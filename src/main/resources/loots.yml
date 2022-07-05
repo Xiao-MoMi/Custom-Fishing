@@ -1,0 +1,120 @@
+#物品库说明：
+#除了display.name/weight/difficulty/material/time为必填项目，其他都是可选项目
+#items与mobs不可重复，否则无法正确进行权重分配
+#物品支持MiniMessage Format
+#https://docs.adventure.kyori.net/minimessage/format.html
+
+items:
+  #最基本的物品需要填写如下项目
+  rubbish:
+    material: paper
+    display:
+      name: '垃圾'
+    weight: 50
+    time: 100000
+    difficulty: 1-1
+
+  #物品内部ID
+  rainbow_fish:
+    #物品的原型
+    material: cod
+    #物品的昵称，若不填写则默认为物品名
+    nick: '彩虹鱼'
+    #物品的显示样式
+    display:
+      name: '<rainbow>✖七✖色✖彩✖虹✖鱼✖</rainbow>'
+      lore:
+        - '<gray>This is a <font:uniform>rainbow fish!'
+        - '<gray> 这是一条七色彩虹鱼'
+    #自定义NBT
+    #可类型(Int) (Byte) (String) (Float) (String) (Double) (Short) (Long) (UUID) (Boolean)
+    nbt:
+      - Itemsadder:
+          namespace: '(String) momirealms'
+          id: '(String) rainbow_fish'
+        CustomModelData: '(Int) 1'
+        SomeNBT:
+          NBTS:
+            byte: '(Byte) 127'
+            float: '(Float) 3.14159'
+    #钓到鱼后发生的动作
+    action:
+      #钓到鱼后的提示信息
+      message: '恭喜你钓到了一条 {loot}！'
+      #钓到鱼后执行的指令
+      command:
+        - 'say 玩家{player}在{world},{x},{y},{z}钓到了一条{loot}!'
+    #钓到此鱼的权重
+    weight: 10
+
+    # 钓此鱼的难度
+    # 难度设置，左侧为每多少tick移动一个单位，右侧为一个单位的像素距离
+    # 1-1指每1tick移动1像素  2-3指每2tick移动3像素
+    difficulty: 1-25
+
+    #指定钓此鱼的UI布局
+    #若不设置则每次都随机
+    layout: bar1
+
+    # 玩家有多少时间捕鱼
+    # 超过指定时间鱼会跑（单位：毫秒）
+    time: 5000
+    #钓到此鱼的条件
+    requirements:
+      #能够钓到此鱼的群系
+      #支持自定义生物群系
+      biome:
+        - minecraft:plains
+        - minecraft:taiga
+      #Y轴范围条件
+      ypos:
+        - 50~100
+        - 150~200
+      #钓到此鱼的天气需求
+      weather:
+        - rain
+        - clear
+        - thunder
+      #钓到此鱼所需的权限
+      permission: 'customfishing.rainbowfish'
+      #指定此鱼出现的世界
+      world:
+        - world
+      #指定此鱼出现的时间
+      time:
+        - 0~12000
+      #region:
+      #  - fishingpool
+      #适合钓到此鱼的季节
+      #删除此设置则可在任何季节捕获
+      #season:
+      #  - 春
+      #  - 秋
+
+mobs:
+  skeletalknight:
+    #MM怪的ID
+    mythicmobsID: SkeletalKnight
+    #MM怪等级，如果有则设置，无则忽略
+    level: 0
+    #这个怪物的名字，用于在消息中提示
+    name: '骷髅骑士'
+    #决定了MM怪的出场方式
+    vector:
+      #水平位移乘数
+      horizontal: 1.1
+      #竖直位移乘数
+      vertical: 1.2
+    action:
+      message: '{loot} 登场！'
+      command:
+        - 'say 玩家{player}在{world},{x},{y},{z}被{loot}追杀!'
+    weight: 10
+    difficulty: 1-6
+    time: 5000
+    requirements:
+      weather:
+        - rain
+        - thunder
+      world:
+        - world

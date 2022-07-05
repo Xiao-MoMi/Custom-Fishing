@@ -1,0 +1,89 @@
+config:
+  #插件兼容
+  integrations:
+    #限定区域钓鱼需要启用WorldGuard兼容
+    WorldGuard: false
+    #钓MM怪需要启用MythicMobs兼容
+    MythicMobs: false
+    #使用季节特性启用PlaceholderAPI兼容
+    PlaceholderAPI: false
+
+  #季节特性
+  season:
+    #是否启用
+    enable: false
+    #需要解析的季节变量
+    papi: '%customcrops_season%'
+
+  #假如某个地方不存在特殊鱼，是否能让玩家获得原版的钓鱼战利品
+  #如果设置为false，那么玩家无法在不满足条件的地方钓起任何物品
+  #你也可以根据原版钓鱼战利品写入本插件内以接近原版
+  vanilla-loot-when-no-custom-fish: false
+
+  #只有在开放水域才能钓到特殊鱼
+  need-open-water: true
+
+  #成功率
+  #你可以自定义区域数量，这为自定义UI提供了可能
+  success-rate:
+    bar1:
+      #每个判定区间的像素个数
+      #默认配置为16个像素每区间
+      #如果你对自定义UI很感兴趣建议联系作者提供相关帮助
+      range: 16
+      title: '鱼上钩了,集中注意!'
+      subtitle:
+        start: '<font:customfishing:default>'
+        bar: '뀃'
+        pointer_offset: '뀂'
+        pointer: '뀄'
+        offset: '뀁'
+        end: '</font>'
+      layout:
+        1: 0
+        2: 0
+        3: 0
+        4: 0.1
+        5: 0.5
+        6: 1
+        7: 0.5
+        8: 0.1
+        9: 0
+        10: 0
+        11: 0
+    bar2:
+      range: 8
+      title: '鱼上钩了,集中注意!'
+      subtitle:
+        start: '<font:customfishing:default>'
+        bar: '뀃'
+        pointer_offset: '뀂'
+        pointer: '뀄'
+        offset: '뀁'
+        end: '</font>'
+      layout:
+        1: 0
+        2: 0
+        3: 0
+        4: 0
+        5: 0
+        6: 0
+        7: 0.1
+        8: 0.1
+        9: 0.3
+        10: 0.3
+        11: 1
+        12: 0.3
+        13: 0.1
+        14: 0
+        15: 0.1
+        16: 0.3
+        17: 1
+        18: 0.3
+        19: 0.1
+        20: 0
+        21: 0
+        22: 0
+
+  #使用找鱼器的冷却时间(ms)
+  fishfinder-cooldown: 3000

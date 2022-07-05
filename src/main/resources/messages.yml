@@ -1,0 +1,19 @@
+#所有位置均可使用MiniMessage Format
+#https://docs.adventure.kyori.net/minimessage/format.html
+messages:
+  prefix: '<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient>'
+  reload: '重载成功.'
+  no-perm: '你没有权限!'
+  not-online: '玩家不在线!'
+  not-exist: '此物品不存在!'
+  escape: '太久没拉钩鱼儿跑走啦!'
+  give-item: '成功给予玩家 {Player} {Amount}x {Item}.'
+  get-item: '成功获得 {Amount}x {Item}.'
+  no-console: '这个指令不能由控制台执行!'
+  wrong-amount: '不能给玩家数量为负数的物品!'
+  lack-args: '参数不足.'
+  cooldown: '你使用找鱼器的速度太快了!'
+  possible-loots: '此处可能钓到: '
+  split-char: ','
+  no-loot: '这个地方什么鱼都没有!'
+  not-open-water: '这里不是开放水域，你将无法获得任何奖励!'
