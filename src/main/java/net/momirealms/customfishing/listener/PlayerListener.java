@@ -1,18 +1,19 @@
 package net.momirealms.customfishing.listener;
 
+import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.momirealms.customfishing.AdventureManager;
 import net.momirealms.customfishing.ConfigReader;
+import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.requirements.FishingCondition;
 import net.momirealms.customfishing.requirements.Requirement;
 import net.momirealms.customfishing.timer.Timer;
-import net.momirealms.customfishing.utils.FishingPlayer;
-import net.momirealms.customfishing.utils.LayoutUtil;
-import net.momirealms.customfishing.utils.LootInstance;
-import net.momirealms.customfishing.utils.MMUtil;
+import net.momirealms.customfishing.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -35,25 +36,70 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onFish(PlayerFishEvent event){
+
         PlayerFishEvent.State state = event.getState();
         Player player = event.getPlayer();
+
         //抛竿
         if (state.equals(PlayerFishEvent.State.FISHING)){
+
+            NBTItem nbtItem = new NBTItem(player.getInventory().getItemInMainHand());
+            NBTCompound nbtCompound = nbtItem.getCompound("CustomFishing");
+
+            //是否需要特殊鱼竿
+            if (ConfigReader.Config.needSpecialRod && nbtCompound == null){
+                nextLoot.put(player, null);
+                return;
+            }
+
+            double timeModifier = 1;
+
+            HashMap<String, Integer> pm = new HashMap<>();
+            HashMap<String, Double> mq = new HashMap<>();
+            if (nbtCompound != null){
+                String rodKey = nbtCompound.getString("id");
+                RodInstance rod = ConfigReader.ROD.get(rodKey);
+                if (rod != null){
+                    if (rod.getWeightPM() != null) pm = rod.getWeightPM();
+                    if (rod.getWeightMQ() != null) mq = rod.getWeightMQ();
+                    if (rod.getTime() != 0) timeModifier = rod.getTime();
+                }
+            }
+
             //设置冷却时间
             long time = System.currentTimeMillis();
             if (time - (coolDown.getOrDefault(player, time - 1000)) < 1000) {
                 return;
             }
             coolDown.put(player, time);
+
+            FishHook hook = event.getHook();
+            hook.setMaxWaitTime((int) (timeModifier * hook.getMaxWaitTime()));
+            hook.setMinWaitTime((int) (timeModifier * hook.getMinWaitTime()));
+
             //获取抛竿位置处可能的Loot实例列表
-            List<LootInstance> possibleLoots = getPossibleLootList(new FishingCondition(player, event.getHook().getLocation()));
+            List<LootInstance> possibleLoots = getPossibleLootList(new FishingCondition(player, hook.getLocation()));
+            List<LootInstance> availableLoots = new ArrayList<>();
             if (possibleLoots.size() == 0){
                 nextLoot.put(player, null);
                 return;
             }
             //计算总权重
-            int totalWeight = 0;
+            double totalWeight = 0;
             for (LootInstance loot : possibleLoots){
+                double weight = loot.getWeight();
+                String group = loot.getGroup();
+                if (group != null){
+                    if (pm.get(group) != null){
+                        weight += pm.get(group);
+                    }
+                    if (mq.get(group) != null){
+                        weight = weight * mq.get(group);
+                    }
+                }
+                //需要进行weight修改
+                if (weight <= 0) continue;
+                availableLoots.add(loot);
                 totalWeight += loot.getWeight();
             }
             //计算每种鱼权重所占的比例并输入数组
@@ -61,10 +107,21 @@ public class PlayerListener implements Listener {
             int index = 0;
             for (LootInstance loot : possibleLoots) {
                 double weight = loot.getWeight();
+                String group = loot.getGroup();
+                if (group != null){
+                    if (pm.get(group) != null){
+                        weight += pm.get(group);
+                    }
+                    if (mq.get(group) != null){
+                        weight = weight * mq.get(group);
+                    }
+                }
+                //需要进行weight修改
+                if (weight <= 0) continue;
                 weightRatios[index++] = weight / totalWeight;
             }
             //根据权重比例划分定义域
-            double[] weights = new double[possibleLoots.size()];
+            double[] weights = new double[availableLoots.size()];
             double startPos = 0;
             for (int i = 0; i < index; i++) {
                 weights[i] = startPos + weightRatios[i];
@@ -79,11 +136,11 @@ public class PlayerListener implements Listener {
                 pos = -pos - 1;
             } else {
                 //如果存在，那真是中大奖了！
-                nextLoot.put(player, possibleLoots.get(pos));
+                nextLoot.put(player, availableLoots.get(pos));
                 return;
             }
             if (pos < weights.length && random < weights[pos]) {
-                nextLoot.put(player, possibleLoots.get(pos));
+                nextLoot.put(player, availableLoots.get(pos));
                 return;
             }
             //以防万一，丢入空值
@@ -103,6 +160,31 @@ public class PlayerListener implements Listener {
                 Object[] values = ConfigReader.LAYOUT.keySet().toArray();
                 return (String) values[generator.nextInt(values.length)];
             });
+
+            NBTItem nbtItem = new NBTItem(player.getInventory().getItemInMainHand());
+            NBTCompound nbtCompound = nbtItem.getCompound("CustomFishing");
+
+            if (nbtCompound != null){
+                String rodKey = nbtCompound.getString("id");
+                RodInstance rod = ConfigReader.ROD.get(rodKey);
+                if (rod != null){
+                    if (rod.getDifficulty() != 0) {
+                        int difficulty = lootInstance.getDifficulty().getSpeed();
+                        difficulty += rod.getDifficulty();
+                        if (difficulty < 1){
+                            difficulty = 1;
+                        }
+                        Difficulty difficult = new Difficulty(lootInstance.getDifficulty().getTimer(), difficulty);
+                        fishingPlayers.put(player,
+                                new FishingPlayer(System.currentTimeMillis() + lootInstance.getTime(),
+                                        new Timer(player, difficult, layout)
+                                )
+                        );
+                        return;
+                    }
+                }
+            }
+
             //根据鱼的时间放入玩家实例，并应用药水效果
             fishingPlayers.put(player,
                     new FishingPlayer(System.currentTimeMillis() + lootInstance.getTime(),
@@ -119,6 +201,7 @@ public class PlayerListener implements Listener {
                 //清除原版战利品
                 if (event.getCaught() != null){
                     event.getCaught().remove();
+                    event.setExpToDrop(0);
                 }
                 LootInstance lootInstance = nextLoot.get(player);
                 LayoutUtil layout = ConfigReader.LAYOUT.get(fishingPlayers.get(player).getTimer().getLayout());
@@ -158,6 +241,10 @@ public class PlayerListener implements Listener {
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCommand);
                         });
                     }
+                    if (lootInstance.getExp() != 0){
+                        player.giveExp(lootInstance.getExp(),true);
+                        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1,1);
+                    }
                     //发送Title
                     AdventureManager.playerTitle(player, ConfigReader.Title.success_title.get((int) (ConfigReader.Title.success_title.size()*Math.random())).replace("{loot}",lootInstance.getNick()), ConfigReader.Title.success_subtitle.get((int) (ConfigReader.Title.success_subtitle.size()*Math.random())).replace("{loot}",lootInstance.getNick()), ConfigReader.Title.success_in, ConfigReader.Title.success_stay, ConfigReader.Title.success_out);
                 }else {
@@ -174,6 +261,7 @@ public class PlayerListener implements Listener {
                     if (event.getCaught() != null){
                         event.getCaught().remove();
                     }
+                    event.setExpToDrop(0);
                 }
             }
         }

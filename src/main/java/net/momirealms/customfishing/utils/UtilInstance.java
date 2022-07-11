@@ -52,22 +52,17 @@ public class UtilInstance {
     /*
     将实例转换为缓存中的NBT物品
      */
-    public static void addUtil2cache(String utilKey){
-        //从缓存中请求物品Item
-        UtilInstance util = ConfigReader.UTIL.get(utilKey);
-        ItemStack itemStack = new ItemStack(Material.valueOf(util.material.toUpperCase()));
+    public void addUtil2cache(String utilKey){
+        ItemStack itemStack = new ItemStack(Material.valueOf(this.material.toUpperCase()));
         NBTItem nbtItem = new NBTItem(itemStack);
-        //设置Name和Lore
         NBTCompound display = nbtItem.addCompound("display");
-        display.setString("Name", GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize("<italic:false>"+util.name)));
-        if (util.lore != null){
+        display.setString("Name", GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize("<italic:false>" + this.name)));
+        if (this.lore != null){
             List<String> lores = display.getStringList("Lore");
-            util.lore.forEach(lore -> lores.add(GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize("<italic:false>"+lore))));
+            this.lore.forEach(lore -> lores.add(GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize("<italic:false>"+lore))));
         }
-        //设置NBT
-        //添加物品进入缓存
-        if (util.nbt != null){
-            NBTUtil nbtUtil = new NBTUtil(util.nbt, nbtItem.getItem());
+        if (this.nbt != null){
+            NBTUtil nbtUtil = new NBTUtil(this.nbt, nbtItem.getItem());
             ConfigReader.UTILITEM.put(utilKey, nbtUtil.getNBTItem().getItem());
         }else {
             ConfigReader.UTILITEM.put(utilKey, nbtItem.getItem());
@@ -77,8 +72,8 @@ public class UtilInstance {
     /*
     给予玩家某NBT物品
      */
-    public static void givePlayerUtil(Player player, String UtilKey, int amount){
-        ItemStack itemStack = ConfigReader.UTILITEM.get(UtilKey);
+    public static void givePlayerUtil(Player player, String utilKey, int amount){
+        ItemStack itemStack = ConfigReader.UTILITEM.get(utilKey);
         itemStack.setAmount(amount);
         player.getInventory().addItem(itemStack);
     }

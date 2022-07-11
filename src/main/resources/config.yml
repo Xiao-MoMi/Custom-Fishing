@@ -23,6 +23,9 @@ config:
   #只有在开放水域才能钓到特殊鱼
   need-open-water: true
 
+  #是否只有本插件的鱼竿能钓到鱼
+  need-special-rod: false
+
   #成功率
   #你可以自定义区域数量，这为自定义UI提供了可能
   success-rate:
@@ -34,9 +37,9 @@ config:
       title: '鱼上钩了,集中注意!'
       subtitle:
         start: '<font:customfishing:default>'
-        bar: '뀃'
+        bar: '뀄'
         pointer_offset: '뀂'
-        pointer: '뀄'
+        pointer: '뀃'
         offset: '뀁'
         end: '</font>'
       layout:
@@ -56,9 +59,9 @@ config:
       title: '鱼上钩了,集中注意!'
       subtitle:
         start: '<font:customfishing:default>'
-        bar: '뀃'
+        bar: '뀅'
         pointer_offset: '뀂'
-        pointer: '뀄'
+        pointer: '뀃'
         offset: '뀁'
         end: '</font>'
       layout:

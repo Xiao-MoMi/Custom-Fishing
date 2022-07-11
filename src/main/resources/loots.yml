@@ -44,8 +44,11 @@ items:
       #钓到鱼后执行的指令
       command:
         - 'say 玩家{player}在{world},{x},{y},{z}钓到了一条{loot}!'
+      exp: 10
     #钓到此鱼的权重
     weight: 10
+    #此鱼所在的组名
+    group: normal
 
     # 钓此鱼的难度
     # 难度设置，左侧为每多少tick移动一个单位，右侧为一个单位的像素距离
@@ -99,6 +102,8 @@ mobs:
     level: 0
     #这个怪物的名字，用于在消息中提示
     name: '骷髅骑士'
+
+    group: creature
     #决定了MM怪的出场方式
     vector:
       #水平位移乘数
@@ -109,6 +114,7 @@ mobs:
       message: '{loot} 登场！'
       command:
         - 'say 玩家{player}在{world},{x},{y},{z}被{loot}追杀!'
+      exp: 10
     weight: 10
     difficulty: 1-6
     time: 5000

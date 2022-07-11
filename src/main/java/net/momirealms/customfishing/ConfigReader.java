@@ -17,6 +17,8 @@ public class ConfigReader{
     public static HashMap<String, ItemStack> LOOTITEM = new HashMap<>();
     public static HashMap<String, UtilInstance> UTIL = new HashMap<>();
     public static HashMap<String, ItemStack> UTILITEM = new HashMap<>();
+    public static HashMap<String, RodInstance> ROD = new HashMap<>();
+    public static HashMap<String, ItemStack> RODITEM = new HashMap<>();
     public static HashMap<String, LayoutUtil> LAYOUT = new HashMap<>();
 
     private static YamlConfiguration getConfig(String configName) {
@@ -33,6 +35,7 @@ public class ConfigReader{
         Title.loadTitle();
         loadLoot();
         loadUtil();
+        loadRod();
     }
 
     public static class Config {
@@ -43,6 +46,7 @@ public class ConfigReader{
         public static boolean season;
         public static boolean vanillaDrop;
         public static boolean needOpenWater;
+        public static boolean needSpecialRod;
         public static String season_papi;
         public static int fishFinderCoolDown;
 
@@ -79,12 +83,12 @@ public class ConfigReader{
                 }
             }
             season = config.getBoolean("config.season.enable");
-            if (!papi && season){
+            if (!papi && season) {
                 season = false;
                 AdventureManager.consoleMessage("<red>[CustomFishing] 使用季节特性请先打开 PlaceholderAPI 兼容!</red>");
             }
 
-            if (season){
+            if (season) {
                 season_papi = config.getString("config.season.papi");
             }else {
                 season_papi = null;
@@ -92,6 +96,7 @@ public class ConfigReader{
 
             vanillaDrop = config.getBoolean("config.vanilla-loot-when-no-custom-fish");
             needOpenWater = config.getBoolean("config.need-open-water");
+            needSpecialRod = config.getBoolean("config.need-special-rod");
             fishFinderCoolDown = config.getInt("config.fishfinder-cooldown");
 
             /*
@@ -279,8 +284,12 @@ public class ConfigReader{
                 loot.setMsg(config.getString("items." + key + ".action.message"));
             if (config.contains("items." + key + ".action.command"))
                 loot.setCommands(config.getStringList("items." + key + ".action.command"));
-            if (config.contains("items." + key + "layout"))
-                loot.setLayout(config.getString("items." + key + "layout"));
+            if (config.contains("items." + key + ".action.exp"))
+                loot.setExp(config.getInt("items." + key + ".action.exp"));
+            if (config.contains("items." + key + ".layout"))
+                loot.setLayout(config.getString("items." + key + ".layout"));
+            if (config.contains("items." + key + ".group"))
+                loot.setGroup(config.getString("items." + key + ".group"));
             /*
             设置捕获条件
              */
@@ -315,7 +324,7 @@ public class ConfigReader{
             //添加单例进缓存
             LOOT.put(key, loot);
             //添加根据单例生成的NBT物品进缓存
-            LootInstance.addLoot2cache(key);
+            loot.addLoot2cache(key);
         });
 
         if (config.contains("mobs") && Config.mm){
@@ -392,8 +401,12 @@ public class ConfigReader{
                     loot.setMsg(config.getString("mobs." + key + ".action.message"));
                 if (config.contains("mobs." + key + ".action.command"))
                     loot.setCommands(config.getStringList("mobs." + key + ".action.command"));
-                if (config.contains("mobs." + key + "layout"))
+                if (config.contains("mobs." + key + ".action.exp"))
+                    loot.setExp(config.getInt("mobs." + key + ".action.exp"));
+                if (config.contains("mobs." + key + ".layout"))
                     loot.setLayout(config.getString("mobs." + key + "layout"));
+                if (config.contains("mobs." + key + ".group"))
+                    loot.setGroup(config.getString("mobs." + key + ".group"));
                 /*
                 设置捕获条件
                  */
@@ -480,12 +493,71 @@ public class ConfigReader{
                 utilInstance.setNbt(config.getMapList("utils." + key + ".nbt").get(0));
 
             UTIL.put(key, utilInstance);
-            UtilInstance.addUtil2cache(key);
+            utilInstance.addUtil2cache(key);
         });
         if (keys.size() != UTILITEM.size()){
             AdventureManager.consoleMessage("<red>[CustomFishing] utils.yml 文件存在配置错误!</red>");
         } else {
             AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><white>从 utils.yml 载入了<green>" + keys.size() + "<white>条工具数据");
+        }
+    }
+
+    /*
+    载入rod物品
+     */
+    public static void loadRod() {
+
+        ROD.clear();
+        RODITEM.clear();
+
+        YamlConfiguration config = getConfig("rods.yml");
+        Set<String> keys = Objects.requireNonNull(config.getConfigurationSection("rods")).getKeys(false);
+
+        keys.forEach(key -> {
+            String name;
+            if (config.contains("rods." + key + ".display.name")) {
+                name = config.getString("rods." + key + ".display.name");
+            } else {
+                AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的物品名称!</red>");
+                return;
+            }
+            RodInstance rodInstance = new RodInstance(name);
+            if (config.contains("rods." + key + ".display.lore")) {
+                rodInstance.setLore(config.getStringList("rods." + key + ".display.lore"));
+            }
+            if (config.contains("rods." + key + ".nbt")) {
+                rodInstance.setNbt(config.getMapList("rods." + key + ".nbt").get(0));
+            }
+            if (config.contains("rods." + key + ".modifier")){
+                config.getConfigurationSection("rods." + key + ".modifier").getKeys(false).forEach(modifier -> {
+                    switch (modifier){
+                        case "weight-PM" -> {
+                            HashMap<String, Integer> pm = new HashMap<>();
+                            config.getConfigurationSection("rods." + key + ".modifier.weight-PM").getValues(false).forEach((group, value) -> {
+                                pm.put(group, (Integer) value);
+                            });
+                            rodInstance.setWeightPM(pm);
+                        }
+                        case "weight-MQ" -> {
+                            HashMap<String, Double> mq = new HashMap<>();
+                            config.getConfigurationSection("rods." + key + ".modifier.weight-MQ").getValues(false).forEach((group, value) -> {
+                                mq.put(group, (Double) value);
+                            });
+                            rodInstance.setWeightMQ(mq);
+                        }
+                        case "time" -> rodInstance.setTime(config.getDouble("rods." + key + ".modifier.time"));
+                        case "difficulty" -> rodInstance.setDifficulty(config.getInt("rods." + key + ".modifier.difficulty"));
+                    }
+                });
+            }
+            ROD.put(key, rodInstance);
+            rodInstance.addRod2Cache(key);
+        });
+
+        if (keys.size() != RODITEM.size()){
+            AdventureManager.consoleMessage("<red>[CustomFishing] rods.yml 文件存在配置错误!</red>");
+        } else {
+            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><white>从 rods.yml 载入了<green>" + keys.size() + "<white>条鱼竿数据");
         }
     }
 }

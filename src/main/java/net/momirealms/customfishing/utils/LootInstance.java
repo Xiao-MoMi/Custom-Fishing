@@ -29,7 +29,9 @@ public class LootInstance {
     private List<Requirement> requirements;
     private final int time;
     private int mmLevel;
+    private int exp;
     private List<String> commands;
+    private String group;
 
     public LootInstance(String key, String name, Difficulty difficulty, int weight, int time){
         this.key = key;
@@ -70,6 +72,14 @@ public class LootInstance {
     public int getMmLevel(){ return this.mmLevel; }
     public VectorUtil getVectorUtil(){ return this.vectorUtil; }
 
+    public String getGroup() {
+        return group;
+    }
+
+    public int getExp() {
+        return exp;
+    }
+
     public void setLore(List<String> lore){
         this.lore = lore;
     }
@@ -86,25 +96,31 @@ public class LootInstance {
     public void setCommands(List<String> commands){ this.commands = commands; }
     public void setMmLevel(int mmLevel){ this.mmLevel = mmLevel; }
 
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public void setExp(int exp) {
+        this.exp = exp;
+    }
+
     /*
-    将实例转换为缓存中的NBT物品
-     */
-    public static void addLoot2cache(String lootKey){
-        //从缓存中请求物品Item
-        LootInstance loot = ConfigReader.LOOT.get(lootKey);
-        ItemStack itemStack = new ItemStack(Material.valueOf(loot.material.toUpperCase()));
+            将实例转换为缓存中的NBT物品
+             */
+    public void addLoot2cache(String lootKey){
+        ItemStack itemStack = new ItemStack(Material.valueOf(this.material.toUpperCase()));
         NBTItem nbtItem = new NBTItem(itemStack);
         //设置Name和Lore
         NBTCompound display = nbtItem.addCompound("display");
-        display.setString("Name", GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize("<italic:false>"+loot.name)));
-        if(loot.lore != null){
+        display.setString("Name", GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize("<italic:false>" + this.name)));
+        if(this.lore != null){
             List<String> lores = display.getStringList("Lore");
-            loot.lore.forEach(lore -> lores.add(GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize("<italic:false>"+lore))));
+            this.lore.forEach(lore -> lores.add(GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize("<italic:false>" + lore))));
         }
         //设置NBT
         //添加物品进入缓存
-        if (loot.nbt != null){
-            NBTUtil nbtUtil = new NBTUtil(loot.nbt, nbtItem.getItem());
+        if (this.nbt != null){
+            NBTUtil nbtUtil = new NBTUtil(this.nbt, nbtItem.getItem());
             ConfigReader.LOOTITEM.put(lootKey, nbtUtil.getNBTItem().getItem());
         }else {
             ConfigReader.LOOTITEM.put(lootKey, nbtItem.getItem());
