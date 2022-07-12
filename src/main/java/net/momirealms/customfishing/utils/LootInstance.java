@@ -71,14 +71,10 @@ public class LootInstance {
     public int getTime(){ return this.time; }
     public int getMmLevel(){ return this.mmLevel; }
     public VectorUtil getVectorUtil(){ return this.vectorUtil; }
-
     public String getGroup() {
         return group;
     }
-
-    public int getExp() {
-        return exp;
-    }
+    public int getExp() {return exp;}
 
     public void setLore(List<String> lore){
         this.lore = lore;
@@ -95,15 +91,10 @@ public class LootInstance {
     public void setVectorUtil(VectorUtil vectorUtil){ this.vectorUtil = vectorUtil; }
     public void setCommands(List<String> commands){ this.commands = commands; }
     public void setMmLevel(int mmLevel){ this.mmLevel = mmLevel; }
-
     public void setGroup(String group) {
         this.group = group;
     }
-
-    public void setExp(int exp) {
-        this.exp = exp;
-    }
-
+    public void setExp(int exp) {this.exp = exp;}
     /*
             将实例转换为缓存中的NBT物品
              */

@@ -57,6 +57,13 @@ public class TabComplete implements TabCompleter {
                     if (args[2].equalsIgnoreCase("get")){
                         return rods();
                     }
+                }else if (args[1].equalsIgnoreCase("bait")){
+                    if (args[2].equalsIgnoreCase("give")){
+                        return online_players();
+                    }
+                    if (args[2].equalsIgnoreCase("get")){
+                        return baits();
+                    }
                 }
             }
         }
@@ -73,6 +80,11 @@ public class TabComplete implements TabCompleter {
                 }else if (args[1].equalsIgnoreCase("rod")){
                     if (args[2].equalsIgnoreCase("give")){
                         return rods();
+                    }
+                }
+                else if (args[1].equalsIgnoreCase("bait")){
+                    if (args[2].equalsIgnoreCase("give")){
+                        return baits();
                     }
                 }
             }
@@ -94,5 +106,8 @@ public class TabComplete implements TabCompleter {
     }
     private List<String> rods() {
         return new ArrayList<>(ConfigReader.ROD.keySet());
+    }
+    private List<String> baits() {
+        return new ArrayList<>(ConfigReader.BAIT.keySet());
     }
 }

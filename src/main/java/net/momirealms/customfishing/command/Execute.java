@@ -2,6 +2,7 @@ package net.momirealms.customfishing.command;
 
 import net.momirealms.customfishing.AdventureManager;
 import net.momirealms.customfishing.ConfigReader;
+import net.momirealms.customfishing.utils.BaitInstance;
 import net.momirealms.customfishing.utils.LootInstance;
 import net.momirealms.customfishing.utils.RodInstance;
 import net.momirealms.customfishing.utils.UtilInstance;
@@ -209,6 +210,62 @@ public class Execute implements CommandExecutor {
                             return true;
                         }
                         RodInstance.givePlayerRod(player, args[4], Integer.parseInt(args[5]));
+                        giveItem(sender, args[3], args[4], Integer.parseInt(args[5]));
+                    }
+                    return true;
+                }
+            }
+            else if (args[1].equalsIgnoreCase("bait")){
+                if (args[2].equalsIgnoreCase("get")) {
+                    //检验参数长度 [0]items [1]bait [2]get [3]xxx [4](amount)
+                    if (sender instanceof Player player){
+                        //是否存在于缓存中
+                        if (!ConfigReader.BAIT.containsKey(args[3])){
+                            noItem(sender);
+                            return true;
+                        }
+                        if (args.length == 4){
+                            BaitInstance.givePlayerBait(player, args[3], 1);
+                            AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.getItem.replace("{Amount}", "1").replace("{Item}",args[3]));
+                        }else {
+                            if (Integer.parseInt(args[4]) < 1){
+                                wrongAmount(sender);
+                                return true;
+                            }
+                            BaitInstance.givePlayerBait(player, args[3], Integer.parseInt(args[4]));
+                            AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.getItem.replace("{Amount}", args[4]).replace("{Item}",args[3]));
+                        }
+                    }else {
+                        AdventureManager.consoleMessage(ConfigReader.Message.prefix + ConfigReader.Message.noConsole);
+                    }
+                    return true;
+                }
+                if (args[2].equalsIgnoreCase("give")) {
+                    //检验参数长度 [0]items [1]bait [2]give [3]player [4]xxx [5](amount)
+                    if (args.length < 5){
+                        lackArgs(sender);
+                        return true;
+                    }
+                    Player player = Bukkit.getPlayer(args[3]);
+                    //玩家是否在线
+                    if (player == null){
+                        notOnline(sender);
+                        return true;
+                    }
+                    //是否存在于缓存中
+                    if (!ConfigReader.BAIT.containsKey(args[4])){
+                        noItem(sender);
+                        return true;
+                    }
+                    if (args.length == 5){
+                        BaitInstance.givePlayerBait(player, args[4], 1);
+                        giveItem(sender, args[3], args[4], 1);
+                    }else {
+                        if (Integer.parseInt(args[5]) < 1){
+                            wrongAmount(sender);
+                            return true;
+                        }
+                        BaitInstance.givePlayerBait(player, args[4], Integer.parseInt(args[5]));
                         giveItem(sender, args[3], args[4], Integer.parseInt(args[5]));
                     }
                     return true;

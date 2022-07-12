@@ -90,3 +90,7 @@ config:
 
   #使用找鱼器的冷却时间(ms)
   fishfinder-cooldown: 3000
+
+  #修改捕鱼所需的时间
+  #在paper.yml中可以修改默认最少最长上钩时间
+  time-multiply: 2

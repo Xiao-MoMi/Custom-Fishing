@@ -8,6 +8,7 @@ import net.momirealms.customfishing.utils.LayoutUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -61,7 +62,8 @@ public class TimerTask extends BukkitRunnable {
             return;
         }
         //移除切换物品的玩家
-        if (player.getInventory().getItemInMainHand().getType() != Material.FISHING_ROD){
+        PlayerInventory playerInventory = player.getInventory();
+        if (playerInventory.getItemInMainHand().getType() != Material.FISHING_ROD && playerInventory.getItemInOffHand().getType() != Material.FISHING_ROD){
             fishingPlayers.remove(player);
             Bukkit.getScheduler().cancelTask(taskID);
             Bukkit.getScheduler().callSyncMethod(CustomFishing.instance, ()-> {

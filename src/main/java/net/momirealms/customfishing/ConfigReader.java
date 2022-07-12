@@ -19,6 +19,8 @@ public class ConfigReader{
     public static HashMap<String, ItemStack> UTILITEM = new HashMap<>();
     public static HashMap<String, RodInstance> ROD = new HashMap<>();
     public static HashMap<String, ItemStack> RODITEM = new HashMap<>();
+    public static HashMap<String, BaitInstance> BAIT = new HashMap<>();
+    public static HashMap<String, ItemStack> BAITITEM = new HashMap<>();
     public static HashMap<String, LayoutUtil> LAYOUT = new HashMap<>();
 
     private static YamlConfiguration getConfig(String configName) {
@@ -36,6 +38,7 @@ public class ConfigReader{
         loadLoot();
         loadUtil();
         loadRod();
+        loadBait();
     }
 
     public static class Config {
@@ -49,6 +52,7 @@ public class ConfigReader{
         public static boolean needSpecialRod;
         public static String season_papi;
         public static int fishFinderCoolDown;
+        public static double timeMultiply;
 
         public static void loadConfig() {
             CustomFishing.instance.saveDefaultConfig();
@@ -58,28 +62,28 @@ public class ConfigReader{
             wg = config.getBoolean("config.integrations.WorldGuard");
             if (wg){
                 if (Bukkit.getPluginManager().getPlugin("WorldGuard") == null){
-                    AdventureManager.consoleMessage("<red>[CustomFishing] 未检测到 WorldGuard!</red>");
+                    AdventureManager.consoleMessage("<red>[CustomFishing] 未检测到插件 WorldGuard!</red>");
                     wg = false;
                 }else {
-                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><green>WorldGuard Hooked!");
+                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>检测到 <color:#00BFFF>WorldGuard <color:#E1FFFF>已启用区域限定!");
                 }
             }
             mm = config.getBoolean("config.integrations.MythicMobs");
             if (mm){
                 if (Bukkit.getPluginManager().getPlugin("MythicMobs") == null){
-                    AdventureManager.consoleMessage("<red>[CustomFishing] 未检测到 MythicMobs!</red>");
+                    AdventureManager.consoleMessage("<red>[CustomFishing] 未检测到插件 MythicMobs!</red>");
                     mm = false;
                 }else {
-                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><green>MythicMobs Hooked!");
+                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] <color:#E1FFFF>检测到 <color:#00BFFF>MythicMobs <color:#E1FFFF>已启用怪物拓展!");
                 }
             }
             papi = config.getBoolean("config.integrations.PlaceholderAPI");
             if (papi){
                 if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null){
-                    AdventureManager.consoleMessage("<red>[CustomFishing] 未检测到 PlaceholderAPI!</red>");
+                    AdventureManager.consoleMessage("<red>[CustomFishing] 未检测到插件 PlaceholderAPI!</red>");
                     papi = false;
                 }else {
-                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><green>PlaceholderAPI Hooked!");
+                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>检测到 <color:#00BFFF>PlaceholderAPI <color:#E1FFFF>已启用变量解析!");
                 }
             }
             season = config.getBoolean("config.season.enable");
@@ -98,6 +102,7 @@ public class ConfigReader{
             needOpenWater = config.getBoolean("config.need-open-water");
             needSpecialRod = config.getBoolean("config.need-special-rod");
             fishFinderCoolDown = config.getInt("config.fishfinder-cooldown");
+            timeMultiply = config.getDouble("config.time-multiply");
 
             /*
             计算获取布局
@@ -444,15 +449,15 @@ public class ConfigReader{
             if (keys.size() != LOOTITEM.size() || mobs.size() != LOOT.size()- LOOTITEM.size()) {
                 AdventureManager.consoleMessage("<red>[CustomFishing] loots.yml 文件存在配置错误!</red>");
             } else {
-                AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><white>从 loots.yml 载入了<green>" + keys.size() + "<white>条物品数据");
-                AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><white>从 loots.yml 载入了<green>" + mobs.size() + "<white>条怪物数据");
+                AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>已载入 <white>" + keys.size() + " <color:#E1FFFF>个战利品!");
+                AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>已载入 <white>" + mobs.size() + " <color:#E1FFFF>个怪物!");
             }
             return;
         }
         if (keys.size() != LOOTITEM.size()){
             AdventureManager.consoleMessage("<red>[CustomFishing] loots.yml 文件存在配置错误!</red>");
         } else {
-            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><white>从 loots.yml 载入了<green>" + keys.size() + "<white>条物品数据");
+            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>已载入 <white>" + keys.size() + " <color:#E1FFFF>个战利品!");
         }
     }
 
@@ -498,7 +503,7 @@ public class ConfigReader{
         if (keys.size() != UTILITEM.size()){
             AdventureManager.consoleMessage("<red>[CustomFishing] utils.yml 文件存在配置错误!</red>");
         } else {
-            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><white>从 utils.yml 载入了<green>" + keys.size() + "<white>条工具数据");
+            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>已载入 <white>" + keys.size() + " <color:#E1FFFF>个实用道具!");
         }
     }
 
@@ -547,6 +552,7 @@ public class ConfigReader{
                         }
                         case "time" -> rodInstance.setTime(config.getDouble("rods." + key + ".modifier.time"));
                         case "difficulty" -> rodInstance.setDifficulty(config.getInt("rods." + key + ".modifier.difficulty"));
+                        case "double-loot" -> rodInstance.setDoubleLoot(config.getDouble("rods." + key + ".modifier.double-loot"));
                     }
                 });
             }
@@ -557,7 +563,71 @@ public class ConfigReader{
         if (keys.size() != RODITEM.size()){
             AdventureManager.consoleMessage("<red>[CustomFishing] rods.yml 文件存在配置错误!</red>");
         } else {
-            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><white>从 rods.yml 载入了<green>" + keys.size() + "<white>条鱼竿数据");
+            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>已载入 <white>" + keys.size() + " <color:#E1FFFF>把鱼竿!");
+        }
+    }
+
+    public static void loadBait(){
+
+        BAITITEM.clear();
+        BAIT.clear();
+
+        YamlConfiguration config = getConfig("baits.yml");
+        Set<String> keys = config.getConfigurationSection("baits").getKeys(false);
+
+        keys.forEach(key -> {
+            String name;
+            if (config.contains("baits." + key + ".display.name")) {
+                name = config.getString("baits." + key + ".display.name");
+            } else {
+                AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的物品名称!</red>");
+                return;
+            }
+            String material;
+            if (config.contains("baits." + key + ".material")) {
+                material = config.getString("baits." + key + ".material");
+            } else {
+                AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的物品材质!</red>");
+                return;
+            }
+            BaitInstance baitInstance = new BaitInstance(name, material);
+            if (config.contains("baits." + key + ".display.lore")) {
+                baitInstance.setLore(config.getStringList("baits." + key + ".display.lore"));
+            }
+            if (config.contains("baits." + key + ".nbt")) {
+                baitInstance.setNbt(config.getMapList("baits." + key + ".nbt").get(0));
+            }
+            if (config.contains("baits." + key + ".modifier")){
+                config.getConfigurationSection("baits." + key + ".modifier").getKeys(false).forEach(modifier -> {
+                    switch (modifier){
+                        case "weight-PM" -> {
+                            HashMap<String, Integer> pm = new HashMap<>();
+                            config.getConfigurationSection("baits." + key + ".modifier.weight-PM").getValues(false).forEach((group, value) -> {
+                                pm.put(group, (Integer) value);
+                            });
+                            baitInstance.setWeightPM(pm);
+                        }
+                        case "weight-MQ" -> {
+                            HashMap<String, Double> mq = new HashMap<>();
+                            config.getConfigurationSection("baits." + key + ".modifier.weight-MQ").getValues(false).forEach((group, value) -> {
+                                mq.put(group, (Double) value);
+                            });
+                            baitInstance.setWeightMQ(mq);
+                        }
+                        case "time" -> baitInstance.setTime(config.getDouble("baits." + key + ".modifier.time"));
+                        case "difficulty" -> baitInstance.setDifficulty(config.getInt("baits." + key + ".modifier.difficulty"));
+                        case "double-loot" -> baitInstance.setDoubleLoot(config.getDouble("baits." + key + ".modifier.double-loot"));
+                    }
+                });
+            }
+            BAIT.put(key, baitInstance);
+            baitInstance.addBait2Cache(key);
+        });
+
+        if (keys.size() != BAITITEM.size()){
+            AdventureManager.consoleMessage("<red>[CustomFishing] baits.yml 文件存在配置错误!</red>");
+        } else {
+            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>已载入 <white>" + keys.size() + " <color:#E1FFFF>条鱼饵!");
         }
     }
 }

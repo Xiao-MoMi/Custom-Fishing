@@ -63,10 +63,15 @@ public class UtilInstance {
         }
         if (this.nbt != null){
             NBTUtil nbtUtil = new NBTUtil(this.nbt, nbtItem.getItem());
-            ConfigReader.UTILITEM.put(utilKey, nbtUtil.getNBTItem().getItem());
-        }else {
-            ConfigReader.UTILITEM.put(utilKey, nbtItem.getItem());
+            nbtItem = nbtUtil.getNBTItem();
         }
+        if (utilKey.equals("fishfinder")){
+            nbtItem.addCompound("CustomFishing");
+            NBTCompound nbtCompound = nbtItem.getCompound("CustomFishing");
+            nbtCompound.setString("type", "util");
+            nbtCompound.setString("id", "fishfinder");
+        }
+        ConfigReader.UTILITEM.put(utilKey, nbtItem.getItem());
     }
 
     /*
