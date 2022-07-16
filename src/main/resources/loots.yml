@@ -59,6 +59,20 @@ items:
     #若不设置则每次都随机
     layout: bar1
 
+    #附魔
+    enchantments:
+      - minecraft:sharpness/1
+      - minecraft:flames/1
+
+    item_flags:
+      - HIDE_ENCHANTS
+    # - HIDE_ATTRIBUTES
+    # - HIDE_DESTROYS
+    # - HIDE_DYE
+    # - HIDE_PLACED_ON
+    # - HIDE_UNBREAKABLE
+    # - HIDE_POTION_EFFECTS
+
     # 玩家有多少时间捕鱼
     # 超过指定时间鱼会跑（单位：毫秒）
     time: 5000

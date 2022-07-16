@@ -1,11 +1,14 @@
 package net.momirealms.customfishing;
 
+import net.kyori.adventure.key.Key;
 import net.momirealms.customfishing.requirements.*;
 import net.momirealms.customfishing.utils.*;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
@@ -74,7 +77,7 @@ public class ConfigReader{
                     AdventureManager.consoleMessage("<red>[CustomFishing] 未检测到插件 MythicMobs!</red>");
                     mm = false;
                 }else {
-                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] <color:#E1FFFF>检测到 <color:#00BFFF>MythicMobs <color:#E1FFFF>已启用怪物拓展!");
+                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>检测到 <color:#00BFFF>MythicMobs <color:#E1FFFF>已启用怪物拓展!");
                 }
             }
             papi = config.getBoolean("config.integrations.PlaceholderAPI");
@@ -238,10 +241,6 @@ public class ConfigReader{
             int weight;
             if (config.contains("items." + key + ".weight")) {
                 weight = config.getInt("items." + key + ".weight");
-                if (weight <= 0){
-                    AdventureManager.consoleMessage("<red>[CustomFishing] 错误! " + key + " 的捕获权重必须为正整数!</red>");
-                    return;
-                }
             } else {
                 AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的捕获权重!</red>");
                 return;
@@ -275,7 +274,22 @@ public class ConfigReader{
              */
             if (config.contains("items." + key + ".display.lore"))
                 loot.setLore(config.getStringList("items." + key + ".display.lore"));
-
+            if (config.contains("items." + key + ".enchantments")) {
+                ArrayList<Enchantment> arrayList = new ArrayList<>();
+                config.getStringList("items." + key + ".enchantments").forEach(enchant -> {
+                    String[] split = StringUtils.split(enchant, "/");
+                    NamespacedKey namespacedKey = NamespacedKey.fromString(split[0]);
+                    arrayList.add(new Enchantment(namespacedKey, Integer.parseInt(split[1])));
+                });
+                loot.setEnchantment(arrayList);
+            }
+            if (config.contains("items." + key + ".item_flags")) {
+                ArrayList<ItemFlag> arrayList = new ArrayList<>();
+                config.getStringList("items." + key + ".item_flags").forEach(flag -> {
+                    arrayList.add(ItemFlag.valueOf(flag));
+                });
+                loot.setItemFlags(arrayList);
+            }
             if (config.contains("items." + key + ".nbt"))
                 loot.setNbt(config.getMapList("items." + key + ".nbt").get(0));
 
@@ -363,10 +377,6 @@ public class ConfigReader{
                 int weight;
                 if (config.contains("mobs." + key + ".weight")) {
                     weight = config.getInt("mobs." + key + ".weight");
-                    if (weight <= 0){
-                        AdventureManager.consoleMessage("<red>[CustomFishing] 错误! " + key + " 的捕获权重必须为正整数!</red>");
-                        return;
-                    }
                 } else {
                     AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的捕获权重!</red>");
                     return;
@@ -496,7 +506,22 @@ public class ConfigReader{
                 utilInstance.setLore(config.getStringList("utils." + key + ".display.lore"));
             if (config.contains("utils." + key + ".nbt"))
                 utilInstance.setNbt(config.getMapList("utils." + key + ".nbt").get(0));
-
+            if (config.contains("utils." + key + ".enchantments")) {
+                ArrayList<Enchantment> arrayList = new ArrayList<>();
+                config.getStringList("utils." + key + ".enchantments").forEach(enchant -> {
+                    String[] split = StringUtils.split(enchant, "/");
+                    NamespacedKey namespacedKey = NamespacedKey.fromString(split[0]);
+                    arrayList.add(new Enchantment(namespacedKey, Integer.parseInt(split[1])));
+                });
+                utilInstance.setEnchantment(arrayList);
+            }
+            if (config.contains("utils." + key + ".item_flags")) {
+                ArrayList<ItemFlag> arrayList = new ArrayList<>();
+                config.getStringList("utils." + key + ".item_flags").forEach(flag -> {
+                    arrayList.add(ItemFlag.valueOf(flag));
+                });
+                utilInstance.setItemFlags(arrayList);
+            }
             UTIL.put(key, utilInstance);
             utilInstance.addUtil2cache(key);
         });
@@ -532,6 +557,22 @@ public class ConfigReader{
             }
             if (config.contains("rods." + key + ".nbt")) {
                 rodInstance.setNbt(config.getMapList("rods." + key + ".nbt").get(0));
+            }
+            if (config.contains("rods." + key + ".enchantments")) {
+                ArrayList<Enchantment> arrayList = new ArrayList<>();
+                config.getStringList("rods." + key + ".enchantments").forEach(enchant -> {
+                    String[] split = StringUtils.split(enchant, "/");
+                    NamespacedKey namespacedKey = NamespacedKey.fromString(split[0]);
+                    arrayList.add(new Enchantment(namespacedKey, Integer.parseInt(split[1])));
+                });
+                rodInstance.setEnchantment(arrayList);
+            }
+            if (config.contains("rods." + key + ".item_flags")) {
+                ArrayList<ItemFlag> arrayList = new ArrayList<>();
+                config.getStringList("rods." + key + ".item_flags").forEach(flag -> {
+                    arrayList.add(ItemFlag.valueOf(flag));
+                });
+                rodInstance.setItemFlags(arrayList);
             }
             if (config.contains("rods." + key + ".modifier")){
                 config.getConfigurationSection("rods." + key + ".modifier").getKeys(false).forEach(modifier -> {
@@ -596,6 +637,22 @@ public class ConfigReader{
             }
             if (config.contains("baits." + key + ".nbt")) {
                 baitInstance.setNbt(config.getMapList("baits." + key + ".nbt").get(0));
+            }
+            if (config.contains("baits." + key + ".enchantments")) {
+                ArrayList<Enchantment> arrayList = new ArrayList<>();
+                config.getStringList("baits." + key + ".enchantments").forEach(enchant -> {
+                    String[] split = StringUtils.split(enchant, "/");
+                    NamespacedKey namespacedKey = NamespacedKey.fromString(split[0]);
+                    arrayList.add(new Enchantment(namespacedKey, Integer.parseInt(split[1])));
+                });
+                baitInstance.setEnchantment(arrayList);
+            }
+            if (config.contains("baits." + key + ".item_flags")) {
+                ArrayList<ItemFlag> arrayList = new ArrayList<>();
+                config.getStringList("baits." + key + ".item_flags").forEach(flag -> {
+                    arrayList.add(ItemFlag.valueOf(flag));
+                });
+                baitInstance.setItemFlags(arrayList);
             }
             if (config.contains("baits." + key + ".modifier")){
                 config.getConfigurationSection("baits." + key + ".modifier").getKeys(false).forEach(modifier -> {

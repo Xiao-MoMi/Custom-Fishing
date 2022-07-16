@@ -2,13 +2,17 @@ package net.momirealms.customfishing.utils;
 
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.ConfigReader;
 import net.momirealms.customfishing.requirements.Requirement;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
@@ -32,6 +36,8 @@ public class LootInstance {
     private int exp;
     private List<String> commands;
     private String group;
+    private List<net.momirealms.customfishing.utils.Enchantment> enchantment;
+    private List<ItemFlag> itemFlags;
 
     public LootInstance(String key, String name, Difficulty difficulty, int weight, int time){
         this.key = key;
@@ -95,11 +101,28 @@ public class LootInstance {
         this.group = group;
     }
     public void setExp(int exp) {this.exp = exp;}
-    /*
-            将实例转换为缓存中的NBT物品
-             */
+
+    public void setItemFlags(List<ItemFlag> itemFlags) {
+        this.itemFlags = itemFlags;
+    }
+
+    public void setEnchantment(List<net.momirealms.customfishing.utils.Enchantment> enchantment) {
+        this.enchantment = enchantment;
+    }
+
     public void addLoot2cache(String lootKey){
         ItemStack itemStack = new ItemStack(Material.valueOf(this.material.toUpperCase()));
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (enchantment != null){
+            enchantment.forEach(enchantment1 -> {
+                itemMeta.addEnchant(Enchantment.getByKey(enchantment1.getKey()),enchantment1.getLevel(),true);
+            });
+        }
+        if (itemFlags != null){
+            itemFlags.forEach(itemMeta::addItemFlags);
+        }
+        itemStack.setItemMeta(itemMeta);
+
         NBTItem nbtItem = new NBTItem(itemStack);
         //设置Name和Lore
         NBTCompound display = nbtItem.addCompound("display");

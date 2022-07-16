@@ -6,8 +6,11 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.ConfigReader;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +22,8 @@ public class UtilInstance {
     private List<String> lore;
     private Map<?, ?> nbt;
     private final String material;
+    private List<net.momirealms.customfishing.utils.Enchantment> enchantment;
+    private List<ItemFlag> itemFlags;
 
     public UtilInstance(String key, String name, String material){
         this.key = key;
@@ -48,12 +53,28 @@ public class UtilInstance {
     public void setNbt(Map<?, ?> nbt){
         this.nbt = nbt;
     }
-
+    public void setEnchantment(List<net.momirealms.customfishing.utils.Enchantment> enchantment) {
+        this.enchantment = enchantment;
+    }
+    public void setItemFlags(List<ItemFlag> itemFlags) {
+        this.itemFlags = itemFlags;
+    }
     /*
     将实例转换为缓存中的NBT物品
      */
     public void addUtil2cache(String utilKey){
         ItemStack itemStack = new ItemStack(Material.valueOf(this.material.toUpperCase()));
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (enchantment != null){
+            enchantment.forEach(enchantment1 -> {
+                itemMeta.addEnchant(Enchantment.getByKey(enchantment1.getKey()),enchantment1.getLevel(),true);
+            });
+        }
+        if (itemFlags != null){
+            itemFlags.forEach(itemMeta::addItemFlags);
+        }
+        itemStack.setItemMeta(itemMeta);
+
         NBTItem nbtItem = new NBTItem(itemStack);
         NBTCompound display = nbtItem.addCompound("display");
         display.setString("Name", GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize("<italic:false>" + this.name)));
