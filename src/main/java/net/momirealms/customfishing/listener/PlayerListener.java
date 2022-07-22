@@ -22,6 +22,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
@@ -381,7 +382,9 @@ public class PlayerListener implements Listener {
     public void onInteract(PlayerInteractEvent event){
         if (!event.hasItem()) return;
         if (!(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) return;
-        NBTItem nbtItem = new NBTItem(event.getItem());
+        ItemStack itemStack = event.getItem();
+        if (itemStack.getType() == Material.AIR) return;
+        NBTItem nbtItem = new NBTItem(itemStack);
         if (nbtItem.getCompound("CustomFishing") == null) return;
         if (nbtItem.getCompound("CustomFishing").getString("type").equals("util") || nbtItem.getCompound("CustomFishing").getString("id").equals("fishfinder")){
             Player player = event.getPlayer();

@@ -12,6 +12,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
@@ -114,14 +115,25 @@ public class LootInstance {
         ItemStack itemStack = new ItemStack(Material.valueOf(this.material.toUpperCase()));
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (enchantment != null){
-            enchantment.forEach(enchantment1 -> {
-                itemMeta.addEnchant(Enchantment.getByKey(enchantment1.getKey()),enchantment1.getLevel(),true);
-            });
+            if (itemStack.getType() == Material.ENCHANTED_BOOK){
+                EnchantmentStorageMeta meta = (EnchantmentStorageMeta)itemMeta;
+                enchantment.forEach(enchantment1 -> {
+                    meta.addStoredEnchant(Enchantment.getByKey(enchantment1.getKey()),enchantment1.getLevel(),true);
+                });
+                if (itemFlags != null){
+                    itemFlags.forEach(meta::addItemFlags);
+                }
+                itemStack.setItemMeta(meta);
+            }else {
+                enchantment.forEach(enchantment1 -> {
+                    itemMeta.addEnchant(Enchantment.getByKey(enchantment1.getKey()),enchantment1.getLevel(),true);
+                });
+                if (itemFlags != null){
+                    itemFlags.forEach(itemMeta::addItemFlags);
+                }
+                itemStack.setItemMeta(itemMeta);
+            }
         }
-        if (itemFlags != null){
-            itemFlags.forEach(itemMeta::addItemFlags);
-        }
-        itemStack.setItemMeta(itemMeta);
 
         NBTItem nbtItem = new NBTItem(itemStack);
         //设置Name和Lore

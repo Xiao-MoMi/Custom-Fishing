@@ -62,7 +62,7 @@ items:
     #附魔
     enchantments:
       - minecraft:sharpness/1
-      - minecraft:flames/1
+      - minecraft:flame/1
 
     item_flags:
       - HIDE_ENCHANTS
