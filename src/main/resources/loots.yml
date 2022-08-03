@@ -1,6 +1,3 @@
-#物品库说明：
-#除了display.name/weight/difficulty/material/time为必填项目，其他都是可选项目
-#items与mobs不可重复，否则无法正确进行权重分配
 #物品支持MiniMessage Format
 #https://docs.adventure.kyori.net/minimessage/format.html
 
@@ -12,6 +9,7 @@ items:
       name: '垃圾'
     weight: 50
     time: 100000
+    show-in-fishfinder: false
     difficulty: 1-1
 
   #物品内部ID
@@ -29,7 +27,7 @@ items:
     #自定义NBT
     #可类型(Int) (Byte) (String) (Float) (String) (Double) (Short) (Long) (UUID) (Boolean)
     nbt:
-      - Itemsadder:
+      - itemsadder:
           namespace: '(String) momirealms'
           id: '(String) rainbow_fish'
         CustomModelData: '(Int) 1'

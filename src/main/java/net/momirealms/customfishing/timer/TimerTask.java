@@ -3,14 +3,15 @@ package net.momirealms.customfishing.timer;
 import net.momirealms.customfishing.AdventureManager;
 import net.momirealms.customfishing.ConfigReader;
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.utils.Difficulty;
-import net.momirealms.customfishing.utils.LayoutUtil;
+import net.momirealms.customfishing.bar.Difficulty;
+import net.momirealms.customfishing.bar.Layout;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import static net.momirealms.customfishing.listener.PlayerListener.fishingPlayers;
 
@@ -23,6 +24,7 @@ public class TimerTask extends BukkitRunnable {
     private int internalTimer;
     private final int size;
     private boolean face;
+    private BukkitScheduler bukkitScheduler;
 
     private final String start;
     private final String bar;
@@ -38,7 +40,8 @@ public class TimerTask extends BukkitRunnable {
         this.progress = 0;
         this.internalTimer = 0;
         this.face = true;
-        LayoutUtil layoutUtil = ConfigReader.LAYOUT.get(layout);
+        this.bukkitScheduler = Bukkit.getScheduler();
+        Layout layoutUtil = ConfigReader.LAYOUT.get(layout);
         this.start = layoutUtil.getStart();
         this.bar = layoutUtil.getBar();
         this.pointer = layoutUtil.getPointer();
@@ -58,24 +61,13 @@ public class TimerTask extends BukkitRunnable {
     public void run() {
         //移除提前收杆玩家
         if (fishingPlayers.get(player) == null){
-            Bukkit.getScheduler().cancelTask(taskID);
-            return;
-        }
-        //移除切换物品的玩家
-        PlayerInventory playerInventory = player.getInventory();
-        if (playerInventory.getItemInMainHand().getType() != Material.FISHING_ROD && playerInventory.getItemInOffHand().getType() != Material.FISHING_ROD){
-            fishingPlayers.remove(player);
-            Bukkit.getScheduler().cancelTask(taskID);
-            Bukkit.getScheduler().callSyncMethod(CustomFishing.instance, ()-> {
-                player.removePotionEffect(PotionEffectType.SLOW);
-                return null;
-            });
+            bukkitScheduler.cancelTask(taskID);
             return;
         }
         //移除超时玩家
         if (System.currentTimeMillis() > fishingPlayers.get(player).getFishingTime()){
             fishingPlayers.remove(player);
-            Bukkit.getScheduler().cancelTask(taskID);
+            bukkitScheduler.cancelTask(taskID);
             return;
         }
         int timer = difficulty.getTimer() - 1;
@@ -89,6 +81,7 @@ public class TimerTask extends BukkitRunnable {
         //内部计时器操控
         if (internalTimer < timer){
             internalTimer++;
+            return;
         }else {
             if (face){
                 internalTimer -= timer;
@@ -109,5 +102,14 @@ public class TimerTask extends BukkitRunnable {
         }
         stringBuilder.append(end);
         AdventureManager.playerTitle(player, title, stringBuilder.toString(),0,300,0);
+        //移除切换物品的玩家
+        PlayerInventory playerInventory = player.getInventory();
+        if (playerInventory.getItemInMainHand().getType() != Material.FISHING_ROD && playerInventory.getItemInOffHand().getType() != Material.FISHING_ROD){
+            fishingPlayers.remove(player);
+            bukkitScheduler.cancelTask(taskID);
+            bukkitScheduler.runTask(CustomFishing.instance, ()-> {
+                player.removePotionEffect(PotionEffectType.SLOW);
+            });
+        }
     }
 }

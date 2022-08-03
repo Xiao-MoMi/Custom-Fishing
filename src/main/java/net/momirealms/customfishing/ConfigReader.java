@@ -1,6 +1,11 @@
 package net.momirealms.customfishing;
 
-import net.kyori.adventure.key.Key;
+import net.momirealms.customfishing.bar.Difficulty;
+import net.momirealms.customfishing.bar.Layout;
+import net.momirealms.customfishing.item.Bait;
+import net.momirealms.customfishing.item.Loot;
+import net.momirealms.customfishing.item.Rod;
+import net.momirealms.customfishing.item.Util;
 import net.momirealms.customfishing.requirements.*;
 import net.momirealms.customfishing.utils.*;
 import org.apache.commons.lang.StringUtils;
@@ -16,15 +21,15 @@ import java.util.*;
 
 public class ConfigReader{
 
-    public static HashMap<String, LootInstance> LOOT = new HashMap<>();
+    public static HashMap<String, Loot> LOOT = new HashMap<>();
     public static HashMap<String, ItemStack> LOOTITEM = new HashMap<>();
-    public static HashMap<String, UtilInstance> UTIL = new HashMap<>();
+    public static HashMap<String, Util> UTIL = new HashMap<>();
     public static HashMap<String, ItemStack> UTILITEM = new HashMap<>();
-    public static HashMap<String, RodInstance> ROD = new HashMap<>();
+    public static HashMap<String, Rod> ROD = new HashMap<>();
     public static HashMap<String, ItemStack> RODITEM = new HashMap<>();
-    public static HashMap<String, BaitInstance> BAIT = new HashMap<>();
+    public static HashMap<String, Bait> BAIT = new HashMap<>();
     public static HashMap<String, ItemStack> BAITITEM = new HashMap<>();
-    public static HashMap<String, LayoutUtil> LAYOUT = new HashMap<>();
+    public static HashMap<String, Layout> LAYOUT = new HashMap<>();
 
     private static YamlConfiguration getConfig(String configName) {
         File file = new File(CustomFishing.instance.getDataFolder(), configName);
@@ -54,10 +59,12 @@ public class ConfigReader{
         public static boolean needOpenWater;
         public static boolean needSpecialRod;
         public static String season_papi;
+        public static String lang;
         public static int fishFinderCoolDown;
         public static double timeMultiply;
 
         public static void loadConfig() {
+
             CustomFishing.instance.saveDefaultConfig();
             CustomFishing.instance.reloadConfig();
             FileConfiguration config = CustomFishing.instance.getConfig();
@@ -65,34 +72,33 @@ public class ConfigReader{
             wg = config.getBoolean("config.integrations.WorldGuard");
             if (wg){
                 if (Bukkit.getPluginManager().getPlugin("WorldGuard") == null){
-                    AdventureManager.consoleMessage("<red>[CustomFishing] 未检测到插件 WorldGuard!</red>");
+                    AdventureManager.consoleMessage("<red>[CustomFishing] Failed to initialize WorldGuard!</red>");
                     wg = false;
                 }else {
-                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>检测到 <color:#00BFFF>WorldGuard <color:#E1FFFF>已启用区域限定!");
+                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>WorldGuard <color:#E1FFFF>Hooked!");
                 }
             }
             mm = config.getBoolean("config.integrations.MythicMobs");
             if (mm){
                 if (Bukkit.getPluginManager().getPlugin("MythicMobs") == null){
-                    AdventureManager.consoleMessage("<red>[CustomFishing] 未检测到插件 MythicMobs!</red>");
+                    AdventureManager.consoleMessage("<red>[CustomFishing] Failed to initialize MythicMobs!</red>");
                     mm = false;
                 }else {
-                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>检测到 <color:#00BFFF>MythicMobs <color:#E1FFFF>已启用怪物拓展!");
+                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>MythicMobs <color:#E1FFFF>Hooked!");
                 }
             }
             papi = config.getBoolean("config.integrations.PlaceholderAPI");
             if (papi){
                 if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null){
-                    AdventureManager.consoleMessage("<red>[CustomFishing] 未检测到插件 PlaceholderAPI!</red>");
+                    AdventureManager.consoleMessage("<red>[CustomFishing] Failed to initialize PlaceholderAPI!</red>");
                     papi = false;
                 }else {
-                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>检测到 <color:#00BFFF>PlaceholderAPI <color:#E1FFFF>已启用变量解析!");
+                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>PlaceholderAPI <color:#E1FFFF>Hooked!");
                 }
             }
             season = config.getBoolean("config.season.enable");
             if (!papi && season) {
                 season = false;
-                AdventureManager.consoleMessage("<red>[CustomFishing] 使用季节特性请先打开 PlaceholderAPI 兼容!</red>");
             }
 
             if (season) {
@@ -106,6 +112,7 @@ public class ConfigReader{
             needSpecialRod = config.getBoolean("config.need-special-rod");
             fishFinderCoolDown = config.getInt("config.fishfinder-cooldown");
             timeMultiply = config.getDouble("config.time-multiply");
+            lang = config.getString("config.lang","cn");
 
             /*
             计算获取布局
@@ -120,7 +127,7 @@ public class ConfigReader{
                     successRate[i] = config.getDouble("config.success-rate." + key + ".layout." +(i + 1));
                 }
                 int size = rates.size()*range -1;
-                LayoutUtil layout = new LayoutUtil(key, range, successRate, size);
+                Layout layout = new Layout(key, range, successRate, size);
                 layout.setTitle(config.getString("config.success-rate." + key + ".title"," "));
                 layout.setBar(config.getString("config.success-rate." + key + ".subtitle.bar","뀃"));
                 layout.setEnd(config.getString("config.success-rate." + key + ".subtitle.end","</font>"));
@@ -134,7 +141,6 @@ public class ConfigReader{
     }
 
     public static class Message {
-
         public static String prefix;
         public static String reload;
         public static String escape;
@@ -151,10 +157,8 @@ public class ConfigReader{
         public static String splitChar;
         public static String noLoot;
         public static String notOpenWater;
-
         public static void loadMessage() {
-            YamlConfiguration config = getConfig("messages.yml");
-
+            YamlConfiguration config = getConfig("messages/messages_" + Config.lang +".yml");
             prefix = config.getString("messages.prefix");
             reload = config.getString("messages.reload");
             escape = config.getString("messages.escape");
@@ -175,7 +179,6 @@ public class ConfigReader{
     }
 
     public static class Title {
-
         public static List<String> success_title;
         public static List<String> success_subtitle;
         public static int success_in;
@@ -186,10 +189,8 @@ public class ConfigReader{
         public static int failure_in;
         public static int failure_out;
         public static int failure_stay;
-
         public static void loadTitle() {
             YamlConfiguration config = getConfig("titles.yml");
-
             success_title = config.getStringList("titles.success.title");
             success_subtitle = config.getStringList("titles.success.subtitle");
             success_in = config.getInt("titles.success.fade.in")*50;
@@ -258,7 +259,7 @@ public class ConfigReader{
             }
 
             //新建单例
-            LootInstance loot = new LootInstance(key, name, difficulty, weight, time);
+            Loot loot = new Loot(key, name, difficulty, weight, time);
 
             /*
             必须设置的内容，但并非构造所需
@@ -309,6 +310,11 @@ public class ConfigReader{
                 loot.setLayout(config.getString("items." + key + ".layout"));
             if (config.contains("items." + key + ".group"))
                 loot.setGroup(config.getString("items." + key + ".group"));
+            if (config.contains("items." + key + ".show-in-fishfinder")){
+                loot.setShowInFinder(config.getBoolean("items." + key + ".show-in-fishfinder"));
+            }else {
+                loot.setShowInFinder(true);
+            }
             /*
             设置捕获条件
              */
@@ -340,10 +346,8 @@ public class ConfigReader{
                 });
                 loot.setRequirements(requirements);
             }
-            //添加单例进缓存
             LOOT.put(key, loot);
-            //添加根据单例生成的NBT物品进缓存
-            loot.addLoot2cache(key);
+            LOOTITEM.put(key, NBTUtil.addIdentifier(ItemStackGenerator.fromItem(loot), "loot", key));
         });
 
         if (config.contains("mobs") && Config.mm){
@@ -393,7 +397,7 @@ public class ConfigReader{
                     return;
                 }
                 //新建单例
-                LootInstance loot = new LootInstance(key, name, difficulty, weight, time);
+                Loot loot = new Loot(key, name, difficulty, weight, time);
                 //设置昵称
                 loot.setNick(name);
                 //设置MM怪ID
@@ -422,6 +426,11 @@ public class ConfigReader{
                     loot.setLayout(config.getString("mobs." + key + "layout"));
                 if (config.contains("mobs." + key + ".group"))
                     loot.setGroup(config.getString("mobs." + key + ".group"));
+                if (config.contains("mobs." + key + ".show-in-fishfinder")){
+                    loot.setShowInFinder(config.getBoolean("mobs." + key + ".show-in-fishfinder"));
+                }else {
+                    loot.setShowInFinder(true);
+                }
                 /*
                 设置捕获条件
                  */
@@ -459,15 +468,15 @@ public class ConfigReader{
             if (keys.size() != LOOTITEM.size() || mobs.size() != LOOT.size()- LOOTITEM.size()) {
                 AdventureManager.consoleMessage("<red>[CustomFishing] loots.yml 文件存在配置错误!</red>");
             } else {
-                AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>已载入 <white>" + keys.size() + " <color:#E1FFFF>个战利品!");
-                AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>已载入 <white>" + mobs.size() + " <color:#E1FFFF>个怪物!");
+                AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><white>" + keys.size() + " <color:#E1FFFF>loots loaded!");
+                AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><white>" + mobs.size() + " <color:#E1FFFF>mobs loaded!");
             }
             return;
         }
         if (keys.size() != LOOTITEM.size()){
-            AdventureManager.consoleMessage("<red>[CustomFishing] loots.yml 文件存在配置错误!</red>");
+            AdventureManager.consoleMessage("<red>[CustomFishing] loots.yml exists error!</red>");
         } else {
-            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>已载入 <white>" + keys.size() + " <color:#E1FFFF>个战利品!");
+            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><white>" + keys.size() + " <color:#E1FFFF>loots loaded!");
         }
     }
 
@@ -489,18 +498,18 @@ public class ConfigReader{
             if (config.contains("utils." + key + ".display.name")) {
                 name = config.getString("utils." + key + ".display.name");
             } else {
-                AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的物品名称!</red>");
+                AdventureManager.consoleMessage("<red>[CustomFishing] Error! No name set for " + key + " !</red>");
                 return;
             }
             String material;
             if (config.contains("utils." + key + ".material")) {
                 material = config.getString("utils." + key + ".material");
             } else {
-                AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的物品材质!</red>");
+                AdventureManager.consoleMessage("<red>[CustomFishing] Error! No material set for " + key + " !</red>");
                 return;
             }
-            //构造
-            UtilInstance utilInstance = new UtilInstance(key, name, material);
+
+            Util utilInstance = new Util(key, name, material);
 
             if (config.contains("utils." + key + ".display.lore"))
                 utilInstance.setLore(config.getStringList("utils." + key + ".display.lore"));
@@ -523,12 +532,12 @@ public class ConfigReader{
                 utilInstance.setItemFlags(arrayList);
             }
             UTIL.put(key, utilInstance);
-            utilInstance.addUtil2cache(key);
+            UTILITEM.put(key, NBTUtil.addIdentifier(ItemStackGenerator.fromItem(utilInstance), "util", key));
         });
         if (keys.size() != UTILITEM.size()){
-            AdventureManager.consoleMessage("<red>[CustomFishing] utils.yml 文件存在配置错误!</red>");
+            AdventureManager.consoleMessage("<red>[CustomFishing] utils.yml exists error!</red>");
         } else {
-            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>已载入 <white>" + keys.size() + " <color:#E1FFFF>个实用道具!");
+            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><white>" + keys.size() + " <color:#E1FFFF>utils loaded!");
         }
     }
 
@@ -551,7 +560,7 @@ public class ConfigReader{
                 AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的物品名称!</red>");
                 return;
             }
-            RodInstance rodInstance = new RodInstance(name);
+            Rod rodInstance = new Rod(name);
             if (config.contains("rods." + key + ".display.lore")) {
                 rodInstance.setLore(config.getStringList("rods." + key + ".display.lore"));
             }
@@ -598,13 +607,13 @@ public class ConfigReader{
                 });
             }
             ROD.put(key, rodInstance);
-            rodInstance.addRod2Cache(key);
+            RODITEM.put(key, NBTUtil.addIdentifier(ItemStackGenerator.fromItem(rodInstance), "rod", key));
         });
 
         if (keys.size() != RODITEM.size()){
-            AdventureManager.consoleMessage("<red>[CustomFishing] rods.yml 文件存在配置错误!</red>");
+            AdventureManager.consoleMessage("<red>[CustomFishing] rods.yml exists error!</red>");
         } else {
-            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>已载入 <white>" + keys.size() + " <color:#E1FFFF>把鱼竿!");
+            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><white>" + keys.size() + " <color:#E1FFFF>rods loaded!");
         }
     }
 
@@ -621,17 +630,17 @@ public class ConfigReader{
             if (config.contains("baits." + key + ".display.name")) {
                 name = config.getString("baits." + key + ".display.name");
             } else {
-                AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的物品名称!</red>");
+                AdventureManager.consoleMessage("<red>[CustomFishing] Error! No name set for " + key + " !</red>");
                 return;
             }
             String material;
             if (config.contains("baits." + key + ".material")) {
                 material = config.getString("baits." + key + ".material");
             } else {
-                AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的物品材质!</red>");
+                AdventureManager.consoleMessage("<red>[CustomFishing] Error! No material set for " + key + " !</red>");
                 return;
             }
-            BaitInstance baitInstance = new BaitInstance(name, material);
+            Bait baitInstance = new Bait(name, material);
             if (config.contains("baits." + key + ".display.lore")) {
                 baitInstance.setLore(config.getStringList("baits." + key + ".display.lore"));
             }
@@ -678,13 +687,13 @@ public class ConfigReader{
                 });
             }
             BAIT.put(key, baitInstance);
-            baitInstance.addBait2Cache(key);
+            BAITITEM.put(key, NBTUtil.addIdentifier(ItemStackGenerator.fromItem(baitInstance), "bait", key));
         });
 
         if (keys.size() != BAITITEM.size()){
-            AdventureManager.consoleMessage("<red>[CustomFishing] baits.yml 文件存在配置错误!</red>");
+            AdventureManager.consoleMessage("<red>[CustomFishing] baits.yml exists error!</red>");
         } else {
-            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>已载入 <white>" + keys.size() + " <color:#E1FFFF>条鱼饵!");
+            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><white>" + keys.size() + " <color:#E1FFFF>baits loaded!");
         }
     }
 }

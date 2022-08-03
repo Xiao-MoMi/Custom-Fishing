@@ -1,7 +1,7 @@
 package net.momirealms.customfishing.timer;
 
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.utils.Difficulty;
+import net.momirealms.customfishing.bar.Difficulty;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 

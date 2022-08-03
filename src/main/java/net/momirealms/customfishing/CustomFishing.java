@@ -15,24 +15,6 @@ public final class CustomFishing extends JavaPlugin {
     public static BukkitAudiences adventure;
 
     @Override
-    public void onLoad(){
-
-//        Paper原生的adventure似乎存在冲突导致1.18.1以下版本无法使用，所以方法废弃
-//        LibraryLoader.load("net.kyori","adventure-api","4.11.0","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-platform-api","4.1.1","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-platform-bukkit","4.1.1","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-platform-facet","4.1.1","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-text-serializer-gson","4.11.0","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-text-serializer-plain","4.11.0","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-text-serializer-gson-legacy-impl","4.11.0","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-text-serializer-legacy","4.11.0","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-nbt","4.11.0","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-key","4.11.0","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-text-minimessage","4.11.0","https://oss.sonatype.org/content/groups/public");
-
-    }
-
-    @Override
     public void onEnable() {
         instance = this;
         adventure = BukkitAudiences.create(this);
@@ -41,7 +23,7 @@ public final class CustomFishing extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerListener(),this);
         AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>Running on " + Bukkit.getVersion());
         ConfigReader.Reload();
-        AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>插件已加载! 作者:小默米 QQ:3266959688");
+        AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>Plugin Enabled!");
     }
 
     @Override

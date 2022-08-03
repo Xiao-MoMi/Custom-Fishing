@@ -1,12 +1,11 @@
 config:
-  #插件兼容
+
+  lang: cn
+
   integrations:
-    #限定区域钓鱼需要启用WorldGuard兼容
     WorldGuard: false
-    #钓MM怪需要启用MythicMobs兼容
     MythicMobs: false
-    #使用季节特性启用PlaceholderAPI兼容
-    PlaceholderAPI: false
+    PlaceholderAPI: true
 
   #季节特性
   season:

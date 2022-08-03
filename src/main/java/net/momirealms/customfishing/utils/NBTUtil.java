@@ -17,6 +17,14 @@ public class NBTUtil {
         this.nbtItem = new NBTItem(itemStack);
     }
 
+    public static ItemStack addIdentifier(ItemStack itemStack, String type, String id){
+        NBTItem nbtItem = new NBTItem(itemStack);
+        nbtItem.addCompound("CustomFishing");
+        nbtItem.getCompound("CustomFishing").setString("type", type);
+        nbtItem.getCompound("CustomFishing").setString("id", id);
+        return nbtItem.getItem();
+    }
+
     public NBTItem getNBTItem(){
         nbt.keySet().forEach(key -> {
             if (nbt.get(key) instanceof Map<?,?> map){

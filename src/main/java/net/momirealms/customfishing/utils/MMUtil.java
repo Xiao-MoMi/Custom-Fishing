@@ -7,6 +7,7 @@ import io.lumine.mythic.api.mobs.MythicMob;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.bukkit.utils.serialize.Position;
 import io.lumine.mythic.core.mobs.ActiveMob;
+import net.momirealms.customfishing.item.Loot;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 public class MMUtil {
 
-    public static void summonMM(Location pLocation, Location bLocation, LootInstance loot){
+    public static void summonMM(Location pLocation, Location bLocation, Loot loot){
         MobManager mobManager = MythicBukkit.inst().getMobManager();
         Optional<MythicMob> mythicMob = mobManager.getMythicMob(loot.getMm());
         if (mythicMob.isPresent()) {

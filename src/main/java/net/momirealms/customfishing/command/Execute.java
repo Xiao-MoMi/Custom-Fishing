@@ -2,10 +2,10 @@ package net.momirealms.customfishing.command;
 
 import net.momirealms.customfishing.AdventureManager;
 import net.momirealms.customfishing.ConfigReader;
-import net.momirealms.customfishing.utils.BaitInstance;
-import net.momirealms.customfishing.utils.LootInstance;
-import net.momirealms.customfishing.utils.RodInstance;
-import net.momirealms.customfishing.utils.UtilInstance;
+import net.momirealms.customfishing.item.Bait;
+import net.momirealms.customfishing.item.Loot;
+import net.momirealms.customfishing.item.Rod;
+import net.momirealms.customfishing.item.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -54,14 +54,14 @@ public class Execute implements CommandExecutor {
                             return true;
                         }
                         if (args.length == 4){
-                            LootInstance.givePlayerLoot(player, args[3], 1);
+                            Loot.givePlayerLoot(player, args[3], 1);
                             AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.getItem.replace("{Amount}", "1").replace("{Item}",args[3]));
                         }else {
                             if (Integer.parseInt(args[4]) < 1){
                                 wrongAmount(sender);
                                 return true;
                             }
-                            LootInstance.givePlayerLoot(player, args[3], Integer.parseInt(args[4]));
+                            Loot.givePlayerLoot(player, args[3], Integer.parseInt(args[4]));
                             AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.getItem.replace("{Amount}", args[4]).replace("{Item}",args[3]));
                         }
                     }else {
@@ -87,14 +87,14 @@ public class Execute implements CommandExecutor {
                         return true;
                     }
                     if (args.length == 5){
-                        LootInstance.givePlayerLoot(player, args[4], 1);
+                        Loot.givePlayerLoot(player, args[4], 1);
                         giveItem(sender, args[3], args[4], 1);
                     }else {
                         if (Integer.parseInt(args[5]) < 1){
                             wrongAmount(sender);
                             return true;
                         }
-                        LootInstance.givePlayerLoot(player, args[4], Integer.parseInt(args[5]));
+                        Loot.givePlayerLoot(player, args[4], Integer.parseInt(args[5]));
                         giveItem(sender, args[3], args[4], Integer.parseInt(args[5]));
                     }
                     return true;
@@ -113,14 +113,14 @@ public class Execute implements CommandExecutor {
                             return true;
                         }
                         if (args.length == 4){
-                            UtilInstance.givePlayerUtil(player, args[3], 1);
+                            Util.givePlayerUtil(player, args[3], 1);
                             AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.getItem.replace("{Amount}", "1").replace("{Item}",args[3]));
                         }else {
                             if (Integer.parseInt(args[4]) < 1){
                                 wrongAmount(sender);
                                 return true;
                             }
-                            UtilInstance.givePlayerUtil(player, args[3], Integer.parseInt(args[4]));
+                            Util.givePlayerUtil(player, args[3], Integer.parseInt(args[4]));
                             AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.getItem.replace("{Amount}", args[4]).replace("{Item}",args[3]));
                         }
                     }else {
@@ -146,14 +146,14 @@ public class Execute implements CommandExecutor {
                         return true;
                     }
                     if (args.length == 5){
-                        UtilInstance.givePlayerUtil(player, args[4], 1);
+                        Util.givePlayerUtil(player, args[4], 1);
                         giveItem(sender, args[3], args[4], 1);
                     }else {
                         if (Integer.parseInt(args[5]) < 1){
                             wrongAmount(sender);
                             return true;
                         }
-                        UtilInstance.givePlayerUtil(player, args[4], Integer.parseInt(args[5]));
+                        Util.givePlayerUtil(player, args[4], Integer.parseInt(args[5]));
                         giveItem(sender, args[3], args[4], Integer.parseInt(args[5]));
                     }
                     return true;
@@ -169,14 +169,14 @@ public class Execute implements CommandExecutor {
                             return true;
                         }
                         if (args.length == 4){
-                            RodInstance.givePlayerRod(player, args[3], 1);
+                            Rod.givePlayerRod(player, args[3], 1);
                             AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.getItem.replace("{Amount}", "1").replace("{Item}",args[3]));
                         }else {
                             if (Integer.parseInt(args[4]) < 1){
                                 wrongAmount(sender);
                                 return true;
                             }
-                            RodInstance.givePlayerRod(player, args[3], Integer.parseInt(args[4]));
+                            Rod.givePlayerRod(player, args[3], Integer.parseInt(args[4]));
                             AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.getItem.replace("{Amount}", args[4]).replace("{Item}",args[3]));
                         }
                     }else {
@@ -202,14 +202,14 @@ public class Execute implements CommandExecutor {
                         return true;
                     }
                     if (args.length == 5){
-                        RodInstance.givePlayerRod(player, args[4], 1);
+                        Rod.givePlayerRod(player, args[4], 1);
                         giveItem(sender, args[3], args[4], 1);
                     }else {
                         if (Integer.parseInt(args[5]) < 1){
                             wrongAmount(sender);
                             return true;
                         }
-                        RodInstance.givePlayerRod(player, args[4], Integer.parseInt(args[5]));
+                        Rod.givePlayerRod(player, args[4], Integer.parseInt(args[5]));
                         giveItem(sender, args[3], args[4], Integer.parseInt(args[5]));
                     }
                     return true;
@@ -225,14 +225,14 @@ public class Execute implements CommandExecutor {
                             return true;
                         }
                         if (args.length == 4){
-                            BaitInstance.givePlayerBait(player, args[3], 1);
+                            Bait.givePlayerBait(player, args[3], 1);
                             AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.getItem.replace("{Amount}", "1").replace("{Item}",args[3]));
                         }else {
                             if (Integer.parseInt(args[4]) < 1){
                                 wrongAmount(sender);
                                 return true;
                             }
-                            BaitInstance.givePlayerBait(player, args[3], Integer.parseInt(args[4]));
+                            Bait.givePlayerBait(player, args[3], Integer.parseInt(args[4]));
                             AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.getItem.replace("{Amount}", args[4]).replace("{Item}",args[3]));
                         }
                     }else {
@@ -258,14 +258,14 @@ public class Execute implements CommandExecutor {
                         return true;
                     }
                     if (args.length == 5){
-                        BaitInstance.givePlayerBait(player, args[4], 1);
+                        Bait.givePlayerBait(player, args[4], 1);
                         giveItem(sender, args[3], args[4], 1);
                     }else {
                         if (Integer.parseInt(args[5]) < 1){
                             wrongAmount(sender);
                             return true;
                         }
-                        BaitInstance.givePlayerBait(player, args[4], Integer.parseInt(args[5]));
+                        Bait.givePlayerBait(player, args[4], Integer.parseInt(args[5]));
                         giveItem(sender, args[3], args[4], Integer.parseInt(args[5]));
                     }
                     return true;
