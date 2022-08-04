@@ -6,6 +6,7 @@ import net.momirealms.customfishing.item.Bait;
 import net.momirealms.customfishing.item.Loot;
 import net.momirealms.customfishing.item.Rod;
 import net.momirealms.customfishing.item.Util;
+import net.momirealms.customfishing.utils.SaveItem;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,17 +19,17 @@ public class Execute implements CommandExecutor {
     @Override
     @ParametersAreNonnullByDefault
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        //没有权限的快走啦
+
         if (!(sender.hasPermission("customfishing.admin") || sender.isOp())) {
             AdventureManager.playerMessage((Player) sender,ConfigReader.Message.prefix + ConfigReader.Message.noPerm);
             return true;
         }
-        //参数打不全的赶紧走开
+
         if (args.length < 1){
             lackArgs(sender);
             return true;
         }
-        //重载命令
+
         if (args[0].equalsIgnoreCase("reload")) {
             ConfigReader.Reload();
             if (sender instanceof Player){
@@ -38,7 +39,18 @@ public class Execute implements CommandExecutor {
             }
             return true;
         }
-        //获取物品命令
+
+        if (args[0].equalsIgnoreCase("export")) {
+            if (args.length < 2){
+                lackArgs(sender);
+                return true;
+            }
+            if (sender instanceof Player player){
+                SaveItem.saveToFile(player.getInventory().getItemInMainHand(), args[1]);
+            }
+            return true;
+        }
+
         if (args[0].equalsIgnoreCase("items")) {
             if (args.length < 4){
                 lackArgs(sender);

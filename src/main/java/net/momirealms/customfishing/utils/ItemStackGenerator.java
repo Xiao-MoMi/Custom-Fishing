@@ -20,6 +20,12 @@ public class ItemStackGenerator {
 
         ItemStack itemStack = new ItemStack(Material.valueOf(item.getMaterial().toUpperCase()));
         ItemMeta itemMeta = itemStack.getItemMeta();
+        if (item.getCustomModelData() != 0){
+            itemMeta.setCustomModelData(item.getCustomModelData());
+        }
+        if (item.isUnbreakable()){
+            itemMeta.setUnbreakable(true);
+        }
         if (item.getItemFlags() != null){
             item.getItemFlags().forEach(itemMeta::addItemFlags);
         }
@@ -41,16 +47,16 @@ public class ItemStackGenerator {
         }
 
         NBTItem nbtItem = new NBTItem(itemStack);
-
         NBTCompound display = nbtItem.addCompound("display");
-        String name  = item.getName();
-        if (name.contains("&") || name.contains("§")){
-            name = name.replaceAll("&","§");
-            display.setString("Name", GsonComponentSerializer.gson().serialize(LegacyComponentSerializer.legacyAmpersand().deserialize(name)));
-        }else {
-            display.setString("Name", GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize("<italic:false>" + name)));
+        if (item.getName() != null){
+            String name  = item.getName();
+            if (name.contains("&") || name.contains("§")){
+                name = name.replaceAll("&","§");
+                display.setString("Name", GsonComponentSerializer.gson().serialize(LegacyComponentSerializer.legacyAmpersand().deserialize(name)));
+            }else {
+                display.setString("Name", GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize("<italic:false>" + name)));
+            }
         }
-
         if(item.getLore() != null){
             List<String> lore = display.getStringList("Lore");
             item.getLore().forEach(line -> {
@@ -62,7 +68,6 @@ public class ItemStackGenerator {
                 }
             });
         }
-
         if (item.getNbt() != null){
             NBTUtil nbtUtil = new NBTUtil(item.getNbt(), nbtItem.getItem());
             return nbtUtil.getNBTItem().getItem();

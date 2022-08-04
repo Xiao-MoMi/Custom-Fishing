@@ -6,8 +6,7 @@ baits:
       lore:
         - '<white>减少捕鱼的时间'
         - '<white>但是加大捕鱼的难度'
-    nbt:
-      - CustomModelData: '(Int) 1'
+    custom-model-data: 1
     #钓饵增益
     modifier:
       #改变指定组的loot权重

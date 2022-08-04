@@ -79,9 +79,7 @@ public final class LibraryLoader {
     }
 
     public static void load(Dependency d) {
-        //Log.info(String.format("Loading dependency %s:%s:%s from %s", d.getGroupId(), d.getArtifactId(), d.getVersion(), d.getRepoUrl()));
         String name = d.getArtifactId() + "-" + d.getVersion();
-
         File saveLocation = new File(getLibFolder(d), name + ".jar");
         if (!saveLocation.exists()) {
 
@@ -100,13 +98,13 @@ public final class LibraryLoader {
         }
 
         if (!saveLocation.exists()) {
-            throw new RuntimeException("Unable to download dependency: " + d.toString());
+            throw new RuntimeException("Unable to download dependency: " + d);
         }
 
         try {
             URL_INJECTOR.get().addURL(saveLocation.toURI().toURL());
         } catch (Exception e) {
-            throw new RuntimeException("Unable to load dependency: " + saveLocation.toString(), e);
+            throw new RuntimeException("Unable to load dependency: " + saveLocation, e);
         }
     }
 

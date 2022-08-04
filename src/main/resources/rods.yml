@@ -4,8 +4,7 @@ rods:
       name: '普通的木鱼竿'
       lore:
         - '就是一把普通的鱼竿而已啦'
-    nbt:
-      - CustomModelData: '(Int) 1'
+    custom-model-data: 1
     #鱼竿增益
     modifier:
       #改变指定组的loot权重

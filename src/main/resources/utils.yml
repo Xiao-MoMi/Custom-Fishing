@@ -5,5 +5,4 @@ utils:
       name: '找鱼器'
       lore:
         - '右键查看这个地方能钓到什么鱼吧!'
-    nbt:
-      - CustomModelData: '(Int) 1'
+    custom-model-data: 1

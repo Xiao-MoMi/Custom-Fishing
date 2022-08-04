@@ -13,10 +13,10 @@ import java.util.*;
 public class Loot implements Item {
 
     private final String key;
-    private final String name;
+    private String name;
     private String nick;
     private List<String> lore;
-    private Map<?, ?> nbt;
+    private Map<String,Object> nbt;
     private String material;
     private String msg;
     private String mm;
@@ -33,10 +33,11 @@ public class Loot implements Item {
     private List<net.momirealms.customfishing.utils.Enchantment> enchantment;
     private List<ItemFlag> itemFlags;
     private boolean showInFinder;
+    private int custommodeldata;
+    private boolean unbreakable;
 
-    public Loot(String key, String name, Difficulty difficulty, int weight, int time){
+    public Loot(String key, Difficulty difficulty, int weight, int time){
         this.key = key;
-        this.name = name;
         this.difficulty = difficulty;
         this.weight = weight;
         this.time = time;
@@ -69,11 +70,16 @@ public class Loot implements Item {
     @Override
     public List<ItemFlag> getItemFlags() {return this.itemFlags;}
     @Override
-    public Map<?, ?> getNbt(){return this.nbt;}
+    public Map<String,Object> getNbt(){return this.nbt;}
+    @Override
+    public int getCustomModelData() {return this.custommodeldata;}
+    @Override
+    public boolean isUnbreakable() {return this.unbreakable;}
 
+    public void setName(String name) {this.name = name;}
     public void setShowInFinder(boolean showInFinder) {this.showInFinder = showInFinder;}
     public void setLore(List<String> lore){this.lore = lore;}
-    public void setNbt(Map<?, ?> nbt){this.nbt = nbt;}
+    public void setNbt(Map<String,Object> nbt){this.nbt = nbt;}
     public void setRequirements(List<Requirement> requirements) {this.requirements = requirements;}
     public void setMaterial(String material){this.material = material;}
     public void setNick(String nick){this.nick = nick;}
@@ -87,6 +93,8 @@ public class Loot implements Item {
     public void setExp(int exp) {this.exp = exp;}
     public void setItemFlags(List<ItemFlag> itemFlags) {this.itemFlags = itemFlags;}
     public void setEnchantment(List<net.momirealms.customfishing.utils.Enchantment> enchantment) {this.enchantment = enchantment;}
+    public void setCustommodeldata(int custommodeldata){this.custommodeldata = custommodeldata;}
+    public void setUnbreakable(boolean unbreakable){this.unbreakable = unbreakable;}
 
     public static void givePlayerLoot(Player player, String lootKey, int amount){
         ItemStack itemStack = ConfigReader.LOOTITEM.get(lootKey);

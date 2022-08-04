@@ -2,7 +2,6 @@
 #https://docs.adventure.kyori.net/minimessage/format.html
 
 items:
-  #最基本的物品需要填写如下项目
   rubbish:
     material: paper
     display:
@@ -24,13 +23,14 @@ items:
       lore:
         - '<gray>This is a <font:uniform>rainbow fish!'
         - '<gray> 这是一条七色彩虹鱼'
+
+    custom-model-data: 1
     #自定义NBT
     #可类型(Int) (Byte) (String) (Float) (String) (Double) (Short) (Long) (UUID) (Boolean)
     nbt:
       - itemsadder:
           namespace: '(String) momirealms'
           id: '(String) rainbow_fish'
-        CustomModelData: '(Int) 1'
         SomeNBT:
           NBTS:
             byte: '(Byte) 127'

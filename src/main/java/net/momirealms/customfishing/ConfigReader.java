@@ -215,59 +215,44 @@ public class ConfigReader{
         YamlConfiguration config = getConfig("loots.yml");
         Set<String> keys = Objects.requireNonNull(config.getConfigurationSection("items")).getKeys(false);
         keys.forEach(key -> {
-            /*
-            必设置的内容，为构造所需
-             */
-            String name;
-            if (config.contains("items." + key + ".display.name")) {
-                name = config.getString("items." + key + ".display.name");
-            } else {
-                AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的物品名称!</red>");
-                return;
-            }
+
             Difficulty difficulty;
             if (config.contains("items." + key + ".difficulty")) {
                 String[] split = StringUtils.split(config.getString("items." + key + ".difficulty"), "-");
                 assert split != null;
                 if (Integer.parseInt(split[1]) <= 0 || Integer.parseInt(split[0]) <= 0){
-                    AdventureManager.consoleMessage("<red>[CustomFishing] 错误! " + key + " 的捕获难度必须为正整数与正整数的组合!</red>");
+                    AdventureManager.consoleMessage("<red>[CustomFishing] Error! " + key + " has wrong difficulty format!</red>");
                     return;
                 }else {
                     difficulty = new Difficulty(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
                 }
             } else {
-                AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的捕获难度!</red>");
-                return;
+                difficulty = new Difficulty(1, 1);
             }
             int weight;
             if (config.contains("items." + key + ".weight")) {
                 weight = config.getInt("items." + key + ".weight");
             } else {
-                AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的捕获权重!</red>");
+                AdventureManager.consoleMessage("<red>[CustomFishing] Error! No weight set for " + key + " !</red>");
                 return;
             }
             int time;
             if (config.contains("items." + key + ".time")) {
                 time = config.getInt("items." + key + ".time");
                 if (time <= 0){
-                    AdventureManager.consoleMessage("<red>[CustomFishing] 错误! " + key + " 的捕捉时间必须为正整数!</red>");
+                    AdventureManager.consoleMessage("<red>[CustomFishing] Error! " + key + " time must be positive!</red>");
                     return;
                 }
             } else {
-                AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的捕捉时间!</red>");
-                return;
+                time = 10000;
             }
 
-            //新建单例
-            Loot loot = new Loot(key, name, difficulty, weight, time);
+            Loot loot = new Loot(key, difficulty, weight, time);
 
-            /*
-            必须设置的内容，但并非构造所需
-             */
             if (config.contains("items." + key + ".material")) {
                 loot.setMaterial(config.getString("items." + key + ".material"));
             } else {
-                AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的物品材质!</red>");
+                AdventureManager.consoleMessage("<red>[CustomFishing] Error! No material set for " + key + " !</red>");
                 return;
             }
             /*
@@ -275,6 +260,8 @@ public class ConfigReader{
              */
             if (config.contains("items." + key + ".display.lore"))
                 loot.setLore(config.getStringList("items." + key + ".display.lore"));
+            if (config.contains("items." + key + ".display.name"))
+                loot.setName(config.getString("items." + key + ".display.name"));
             if (config.contains("items." + key + ".enchantments")) {
                 ArrayList<Enchantment> arrayList = new ArrayList<>();
                 config.getStringList("items." + key + ".enchantments").forEach(enchant -> {
@@ -292,13 +279,15 @@ public class ConfigReader{
                 loot.setItemFlags(arrayList);
             }
             if (config.contains("items." + key + ".nbt"))
-                loot.setNbt(config.getMapList("items." + key + ".nbt").get(0));
-
+                loot.setNbt((Map<String, Object>) config.getMapList("items." + key + ".nbt").get(0));
+            if (config.contains("items." + key + ".custom-model-data"))
+                loot.setCustommodeldata(config.getInt("items." + key + ".custom-model-data"));
             if (config.contains("items."+ key +".nick")){
                 loot.setNick(config.getString("items."+key+".nick"));
             }else {
                 loot.setNick(loot.getName());
             }
+            loot.setUnbreakable(config.getBoolean("items." + key + ".unbreakable",false));
 
             if (config.contains("items." + key + ".action.message"))
                 loot.setMsg(config.getString("items." + key + ".action.message"));
@@ -328,7 +317,7 @@ public class ConfigReader{
                             if (Config.season){
                                 requirements.add(new Season(config.getStringList("items." + key + ".requirements.season")));
                             }else {
-                                AdventureManager.consoleMessage("<red>[CustomFishing] 使用季节特性请先在 config.yml 中启用季节特性!</red>");
+                                AdventureManager.consoleMessage("<red>[CustomFishing] Plz enable season in config.yml!</red>");
                             }
                         }
                         case "world" -> requirements.add(new World(config.getStringList("items." + key + ".requirements.world")));
@@ -338,7 +327,7 @@ public class ConfigReader{
                             if (Config.wg){
                                 requirements.add(new Region(config.getStringList("items." + key + ".requirements.regions")));
                             }else {
-                                AdventureManager.consoleMessage("<red>[CustomFishing] 指定钓鱼区域需要启用 WorldGuard 兼容!</red>");
+                                AdventureManager.consoleMessage("<red>[CustomFishing] Plz enable WorldGuard Integration!</red>");
                             }
                         }
                         case "time" -> requirements.add(new Time(config.getStringList("items." + key + ".requirements.time")));
@@ -361,7 +350,7 @@ public class ConfigReader{
                 if (config.contains("mobs." + key + ".name")) {
                     name = config.getString("mobs." + key + ".name");
                 } else {
-                    AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的怪物名称!</red>");
+                    AdventureManager.consoleMessage("<red>[CustomFishing] Error! No name set for mob " + key + " !</red>");
                     return;
                 }
                 Difficulty difficulty;
@@ -369,42 +358,40 @@ public class ConfigReader{
                     String[] split = StringUtils.split(config.getString("mobs." + key + ".difficulty"), "-");
                     assert split != null;
                     if (Integer.parseInt(split[1]) <= 0 || Integer.parseInt(split[0]) <= 0){
-                        AdventureManager.consoleMessage("<red>[CustomFishing] 错误! " + key + " 的捕获难度必须为正整数与正整数的组合!</red>");
+                        AdventureManager.consoleMessage("<red>[CustomFishing] Error! " + key + " has wrong difficulty format!</red>");
                         return;
                     }else {
                         difficulty = new Difficulty(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
                     }
                 } else {
-                    AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的捕获难度!</red>");
-                    return;
+                    difficulty = new Difficulty(1, 1);
                 }
                 int weight;
                 if (config.contains("mobs." + key + ".weight")) {
                     weight = config.getInt("mobs." + key + ".weight");
                 } else {
-                    AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的捕获权重!</red>");
+                    AdventureManager.consoleMessage("<red>[CustomFishing] Error! No weight set for " + key + " !</red>");
                     return;
                 }
                 int time;
                 if (config.contains("mobs." + key + ".time")) {
                     time = config.getInt("mobs." + key + ".time");
                     if (time <= 0){
-                        AdventureManager.consoleMessage("<red>[CustomFishing] 错误! " + key + " 的捕捉时间必须为正整数!</red>");
+                        AdventureManager.consoleMessage("<red>[CustomFishing] Error! " + key + " time must be positive!</red>");
                         return;
                     }
                 } else {
-                    AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的捕捉时间!</red>");
-                    return;
+                    time = 10000;
                 }
                 //新建单例
-                Loot loot = new Loot(key, name, difficulty, weight, time);
+                Loot loot = new Loot(key, difficulty, weight, time);
                 //设置昵称
                 loot.setNick(name);
                 //设置MM怪ID
                 if (config.contains("mobs." + key + ".mythicmobsID")) {
                     loot.setMm(config.getString("mobs." + key + ".mythicmobsID"));
                 } else {
-                    AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的MM怪ID!</red>");
+                    AdventureManager.consoleMessage("<red>[CustomFishing] Error! No MythicMobs id set for " + key + " !</red>");
                     return;
                 }
                 //设置MM怪位移
@@ -444,7 +431,7 @@ public class ConfigReader{
                                 if (Config.season){
                                     requirements.add(new Season(config.getStringList("mobs." + key + ".requirements.season")));
                                 }else {
-                                    AdventureManager.consoleMessage("<red>[CustomFishing] 使用季节特性请先在 config.yml 中启用季节特性!</red>");
+                                    AdventureManager.consoleMessage("<red>[CustomFishing] Plz enable season in config.yml!</red>");
                                 }
                             }
                             case "world" -> requirements.add(new World(config.getStringList("mobs." + key + ".requirements.world")));
@@ -454,7 +441,7 @@ public class ConfigReader{
                                 if (Config.wg){
                                     requirements.add(new Region(config.getStringList("mobs." + key + ".requirements.regions")));
                                 }else {
-                                    AdventureManager.consoleMessage("<red>[CustomFishing] 指定钓鱼区域需要启用 WorldGuard 兼容!</red>");
+                                    AdventureManager.consoleMessage("<red>[CustomFishing] Plz enable WorldGuard Integration!</red>");
                                 }
                             }
                             case "time" -> requirements.add(new Time(config.getStringList("mobs." + key + ".requirements.time")));
@@ -466,7 +453,7 @@ public class ConfigReader{
                 LOOT.put(key, loot);
             });
             if (keys.size() != LOOTITEM.size() || mobs.size() != LOOT.size()- LOOTITEM.size()) {
-                AdventureManager.consoleMessage("<red>[CustomFishing] loots.yml 文件存在配置错误!</red>");
+                AdventureManager.consoleMessage("<red>[CustomFishing] loots.yml exists error!</red>");
             } else {
                 AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><white>" + keys.size() + " <color:#E1FFFF>loots loaded!");
                 AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><white>" + mobs.size() + " <color:#E1FFFF>mobs loaded!");
@@ -494,13 +481,7 @@ public class ConfigReader{
             /*
             必设置的内容，为构造所需
              */
-            String name;
-            if (config.contains("utils." + key + ".display.name")) {
-                name = config.getString("utils." + key + ".display.name");
-            } else {
-                AdventureManager.consoleMessage("<red>[CustomFishing] Error! No name set for " + key + " !</red>");
-                return;
-            }
+
             String material;
             if (config.contains("utils." + key + ".material")) {
                 material = config.getString("utils." + key + ".material");
@@ -509,12 +490,16 @@ public class ConfigReader{
                 return;
             }
 
-            Util utilInstance = new Util(key, name, material);
-
+            Util utilInstance = new Util(material);
+            if (config.contains("utils." + key + ".custom-model-data"))
+                utilInstance.setCustommodeldata(config.getInt("utils." + key + ".custom-model-data"));
+            if (config.contains("utils." + key + ".display.name"))
+                utilInstance.setName(config.getString("utils." + key + ".display.name"));
             if (config.contains("utils." + key + ".display.lore"))
                 utilInstance.setLore(config.getStringList("utils." + key + ".display.lore"));
             if (config.contains("utils." + key + ".nbt"))
-                utilInstance.setNbt(config.getMapList("utils." + key + ".nbt").get(0));
+                utilInstance.setNbt((Map<String, Object>) config.getMapList("utils." + key + ".nbt").get(0));
+            utilInstance.setUnbreakable(config.getBoolean("utils." + key + ".unbreakable",false));
             if (config.contains("utils." + key + ".enchantments")) {
                 ArrayList<Enchantment> arrayList = new ArrayList<>();
                 config.getStringList("utils." + key + ".enchantments").forEach(enchant -> {
@@ -531,6 +516,7 @@ public class ConfigReader{
                 });
                 utilInstance.setItemFlags(arrayList);
             }
+
             UTIL.put(key, utilInstance);
             UTILITEM.put(key, NBTUtil.addIdentifier(ItemStackGenerator.fromItem(utilInstance), "util", key));
         });
@@ -553,20 +539,16 @@ public class ConfigReader{
         Set<String> keys = Objects.requireNonNull(config.getConfigurationSection("rods")).getKeys(false);
 
         keys.forEach(key -> {
-            String name;
-            if (config.contains("rods." + key + ".display.name")) {
-                name = config.getString("rods." + key + ".display.name");
-            } else {
-                AdventureManager.consoleMessage("<red>[CustomFishing] 错误! 未设置 " + key + " 的物品名称!</red>");
-                return;
-            }
-            Rod rodInstance = new Rod(name);
-            if (config.contains("rods." + key + ".display.lore")) {
+            Rod rodInstance = new Rod();
+            if (config.contains("rods." + key + ".display.name"))
+                rodInstance.setName(config.getString("rods." + key + ".display.name"));
+            if (config.contains("rods." + key + ".display.lore"))
                 rodInstance.setLore(config.getStringList("rods." + key + ".display.lore"));
-            }
-            if (config.contains("rods." + key + ".nbt")) {
-                rodInstance.setNbt(config.getMapList("rods." + key + ".nbt").get(0));
-            }
+            if (config.contains("rods." + key + ".nbt"))
+                rodInstance.setNbt((Map<String, Object>)(config.getMapList("rods." + key + ".nbt").get(0)));
+            if (config.contains("rods." + key + ".custom-model-data"))
+                rodInstance.setCustommodeldata(config.getInt("rods." + key + ".custom-model-data"));
+            rodInstance.setUnbreakable(config.getBoolean("rods." + key + ".unbreakable",false));
             if (config.contains("rods." + key + ".enchantments")) {
                 ArrayList<Enchantment> arrayList = new ArrayList<>();
                 config.getStringList("rods." + key + ".enchantments").forEach(enchant -> {
@@ -626,13 +608,6 @@ public class ConfigReader{
         Set<String> keys = config.getConfigurationSection("baits").getKeys(false);
 
         keys.forEach(key -> {
-            String name;
-            if (config.contains("baits." + key + ".display.name")) {
-                name = config.getString("baits." + key + ".display.name");
-            } else {
-                AdventureManager.consoleMessage("<red>[CustomFishing] Error! No name set for " + key + " !</red>");
-                return;
-            }
             String material;
             if (config.contains("baits." + key + ".material")) {
                 material = config.getString("baits." + key + ".material");
@@ -640,13 +615,17 @@ public class ConfigReader{
                 AdventureManager.consoleMessage("<red>[CustomFishing] Error! No material set for " + key + " !</red>");
                 return;
             }
-            Bait baitInstance = new Bait(name, material);
-            if (config.contains("baits." + key + ".display.lore")) {
+            Bait baitInstance = new Bait(material);
+            if (config.contains("baits." + key + ".display.lore"))
                 baitInstance.setLore(config.getStringList("baits." + key + ".display.lore"));
-            }
+            if (config.contains("baits." + key + ".display.name"))
+                baitInstance.setName(config.getString("baits." + key + ".display.name"));
+            if (config.contains("baits." + key + ".custom-model-data"))
+                baitInstance.setCustommodeldata(config.getInt("baits." + key + ".custom-model-data"));
             if (config.contains("baits." + key + ".nbt")) {
-                baitInstance.setNbt(config.getMapList("baits." + key + ".nbt").get(0));
+                baitInstance.setNbt((Map<String, Object>) config.getMapList("baits." + key + ".nbt").get(0));
             }
+            baitInstance.setUnbreakable(config.getBoolean("baits." + key + ".unbreakable",false));
             if (config.contains("baits." + key + ".enchantments")) {
                 ArrayList<Enchantment> arrayList = new ArrayList<>();
                 config.getStringList("baits." + key + ".enchantments").forEach(enchant -> {

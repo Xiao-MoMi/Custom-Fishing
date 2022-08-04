@@ -30,7 +30,6 @@ public class Layout {
     public void setStart(String start) {this.start = start;}
     public void setTitle(String title) {this.title = title;}
 
-    public String getKey(){return this.key;}
     public int getRange(){return this.range;}
     public double[] getSuccessRate(){return this.successRate;}
     public int getSize(){return this.size;}

@@ -15,16 +15,19 @@ public class TabComplete implements TabCompleter {
     @Override
     @ParametersAreNonnullByDefault
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        //没有权限还想补全？
+
         if (!(sender.hasPermission("customfishing.admin") || sender.isOp())) {
             return null;
         }
         if (args.length == 1){
-            return Arrays.asList("reload","items");
+            return Arrays.asList("reload","items","export");
         }
         if (args.length == 2){
             if (args[0].equalsIgnoreCase("items")){
                 return Arrays.asList("loot","bait","rod","util");
+            }
+            if (args[0].equalsIgnoreCase("export")){
+                return List.of("FileName");
             }
         }
         if (args.length == 3){
