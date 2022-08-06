@@ -1,4 +1,4 @@
-package net.momirealms.customfishing.bar;
+package net.momirealms.customfishing.titlebar;
 
 public class Layout {
 

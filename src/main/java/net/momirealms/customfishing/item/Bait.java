@@ -1,9 +1,23 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing.item;
 
-import net.momirealms.customfishing.ConfigReader;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,12 +43,6 @@ public class Bait implements Item{
         this.material = material;
     }
 
-    public static void givePlayerBait(Player player, String baitKey, int amount){
-        ItemStack itemStack = ConfigReader.BAITITEM.get(baitKey);
-        if (itemStack == null) return;
-        itemStack.setAmount(amount);
-        player.getInventory().addItem(itemStack);
-    }
 
     public void setName(String name) {this.name = name;}
     public void setItemFlags(List<ItemFlag> itemFlags) {this.itemFlags = itemFlags;}

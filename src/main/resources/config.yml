@@ -6,6 +6,9 @@ config:
     WorldGuard: false
     MythicMobs: false
     PlaceholderAPI: true
+    mcMMO: false
+    MMOCore: false
+    AureliumSkills: false
 
   #季节特性
   season:
@@ -24,6 +27,16 @@ config:
 
   #是否只有本插件的鱼竿能钓到鱼
   need-special-rod: false
+
+  #使用找鱼器的冷却时间(ms)
+  fishfinder-cooldown: 3000
+
+  #修改捕鱼所需的时间
+  #在paper.yml中可以修改默认最少最长上钩时间
+  time-multiply: 2
+
+  #是否启用钓鱼比赛(修改此项需要重启)
+  fishing-competition: true
 
   #成功率
   #你可以自定义区域数量，这为自定义UI提供了可能
@@ -86,10 +99,3 @@ config:
         20: 0
         21: 0
         22: 0
-
-  #使用找鱼器的冷却时间(ms)
-  fishfinder-cooldown: 3000
-
-  #修改捕鱼所需的时间
-  #在paper.yml中可以修改默认最少最长上钩时间
-  time-multiply: 2

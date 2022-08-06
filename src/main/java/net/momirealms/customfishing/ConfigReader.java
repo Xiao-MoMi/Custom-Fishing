@@ -1,7 +1,32 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing;
 
-import net.momirealms.customfishing.bar.Difficulty;
-import net.momirealms.customfishing.bar.Layout;
+import net.kyori.adventure.bossbar.BossBar;
+import net.momirealms.customfishing.competition.CompetitionConfig;
+import net.momirealms.customfishing.competition.Goal;
+import net.momirealms.customfishing.competition.bossbar.BossBarConfig;
+import net.momirealms.customfishing.titlebar.Difficulty;
+import net.momirealms.customfishing.titlebar.Layout;
+import net.momirealms.customfishing.hook.skill.Aurelium;
+import net.momirealms.customfishing.hook.skill.MMOCore;
+import net.momirealms.customfishing.hook.skill.SkillXP;
+import net.momirealms.customfishing.hook.skill.mcMMO;
 import net.momirealms.customfishing.item.Bait;
 import net.momirealms.customfishing.item.Loot;
 import net.momirealms.customfishing.item.Rod;
@@ -10,6 +35,7 @@ import net.momirealms.customfishing.requirements.*;
 import net.momirealms.customfishing.utils.*;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -30,6 +56,8 @@ public class ConfigReader{
     public static HashMap<String, Bait> BAIT = new HashMap<>();
     public static HashMap<String, ItemStack> BAITITEM = new HashMap<>();
     public static HashMap<String, Layout> LAYOUT = new HashMap<>();
+    public static HashMap<String, CompetitionConfig> Competitions = new HashMap<>();
+    public static HashMap<String, CompetitionConfig> CompetitionsCommand = new HashMap<>();
 
     private static YamlConfiguration getConfig(String configName) {
         File file = new File(CustomFishing.instance.getDataFolder(), configName);
@@ -47,6 +75,7 @@ public class ConfigReader{
         loadUtil();
         loadRod();
         loadBait();
+        loadCompetitions();
     }
 
     public static class Config {
@@ -58,10 +87,12 @@ public class ConfigReader{
         public static boolean vanillaDrop;
         public static boolean needOpenWater;
         public static boolean needSpecialRod;
+        public static boolean competition;
         public static String season_papi;
         public static String lang;
         public static int fishFinderCoolDown;
         public static double timeMultiply;
+        public static SkillXP skillXP;
 
         public static void loadConfig() {
 
@@ -96,6 +127,34 @@ public class ConfigReader{
                     AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>PlaceholderAPI <color:#E1FFFF>Hooked!");
                 }
             }
+            skillXP = null;
+
+            if(config.getBoolean("config.integrations.mcMMO",false)){
+                if(Bukkit.getPluginManager().getPlugin("mcMMO") == null){
+                    CustomFishing.instance.getLogger().warning("Failed to initialize mcMMO!");
+                }else {
+                    skillXP = new mcMMO();
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>mcMMO <color:#FFEBCD>Hooked!");
+                }
+            }
+            if(config.getBoolean("config.integrations.AureliumSkills",false)){
+                if(Bukkit.getPluginManager().getPlugin("AureliumSkills") == null){
+                    CustomFishing.instance.getLogger().warning("Failed to initialize AureliumSkills!");
+                }else {
+                    skillXP = new Aurelium();
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>AureliumSkills <color:#FFEBCD>Hooked!");
+                }
+            }
+            if(config.getBoolean("config.integrations.MMOCore",false)){
+                if(Bukkit.getPluginManager().getPlugin("MMOCore") == null){
+                    CustomFishing.instance.getLogger().warning("Failed to initialize MMOCore!");
+                }else {
+                    skillXP = new MMOCore();
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>MMOCore <color:#FFEBCD>Hooked!");
+                }
+            }
+
+
             season = config.getBoolean("config.season.enable");
             if (!papi && season) {
                 season = false;
@@ -113,6 +172,7 @@ public class ConfigReader{
             fishFinderCoolDown = config.getInt("config.fishfinder-cooldown");
             timeMultiply = config.getDouble("config.time-multiply");
             lang = config.getString("config.lang","cn");
+            competition = config.getBoolean("config.fishing-competition",true);
 
             /*
             计算获取布局
@@ -157,6 +217,15 @@ public class ConfigReader{
         public static String splitChar;
         public static String noLoot;
         public static String notOpenWater;
+        public static String competitionOn;
+        public static String notEnoughPlayers;
+        public static String noRank;
+        public static String forceSuccess;
+        public static String forceFailure;
+        public static String forceEnd;
+        public static String forceCancel;
+        public static String noPlayer;
+        public static String noScore;
         public static void loadMessage() {
             YamlConfiguration config = getConfig("messages/messages_" + Config.lang +".yml");
             prefix = config.getString("messages.prefix");
@@ -175,6 +244,15 @@ public class ConfigReader{
             splitChar = config.getString("messages.split-char");
             noLoot = config.getString("messages.no-loot");
             notOpenWater = config.getString("messages.not-open-water");
+            competitionOn = config.getString("messages.competition-ongoing");
+            notEnoughPlayers = config.getString("messages.players-not-enough");
+            noRank = config.getString("messages.no-rank");
+            forceSuccess = config.getString("messages.force-competition-success");
+            forceFailure = config.getString("messages.force-competition-failure");
+            forceEnd = config.getString("messages.force-competition-end");
+            forceCancel = config.getString("messages.force-competition-cancel");
+            noPlayer = config.getString("messages.no-player");
+            noScore = config.getString("messages.no-score");
         }
     }
 
@@ -288,6 +366,7 @@ public class ConfigReader{
                 loot.setNick(loot.getName());
             }
             loot.setUnbreakable(config.getBoolean("items." + key + ".unbreakable",false));
+            loot.setPoint((float) config.getDouble("items." + key + ".score"));
 
             if (config.contains("items." + key + ".action.message"))
                 loot.setMsg(config.getString("items." + key + ".action.message"));
@@ -297,6 +376,8 @@ public class ConfigReader{
                 loot.setExp(config.getInt("items." + key + ".action.exp"));
             if (config.contains("items." + key + ".layout"))
                 loot.setLayout(config.getString("items." + key + ".layout"));
+            if (config.contains("items." + key + ".skill-xp"))
+                loot.setSkillXP(config.getDouble("items." + key + ".skill-xp"));
             if (config.contains("items." + key + ".group"))
                 loot.setGroup(config.getString("items." + key + ".group"));
             if (config.contains("items." + key + ".show-in-fishfinder")){
@@ -336,7 +417,11 @@ public class ConfigReader{
                 loot.setRequirements(requirements);
             }
             LOOT.put(key, loot);
-            LOOTITEM.put(key, NBTUtil.addIdentifier(ItemStackGenerator.fromItem(loot), "loot", key));
+            if (loot.getMaterial().equalsIgnoreCase("AIR")){
+                LOOTITEM.put(key, new ItemStack(Material.AIR));
+            }else {
+                LOOTITEM.put(key, NBTUtil.addIdentifier(ItemStackGenerator.fromItem(loot), "loot", key));
+            }
         });
 
         if (config.contains("mobs") && Config.mm){
@@ -409,6 +494,8 @@ public class ConfigReader{
                     loot.setCommands(config.getStringList("mobs." + key + ".action.command"));
                 if (config.contains("mobs." + key + ".action.exp"))
                     loot.setExp(config.getInt("mobs." + key + ".action.exp"));
+                if (config.contains("mobs." + key + ".skill-xp"))
+                    loot.setSkillXP(config.getDouble("mobs." + key + ".skill-xp"));
                 if (config.contains("mobs." + key + ".layout"))
                     loot.setLayout(config.getString("mobs." + key + "layout"));
                 if (config.contains("mobs." + key + ".group"))
@@ -418,6 +505,7 @@ public class ConfigReader{
                 }else {
                     loot.setShowInFinder(true);
                 }
+                loot.setPoint((float) config.getDouble("mobs." + key + ".score"));
                 /*
                 设置捕获条件
                  */
@@ -674,5 +762,39 @@ public class ConfigReader{
         } else {
             AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><white>" + keys.size() + " <color:#E1FFFF>baits loaded!");
         }
+    }
+
+    public static void loadCompetitions(){
+        Competitions.clear();
+        CompetitionsCommand.clear();
+        YamlConfiguration config = getConfig("competition.yml");
+        Set<String> keys = config.getConfigurationSection("").getKeys(false);
+        keys.forEach(key -> {
+            CompetitionConfig competitionConfig;
+            if (config.getBoolean(key + ".bossbar.enable", true)){
+                competitionConfig = new CompetitionConfig(true);
+                BossBarConfig bossBarConfig = new BossBarConfig(
+                        config.getString(key + ".bossbar.text"),
+                        BossBar.Overlay.valueOf(config.getString(key + ".bossbar.overlay")),
+                        BossBar.Color.valueOf(config.getString(key + ".bossbar.color")),
+                        config.getInt(key + ".bossbar.refresh-rate")
+                );
+                competitionConfig.setBossBarConfig(bossBarConfig);
+            }else {
+                competitionConfig = new CompetitionConfig(false);
+            }
+            competitionConfig.setDuration(config.getInt(key + ".duration",600));
+            competitionConfig.setGoal(Goal.valueOf(config.getString(key + ".goal", "RANDOM")));
+            if (config.contains(key + ".broadcast.start")){
+                competitionConfig.setStartMessage(config.getStringList(key + ".broadcast.start"));
+            }
+            if (config.contains(key + ".broadcast.end")){
+                competitionConfig.setEndMessage(config.getStringList(key + ".broadcast.end"));
+            }
+            config.getStringList(key + ".start-time").forEach(time -> {
+                Competitions.put(time, competitionConfig);
+            });
+            CompetitionsCommand.put(key, competitionConfig);
+        });
     }
 }

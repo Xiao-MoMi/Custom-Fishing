@@ -1,4 +1,4 @@
-package net.momirealms.customfishing.bar;
+package net.momirealms.customfishing.titlebar;
 
 public record Difficulty(int timer, int speed) {
 

@@ -20,7 +20,7 @@ public class TabComplete implements TabCompleter {
             return null;
         }
         if (args.length == 1){
-            return Arrays.asList("reload","items","export");
+            return Arrays.asList("competition","reload","items","export");
         }
         if (args.length == 2){
             if (args[0].equalsIgnoreCase("items")){
@@ -29,11 +29,19 @@ public class TabComplete implements TabCompleter {
             if (args[0].equalsIgnoreCase("export")){
                 return List.of("FileName");
             }
+            if (args[0].equalsIgnoreCase("competition")){
+                return List.of("start","end","cancel");
+            }
         }
         if (args.length == 3){
             if (args[0].equalsIgnoreCase("items")){
                 if (args[1].equalsIgnoreCase("loot") || args[1].equalsIgnoreCase("util") || args[1].equalsIgnoreCase("rod") || args[1].equalsIgnoreCase("bait")){
                     return Arrays.asList("get","give");
+                }
+            }
+            if (args[0].equalsIgnoreCase("competition")){
+                if (args[1].equalsIgnoreCase("start")){
+                    return competitions();
                 }
             }
         }
@@ -112,5 +120,8 @@ public class TabComplete implements TabCompleter {
     }
     private List<String> baits() {
         return new ArrayList<>(ConfigReader.BAIT.keySet());
+    }
+    private List<String> competitions() {
+        return new ArrayList<>(ConfigReader.CompetitionsCommand.keySet());
     }
 }

@@ -1,0 +1,43 @@
+example:
+
+  #TOTAL_POINTS
+  #CATCH_AMOUNT
+  goal: TOTAL_POINTS
+
+  start-time:
+    - '5:30'
+    - '17:30'
+
+  duration: 300  #seconds
+
+  bossbar:
+    enable: true
+    color: YELLOW
+    overlay: PROGRESS
+    text: 'Time Left:{time}s Rank:{rank} Time Left:{minute}m{second}s Points:{point}'
+    refresh-rate: 10
+
+  broadcast:
+    start:
+      - 'The competition has started. Start Fishing to join!'
+    end:
+      - 'The competition has ended!'
+      - '  ① {1st} {1st_points}points'
+      - '  ② {2nd} {2nd_points}points'
+      - '  ③ {3rd} {3rd_points}points'
+
+  prize:
+    1:
+      commands:
+        - 'say {player} got the 1st place'
+      messages:
+        - 'You got the first prize lol!'
+    2:
+      commands:
+        - 'money give {player} 100'
+    3:
+      commands:
+        - 'money give {player} 50'
+    participation:
+      commands:
+        - 'money give {player} 10'

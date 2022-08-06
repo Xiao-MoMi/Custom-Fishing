@@ -7,6 +7,9 @@ softdepend:
   - MythicMobs
   - PlaceholderAPI
   - WorldGuard
+  - mcMMO
+  - AureliumSkills
+  - MMOCore
 commands:
   customfishing:
     usage: /customfishing

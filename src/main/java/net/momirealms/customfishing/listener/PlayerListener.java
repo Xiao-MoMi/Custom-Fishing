@@ -1,20 +1,40 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing.listener;
 
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import net.momirealms.customfishing.AdventureManager;
+import net.momirealms.customfishing.competition.Competition;
+import net.momirealms.customfishing.competition.CompetitionSchedule;
+import net.momirealms.customfishing.competition.bossbar.BossBarManager;
+import net.momirealms.customfishing.hook.MythicMobsUtils;
+import net.momirealms.customfishing.utils.AdventureManager;
 import net.momirealms.customfishing.ConfigReader;
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.bar.Difficulty;
-import net.momirealms.customfishing.bar.FishingPlayer;
-import net.momirealms.customfishing.bar.Layout;
+import net.momirealms.customfishing.titlebar.Difficulty;
+import net.momirealms.customfishing.titlebar.FishingPlayer;
+import net.momirealms.customfishing.titlebar.Layout;
 import net.momirealms.customfishing.item.Bait;
 import net.momirealms.customfishing.item.Loot;
 import net.momirealms.customfishing.item.Rod;
 import net.momirealms.customfishing.requirements.FishingCondition;
 import net.momirealms.customfishing.requirements.Requirement;
-import net.momirealms.customfishing.timer.Timer;
-import net.momirealms.customfishing.utils.*;
+import net.momirealms.customfishing.titlebar.Timer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -56,7 +76,7 @@ public class PlayerListener implements Listener {
 
             //设置冷却时间
             long time = System.currentTimeMillis();
-            if (time - (coolDown.getOrDefault(player, time - 1000)) < 1000) {
+            if (time - (coolDown.getOrDefault(player, time - 2000)) < 2000) {
                 return;
             }
             coolDown.put(player, time);
@@ -274,7 +294,7 @@ public class PlayerListener implements Listener {
                 int last = (fishingPlayers.get(player).getTimer().getTimerTask().getProgress() + 1)/layout.getRange();
                 fishingPlayers.remove(player);
                 player.removePotionEffect(PotionEffectType.SLOW);
-                if (!event.getHook().isInOpenWater()){
+                if (ConfigReader.Config.needOpenWater && !event.getHook().isInOpenWater()){
                     AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.notOpenWater);
                     return;
                 }
@@ -283,15 +303,18 @@ public class PlayerListener implements Listener {
                     Location location = event.getHook().getLocation();
                     //钓上来的是MM怪吗
                     if (lootInstance.getMm() != null){
-                        MMUtil.summonMM(player.getLocation(), location, lootInstance);
+                        MythicMobsUtils.summonMM(player.getLocation(), location, lootInstance);
                     }else {
-                        Entity item = location.getWorld().dropItem(location, ConfigReader.LOOTITEM.get(lootInstance.getKey()));
-                        Vector vector = player.getLocation().subtract(location).toVector().multiply(0.1);
-                        vector = vector.setY((vector.getY()+0.2)*1.2);
-                        item.setVelocity(vector);
-                        if (willDouble.contains(player)){
-                            Entity item2 = location.getWorld().dropItem(location, ConfigReader.LOOTITEM.get(lootInstance.getKey()));
-                            item2.setVelocity(vector);
+                        ItemStack itemStack = ConfigReader.LOOTITEM.get(lootInstance.getKey());
+                        if (itemStack.getType() != Material.AIR) {
+                            Entity item = location.getWorld().dropItem(location, itemStack);
+                            Vector vector = player.getLocation().subtract(location).toVector().multiply(0.1);
+                            vector = vector.setY((vector.getY()+0.2)*1.2);
+                            item.setVelocity(vector);
+                            if (willDouble.contains(player)){
+                                Entity item2 = location.getWorld().dropItem(location, itemStack);
+                                item2.setVelocity(vector);
+                            }
                         }
                     }
                     if (lootInstance.getMsg() != null){
@@ -314,6 +337,13 @@ public class PlayerListener implements Listener {
                     if (lootInstance.getExp() != 0){
                         player.giveExp(lootInstance.getExp(),true);
                         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1,1);
+                    }
+                    if (lootInstance.getSkillXP() != 0){
+                        ConfigReader.Config.skillXP.addXp(player, lootInstance.getSkillXP());
+                    }
+                    if (CompetitionSchedule.competition != null && CompetitionSchedule.competition.isGoingOn()){
+                        CompetitionSchedule.competition.refreshRanking(player.getName(), lootInstance);
+                        BossBarManager.joinCompetition(player);
                     }
                     //发送Title
                     AdventureManager.playerTitle(player, ConfigReader.Title.success_title.get((int) (ConfigReader.Title.success_title.size()*Math.random())).replace("{loot}",lootInstance.getNick()), ConfigReader.Title.success_subtitle.get((int) (ConfigReader.Title.success_subtitle.size()*Math.random())).replace("{loot}",lootInstance.getNick()), ConfigReader.Title.success_in, ConfigReader.Title.success_stay, ConfigReader.Title.success_out);
