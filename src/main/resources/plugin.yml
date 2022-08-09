@@ -15,3 +15,5 @@ commands:
     usage: /customfishing
     description: main command
     permission: customfishing.admin
+    aliases:
+      - cfishing

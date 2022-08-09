@@ -15,12 +15,26 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.competition;
+package net.momirealms.customfishing.competition.reward;
 
-public enum Goal {
+import net.momirealms.customfishing.utils.AdventureManager;
+import org.bukkit.entity.Player;
 
-    TOTAL_SCORE,
-    CATCH_AMOUNT,
-    RANDOM
+import java.util.List;
 
+public class MessageImpl implements Reward{
+
+    private final List<String> messages;
+
+    public MessageImpl(List<String> messages){
+        this.messages = messages;
+    }
+
+    @Override
+    public void giveReward(Player player) {
+        if (!player.isOnline()) return;
+        messages.forEach(message -> {
+            AdventureManager.playerMessage(player, message);
+        });
+    }
 }

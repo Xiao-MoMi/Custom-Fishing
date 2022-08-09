@@ -32,6 +32,7 @@ public class Rod implements Item{
     private HashMap<String, Double> weightMQ;
     private HashMap<String, Integer> weightPM;
     private double time;
+    private double scoreModifier;
     private int difficulty;
     private double doubleLoot;
     private List<net.momirealms.customfishing.utils.Enchantment> enchantment;
@@ -51,12 +52,14 @@ public class Rod implements Item{
     public void setCustommodeldata(int custommodeldata){this.custommodeldata = custommodeldata;}
     public void setUnbreakable(boolean unbreakable){this.unbreakable = unbreakable;}
     public void setName(String name) {this.name = name;}
+    public void setScoreModifier(double scoreModifier) {this.scoreModifier = scoreModifier;}
 
     public double getTime() {return time;}
     public HashMap<String, Double> getWeightMQ() {return weightMQ;}
     public HashMap<String, Integer> getWeightPM() {return weightPM;}
     public int getDifficulty() {return difficulty;}
     public double getDoubleLoot() {return this.doubleLoot;}
+    public double getScoreModifier() {return scoreModifier;}
 
     @Override
     public boolean isUnbreakable() {return this.unbreakable;}

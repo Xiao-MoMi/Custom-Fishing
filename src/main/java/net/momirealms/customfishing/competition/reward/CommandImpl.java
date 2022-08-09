@@ -15,12 +15,25 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.competition;
+package net.momirealms.customfishing.competition.reward;
 
-public enum Goal {
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
-    TOTAL_SCORE,
-    CATCH_AMOUNT,
-    RANDOM
+import java.util.List;
 
+public class CommandImpl implements Reward{
+
+    private final List<String> commands;
+
+    public CommandImpl(List<String> commands){
+        this.commands = commands;
+    }
+
+    @Override
+    public void giveReward(Player player) {
+        commands.forEach(command -> {
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.replace("{player}", player.getName()));
+        });
+    }
 }

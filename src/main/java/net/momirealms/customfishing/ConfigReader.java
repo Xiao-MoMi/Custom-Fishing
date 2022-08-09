@@ -21,6 +21,9 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.momirealms.customfishing.competition.CompetitionConfig;
 import net.momirealms.customfishing.competition.Goal;
 import net.momirealms.customfishing.competition.bossbar.BossBarConfig;
+import net.momirealms.customfishing.competition.reward.CommandImpl;
+import net.momirealms.customfishing.competition.reward.MessageImpl;
+import net.momirealms.customfishing.competition.reward.Reward;
 import net.momirealms.customfishing.titlebar.Difficulty;
 import net.momirealms.customfishing.titlebar.Layout;
 import net.momirealms.customfishing.hook.skill.Aurelium;
@@ -59,7 +62,7 @@ public class ConfigReader{
     public static HashMap<String, CompetitionConfig> Competitions = new HashMap<>();
     public static HashMap<String, CompetitionConfig> CompetitionsCommand = new HashMap<>();
 
-    private static YamlConfiguration getConfig(String configName) {
+    public static YamlConfiguration getConfig(String configName) {
         File file = new File(CustomFishing.instance.getDataFolder(), configName);
         if (!file.exists()) {
             CustomFishing.instance.saveResource(configName, false);
@@ -366,7 +369,7 @@ public class ConfigReader{
                 loot.setNick(loot.getName());
             }
             loot.setUnbreakable(config.getBoolean("items." + key + ".unbreakable",false));
-            loot.setPoint((float) config.getDouble("items." + key + ".score"));
+            loot.setScore((float) config.getDouble("items." + key + ".score",0));
 
             if (config.contains("items." + key + ".action.message"))
                 loot.setMsg(config.getString("items." + key + ".action.message"));
@@ -505,7 +508,7 @@ public class ConfigReader{
                 }else {
                     loot.setShowInFinder(true);
                 }
-                loot.setPoint((float) config.getDouble("mobs." + key + ".score"));
+                loot.setScore((float) config.getDouble("mobs." + key + ".score",0));
                 /*
                 设置捕获条件
                  */
@@ -673,6 +676,7 @@ public class ConfigReader{
                         case "time" -> rodInstance.setTime(config.getDouble("rods." + key + ".modifier.time"));
                         case "difficulty" -> rodInstance.setDifficulty(config.getInt("rods." + key + ".modifier.difficulty"));
                         case "double-loot" -> rodInstance.setDoubleLoot(config.getDouble("rods." + key + ".modifier.double-loot"));
+                        case "score" -> rodInstance.setScoreModifier(config.getDouble("rods." + key + ".modifier.score"));
                     }
                 });
             }
@@ -750,6 +754,7 @@ public class ConfigReader{
                         case "time" -> baitInstance.setTime(config.getDouble("baits." + key + ".modifier.time"));
                         case "difficulty" -> baitInstance.setDifficulty(config.getInt("baits." + key + ".modifier.difficulty"));
                         case "double-loot" -> baitInstance.setDoubleLoot(config.getDouble("baits." + key + ".modifier.double-loot"));
+                        case "score" -> baitInstance.setScoreModifier(config.getDouble("baits." + key + ".modifier.score"));
                     }
                 });
             }
@@ -791,10 +796,34 @@ public class ConfigReader{
             if (config.contains(key + ".broadcast.end")){
                 competitionConfig.setEndMessage(config.getStringList(key + ".broadcast.end"));
             }
+            if (config.contains(key + ".prize")){
+                HashMap<String, List<Reward>> rewardsMap = new HashMap<>();
+                config.getConfigurationSection(key + ".prize").getKeys(false).forEach(rank -> {
+                    List<Reward> rewards = new ArrayList<>();
+                    if (config.contains(key + ".prize." + rank + ".messages")){
+                        rewards.add(new MessageImpl(config.getStringList(key + ".prize." + rank + ".messages")));
+                    }
+                    if (config.contains(key + ".prize." + rank + ".commands")){
+                        rewards.add(new CommandImpl(config.getStringList(key + ".prize." + rank + ".commands")));
+                    }
+                    rewardsMap.put(rank, rewards);
+                });
+                competitionConfig.setRewards(rewardsMap);
+            }
             config.getStringList(key + ".start-time").forEach(time -> {
                 Competitions.put(time, competitionConfig);
             });
             CompetitionsCommand.put(key, competitionConfig);
         });
+    }
+
+    public static void tryEnableJedis(){
+        YamlConfiguration configuration = ConfigReader.getConfig("redis.yml");
+        if (configuration.getBoolean("redis.enable")){
+            JedisUtil.initializeRedis(configuration);
+            JedisUtil.useRedis = true;
+        }else {
+            JedisUtil.useRedis = false;
+        }
     }
 }

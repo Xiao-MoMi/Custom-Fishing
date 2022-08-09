@@ -63,7 +63,7 @@ public class BossBarManager implements Listener {
     }
 
     public static void joinCompetition(Player player){
-        if (cache.get(player) == null){
+        if (cache.get(player) == null) {
             BossBarTimer timerTask = new BossBarTimer(player, CompetitionSchedule.competition.getBossBarConfig());
             cache.put(player, timerTask);
         }

@@ -25,6 +25,8 @@ public class CompetitionPlayer implements Comparable<CompetitionPlayer>{
     private final String player;
     private float score;
 
+    public static CompetitionPlayer emptyPlayer = new CompetitionPlayer(null, 0);
+
     public CompetitionPlayer(String player, float score) {
         this.player = player;
         this.score = score;

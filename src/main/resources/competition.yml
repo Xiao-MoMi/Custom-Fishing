@@ -1,8 +1,8 @@
 example:
 
-  #TOTAL_POINTS
+  #TOTAL_SCORE
   #CATCH_AMOUNT
-  goal: TOTAL_POINTS
+  goal: TOTAL_SCORE
 
   start-time:
     - '5:30'

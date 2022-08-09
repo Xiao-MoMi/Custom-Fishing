@@ -31,6 +31,7 @@ public class Bait implements Item{
     private HashMap<String, Double> weightMQ;
     private HashMap<String, Integer> weightPM;
     private double time;
+    private double scoreModifier;
     private double doubleLoot;
     private int difficulty;
     private final String material;
@@ -42,7 +43,6 @@ public class Bait implements Item{
     public Bait(String material) {
         this.material = material;
     }
-
 
     public void setName(String name) {this.name = name;}
     public void setItemFlags(List<ItemFlag> itemFlags) {this.itemFlags = itemFlags;}
@@ -56,12 +56,14 @@ public class Bait implements Item{
     public void setEnchantment(List<net.momirealms.customfishing.utils.Enchantment> enchantment) {this.enchantment = enchantment;}
     public void setCustommodeldata(int custommodeldata){this.custommodeldata = custommodeldata;}
     public void setUnbreakable(boolean unbreakable){this.unbreakable = unbreakable;}
+    public void setScoreModifier(double scoreModifier) {this.scoreModifier = scoreModifier;}
 
     public double getDoubleLoot() {return this.doubleLoot;}
     public int getDifficulty() {return difficulty;}
     public double getTime() {return time;}
     public HashMap<String, Double> getWeightMQ() {return weightMQ;}
     public HashMap<String, Integer> getWeightPM() {return weightPM;}
+    public double getScoreModifier() {return scoreModifier;}
 
     @Override
     public boolean isUnbreakable() {return this.unbreakable;}

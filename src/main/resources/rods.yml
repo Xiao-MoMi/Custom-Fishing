@@ -22,3 +22,5 @@ rods:
       difficulty: -1
       #双倍掉落概率
       double-loot: 0.05
+      #比赛分数加成
+      score: 1.2

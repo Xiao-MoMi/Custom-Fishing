@@ -39,7 +39,7 @@ public class CompetitionSchedule {
     public static boolean startCompetition(String competitionName){
         CompetitionConfig competitionConfig = ConfigReader.CompetitionsCommand.get(competitionName);
         if (competitionConfig == null) return false;
-        if (competition != null){
+        if (competition != null && competition.isGoingOn()){
             competition.end();
         }
         competition = new Competition(competitionConfig);
@@ -61,7 +61,7 @@ public class CompetitionSchedule {
     }
 
     public void startCompetition(CompetitionConfig competitionConfig){
-        if (competition != null){
+        if (competition != null && competition.isGoingOn()){
             competition.end();
         }
         competition = new Competition(competitionConfig);
