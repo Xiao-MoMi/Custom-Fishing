@@ -1,4 +1,4 @@
-#所有位置均可使用MiniMessage Format
+#MiniMessage Format
 #https://docs.adventure.kyori.net/minimessage/format.html
 messages:
   prefix: '<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient>'

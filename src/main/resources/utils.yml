@@ -1,8 +1,9 @@
 utils:
   fishfinder:
-    material: compass
+    material: PAPER
     display:
-      name: '找鱼器'
+      name: '<gray>Fish Finder'
       lore:
-        - '右键查看这个地方能钓到什么鱼吧!'
-    custom-model-data: 1
+        - '<white>Right click to see what fish can be caught in this place!'
+    nbt:
+      - CustomModelData: '(Int) 647'

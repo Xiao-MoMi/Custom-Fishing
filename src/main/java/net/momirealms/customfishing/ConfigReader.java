@@ -17,6 +17,12 @@
 
 package net.momirealms.customfishing;
 
+import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.kyori.adventure.bossbar.BossBar;
 import net.momirealms.customfishing.competition.CompetitionConfig;
 import net.momirealms.customfishing.competition.Goal;
@@ -24,6 +30,7 @@ import net.momirealms.customfishing.competition.bossbar.BossBarConfig;
 import net.momirealms.customfishing.competition.reward.CommandImpl;
 import net.momirealms.customfishing.competition.reward.MessageImpl;
 import net.momirealms.customfishing.competition.reward.Reward;
+import net.momirealms.customfishing.helper.Log;
 import net.momirealms.customfishing.titlebar.Difficulty;
 import net.momirealms.customfishing.titlebar.Layout;
 import net.momirealms.customfishing.hook.skill.Aurelium;
@@ -46,6 +53,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class ConfigReader{
@@ -74,6 +82,7 @@ public class ConfigReader{
         Config.loadConfig();
         Message.loadMessage();
         Title.loadTitle();
+        loadBars();
         loadLoot();
         loadUtil();
         loadRod();
@@ -91,6 +100,7 @@ public class ConfigReader{
         public static boolean needOpenWater;
         public static boolean needSpecialRod;
         public static boolean competition;
+        public static boolean convertMMOItems;
         public static String season_papi;
         public static String lang;
         public static int fishFinderCoolDown;
@@ -98,6 +108,12 @@ public class ConfigReader{
         public static SkillXP skillXP;
 
         public static void loadConfig() {
+
+            try {
+                YamlDocument.create(new File(CustomFishing.instance.getDataFolder(), "config.yml"), CustomFishing.instance.getResource("config.yml"), GeneralSettings.DEFAULT, LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
+            }catch (IOException e){
+                Log.warn(e.getMessage());
+            }
 
             CustomFishing.instance.saveDefaultConfig();
             CustomFishing.instance.reloadConfig();
@@ -170,36 +186,13 @@ public class ConfigReader{
             }
 
             vanillaDrop = config.getBoolean("config.vanilla-loot-when-no-custom-fish");
+            convertMMOItems = config.getBoolean("config.convert-MMOITEMS");
             needOpenWater = config.getBoolean("config.need-open-water");
             needSpecialRod = config.getBoolean("config.need-special-rod");
             fishFinderCoolDown = config.getInt("config.fishfinder-cooldown");
             timeMultiply = config.getDouble("config.time-multiply");
             lang = config.getString("config.lang","cn");
             competition = config.getBoolean("config.fishing-competition",true);
-
-            /*
-            计算获取布局
-             */
-            LAYOUT.clear();
-            Set<String> keys = Objects.requireNonNull(config.getConfigurationSection("config.success-rate")).getKeys(false);
-            keys.forEach(key -> {
-                int range = config.getInt("config.success-rate." + key + ".range");
-                Set<String> rates = Objects.requireNonNull(config.getConfigurationSection("config.success-rate." + key + ".layout")).getKeys(false);
-                double[] successRate = new double[rates.size()];
-                for(int i = 0; i < rates.size(); i++){
-                    successRate[i] = config.getDouble("config.success-rate." + key + ".layout." +(i + 1));
-                }
-                int size = rates.size()*range -1;
-                Layout layout = new Layout(key, range, successRate, size);
-                layout.setTitle(config.getString("config.success-rate." + key + ".title"," "));
-                layout.setBar(config.getString("config.success-rate." + key + ".subtitle.bar","뀃"));
-                layout.setEnd(config.getString("config.success-rate." + key + ".subtitle.end","</font>"));
-                layout.setStart(config.getString("config.success-rate." + key + ".subtitle.start","<font:customfishing:default>"));
-                layout.setPointer(config.getString("config.success-rate." + key + ".subtitle.pointer","뀄"));
-                layout.setPointerOffset(config.getString("config.success-rate." + key + ".subtitle.pointer_offset","뀂"));
-                layout.setOffset(config.getString("config.success-rate." + key + ".subtitle.offset","뀁"));
-                LAYOUT.put(key, layout);
-            });
         }
     }
 
@@ -423,7 +416,7 @@ public class ConfigReader{
             if (loot.getMaterial().equalsIgnoreCase("AIR")){
                 LOOTITEM.put(key, new ItemStack(Material.AIR));
             }else {
-                LOOTITEM.put(key, NBTUtil.addIdentifier(ItemStackGenerator.fromItem(loot), "loot", key));
+                LOOTITEM.put(key, ItemStackGenerator.fromItem(loot));
             }
         });
 
@@ -796,6 +789,9 @@ public class ConfigReader{
             if (config.contains(key + ".broadcast.end")){
                 competitionConfig.setEndMessage(config.getStringList(key + ".broadcast.end"));
             }
+            if (config.contains(key + ".min-players")){
+                competitionConfig.setMinPlayers(config.getInt(key + ".min-players"));
+            }
             if (config.contains(key + ".prize")){
                 HashMap<String, List<Reward>> rewardsMap = new HashMap<>();
                 config.getConfigurationSection(key + ".prize").getKeys(false).forEach(rank -> {
@@ -825,5 +821,29 @@ public class ConfigReader{
         }else {
             JedisUtil.useRedis = false;
         }
+    }
+
+    public static void loadBars(){
+        LAYOUT.clear();
+        YamlConfiguration config = ConfigReader.getConfig("bars.yml");
+        Set<String> keys = Objects.requireNonNull(config.getConfigurationSection("")).getKeys(false);
+        keys.forEach(key -> {
+            int range = config.getInt(key + ".range");
+            Set<String> rates = Objects.requireNonNull(config.getConfigurationSection(key + ".layout")).getKeys(false);
+            double[] successRate = new double[rates.size()];
+            for(int i = 0; i < rates.size(); i++){
+                successRate[i] = config.getDouble(key + ".layout." +(i + 1));
+            }
+            int size = rates.size()*range -1;
+            Layout layout = new Layout(key, range, successRate, size);
+            layout.setTitle(config.getString(key + ".title"," "));
+            layout.setBar(config.getString(key + ".subtitle.bar","뀃"));
+            layout.setEnd(config.getString(key + ".subtitle.end","</font>"));
+            layout.setStart(config.getString(key + ".subtitle.start","<font:customfishing:default>"));
+            layout.setPointer(config.getString(key + ".subtitle.pointer","뀄"));
+            layout.setPointerOffset(config.getString(key + ".subtitle.pointer_offset","뀂"));
+            layout.setOffset(config.getString(key + ".subtitle.offset","뀁"));
+            LAYOUT.put(key, layout);
+        });
     }
 }

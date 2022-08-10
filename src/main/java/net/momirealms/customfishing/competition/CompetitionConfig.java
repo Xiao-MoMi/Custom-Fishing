@@ -41,6 +41,7 @@ public class CompetitionConfig {
     public void setGoal(Goal goal) {this.goal = goal;}
     public void setEndMessage(List<String> endMessage) {this.endMessage = endMessage;}
     public void setStartMessage(List<String> startMessage) {this.startMessage = startMessage;}
+    public void setMinPlayers(int minPlayers) {this.minPlayers = minPlayers;}
     public HashMap<String, List<Reward>> getRewards() {return rewards;}
 
     public Goal getGoal() {return goal;}

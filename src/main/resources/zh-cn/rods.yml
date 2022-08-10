@@ -1,0 +1,26 @@
+rods:
+  wooden_rod:
+    display:
+      name: '普通的木鱼竿'
+      lore:
+        - '就是一把普通的鱼竿而已啦'
+    custom-model-data: 1
+    #鱼竿增益
+    modifier:
+      #改变指定组的loot权重
+      #加减权重
+      weight-PM:
+        normal: 20
+        creature: -10
+      #乘除权重
+      weight-MQ:
+        normal: 1.8
+        creature: 0.8
+      #改变上鱼的时间(>1为延长,<1为缩短)
+      time: 1.5
+      #更改难度，例如原来难度为(1-6),现在变成(1-5)
+      difficulty: -1
+      #双倍掉落概率
+      double-loot: 0.05
+      #比赛分数加成
+      score: 1.2

@@ -23,6 +23,7 @@ import net.momirealms.customfishing.command.TabComplete;
 import net.momirealms.customfishing.competition.CompetitionSchedule;
 import net.momirealms.customfishing.competition.bossbar.BossBarManager;
 import net.momirealms.customfishing.helper.LibraryLoader;
+import net.momirealms.customfishing.listener.MMOItemsConverter;
 import net.momirealms.customfishing.listener.PlayerListener;
 import net.momirealms.customfishing.utils.AdventureManager;
 import org.bukkit.Bukkit;
@@ -41,6 +42,7 @@ public final class CustomFishing extends JavaPlugin {
         instance = this;
         LibraryLoader.load("redis.clients","jedis","4.2.3","https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("org.apache.commons","commons-pool2","2.11.1","https://repo.maven.apache.org/maven2/");
+        LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3","https://repo.maven.apache.org/maven2/");
     }
 
     @Override
@@ -55,6 +57,9 @@ public final class CustomFishing extends JavaPlugin {
             competitionSchedule = new CompetitionSchedule();
             competitionSchedule.checkTime();
             Bukkit.getPluginManager().registerEvents(new BossBarManager(), this);
+        }
+        if (ConfigReader.Config.convertMMOItems){
+            Bukkit.getPluginManager().registerEvents(new MMOItemsConverter(), this);
         }
         ConfigReader.tryEnableJedis();
         AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>Plugin Enabled!");

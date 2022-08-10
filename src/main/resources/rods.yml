@@ -1,26 +1,43 @@
 rods:
   wooden_rod:
     display:
-      name: '普通的木鱼竿'
+      name: 'Ordinary wooden fishing rod'
       lore:
-        - '就是一把普通的鱼竿而已啦'
-    custom-model-data: 1
-    #鱼竿增益
+        - 'Its just an ordinary fishing rod'
+    # The same to baits.yml
     modifier:
-      #改变指定组的loot权重
-      #加减权重
+      difficulty: 1
+  nature_fishing_cane:
+    display:
+      name: 'Nature Fishing Cane'
+    custom-model-data: 2
+    modifier:
       weight-PM:
-        normal: 20
-        creature: -10
-      #乘除权重
-      weight-MQ:
-        normal: 1.8
-        creature: 0.8
-      #改变上鱼的时间(>1为延长,<1为缩短)
-      time: 1.5
-      #更改难度，例如原来难度为(1-6),现在变成(1-5)
-      difficulty: -1
-      #双倍掉落概率
-      double-loot: 0.05
-      #比赛分数加成
-      score: 1.2
+        silver: 5
+
+  silver_fishing_rod:
+    display:
+      name: 'Silver Fishing Rod'
+    custom-model-data: 3
+    modifier:
+      weight-PM:
+        silver: 20
+        gold: -10
+
+  golden_fishing_rod:
+    display:
+      name: 'Golden Fishing Rod'
+    custom-model-data: 4
+    modifier:
+      weight-PM:
+        silver: -20
+        gold: 20
+
+  star_fishing_rod:
+    display:
+      name: 'Star Fishing Rod'
+    custom-model-data: 5
+    modifier:
+      weight-PM:
+        silver: 20
+        gold: 10

@@ -1,26 +1,25 @@
-#对于不想启用的title设置title和subtitle为空即可
-#所有位置均可使用MiniMessage Format
+#MiniMessage Format
 #https://docs.adventure.kyori.net/minimessage/format.html
 titles:
   failure:
     title:
-      - '<red>真菜!</red>'
-      - '<red>失败!</red>'
+      - '<red>Real food!</red>'
+      - '<red>Failure!</red>'
     subtitle:
-      - '鱼已经逃跑了'
-      - '下次再努力吧'
-    #单位 tick
+      - 'The fish have escaped'
+      - 'Lets try again next time'
+    #tick
     fade:
       in: 10
       stay: 30
       out: 10
   success:
     title:
-      - '<green>成功!</green>'
-      - '<green>漂亮!</green>'
+      - '<green>Success!</green>'
+      - '<green>Beautiful!</green>'
     subtitle:
-      - '你捕捉到了一条 {loot}'
-      - '嗨害嗨 {loot} 来咯！'
+      - 'You have captured a {loot}'
+      - 'Hi Harm Hi {loot} Here we go!'
     fade:
       in: 10
       stay: 30

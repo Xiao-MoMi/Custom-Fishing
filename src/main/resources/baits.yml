@@ -2,27 +2,49 @@ baits:
   simple_bait:
     material: paper
     display:
-      name: '普通的钓饵'
+      name: '<gray>Common fishing lures'
       lore:
-        - '<white>减少捕鱼的时间'
-        - '<white>但是加大捕鱼的难度'
-    custom-model-data: 1
-    #钓饵增益
+        - '<white>Reduce the time spent fishing'
+        - '<white>But make it more difficult to catch fish'
+    custom-model-data: 646
+    #Bait Gain
     modifier:
-      #改变指定组的loot权重
-      #加减权重
+      #Change the loot weight of the specified group
+      #Add or subtract weights
       weight-PM:
-        normal: 20
-        creature: -10
-      #乘除权重
+        silver: 5
+        gold: 3
+      #Multiply and divide weights
       weight-MQ:
-        normal: 1.8
-        creature: 0.8
-      #改变上鱼的时间(>1为延长,<1为缩短)
-      time: 0.95
-      #更改难度，例如原来难度为(1-6),现在变成(1-5)
+        silver: 1.1
+        gold: 1.1
+      #Change the time to fish (>1 for longer, <1 for shorter)
+      time: 0.85
+      #Change the difficulty, for example, if the original difficulty is (1-6), now it becomes (1-9)
       difficulty: 3
-      #双倍掉落概率
-      double-loot: 0.05
-      #比赛分数加成
+      #Double drop probability
+      double-loot: 0.06
+      #Multiply the score got in competition
       score: 1.2
+
+  wild_bait:
+    material: paper
+    display:
+      name: 'Wild Bait'
+      lore:
+        - '<white>Decreases fishing time by 30%.'
+    custom-model-data: 696
+    modifier:
+      time: 0.7
+
+  magnet_bait:
+    material: paper
+    display:
+      name: '<gray>Magnet Bait'
+      lore:
+        - '<white>Increases the probability of better loot by 15%.'
+    custom-model-data: 695
+    modifier:
+      weight-MQ:
+        silver: 1.15
+        gold: 1.15

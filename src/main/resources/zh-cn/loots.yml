@@ -34,11 +34,6 @@ items:
     weight: 10
     # Optional
     group: normal
-    # The score to get when in competition
-    score: 10
-
-    # Fishing Skill xp add to skill plugin
-    #skill-xp: 100
 
     # Difficulty
     # '1' represents the pointer moves every 1 tick
@@ -85,8 +80,8 @@ items:
       #  - fishingpool
       #Requires PlaceholderAPI
       #season:
-      #  - Spring
-      #  - Autumn
+      #  - 春
+      #  - 秋
 
   rubbish:
     material: paper
@@ -152,7 +147,12 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-1
-    custom-model-data: 641
+    nbt:
+      - CustomModelData: '(Int) 641'
+    requirements:
+      season:
+        - Summer
+        - Winter
 
   tuna_fish_silver_star:
     material: paper
@@ -161,8 +161,12 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-1
-    group: silver
-    custom-model-data: 666
+    nbt:
+      - CustomModelData: '(Int) 666'
+    requirements:
+      season:
+        - Summer
+        - Winter
 
   tuna_fish_golden_star:
     material: paper
@@ -171,8 +175,12 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-1
-    group: gold
-    custom-model-data: 667
+    nbt:
+      - CustomModelData: '(Int) 667'
+    requirements:
+      season:
+        - Summer
+        - Winter
 
   pike:
     material: paper
@@ -181,7 +189,12 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-2
-    custom-model-data: 642
+    nbt:
+      - CustomModelData: '(Int) 642'
+    requirements:
+      season:
+        - Summer
+        - Winter
 
   pike_fish_silver_star:
     material: paper
@@ -190,8 +203,12 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-2
-    group: silver
-    custom-model-data: 664
+    nbt:
+      - CustomModelData: '(Int) 664'
+    requirements:
+      season:
+        - Summer
+        - Winter
 
   pike_fish_golden_star:
     material: paper
@@ -200,8 +217,12 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-2
-    group: gold
-    custom-model-data: 665
+    nbt:
+      - CustomModelData: '(Int) 665'
+    requirements:
+      season:
+        - Summer
+        - Winter
 
   golden:
     material: paper
@@ -210,7 +231,11 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-2
-    custom-model-data: 643
+    nbt:
+      - CustomModelData: '(Int) 643'
+    requirements:
+      season:
+        - Summer
 
   golden_fish_silver_star:
     material: paper
@@ -219,8 +244,11 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-2
-    group: silver
-    custom-model-data: 658
+    nbt:
+      - CustomModelData: '(Int) 658'
+    requirements:
+      season:
+        - Summer
 
   golden_fish_golden_star:
     material: paper
@@ -228,9 +256,12 @@ items:
       name: 'Golden Fish Golden Star'
     weight: 50
     time: 100000
-    group: gold
     difficulty: 1-2
-    custom-model-data: 659
+    nbt:
+      - CustomModelData: '(Int) 659'
+    requirements:
+      season:
+        - Summer
 
   perch_fish:
     material: paper
@@ -239,27 +270,36 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-2
-    custom-model-data: 644
-
+    nbt:
+      - CustomModelData: '(Int) 644'
+    requirements:
+      season:
+        - Winter
   perch_fish_silver_star:
     material: paper
     display:
       name: 'Perch Fish Silver Star'
     weight: 50
     time: 100000
-    group: silver
     difficulty: 1-2
-    custom-model-data: 660
+    nbt:
+      - CustomModelData: '(Int) 660'
+    requirements:
+      season:
+        - Winter
 
   perch_fish_golden_star:
     material: paper
     display:
       name: 'Perch Fish Golden Star'
     weight: 50
-    group: gold
     time: 100000
     difficulty: 1-2
-    custom-model-data: 661
+    nbt:
+      - CustomModelData: '(Int) 661'
+    requirements:
+      season:
+        - Winter
 
   mullet_fish:
     material: paper
@@ -268,17 +308,26 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-2
-    custom-model-data: 645
+    nbt:
+      - CustomModelData: '(Int) 645'
+    requirements:
+      season:
+        - Summer
+        - Winter
 
   mullet_fish_silver_star:
     material: paper
     display:
       name: 'Mullet Fish Silver Star'
     weight: 50
-    group: silver
     time: 100000
     difficulty: 1-2
-    custom-model-data: 662
+    nbt:
+      - CustomModelData: '(Int) 662'
+    requirements:
+      season:
+        - Summer
+        - Winter
 
   mullet_fish_golden_star:
     material: paper
@@ -286,9 +335,13 @@ items:
       name: 'Mullet Fish Golden Star'
     weight: 50
     time: 100000
-    group: gold
     difficulty: 1-2
-    custom-model-data: 663
+    nbt:
+      - CustomModelData: '(Int) 663'
+    requirements:
+      season:
+        - Summer
+        - Winter
 
   sardine_fish:
     material: paper
@@ -297,7 +350,12 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-2
-    custom-model-data: 668
+    nbt:
+      - CustomModelData: '(Int) 668'
+    requirements:
+      season:
+        - Summer
+        - Winter
 
   sardine_fish_silver_star:
     material: paper
@@ -305,9 +363,13 @@ items:
       name: 'Sardine Fish Silver Star'
     weight: 50
     time: 100000
-    group: silver
     difficulty: 1-2
-    custom-model-data: 669
+    nbt:
+      - CustomModelData: '(Int) 669'
+    requirements:
+      season:
+        - Summer
+        - Winter
 
   sardine_fish_golden_star:
     material: paper
@@ -315,9 +377,13 @@ items:
       name: 'Sardine Fish Golden Star'
     weight: 50
     time: 100000
-    group: gold
     difficulty: 1-2
-    custom-model-data: 670
+    nbt:
+      - CustomModelData: '(Int) 670'
+    requirements:
+      season:
+        - Summer
+        - Winter
 
   carp_fish:
     material: paper
@@ -326,7 +392,8 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-2
-    custom-model-data: 671
+    nbt:
+      - CustomModelData: '(Int) 671'
 
   carp_fish_silver_star:
     material: paper
@@ -334,9 +401,9 @@ items:
       name: 'Carp Fish Silver Star'
     weight: 50
     time: 100000
-    group: silver
     difficulty: 1-2
-    custom-model-data: 672
+    nbt:
+      - CustomModelData: '(Int) 672'
 
   carp_fish_golden_star:
     material: paper
@@ -344,9 +411,9 @@ items:
       name: 'Carp Fish Golden Star'
     weight: 50
     time: 100000
-    group: gold
     difficulty: 1-2
-    custom-model-data: 673
+    nbt:
+      - CustomModelData: '(Int) 673'
 
   cat_fish:
     material: paper
@@ -355,17 +422,26 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-2
-    custom-model-data: 674
+    nbt:
+      - CustomModelData: '(Int) 674'
+    requirements:
+      season:
+        - Summer
+        - Spring
 
   cat_fish_silver_star:
     material: paper
     display:
       name: 'Cat Fish Silver Star'
     weight: 50
-    group: silver
     time: 100000
     difficulty: 1-2
-    custom-model-data: 675
+    nbt:
+      - CustomModelData: '(Int) 675'
+    requirements:
+      season:
+        - Summer
+        - Spring
 
   cat_fish_golden_star:
     material: paper
@@ -373,9 +449,13 @@ items:
       name: 'Cat Fish Golden Star'
     weight: 50
     time: 100000
-    group: gold
     difficulty: 1-2
-    custom-model-data: 676
+    nbt:
+      - CustomModelData: '(Int) 676'
+    requirements:
+      season:
+        - Summer
+        - Spring
 
   octopus_fish:
     material: paper
@@ -384,17 +464,24 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-2
-    custom-model-data: 677
+    nbt:
+      - CustomModelData: '(Int) 677'
+    requirements:
+      season:
+        - Summer
 
   octopus_fish_silver_star:
     material: paper
     display:
       name: 'Octopus Fish Silver Star'
     weight: 50
-    group: silver
     time: 100000
     difficulty: 1-2
-    custom-model-data: 678
+    nbt:
+      - CustomModelData: '(Int) 678'
+    requirements:
+      season:
+        - Summer
 
   octopus_fish_golden_star:
     material: paper
@@ -402,9 +489,12 @@ items:
       name: 'Octopus Fish Golden Star'
     weight: 50
     time: 100000
-    group: gold
     difficulty: 1-2
-    custom-model-data: 679
+    nbt:
+      - CustomModelData: '(Int) 679'
+    requirements:
+      season:
+        - Summer
 
   sunfish_fish:
     material: paper
@@ -413,17 +503,26 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-2
-    custom-model-data: 680
+    nbt:
+      - CustomModelData: '(Int) 680'
+    requirements:
+      season:
+        - Summer
+        - Spring
 
   sunfish_fish_silver_star:
     material: paper
     display:
       name: 'Sunfish Fish Silver Star'
     weight: 50
-    group: silver
     time: 100000
     difficulty: 1-2
-    custom-model-data: 681
+    nbt:
+      - CustomModelData: '(Int) 681'
+    requirements:
+      season:
+        - Summer
+        - Spring
 
   sunfish_fish_golden_star:
     material: paper
@@ -431,9 +530,13 @@ items:
       name: 'Sunfish Fish Golden Star'
     weight: 50
     time: 100000
-    group: gold
     difficulty: 1-2
-    custom-model-data: 682
+    nbt:
+      - CustomModelData: '(Int) 682'
+    requirements:
+      season:
+        - Summer
+        - Spring
 
   red_spnapper_fish:
     material: paper
@@ -442,7 +545,14 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-2
-    custom-model-data: 683
+    nbt:
+      - CustomModelData: '(Int) 683'
+    requirements:
+      season:
+        - Summer
+        - Winter
+      weather:
+        - rain
 
   red_spnapper_fish_silver_star:
     material: paper
@@ -450,9 +560,15 @@ items:
       name: 'Red Snapper Fish Silver Star'
     weight: 50
     time: 100000
-    group: silver
     difficulty: 1-2
-    custom-model-data: 684
+    nbt:
+      - CustomModelData: '(Int) 684'
+    requirements:
+      season:
+        - Summer
+        - Winter
+      weather:
+        - rain
 
   red_spnapper_fish_golden_star:
     material: paper
@@ -460,9 +576,15 @@ items:
       name: 'Red Snapper Golden Star'
     weight: 50
     time: 100000
-    group: gold
     difficulty: 1-2
-    custom-model-data: 685
+    nbt:
+      - CustomModelData: '(Int) 685'
+    requirements:
+      season:
+        - Summer
+        - Winter
+      weather:
+        - rain
 
   salmon_void_fish:
     material: paper
@@ -471,7 +593,8 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-2
-    custom-model-data: 686
+    nbt:
+      - CustomModelData: '(Int) 686'
 
   salmon_void_fish_silver_star:
     material: paper
@@ -479,9 +602,9 @@ items:
       name: 'Salmon Void Fish Silver Star'
     weight: 50
     time: 100000
-    group: silver
     difficulty: 1-2
-    custom-model-data: 687
+    nbt:
+      - CustomModelData: '(Int) 687'
 
   salmon_void_fish_golden_star:
     material: paper
@@ -489,9 +612,9 @@ items:
       name: 'Salmon Void Fish Golden Star'
     weight: 50
     time: 100000
-    group: gold
     difficulty: 1-2
-    custom-model-data: 688
+    nbt:
+      - CustomModelData: '(Int) 688'
 
   woodskip_fish:
     material: paper
@@ -500,27 +623,28 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-2
-    custom-model-data: 689
+    nbt:
+      - CustomModelData: '(Int) 689'
 
   woodskip_fish_silver_star:
     material: paper
     display:
       name: 'Woodskip Fish Silver Star'
     weight: 50
-    group: silver
     time: 100000
     difficulty: 1-2
-    custom-model-data: 690
+    nbt:
+      - CustomModelData: '(Int) 690'
 
   woodskip_fish_golden_star:
     material: paper
     display:
       name: 'Woodskip Fish Golden Star'
     weight: 50
-    group: gold
     time: 100000
     difficulty: 1-2
-    custom-model-data: 691
+    nbt:
+      - CustomModelData: '(Int) 691'
 
   sturgeon_fish:
     material: paper
@@ -529,17 +653,26 @@ items:
     weight: 50
     time: 100000
     difficulty: 1-2
-    custom-model-data: 692
+    nbt:
+      - CustomModelData: '(Int) 692'
+    requirements:
+      season:
+        - Summer
+        - Winter
 
   sturgeon_fish_silver_star:
     material: paper
     display:
       name: 'Sturgeon Fish Silver Star'
     weight: 50
-    group: silver
     time: 100000
     difficulty: 1-2
-    custom-model-data: 693
+    nbt:
+      - CustomModelData: '(Int) 693'
+    requirements:
+      season:
+        - Summer
+        - Winter
 
   sturgeon_fish_golden_star:
     material: paper
@@ -547,9 +680,13 @@ items:
       name: 'Sturgeon Fish Golden Star'
     weight: 50
     time: 100000
-    group: gold
     difficulty: 1-2
-    custom-model-data: 694
+    nbt:
+      - CustomModelData: '(Int) 694'
+    requirements:
+      season:
+        - Summer
+        - Winter
 
 mobs:
   skeletalknight:
@@ -571,10 +708,10 @@ mobs:
     time: 5000
     requirements:
       weather:
+        - rain
         - thunder
       world:
         - world
-
   piranha:
     mythicmobsID: piranha
     name: 'Piranha'
@@ -582,7 +719,7 @@ mobs:
     time: 1000000
     difficulty: 1-1
     action:
-      command: 'say {player} Caught a piranha!'
+      command: 'say {player}Caught a piranha!'
     vector:
       #Vertical displacement multiplier
       vertical: 2
