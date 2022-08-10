@@ -1,3 +1,6 @@
+# don't change
+config-version: 1
+
 config:
   
   #en/es/cn
@@ -42,64 +45,5 @@ config:
   #转换MMOItems鱼竿为插件物品鱼竿(修改此项需要重启)
   convert-MMOITEMS: false
 
-  #成功率
-  #你可以自定义区域数量，这为自定义UI提供了可能
-  success-rate:
-    bar1:
-      #每个判定区间的像素个数
-      #默认配置为16个像素每区间
-      #如果你对自定义UI很感兴趣建议联系作者提供相关帮助
-      range: 16
-      title: '鱼上钩了,集中注意!'
-      subtitle:
-        start: '<font:customfishing:default>'
-        bar: '뀄'
-        pointer_offset: '뀂'
-        pointer: '뀃'
-        offset: '뀁'
-        end: '</font>'
-      layout:
-        1: 0
-        2: 0
-        3: 0
-        4: 0.1
-        5: 0.5
-        6: 1
-        7: 0.5
-        8: 0.1
-        9: 0
-        10: 0
-        11: 0
-    bar2:
-      range: 8
-      title: '鱼上钩了,集中注意!'
-      subtitle:
-        start: '<font:customfishing:default>'
-        bar: '뀅'
-        pointer_offset: '뀂'
-        pointer: '뀃'
-        offset: '뀁'
-        end: '</font>'
-      layout:
-        1: 0
-        2: 0
-        3: 0
-        4: 0
-        5: 0
-        6: 0
-        7: 0.1
-        8: 0.1
-        9: 0.3
-        10: 0.3
-        11: 1
-        12: 0.3
-        13: 0.1
-        14: 0
-        15: 0.1
-        16: 0.3
-        17: 1
-        18: 0.3
-        19: 0.1
-        20: 0
-        21: 0
-        22: 0
+  # ProtocolLib 模式 (修改此项需要重启)
+  protocollib-bossbar: false

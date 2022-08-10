@@ -240,7 +240,7 @@ public class PlayerListener implements Listener {
                     nextLoot.put(player, availableLoots.get(pos));
                     return;
                 }
-                //以防万一，丢入空值
+
                 nextLoot.put(player, null);
             });
         }
@@ -255,11 +255,10 @@ public class PlayerListener implements Listener {
             Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.instance, ()-> {
 
                 Loot lootInstance = nextLoot.get(player);
-                //获取布局名，或是随机布局
+
                 String layout = Optional.ofNullable(lootInstance.getLayout()).orElseGet(() ->{
-                    Random generator = new Random();
                     Object[] values = ConfigReader.LAYOUT.keySet().toArray();
-                    return (String) values[generator.nextInt(values.length)];
+                    return (String) values[new Random().nextInt(values.length)];
                 });
 
                 int difficulty = lootInstance.getDifficulty().getSpeed();
@@ -269,7 +268,6 @@ public class PlayerListener implements Listener {
                 }
                 Difficulty difficult = new Difficulty(lootInstance.getDifficulty().getTimer(), difficulty);
 
-                //根据鱼的时间放入玩家实例，并应用药水效果
                 fishingPlayers.put(player,
                         new FishingPlayer(System.currentTimeMillis() + lootInstance.getTime(),
                                 new Timer(player, difficult, layout)

@@ -33,30 +33,26 @@ public class AdventureManager {
 
     public static void consoleMessage(String s) {
         Audience au = CustomFishing.adventure.sender(Bukkit.getConsoleSender());
-        MiniMessage mm = MiniMessage.miniMessage();
-        Component parsed = mm.deserialize(s);
+        Component parsed = CustomFishing.miniMessage.deserialize(s);
         au.sendMessage(parsed);
     }
 
     public static void playerMessage(Player player, String s) {
         Audience au = CustomFishing.adventure.player(player);
-        MiniMessage mm = MiniMessage.miniMessage();
-        Component parsed = mm.deserialize(s);
+        Component parsed = CustomFishing.miniMessage.deserialize(s);
         au.sendMessage(parsed);
     }
 
     public static void playerTitle(Player player, String s1, String s2, int in, int duration, int out) {
         Audience au = CustomFishing.adventure.player(player);
-        MiniMessage mm = MiniMessage.miniMessage();
         Title.Times times = Title.Times.times(Duration.ofMillis(in), Duration.ofMillis(duration), Duration.ofMillis(out));
-        Title title = Title.title(mm.deserialize(s1), mm.deserialize(s2), times);
+        Title title = Title.title(CustomFishing.miniMessage.deserialize(s1), CustomFishing.miniMessage.deserialize(s2), times);
         au.showTitle(title);
     }
 
     public static void playerActionbar(Player player, String s) {
         Audience au = CustomFishing.adventure.player(player);
-        MiniMessage mm = MiniMessage.miniMessage();
-        au.sendActionBar(mm.deserialize(s));
+        au.sendActionBar(CustomFishing.miniMessage.deserialize(s));
     }
 
     public static void playerSound(Player player, Sound.Source source, Key key) {

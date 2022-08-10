@@ -45,6 +45,9 @@ public class Execute implements CommandExecutor {
             }
             if (sender instanceof Player player){
                 SaveItem.saveToFile(player.getInventory().getItemInMainHand(), args[1]);
+                AdventureManager.playerMessage(player, ConfigReader.Message.prefix + "Done!");
+            }else {
+                AdventureManager.consoleMessage(ConfigReader.Message.prefix + ConfigReader.Message.noConsole);
             }
             return true;
         }
@@ -310,7 +313,6 @@ public class Execute implements CommandExecutor {
         }
         return true;
     }
-
 
     private void lackArgs(CommandSender sender){
         if (sender instanceof Player){

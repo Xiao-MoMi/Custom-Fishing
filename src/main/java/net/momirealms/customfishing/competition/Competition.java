@@ -189,8 +189,8 @@ public class Competition {
     }
 
     public void cancel() {
-        ranking.clear();
         BossBarManager.stopAllTimer();
+        ranking.clear();
         this.timerTask.cancel();
         status = false;
     }

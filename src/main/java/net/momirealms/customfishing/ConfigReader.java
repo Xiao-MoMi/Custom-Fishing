@@ -146,6 +146,7 @@ public class ConfigReader{
                     AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>PlaceholderAPI <color:#E1FFFF>Hooked!");
                 }
             }
+
             skillXP = null;
 
             if(config.getBoolean("config.integrations.mcMMO",false)){
@@ -173,7 +174,6 @@ public class ConfigReader{
                 }
             }
 
-
             season = config.getBoolean("config.season.enable");
             if (!papi && season) {
                 season = false;
@@ -189,6 +189,7 @@ public class ConfigReader{
             convertMMOItems = config.getBoolean("config.convert-MMOITEMS");
             needOpenWater = config.getBoolean("config.need-open-water");
             needSpecialRod = config.getBoolean("config.need-special-rod");
+
             fishFinderCoolDown = config.getInt("config.fishfinder-cooldown");
             timeMultiply = config.getDouble("config.time-multiply");
             lang = config.getString("config.lang","cn");

@@ -26,7 +26,7 @@ import java.util.HashMap;
 
 public class BossBarTimer {
 
-    public HashMap<Integer, BossBarSender> bossbarCache = new HashMap<>();
+    private HashMap<Integer, BossBarSender> bossbarCache = new HashMap<>();
 
     public BossBarTimer(Player player, BossBarConfig bossBarConfig){
 

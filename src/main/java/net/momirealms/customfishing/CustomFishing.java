@@ -18,6 +18,7 @@
 package net.momirealms.customfishing;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.momirealms.customfishing.command.Execute;
 import net.momirealms.customfishing.command.TabComplete;
 import net.momirealms.customfishing.competition.CompetitionSchedule;
@@ -35,6 +36,7 @@ public final class CustomFishing extends JavaPlugin {
 
     public static JavaPlugin instance;
     public static BukkitAudiences adventure;
+    public static MiniMessage miniMessage;
     private CompetitionSchedule competitionSchedule;
 
     @Override
@@ -48,6 +50,7 @@ public final class CustomFishing extends JavaPlugin {
     @Override
     public void onEnable() {
         adventure = BukkitAudiences.create(this);
+        miniMessage = MiniMessage.miniMessage();
         Objects.requireNonNull(Bukkit.getPluginCommand("customfishing")).setExecutor(new Execute());
         Objects.requireNonNull(Bukkit.getPluginCommand("customfishing")).setTabCompleter(new TabComplete());
         Bukkit.getPluginManager().registerEvents(new PlayerListener(),this);

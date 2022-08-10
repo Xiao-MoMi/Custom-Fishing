@@ -20,28 +20,53 @@ public class TabComplete implements TabCompleter {
             return null;
         }
         if (args.length == 1){
-            return Arrays.asList("competition","reload","items","export");
+            List<String> arrayList = new ArrayList<>();
+            for (String cmd : Arrays.asList("competition","reload","items","export")) {
+                if (cmd.startsWith(args[0]))
+                    arrayList.add(cmd);
+            }
+            return arrayList;
         }
         if (args.length == 2){
             if (args[0].equalsIgnoreCase("items")){
-                return Arrays.asList("loot","bait","rod","util");
+                List<String> arrayList = new ArrayList<>();
+                for (String cmd : Arrays.asList("loot","bait","rod","util")) {
+                    if (cmd.startsWith(args[1]))
+                        arrayList.add(cmd);
+                }
+                return arrayList;
             }
             if (args[0].equalsIgnoreCase("export")){
                 return List.of("FileName");
             }
             if (args[0].equalsIgnoreCase("competition")){
-                return List.of("start","end","cancel");
+                List<String> arrayList = new ArrayList<>();
+                for (String cmd : List.of("start","end","cancel")) {
+                    if (cmd.startsWith(args[1]))
+                        arrayList.add(cmd);
+                }
+                return arrayList;
             }
         }
         if (args.length == 3){
             if (args[0].equalsIgnoreCase("items")){
                 if (args[1].equalsIgnoreCase("loot") || args[1].equalsIgnoreCase("util") || args[1].equalsIgnoreCase("rod") || args[1].equalsIgnoreCase("bait")){
-                    return Arrays.asList("get","give");
+                    List<String> arrayList = new ArrayList<>();
+                    for (String cmd : Arrays.asList("get","give")) {
+                        if (cmd.startsWith(args[2]))
+                            arrayList.add(cmd);
+                    }
+                    return arrayList;
                 }
             }
             if (args[0].equalsIgnoreCase("competition")){
                 if (args[1].equalsIgnoreCase("start")){
-                    return competitions();
+                    List<String> arrayList = new ArrayList<>();
+                    for (String cmd : competitions()) {
+                        if (cmd.startsWith(args[2]))
+                            arrayList.add(cmd);
+                    }
+                    return arrayList;
                 }
             }
         }
@@ -49,31 +74,71 @@ public class TabComplete implements TabCompleter {
             if (args[0].equalsIgnoreCase("items")){
                 if (args[1].equalsIgnoreCase("loot")){
                     if (args[2].equalsIgnoreCase("give")){
-                        return online_players();
+                        List<String> arrayList = new ArrayList<>();
+                        for (String cmd : online_players()) {
+                            if (cmd.startsWith(args[3]))
+                                arrayList.add(cmd);
+                        }
+                        return arrayList;
                     }
                     if (args[2].equalsIgnoreCase("get")){
-                        return loots();
+                        List<String> arrayList = new ArrayList<>();
+                        for (String cmd : loots()) {
+                            if (cmd.startsWith(args[3]))
+                                arrayList.add(cmd);
+                        }
+                        return arrayList;
                     }
                 }else if (args[1].equalsIgnoreCase("util")){
                     if (args[2].equalsIgnoreCase("give")){
-                        return online_players();
+                        List<String> arrayList = new ArrayList<>();
+                        for (String cmd : online_players()) {
+                            if (cmd.startsWith(args[3]))
+                                arrayList.add(cmd);
+                        }
+                        return arrayList;
                     }
                     if (args[2].equalsIgnoreCase("get")){
-                        return utils();
+                        List<String> arrayList = new ArrayList<>();
+                        for (String cmd : utils()) {
+                            if (cmd.startsWith(args[3]))
+                                arrayList.add(cmd);
+                        }
+                        return arrayList;
                     }
                 }else if (args[1].equalsIgnoreCase("rod")){
                     if (args[2].equalsIgnoreCase("give")){
-                        return online_players();
+                        List<String> arrayList = new ArrayList<>();
+                        for (String cmd : online_players()) {
+                            if (cmd.startsWith(args[3]))
+                                arrayList.add(cmd);
+                        }
+                        return arrayList;
                     }
                     if (args[2].equalsIgnoreCase("get")){
-                        return rods();
+                        List<String> arrayList = new ArrayList<>();
+                        for (String cmd : rods()) {
+                            if (cmd.startsWith(args[3]))
+                                arrayList.add(cmd);
+                        }
+                        return arrayList;
                     }
                 }else if (args[1].equalsIgnoreCase("bait")){
                     if (args[2].equalsIgnoreCase("give")){
-                        return online_players();
+                        List<String> arrayList = new ArrayList<>();
+                        for (String cmd : online_players()) {
+                            if (cmd.startsWith(args[3]))
+                                arrayList.add(cmd);
+                        }
+                        return arrayList;
                     }
                     if (args[2].equalsIgnoreCase("get")){
-                        return baits();
+                        List<String> arrayList = new ArrayList<>();
+                        for (String cmd : baits()) {
+                            if (cmd.startsWith(args[3]))
+                                arrayList.add(cmd);
+                        }
+                        return arrayList;
                     }
                 }
             }
@@ -82,20 +147,40 @@ public class TabComplete implements TabCompleter {
             if (args[0].equalsIgnoreCase("items")){
                 if (args[1].equalsIgnoreCase("loot")){
                     if (args[2].equalsIgnoreCase("give")){
-                        return loots();
+                        List<String> arrayList = new ArrayList<>();
+                        for (String cmd : loots()) {
+                            if (cmd.startsWith(args[4]))
+                                arrayList.add(cmd);
+                        }
+                        return arrayList;
                     }
                 }else if (args[1].equalsIgnoreCase("util")){
                     if (args[2].equalsIgnoreCase("give")){
-                        return utils();
+                        List<String> arrayList = new ArrayList<>();
+                        for (String cmd : utils()) {
+                            if (cmd.startsWith(args[4]))
+                                arrayList.add(cmd);
+                        }
+                        return arrayList;
                     }
                 }else if (args[1].equalsIgnoreCase("rod")){
                     if (args[2].equalsIgnoreCase("give")){
-                        return rods();
+                        List<String> arrayList = new ArrayList<>();
+                        for (String cmd : rods()) {
+                            if (cmd.startsWith(args[4]))
+                                arrayList.add(cmd);
+                        }
+                        return arrayList;
                     }
                 }
                 else if (args[1].equalsIgnoreCase("bait")){
                     if (args[2].equalsIgnoreCase("give")){
-                        return baits();
+                        List<String> arrayList = new ArrayList<>();
+                        for (String cmd : baits()) {
+                            if (cmd.startsWith(args[4]))
+                                arrayList.add(cmd);
+                        }
+                        return arrayList;
                     }
                 }
             }
