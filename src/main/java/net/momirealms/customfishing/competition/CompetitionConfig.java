@@ -29,6 +29,9 @@ public class CompetitionConfig {
     private int minPlayers;
     private List<String> startMessage;
     private List<String> endMessage;
+    private List<String> startCommand;
+    private List<String> endCommand;
+    private List<String> joinCommand;
     private Goal goal;
     private BossBarConfig bossBarConfig;
     private final boolean enableBossBar;
@@ -41,6 +44,9 @@ public class CompetitionConfig {
     public void setGoal(Goal goal) {this.goal = goal;}
     public void setEndMessage(List<String> endMessage) {this.endMessage = endMessage;}
     public void setStartMessage(List<String> startMessage) {this.startMessage = startMessage;}
+    public void setStartCommand(List<String> startCommand) {this.startCommand = startCommand;}
+    public void setEndCommand(List<String> endCommand) {this.endCommand = endCommand;}
+    public void setJoinCommand(List<String> joinCommand) {this.joinCommand = joinCommand;}
     public void setMinPlayers(int minPlayers) {this.minPlayers = minPlayers;}
     public HashMap<String, List<Reward>> getRewards() {return rewards;}
 
@@ -52,4 +58,7 @@ public class CompetitionConfig {
     public List<String> getEndMessage() {return endMessage;}
     public List<String> getStartMessage() {return startMessage;}
     public void setRewards(HashMap<String, List<Reward>> rewards) {this.rewards = rewards;}
+    public List<String> getEndCommand() {return endCommand;}
+    public List<String> getJoinCommand() {return joinCommand;}
+    public List<String> getStartCommand() {return startCommand;}
 }

@@ -24,9 +24,12 @@ import net.momirealms.customfishing.command.TabComplete;
 import net.momirealms.customfishing.competition.CompetitionSchedule;
 import net.momirealms.customfishing.competition.bossbar.BossBarManager;
 import net.momirealms.customfishing.helper.LibraryLoader;
+import net.momirealms.customfishing.hook.Placeholders;
 import net.momirealms.customfishing.listener.MMOItemsConverter;
+import net.momirealms.customfishing.listener.PapiReload;
 import net.momirealms.customfishing.listener.PlayerListener;
 import net.momirealms.customfishing.utils.AdventureManager;
+import net.momirealms.customfishing.utils.UpdateConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -38,6 +41,7 @@ public final class CustomFishing extends JavaPlugin {
     public static BukkitAudiences adventure;
     public static MiniMessage miniMessage;
     private CompetitionSchedule competitionSchedule;
+    public static Placeholders placeholders;
 
     @Override
     public void onLoad(){
@@ -55,6 +59,7 @@ public final class CustomFishing extends JavaPlugin {
         Objects.requireNonNull(Bukkit.getPluginCommand("customfishing")).setTabCompleter(new TabComplete());
         Bukkit.getPluginManager().registerEvents(new PlayerListener(),this);
         AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>Running on " + Bukkit.getVersion());
+
         ConfigReader.Reload();
         if (ConfigReader.Config.competition){
             competitionSchedule = new CompetitionSchedule();
@@ -64,12 +69,22 @@ public final class CustomFishing extends JavaPlugin {
         if (ConfigReader.Config.convertMMOItems){
             Bukkit.getPluginManager().registerEvents(new MMOItemsConverter(), this);
         }
+        if (ConfigReader.Config.papi){
+            placeholders = new Placeholders();
+            placeholders.register();
+            AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>PlaceholderAPI <color:#E1FFFF>Hooked!");
+            Bukkit.getPluginManager().registerEvents(new PapiReload(), this);
+        }
         ConfigReader.tryEnableJedis();
+        if (ConfigReader.Config.version != 2){
+            UpdateConfig.update();
+        }
         AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>Plugin Enabled!");
     }
 
     @Override
     public void onDisable() {
+        
         if (competitionSchedule != null){
             competitionSchedule.stopCheck();
             competitionSchedule = null;

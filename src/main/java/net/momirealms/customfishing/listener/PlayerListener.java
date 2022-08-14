@@ -240,7 +240,6 @@ public class PlayerListener implements Listener {
                     nextLoot.put(player, availableLoots.get(pos));
                     return;
                 }
-
                 nextLoot.put(player, null);
             });
         }
@@ -267,12 +266,21 @@ public class PlayerListener implements Listener {
                     difficulty = 1;
                 }
                 Difficulty difficult = new Difficulty(lootInstance.getDifficulty().getTimer(), difficulty);
-
                 fishingPlayers.put(player,
                         new FishingPlayer(System.currentTimeMillis() + lootInstance.getTime(),
                                 new Timer(player, difficult, layout)
                         )
                 );
+                if (lootInstance.getHookCommands() != null){
+                    lootInstance.getHookCommands().forEach(command ->{
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("{player}", player.getName()));
+                    });
+                }
+                if (lootInstance.getHookMsg() != null){
+                    lootInstance.getHookMsg().forEach(msg -> {
+                        AdventureManager.playerMessage(player, msg.replace("{loot}",lootInstance.getNick()).replace("{player}", player.getName()));
+                    });
+                }
                 Bukkit.getScheduler().runTask(CustomFishing.instance, ()->{
                     player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, lootInstance.getTime()/50,3));
                 });
@@ -290,7 +298,7 @@ public class PlayerListener implements Listener {
                 }
                 Loot lootInstance = nextLoot.get(player);
                 Layout layout = ConfigReader.LAYOUT.get(fishingPlayers.get(player).getTimer().getLayout());
-                int last = (fishingPlayers.get(player).getTimer().getTimerTask().getProgress() + 1)/layout.getRange();
+                int last = (fishingPlayers.get(player).getTimer().getTimerTask().getProgress())/layout.getRange();
                 fishingPlayers.remove(player);
                 player.removePotionEffect(PotionEffectType.SLOW);
                 if (ConfigReader.Config.needOpenWater && !event.getHook().isInOpenWater()){
@@ -317,8 +325,9 @@ public class PlayerListener implements Listener {
                         }
                     }
                     if (lootInstance.getMsg() != null){
-                        //发送消息
-                        AdventureManager.playerMessage(player, ConfigReader.Message.prefix + lootInstance.getMsg().replace("{loot}",lootInstance.getNick()).replace("{player}", player.getName()));
+                        lootInstance.getMsg().forEach(msg -> {
+                            AdventureManager.playerMessage(player, msg.replace("{loot}",lootInstance.getNick()).replace("{player}", player.getName()));
+                        });
                     }
                     if (lootInstance.getCommands() != null){
                         //执行指令
@@ -327,7 +336,7 @@ public class PlayerListener implements Listener {
                                     replaceAll("\\{x}", String.valueOf(Math.round(location.getX()))).
                                     replaceAll("\\{y}", String.valueOf(Math.round(location.getY()))).
                                     replaceAll("\\{z}", String.valueOf(Math.round(location.getZ()))).
-                                    replaceAll("\\{player}", event.getPlayer().getName()).
+                                    replaceAll("\\{player}", player.getName()).
                                     replaceAll("\\{world}", player.getWorld().getName()).
                                     replaceAll("\\{loot}", lootInstance.getNick());
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCommand);

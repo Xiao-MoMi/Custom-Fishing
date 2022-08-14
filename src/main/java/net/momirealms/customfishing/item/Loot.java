@@ -32,7 +32,6 @@ public class Loot implements Item {
     private List<String> lore;
     private Map<String,Object> nbt;
     private String material;
-    private String msg;
     private String mm;
     private String layout;
     private VectorUtil vectorUtil;
@@ -42,7 +41,10 @@ public class Loot implements Item {
     private final int time;
     private int mmLevel;
     private int exp;
+    private List<String> msg;
     private List<String> commands;
+    private List<String> hookCommands;
+    private List<String> hookMsg;
     private String group;
     private List<net.momirealms.customfishing.utils.Enchantment> enchantment;
     private List<ItemFlag> itemFlags;
@@ -61,7 +63,7 @@ public class Loot implements Item {
 
     public String getKey(){return this.key;}
     public String getNick(){return this.nick;}
-    public String getMsg(){return this.msg;}
+    public List<String> getMsg(){return this.msg;}
     public String getLayout(){return this.layout;}
     public String getMm(){return this.mm;}
     public boolean isShowInFinder() {return this.showInFinder;}
@@ -76,6 +78,8 @@ public class Loot implements Item {
     public int getExp() {return exp;}
     public double getSkillXP() {return skillXP;}
     public float getScore() {return score;}
+    public List<String> getHookCommands() {return hookCommands;}
+    public List<String> getHookMsg() {return hookMsg;}
 
     @Override
     public List<String> getLore(){return this.lore;}
@@ -101,7 +105,7 @@ public class Loot implements Item {
     public void setRequirements(List<Requirement> requirements) {this.requirements = requirements;}
     public void setMaterial(String material){this.material = material;}
     public void setNick(String nick){this.nick = nick;}
-    public void setMsg(String msg){this.msg = msg;}
+    public void setMsg(List<String> msg){this.msg = msg;}
     public void setMm(String mm){this.mm = mm;}
     public void setLayout(String layout){this.layout = layout;}
     public void setVectorUtil(VectorUtil vectorUtil){this.vectorUtil = vectorUtil;}
@@ -115,4 +119,6 @@ public class Loot implements Item {
     public void setUnbreakable(boolean unbreakable){this.unbreakable = unbreakable;}
     public void setSkillXP(double skillXP) {this.skillXP = skillXP;}
     public void setScore(float score) {this.score = score;}
+    public void setHookMsg(List<String> hookMsg) {this.hookMsg = hookMsg;}
+    public void setHookCommands(List<String> hookCommands) {this.hookCommands = hookCommands;}
 }

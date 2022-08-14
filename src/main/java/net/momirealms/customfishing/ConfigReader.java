@@ -17,12 +17,6 @@
 
 package net.momirealms.customfishing;
 
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
-import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
-import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
-import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
-import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.kyori.adventure.bossbar.BossBar;
 import net.momirealms.customfishing.competition.CompetitionConfig;
 import net.momirealms.customfishing.competition.Goal;
@@ -30,13 +24,10 @@ import net.momirealms.customfishing.competition.bossbar.BossBarConfig;
 import net.momirealms.customfishing.competition.reward.CommandImpl;
 import net.momirealms.customfishing.competition.reward.MessageImpl;
 import net.momirealms.customfishing.competition.reward.Reward;
-import net.momirealms.customfishing.helper.Log;
+import net.momirealms.customfishing.hook.Placeholders;
+import net.momirealms.customfishing.hook.skill.*;
 import net.momirealms.customfishing.titlebar.Difficulty;
 import net.momirealms.customfishing.titlebar.Layout;
-import net.momirealms.customfishing.hook.skill.Aurelium;
-import net.momirealms.customfishing.hook.skill.MMOCore;
-import net.momirealms.customfishing.hook.skill.SkillXP;
-import net.momirealms.customfishing.hook.skill.mcMMO;
 import net.momirealms.customfishing.item.Bait;
 import net.momirealms.customfishing.item.Loot;
 import net.momirealms.customfishing.item.Rod;
@@ -53,7 +44,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class ConfigReader{
@@ -69,6 +59,7 @@ public class ConfigReader{
     public static HashMap<String, Layout> LAYOUT = new HashMap<>();
     public static HashMap<String, CompetitionConfig> Competitions = new HashMap<>();
     public static HashMap<String, CompetitionConfig> CompetitionsCommand = new HashMap<>();
+
 
     public static YamlConfiguration getConfig(String configName) {
         File file = new File(CustomFishing.instance.getDataFolder(), configName);
@@ -106,14 +97,9 @@ public class ConfigReader{
         public static int fishFinderCoolDown;
         public static double timeMultiply;
         public static SkillXP skillXP;
+        public static int version;
 
         public static void loadConfig() {
-
-            try {
-                YamlDocument.create(new File(CustomFishing.instance.getDataFolder(), "config.yml"), CustomFishing.instance.getResource("config.yml"), GeneralSettings.DEFAULT, LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
-            }catch (IOException e){
-                Log.warn(e.getMessage());
-            }
 
             CustomFishing.instance.saveDefaultConfig();
             CustomFishing.instance.reloadConfig();
@@ -142,8 +128,6 @@ public class ConfigReader{
                 if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null){
                     AdventureManager.consoleMessage("<red>[CustomFishing] Failed to initialize PlaceholderAPI!</red>");
                     papi = false;
-                }else {
-                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>PlaceholderAPI <color:#E1FFFF>Hooked!");
                 }
             }
 
@@ -154,7 +138,7 @@ public class ConfigReader{
                     CustomFishing.instance.getLogger().warning("Failed to initialize mcMMO!");
                 }else {
                     skillXP = new mcMMO();
-                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>mcMMO <color:#FFEBCD>Hooked!");
+                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>mcMMO <color:#E1FFFF>Hooked!");
                 }
             }
             if(config.getBoolean("config.integrations.AureliumSkills",false)){
@@ -162,7 +146,7 @@ public class ConfigReader{
                     CustomFishing.instance.getLogger().warning("Failed to initialize AureliumSkills!");
                 }else {
                     skillXP = new Aurelium();
-                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>AureliumSkills <color:#FFEBCD>Hooked!");
+                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>AureliumSkills <color:#E1FFFF>Hooked!");
                 }
             }
             if(config.getBoolean("config.integrations.MMOCore",false)){
@@ -170,7 +154,15 @@ public class ConfigReader{
                     CustomFishing.instance.getLogger().warning("Failed to initialize MMOCore!");
                 }else {
                     skillXP = new MMOCore();
-                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>MMOCore <color:#FFEBCD>Hooked!");
+                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>MMOCore <color:#E1FFFF>Hooked!");
+                }
+            }
+            if(config.getBoolean("config.integrations.EcoSkills",false)){
+                if(Bukkit.getPluginManager().getPlugin("EcoSkills") == null){
+                    CustomFishing.instance.getLogger().warning("Failed to initialize EcoSkills!");
+                }else {
+                    skillXP = new EcoSkill();
+                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>EcoSkills <color:#E1FFFF>Hooked!");
                 }
             }
 
@@ -190,6 +182,7 @@ public class ConfigReader{
             needOpenWater = config.getBoolean("config.need-open-water");
             needSpecialRod = config.getBoolean("config.need-special-rod");
 
+            version = config.getInt("config-version");
             fishFinderCoolDown = config.getInt("config.fishfinder-cooldown");
             timeMultiply = config.getDouble("config.time-multiply");
             lang = config.getString("config.lang","cn");
@@ -366,9 +359,13 @@ public class ConfigReader{
             loot.setScore((float) config.getDouble("items." + key + ".score",0));
 
             if (config.contains("items." + key + ".action.message"))
-                loot.setMsg(config.getString("items." + key + ".action.message"));
+                loot.setMsg(config.getStringList("items." + key + ".action.message"));
             if (config.contains("items." + key + ".action.command"))
                 loot.setCommands(config.getStringList("items." + key + ".action.command"));
+            if (config.contains("items." + key + ".action-hook.message"))
+                loot.setHookMsg(config.getStringList("items." + key + ".action-hook.message"));
+            if (config.contains("items." + key + ".action-hook.command"))
+                loot.setHookCommands(config.getStringList("items." + key + ".action-hook.command"));
             if (config.contains("items." + key + ".action.exp"))
                 loot.setExp(config.getInt("items." + key + ".action.exp"));
             if (config.contains("items." + key + ".layout"))
@@ -486,9 +483,13 @@ public class ConfigReader{
                 if (config.contains("mobs." + key + ".level"))
                     loot.setMmLevel(config.getInt("mobs." + key + ".level", 0));
                 if (config.contains("mobs." + key + ".action.message"))
-                    loot.setMsg(config.getString("mobs." + key + ".action.message"));
+                    loot.setMsg(config.getStringList("mobs." + key + ".action.message"));
                 if (config.contains("mobs." + key + ".action.command"))
                     loot.setCommands(config.getStringList("mobs." + key + ".action.command"));
+                if (config.contains("mobs." + key + ".action-hook.message"))
+                    loot.setHookMsg(config.getStringList("mobs." + key + ".action-hook.message"));
+                if (config.contains("mobs." + key + ".action-hook.command"))
+                    loot.setHookCommands(config.getStringList("mobs." + key + ".action-hook.command"));
                 if (config.contains("mobs." + key + ".action.exp"))
                     loot.setExp(config.getInt("mobs." + key + ".action.exp"));
                 if (config.contains("mobs." + key + ".skill-xp"))
@@ -789,6 +790,15 @@ public class ConfigReader{
             }
             if (config.contains(key + ".broadcast.end")){
                 competitionConfig.setEndMessage(config.getStringList(key + ".broadcast.end"));
+            }
+            if (config.contains(key + ".command.join")){
+                competitionConfig.setJoinCommand(config.getStringList(key + ".command.join"));
+            }
+            if (config.contains(key + ".command.start")){
+                competitionConfig.setStartCommand(config.getStringList(key + ".command.start"));
+            }
+            if (config.contains(key + ".command.end")){
+                competitionConfig.setEndCommand(config.getStringList(key + ".command.end"));
             }
             if (config.contains(key + ".min-players")){
                 competitionConfig.setMinPlayers(config.getInt(key + ".min-players"));

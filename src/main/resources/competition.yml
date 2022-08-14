@@ -16,8 +16,19 @@ example:
     enable: true
     color: YELLOW
     overlay: PROGRESS
+    #https://docs.adventure.kyori.net/minimessage/format.html
     text: '<gray>Time Left: <gold>{time}s <gray>Rank: <gold>{rank} <gray>Time Left: <gold>{minute}m{second}s <gray>Points: <gold>{point}'
     refresh-rate: 10
+
+  command:
+    start:
+      - 'say competition started!'
+    end:
+      - 'say competition ended!'
+    # When player join the competition
+    # You can execute some commands on that player
+    join:
+      - 'money give {player} 10'
 
   broadcast:
     start:

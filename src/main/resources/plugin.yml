@@ -10,6 +10,7 @@ softdepend:
   - mcMMO
   - AureliumSkills
   - MMOCore
+  - EcoSkills
 commands:
   customfishing:
     usage: /customfishing

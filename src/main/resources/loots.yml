@@ -30,6 +30,12 @@ items:
       command:
         - 'say 玩家 {player} 在 {world}, {x},{y},{z} 钓到了一条 {loot}!'
       exp: 10
+    # Action to be triggered when fish is hooked
+    action-hook:
+      message:
+        - 'The fish is hooked！'
+      command:
+        - 'effect give {player} minecraft:slowness 30 10'
     # The weight(relative chance) of getting this fish 
     weight: 10
     # Optional

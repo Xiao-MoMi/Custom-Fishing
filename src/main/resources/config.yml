@@ -1,5 +1,5 @@
 # don't change
-config-version: 1
+config-version: 2
 
 config:
   #en/es/cn
@@ -12,21 +12,23 @@ config:
     mcMMO: false
     MMOCore: false
     AureliumSkills: false
+    EcoSkills: false
 
   season:
     enable: false
     # Season Papi
     papi: '%customcrops_season%'
 
-  # If there's no custom fish in this place
-  # Should players get vanilla loots?
-  vanilla-loot-when-no-custom-fish: false
-
   # The same to vanilla
   need-open-water: true
 
   # Players must use rods with CustomFishing's NBT Tags
   need-special-rod: false
+
+  # If there's no custom fish in this place or players don't have a special rod
+  # Should players get loots in vanilla way?
+  # This should be compatible with other fishing plugin's loot system
+  vanilla-loot-when-no-custom-fish: false
 
   # Cool down time of fish finder
   fishfinder-cooldown: 3000
