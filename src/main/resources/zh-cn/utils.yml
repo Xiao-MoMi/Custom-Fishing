@@ -1,8 +1,0 @@
-utils:
-  fishfinder:
-    material: compass
-    display:
-      name: '找鱼器'
-      lore:
-        - '右键查看这个地方能钓到什么鱼吧!'
-    custom-model-data: 1

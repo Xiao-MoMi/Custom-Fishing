@@ -154,6 +154,9 @@ public class TabComplete implements TabCompleter {
                         }
                         return arrayList;
                     }
+                    if (args[2].equalsIgnoreCase("get")){
+                        return Arrays.asList("1","16","64");
+                    }
                 }else if (args[1].equalsIgnoreCase("util")){
                     if (args[2].equalsIgnoreCase("give")){
                         List<String> arrayList = new ArrayList<>();
@@ -162,6 +165,9 @@ public class TabComplete implements TabCompleter {
                                 arrayList.add(cmd);
                         }
                         return arrayList;
+                    }
+                    if (args[2].equalsIgnoreCase("get")){
+                        return Arrays.asList("1","16","64");
                     }
                 }else if (args[1].equalsIgnoreCase("rod")){
                     if (args[2].equalsIgnoreCase("give")){
@@ -172,6 +178,9 @@ public class TabComplete implements TabCompleter {
                         }
                         return arrayList;
                     }
+                    if (args[2].equalsIgnoreCase("get")){
+                        return Arrays.asList("1","16","64");
+                    }
                 }
                 else if (args[1].equalsIgnoreCase("bait")){
                     if (args[2].equalsIgnoreCase("give")){
@@ -181,6 +190,31 @@ public class TabComplete implements TabCompleter {
                                 arrayList.add(cmd);
                         }
                         return arrayList;
+                    }
+                    if (args[2].equalsIgnoreCase("get")){
+                        return Arrays.asList("1","16","64");
+                    }
+                }
+            }
+        }
+        if (args.length == 6){
+            if (args[0].equalsIgnoreCase("items")){
+                if (args[1].equalsIgnoreCase("loot")){
+                    if (args[2].equalsIgnoreCase("give")){
+                        return Arrays.asList("1","16","64");
+                    }
+                }else if (args[1].equalsIgnoreCase("util")){
+                    if (args[2].equalsIgnoreCase("give")){
+                        return Arrays.asList("1","16","64");
+                    }
+                }else if (args[1].equalsIgnoreCase("rod")){
+                    if (args[2].equalsIgnoreCase("give")){
+                        return List.of("1");
+                    }
+                }
+                else if (args[1].equalsIgnoreCase("bait")){
+                    if (args[2].equalsIgnoreCase("give")){
+                        return Arrays.asList("1","16","64");
                     }
                 }
             }

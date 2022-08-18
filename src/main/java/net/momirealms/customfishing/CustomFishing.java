@@ -76,7 +76,7 @@ public final class CustomFishing extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new PapiReload(), this);
         }
         ConfigReader.tryEnableJedis();
-        if (ConfigReader.Config.version != 2){
+        if (!Objects.equals(ConfigReader.Config.version, "3")){
             UpdateConfig.update();
         }
         AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>Plugin Enabled!");

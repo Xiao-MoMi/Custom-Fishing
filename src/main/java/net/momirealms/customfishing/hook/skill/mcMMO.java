@@ -24,6 +24,6 @@ public class mcMMO implements SkillXP{
 
     @Override
     public void addXp(Player player, double amount) {
-        ExperienceAPI.addXP(player, "Fishing", (int) amount, "UNKNOWN");
+        ExperienceAPI.addRawXP(player, "FISHING", (float) amount, "UNKNOWN");
     }
 }

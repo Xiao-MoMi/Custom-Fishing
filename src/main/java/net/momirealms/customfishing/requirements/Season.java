@@ -19,6 +19,8 @@ package net.momirealms.customfishing.requirements;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.momirealms.customfishing.ConfigReader;
+import net.momirealms.customfishing.hook.CustomCropsSeason;
+import net.momirealms.customfishing.hook.RealisticSeason;
 import org.bukkit.ChatColor;
 
 import java.util.List;
@@ -31,7 +33,14 @@ public record Season(List<String> seasons) implements Requirement {
 
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
-        String currentSeason = ChatColor.stripColor(PlaceholderAPI.setPlaceholders(fishingCondition.getPlayer(), ConfigReader.Config.season_papi));
+        String currentSeason;
+        if (ConfigReader.Config.rsSeason){
+            currentSeason = RealisticSeason.getSeason(fishingCondition.getLocation().getWorld());
+        }else if(ConfigReader.Config.ccSeason){
+            currentSeason = CustomCropsSeason.getSeason(fishingCondition.getLocation().getWorld());
+        }else {
+            currentSeason = ChatColor.stripColor(PlaceholderAPI.setPlaceholders(fishingCondition.getPlayer(), ConfigReader.Config.season_papi));
+        }
         for (String season : seasons) {
             if (season.equalsIgnoreCase(currentSeason)) {
                 return true;

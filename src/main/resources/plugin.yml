@@ -11,6 +11,8 @@ softdepend:
   - AureliumSkills
   - MMOCore
   - EcoSkills
+  - RealisticSeasons
+  - CustomCrops
 commands:
   customfishing:
     usage: /customfishing

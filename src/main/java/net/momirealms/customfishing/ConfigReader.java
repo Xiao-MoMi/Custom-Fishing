@@ -18,6 +18,7 @@
 package net.momirealms.customfishing;
 
 import net.kyori.adventure.bossbar.BossBar;
+import net.momirealms.customcrops.helper.Log;
 import net.momirealms.customfishing.competition.CompetitionConfig;
 import net.momirealms.customfishing.competition.Goal;
 import net.momirealms.customfishing.competition.bossbar.BossBarConfig;
@@ -92,12 +93,15 @@ public class ConfigReader{
         public static boolean needSpecialRod;
         public static boolean competition;
         public static boolean convertMMOItems;
+        public static boolean loseDurability;
+        public static boolean rsSeason;
+        public static boolean ccSeason;
         public static String season_papi;
         public static String lang;
         public static int fishFinderCoolDown;
         public static double timeMultiply;
         public static SkillXP skillXP;
-        public static int version;
+        public static String version;
 
         public static void loadConfig() {
 
@@ -169,20 +173,38 @@ public class ConfigReader{
             season = config.getBoolean("config.season.enable");
             if (!papi && season) {
                 season = false;
-            }
-
-            if (season) {
-                season_papi = config.getString("config.season.papi");
             }else {
-                season_papi = null;
+                season_papi = config.getString("config.season.papi");
             }
 
-            vanillaDrop = config.getBoolean("config.vanilla-loot-when-no-custom-fish");
-            convertMMOItems = config.getBoolean("config.convert-MMOITEMS");
-            needOpenWater = config.getBoolean("config.need-open-water");
-            needSpecialRod = config.getBoolean("config.need-special-rod");
+            rsSeason = false;
+            if (config.getBoolean("config.integrations.RealisticSeasons",false)){
+                if (Bukkit.getPluginManager().getPlugin("RealisticSeasons") == null) Log.warn("Failed to initialize RealisticSeasons!");
+                else {
+                    rsSeason = true;
+                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>RealisticSeasons <color:#E1FFFF>Hooked!");
+                }
+            }
+            ccSeason = false;
+            if (config.getBoolean("config.integrations.CustomCrops",false)){
+                if (Bukkit.getPluginManager().getPlugin("CustomCrops") == null) Log.warn("Failed to initialize CustomCrops!");
+                else {
+                    ccSeason = true;
+                    AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>CustomCrops <color:#E1FFFF>Hooked!");
+                }
+            }
 
-            version = config.getInt("config-version");
+            if (rsSeason || ccSeason){
+                season = true;
+            }
+
+            vanillaDrop = config.getBoolean("config.vanilla-loot-when-no-custom-fish", true);
+            convertMMOItems = config.getBoolean("config.convert-MMOITEMS", false);
+            needOpenWater = config.getBoolean("config.need-open-water", false);
+            needSpecialRod = config.getBoolean("config.need-special-rod", false);
+            loseDurability = config.getBoolean("config.rod-lose-durability", true);
+
+            version = config.getString("config-version");
             fishFinderCoolDown = config.getInt("config.fishfinder-cooldown");
             timeMultiply = config.getDouble("config.time-multiply");
             lang = config.getString("config.lang","cn");
