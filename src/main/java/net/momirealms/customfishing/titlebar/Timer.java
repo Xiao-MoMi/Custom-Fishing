@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.titlebar;
 
 import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.object.Difficulty;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 

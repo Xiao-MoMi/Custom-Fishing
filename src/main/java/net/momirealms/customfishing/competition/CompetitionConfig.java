@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.competition;
 
 import net.momirealms.customfishing.competition.bossbar.BossBarConfig;
-import net.momirealms.customfishing.competition.reward.Reward;
+import net.momirealms.customfishing.object.action.ActionB;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +35,7 @@ public class CompetitionConfig {
     private Goal goal;
     private BossBarConfig bossBarConfig;
     private final boolean enableBossBar;
-    private HashMap<String, List<Reward>> rewards;
+    private HashMap<String, List<ActionB>> rewards;
 
     public CompetitionConfig(boolean enableBossBar){this.enableBossBar = enableBossBar;}
 
@@ -48,7 +48,7 @@ public class CompetitionConfig {
     public void setEndCommand(List<String> endCommand) {this.endCommand = endCommand;}
     public void setJoinCommand(List<String> joinCommand) {this.joinCommand = joinCommand;}
     public void setMinPlayers(int minPlayers) {this.minPlayers = minPlayers;}
-    public HashMap<String, List<Reward>> getRewards() {return rewards;}
+    public HashMap<String, List<ActionB>> getRewards() {return rewards;}
 
     public Goal getGoal() {return goal;}
     public int getMinPlayers() {return minPlayers;}
@@ -57,7 +57,7 @@ public class CompetitionConfig {
     public boolean isEnableBossBar() {return enableBossBar;}
     public List<String> getEndMessage() {return endMessage;}
     public List<String> getStartMessage() {return startMessage;}
-    public void setRewards(HashMap<String, List<Reward>> rewards) {this.rewards = rewards;}
+    public void setRewards(HashMap<String, List<ActionB>> rewards) {this.rewards = rewards;}
     public List<String> getEndCommand() {return endCommand;}
     public List<String> getJoinCommand() {return joinCommand;}
     public List<String> getStartCommand() {return startCommand;}

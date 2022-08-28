@@ -1,0 +1,184 @@
+rainbow_fish:
+
+  # Enable
+  enable: false
+
+  # Nick is what to show in fish finder
+  nick: 'Example Fish'
+  # Should it be displayed in fish finder?
+  show-in-fishfinder: false
+  # The weight(relative chance) of getting this fish
+  weight: 10
+  # Optional
+  group: normal
+  # The score to get in competition
+  score: 10
+  # Specify the bar. If not specified, it will be random
+  layout:
+    - bar1
+  # Difficulty
+  # '1' represents the pointer moves every 1 tick
+  # '7' represents the pointer moves 7 pixels each time
+  difficulty: 1-7
+  # How long can a player fish on each bite（ms）
+  time: 5000
+
+  # Basic elements of an item
+  # You can use MiniMessage format in name & lore
+  # legacy color code '&' is supported but not recommended
+  # https://docs.adventure.kyori.net/minimessage/format.html
+  material: COD
+  display:
+    name: '<rainbow>✖Example Rainbow Fish✖</rainbow>'
+    lore:
+      - '<gray>This is a <font:uniform>rainbow fish!'
+  custom-model-data: 1
+
+  # Custom NBT tags
+  # If you are not sure about the NBT tag. You can use command '/customfishing export xxx' and get it in 'CustomFishing/export' folder
+  # (Int) (Byte) (String) (Float) (String) (Double) (Short) (Long) (UUID) (Boolean) (IntArray) (ByteArray)
+  nbt:
+    itemsadder:
+      namespace: '(String) momirealms'
+      id: '(String) rainbow_fish'
+    SomeNBT:
+      NBTS:
+        byte: '(Byte) 127'
+        float: '(Float) 3.14159'
+    Price: '(Double) 10'
+
+  # Available events: success/failure/hook
+  # Available actions: message/command/exp/mending/skill-xp
+  action:
+    success:
+      message:
+        - 'You got a {loot} lol！'
+      command:
+        - 'say Success command example!'
+      # Exp directly go to player's level
+      exp: 10
+      # Exp that would apply to mending
+      mending: 5
+      # Fishing Skill xp (requires skill plugin hook)
+      #skill-xp: 100
+    failure:
+      message:
+        - 'The fish escaped！'
+      command:
+        - 'say Failure command example!'
+    hook:
+      message:
+        - 'The fish is hooked！'
+      command:
+        - 'say Hook command example'
+
+  # Enchantments on the item
+  enchantments:
+    minecraft:sharpness: 1
+    minecraft:flame: 1
+
+  # Random Durability (only available on damageable items)
+  random-durability: false
+
+  # Random Enchantments
+  # Higher level enchantment should be below the lower ones
+  random-enchantments:
+    enchantment_1:
+      enchant: minecraft:sharpness
+      chance: 0.3
+      level: 1
+    enchantment_2:
+      enchant: minecraft:sharpness
+      chance: 0.2
+      level: 2
+    enchantment_3:
+      enchant: minecraft:sharpness
+      chance: 0.1
+      level: 3
+    enchantment_4:
+      enchant: minecraft:flame
+      chance: 0.5
+      level: 1
+    enchantment_5:
+      enchant: minecraft:unbreaking
+      chance: 0.2
+      level: 1
+    enchantment_6:
+      enchant: minecraft:unbreaking
+      chance: 0.2
+      level: 2
+
+  # - HIDE_ATTRIBUTES
+  # - HIDE_DESTROYS
+  # - HIDE_DYE
+  # - HIDE_PLACED_ON
+  # - HIDE_UNBREAKABLE
+  # - HIDE_POTION_EFFECTS
+  item_flags:
+    - HIDE_ENCHANTS
+
+  # Optional
+  requirements:
+
+    #Biome
+    biome:
+      - minecraft:plains
+      - minecraft:taiga
+
+    #Y coordinate
+    ypos:
+      - 50~100
+      - 150~200
+
+    #World weather
+    weather:
+      - rain
+      - clear
+      - thunder
+
+    #Player permission
+    permission: 'customfishing.rainbowfish'
+
+    #Specified world
+    world:
+      - world
+
+    #Game Time Range
+    time:
+      - 0~12000
+
+    #Requires skill plugin
+    skill-level: 10
+
+    #Requires WorldGuard
+    region:
+      - fishingpool
+
+    #Requires Season Plugin
+    season:
+      - Spring
+      - Autumn
+
+    #Requires PlaceholderAPI
+    #Create complex condition as you want
+    # "||" means one of the conditions is true, it would be true
+    # "&&" means all the conditions must be true to be true
+    papi-condition:
+      '||':
+        condition_1:
+          type: '=='
+          papi: '%player_world%'
+          value: world
+        condition_2:
+          type: '=='
+          papi: '%player_world%'
+          value: Island
+        '&&':
+          condition_1:
+            type: '>='
+            papi: '%player_health%'
+            value: 5
+          condition_2:
+            type: '<'
+            papi: '%player_health%'
+            value: 15

@@ -24,5 +24,7 @@ messages:
   force-competition-failure: '此比赛不存在!'
   force-competition-end: '已强制结束当前正在进行的比赛!'
   force-competition-cancel: '已强制取消当前正在进行的比赛!'
+  hook-other-entity: '你的鱼钩被其他生物钩走了!'
+  no-rod: '你必须使用特殊鱼竿才能获得战利品!'
   no-player: '无'
   no-score: '无'

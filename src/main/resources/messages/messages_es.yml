@@ -24,5 +24,7 @@ messages:
   force-competition-failure: '¡Este concurso no existe!'
   force-competition-end: '¡Obligado a terminar el partido en curso!'
   force-competition-cancel: '¡Cancelación forzosa del partido en curso!'
+  hook-other-entity: 'The bobber is hooked on another entity!'
+  no-rod: 'You have to obtain a special rod to get special loots!'
   no-player: 'Ningún jugador'
   no-score: 'Sin puntuación'

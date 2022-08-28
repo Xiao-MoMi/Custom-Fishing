@@ -1,0 +1,42 @@
+wooden_rod:
+  display:
+    name: 'Ordinary wooden fishing rod'
+    lore:
+      - 'Its just an ordinary fishing rod'
+  # The same to baits.yml
+  modifier:
+    difficulty: 1
+nature_fishing_cane:
+  display:
+    name: 'Nature Fishing Cane'
+  custom-model-data: 2
+  modifier:
+    weight-PM:
+      silver: 5
+
+silver_fishing_rod:
+  display:
+    name: 'Silver Fishing Rod'
+  custom-model-data: 3
+  modifier:
+    weight-PM:
+      silver: 20
+      gold: -10
+
+golden_fishing_rod:
+  display:
+    name: 'Golden Fishing Rod'
+  custom-model-data: 4
+  modifier:
+    weight-PM:
+      silver: -20
+      gold: 20
+
+star_fishing_rod:
+  display:
+    name: 'Star Fishing Rod'
+  custom-model-data: 5
+  modifier:
+    weight-PM:
+      silver: 20
+      gold: 10

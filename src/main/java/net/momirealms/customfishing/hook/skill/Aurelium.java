@@ -31,4 +31,9 @@ public class Aurelium implements SkillXP{
     public void addXp(Player player, double amount) {
         leveler.addXp(player, skill, amount);
     }
+
+    @Override
+    public int getLevel(Player player) {
+        return AureliumAPI.getSkillLevel(player, skill);
+    }
 }

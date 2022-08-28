@@ -4,7 +4,7 @@ bar1:
   subtitle:
     # <font:Namespace:Font>
     # It's not recommended to use minecraft:default
-    # If you insists on that, use <font:minecraft:default>
+    # If you insist on doing that, use <font:minecraft:default>
     start: '<font:customfishing:default>'
     bar: '뀄'
     pointer_offset: '뀂'

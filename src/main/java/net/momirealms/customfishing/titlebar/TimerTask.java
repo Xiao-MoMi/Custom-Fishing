@@ -17,11 +17,11 @@
 
 package net.momirealms.customfishing.titlebar;
 
-import net.momirealms.customfishing.utils.AdventureManager;
+import net.momirealms.customfishing.object.Layout;
+import net.momirealms.customfishing.utils.AdventureUtil;
 import net.momirealms.customfishing.ConfigReader;
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.titlebar.Difficulty;
-import net.momirealms.customfishing.titlebar.Layout;
+import net.momirealms.customfishing.object.Difficulty;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -30,7 +30,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import static net.momirealms.customfishing.listener.PlayerListener.fishingPlayers;
+import static net.momirealms.customfishing.listener.FishListener.fishingPlayers;
 
 public class TimerTask extends BukkitRunnable {
 
@@ -41,7 +41,7 @@ public class TimerTask extends BukkitRunnable {
     private int internalTimer;
     private final int size;
     private boolean face;
-    private BukkitScheduler bukkitScheduler;
+    private final BukkitScheduler bukkitScheduler;
 
     private final String start;
     private final String bar;
@@ -83,6 +83,7 @@ public class TimerTask extends BukkitRunnable {
         }
         //移除超时玩家
         if (System.currentTimeMillis() > fishingPlayers.get(player).getFishingTime()){
+            AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.escape);
             fishingPlayers.remove(player);
             bukkitScheduler.cancelTask(taskID);
             return;
@@ -118,7 +119,7 @@ public class TimerTask extends BukkitRunnable {
             }
         }
         stringBuilder.append(end);
-        AdventureManager.playerTitle(player, title, stringBuilder.toString(),0,300,0);
+        AdventureUtil.playerTitle(player, title, stringBuilder.toString(),0,300,0);
         //移除切换物品的玩家
         PlayerInventory playerInventory = player.getInventory();
         if (playerInventory.getItemInMainHand().getType() != Material.FISHING_ROD && playerInventory.getItemInOffHand().getType() != Material.FISHING_ROD){

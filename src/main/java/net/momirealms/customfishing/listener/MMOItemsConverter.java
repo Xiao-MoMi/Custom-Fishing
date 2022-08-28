@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -52,7 +53,7 @@ public class MMOItemsConverter implements Listener {
             if(mainHand.getType() == Material.FISHING_ROD){
                 NBTItem nbtItem = new NBTItem(mainHand);
                 if (nbtItem.getCompound("CustomFishing") == null) {
-                    if (nbtItem.getString("MMOITEMS_ITEM_ID") != null){
+                    if (!nbtItem.getString("MMOITEMS_ITEM_ID").equals("")){
                         NBTCompound nbtCompound = nbtItem.addCompound("CustomFishing");
                         nbtCompound.setString("type","rod");
                         nbtCompound.setString("id",nbtItem.getString("MMOITEMS_ITEM_ID"));
@@ -65,7 +66,7 @@ public class MMOItemsConverter implements Listener {
             if(offHand.getType() == Material.FISHING_ROD){
                 NBTItem nbtItem = new NBTItem(offHand);
                 if (nbtItem.getCompound("CustomFishing") == null) {
-                    if (nbtItem.getString("MMOITEMS_ITEM_ID") != null){
+                    if (!nbtItem.getString("MMOITEMS_ITEM_ID").equals("")){
                         NBTCompound nbtCompound = nbtItem.addCompound("CustomFishing");
                         nbtCompound.setString("type", "rod");
                         nbtCompound.setString("id", nbtItem.getString("MMOITEMS_ITEM_ID"));
@@ -74,5 +75,10 @@ public class MMOItemsConverter implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event){
+        coolDown.remove(event.getPlayer());
     }
 }

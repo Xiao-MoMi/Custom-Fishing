@@ -19,7 +19,7 @@ package net.momirealms.customfishing.competition.bossbar;
 
 import net.momirealms.customfishing.ConfigReader;
 import net.momirealms.customfishing.competition.CompetitionSchedule;
-import net.momirealms.customfishing.utils.AdventureManager;
+import net.momirealms.customfishing.utils.AdventureUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,7 +41,7 @@ public class BossBarManager implements Listener {
                 BossBarTimer timerTask = new BossBarTimer(player, CompetitionSchedule.competition.getBossBarConfig());
                 cache.put(player, timerTask);
             }else {
-                AdventureManager.playerMessage(player, ConfigReader.Message.competitionOn);
+                AdventureUtil.playerMessage(player, ConfigReader.Message.competitionOn);
             }
         }
     }

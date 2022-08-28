@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.requirements;
 
-import net.momirealms.customfishing.utils.AdventureManager;
+import net.momirealms.customfishing.utils.AdventureUtil;
 import org.bukkit.World;
 
 import java.util.List;
@@ -47,7 +47,6 @@ public record Weather(List<String> weathers) implements Requirement {
             }
             return false;
         }
-        AdventureManager.consoleMessage("<red>[CustomFishing] 这条消息不应该出现,玩家钓鱼时所处的世界并不存在!</red>");
         return false;
     }
 }

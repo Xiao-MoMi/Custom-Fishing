@@ -37,7 +37,7 @@ public class CompetitionSchedule {
     }
 
     public static boolean startCompetition(String competitionName){
-        CompetitionConfig competitionConfig = ConfigReader.CompetitionsCommand.get(competitionName);
+        CompetitionConfig competitionConfig = ConfigReader.CompetitionsC.get(competitionName);
         if (competitionConfig == null) return false;
         if (competition != null && competition.isGoingOn()){
             competition.end();
@@ -73,7 +73,7 @@ public class CompetitionSchedule {
         BukkitTask checkTimeTask = new BukkitRunnable(){
             public void run(){
                 if (isANewMinute()){
-                    CompetitionConfig competitionConfig = ConfigReader.Competitions.get(getCurrentTime());
+                    CompetitionConfig competitionConfig = ConfigReader.CompetitionsT.get(getCurrentTime());
                     if (competitionConfig != null){
                         startCompetition(competitionConfig);
                     }

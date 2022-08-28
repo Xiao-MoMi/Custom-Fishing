@@ -10,13 +10,15 @@ example:
 
   duration: 300  #seconds
 
+  # Min players to begin the competition
   min-players: 2
 
+  # Competition information (it will only be shown to participants)
   bossbar:
     enable: true
     color: YELLOW
     overlay: PROGRESS
-    #https://docs.adventure.kyori.net/minimessage/format.html
+    # https://docs.adventure.kyori.net/minimessage/format.html
     text: '<gray>Time Left: <gold>{time}s <gray>Rank: <gold>{rank} <gray>Time Left: <gold>{minute}m{second}s <gray>Points: <gold>{point}'
     refresh-rate: 10
 
@@ -25,8 +27,6 @@ example:
       - 'say competition started!'
     end:
       - 'say competition ended!'
-    # When player join the competition
-    # You can execute some commands on that player
     join:
       - 'money give {player} 10'
 
@@ -51,6 +51,7 @@ example:
       - ''
       - '<blue>----------------------------------------'
 
+  # You can customize unlimited ranks' rewards by adding 4,5,6...
   prize:
     1:
       commands:

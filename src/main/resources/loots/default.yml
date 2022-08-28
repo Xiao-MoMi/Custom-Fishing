@@ -1,0 +1,462 @@
+rubbish:
+  material: paper
+  show-in-fishfinder: false
+  display:
+    name: 'Garbage'
+  weight: 50
+  time: 100000
+  difficulty: 1-1
+  custom-model-data: 640
+
+Pufferfish:
+  material: pufferfish
+  display:
+    name: 'Pufferfish'
+  weight: 50
+  time: 100000
+  difficulty: 1-5
+  requirements:
+    weather:
+      - clear
+
+cod:
+  material: cod
+  display:
+    name: 'Cod'
+  weight: 50
+  time: 100000
+  difficulty: 1-5
+  requirements:
+    weather:
+      - clear
+
+salmon:
+  material: salmon
+  display:
+    name: 'Salmon'
+  weight: 50
+  time: 100000
+  difficulty: 1-5
+  requirements:
+    weather:
+      - clear
+
+tropical_fish:
+  material: tropical_fish
+  display:
+    name: 'Tropical Fish'
+  weight: 50
+  time: 100000
+  difficulty: 1-5
+  requirements:
+    weather:
+      - clear
+    biome:
+      - minecraft:jungle
+      - minecraft:bamboo_jungle
+
+tuna:
+  material: paper
+  display:
+    name: 'Tuna Fish'
+  weight: 50
+  time: 100000
+  difficulty: 1-1
+  custom-model-data: 641
+
+tuna_fish_silver_star:
+  material: paper
+  display:
+    name: 'Tuna Fish Silver Star'
+  weight: 50
+  time: 100000
+  difficulty: 1-1
+  group: silver
+  custom-model-data: 666
+
+tuna_fish_golden_star:
+  material: paper
+  display:
+    name: 'Tuna Fish Golden Star'
+  weight: 50
+  time: 100000
+  difficulty: 1-1
+  group: gold
+  custom-model-data: 667
+
+pike:
+  material: paper
+  display:
+    name: 'Pike Fish'
+  weight: 50
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 642
+
+pike_fish_silver_star:
+  material: paper
+  display:
+    name: 'Pike Fish Silver Star'
+  weight: 50
+  time: 100000
+  difficulty: 1-2
+  group: silver
+  custom-model-data: 664
+
+pike_fish_golden_star:
+  material: paper
+  display:
+    name: 'Pike Fish Golden Star'
+  weight: 50
+  time: 100000
+  difficulty: 1-2
+  group: gold
+  custom-model-data: 665
+
+golden:
+  material: paper
+  display:
+    name: 'Golden Fish'
+  weight: 50
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 643
+
+golden_fish_silver_star:
+  material: paper
+  display:
+    name: 'Golden Fish Silver Star'
+  weight: 50
+  time: 100000
+  difficulty: 1-2
+  group: silver
+  custom-model-data: 658
+
+golden_fish_golden_star:
+  material: paper
+  display:
+    name: 'Golden Fish Golden Star'
+  weight: 50
+  time: 100000
+  group: gold
+  difficulty: 1-2
+  custom-model-data: 659
+
+perch_fish:
+  material: paper
+  display:
+    name: 'Perch Fish'
+  weight: 50
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 644
+
+perch_fish_silver_star:
+  material: paper
+  display:
+    name: 'Perch Fish Silver Star'
+  weight: 50
+  time: 100000
+  group: silver
+  difficulty: 1-2
+  custom-model-data: 660
+
+perch_fish_golden_star:
+  material: paper
+  display:
+    name: 'Perch Fish Golden Star'
+  weight: 50
+  group: gold
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 661
+
+mullet_fish:
+  material: paper
+  display:
+    name: 'Mullet Fish'
+  weight: 50
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 645
+
+mullet_fish_silver_star:
+  material: paper
+  display:
+    name: 'Mullet Fish Silver Star'
+  weight: 50
+  group: silver
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 662
+
+mullet_fish_golden_star:
+  material: paper
+  display:
+    name: 'Mullet Fish Golden Star'
+  weight: 50
+  time: 100000
+  group: gold
+  difficulty: 1-2
+  custom-model-data: 663
+
+sardine_fish:
+  material: paper
+  display:
+    name: 'Sardine Fish'
+  weight: 50
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 668
+
+sardine_fish_silver_star:
+  material: paper
+  display:
+    name: 'Sardine Fish Silver Star'
+  weight: 50
+  time: 100000
+  group: silver
+  difficulty: 1-2
+  custom-model-data: 669
+
+sardine_fish_golden_star:
+  material: paper
+  display:
+    name: 'Sardine Fish Golden Star'
+  weight: 50
+  time: 100000
+  group: gold
+  difficulty: 1-2
+  custom-model-data: 670
+
+carp_fish:
+  material: paper
+  display:
+    name: 'Carp Fish'
+  weight: 50
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 671
+
+carp_fish_silver_star:
+  material: paper
+  display:
+    name: 'Carp Fish Silver Star'
+  weight: 50
+  time: 100000
+  group: silver
+  difficulty: 1-2
+  custom-model-data: 672
+
+carp_fish_golden_star:
+  material: paper
+  display:
+    name: 'Carp Fish Golden Star'
+  weight: 50
+  time: 100000
+  group: gold
+  difficulty: 1-2
+  custom-model-data: 673
+
+cat_fish:
+  material: paper
+  display:
+    name: 'Cat Fish'
+  weight: 50
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 674
+
+cat_fish_silver_star:
+  material: paper
+  display:
+    name: 'Cat Fish Silver Star'
+  weight: 50
+  group: silver
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 675
+
+cat_fish_golden_star:
+  material: paper
+  display:
+    name: 'Cat Fish Golden Star'
+  weight: 50
+  time: 100000
+  group: gold
+  difficulty: 1-2
+  custom-model-data: 676
+
+octopus_fish:
+  material: paper
+  display:
+    name: 'Octopus Fish'
+  weight: 50
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 677
+
+octopus_fish_silver_star:
+  material: paper
+  display:
+    name: 'Octopus Fish Silver Star'
+  weight: 50
+  group: silver
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 678
+
+octopus_fish_golden_star:
+  material: paper
+  display:
+    name: 'Octopus Fish Golden Star'
+  weight: 50
+  time: 100000
+  group: gold
+  difficulty: 1-2
+  custom-model-data: 679
+
+sunfish_fish:
+  material: paper
+  display:
+    name: 'Sunfish Fish'
+  weight: 50
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 680
+
+sunfish_fish_silver_star:
+  material: paper
+  display:
+    name: 'Sunfish Fish Silver Star'
+  weight: 50
+  group: silver
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 681
+
+sunfish_fish_golden_star:
+  material: paper
+  display:
+    name: 'Sunfish Fish Golden Star'
+  weight: 50
+  time: 100000
+  group: gold
+  difficulty: 1-2
+  custom-model-data: 682
+
+red_spnapper_fish:
+  material: paper
+  display:
+    name: 'Red Snapper Fish'
+  weight: 50
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 683
+
+red_spnapper_fish_silver_star:
+  material: paper
+  display:
+    name: 'Red Snapper Fish Silver Star'
+  weight: 50
+  time: 100000
+  group: silver
+  difficulty: 1-2
+  custom-model-data: 684
+
+red_spnapper_fish_golden_star:
+  material: paper
+  display:
+    name: 'Red Snapper Golden Star'
+  weight: 50
+  time: 100000
+  group: gold
+  difficulty: 1-2
+  custom-model-data: 685
+
+salmon_void_fish:
+  material: paper
+  display:
+    name: 'Salmon Void Fish'
+  weight: 50
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 686
+
+salmon_void_fish_silver_star:
+  material: paper
+  display:
+    name: 'Salmon Void Fish Silver Star'
+  weight: 50
+  time: 100000
+  group: silver
+  difficulty: 1-2
+  custom-model-data: 687
+
+salmon_void_fish_golden_star:
+  material: paper
+  display:
+    name: 'Salmon Void Fish Golden Star'
+  weight: 50
+  time: 100000
+  group: gold
+  difficulty: 1-2
+  custom-model-data: 688
+
+woodskip_fish:
+  material: paper
+  display:
+    name: 'Woodskip Fish'
+  weight: 50
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 689
+
+woodskip_fish_silver_star:
+  material: paper
+  display:
+    name: 'Woodskip Fish Silver Star'
+  weight: 50
+  group: silver
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 690
+
+woodskip_fish_golden_star:
+  material: paper
+  display:
+    name: 'Woodskip Fish Golden Star'
+  weight: 50
+  group: gold
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 691
+
+sturgeon_fish:
+  material: paper
+  display:
+    name: 'Sturgeon Fish'
+  weight: 50
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 692
+
+sturgeon_fish_silver_star:
+  material: paper
+  display:
+    name: 'Sturgeon Fish Silver Star'
+  weight: 50
+  group: silver
+  time: 100000
+  difficulty: 1-2
+  custom-model-data: 693
+
+sturgeon_fish_golden_star:
+  material: paper
+  display:
+    name: 'Sturgeon Fish Golden Star'
+  weight: 50
+  time: 100000
+  group: gold
+  difficulty: 1-2
+  custom-model-data: 694

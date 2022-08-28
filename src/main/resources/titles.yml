@@ -5,10 +5,10 @@ titles:
     title:
       - '<red>Real food!</red>'
       - '<red>Failure!</red>'
+      - '<red>Try next time!</red>'
     subtitle:
-      - 'The fish have escaped'
-      - 'Lets try again next time'
-    #tick
+      - 'The fish escaped'
+      - 'Pay more attention on it!'
     fade:
       in: 10
       stay: 30
@@ -16,7 +16,8 @@ titles:
   success:
     title:
       - '<green>Success!</green>'
-      - '<green>Beautiful!</green>'
+      - '<green>GG!</green>'
+      - '<green>Good Job!</green>'
     subtitle:
       - 'You have captured a {loot}'
       - 'Hi Harm Hi {loot} Here we go!'

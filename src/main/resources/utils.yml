@@ -1,9 +1,0 @@
-utils:
-  fishfinder:
-    material: PAPER
-    display:
-      name: '<gray>Fish Finder'
-      lore:
-        - '<white>Right click to see what fish can be caught in this place!'
-    nbt:
-      - CustomModelData: '(Int) 647'

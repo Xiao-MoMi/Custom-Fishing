@@ -21,4 +21,5 @@ import org.bukkit.entity.Player;
 
 public interface SkillXP {
     void addXp(Player player, double amount);
+    int getLevel(Player player);
 }

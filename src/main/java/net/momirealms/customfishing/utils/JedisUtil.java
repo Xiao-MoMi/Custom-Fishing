@@ -29,7 +29,6 @@ import java.util.List;
 public class JedisUtil {
 
     private static JedisPool jedisPool;
-    public static boolean useRedis;
 
     public static Jedis getJedis(){
         return jedisPool.getResource();
@@ -49,7 +48,7 @@ public class JedisUtil {
 
         jedisPool = new JedisPool(jedisPoolConfig, configuration.getString("redis.host","localhost"), configuration.getInt("redis.port",6379));
 
-        AdventureManager.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] <color:#E1FFFF>Redis Enabled!");
+        AdventureUtil.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] <color:#E1FFFF>Redis Enabled!");
 
         List<Jedis> minIdleJedisList = new ArrayList<>(jedisPoolConfig.getMinIdle());
         for (int i = 0; i < jedisPoolConfig.getMinIdle(); i++) {

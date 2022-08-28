@@ -1,5 +1,5 @@
 # don't change
-config-version: '3'
+config-version: '5'
 
 config:
   #en/es/cn
@@ -8,42 +8,40 @@ config:
   integrations:
     # fishing region hook
     WorldGuard: false
-
     # mobs hook
     MythicMobs: false
-
     # Papi hook
     PlaceholderAPI: true
-
     # Skill xp hook
     mcMMO: false
     MMOCore: false
     AureliumSkills: false
     EcoSkills: false
-
     # Season hook
     CustomCrops: false
     RealisticSeasons: false
 
-  season:
-    # Season Papi
-    # If you enabled CustomCrops or RealisticSeasons season hook, this option will not take effect
-    enable: false
-    papi: '%customcrops_season%'
+  # Should the fishing bar only show after player reel in
+  # Otherwise the bar would show immediately the bobber is hooked
+  double-reel-in: true
 
-  # The same to vanilla
+  # This is useful for vanilla loots
+  # This should be compatible with other fishing plugin's loot system
+  vanilla-loot:
+    enable: true
+    # Bar and ratio only works when 'double-reel-in' is true
+    bar: true
+    ratio: 0.3
+
+  # The same to vanilla (refer to the wiki)
+  # https://technical-minecraft.fandom.com/wiki/Fishing
   need-open-water: true
 
-  # Players must use rods with CustomFishing's NBT Tags
+  # Players must use rods with CustomFishing's NBT Tags to get loots in CustomFishing
   need-special-rod: false
 
   # does rod lose durability when player successfully fish
   rod-lose-durability: true
-
-  # If there's no custom fish in this place or players don't have a special rod
-  # Should players get loots in vanilla way?
-  # This should be compatible with other fishing plugin's loot system
-  vanilla-loot-when-no-custom-fish: true
 
   # Cool down time of fish finder
   fishfinder-cooldown: 3000
@@ -51,8 +49,13 @@ config:
   # Change the time bobber needs to be hooked
   time-multiply: 2
 
-  # Enable Competition(Requires a restart)
+  # Competition (Requires a restart)
   fishing-competition: true
 
   # Convert MMOItems' rod into CustomFishing's rod (Requires a restart)
-  convert-MMOITEMS: true
+  # keep the same key name both in MMOItems and CustomFishing and rods can extend the bonus of those in CustomFishing
+  convert-MMOITEMS: false
+
+  # Prevent other players to pick up your fishing loot (Requires a restart)
+  # This is useful for players to fish in a public area
+  prevent-other-players-pick-up-loot: false

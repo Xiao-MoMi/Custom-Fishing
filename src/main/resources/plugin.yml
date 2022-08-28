@@ -1,7 +1,7 @@
 name: CustomFishing
 version: '${version}'
 main: net.momirealms.customfishing.CustomFishing
-api-version: 1.16
+api-version: 1.17
 authors: [ XiaoMoMi ]
 softdepend:
   - MythicMobs
@@ -11,8 +11,12 @@ softdepend:
   - AureliumSkills
   - MMOCore
   - EcoSkills
+  - EcoEnchants
   - RealisticSeasons
   - CustomCrops
+  - ItemsAdder
+  - Oraxen
+  - MMOItems
 commands:
   customfishing:
     usage: /customfishing

@@ -24,9 +24,8 @@ import net.momirealms.customfishing.competition.bossbar.BossBarManager;
 import net.momirealms.customfishing.competition.ranking.Ranking;
 import net.momirealms.customfishing.competition.ranking.RankingImpl;
 import net.momirealms.customfishing.competition.ranking.RedisRankingImpl;
-import net.momirealms.customfishing.competition.reward.Reward;
-import net.momirealms.customfishing.utils.AdventureManager;
-import net.momirealms.customfishing.utils.JedisUtil;
+import net.momirealms.customfishing.object.action.ActionB;
+import net.momirealms.customfishing.utils.AdventureUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -50,7 +49,7 @@ public class Competition {
     private final List<String> endCommand;
     private final List<String> startCommand;
     private final List<String> joinCommand;
-    private final HashMap<String, List<Reward>> rewardsMap;
+    private final HashMap<String, List<ActionB>> rewardsMap;
 
     public static long remainingTime;
     public static float progress;
@@ -79,7 +78,7 @@ public class Competition {
         Collection<? extends Player> playerCollections = Bukkit.getOnlinePlayers();
         if (playerCollections.size() >= minPlayers || forceStart) {
             status = true;
-            if (JedisUtil.useRedis){
+            if (ConfigReader.useRedis){
                 ranking = new RedisRankingImpl();
             }else {
                 ranking = new RankingImpl();
@@ -88,7 +87,7 @@ public class Competition {
             if (startMessage != null){
                 playerCollections.forEach(player -> {
                     startMessage.forEach(message -> {
-                        AdventureManager.playerMessage(player, message);
+                        AdventureUtil.playerMessage(player, message);
                     });
                 });
             }
@@ -100,7 +99,7 @@ public class Competition {
         }
         else {
             playerCollections.forEach(player -> {
-                AdventureManager.playerMessage(player, ConfigReader.Message.notEnoughPlayers);
+                AdventureUtil.playerMessage(player, ConfigReader.Message.notEnoughPlayers);
             });
         }
     }
@@ -155,7 +154,7 @@ public class Competition {
             });
             Bukkit.getOnlinePlayers().forEach(player -> {
                 newMessage.forEach(message -> {
-                    AdventureManager.playerMessage(player, message);
+                    AdventureUtil.playerMessage(player, message);
                 });
             });
         }
@@ -178,20 +177,20 @@ public class Competition {
                     String playerName = iterator.next();
                     Player player = Bukkit.getPlayer(playerName);
                     if (player != null){
-                        for (Reward reward : rewardsMap.get(String.valueOf(i))) {
-                            reward.giveReward(player);
+                        for (ActionB action : rewardsMap.get(String.valueOf(i))) {
+                            action.doOn(player);
                         }
                     }
                     i++;
                 }
                 else {
-                    List<Reward> rewards = rewardsMap.get("participation");
-                    if (rewards != null) {
+                    List<ActionB> actions = rewardsMap.get("participation");
+                    if (actions != null) {
                         iterator.forEachRemaining(playerName -> {
                             Player player = Bukkit.getPlayer(playerName);
                             if (player != null){
-                                for (Reward reward : rewards) {
-                                    reward.giveReward(player);
+                                for (ActionB action : actions) {
+                                    action.doOn(player);
                                 }
                             }
                         });
@@ -213,7 +212,6 @@ public class Competition {
 
     public void refreshRanking(String player, float score) {
         if (this.goal != Goal.TOTAL_SCORE) score = 1.0f;
-        if (score == 0) return;
         ranking.refreshData(player, score);
     }
 

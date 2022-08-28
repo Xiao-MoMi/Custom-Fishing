@@ -1,3 +1,5 @@
+# Redis server
+# Sync competition scores between servers without lag!
 redis:
   enable: false
   host: localhost
