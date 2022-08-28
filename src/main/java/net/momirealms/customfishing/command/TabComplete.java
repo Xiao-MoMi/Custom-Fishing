@@ -228,17 +228,24 @@ public class TabComplete implements TabCompleter {
     }
 
     private List<String> loots(){
-        return new ArrayList<>(ConfigReader.LootItem.keySet());
+        ArrayList<String> loots = new ArrayList<>();
+        loots.addAll(ConfigReader.LootItem.keySet());
+        loots.addAll(ConfigReader.OTHERS.keySet());
+        return loots;
     }
+
     private List<String> utils(){
         return new ArrayList<>(ConfigReader.UtilItem.keySet());
     }
+
     private List<String> rods() {
         return new ArrayList<>(ConfigReader.RodItem.keySet());
     }
+
     private List<String> baits() {
         return new ArrayList<>(ConfigReader.BaitItem.keySet());
     }
+
     private List<String> competitions() {
         return new ArrayList<>(ConfigReader.CompetitionsC.keySet());
     }

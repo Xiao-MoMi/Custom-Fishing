@@ -88,17 +88,54 @@ public class FishListener implements Listener {
 
                 PlayerInventory inventory = player.getInventory();
 
+                boolean noSpecialRod = true;
                 boolean noRod = true;
                 double timeModifier = 1;
                 double doubleLoot = 0;
                 double scoreModifier = 1;
                 int difficultyModifier = 0;
 
-                HashMap<String, Integer> pm1 = new HashMap<>();
-                HashMap<String, Double> mq1 = new HashMap<>();
+                HashMap<String, Integer> pm = new HashMap<>();
+                HashMap<String, Double> mq = new HashMap<>();
 
                 ItemStack mainHandItem = inventory.getItemInMainHand();
-                if (mainHandItem.getType() != Material.AIR){
+
+                Material material1 = mainHandItem.getType();
+                if (material1 != Material.AIR){
+                    if (material1 == Material.FISHING_ROD) {
+                        noRod = false;
+                        Map<Enchantment, Integer> enchantments = mainHandItem.getEnchantments();
+                        Object[] enchantmentsArray = enchantments.keySet().toArray();
+                        for (Object o : enchantmentsArray) {
+                            Enchantment enchantment = (Enchantment) o;
+                            HashMap<Integer, Bonus> enchantMap = ConfigReader.ENCHANTS.get(enchantment.getKey().toString());
+                            if (enchantMap != null) {
+                                Bonus enchantBonus = enchantMap.get(enchantments.get(enchantment));
+                                if (enchantBonus != null) {
+                                    HashMap<String, Integer> weightPM = enchantBonus.getWeightPM();
+                                    if (weightPM != null){
+                                        Object[] bonus = weightPM.keySet().toArray();
+                                        for (Object value : bonus) {
+                                            String group = (String) value;
+                                            pm.put(group, Optional.ofNullable(pm.get(group)).orElse(0) + weightPM.get(group));
+                                        }
+                                    }
+                                    HashMap<String, Integer> weightMQ = enchantBonus.getWeightPM();
+                                    if (weightMQ != null){
+                                        Object[] bonus = weightMQ.keySet().toArray();
+                                        for (Object value : bonus) {
+                                            String group = (String) value;
+                                            mq.put(group, Optional.ofNullable(mq.get(group)).orElse(0d) + weightMQ.get(group));
+                                        }
+                                    }
+                                    if (enchantBonus.getTime() != 0) timeModifier *= enchantBonus.getTime();
+                                    if (enchantBonus.getDoubleLoot() != 0) doubleLoot += enchantBonus.getDoubleLoot();
+                                    if (enchantBonus.getDifficulty() != 0) difficultyModifier += enchantBonus.getDifficulty();
+                                    if (enchantBonus.getScore() != 0) scoreModifier *= enchantBonus.getScore();
+                                }
+                            }
+                        }
+                    }
                     NBTItem nbtItem = new NBTItem(inventory.getItemInMainHand());
                     NBTCompound nbtCompound = nbtItem.getCompound("CustomFishing");
                     if (nbtCompound != null){
@@ -106,21 +143,49 @@ public class FishListener implements Listener {
                             String key = nbtCompound.getString("id");
                             Bonus rod = ConfigReader.ROD.get(key);
                             if (rod != null){
-                                pm1 = rod.getWeightPM();
-                                mq1 = rod.getWeightMQ();
+                                HashMap<String, Integer> weightPM = rod.getWeightPM();
+                                if (weightPM != null){
+                                    Object[] bonus = weightPM.keySet().toArray();
+                                    for (Object value : bonus) {
+                                        String group = (String) value;
+                                        pm.put(group, Optional.ofNullable(pm.get(group)).orElse(0) + weightPM.get(group));
+                                    }
+                                }
+                                HashMap<String, Integer> weightMQ = rod.getWeightPM();
+                                if (weightMQ != null){
+                                    Object[] bonus = weightMQ.keySet().toArray();
+                                    for (Object value : bonus) {
+                                        String group = (String) value;
+                                        mq.put(group, Optional.ofNullable(mq.get(group)).orElse(0d) + weightMQ.get(group));
+                                    }
+                                }
                                 if (rod.getTime() != 0) timeModifier *= rod.getTime();
                                 if (rod.getDoubleLoot() != 0) doubleLoot += rod.getDoubleLoot();
                                 if (rod.getDifficulty() != 0) difficultyModifier += rod.getDifficulty();
                                 if (rod.getScore() != 0) scoreModifier *= rod.getScore();
-                                noRod = false;
+                                noSpecialRod = false;
                             }
                         }
                         else if (nbtCompound.getString("type").equals("bait")){
                             String key = nbtCompound.getString("id");
                             Bonus bait = ConfigReader.BAIT.get(key);
                             if (bait != null){
-                                pm1 = bait.getWeightPM();
-                                mq1 = bait.getWeightMQ();
+                                HashMap<String, Integer> weightPM = bait.getWeightPM();
+                                if (weightPM != null){
+                                    Object[] bonus = weightPM.keySet().toArray();
+                                    for (Object value : bonus) {
+                                        String group = (String) value;
+                                        pm.put(group, Optional.ofNullable(pm.get(group)).orElse(0) + weightPM.get(group));
+                                    }
+                                }
+                                HashMap<String, Integer> weightMQ = bait.getWeightPM();
+                                if (weightMQ != null){
+                                    Object[] bonus = weightMQ.keySet().toArray();
+                                    for (Object value : bonus) {
+                                        String group = (String) value;
+                                        mq.put(group, Optional.ofNullable(mq.get(group)).orElse(0d) + weightMQ.get(group));
+                                    }
+                                }
                                 if (bait.getTime() != 0) timeModifier *= bait.getTime();
                                 if (bait.getDoubleLoot() != 0) doubleLoot += bait.getDoubleLoot();
                                 if (bait.getDifficulty() != 0) difficultyModifier += bait.getDifficulty();
@@ -131,11 +196,42 @@ public class FishListener implements Listener {
                     }
                 }
 
-                HashMap<String, Integer> pm2 = new HashMap<>();
-                HashMap<String, Double> mq2 = new HashMap<>();
-
                 ItemStack offHandItem = inventory.getItemInOffHand();
-                if (offHandItem.getType() != Material.AIR){
+                Material material2 = offHandItem.getType();
+                if (material2 != Material.AIR){
+                    if (noRod && material2 == Material.FISHING_ROD) {
+                        Map<Enchantment, Integer> enchantments = mainHandItem.getEnchantments();
+                        Object[] enchantmentsArray = enchantments.keySet().toArray();
+                        for (Object o : enchantmentsArray) {
+                            Enchantment enchantment = (Enchantment) o;
+                            HashMap<Integer, Bonus> enchantMap = ConfigReader.ENCHANTS.get(enchantment.getKey().toString());
+                            if (enchantMap != null) {
+                                Bonus enchantBonus = enchantMap.get(enchantments.get(enchantment));
+                                if (enchantBonus != null) {
+                                    HashMap<String, Integer> weightPM = enchantBonus.getWeightPM();
+                                    if (weightPM != null){
+                                        Object[] bonus = weightPM.keySet().toArray();
+                                        for (Object value : bonus) {
+                                            String group = (String) value;
+                                            pm.put(group, Optional.ofNullable(pm.get(group)).orElse(0) + weightPM.get(group));
+                                        }
+                                    }
+                                    HashMap<String, Integer> weightMQ = enchantBonus.getWeightPM();
+                                    if (weightMQ != null){
+                                        Object[] bonus = weightMQ.keySet().toArray();
+                                        for (Object value : bonus) {
+                                            String group = (String) value;
+                                            mq.put(group, Optional.ofNullable(mq.get(group)).orElse(0d) + weightMQ.get(group));
+                                        }
+                                    }
+                                    if (enchantBonus.getTime() != 0) timeModifier *= enchantBonus.getTime();
+                                    if (enchantBonus.getDoubleLoot() != 0) doubleLoot += enchantBonus.getDoubleLoot();
+                                    if (enchantBonus.getDifficulty() != 0) difficultyModifier += enchantBonus.getDifficulty();
+                                    if (enchantBonus.getScore() != 0) scoreModifier *= enchantBonus.getScore();
+                                }
+                            }
+                        }
+                    }
                     NBTItem offHand = new NBTItem(inventory.getItemInOffHand());
                     NBTCompound offHandCompound = offHand.getCompound("CustomFishing");
                     if (offHandCompound != null){
@@ -143,31 +239,60 @@ public class FishListener implements Listener {
                             String key = offHandCompound.getString("id");
                             Bonus bait = ConfigReader.BAIT.get(key);
                             if (bait != null){
-                                pm2 = bait.getWeightPM();
-                                mq2 = bait.getWeightMQ();
+                                HashMap<String, Integer> weightPM = bait.getWeightPM();
+                                if (weightPM != null){
+                                    Object[] bonus = weightPM.keySet().toArray();
+                                    for (Object value : bonus) {
+                                        String group = (String) value;
+                                        pm.put(group, Optional.ofNullable(pm.get(group)).orElse(0) + weightPM.get(group));
+                                    }
+                                }
+                                HashMap<String, Integer> weightMQ = bait.getWeightPM();
+                                if (weightMQ != null){
+                                    Object[] bonus = weightMQ.keySet().toArray();
+                                    for (Object value : bonus) {
+                                        String group = (String) value;
+                                        mq.put(group, Optional.ofNullable(mq.get(group)).orElse(0d) + weightMQ.get(group));
+                                    }
+                                }
                                 if (bait.getTime() != 0) timeModifier *= bait.getTime();
                                 if (bait.getDoubleLoot() != 0) doubleLoot += bait.getDoubleLoot();
                                 if (bait.getDifficulty() != 0) difficultyModifier += bait.getDifficulty();
                                 if (bait.getScore() != 0) scoreModifier *= bait.getScore();
                                 offHandItem.setAmount(offHandItem.getAmount() - 1);
                             }
-                        }else if (noRod && offHandCompound.getString("type").equals("rod")){
+                        }
+                        else if (noSpecialRod && offHandCompound.getString("type").equals("rod")){
                             String key = offHandCompound.getString("id");
                             Bonus rod = ConfigReader.ROD.get(key);
                             if (rod != null){
-                                pm2 = rod.getWeightPM();
-                                mq2 = rod.getWeightMQ();
+                                HashMap<String, Integer> weightPM = rod.getWeightPM();
+                                if (weightPM != null){
+                                    Object[] bonus = weightPM.keySet().toArray();
+                                    for (Object value : bonus) {
+                                        String group = (String) value;
+                                        pm.put(group, Optional.ofNullable(pm.get(group)).orElse(0) + weightPM.get(group));
+                                    }
+                                }
+                                HashMap<String, Integer> weightMQ = rod.getWeightPM();
+                                if (weightMQ != null){
+                                    Object[] bonus = weightMQ.keySet().toArray();
+                                    for (Object value : bonus) {
+                                        String group = (String) value;
+                                        mq.put(group, Optional.ofNullable(mq.get(group)).orElse(0d) + weightMQ.get(group));
+                                    }
+                                }
                                 if (rod.getTime() != 0) timeModifier *= rod.getTime();
                                 if (rod.getDoubleLoot() != 0) doubleLoot += rod.getDoubleLoot();
                                 if (rod.getDifficulty() != 0) difficultyModifier += rod.getDifficulty();
                                 if (rod.getScore() != 0) scoreModifier *= rod.getScore();
-                                noRod = false;
+                                noSpecialRod = false;
                             }
                         }
                     }
                 }
 
-                if (ConfigReader.Config.needSpecialRod && noRod){
+                if (ConfigReader.Config.needSpecialRod && noSpecialRod){
                     if (!ConfigReader.Config.vanillaLoot)
                         AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.noRod);
                     nextLoot.put(player, null);
@@ -192,23 +317,18 @@ public class FishListener implements Listener {
                 modifier.setWillDouble(doubleLoot > Math.random());
                 modifiers.put(player, modifier);
 
+
                 double[] weights = new double[possibleLoots.size()];
                 int index = 0;
                 for (Loot loot : possibleLoots){
                     double weight = loot.getWeight();
                     String group = loot.getGroup();
                     if (group != null){
-                        if (pm1 != null && pm1.get(group) != null){
-                            weight += pm1.get(group);
+                        if (pm.get(group) != null){
+                            weight += pm.get(group);
                         }
-                        if (pm2!= null && pm2.get(group) != null){
-                            weight += pm2.get(group);
-                        }
-                        if (mq1 != null && mq1.get(group) != null){
-                            weight *= mq1.get(group);
-                        }
-                        if (mq2 != null && mq2.get(group) != null){
-                            weight *= mq2.get(group);
+                        if (mq.get(group) != null){
+                            weight *= mq.get(group);
                         }
                     }
                     if (weight <= 0) continue;
@@ -545,28 +665,16 @@ public class FishListener implements Listener {
                                 Entity item2 = location.getWorld().dropItem(location, itemStack);
                                 item2.setVelocity(vector);
                             }
-                            String[] titleSplit = StringUtils.split(ConfigReader.Title.success_title.get((int) (ConfigReader.Title.success_title.size()*Math.random()))
-                                    .replace("{player}", player.getName()), "{loot}");
-                            String[] subtitleSplit = StringUtils.split(ConfigReader.Title.success_title.get((int) (ConfigReader.Title.success_title.size()*Math.random()))
-                                    .replace("{player}", player.getName()), "{loot}");
-                            Component titleComponent;
-                            Component subComponent;
-                            if (titleSplit.length == 1){
-                                titleComponent = MiniMessage.miniMessage().deserialize(titleSplit[0]);
-                            }
-                            else {
-                                titleComponent = MiniMessage.miniMessage().deserialize(titleSplit[0]).append(itemStack.displayName()).append(MiniMessage.miniMessage().deserialize(titleSplit[1]));
-                            }
-                            if (subtitleSplit.length == 1){
-                                subComponent = MiniMessage.miniMessage().deserialize(subtitleSplit[0]);
-                            }
-                            else {
-                                subComponent = MiniMessage.miniMessage().deserialize(subtitleSplit[0]).append(itemStack.displayName()).append(MiniMessage.miniMessage().deserialize(subtitleSplit[1]));
-                            }
+
+                            String title = ConfigReader.Title.success_title.get((int) (ConfigReader.Title.success_title.size()*Math.random()));
+                            Component titleComponent = getTitleComponent(itemStack, title);
+                            String subTitle = ConfigReader.Title.success_subtitle.get((int) (ConfigReader.Title.success_subtitle.size()*Math.random()));
+                            Component subtitleComponent = getTitleComponent(itemStack, subTitle);
+
                             AdventureUtil.playerTitle(
                                     player,
                                     titleComponent,
-                                    subComponent,
+                                    subtitleComponent,
                                     ConfigReader.Title.success_in,
                                     ConfigReader.Title.success_stay,
                                     ConfigReader.Title.success_out
@@ -660,10 +768,10 @@ public class FishListener implements Listener {
     private void dropLoot(Player player, Location location, DroppedItem droppedItem) {
         ItemStack itemStack;
         switch (droppedItem.getType()){
-            case "ia" -> itemStack = ItemsAdderItem.getItemStack(droppedItem.getId());
-            case "oraxen" -> itemStack = OraxenItem.getItemStack(droppedItem.getId());
-            case "mm" -> itemStack = MythicItems.getItemStack(droppedItem.getId());
-            case "mmoitems" -> itemStack = MMOItemsHook.getItemStack(droppedItem.getId());
+            case "ia" -> itemStack = ItemsAdderItem.getItemStack(droppedItem.getId()).clone();
+            case "oraxen" -> itemStack = OraxenItem.getItemStack(droppedItem.getId()).clone();
+            case "mm" -> itemStack = MythicItems.getItemStack(droppedItem.getId()).clone();
+            case "mmoitems" -> itemStack = MMOItemsHook.getItemStack(droppedItem.getId()).clone();
             default -> itemStack = ConfigReader.LootItem.get(droppedItem.getKey()).clone();
         }
 

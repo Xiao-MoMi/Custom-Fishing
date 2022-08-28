@@ -56,6 +56,8 @@ public class ConfigReader{
     public static HashMap<String, Bonus> BAIT = new HashMap<>();
     public static HashMap<String, ItemStack> BaitItem = new HashMap<>();
     public static HashMap<String, Layout> LAYOUT = new HashMap<>();
+    public static HashMap<String, String> OTHERS = new HashMap<>();
+    public static HashMap<String, HashMap<Integer, Bonus>> ENCHANTS = new HashMap<>();
     public static HashMap<String, CompetitionConfig> CompetitionsT = new HashMap<>();
     public static HashMap<String, CompetitionConfig> CompetitionsC = new HashMap<>();
     public static boolean useRedis;
@@ -77,6 +79,7 @@ public class ConfigReader{
         loadUtil();
         loadRod();
         loadBait();
+        loadEnchants();
         loadCompetitions();
     }
 
@@ -290,6 +293,7 @@ public class ConfigReader{
 
         LOOT.clear();
         LootItem.clear();
+        OTHERS.clear();
         CustomPapi.allPapi.clear();
 
         File loot_file = new File(CustomFishing.instance.getDataFolder() + File.separator + "loots");
@@ -437,6 +441,7 @@ public class ConfigReader{
                             AdventureUtil.consoleMessage("<red>Unknown Item: " + key);
                             return;
                         }
+                        OTHERS.put(key, material);
                         LOOT.put(key, loot);
                     }
                     else {
@@ -478,7 +483,7 @@ public class ConfigReader{
                     }
                 });
             }
-            AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + LootItem.size() + " <gray>loots");
+            AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + LOOT.size() + " <gray>loots");
         }
 
         if (Config.mm){
@@ -492,6 +497,9 @@ public class ConfigReader{
             }
             File[] mobFiles = mob_file.listFiles();
             if (mobFiles != null) {
+
+                int size = LOOT.size();
+
                 for (File file : mobFiles) {
                     YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
                     Set<String> mobs = config.getKeys(false);
@@ -593,7 +601,7 @@ public class ConfigReader{
                         LOOT.put(key, loot);
                     });
                 }
-                AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + (LOOT.size() - LootItem.size()) + " <gray>mobs");
+                AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + (LOOT.size() - size) + " <gray>mobs");
             }
         }
     }
@@ -897,7 +905,7 @@ public class ConfigReader{
     public static void loadBars(){
         LAYOUT.clear();
         YamlConfiguration config = ConfigReader.getConfig("bars.yml");
-        Set<String> keys = Objects.requireNonNull(config.getConfigurationSection("")).getKeys(false);
+        Set<String> keys = config.getKeys(false);
         keys.forEach(key -> {
             int range = config.getInt(key + ".range");
             Set<String> rates = Objects.requireNonNull(config.getConfigurationSection(key + ".layout")).getKeys(false);
@@ -915,5 +923,44 @@ public class ConfigReader{
             layout.setOffset(config.getString(key + ".subtitle.offset","뀁"));
             LAYOUT.put(key, layout);
         });
+    }
+
+    public static void loadEnchants(){
+
+        ENCHANTS.clear();
+
+        YamlConfiguration config = ConfigReader.getConfig("enchant-bonus.yml");
+        Set<String> keys = config.getKeys(false);
+        keys.forEach(key -> {
+            HashMap<Integer, Bonus> levelBonus = new HashMap<>();
+            config.getConfigurationSection(key).getKeys(false).forEach(level -> {
+                Bonus bonus = new Bonus();
+                config.getConfigurationSection(key + "." + level).getKeys(false).forEach(modifier -> {
+                    switch (modifier) {
+                        case "weight-PM" -> {
+                            HashMap<String, Integer> pm = new HashMap<>();
+                            config.getConfigurationSection(key + "." + level + ".weight-PM").getValues(false).forEach((group, value) -> {
+                                pm.put(group, (Integer) value);
+                            });
+                            bonus.setWeightPM(pm);
+                        }
+                        case "weight-MQ" -> {
+                            HashMap<String, Double> mq = new HashMap<>();
+                            config.getConfigurationSection(key + "." + level + ".weight-MQ").getValues(false).forEach((group, value) -> {
+                                mq.put(group, Double.valueOf(String.valueOf(value)));
+                            });
+                            bonus.setWeightMQ(mq);
+                        }
+                        case "time" -> bonus.setTime(config.getDouble(key + "." + level + ".time"));
+                        case "difficulty" -> bonus.setDifficulty(config.getInt(key + "." + level + ".difficulty"));
+                        case "double-loot" -> bonus.setDoubleLoot(config.getDouble(key + "." + level + ".double-loot"));
+                        case "score" -> bonus.setScore(config.getDouble(key + "." + level + ".score"));
+                    }
+                });
+                levelBonus.put(Integer.parseInt(level), bonus);
+            });
+            ENCHANTS.put(key, levelBonus);
+        });
+        AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + ENCHANTS.size() + " <gray>enchants bonus");
     }
 }

@@ -21,6 +21,11 @@ import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.momirealms.customfishing.ConfigReader;
 import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.hook.ItemsAdderItem;
+import net.momirealms.customfishing.hook.MMOItemsHook;
+import net.momirealms.customfishing.hook.MythicItems;
+import net.momirealms.customfishing.hook.OraxenItem;
+import net.momirealms.customfishing.object.loot.DroppedItem;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -59,6 +64,18 @@ public class ItemUtil {
         if (itemStack == null) return;
         itemStack.setAmount(amount);
         player.getInventory().addItem(itemStack);
+    }
+
+    public static ItemStack getItemStackFromOtherPlugins(String key){
+        DroppedItem droppedItem = (DroppedItem) ConfigReader.LOOT.get(key);
+        ItemStack itemStack = null;
+        switch (droppedItem.getType()){
+            case "ia" -> itemStack = ItemsAdderItem.getItemStack(droppedItem.getId()).clone();
+            case "oraxen" -> itemStack = OraxenItem.getItemStack(droppedItem.getId()).clone();
+            case "mm" -> itemStack = MythicItems.getItemStack(droppedItem.getId()).clone();
+            case "mmoitems" -> itemStack = MMOItemsHook.getItemStack(droppedItem.getId()).clone();
+        }
+        return itemStack;
     }
 
     public static void saveToFile(ItemStack itemStack, String fileName){

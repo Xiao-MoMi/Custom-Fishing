@@ -9,7 +9,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import javax.print.DocFlavor;
 
 public class Execute implements CommandExecutor {
 
@@ -86,21 +89,37 @@ public class Execute implements CommandExecutor {
                     //检验参数长度 [0]items [1]loot [2]get [3]xxx [4](amount)
                     if (sender instanceof Player player){
                         //是否存在于缓存中
-                        if (!ConfigReader.LootItem.containsKey(args[3])){
+                        if (ConfigReader.LootItem.containsKey(args[3])){
+                            if (args.length == 4){
+                                ItemUtil.givePlayerLoot(player, args[3], 1);
+                                AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.getItem.replace("{Amount}", "1").replace("{Item}",args[3]));
+                            }else {
+                                if (Integer.parseInt(args[4]) < 1){
+                                    wrongAmount(sender);
+                                    return true;
+                                }
+                                ItemUtil.givePlayerLoot(player, args[3], Integer.parseInt(args[4]));
+                                AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.getItem.replace("{Amount}", args[4]).replace("{Item}",args[3]));
+                            }
+                        }else if (ConfigReader.OTHERS.containsKey(args[3])){
+                            if (args.length == 4){
+                                player.getInventory().addItem(ItemUtil.getItemStackFromOtherPlugins(args[3]));
+                                AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.getItem.replace("{Amount}", "1").replace("{Item}",args[3]));
+                            }else {
+                                if (Integer.parseInt(args[4]) < 1){
+                                    wrongAmount(sender);
+                                    return true;
+                                }
+                                ItemStack itemStack = ItemUtil.getItemStackFromOtherPlugins(args[3]);
+                                itemStack.setAmount(Integer.parseInt(args[4]));
+                                player.getInventory().addItem(itemStack);
+                                AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.getItem.replace("{Amount}", args[4]).replace("{Item}",args[3]));
+                            }
+                        }else {
                             noItem(sender);
                             return true;
                         }
-                        if (args.length == 4){
-                            ItemUtil.givePlayerLoot(player, args[3], 1);
-                            AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.getItem.replace("{Amount}", "1").replace("{Item}",args[3]));
-                        }else {
-                            if (Integer.parseInt(args[4]) < 1){
-                                wrongAmount(sender);
-                                return true;
-                            }
-                            ItemUtil.givePlayerLoot(player, args[3], Integer.parseInt(args[4]));
-                            AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.getItem.replace("{Amount}", args[4]).replace("{Item}",args[3]));
-                        }
+
                     }else {
                         AdventureUtil.consoleMessage(ConfigReader.Message.prefix + ConfigReader.Message.noConsole);
                     }
@@ -119,20 +138,39 @@ public class Execute implements CommandExecutor {
                         return true;
                     }
                     //是否存在于缓存中
-                    if (!ConfigReader.LootItem.containsKey(args[4])){
-                        noItem(sender);
-                        return true;
-                    }
-                    if (args.length == 5){
-                        ItemUtil.givePlayerLoot(player, args[4], 1);
-                        giveItem(sender, args[3], args[4], 1);
-                    }else {
-                        if (Integer.parseInt(args[5]) < 1){
-                            wrongAmount(sender);
+                    if (ConfigReader.LootItem.containsKey(args[4])){
+                        if (args.length == 5){
+                            ItemUtil.givePlayerLoot(player, args[4], 1);
+                            giveItem(sender, args[3], args[4], 1);
                             return true;
                         }
-                        ItemUtil.givePlayerLoot(player, args[4], Integer.parseInt(args[5]));
-                        giveItem(sender, args[3], args[4], Integer.parseInt(args[5]));
+                        else {
+                            if (Integer.parseInt(args[5]) < 1){
+                                wrongAmount(sender);
+                                return true;
+                            }
+                            ItemUtil.givePlayerLoot(player, args[4], Integer.parseInt(args[5]));
+                            giveItem(sender, args[3], args[4], Integer.parseInt(args[5]));
+                        }
+                    }else if (ConfigReader.OTHERS.containsKey(args[4])){
+                        if (args.length == 5){
+                            player.getInventory().addItem(ItemUtil.getItemStackFromOtherPlugins(args[4]));
+                            giveItem(sender, args[3], args[4], 1);
+                            return true;
+                        }
+                        else {
+                            if (Integer.parseInt(args[5]) < 1) {
+                                wrongAmount(sender);
+                                return true;
+                            }
+                            ItemStack itemStack = ItemUtil.getItemStackFromOtherPlugins(args[4]);
+                            itemStack.setAmount(Integer.parseInt(args[5]));
+                            player.getInventory().addItem(itemStack);
+                            giveItem(sender, args[3], args[4], Integer.parseInt(args[5]));
+                        }
+                    }else {
+                        noItem(sender);
+                        return true;
                     }
                     return true;
                 }
