@@ -24,11 +24,9 @@ import net.momirealms.customfishing.command.TabComplete;
 import net.momirealms.customfishing.competition.CompetitionSchedule;
 import net.momirealms.customfishing.competition.bossbar.BossBarManager;
 import net.momirealms.customfishing.helper.LibraryLoader;
+import net.momirealms.customfishing.hook.McMMOTreasure;
 import net.momirealms.customfishing.hook.Placeholders;
-import net.momirealms.customfishing.listener.MMOItemsConverter;
-import net.momirealms.customfishing.listener.PapiUnregister;
-import net.momirealms.customfishing.listener.PickUpListener;
-import net.momirealms.customfishing.listener.FishListener;
+import net.momirealms.customfishing.listener.*;
 import net.momirealms.customfishing.utils.AdventureUtil;
 import net.momirealms.customfishing.utils.ConfigUtil;
 import org.bukkit.Bukkit;
@@ -84,7 +82,7 @@ public final class CustomFishing extends JavaPlugin {
                 });
             }
             ConfigReader.tryEnableJedis();
-            if (!Objects.equals(ConfigReader.Config.version, "5")){
+            if (!Objects.equals(ConfigReader.Config.version, "6")){
                 ConfigUtil.update();
             }
             if (ConfigReader.Config.preventPick){

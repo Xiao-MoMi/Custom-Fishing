@@ -43,6 +43,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerFishEvent;
@@ -68,51 +69,104 @@ public class FishListener implements Listener {
     private final HashMap<Player, VanillaLoot> vanilla = new HashMap<>();
     public static ConcurrentHashMap<Player, FishingPlayer> fishingPlayers = new ConcurrentHashMap<>();
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onFishHighest(PlayerFishEvent event){
+        if (ConfigReader.Config.priority.equals("HIGHEST")){
+            onFish(event);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onFishNormal(PlayerFishEvent event){
+        if (ConfigReader.Config.priority.equals("NORMAL")){
+            onFish(event);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onFishLowest(PlayerFishEvent event){
+        if (ConfigReader.Config.priority.equals("LOWEST")){
+            onFish(event);
+        }
+    }
+
     public void onFish(PlayerFishEvent event){
 
         PlayerFishEvent.State state = event.getState();
         Player player = event.getPlayer();
 
-        if (state.equals(PlayerFishEvent.State.FISHING)){
+        switch (state){
 
-            long time = System.currentTimeMillis();
-            if (time - (coolDown.getOrDefault(player, time - 2000)) < 2000) {
-                return;
-            }
-            coolDown.put(player, time);
+            case FISHING ->{
 
-            hooks.put(player, event.getHook());
+                long time = System.currentTimeMillis();
+                if (time - (coolDown.getOrDefault(player, time - 2000)) < 2000) {
+                    return;
+                }
+                coolDown.put(player, time);
 
-            Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.instance, ()->{
+                hooks.put(player, event.getHook());
 
-                PlayerInventory inventory = player.getInventory();
+                Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.instance, ()->{
 
-                boolean noSpecialRod = true;
-                boolean noRod = true;
-                double timeModifier = 1;
-                double doubleLoot = 0;
-                double scoreModifier = 1;
-                int difficultyModifier = 0;
+                    PlayerInventory inventory = player.getInventory();
 
-                HashMap<String, Integer> pm = new HashMap<>();
-                HashMap<String, Double> mq = new HashMap<>();
+                    boolean noSpecialRod = true;
+                    boolean noRod = true;
+                    double timeModifier = 1;
+                    double doubleLoot = 0;
+                    double scoreModifier = 1;
+                    int difficultyModifier = 0;
 
-                ItemStack mainHandItem = inventory.getItemInMainHand();
+                    HashMap<String, Integer> pm = new HashMap<>();
+                    HashMap<String, Double> mq = new HashMap<>();
 
-                Material material1 = mainHandItem.getType();
-                if (material1 != Material.AIR){
-                    if (material1 == Material.FISHING_ROD) {
-                        noRod = false;
-                        Map<Enchantment, Integer> enchantments = mainHandItem.getEnchantments();
-                        Object[] enchantmentsArray = enchantments.keySet().toArray();
-                        for (Object o : enchantmentsArray) {
-                            Enchantment enchantment = (Enchantment) o;
-                            HashMap<Integer, Bonus> enchantMap = ConfigReader.ENCHANTS.get(enchantment.getKey().toString());
-                            if (enchantMap != null) {
-                                Bonus enchantBonus = enchantMap.get(enchantments.get(enchantment));
-                                if (enchantBonus != null) {
-                                    HashMap<String, Integer> weightPM = enchantBonus.getWeightPM();
+                    ItemStack mainHandItem = inventory.getItemInMainHand();
+
+                    Material material1 = mainHandItem.getType();
+                    if (material1 != Material.AIR){
+                        if (material1 == Material.FISHING_ROD) {
+                            noRod = false;
+                            Map<Enchantment, Integer> enchantments = mainHandItem.getEnchantments();
+                            Object[] enchantmentsArray = enchantments.keySet().toArray();
+                            for (Object o : enchantmentsArray) {
+                                Enchantment enchantment = (Enchantment) o;
+                                HashMap<Integer, Bonus> enchantMap = ConfigReader.ENCHANTS.get(enchantment.getKey().toString());
+                                if (enchantMap != null) {
+                                    Bonus enchantBonus = enchantMap.get(enchantments.get(enchantment));
+                                    if (enchantBonus != null) {
+                                        HashMap<String, Integer> weightPM = enchantBonus.getWeightPM();
+                                        if (weightPM != null){
+                                            Object[] bonus = weightPM.keySet().toArray();
+                                            for (Object value : bonus) {
+                                                String group = (String) value;
+                                                pm.put(group, Optional.ofNullable(pm.get(group)).orElse(0) + weightPM.get(group));
+                                            }
+                                        }
+                                        HashMap<String, Double> weightMQ = enchantBonus.getWeightMQ();
+                                        if (weightMQ != null){
+                                            Object[] bonus = weightMQ.keySet().toArray();
+                                            for (Object value : bonus) {
+                                                String group = (String) value;
+                                                mq.put(group, Optional.ofNullable(mq.get(group)).orElse(1d) + weightMQ.get(group));
+                                            }
+                                        }
+                                        if (enchantBonus.getTime() != 0) timeModifier *= enchantBonus.getTime();
+                                        if (enchantBonus.getDoubleLoot() != 0) doubleLoot += enchantBonus.getDoubleLoot();
+                                        if (enchantBonus.getDifficulty() != 0) difficultyModifier += enchantBonus.getDifficulty();
+                                        if (enchantBonus.getScore() != 0) scoreModifier *= enchantBonus.getScore();
+                                    }
+                                }
+                            }
+                        }
+                        NBTItem nbtItem = new NBTItem(inventory.getItemInMainHand());
+                        NBTCompound nbtCompound = nbtItem.getCompound("CustomFishing");
+                        if (nbtCompound != null){
+                            if (nbtCompound.getString("type").equals("rod")) {
+                                String key = nbtCompound.getString("id");
+                                Bonus rod = ConfigReader.ROD.get(key);
+                                if (rod != null){
+                                    HashMap<String, Integer> weightPM = rod.getWeightPM();
                                     if (weightPM != null){
                                         Object[] bonus = weightPM.keySet().toArray();
                                         for (Object value : bonus) {
@@ -120,95 +174,26 @@ public class FishListener implements Listener {
                                             pm.put(group, Optional.ofNullable(pm.get(group)).orElse(0) + weightPM.get(group));
                                         }
                                     }
-                                    HashMap<String, Integer> weightMQ = enchantBonus.getWeightPM();
+                                    HashMap<String, Double> weightMQ = rod.getWeightMQ();
                                     if (weightMQ != null){
                                         Object[] bonus = weightMQ.keySet().toArray();
                                         for (Object value : bonus) {
                                             String group = (String) value;
-                                            mq.put(group, Optional.ofNullable(mq.get(group)).orElse(0d) + weightMQ.get(group));
+                                            mq.put(group, Optional.ofNullable(mq.get(group)).orElse(1d) + weightMQ.get(group));
                                         }
                                     }
-                                    if (enchantBonus.getTime() != 0) timeModifier *= enchantBonus.getTime();
-                                    if (enchantBonus.getDoubleLoot() != 0) doubleLoot += enchantBonus.getDoubleLoot();
-                                    if (enchantBonus.getDifficulty() != 0) difficultyModifier += enchantBonus.getDifficulty();
-                                    if (enchantBonus.getScore() != 0) scoreModifier *= enchantBonus.getScore();
+                                    if (rod.getTime() != 0) timeModifier *= rod.getTime();
+                                    if (rod.getDoubleLoot() != 0) doubleLoot += rod.getDoubleLoot();
+                                    if (rod.getDifficulty() != 0) difficultyModifier += rod.getDifficulty();
+                                    if (rod.getScore() != 0) scoreModifier *= rod.getScore();
+                                    noSpecialRod = false;
                                 }
                             }
-                        }
-                    }
-                    NBTItem nbtItem = new NBTItem(inventory.getItemInMainHand());
-                    NBTCompound nbtCompound = nbtItem.getCompound("CustomFishing");
-                    if (nbtCompound != null){
-                        if (nbtCompound.getString("type").equals("rod")) {
-                            String key = nbtCompound.getString("id");
-                            Bonus rod = ConfigReader.ROD.get(key);
-                            if (rod != null){
-                                HashMap<String, Integer> weightPM = rod.getWeightPM();
-                                if (weightPM != null){
-                                    Object[] bonus = weightPM.keySet().toArray();
-                                    for (Object value : bonus) {
-                                        String group = (String) value;
-                                        pm.put(group, Optional.ofNullable(pm.get(group)).orElse(0) + weightPM.get(group));
-                                    }
-                                }
-                                HashMap<String, Integer> weightMQ = rod.getWeightPM();
-                                if (weightMQ != null){
-                                    Object[] bonus = weightMQ.keySet().toArray();
-                                    for (Object value : bonus) {
-                                        String group = (String) value;
-                                        mq.put(group, Optional.ofNullable(mq.get(group)).orElse(0d) + weightMQ.get(group));
-                                    }
-                                }
-                                if (rod.getTime() != 0) timeModifier *= rod.getTime();
-                                if (rod.getDoubleLoot() != 0) doubleLoot += rod.getDoubleLoot();
-                                if (rod.getDifficulty() != 0) difficultyModifier += rod.getDifficulty();
-                                if (rod.getScore() != 0) scoreModifier *= rod.getScore();
-                                noSpecialRod = false;
-                            }
-                        }
-                        else if (nbtCompound.getString("type").equals("bait")){
-                            String key = nbtCompound.getString("id");
-                            Bonus bait = ConfigReader.BAIT.get(key);
-                            if (bait != null){
-                                HashMap<String, Integer> weightPM = bait.getWeightPM();
-                                if (weightPM != null){
-                                    Object[] bonus = weightPM.keySet().toArray();
-                                    for (Object value : bonus) {
-                                        String group = (String) value;
-                                        pm.put(group, Optional.ofNullable(pm.get(group)).orElse(0) + weightPM.get(group));
-                                    }
-                                }
-                                HashMap<String, Integer> weightMQ = bait.getWeightPM();
-                                if (weightMQ != null){
-                                    Object[] bonus = weightMQ.keySet().toArray();
-                                    for (Object value : bonus) {
-                                        String group = (String) value;
-                                        mq.put(group, Optional.ofNullable(mq.get(group)).orElse(0d) + weightMQ.get(group));
-                                    }
-                                }
-                                if (bait.getTime() != 0) timeModifier *= bait.getTime();
-                                if (bait.getDoubleLoot() != 0) doubleLoot += bait.getDoubleLoot();
-                                if (bait.getDifficulty() != 0) difficultyModifier += bait.getDifficulty();
-                                if (bait.getScore() != 0) scoreModifier *= bait.getScore();
-                                mainHandItem.setAmount(mainHandItem.getAmount() - 1);
-                            }
-                        }
-                    }
-                }
-
-                ItemStack offHandItem = inventory.getItemInOffHand();
-                Material material2 = offHandItem.getType();
-                if (material2 != Material.AIR){
-                    if (noRod && material2 == Material.FISHING_ROD) {
-                        Map<Enchantment, Integer> enchantments = mainHandItem.getEnchantments();
-                        Object[] enchantmentsArray = enchantments.keySet().toArray();
-                        for (Object o : enchantmentsArray) {
-                            Enchantment enchantment = (Enchantment) o;
-                            HashMap<Integer, Bonus> enchantMap = ConfigReader.ENCHANTS.get(enchantment.getKey().toString());
-                            if (enchantMap != null) {
-                                Bonus enchantBonus = enchantMap.get(enchantments.get(enchantment));
-                                if (enchantBonus != null) {
-                                    HashMap<String, Integer> weightPM = enchantBonus.getWeightPM();
+                            else if (nbtCompound.getString("type").equals("bait")){
+                                String key = nbtCompound.getString("id");
+                                Bonus bait = ConfigReader.BAIT.get(key);
+                                if (bait != null){
+                                    HashMap<String, Integer> weightPM = bait.getWeightPM();
                                     if (weightPM != null){
                                         Object[] bonus = weightPM.keySet().toArray();
                                         for (Object value : bonus) {
@@ -216,243 +201,370 @@ public class FishListener implements Listener {
                                             pm.put(group, Optional.ofNullable(pm.get(group)).orElse(0) + weightPM.get(group));
                                         }
                                     }
-                                    HashMap<String, Integer> weightMQ = enchantBonus.getWeightPM();
+                                    HashMap<String, Double> weightMQ = bait.getWeightMQ();
                                     if (weightMQ != null){
                                         Object[] bonus = weightMQ.keySet().toArray();
                                         for (Object value : bonus) {
                                             String group = (String) value;
-                                            mq.put(group, Optional.ofNullable(mq.get(group)).orElse(0d) + weightMQ.get(group));
+                                            mq.put(group, Optional.ofNullable(mq.get(group)).orElse(1d) + weightMQ.get(group));
                                         }
                                     }
-                                    if (enchantBonus.getTime() != 0) timeModifier *= enchantBonus.getTime();
-                                    if (enchantBonus.getDoubleLoot() != 0) doubleLoot += enchantBonus.getDoubleLoot();
-                                    if (enchantBonus.getDifficulty() != 0) difficultyModifier += enchantBonus.getDifficulty();
-                                    if (enchantBonus.getScore() != 0) scoreModifier *= enchantBonus.getScore();
+                                    if (bait.getTime() != 0) timeModifier *= bait.getTime();
+                                    if (bait.getDoubleLoot() != 0) doubleLoot += bait.getDoubleLoot();
+                                    if (bait.getDifficulty() != 0) difficultyModifier += bait.getDifficulty();
+                                    if (bait.getScore() != 0) scoreModifier *= bait.getScore();
+                                    mainHandItem.setAmount(mainHandItem.getAmount() - 1);
                                 }
                             }
                         }
                     }
-                    NBTItem offHand = new NBTItem(inventory.getItemInOffHand());
-                    NBTCompound offHandCompound = offHand.getCompound("CustomFishing");
-                    if (offHandCompound != null){
-                        if (offHandCompound.getString("type").equals("bait")) {
-                            String key = offHandCompound.getString("id");
-                            Bonus bait = ConfigReader.BAIT.get(key);
-                            if (bait != null){
-                                HashMap<String, Integer> weightPM = bait.getWeightPM();
-                                if (weightPM != null){
-                                    Object[] bonus = weightPM.keySet().toArray();
-                                    for (Object value : bonus) {
-                                        String group = (String) value;
-                                        pm.put(group, Optional.ofNullable(pm.get(group)).orElse(0) + weightPM.get(group));
-                                    }
-                                }
-                                HashMap<String, Integer> weightMQ = bait.getWeightPM();
-                                if (weightMQ != null){
-                                    Object[] bonus = weightMQ.keySet().toArray();
-                                    for (Object value : bonus) {
-                                        String group = (String) value;
-                                        mq.put(group, Optional.ofNullable(mq.get(group)).orElse(0d) + weightMQ.get(group));
-                                    }
-                                }
-                                if (bait.getTime() != 0) timeModifier *= bait.getTime();
-                                if (bait.getDoubleLoot() != 0) doubleLoot += bait.getDoubleLoot();
-                                if (bait.getDifficulty() != 0) difficultyModifier += bait.getDifficulty();
-                                if (bait.getScore() != 0) scoreModifier *= bait.getScore();
-                                offHandItem.setAmount(offHandItem.getAmount() - 1);
-                            }
-                        }
-                        else if (noSpecialRod && offHandCompound.getString("type").equals("rod")){
-                            String key = offHandCompound.getString("id");
-                            Bonus rod = ConfigReader.ROD.get(key);
-                            if (rod != null){
-                                HashMap<String, Integer> weightPM = rod.getWeightPM();
-                                if (weightPM != null){
-                                    Object[] bonus = weightPM.keySet().toArray();
-                                    for (Object value : bonus) {
-                                        String group = (String) value;
-                                        pm.put(group, Optional.ofNullable(pm.get(group)).orElse(0) + weightPM.get(group));
-                                    }
-                                }
-                                HashMap<String, Integer> weightMQ = rod.getWeightPM();
-                                if (weightMQ != null){
-                                    Object[] bonus = weightMQ.keySet().toArray();
-                                    for (Object value : bonus) {
-                                        String group = (String) value;
-                                        mq.put(group, Optional.ofNullable(mq.get(group)).orElse(0d) + weightMQ.get(group));
-                                    }
-                                }
-                                if (rod.getTime() != 0) timeModifier *= rod.getTime();
-                                if (rod.getDoubleLoot() != 0) doubleLoot += rod.getDoubleLoot();
-                                if (rod.getDifficulty() != 0) difficultyModifier += rod.getDifficulty();
-                                if (rod.getScore() != 0) scoreModifier *= rod.getScore();
-                                noSpecialRod = false;
-                            }
-                        }
-                    }
-                }
 
-                if (ConfigReader.Config.needSpecialRod && noSpecialRod){
-                    if (!ConfigReader.Config.vanillaLoot)
-                        AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.noRod);
+                    ItemStack offHandItem = inventory.getItemInOffHand();
+                    Material material2 = offHandItem.getType();
+                    if (material2 != Material.AIR){
+                        if (noRod && material2 == Material.FISHING_ROD) {
+                            Map<Enchantment, Integer> enchantments = mainHandItem.getEnchantments();
+                            Object[] enchantmentsArray = enchantments.keySet().toArray();
+                            for (Object o : enchantmentsArray) {
+                                Enchantment enchantment = (Enchantment) o;
+                                HashMap<Integer, Bonus> enchantMap = ConfigReader.ENCHANTS.get(enchantment.getKey().toString());
+                                if (enchantMap != null) {
+                                    Bonus enchantBonus = enchantMap.get(enchantments.get(enchantment));
+                                    if (enchantBonus != null) {
+                                        HashMap<String, Integer> weightPM = enchantBonus.getWeightPM();
+                                        if (weightPM != null){
+                                            Object[] bonus = weightPM.keySet().toArray();
+                                            for (Object value : bonus) {
+                                                String group = (String) value;
+                                                pm.put(group, Optional.ofNullable(pm.get(group)).orElse(0) + weightPM.get(group));
+                                            }
+                                        }
+                                        HashMap<String, Double> weightMQ = enchantBonus.getWeightMQ();
+                                        if (weightMQ != null){
+                                            Object[] bonus = weightMQ.keySet().toArray();
+                                            for (Object value : bonus) {
+                                                String group = (String) value;
+                                                mq.put(group, Optional.ofNullable(mq.get(group)).orElse(1d) + weightMQ.get(group));
+                                            }
+                                        }
+                                        if (enchantBonus.getTime() != 0) timeModifier *= enchantBonus.getTime();
+                                        if (enchantBonus.getDoubleLoot() != 0) doubleLoot += enchantBonus.getDoubleLoot();
+                                        if (enchantBonus.getDifficulty() != 0) difficultyModifier += enchantBonus.getDifficulty();
+                                        if (enchantBonus.getScore() != 0) scoreModifier *= enchantBonus.getScore();
+                                    }
+                                }
+                            }
+                        }
+                        NBTItem offHand = new NBTItem(inventory.getItemInOffHand());
+                        NBTCompound offHandCompound = offHand.getCompound("CustomFishing");
+                        if (offHandCompound != null){
+                            if (offHandCompound.getString("type").equals("bait")) {
+                                String key = offHandCompound.getString("id");
+                                Bonus bait = ConfigReader.BAIT.get(key);
+                                if (bait != null){
+                                    HashMap<String, Integer> weightPM = bait.getWeightPM();
+                                    if (weightPM != null){
+                                        Object[] bonus = weightPM.keySet().toArray();
+                                        for (Object value : bonus) {
+                                            String group = (String) value;
+                                            pm.put(group, Optional.ofNullable(pm.get(group)).orElse(0) + weightPM.get(group));
+                                        }
+                                    }
+                                    HashMap<String, Double> weightMQ = bait.getWeightMQ();
+                                    if (weightMQ != null){
+                                        Object[] bonus = weightMQ.keySet().toArray();
+                                        for (Object value : bonus) {
+                                            String group = (String) value;
+                                            mq.put(group, Optional.ofNullable(mq.get(group)).orElse(1d) + weightMQ.get(group));
+                                        }
+                                    }
+                                    if (bait.getTime() != 0) timeModifier *= bait.getTime();
+                                    if (bait.getDoubleLoot() != 0) doubleLoot += bait.getDoubleLoot();
+                                    if (bait.getDifficulty() != 0) difficultyModifier += bait.getDifficulty();
+                                    if (bait.getScore() != 0) scoreModifier *= bait.getScore();
+                                    offHandItem.setAmount(offHandItem.getAmount() - 1);
+                                }
+                            }
+                            else if (noSpecialRod && offHandCompound.getString("type").equals("rod")){
+                                String key = offHandCompound.getString("id");
+                                Bonus rod = ConfigReader.ROD.get(key);
+                                if (rod != null){
+                                    HashMap<String, Integer> weightPM = rod.getWeightPM();
+                                    if (weightPM != null){
+                                        Object[] bonus = weightPM.keySet().toArray();
+                                        for (Object value : bonus) {
+                                            String group = (String) value;
+                                            pm.put(group, Optional.ofNullable(pm.get(group)).orElse(0) + weightPM.get(group));
+                                        }
+                                    }
+                                    HashMap<String, Double> weightMQ = rod.getWeightMQ();
+                                    if (weightMQ != null){
+                                        Object[] bonus = weightMQ.keySet().toArray();
+                                        for (Object value : bonus) {
+                                            String group = (String) value;
+                                            mq.put(group, Optional.ofNullable(mq.get(group)).orElse(1d) + weightMQ.get(group));
+                                        }
+                                    }
+                                    if (rod.getTime() != 0) timeModifier *= rod.getTime();
+                                    if (rod.getDoubleLoot() != 0) doubleLoot += rod.getDoubleLoot();
+                                    if (rod.getDifficulty() != 0) difficultyModifier += rod.getDifficulty();
+                                    if (rod.getScore() != 0) scoreModifier *= rod.getScore();
+                                    noSpecialRod = false;
+                                }
+                            }
+                        }
+                    }
+
+                    if (ConfigReader.Config.needSpecialRod && noSpecialRod){
+                        if (!ConfigReader.Config.vanillaLoot)
+                            AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.noRod);
+                        nextLoot.put(player, null);
+                        return;
+                    }
+
+                    FishHook hook = event.getHook();
+                    hook.setMaxWaitTime((int) (timeModifier * hook.getMaxWaitTime()));
+                    hook.setMinWaitTime((int) (timeModifier * hook.getMinWaitTime()));
+
+                    List<Loot> possibleLoots = getPossibleLootList(new FishingCondition(hook.getLocation(), player));
+                    List<Loot> availableLoots = new ArrayList<>();
+
+                    if (possibleLoots.size() == 0){
+                        nextLoot.put(player, null);
+                        return;
+                    }
+
+                    Modifier modifier = new Modifier();
+                    modifier.setDifficulty(difficultyModifier);
+                    modifier.setScore(scoreModifier);
+                    modifier.setWillDouble(doubleLoot > Math.random());
+                    modifiers.put(player, modifier);
+
+                    double[] weights = new double[possibleLoots.size()];
+                    int index = 0;
+                    for (Loot loot : possibleLoots){
+                        double weight = loot.getWeight();
+                        String group = loot.getGroup();
+                        if (group != null){
+                            if (pm.get(group) != null){
+                                weight += pm.get(group);
+                            }
+                            if (mq.get(group) != null){
+                                weight *= mq.get(group);
+                            }
+                        }
+                        if (weight <= 0) continue;
+                        availableLoots.add(loot);
+                        weights[index++] = weight;
+                    }
+
+                    double total = Arrays.stream(weights).sum();
+                    double[] weightRatios = new double[index];
+                    for (int i = 0; i < index; i++){
+                        weightRatios[i] = weights[i]/total;
+                    }
+
+                    double[] weightRange = new double[index];
+                    double startPos = 0;
+                    for (int i = 0; i < index; i++) {
+                        weightRange[i] = startPos + weightRatios[i];
+                        startPos += weightRatios[i];
+                    }
+
+                    double random = Math.random();
+                    int pos = Arrays.binarySearch(weightRange, random);
+
+                    if (pos < 0) {
+                        pos = -pos - 1;
+                    } else {
+                        nextLoot.put(player, availableLoots.get(pos));
+                        return;
+                    }
+                    if (pos < weightRange.length && random < weightRange[pos]) {
+                        nextLoot.put(player, availableLoots.get(pos));
+                        return;
+                    }
                     nextLoot.put(player, null);
-                    return;
-                }
-
-                FishHook hook = event.getHook();
-                hook.setMaxWaitTime((int) (timeModifier * hook.getMaxWaitTime()));
-                hook.setMinWaitTime((int) (timeModifier * hook.getMinWaitTime()));
-
-                List<Loot> possibleLoots = getPossibleLootList(new FishingCondition(hook.getLocation(), player));
-                List<Loot> availableLoots = new ArrayList<>();
-
-                if (possibleLoots.size() == 0){
-                    nextLoot.put(player, null);
-                    return;
-                }
-
-                Modifier modifier = new Modifier();
-                modifier.setDifficulty(difficultyModifier);
-                modifier.setScore(scoreModifier);
-                modifier.setWillDouble(doubleLoot > Math.random());
-                modifiers.put(player, modifier);
-
-
-                double[] weights = new double[possibleLoots.size()];
-                int index = 0;
-                for (Loot loot : possibleLoots){
-                    double weight = loot.getWeight();
-                    String group = loot.getGroup();
-                    if (group != null){
-                        if (pm.get(group) != null){
-                            weight += pm.get(group);
-                        }
-                        if (mq.get(group) != null){
-                            weight *= mq.get(group);
-                        }
-                    }
-                    if (weight <= 0) continue;
-                    availableLoots.add(loot);
-                    weights[index++] = weight;
-                }
-
-                double total = Arrays.stream(weights).sum();
-                double[] weightRatios = new double[index];
-                for (int i = 0; i < index; i++){
-                    weightRatios[i] = weights[i]/total;
-                }
-
-                double[] weightRange = new double[index];
-                double startPos = 0;
-                for (int i = 0; i < index; i++) {
-                    weightRange[i] = startPos + weightRatios[i];
-                    startPos += weightRatios[i];
-                }
-
-                double random = Math.random();
-                int pos = Arrays.binarySearch(weightRange, random);
-
-                if (pos < 0) {
-                    pos = -pos - 1;
-                } else {
-                    nextLoot.put(player, availableLoots.get(pos));
-                    return;
-                }
-                if (pos < weightRange.length && random < weightRange[pos]) {
-                    nextLoot.put(player, availableLoots.get(pos));
-                    return;
-                }
-                nextLoot.put(player, null);
-            });
-        }
-
-        else if (state.equals(PlayerFishEvent.State.BITE)){
-
-            if (ConfigReader.Config.doubleRealIn) return;
-
-            if (fishingPlayers.get(player) != null) return;
-
-            Loot loot = nextLoot.get(player);
-
-            if (loot == null) return;
-
-            String layout;
-            if (loot.getLayout() != null){
-                layout = loot.getLayout().get((int) (loot.getLayout().size() * Math.random()));
-            }else {
-                Object[] values = ConfigReader.LAYOUT.keySet().toArray();
-                layout = (String) values[new Random().nextInt(values.length)];
+                });
             }
+            case CAUGHT_FISH -> {
+                //是否需要两次拉杆
+                if (ConfigReader.Config.doubleRealIn) {
 
-            int difficulty = loot.getDifficulty().getSpeed();
-            difficulty += Objects.requireNonNullElse(modifiers.get(player).getDifficulty(), 0);;
-            if (difficulty < 1){
-                difficulty = 1;
-            }
+                    FishingPlayer fishingPlayer = fishingPlayers.remove(player);
 
-            Difficulty difficult = new Difficulty(loot.getDifficulty().getTimer(), difficulty);
-            fishingPlayers.put(player,
-                    new FishingPlayer(System.currentTimeMillis() + loot.getTime(),
-                            new Timer(player, difficult, layout)
-                    )
-            );
+                    if (fishingPlayer == null){
 
-            for (ActionB action : loot.getHookActions()){
-                action.doOn(player);
-            }
-
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, loot.getTime()/50,3));
-
-        }
-
-        //收杆拉鱼
-        else if (state.equals(PlayerFishEvent.State.CAUGHT_FISH)) {
-
-            //是否需要两次拉杆
-            if (ConfigReader.Config.doubleRealIn) {
-
-                FishingPlayer fishingPlayer = fishingPlayers.remove(player);
-                if (fishingPlayer == null){
-                    Entity entity = event.getCaught();
-                    if (entity instanceof Item item){
-                        //是否有原版战利品
-                        if (ConfigReader.Config.vanillaLoot) {
-                            //不是原版战利品
-                            if (ConfigReader.Config.vanillaRatio < Math.random()) {
-                                event.setCancelled(true);
-                                vanilla.remove(player);
-                                showPlayerBar(player);
-                            }
-                            //是原版战利品
-                            else {
-                                //需要走力度条流程
-                                if (ConfigReader.Config.showBar){
+                        Entity entity = event.getCaught();
+                        if (entity instanceof Item item){
+                            //是否有原版战利品
+                            if (ConfigReader.Config.vanillaLoot) {
+                                //不是原版战利品
+                                if (ConfigReader.Config.vanillaRatio < Math.random()) {
                                     event.setCancelled(true);
-                                    vanilla.put(player, new VanillaLoot(item.getItemStack(), event.getExpToDrop()));
+                                    vanilla.remove(player);
+                                    showPlayerBar(player);
+                                }
+                                //是原版战利品
+                                else {
+                                    //需要走力度条流程
+                                    if (ConfigReader.Config.showBar){
+                                        event.setCancelled(true);
+                                        vanilla.put(player, new VanillaLoot(item.getItemStack(), event.getExpToDrop()));
+                                        showPlayerBar(player);
+                                    }
+                                }
+                            }
+                            //如果不许有原版战利品则清除
+                            else {
+                                if (nextLoot.get(player) == null){
+                                    item.remove();
+                                    event.setExpToDrop(0);
+                                    AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.noLoot);
+                                }
+                                else {
+                                    event.setCancelled(true);
                                     showPlayerBar(player);
                                 }
                             }
                         }
-                        //如果不许有原版战利品则清除
+                    }
+                    else {
+
+                        Entity entity = event.getCaught();
+                        if (entity instanceof Item item){
+                            item.remove();
+                            event.setExpToDrop(0);
+                        }
+                        Loot loot = nextLoot.remove(player);
+
+                        VanillaLoot vanillaLoot = vanilla.remove(player);
+                        Timer timer = fishingPlayer.getTimer();
+                        Layout layout = ConfigReader.LAYOUT.get(timer.getLayout());
+                        int last = (timer.getTimerTask().getProgress())/layout.getRange();
+
+                        player.removePotionEffect(PotionEffectType.SLOW);
+                        if (ConfigReader.Config.needOpenWater && !event.getHook().isInOpenWater()){
+                            AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.notOpenWater);
+                            return;
+                        }
+
+                        if (Math.random() < layout.getSuccessRate()[last]){
+                            if (ConfigReader.Config.loseDurability)
+                                loseDurability(player);
+                            Location location = event.getHook().getLocation();
+                            if (loot instanceof Mob mob){
+                                summonMob(player, loot, location, mob);
+                            }
+                            else if (loot instanceof DroppedItem droppedItem){
+                                if (vanillaLoot != null) {
+                                    dropVanillaLoot(player, vanillaLoot, location);
+                                }
+                                else if (ConfigReader.Config.mcMMOLoot && Math.random() < ConfigReader.Config.mcMMOLootChance){
+                                    if(dropMcMMOLoot(player, location)){
+                                        dropMyLoot(player, loot, location, droppedItem);
+                                    }
+                                }
+                                else {
+                                    dropMyLoot(player, loot, location, droppedItem);
+                                }
+                            }
+                        }
+                        else if (vanillaLoot == null) {
+                            fail(player, loot);
+                        }
+                    }
+                }
+                //不需要两次拉杆
+                //除非设置否则肯定不会有原版掉落物
+                else {
+
+                    Entity entity = event.getCaught();
+                    if (entity instanceof Item item){
+
+                        //如果玩家正在钓鱼
+                        //那么拉杆的时候可能也会遇到上钩点，进行正常收杆判断
+                        FishingPlayer fishingPlayer = fishingPlayers.remove(player);
+                        if (fishingPlayer != null){
+
+                            item.remove();
+                            event.setExpToDrop(0);
+
+                            Loot loot = nextLoot.get(player);
+                            Timer timer = fishingPlayer.getTimer();
+                            Layout layout = ConfigReader.LAYOUT.get(timer.getLayout());
+                            int last = (timer.getTimerTask().getProgress())/layout.getRange();
+                            player.removePotionEffect(PotionEffectType.SLOW);
+
+                            if (ConfigReader.Config.needOpenWater && !event.getHook().isInOpenWater()){
+                                AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.notOpenWater);
+                                return;
+                            }
+
+                            //捕鱼成功
+                            if (Math.random() < layout.getSuccessRate()[last]) {
+                                Location location = event.getHook().getLocation();
+                                if (loot instanceof Mob mob){
+                                    MythicMobsUtil.summonMM(player.getLocation(), location, mob);
+                                }
+                                else if (loot instanceof DroppedItem droppedItem){
+                                    if (ConfigReader.Config.mcMMOLoot && ConfigReader.Config.mcMMOLootChance > Math.random()){
+                                        if (dropMcMMOLoot(player, location)){
+                                            dropLoot(player, location, droppedItem);
+                                        }
+                                    }else {
+                                        dropLoot(player, location, droppedItem);
+                                    }
+                                }
+                                for (ActionB action : loot.getSuccessActions())
+                                    action.doOn(player);
+                                if (CompetitionSchedule.competition != null && CompetitionSchedule.competition.isGoingOn()){
+                                    float score = (float) (loot.getScore() * modifiers.get(player).getScore());
+                                    CompetitionSchedule.competition.refreshRanking(player.getName(), score);
+                                    BossBarManager.joinCompetition(player);
+                                }
+                                AdventureUtil.playerTitle(
+                                        player,
+                                        ConfigReader.Title.success_title.get((int) (ConfigReader.Title.success_title.size()*Math.random()))
+                                                .replace("{loot}",loot.getNick())
+                                                .replace("{player}", player.getName()),
+                                        ConfigReader.Title.success_subtitle.get((int) (ConfigReader.Title.success_subtitle.size()*Math.random()))
+                                                .replace("{loot}",loot.getNick())
+                                                .replace("{player}", player.getName()),
+                                        ConfigReader.Title.success_in,
+                                        ConfigReader.Title.success_stay,
+                                        ConfigReader.Title.success_out
+                                );
+                                if (ConfigReader.Config.loseDurability)
+                                    loseDurability(player);
+                            }
+                            //捕鱼失败
+                            else {
+                                fail(player, loot);
+                            }
+                        }
                         else {
-                            if (nextLoot.get(player) == null){
+                            if (!ConfigReader.Config.vanillaLoot) {
                                 item.remove();
                                 event.setExpToDrop(0);
-                                AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.noLoot);
-                            }
-                            else {
-                                event.setCancelled(true);
-                                showPlayerBar(player);
                             }
                         }
                     }
                 }
-                else {
-                    Entity entity = event.getCaught();
-                    if (entity instanceof Item item){
-                        item.remove();
-                        event.setExpToDrop(0);
-                    }
+            }
+            case CAUGHT_ENTITY -> {
+                //理论是不存在实体的
+                //说明在钓鱼的时候可能鱼钩勾上了鱿鱼之类的生物
+                //直接按照失败处理
+                if (fishingPlayers.remove(player) != null && event.getCaught() != null){
+                    AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.hookOther);
+                }
+            }
+            case REEL_IN -> {
+                FishingPlayer fishingPlayer = fishingPlayers.remove(player);
+                //首先得是钓鱼中的玩家
+                if (fishingPlayer != null){
+
                     Loot loot = nextLoot.remove(player);
                     VanillaLoot vanillaLoot = vanilla.remove(player);
                     Timer timer = fishingPlayer.getTimer();
@@ -466,72 +578,24 @@ public class FishListener implements Listener {
                     }
 
                     if (Math.random() < layout.getSuccessRate()[last]){
+                        //这里是普通收杆，需要减少耐久度
                         if (ConfigReader.Config.loseDurability)
                             loseDurability(player);
                         Location location = event.getHook().getLocation();
                         if (loot instanceof Mob mob){
-                            MythicMobsUtil.summonMM(player.getLocation(), location, mob);
-                            for (ActionB action : loot.getSuccessActions())
-                                action.doOn(player);
-                            if (CompetitionSchedule.competition != null && CompetitionSchedule.competition.isGoingOn()) {
-                                float score = (float) (loot.getScore() * modifiers.get(player).getScore());
-                                CompetitionSchedule.competition.refreshRanking(player.getName(), score);
-                                BossBarManager.joinCompetition(player);
-                            }
+                            summonMob(player, loot, location, mob);
                         }
                         else if (loot instanceof DroppedItem droppedItem){
-                            ItemStack itemStack;
                             if (vanillaLoot != null) {
-                                itemStack = vanillaLoot.getItemStack();
-                                player.giveExp(vanillaLoot.getXp(), true);
-                                player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1,1);
-                                Entity item = location.getWorld().dropItem(location, itemStack);
-                                Vector vector = player.getLocation().subtract(location).toVector().multiply(0.1);
-                                vector = vector.setY((vector.getY()+0.2)*1.2);
-                                item.setVelocity(vector);
-                                if (CompetitionSchedule.competition != null && CompetitionSchedule.competition.isGoingOn()) {
-                                    CompetitionSchedule.competition.refreshRanking(player.getName(), 0);
-                                    BossBarManager.joinCompetition(player);
+                                dropVanillaLoot(player, vanillaLoot, location);
+                            }
+                            else if (ConfigReader.Config.mcMMOLoot && Math.random() < ConfigReader.Config.mcMMOLootChance){
+                                if (dropMcMMOLoot(player, location)){
+                                    dropMyLoot(player, loot, location, droppedItem);
                                 }
-                                if (modifiers.get(player).isWillDouble()) {
-                                    Entity item2 = location.getWorld().dropItem(location, itemStack);
-                                    item2.setVelocity(vector);
-                                }
-                                String title = ConfigReader.Title.success_title.get((int) (ConfigReader.Title.success_title.size()*Math.random()));
-                                Component titleComponent = getTitleComponent(itemStack, title);
-                                String subTitle = ConfigReader.Title.success_subtitle.get((int) (ConfigReader.Title.success_subtitle.size()*Math.random()));
-                                Component subtitleComponent = getTitleComponent(itemStack, subTitle);
-
-                                AdventureUtil.playerTitle(
-                                        player,
-                                        titleComponent,
-                                        subtitleComponent,
-                                        ConfigReader.Title.success_in,
-                                        ConfigReader.Title.success_stay,
-                                        ConfigReader.Title.success_out
-                                );
                             }
                             else {
-                                if (CompetitionSchedule.competition != null && CompetitionSchedule.competition.isGoingOn()) {
-                                    float score = (float) (loot.getScore() * modifiers.get(player).getScore());
-                                    CompetitionSchedule.competition.refreshRanking(player.getName(), score);
-                                    BossBarManager.joinCompetition(player);
-                                }
-                                for (ActionB action : loot.getSuccessActions())
-                                    action.doOn(player);
-                                dropLoot(player, location, droppedItem);
-                                AdventureUtil.playerTitle(
-                                        player,
-                                        ConfigReader.Title.success_title.get((int) (ConfigReader.Title.success_title.size()*Math.random()))
-                                                .replace("{loot}",loot.getNick())
-                                                .replace("{player}", player.getName()),
-                                        ConfigReader.Title.success_subtitle.get((int) (ConfigReader.Title.success_subtitle.size()*Math.random()))
-                                                .replace("{loot}",loot.getNick())
-                                                .replace("{player}", player.getName()),
-                                        ConfigReader.Title.success_in,
-                                        ConfigReader.Title.success_stay,
-                                        ConfigReader.Title.success_out
-                                );
+                                dropMyLoot(player, loot, location, droppedItem);
                             }
                         }
                     }
@@ -539,208 +603,198 @@ public class FishListener implements Listener {
                         fail(player, loot);
                     }
                 }
-            }
-            //不需要两次拉杆
-            //除非设置否则肯定不会有原版掉落物
-            else {
-
-                Entity entity = event.getCaught();
-                if (entity instanceof Item item){
-
-                    //如果玩家正在钓鱼
-                    //那么拉杆的时候可能也会遇到上钩点，进行正常收杆判断
-                    FishingPlayer fishingPlayer = fishingPlayers.remove(player);
-                    if (fishingPlayer != null){
-
-                        item.remove();
-                        event.setExpToDrop(0);
-
-                        Loot loot = nextLoot.get(player);
-                        Timer timer = fishingPlayer.getTimer();
-                        Layout layout = ConfigReader.LAYOUT.get(timer.getLayout());
-                        int last = (timer.getTimerTask().getProgress())/layout.getRange();
-                        player.removePotionEffect(PotionEffectType.SLOW);
-
-                        if (ConfigReader.Config.needOpenWater && !event.getHook().isInOpenWater()){
-                            AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.notOpenWater);
-                            return;
+                else {
+                    //钓上来的是物品
+                    if (event.getCaught() instanceof Item item) {
+                        //是否允许原版掉落物
+                        if (ConfigReader.Config.vanillaLoot) {
+                            if (ConfigReader.Config.showBar){
+                                item.remove();
+                                event.setExpToDrop(0);
+                                //event.setCancelled(true);
+                                vanilla.put(player, new VanillaLoot(item.getItemStack(), event.getExpToDrop()));
+                                showPlayerBar(player);
+                            }
+//                            else {
+//                                //啥也不干
+//                            }
                         }
-
-                        //捕鱼成功
-                        if (Math.random() < layout.getSuccessRate()[last]) {
-                            Location location = event.getHook().getLocation();
-                            if (loot instanceof Mob mob){
-                                MythicMobsUtil.summonMM(player.getLocation(), location, mob);
-                            }
-                            else if (loot instanceof DroppedItem droppedItem){
-                                dropLoot(player, location, droppedItem);
-                            }
-                            for (ActionB action : loot.getSuccessActions())
-                                action.doOn(player);
-                            if (ConfigReader.Config.loseDurability)
-                                loseDurability(player);
-                            if (CompetitionSchedule.competition != null && CompetitionSchedule.competition.isGoingOn()){
-                                float score = (float) (loot.getScore() * modifiers.get(player).getScore());
-                                CompetitionSchedule.competition.refreshRanking(player.getName(), score);
-                                BossBarManager.joinCompetition(player);
-                            }
-                            AdventureUtil.playerTitle(
-                                    player,
-                                    ConfigReader.Title.success_title.get((int) (ConfigReader.Title.success_title.size()*Math.random()))
-                                            .replace("{loot}",loot.getNick())
-                                            .replace("{player}", player.getName()),
-                                    ConfigReader.Title.success_subtitle.get((int) (ConfigReader.Title.success_subtitle.size()*Math.random()))
-                                            .replace("{loot}",loot.getNick())
-                                            .replace("{player}", player.getName()),
-                                    ConfigReader.Title.success_in,
-                                    ConfigReader.Title.success_stay,
-                                    ConfigReader.Title.success_out
-                            );
-                        }
-                        //捕鱼失败
+                        //不允许原版掉落物
                         else {
-                            fail(player, loot);
-                        }
-                    }
-                    else {
-                        if (!ConfigReader.Config.vanillaLoot) {
-                            item.remove();
-                            event.setExpToDrop(0);
-                        }
-                    }
-                }
-            }
-        }
-
-        //普通收杆
-        //对于在Vanilla HashMap中有值的，说明是有原版战利品，否则全部是插件战利品
-        else if (state.equals(PlayerFishEvent.State.REEL_IN)){
-
-            FishingPlayer fishingPlayer = fishingPlayers.remove(player);
-            //首先得是钓鱼中的玩家
-            if (fishingPlayer != null){
-
-                Loot loot = nextLoot.remove(player);
-                VanillaLoot vanillaLoot = vanilla.remove(player);
-                Timer timer = fishingPlayer.getTimer();
-                Layout layout = ConfigReader.LAYOUT.get(timer.getLayout());
-                int last = (timer.getTimerTask().getProgress())/layout.getRange();
-
-                player.removePotionEffect(PotionEffectType.SLOW);
-                if (ConfigReader.Config.needOpenWater && !event.getHook().isInOpenWater()){
-                    AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.notOpenWater);
-                    return;
-                }
-
-                if (Math.random() < layout.getSuccessRate()[last]){
-                    if (ConfigReader.Config.loseDurability)
-                        loseDurability(player);
-                    Location location = event.getHook().getLocation();
-                    if (loot instanceof Mob mob){
-                        MythicMobsUtil.summonMM(player.getLocation(), location, mob);
-                        for (ActionB action : loot.getSuccessActions())
-                            action.doOn(player);
-                        if (CompetitionSchedule.competition != null && CompetitionSchedule.competition.isGoingOn()) {
-                            float score = (float) (loot.getScore() * modifiers.get(player).getScore());
-                            CompetitionSchedule.competition.refreshRanking(player.getName(), score);
-                            BossBarManager.joinCompetition(player);
-                        }
-                    }
-                    else if (loot instanceof DroppedItem droppedItem){
-                        ItemStack itemStack;
-
-                        if (vanillaLoot != null) {
-                            itemStack = vanillaLoot.getItemStack();
-                            player.giveExp(vanillaLoot.getXp(), true);
-                            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1,1);
-                            Entity item = location.getWorld().dropItem(location, itemStack);
-                            Vector vector = player.getLocation().subtract(location).toVector().multiply(0.1);
-                            vector = vector.setY((vector.getY()+0.2)*1.2);
-                            item.setVelocity(vector);
-                            if (CompetitionSchedule.competition != null && CompetitionSchedule.competition.isGoingOn()) {
-                                CompetitionSchedule.competition.refreshRanking(player.getName(), 0);
-                                BossBarManager.joinCompetition(player);
-                            }
-                            if (modifiers.get(player).isWillDouble()) {
-                                Entity item2 = location.getWorld().dropItem(location, itemStack);
-                                item2.setVelocity(vector);
-                            }
-
-                            String title = ConfigReader.Title.success_title.get((int) (ConfigReader.Title.success_title.size()*Math.random()));
-                            Component titleComponent = getTitleComponent(itemStack, title);
-                            String subTitle = ConfigReader.Title.success_subtitle.get((int) (ConfigReader.Title.success_subtitle.size()*Math.random()));
-                            Component subtitleComponent = getTitleComponent(itemStack, subTitle);
-
-                            AdventureUtil.playerTitle(
-                                    player,
-                                    titleComponent,
-                                    subtitleComponent,
-                                    ConfigReader.Title.success_in,
-                                    ConfigReader.Title.success_stay,
-                                    ConfigReader.Title.success_out
-                            );
-                        }
-                        else {
-                            if (CompetitionSchedule.competition != null && CompetitionSchedule.competition.isGoingOn()) {
-                                float score = (float) (loot.getScore() * modifiers.get(player).getScore());
-                                CompetitionSchedule.competition.refreshRanking(player.getName(), score);
-                                BossBarManager.joinCompetition(player);
-                            }
-                            for (ActionB action : loot.getSuccessActions())
-                                action.doOn(player);
-                            dropLoot(player, location, droppedItem);
-                            AdventureUtil.playerTitle(
-                                    player,
-                                    ConfigReader.Title.success_title.get((int) (ConfigReader.Title.success_title.size()*Math.random()))
-                                            .replace("{loot}",loot.getNick())
-                                            .replace("{player}", player.getName()),
-                                    ConfigReader.Title.success_subtitle.get((int) (ConfigReader.Title.success_subtitle.size()*Math.random()))
-                                            .replace("{loot}",loot.getNick())
-                                            .replace("{player}", player.getName()),
-                                    ConfigReader.Title.success_in,
-                                    ConfigReader.Title.success_stay,
-                                    ConfigReader.Title.success_out
-                            );
-                        }
-                    }
-                }
-                else if (vanillaLoot == null) {
-                    fail(player, loot);
-                }
-            }
-            else {
-                //钓上来的是物品
-                if (event.getCaught() instanceof Item item) {
-                    //是否允许原版掉落物
-                    if (ConfigReader.Config.vanillaLoot) {
-                        if (ConfigReader.Config.showBar){
                             item.remove();
                             event.setExpToDrop(0);
                             //event.setCancelled(true);
-                            vanilla.put(player, new VanillaLoot(item.getItemStack(), event.getExpToDrop()));
-                            showPlayerBar(player);
                         }
-                        else {
-                            //啥也不干
-                        }
-                    }
-                    //不允许原版掉落物
-                    else {
-                        item.remove();
-                        event.setExpToDrop(0);
-                        //event.setCancelled(true);
                     }
                 }
             }
-        }
-        else if (state.equals(PlayerFishEvent.State.CAUGHT_ENTITY)){
-            //理论是不存在实体的
-            //说明在钓鱼的时候可能鱼钩勾上了鱿鱼之类的生物
-            //直接按照失败处理
-            if (fishingPlayers.remove(player) != null && event.getCaught() != null){
-                AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.hookOther);
+            case BITE -> {
+                if (ConfigReader.Config.doubleRealIn) return;
+
+                if (fishingPlayers.get(player) != null) return;
+
+                Loot loot = nextLoot.get(player);
+
+                if (loot == null) return;
+
+                String layout;
+                if (loot.getLayout() != null){
+                    layout = loot.getLayout().get((int) (loot.getLayout().size() * Math.random()));
+                }else {
+                    Object[] values = ConfigReader.LAYOUT.keySet().toArray();
+                    layout = (String) values[new Random().nextInt(values.length)];
+                }
+
+                int difficulty = loot.getDifficulty().getSpeed();
+                difficulty += Objects.requireNonNullElse(modifiers.get(player).getDifficulty(), 0);;
+                if (difficulty < 1){
+                    difficulty = 1;
+                }
+
+                Difficulty difficult = new Difficulty(loot.getDifficulty().getTimer(), difficulty);
+                fishingPlayers.put(player,
+                        new FishingPlayer(System.currentTimeMillis() + loot.getTime(),
+                                new Timer(player, difficult, layout)
+                        )
+                );
+
+                for (ActionB action : loot.getHookActions()){
+                    action.doOn(player);
+                }
+
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, loot.getTime()/50,3));
             }
         }
+    }
+
+    private void dropMyLoot(Player player, Loot loot, Location location, DroppedItem droppedItem) {
+        dropLoot(player, location, droppedItem);
+        if (CompetitionSchedule.competition != null && CompetitionSchedule.competition.isGoingOn()) {
+            float score = (float) (loot.getScore() * modifiers.get(player).getScore());
+            CompetitionSchedule.competition.refreshRanking(player.getName(), score);
+            BossBarManager.joinCompetition(player);
+        }
+        for (ActionB action : loot.getSuccessActions())
+            action.doOn(player);
+        AdventureUtil.playerTitle(
+                player,
+                ConfigReader.Title.success_title.get((int) (ConfigReader.Title.success_title.size()*Math.random()))
+                        .replace("{loot}",loot.getNick())
+                        .replace("{player}", player.getName()),
+                ConfigReader.Title.success_subtitle.get((int) (ConfigReader.Title.success_subtitle.size()*Math.random()))
+                        .replace("{loot}",loot.getNick())
+                        .replace("{player}", player.getName()),
+                ConfigReader.Title.success_in,
+                ConfigReader.Title.success_stay,
+                ConfigReader.Title.success_out
+        );
+    }
+
+    private void summonMob(Player player, Loot loot, Location location, Mob mob) {
+        MythicMobsUtil.summonMM(player.getLocation(), location, mob);
+        for (ActionB action : loot.getSuccessActions())
+            action.doOn(player);
+        if (CompetitionSchedule.competition != null && CompetitionSchedule.competition.isGoingOn()) {
+            float score = (float) (loot.getScore() * modifiers.get(player).getScore());
+            CompetitionSchedule.competition.refreshRanking(player.getName(), score);
+            BossBarManager.joinCompetition(player);
+        }
+        AdventureUtil.playerTitle(
+                player,
+                ConfigReader.Title.success_title.get((int) (ConfigReader.Title.success_title.size()*Math.random()))
+                        .replace("{loot}",loot.getNick())
+                        .replace("{player}", player.getName()),
+                ConfigReader.Title.success_subtitle.get((int) (ConfigReader.Title.success_subtitle.size()*Math.random()))
+                        .replace("{loot}",loot.getNick())
+                        .replace("{player}", player.getName()),
+                ConfigReader.Title.success_in,
+                ConfigReader.Title.success_stay,
+                ConfigReader.Title.success_out
+        );
+    }
+
+    private void dropVanillaLoot(Player player, VanillaLoot vanillaLoot, Location location) {
+
+        ItemStack itemStack;
+        itemStack = vanillaLoot.getItemStack();
+
+        if (ConfigReader.Config.mcMMOLoot && ConfigReader.Config.mcMMOLootChance > Math.random()){
+            ItemStack itemStack1 = McMMOTreasure.getTreasure(player);
+            if (itemStack1 != null){
+                itemStack = itemStack1;
+            }
+        }
+
+        player.giveExp(vanillaLoot.getXp(), true);
+        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1,1);
+        Entity item = location.getWorld().dropItem(location, itemStack);
+        Vector vector = player.getLocation().subtract(location).toVector().multiply(0.1);
+        vector = vector.setY((vector.getY()+0.2)*1.2);
+        item.setVelocity(vector);
+        if (CompetitionSchedule.competition != null && CompetitionSchedule.competition.isGoingOn()) {
+            CompetitionSchedule.competition.refreshRanking(player.getName(), 0);
+            BossBarManager.joinCompetition(player);
+        }
+        if (modifiers.get(player).isWillDouble()) {
+            Entity item2 = location.getWorld().dropItem(location, itemStack);
+            item2.setVelocity(vector);
+        }
+        String title = ConfigReader.Title.success_title.get((int) (ConfigReader.Title.success_title.size()*Math.random()));
+        Component titleComponent = getTitleComponent(itemStack, title);
+        String subTitle = ConfigReader.Title.success_subtitle.get((int) (ConfigReader.Title.success_subtitle.size()*Math.random()));
+        Component subtitleComponent = getTitleComponent(itemStack, subTitle);
+
+        AdventureUtil.playerTitle(
+                player,
+                titleComponent,
+                subtitleComponent,
+                ConfigReader.Title.success_in,
+                ConfigReader.Title.success_stay,
+                ConfigReader.Title.success_out
+        );
+    }
+
+    /*
+    返回是否为mcmmo物品为空值
+     */
+    private boolean dropMcMMOLoot(Player player, Location location) {
+        ItemStack itemStack = McMMOTreasure.getTreasure(player);
+
+        if (itemStack != null) {
+            if (ConfigReader.Config.preventPick)
+                ItemStackUtil.addOwner(itemStack, player.getName());
+            Entity item = location.getWorld().dropItem(location, itemStack);
+            Vector vector = player.getLocation().subtract(location).toVector().multiply(0.1);
+            vector = vector.setY((vector.getY()+0.2)*1.2);
+            item.setVelocity(vector);
+            if (modifiers.get(player).isWillDouble()){
+                Entity item2 = location.getWorld().dropItem(location, itemStack);
+                item2.setVelocity(vector);
+            }
+        }
+        else {
+            return true;
+        }
+
+        if (CompetitionSchedule.competition != null && CompetitionSchedule.competition.isGoingOn()) {
+            CompetitionSchedule.competition.refreshRanking(player.getName(), 0);
+            BossBarManager.joinCompetition(player);
+        }
+
+        String title = ConfigReader.Title.success_title.get((int) (ConfigReader.Title.success_title.size()*Math.random()));
+        Component titleComponent = getTitleComponent(itemStack, title);
+        String subTitle = ConfigReader.Title.success_subtitle.get((int) (ConfigReader.Title.success_subtitle.size()*Math.random()));
+        Component subtitleComponent = getTitleComponent(itemStack, subTitle);
+
+        AdventureUtil.playerTitle(
+                player,
+                titleComponent,
+                subtitleComponent,
+                ConfigReader.Title.success_in,
+                ConfigReader.Title.success_stay,
+                ConfigReader.Title.success_out
+        );
+        return false;
     }
 
     @NotNull

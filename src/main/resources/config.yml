@@ -1,5 +1,5 @@
 # don't change
-config-version: '5'
+config-version: '6'
 
 config:
   #en/es/cn
@@ -25,13 +25,22 @@ config:
   # Otherwise the bar would show immediately the bobber is hooked
   double-reel-in: true
 
-  # This is useful for vanilla loots
-  # This should be compatible with other fishing plugin's loot system
-  vanilla-loot:
-    enable: true
-    # Bar and ratio only works when 'double-reel-in' is true
+  other-loot:
+    # This is useful for vanilla loots
+    # Vanilla loot is available only when 'double-reel-in' is true
+    vanilla: true
+    # This means 30% of the loots are from vanilla
+    # and 70% are from CustomFishing Loot system
+    vanilla-ratio: 0.4
+    # Should vanilla loots have the same fishing mechanic CustomFishing provides
     bar: true
-    ratio: 0.3
+
+    # mcMMO treasure system
+    # chance represents the chance to try to be a mcMMO treasure
+    # But it doesn't mean 50% chance of the loot would be mcMMO treasure
+    # mcMMO has a complex treasure system
+    mcMMO: false
+    mcMMO-chance: 0.5
 
   # The same to vanilla (refer to the wiki)
   # https://technical-minecraft.fandom.com/wiki/Fishing
@@ -59,3 +68,7 @@ config:
   # Prevent other players to pick up your fishing loot (Requires a restart)
   # This is useful for players to fish in a public area
   prevent-other-players-pick-up-loot: false
+
+  # If there's a plugin conflict, event priority sometimes works
+  # HIGHEST NORMAL LOWEST
+  event-priority: NORMAL

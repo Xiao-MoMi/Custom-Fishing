@@ -97,12 +97,15 @@ public class ConfigReader{
         public static boolean doubleRealIn;
         public static boolean vanillaLoot;
         public static boolean showBar;
+        public static boolean mcMMOLoot;
         public static int fishFinderCoolDown;
         public static double timeMultiply;
         public static double vanillaRatio;
+        public static double mcMMOLootChance;
         public static SkillXP skillXP;
         public static String version;
         public static String lang;
+        public static String priority;
         public static SeasonInterface season;
 
         public static void loadConfig() {
@@ -178,8 +181,14 @@ public class ConfigReader{
             }
 
             doubleRealIn = config.getBoolean("config.double-reel-in", true);
-            vanillaLoot = config.getBoolean("config.vanilla-loot.enable", true);
-            showBar = config.getBoolean("config.vanilla-loot.bar", true);
+
+            mcMMOLoot = config.getBoolean("config.other-loot.mcMMO", false);
+            mcMMOLootChance = config.getDouble("config.other-loot.mcMMO-chance", 0.5);
+
+            vanillaLoot = config.getBoolean("config.other-loot.vanilla", true);
+            showBar = config.getBoolean("config.other-loot.bar", true);
+            vanillaRatio = config.getDouble("config.other-loot.vanilla-ratio");
+
             convertMMOItems = config.getBoolean("config.convert-MMOITEMS", false);
             needOpenWater = config.getBoolean("config.need-open-water", false);
             needSpecialRod = config.getBoolean("config.need-special-rod", false);
@@ -187,9 +196,9 @@ public class ConfigReader{
             preventPick = config.getBoolean("config.prevent-other-players-pick-up-loot", false);
 
             version = config.getString("config-version");
+            priority = config.getString("config.event-priority");
             fishFinderCoolDown = config.getInt("config.fishfinder-cooldown");
             timeMultiply = config.getDouble("config.time-multiply");
-            vanillaRatio = config.getDouble("config.vanilla-loot.ratio");
             lang = config.getString("config.lang","cn");
             competition = config.getBoolean("config.fishing-competition",true);
         }
@@ -734,7 +743,7 @@ public class ConfigReader{
                                 case "weight-MQ" -> {
                                     HashMap<String, Double> mq = new HashMap<>();
                                     config.getConfigurationSection(key + ".modifier.weight-MQ").getValues(false).forEach((group, value) -> {
-                                        mq.put(group, Double.valueOf(String.valueOf(value)));
+                                        mq.put(group, Double.parseDouble(String.valueOf(value))-1);
                                     });
                                     bonus.setWeightMQ(mq);
                                 }
@@ -820,7 +829,7 @@ public class ConfigReader{
                                 case "weight-MQ" -> {
                                     HashMap<String, Double> mq = new HashMap<>();
                                     config.getConfigurationSection(key + ".modifier.weight-MQ").getValues(false).forEach((group, value) -> {
-                                        mq.put(group, Double.valueOf(String.valueOf(value)));
+                                        mq.put(group, Double.parseDouble(String.valueOf(value))-1);
                                     });
                                     bonus.setWeightMQ(mq);
                                 }
@@ -947,7 +956,7 @@ public class ConfigReader{
                         case "weight-MQ" -> {
                             HashMap<String, Double> mq = new HashMap<>();
                             config.getConfigurationSection(key + "." + level + ".weight-MQ").getValues(false).forEach((group, value) -> {
-                                mq.put(group, Double.valueOf(String.valueOf(value)));
+                                mq.put(group, Double.parseDouble(String.valueOf(value))-1);
                             });
                             bonus.setWeightMQ(mq);
                         }
