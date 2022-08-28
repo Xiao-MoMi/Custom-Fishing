@@ -86,7 +86,7 @@ public class NBTUtil {
                         nbtCompound.setLong(key, Long.valueOf(string.substring(7)));
                     }else if (string.startsWith("(Float) ")){
                         nbtCompound.setFloat(key, Float.valueOf(string.substring(8)));
-                    } else if (string.startsWith("(Double) ")){
+                    }else if (string.startsWith("(Double) ")){
                         nbtCompound.setDouble(key, Double.valueOf(string.substring(9)));
                     }else if (string.startsWith("(Short) ")){
                         nbtCompound.setShort(key, Short.valueOf(string.substring(8)));

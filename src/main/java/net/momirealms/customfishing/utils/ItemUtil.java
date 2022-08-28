@@ -25,6 +25,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
@@ -88,6 +89,13 @@ public class ItemUtil {
             });
             yamlConfiguration.createSection(fileName + ".enchantments", map);
         }
+        if (itemMeta instanceof EnchantmentStorageMeta enchantmentStorageMeta){
+            Map<String, Integer> map = new HashMap<>();
+            enchantmentStorageMeta.getStoredEnchants().forEach(((enchantment, level) -> {
+                map.put(String.valueOf(enchantment.getKey()), level);
+            }));
+            yamlConfiguration.createSection(fileName + ".enchantments", map);
+        }
         if (itemMeta.getItemFlags().size() > 0){
             ArrayList<String> itemFlags = new ArrayList<>();
             itemStack.getItemFlags().forEach(itemFlag -> {
@@ -99,7 +107,9 @@ public class ItemUtil {
         NBTItem nbtItem = new NBTItem(itemStack);
 
         Map<String, Object> map0 = compoundToMap(nbtItem);
-        yamlConfiguration.createSection(fileName + ".nbt", map0);
+        if (map0.size() != 0){
+            yamlConfiguration.createSection(fileName + ".nbt", map0);
+        }
 
         File file = new File(CustomFishing.instance.getDataFolder(), File.separator + "loots" + File.separator + fileName + ".yml");
 
@@ -119,6 +129,7 @@ public class ItemUtil {
                     || key.equals("Lore")
                     || key.equals("HideFlags")
                     || key.equals("CustomModelData")
+                    || key.equals("StoredEnchantments")
                     || key.equals("Unbreakable")) return;
             switch (nbtCompound.getType(key)){
                 case NBTTagByte -> map.put(key, "(Byte) " + nbtCompound.getByte(key));
