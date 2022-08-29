@@ -13,6 +13,8 @@ config:
     # Papi hook
     PlaceholderAPI: true
     # Skill xp hook
+    # If skill xp is added not as expected
+    # Check the xp-source file in those skill plugins and set them to 0
     mcMMO: false
     MMOCore: false
     AureliumSkills: false

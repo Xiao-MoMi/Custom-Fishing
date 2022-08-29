@@ -319,7 +319,6 @@ public class FishListener implements Listener {
                         if (!ConfigReader.Config.vanillaLoot)
                             AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.noRod);
                         nextLoot.put(player, null);
-                        return;
                     }
 
                     FishHook hook = event.getHook();
@@ -329,16 +328,16 @@ public class FishListener implements Listener {
                     List<Loot> possibleLoots = getPossibleLootList(new FishingCondition(hook.getLocation(), player));
                     List<Loot> availableLoots = new ArrayList<>();
 
-                    if (possibleLoots.size() == 0){
-                        nextLoot.put(player, null);
-                        return;
-                    }
-
                     Modifier modifier = new Modifier();
                     modifier.setDifficulty(difficultyModifier);
                     modifier.setScore(scoreModifier);
                     modifier.setWillDouble(doubleLoot > Math.random());
                     modifiers.put(player, modifier);
+
+                    if (possibleLoots.size() == 0){
+                        nextLoot.put(player, null);
+                        return;
+                    }
 
                     double[] weights = new double[possibleLoots.size()];
                     int index = 0;
@@ -402,7 +401,11 @@ public class FishListener implements Listener {
                                 //不是原版战利品
                                 if (ConfigReader.Config.vanillaRatio < Math.random()) {
                                     event.setCancelled(true);
-                                    vanilla.remove(player);
+                                    if (nextLoot.get(player) != null){
+                                        vanilla.remove(player);
+                                    }else {
+                                        vanilla.put(player, new VanillaLoot(item.getItemStack(), event.getExpToDrop()));
+                                    }
                                     showPlayerBar(player);
                                 }
                                 //是原版战利品
@@ -468,10 +471,12 @@ public class FishListener implements Listener {
                                 else {
                                     dropMyLoot(player, loot, location, droppedItem);
                                 }
+                            }else if (loot == null && vanillaLoot != null){
+                                dropVanillaLoot(player, vanillaLoot, location);
                             }
                         }
                         else {
-                            fail(player, loot);
+                            fail(player, loot, vanillaLoot != null);
                         }
                     }
                 }
@@ -540,7 +545,7 @@ public class FishListener implements Listener {
                             }
                             //捕鱼失败
                             else {
-                                fail(player, loot);
+                                fail(player, loot, false);
                             }
                         }
                         else {
@@ -597,10 +602,12 @@ public class FishListener implements Listener {
                             else {
                                 dropMyLoot(player, loot, location, droppedItem);
                             }
+                        }else if (loot == null && vanillaLoot != null){
+                            dropVanillaLoot(player, vanillaLoot, location);
                         }
                     }
-                    else if (vanillaLoot == null) {
-                        fail(player, loot);
+                    else{
+                        fail(player, loot, vanillaLoot != null);
                     }
                 }
                 else {
@@ -878,11 +885,20 @@ public class FishListener implements Listener {
         }
     }
 
-    private void fail(Player player, Loot loot) {
+    private void fail(Player player, Loot loot, boolean isVanilla) {
         fishingPlayers.remove(player);
-        for (ActionB action : loot.getFailureActions())
-            action.doOn(player);
-        AdventureUtil.playerTitle(player, ConfigReader.Title.failure_title.get((int) (ConfigReader.Title.failure_title.size()*Math.random())), ConfigReader.Title.failure_subtitle.get((int) (ConfigReader.Title.failure_subtitle.size()*Math.random())), ConfigReader.Title.failure_in, ConfigReader.Title.failure_stay, ConfigReader.Title.failure_out);
+        if (!isVanilla && loot != null){
+            for (ActionB action : loot.getFailureActions())
+                action.doOn(player);
+        }
+        AdventureUtil.playerTitle(
+                player,
+                ConfigReader.Title.failure_title.get((int) (ConfigReader.Title.failure_title.size()*Math.random())),
+                ConfigReader.Title.failure_subtitle.get((int) (ConfigReader.Title.failure_subtitle.size()*Math.random())),
+                ConfigReader.Title.failure_in,
+                ConfigReader.Title.failure_stay,
+                ConfigReader.Title.failure_out
+        );
     }
 
     @EventHandler
@@ -977,10 +993,11 @@ public class FishListener implements Listener {
     }
 
     private void showPlayerBar(Player player){
+
         Loot loot = nextLoot.get(player);
 
         String layout;
-        if (loot.getLayout() != null){
+        if (loot != null && loot.getLayout() != null){
             try {
                 layout = loot.getLayout().get((int) (loot.getLayout().size() * Math.random()));
             }
@@ -994,25 +1011,34 @@ public class FishListener implements Listener {
             layout = (String) values[new Random().nextInt(values.length)];
         }
 
-        int difficulty = loot.getDifficulty().getSpeed();
-        difficulty += Objects.requireNonNullElse(modifiers.get(player).getDifficulty(), 0);;
+        int difficulty = new Random().nextInt(5);
+        int timer = 1;
+        int time = 10000;
+        if (loot != null){
+            difficulty = loot.getDifficulty().getSpeed();
+            timer = loot.getDifficulty().getTimer();
+            time = loot.getTime();
+        }
+
+        difficulty += Objects.requireNonNullElse(modifiers.get(player).getDifficulty(), 0);
+
         if (difficulty < 1){
             difficulty = 1;
         }
 
-        Difficulty difficult = new Difficulty(loot.getDifficulty().getTimer(), difficulty);
+        Difficulty difficult = new Difficulty(timer, difficulty);
         fishingPlayers.put(player,
-                new FishingPlayer(System.currentTimeMillis() + loot.getTime(),
+                new FishingPlayer(System.currentTimeMillis() + time,
                         new Timer(player, difficult, layout)
                 )
         );
 
-        if (vanilla.get(player) == null){
+        if (vanilla.get(player) == null && loot != null){
             for (ActionB action : loot.getHookActions()){
                 action.doOn(player);
             }
         }
 
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, loot.getTime()/50,3));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, time/50,3));
     }
 }
