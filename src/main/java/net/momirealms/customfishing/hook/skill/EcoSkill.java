@@ -4,7 +4,7 @@ import com.willfp.ecoskills.api.EcoSkillsAPI;
 import com.willfp.ecoskills.skills.Skills;
 import org.bukkit.entity.Player;
 
-public class EcoSkill implements SkillXP{
+public class EcoSkill implements SkillXP {
 
     @Override
     public void addXp(Player player, double amount) {
