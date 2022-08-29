@@ -470,7 +470,7 @@ public class FishListener implements Listener {
                                 }
                             }
                         }
-                        else if (vanillaLoot == null) {
+                        else {
                             fail(player, loot);
                         }
                     }

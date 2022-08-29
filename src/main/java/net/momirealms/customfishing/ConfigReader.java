@@ -118,14 +118,14 @@ public class ConfigReader{
             if (config.getBoolean("config.integrations.WorldGuard")){
                 if (Bukkit.getPluginManager().getPlugin("WorldGuard") == null) AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to initialize WorldGuard!</red>");
                 else {
-                    AdventureUtil.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>WorldGuard <color:#E1FFFF>Hooked!");
+                    AdventureUtil.consoleMessage("[CustomFishing] <color:#00BFFF>WorldGuard <color:#E1FFFF>Hooked!");
                     wg = true;
                 }
             }
             if (config.getBoolean("config.integrations.MythicMobs")){
                 if (Bukkit.getPluginManager().getPlugin("MythicMobs") == null) AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to initialize MythicMobs!</red>");
                 else {
-                    AdventureUtil.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>MythicMobs <color:#E1FFFF>Hooked!");
+                    AdventureUtil.consoleMessage("[CustomFishing] <color:#00BFFF>MythicMobs <color:#E1FFFF>Hooked!");
                     mm = true;
                 }
             }
@@ -139,28 +139,28 @@ public class ConfigReader{
                 if (Bukkit.getPluginManager().getPlugin("mcMMO") == null) CustomFishing.instance.getLogger().warning("Failed to initialize mcMMO!");
                 else {
                     skillXP = new mcMMO();
-                    AdventureUtil.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>mcMMO <color:#E1FFFF>Hooked!");
+                    AdventureUtil.consoleMessage("[CustomFishing] <color:#00BFFF>mcMMO <color:#E1FFFF>Hooked!");
                 }
             }
             if(config.getBoolean("config.integrations.AureliumSkills",false)){
                 if (Bukkit.getPluginManager().getPlugin("AureliumSkills") == null) CustomFishing.instance.getLogger().warning("Failed to initialize AureliumSkills!");
                 else {
                     skillXP = new Aurelium();
-                    AdventureUtil.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>AureliumSkills <color:#E1FFFF>Hooked!");
+                    AdventureUtil.consoleMessage("[CustomFishing] <color:#00BFFF>AureliumSkills <color:#E1FFFF>Hooked!");
                 }
             }
             if(config.getBoolean("config.integrations.MMOCore",false)){
                 if (Bukkit.getPluginManager().getPlugin("MMOCore") == null) CustomFishing.instance.getLogger().warning("Failed to initialize MMOCore!");
                 else {
                     skillXP = new MMOCore();
-                    AdventureUtil.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>MMOCore <color:#E1FFFF>Hooked!");
+                    AdventureUtil.consoleMessage("[CustomFishing] <color:#00BFFF>MMOCore <color:#E1FFFF>Hooked!");
                 }
             }
             if(config.getBoolean("config.integrations.EcoSkills",false)){
                 if (Bukkit.getPluginManager().getPlugin("EcoSkills") == null) CustomFishing.instance.getLogger().warning("Failed to initialize EcoSkills!");
                 else {
                     skillXP = new EcoSkill();
-                    AdventureUtil.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>EcoSkills <color:#E1FFFF>Hooked!");
+                    AdventureUtil.consoleMessage("[CustomFishing] <color:#00BFFF>EcoSkills <color:#E1FFFF>Hooked!");
                 }
             }
 
@@ -169,14 +169,14 @@ public class ConfigReader{
                 if (Bukkit.getPluginManager().getPlugin("RealisticSeasons") == null) Log.warn("Failed to initialize RealisticSeasons!");
                 else {
                     season = new RealisticSeason();
-                    AdventureUtil.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>RealisticSeasons <color:#E1FFFF>Hooked!");
+                    AdventureUtil.consoleMessage("[CustomFishing] <color:#00BFFF>RealisticSeasons <color:#E1FFFF>Hooked!");
                 }
             }
             if (config.getBoolean("config.integrations.CustomCrops",false)){
                 if (Bukkit.getPluginManager().getPlugin("CustomCrops") == null) Log.warn("Failed to initialize CustomCrops!");
                 else {
                     season = new CustomCropsSeason();
-                    AdventureUtil.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#00BFFF>CustomCrops <color:#E1FFFF>Hooked!");
+                    AdventureUtil.consoleMessage("[CustomFishing] <color:#00BFFF>CustomCrops <color:#E1FFFF>Hooked!");
                 }
             }
 
@@ -502,7 +502,7 @@ public class ConfigReader{
                     AdventureUtil.consoleMessage("<red>[CustomFishing] Error! Failed to create mobs folder...</red>");
                     return;
                 }
-                CustomFishing.instance.saveResource("loots" + File.separator + "ExampleMob.yml", false);
+                CustomFishing.instance.saveResource("mobs" + File.separator + "example.yml", false);
             }
             File[] mobFiles = mob_file.listFiles();
             if (mobFiles != null) {

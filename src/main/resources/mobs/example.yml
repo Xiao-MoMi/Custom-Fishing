@@ -1,6 +1,6 @@
 skeletalknight:
 
-  enable: false
+  enable: true
 
   # MythicMobsID
   mythicmobsID: SkeletalKnight
@@ -28,6 +28,7 @@ skeletalknight:
       - world
 
 piranha:
+  enable: false
   mythicmobsID: piranha
   name: 'Piranha'
   weight: 50

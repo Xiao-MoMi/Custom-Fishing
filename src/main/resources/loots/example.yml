@@ -35,7 +35,7 @@ rainbow_fish:
   custom-model-data: 1
 
   # Custom NBT tags
-  # If you are not sure about the NBT tag. You can use command '/cfishing import xxx' and get it in 'CustomFishing/export' folder
+  # If you are not sure about the NBT tag. You can use command '/cfishing import xxx'
   # (Int) (Byte) (String) (Float) (String) (Double) (Short) (Long) (UUID) (Boolean) (IntArray) (ByteArray)
   nbt:
     itemsadder:

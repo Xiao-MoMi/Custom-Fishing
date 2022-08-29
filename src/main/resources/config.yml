@@ -29,8 +29,8 @@ config:
     # This is useful for vanilla loots
     # Vanilla loot is available only when 'double-reel-in' is true
     vanilla: true
-    # This means 30% of the loots are from vanilla
-    # and 70% are from CustomFishing Loot system
+    # 0.4 means 40% of the loots are from vanilla
+    # and 60% are from CustomFishing Loot system
     vanilla-ratio: 0.4
     # Should vanilla loots have the same fishing mechanic CustomFishing provides
     bar: true

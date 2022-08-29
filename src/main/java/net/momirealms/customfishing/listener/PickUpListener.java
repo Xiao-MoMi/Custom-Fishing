@@ -3,6 +3,7 @@ package net.momirealms.customfishing.listener;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,6 +23,16 @@ public class PickUpListener implements Listener {
                 nbtItem.removeKey("M_Owner");
                 itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
             }
+        }
+    }
+
+    @EventHandler
+    public void onMove(InventoryPickupItemEvent event){
+        ItemStack itemStack = event.getItem().getItemStack();
+        NBTItem nbtItem = new NBTItem(itemStack);
+        if (nbtItem.hasKey("M_Owner")){
+            nbtItem.removeKey("M_Owner");
+            itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
         }
     }
 }
