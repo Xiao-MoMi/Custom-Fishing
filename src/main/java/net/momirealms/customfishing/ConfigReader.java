@@ -103,6 +103,8 @@ public class ConfigReader{
         public static boolean showBar;
         public static boolean mcMMOLoot;
         public static boolean hasWhitelist;
+        public static boolean needRodFishing;
+        public static boolean disableJobXp;
         public static int fishFinderCoolDown;
         public static double timeMultiply;
         public static double vanillaRatio;
@@ -169,6 +171,13 @@ public class ConfigReader{
                     AdventureUtil.consoleMessage("[CustomFishing] <color:#00BFFF>EcoSkills <color:#E1FFFF>Hooked!");
                 }
             }
+            if(config.getBoolean("config.integrations.JobsReborn",false)){
+                if (Bukkit.getPluginManager().getPlugin("Jobs") == null) CustomFishing.instance.getLogger().warning("Failed to initialize JobsReborn!");
+                else {
+                    skillXP = new JobsReborn();
+                    AdventureUtil.consoleMessage("[CustomFishing] <color:#00BFFF>JobsReborn <color:#E1FFFF>Hooked!");
+                }
+            }
 
             season = null;
             if (config.getBoolean("config.integrations.RealisticSeasons",false)){
@@ -199,7 +208,9 @@ public class ConfigReader{
 
             convertMMOItems = config.getBoolean("config.convert-MMOITEMS", false);
             needOpenWater = config.getBoolean("config.need-open-water", false);
-            needSpecialRod = config.getBoolean("config.need-special-rod", false);
+            needSpecialRod = config.getBoolean("config.need-special-rod.for-loots", false);
+            needRodFishing = config.getBoolean("config.need-special-rod.to-fish", false);
+
             loseDurability = config.getBoolean("config.rod-lose-durability", true);
             preventPick = config.getBoolean("config.prevent-other-players-pick-up-loot", false);
 
@@ -208,6 +219,7 @@ public class ConfigReader{
             timeMultiply = config.getDouble("config.time-multiply");
             lang = config.getString("config.lang","cn");
             competition = config.getBoolean("config.fishing-competition",true);
+            disableJobXp = config.getBoolean("config.disable-JobsReborn-fishing-exp",false);
 
             hasWhitelist = config.getBoolean("config.whitelist-worlds.enable",false);
 
@@ -362,7 +374,8 @@ public class ConfigReader{
                     loot.setDifficulty(difficulty);
                     loot.setTime(time);
                     loot.setWeight(weight);
-                    loot.setNick(config.getString(key + ".nick", key));
+                    if (config.contains(key + ".nick")) loot.setNick(config.getString(key + ".nick"));
+                    else loot.setNick(config.getString(key + ".display.name", key));
                     loot.setScore(config.getDouble(key + ".score",0));
                     loot.setShowInFinder(config.getBoolean(key + ".show-in-fishfinder", true));
                     loot.setRandomDurability(config.getBoolean(key + ".random-durability", false));
@@ -549,7 +562,8 @@ public class ConfigReader{
                         loot.setDifficulty(difficulty);
                         loot.setTime(time);
                         loot.setWeight(weight);
-                        loot.setNick(config.getString(key + ".name", key));
+                        if (config.contains(key + ".nick")) loot.setNick(config.getString(key + ".nick"));
+                        else loot.setNick(config.getString(key + ".display.name", key));
                         loot.setScore(config.getDouble(key + ".score",0));
                         loot.setShowInFinder(config.getBoolean(key + ".show-in-fishfinder", true));
                         loot.setMmLevel(config.getInt(key + ".level", 0));

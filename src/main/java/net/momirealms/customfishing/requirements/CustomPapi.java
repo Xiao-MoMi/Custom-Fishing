@@ -33,6 +33,7 @@ public class CustomPapi implements Requirement {
                     allPapi.add(papi);
                     switch (type){
                         case "==" -> papiRequirement = new PapiEquals(papi, value);
+                        case "!=" -> papiRequirement = new PapiNotEquals(papi, value);
                         case ">=" -> papiRequirement = new PapiNoLess(papi, Double.parseDouble(value));
                         case "<=" -> papiRequirement = new PapiNoLarger(papi, Double.parseDouble(value));
                         case "<" -> papiRequirement = new PapiSmaller(papi, Double.parseDouble(value));
@@ -67,6 +68,7 @@ public class CustomPapi implements Requirement {
                     allPapi.add(papi);
                     switch (type){
                         case "==" -> andRequirements.add(new PapiEquals(papi, value));
+                        case "!=" -> andRequirements.add(new PapiNotEquals(papi, value));
                         case ">=" -> andRequirements.add(new PapiNoLess(papi, Double.parseDouble(value)));
                         case "<=" -> andRequirements.add(new PapiNoLarger(papi, Double.parseDouble(value)));
                         case "<" -> andRequirements.add(new PapiSmaller(papi, Double.parseDouble(value)));
@@ -97,6 +99,7 @@ public class CustomPapi implements Requirement {
                     allPapi.add(papi);
                     switch (type){
                         case "==" -> orRequirements.add(new PapiEquals(papi, value));
+                        case "!=" -> orRequirements.add(new PapiNotEquals(papi, value));
                         case ">=" -> orRequirements.add(new PapiNoLess(papi, Double.parseDouble(value)));
                         case "<=" -> orRequirements.add(new PapiNoLarger(papi, Double.parseDouble(value)));
                         case "<" -> orRequirements.add(new PapiSmaller(papi, Double.parseDouble(value)));

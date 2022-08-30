@@ -3,7 +3,7 @@ rainbow_fish:
   # Enable
   enable: false
 
-  # Nick is what to show in fish finder
+  # Nick is what to show in fish finder and titles
   nick: 'Example Fish'
   # Should it be displayed in fish finder?
   show-in-fishfinder: false
@@ -60,7 +60,7 @@ rainbow_fish:
       # Exp that would apply to mending
       mending: 5
       # Fishing Skill xp (requires skill plugin hook)
-      #skill-xp: 100
+      skill-xp: 100
     failure:
       message:
         - 'The fish escaped！'
@@ -163,6 +163,7 @@ rainbow_fish:
     #Create complex condition as you want
     # "||" means one of the conditions is true, it would be true
     # "&&" means all the conditions must be true to be true
+    # available types "==" "!=" ">" "<" ">=" "<="
     papi-condition:
       '||':
         condition_1:

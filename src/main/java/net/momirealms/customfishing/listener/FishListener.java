@@ -328,12 +328,6 @@ public class FishListener implements Listener {
                         }
                     }
 
-                    if (ConfigReader.Config.needSpecialRod && noSpecialRod){
-                        if (!ConfigReader.Config.vanillaLoot)
-                            AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.noRod);
-                        nextLoot.put(player, null);
-                    }
-
                     FishHook hook = event.getHook();
                     hook.setMaxWaitTime((int) (timeModifier * hook.getMaxWaitTime()));
                     hook.setMinWaitTime((int) (timeModifier * hook.getMinWaitTime()));
@@ -351,6 +345,18 @@ public class FishListener implements Listener {
                         nextLoot.put(player, null);
                         return;
                     }
+
+                    if (ConfigReader.Config.needSpecialRod && noSpecialRod){
+                        if (!ConfigReader.Config.vanillaLoot)
+                            AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.noRod);
+                        nextLoot.put(player, null);
+                    }
+
+                    if (ConfigReader.Config.needRodFishing && noSpecialRod){
+                        nextLoot.put(player, new Loot("none"));
+                    }
+
+                    if ((ConfigReader.Config.needSpecialRod || ConfigReader.Config.needRodFishing) && noSpecialRod) return;
 
                     double[] weights = new double[possibleLoots.size()];
                     int index = 0;
@@ -400,14 +406,19 @@ public class FishListener implements Listener {
                 });
             }
             case CAUGHT_FISH -> {
+
+                if (ConfigReader.Config.needRodFishing && nextLoot.get(player) != null && nextLoot.get(player).getKey().equals("none")){
+                    return;
+                }
                 //是否需要两次拉杆
                 if (ConfigReader.Config.doubleRealIn) {
 
                     FishingPlayer fishingPlayer = fishingPlayers.remove(player);
 
+                    Entity entity = event.getCaught();
+
                     if (fishingPlayer == null){
 
-                        Entity entity = event.getCaught();
                         if (entity instanceof Item item){
                             //是否有原版战利品
                             if (ConfigReader.Config.vanillaLoot) {
@@ -447,7 +458,6 @@ public class FishListener implements Listener {
                     }
                     else {
 
-                        Entity entity = event.getCaught();
                         if (entity instanceof Item item){
                             item.remove();
                             event.setExpToDrop(0);
@@ -503,6 +513,7 @@ public class FishListener implements Listener {
                         //如果玩家正在钓鱼
                         //那么拉杆的时候可能也会遇到上钩点，进行正常收杆判断
                         FishingPlayer fishingPlayer = fishingPlayers.remove(player);
+
                         if (fishingPlayer != null){
 
                             item.remove();
@@ -579,6 +590,7 @@ public class FishListener implements Listener {
                 }
             }
             case REEL_IN -> {
+
                 FishingPlayer fishingPlayer = fishingPlayers.remove(player);
                 //首先得是钓鱼中的玩家
                 if (fishingPlayer != null){
@@ -649,6 +661,7 @@ public class FishListener implements Listener {
                 }
             }
             case BITE -> {
+
                 if (ConfigReader.Config.doubleRealIn) return;
 
                 if (fishingPlayers.get(player) != null) return;
@@ -656,6 +669,10 @@ public class FishListener implements Listener {
                 Loot loot = nextLoot.get(player);
 
                 if (loot == null) return;
+
+                if (ConfigReader.Config.needRodFishing && loot.getKey().equals("none")){
+                    return;
+                }
 
                 String layout;
                 if (loot.getLayout() != null){

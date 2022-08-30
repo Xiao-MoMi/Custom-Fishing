@@ -1,5 +1,5 @@
 # don't change
-config-version: '7'
+config-version: '8'
 
 config:
   #en/es/cn
@@ -13,12 +13,14 @@ config:
     # Papi hook
     PlaceholderAPI: true
     # Skill xp hook
-    # If skill xp is added not as expected
-    # Check the xp-source file in those skill plugins and set them to 0
+    # If skill xp is added not as expected please check if you have set skill-xp for each loot
+    # Some plugins like AureliumSkills will still add skill-xp when player failed to fish. Check the xp-source file in those skill plugins and set them to 0
     mcMMO: false
     MMOCore: false
     AureliumSkills: false
     EcoSkills: false
+    # You need a restart to cancel the Jobs xp getting in vanilla way
+    JobsReborn: false
     # Season hook
     CustomCrops: false
     RealisticSeasons: false
@@ -54,8 +56,12 @@ config:
   # https://technical-minecraft.fandom.com/wiki/Fishing
   need-open-water: true
 
-  # Players must use rods with CustomFishing's NBT Tags to get loots in CustomFishing
-  need-special-rod: false
+  need-special-rod:
+    # if set true and "double-reel-in" is true, players must use rods with CustomFishing's NBT Tags to get loots in CustomFishing but they can experience the special fishing mechanic.
+    # This option will not work if "double-reel-in" is false because in that mode no vanilla loots are available
+    for-loots: false
+    # if set true and "double-reel-in" is true, players must use rods with CustomFishing's NBT Tags to experience the special fishing mechanic. Otherwise they can only fish in a vanilla way
+    to-fish: false
 
   # does rod lose durability when player successfully fish
   rod-lose-durability: true
@@ -80,3 +86,6 @@ config:
   # If there's a plugin conflict, event priority sometimes works
   # HIGHEST NORMAL LOWEST
   event-priority: NORMAL
+
+  # If enabled, players would not be able to get job exp in vanilla way (Requires a restart)
+  disable-JobsReborn-fishing-exp: false

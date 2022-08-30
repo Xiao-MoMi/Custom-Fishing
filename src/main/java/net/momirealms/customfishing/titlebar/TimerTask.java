@@ -88,6 +88,7 @@ public class TimerTask extends BukkitRunnable {
             bukkitScheduler.cancelTask(taskID);
             return;
         }
+
         int timer = difficulty.getTimer() - 1;
         int speed = difficulty.getSpeed();
         //设置指针方向
@@ -119,7 +120,7 @@ public class TimerTask extends BukkitRunnable {
             }
         }
         stringBuilder.append(end);
-        AdventureUtil.playerTitle(player, title, stringBuilder.toString(),0,300,0);
+        AdventureUtil.playerTitle(player, title, stringBuilder.toString(),0,500,0);
         //移除切换物品的玩家
         PlayerInventory playerInventory = player.getInventory();
         if (playerInventory.getItemInMainHand().getType() != Material.FISHING_ROD && playerInventory.getItemInOffHand().getType() != Material.FISHING_ROD){

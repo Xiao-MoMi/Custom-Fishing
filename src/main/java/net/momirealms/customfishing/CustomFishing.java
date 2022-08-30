@@ -25,6 +25,7 @@ import net.momirealms.customfishing.competition.CompetitionSchedule;
 import net.momirealms.customfishing.competition.bossbar.BossBarManager;
 import net.momirealms.customfishing.helper.LibraryLoader;
 import net.momirealms.customfishing.hook.Placeholders;
+import net.momirealms.customfishing.hook.skill.JobsReborn;
 import net.momirealms.customfishing.listener.*;
 import net.momirealms.customfishing.utils.AdventureUtil;
 import net.momirealms.customfishing.utils.ConfigUtil;
@@ -51,6 +52,7 @@ public final class CustomFishing extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
         adventure = BukkitAudiences.create(this);
         miniMessage = MiniMessage.miniMessage();
         Objects.requireNonNull(Bukkit.getPluginCommand("customfishing")).setExecutor(new Execute());
@@ -62,18 +64,13 @@ public final class CustomFishing extends JavaPlugin {
         Bukkit.getScheduler().runTaskAsynchronously(this, ()-> {
 
             ConfigReader.Reload();
+
             if (ConfigReader.Config.competition){
                 competitionSchedule = new CompetitionSchedule();
                 competitionSchedule.checkTime();
-                Bukkit.getScheduler().runTask(this, () -> {
-                    Bukkit.getPluginManager().registerEvents(new BossBarManager(), this);
-                });
+                Bukkit.getScheduler().runTask(this, () -> Bukkit.getPluginManager().registerEvents(new BossBarManager(), this));
             }
-            if (ConfigReader.Config.convertMMOItems){
-                Bukkit.getScheduler().runTask(this, () -> {
-                    Bukkit.getPluginManager().registerEvents(new MMOItemsConverter(), this);
-                });
-            }
+
             if (ConfigReader.Config.papi){
                 placeholders = new Placeholders();
                 Bukkit.getScheduler().runTask(this, () -> {
@@ -81,15 +78,18 @@ public final class CustomFishing extends JavaPlugin {
                     Bukkit.getPluginManager().registerEvents(new PapiUnregister(), this);
                 });
             }
-            if (ConfigReader.Config.preventPick){
-                Bukkit.getScheduler().runTask(this, () -> {
-                    Bukkit.getPluginManager().registerEvents(new PickUpListener(),this);
-                });
-            }
-            if (!Objects.equals(ConfigReader.Config.version, "7")){
+
+            if (ConfigReader.Config.preventPick)
+                Bukkit.getScheduler().runTask(this, () -> Bukkit.getPluginManager().registerEvents(new PickUpListener(),this));
+            if (!Objects.equals(ConfigReader.Config.version, "8"))
                 ConfigUtil.update();
-            }
+            if (ConfigReader.Config.convertMMOItems)
+                Bukkit.getScheduler().runTask(this, () -> Bukkit.getPluginManager().registerEvents(new MMOItemsListener(), this));
+            if (ConfigReader.Config.disableJobXp)
+                Bukkit.getScheduler().runTask(this, () -> Bukkit.getPluginManager().registerEvents(new JobsListener(), this));
+
             ConfigReader.tryEnableJedis();
+
             AdventureUtil.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>Plugin Enabled!");
         });
     }

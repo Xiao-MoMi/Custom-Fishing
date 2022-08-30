@@ -18,6 +18,7 @@ softdepend:
   - Oraxen
   - MMOItems
   - eco
+  - Jobs
 commands:
   customfishing:
     usage: /customfishing
