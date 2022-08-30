@@ -57,6 +57,8 @@ dependencies {
     implementation('net.kyori:adventure-text-minimessage:4.11.0')
     implementation('net.kyori:adventure-text-serializer-legacy:4.11.0')
     implementation('de.tr7zw:item-nbt-api:2.10.0')
+    compileOnly('com.willfp:EcoSkills:1.72.0')
+    compileOnly('com.willfp:eco:6.38.3')
 }
 
 def targetJavaVersion = 16

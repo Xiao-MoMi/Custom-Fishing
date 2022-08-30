@@ -22,6 +22,7 @@ import net.momirealms.customcrops.helper.Log;
 import net.momirealms.customfishing.competition.CompetitionConfig;
 import net.momirealms.customfishing.competition.Goal;
 import net.momirealms.customfishing.competition.bossbar.BossBarConfig;
+import net.momirealms.customfishing.hook.EcoItemRegister;
 import net.momirealms.customfishing.hook.season.CustomCropsSeason;
 import net.momirealms.customfishing.hook.season.RealisticSeason;
 import net.momirealms.customfishing.hook.season.SeasonInterface;
@@ -81,6 +82,9 @@ public class ConfigReader{
         loadBait();
         loadEnchants();
         loadCompetitions();
+        if (Bukkit.getPluginManager().isPluginEnabled("eco")) {
+            EcoItemRegister.registerItems();
+        }
     }
 
     public static class Config {

@@ -17,6 +17,7 @@ softdepend:
   - ItemsAdder
   - Oraxen
   - MMOItems
+  - eco
 commands:
   customfishing:
     usage: /customfishing
