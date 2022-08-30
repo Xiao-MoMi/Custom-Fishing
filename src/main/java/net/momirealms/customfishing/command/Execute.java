@@ -1,5 +1,6 @@
 package net.momirealms.customfishing.command;
 
+import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.competition.CompetitionSchedule;
 import net.momirealms.customfishing.utils.AdventureUtil;
 import net.momirealms.customfishing.ConfigReader;
@@ -30,12 +31,14 @@ public class Execute implements CommandExecutor {
         }
 
         if (args[0].equalsIgnoreCase("reload")) {
-            ConfigReader.Reload();
-            if (sender instanceof Player){
-                AdventureUtil.playerMessage((Player) sender, ConfigReader.Message.prefix + ConfigReader.Message.reload);
-            }else {
-                AdventureUtil.consoleMessage(ConfigReader.Message.prefix + ConfigReader.Message.reload);
-            }
+            Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.instance, ()-> {
+                ConfigReader.Reload();
+                if (sender instanceof Player){
+                    AdventureUtil.playerMessage((Player) sender, ConfigReader.Message.prefix + ConfigReader.Message.reload);
+                }else {
+                    AdventureUtil.consoleMessage(ConfigReader.Message.prefix + ConfigReader.Message.reload);
+                }
+            });
             return true;
         }
 

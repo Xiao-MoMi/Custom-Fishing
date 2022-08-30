@@ -95,6 +95,19 @@ public class FishListener implements Listener {
         PlayerFishEvent.State state = event.getState();
         Player player = event.getPlayer();
 
+        if (ConfigReader.Config.hasWhitelist){
+            boolean isWhite = false;
+            for (World world : ConfigReader.Config.whitelistWorlds){
+                if (world.equals(player.getWorld())){
+                    isWhite = true;
+                    break;
+                }
+            }
+            if (!isWhite){
+                return;
+            }
+        }
+
         switch (state){
 
             case FISHING ->{
@@ -325,7 +338,7 @@ public class FishListener implements Listener {
                     hook.setMaxWaitTime((int) (timeModifier * hook.getMaxWaitTime()));
                     hook.setMinWaitTime((int) (timeModifier * hook.getMinWaitTime()));
 
-                    List<Loot> possibleLoots = getPossibleLootList(new FishingCondition(hook.getLocation(), player));
+                    List<Loot> possibleLoots = getPossibleLootList(new FishingCondition(hook.getLocation(), player), false);
                     List<Loot> availableLoots = new ArrayList<>();
 
                     Modifier modifier = new Modifier();
@@ -933,7 +946,7 @@ public class FishListener implements Listener {
             }
             coolDown.put(player, time);
             //获取玩家位置处可能的Loot实例列表
-            List<Loot> possibleLoots = getFinder(new FishingCondition(player.getLocation(), player));
+            List<Loot> possibleLoots = getPossibleLootList(new FishingCondition(player.getLocation(), player), true);
             if (possibleLoots.size() == 0){
                 AdventureUtil.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.noLoot);
                 return;
@@ -947,33 +960,11 @@ public class FishListener implements Listener {
     /*
     获取可能的Loot列表
      */
-    private List<Loot> getPossibleLootList(FishingCondition fishingCondition) {
+    private List<Loot> getPossibleLootList(FishingCondition fishingCondition, boolean finder) {
         List<Loot> available = new ArrayList<>();
         ConfigReader.LOOT.keySet().forEach(key -> {
             Loot loot = ConfigReader.LOOT.get(key);
-            List<Requirement> requirements = loot.getRequirements();
-            if (requirements == null){
-                available.add(loot);
-            }else {
-                boolean isMet = true;
-                for (Requirement requirement : requirements){
-                    if (!requirement.isConditionMet(fishingCondition)){
-                        isMet = false;
-                    }
-                }
-                if (isMet){
-                    available.add(loot);
-                }
-            }
-        });
-        return available;
-    }
-
-    private List<Loot> getFinder(FishingCondition fishingCondition) {
-        List<Loot> available = new ArrayList<>();
-        ConfigReader.LOOT.keySet().forEach(key -> {
-            Loot loot = ConfigReader.LOOT.get(key);
-            if (!loot.isShowInFinder()) return;
+            if (finder && !loot.isShowInFinder()) return;
             List<Requirement> requirements = loot.getRequirements();
             if (requirements == null){
                 available.add(loot);

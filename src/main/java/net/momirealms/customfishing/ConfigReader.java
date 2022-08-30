@@ -102,6 +102,7 @@ public class ConfigReader{
         public static boolean vanillaLoot;
         public static boolean showBar;
         public static boolean mcMMOLoot;
+        public static boolean hasWhitelist;
         public static int fishFinderCoolDown;
         public static double timeMultiply;
         public static double vanillaRatio;
@@ -110,6 +111,7 @@ public class ConfigReader{
         public static String version;
         public static String lang;
         public static String priority;
+        public static List<org.bukkit.World> whitelistWorlds = new ArrayList<>();
         public static SeasonInterface season;
 
         public static void loadConfig() {
@@ -184,6 +186,8 @@ public class ConfigReader{
                 }
             }
 
+            version = config.getString("config-version");
+
             doubleRealIn = config.getBoolean("config.double-reel-in", true);
 
             mcMMOLoot = config.getBoolean("config.other-loot.mcMMO", false);
@@ -199,12 +203,26 @@ public class ConfigReader{
             loseDurability = config.getBoolean("config.rod-lose-durability", true);
             preventPick = config.getBoolean("config.prevent-other-players-pick-up-loot", false);
 
-            version = config.getString("config-version");
             priority = config.getString("config.event-priority");
             fishFinderCoolDown = config.getInt("config.fishfinder-cooldown");
             timeMultiply = config.getDouble("config.time-multiply");
             lang = config.getString("config.lang","cn");
             competition = config.getBoolean("config.fishing-competition",true);
+
+            hasWhitelist = config.getBoolean("config.whitelist-worlds.enable",false);
+
+            if (hasWhitelist){
+                whitelistWorlds.clear();
+                config.getStringList("config.whitelist-worlds.worlds").forEach(whitelistWorld -> {
+                    try {
+                        whitelistWorlds.add(Bukkit.getWorld(whitelistWorld));
+                    }
+                    catch (Exception e){
+                        AdventureUtil.consoleMessage("<red>[CustomFishing] Invalid world " + whitelistWorld);
+                        e.printStackTrace();
+                    }
+                });
+            }
         }
     }
 
@@ -242,12 +260,12 @@ public class ConfigReader{
 
             YamlConfiguration config = getConfig("messages/messages_" + Config.lang +".yml");
 
-            prefix = config.getString("messages.prefix");
-            reload = config.getString("messages.reload");
-            escape = config.getString("messages.escape");
-            noPerm = config.getString("messages.no-perm");
-            notExist = config.getString("messages.not-exist");
-            noConsole = config.getString("messages.no-console");
+            prefix = config.getString("messages.prefix", "messages.prefix is missing");
+            reload = config.getString("messages.reload", "messages.reload is missing");
+            escape = config.getString("messages.escape", "messages.escape is missing");
+            noPerm = config.getString("messages.no-perm", "messages.no-perm is missing");
+            notExist = config.getString("messages.not-exist", "messages.not-exist is missing");
+            noConsole = config.getString("messages.no-console", "messages.no-console is missing");
             wrongAmount = config.getString("messages.wrong-amount");
             lackArgs = config.getString("messages.lack-args");
             notOnline = config.getString("messages.not-online");
@@ -264,7 +282,7 @@ public class ConfigReader{
             forceSuccess = config.getString("messages.force-competition-success");
             forceFailure = config.getString("messages.force-competition-failure");
             forceEnd = config.getString("messages.force-competition-end");
-            forceCancel = config.getString("messages.force-competition-cancel");
+            forceCancel = config.getString("messages.force-competition-cancel","messages.force-competition-cancel is messing");
             noPlayer = config.getString("messages.no-player", "messages.no-player is missing");
             noScore = config.getString("messages.no-score", "messages.no-score is missing");
             noRod = config.getString("messages.no-rod", "messages.no-rod is missing");
@@ -974,6 +992,6 @@ public class ConfigReader{
             });
             ENCHANTS.put(key, levelBonus);
         });
-        AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + ENCHANTS.size() + " <gray>enchants bonus");
+        AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + ENCHANTS.size() + " <gray>enchantments");
     }
 }

@@ -1,6 +1,8 @@
 package net.momirealms.customfishing.hook;
 
 import com.willfp.eco.core.items.CustomItem;
+import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.momirealms.customfishing.ConfigReader;
 import net.momirealms.customfishing.CustomFishing;
 import org.bukkit.NamespacedKey;
@@ -17,12 +19,11 @@ public class EcoItemRegister {
                     new NamespacedKey(CustomFishing.instance, "rod_" + entry.getKey()),
                     itemStack -> {
                         try {
-                            return itemStack.getItemMeta().getPersistentDataContainer()
-                                    .get(new NamespacedKey(CustomFishing.instance, "type"),
-                                            PersistentDataType.STRING).equalsIgnoreCase("rod")
-                                    && itemStack.getItemMeta().getPersistentDataContainer()
-                                    .get(new NamespacedKey(CustomFishing.instance, "id"),
-                                            PersistentDataType.STRING).equalsIgnoreCase(entry.getKey());
+                            NBTItem nbtItem = new NBTItem(itemStack);
+                            NBTCompound nbtCompound = nbtItem.getCompound("CustomFishing");
+                            return  nbtCompound != null
+                                    && nbtCompound.getString("type").equalsIgnoreCase("rod")
+                                    && nbtCompound.getString("id").equalsIgnoreCase(entry.getKey());
                         } catch (Exception e) {
                             return false;
                         }
@@ -36,12 +37,11 @@ public class EcoItemRegister {
                     new NamespacedKey(CustomFishing.instance, "bait_" + entry.getKey()),
                     itemStack -> {
                         try {
-                            return itemStack.getItemMeta().getPersistentDataContainer()
-                                    .get(new NamespacedKey(CustomFishing.instance, "type"),
-                                            PersistentDataType.STRING).equalsIgnoreCase("bait")
-                                    && itemStack.getItemMeta().getPersistentDataContainer()
-                                    .get(new NamespacedKey(CustomFishing.instance, "id"),
-                                            PersistentDataType.STRING).equalsIgnoreCase(entry.getKey());
+                            NBTItem nbtItem = new NBTItem(itemStack);
+                            NBTCompound nbtCompound = nbtItem.getCompound("CustomFishing");
+                            return  nbtCompound != null
+                                    && nbtCompound.getString("type").equalsIgnoreCase("bait")
+                                    && nbtCompound.getString("id").equalsIgnoreCase(entry.getKey());
                         } catch (Exception e) {
                             return false;
                         }
@@ -55,12 +55,11 @@ public class EcoItemRegister {
                     new NamespacedKey(CustomFishing.instance, "util_" + entry.getKey()),
                     itemStack -> {
                         try {
-                            return itemStack.getItemMeta().getPersistentDataContainer()
-                                    .get(new NamespacedKey(CustomFishing.instance, "type"),
-                                            PersistentDataType.STRING).equalsIgnoreCase("util")
-                                    && itemStack.getItemMeta().getPersistentDataContainer()
-                                    .get(new NamespacedKey(CustomFishing.instance, "id"),
-                                            PersistentDataType.STRING).equalsIgnoreCase(entry.getKey());
+                            NBTItem nbtItem = new NBTItem(itemStack);
+                            NBTCompound nbtCompound = nbtItem.getCompound("CustomFishing");
+                            return  nbtCompound != null
+                                    && nbtCompound.getString("type").equalsIgnoreCase("util")
+                                    && nbtCompound.getString("id").equalsIgnoreCase(entry.getKey());
                         } catch (Exception e) {
                             return false;
                         }

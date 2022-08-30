@@ -24,7 +24,6 @@ import net.momirealms.customfishing.command.TabComplete;
 import net.momirealms.customfishing.competition.CompetitionSchedule;
 import net.momirealms.customfishing.competition.bossbar.BossBarManager;
 import net.momirealms.customfishing.helper.LibraryLoader;
-import net.momirealms.customfishing.hook.McMMOTreasure;
 import net.momirealms.customfishing.hook.Placeholders;
 import net.momirealms.customfishing.listener.*;
 import net.momirealms.customfishing.utils.AdventureUtil;
@@ -61,6 +60,7 @@ public final class CustomFishing extends JavaPlugin {
         AdventureUtil.consoleMessage("[CustomFishing] Running on <white>" + Bukkit.getVersion());
 
         Bukkit.getScheduler().runTaskAsynchronously(this, ()-> {
+
             ConfigReader.Reload();
             if (ConfigReader.Config.competition){
                 competitionSchedule = new CompetitionSchedule();
@@ -81,15 +81,15 @@ public final class CustomFishing extends JavaPlugin {
                     Bukkit.getPluginManager().registerEvents(new PapiUnregister(), this);
                 });
             }
-            ConfigReader.tryEnableJedis();
-            if (!Objects.equals(ConfigReader.Config.version, "6")){
-                ConfigUtil.update();
-            }
             if (ConfigReader.Config.preventPick){
                 Bukkit.getScheduler().runTask(this, () -> {
                     Bukkit.getPluginManager().registerEvents(new PickUpListener(),this);
                 });
             }
+            if (!Objects.equals(ConfigReader.Config.version, "7")){
+                ConfigUtil.update();
+            }
+            ConfigReader.tryEnableJedis();
             AdventureUtil.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>Plugin Enabled!");
         });
     }

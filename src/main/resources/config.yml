@@ -1,5 +1,5 @@
 # don't change
-config-version: '6'
+config-version: '7'
 
 config:
   #en/es/cn
@@ -22,6 +22,12 @@ config:
     # Season hook
     CustomCrops: false
     RealisticSeasons: false
+
+  # Worlds where the special fishing mechanic take effects
+  whitelist-worlds:
+    enable: false
+    worlds:
+      - world
 
   # Should the fishing bar only show after player reel in
   # Otherwise the bar would show immediately the bobber is hooked
