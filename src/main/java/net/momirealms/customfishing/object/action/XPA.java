@@ -1,5 +1,8 @@
 package net.momirealms.customfishing.object.action;
 
+import net.kyori.adventure.key.Key;
+import net.momirealms.customfishing.ConfigReader;
+import net.momirealms.customfishing.utils.AdventureUtil;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -7,7 +10,8 @@ public record XPA(int amount) implements ActionB {
 
     @Override
     public void doOn(Player player) {
-        player.giveExp(amount, true);
-        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1,1);
+        if (ConfigReader.Config.isSpigot) player.giveExp(amount);
+        else player.giveExp(amount, true);
+        AdventureUtil.playerSound(player, net.kyori.adventure.sound.Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"));
     }
 }

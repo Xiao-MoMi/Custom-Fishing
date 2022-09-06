@@ -19,6 +19,7 @@ package net.momirealms.customfishing.listener;
 
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.momirealms.customfishing.competition.CompetitionSchedule;
@@ -37,6 +38,7 @@ import net.momirealms.customfishing.requirements.FishingCondition;
 import net.momirealms.customfishing.requirements.Requirement;
 import net.momirealms.customfishing.titlebar.Timer;
 import net.momirealms.customfishing.utils.ItemStackUtil;
+import net.momirealms.customfishing.utils.ItemUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
@@ -761,9 +763,9 @@ public class FishListener implements Listener {
                 itemStack = itemStack1;
             }
         }
-
-        player.giveExp(vanillaLoot.getXp(), true);
-        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1,1);
+        if (ConfigReader.Config.isSpigot) player.giveExp(vanillaLoot.getXp());
+        else player.giveExp(vanillaLoot.getXp(), true);
+        AdventureUtil.playerSound(player, net.kyori.adventure.sound.Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"));
         Entity item = location.getWorld().dropItem(location, itemStack);
         Vector vector = player.getLocation().subtract(location).toVector().multiply(0.1);
         vector = vector.setY((vector.getY()+0.2)*1.2);
@@ -840,14 +842,14 @@ public class FishListener implements Listener {
         if (text.contains("{loot}")){
             text = text.replace("{loot}","|");
             if (text.startsWith("|")){
-                subtitleComponent = itemStack.displayName().append(MiniMessage.miniMessage().deserialize(text.substring(1)));
+                subtitleComponent = ItemUtil.getDisplayName(itemStack).append(MiniMessage.miniMessage().deserialize(text.substring(1)));
             }
             else if (text.endsWith("|")){
-                subtitleComponent = MiniMessage.miniMessage().deserialize(text.substring(0,text.length()-1)).append(itemStack.displayName());
+                subtitleComponent = MiniMessage.miniMessage().deserialize(text.substring(0,text.length()-1)).append(ItemUtil.getDisplayName(itemStack));
             }
             else {
                 String[] titleSplit = StringUtils.split(text, "|");
-                subtitleComponent = MiniMessage.miniMessage().deserialize(titleSplit[0]).append(itemStack.displayName()).append(MiniMessage.miniMessage().deserialize(titleSplit[1]));
+                subtitleComponent = MiniMessage.miniMessage().deserialize(titleSplit[0]).append(ItemUtil.getDisplayName(itemStack)).append(MiniMessage.miniMessage().deserialize(titleSplit[1]));
             }
         }
         else {

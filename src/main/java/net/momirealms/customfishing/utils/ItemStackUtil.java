@@ -19,6 +19,7 @@ package net.momirealms.customfishing.utils;
 
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -116,7 +117,7 @@ public class ItemStackUtil {
     public static void addRandomDamage(ItemStack itemStack){
         if (itemStack.getItemMeta() instanceof Damageable damageable){
             damageable.setDamage((int) (itemStack.getType().getMaxDurability() * Math.random()));
-            itemStack.setItemMeta((ItemMeta) damageable);
+            itemStack.setItemMeta(damageable);
         }
     }
 

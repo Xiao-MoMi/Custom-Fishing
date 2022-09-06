@@ -13,19 +13,21 @@ public class CustomPapi implements Requirement {
 
     public CustomPapi(Map<String, Object> expressions){
         expressions.keySet().forEach(key -> {
-            if (key.equals("&&")){
+            if (key.startsWith("&&")){
                 List<PapiRequirement> papiRequirements = new ArrayList<>();
                 if (expressions.get(key) instanceof MemorySection map2){
                     addAndRequirements(papiRequirements, map2.getValues(false));
                 }
                 papiRequirement = new ExpressionAnd(papiRequirements);
-            }else if (key.equals("||")){
+            }
+            else if (key.startsWith("||")){
                 List<PapiRequirement> papiRequirements = new ArrayList<>();
                 if (expressions.get(key) instanceof MemorySection map2){
                     addOrRequirements(papiRequirements, map2.getValues(false));
                 }
                 papiRequirement = new ExpressionOr(papiRequirements);
-            }else {
+            }
+            else {
                 if (expressions.get(key) instanceof MemorySection map){
                     String type = map.getString("type");
                     String papi = map.getString("papi");
@@ -52,11 +54,11 @@ public class CustomPapi implements Requirement {
     private void addAndRequirements(List<PapiRequirement> requirements, Map<String, Object> map){
         List<PapiRequirement> andRequirements = new ArrayList<>();
         map.keySet().forEach(key -> {
-            if (key.equals("&&")){
+            if (key.startsWith("&&")){
                 if (map.get(key) instanceof MemorySection map2){
                     addAndRequirements(andRequirements, map2.getValues(false));
                 }
-            }else if (key.equals("||")){
+            }else if (key.startsWith("||")){
                 if (map.get(key) instanceof MemorySection map2){
                     addOrRequirements(andRequirements, map2.getValues(false));
                 }
@@ -83,11 +85,11 @@ public class CustomPapi implements Requirement {
     private void addOrRequirements(List<PapiRequirement> requirements, Map<String, Object> map){
         List<PapiRequirement> orRequirements = new ArrayList<>();
         map.keySet().forEach(key -> {
-            if (key.equals("&&")){
+            if (key.startsWith("&&")){
                 if (map.get(key) instanceof MemorySection map2){
                     addAndRequirements(orRequirements, map2.getValues(false));
                 }
-            }else if (key.equals("||")){
+            }else if (key.startsWith("||")){
                 if (map.get(key) instanceof MemorySection map2){
                     addOrRequirements(orRequirements, map2.getValues(false));
                 }

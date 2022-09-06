@@ -36,6 +36,7 @@ import net.momirealms.customfishing.requirements.*;
 import net.momirealms.customfishing.utils.*;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.MemorySection;
@@ -105,6 +106,7 @@ public class ConfigReader{
         public static boolean hasWhitelist;
         public static boolean needRodFishing;
         public static boolean disableJobXp;
+        public static boolean isSpigot;
         public static int fishFinderCoolDown;
         public static double timeMultiply;
         public static double vanillaRatio;
@@ -194,6 +196,8 @@ public class ConfigReader{
                     AdventureUtil.consoleMessage("[CustomFishing] <color:#00BFFF>CustomCrops <color:#E1FFFF>Hooked!");
                 }
             }
+
+            isSpigot = Bukkit.getVersion().contains("Spigot");
 
             version = config.getString("config-version");
 
@@ -375,7 +379,7 @@ public class ConfigReader{
                     loot.setTime(time);
                     loot.setWeight(weight);
                     if (config.contains(key + ".nick")) loot.setNick(config.getString(key + ".nick"));
-                    else loot.setNick(config.getString(key + ".display.name", key));
+                    else loot.setNick(ChatColor.stripColor(config.getString(key + ".display.name", key)));
                     loot.setScore(config.getDouble(key + ".score",0));
                     loot.setShowInFinder(config.getBoolean(key + ".show-in-fishfinder", true));
                     loot.setRandomDurability(config.getBoolean(key + ".random-durability", false));

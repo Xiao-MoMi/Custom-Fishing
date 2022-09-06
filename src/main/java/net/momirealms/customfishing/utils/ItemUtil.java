@@ -19,13 +19,18 @@ package net.momirealms.customfishing.utils;
 
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.ConfigReader;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.hook.ItemsAdderItem;
 import net.momirealms.customfishing.hook.MMOItemsHook;
 import net.momirealms.customfishing.hook.MythicItems;
 import net.momirealms.customfishing.hook.OraxenItem;
+import net.momirealms.customfishing.listener.PapiUnregister;
 import net.momirealms.customfishing.object.loot.DroppedItem;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -88,10 +93,14 @@ public class ItemUtil {
 
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (itemMeta.hasDisplayName()){
-            yamlConfiguration.set(fileName + ".display.name", itemMeta.getDisplayName());
+            yamlConfiguration.set(fileName + ".display.name", replaceLegacy(itemMeta.getDisplayName()));
         }
         if (itemMeta.hasLore()){
-            yamlConfiguration.set(fileName + ".display.lore", itemMeta.getLore());
+            List<String> lore = new ArrayList<>();
+            itemMeta.getLore().forEach(line -> {
+                lore.add(replaceLegacy(line));
+            });
+            yamlConfiguration.set(fileName + ".display.lore", lore);
         }
         if (itemMeta.hasCustomModelData()) {
             yamlConfiguration.set(fileName + ".custom-model-data", itemMeta.getCustomModelData());
@@ -179,5 +188,128 @@ public class ItemUtil {
             }
         });
         return map;
+    }
+
+    public static Component getDisplayName(ItemStack itemStack){
+        NBTItem nbtItem = new NBTItem(itemStack);
+        NBTCompound nbtCompound = nbtItem.getCompound("display");
+        if (nbtCompound != null){
+            String name = nbtCompound.getString("Name");
+            if (!name.equals("")){
+                return GsonComponentSerializer.gson().deserialize(name);
+            }
+        }
+        String type = itemStack.getType().toString().toLowerCase();
+        if (itemStack.getType().isBlock()) return GsonComponentSerializer.gson().deserialize("{\"translate\":\"block.minecraft."+ type + "\"}");
+        else return GsonComponentSerializer.gson().deserialize("{\"translate\":\"item.minecraft."+ type + "\"}");
+    }
+
+    public static String replaceLegacy(String s) {
+        StringBuilder stringBuilder = new StringBuilder();
+        char[] chars = s.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '§') {
+                if (i + 1 < chars.length) {
+                    switch (chars[i+1]){
+                        case '0' -> {
+                            i++;
+                            stringBuilder.append("<black>");
+                        }
+                        case '1' -> {
+                            i++;
+                            stringBuilder.append("<dark_blue>");
+                        }
+                        case '2' -> {
+                            i++;
+                            stringBuilder.append("<dark_green>");
+                        }
+                        case '3' -> {
+                            i++;
+                            stringBuilder.append("<dark_aqua>");
+                        }
+                        case '4' -> {
+                            i++;
+                            stringBuilder.append("<dark_red>");
+                        }
+                        case '5' -> {
+                            i++;
+                            stringBuilder.append("<dark_purple>");
+                        }
+                        case '6' -> {
+                            i++;
+                            stringBuilder.append("<gold>");
+                        }
+                        case '7' -> {
+                            i++;
+                            stringBuilder.append("<gray>");
+                        }
+                        case '8' -> {
+                            i++;
+                            stringBuilder.append("<dark_gray>");
+                        }
+                        case '9' -> {
+                            i++;
+                            stringBuilder.append("<blue>");
+                        }
+                        case 'a' -> {
+                            i++;
+                            stringBuilder.append("<green>");
+                        }
+                        case 'b' -> {
+                            i++;
+                            stringBuilder.append("<aqua>");
+                        }
+                        case 'c' -> {
+                            i++;
+                            stringBuilder.append("<red>");
+                        }
+                        case 'd' -> {
+                            i++;
+                            stringBuilder.append("<light_purple>");
+                        }
+                        case 'e' -> {
+                            i++;
+                            stringBuilder.append("<yellow>");
+                        }
+                        case 'f' -> {
+                            i++;
+                            stringBuilder.append("<white>");
+                        }
+                        case 'r' -> {
+                            i++;
+                            stringBuilder.append("<reset><!italic>");
+                        }
+                        case 'l' -> {
+                            i++;
+                            stringBuilder.append("<bold>");
+                        }
+                        case 'm' -> {
+                            i++;
+                            stringBuilder.append("<strikethrough>");
+                        }
+                        case 'o' -> {
+                            i++;
+                            stringBuilder.append("<italic>");
+                        }
+                        case 'n' -> {
+                            i++;
+                            stringBuilder.append("<underlined>");
+                        }
+                        case 'x' -> {
+                            stringBuilder.append("<#").append(chars[i+3]).append(chars[i+5]).append(chars[i+7]).append(chars[i+9]).append(chars[i+11]).append(chars[i+13]).append(">");
+                            i += 13;
+                        }
+                        case 'k' -> {
+                            i++;
+                            stringBuilder.append("<obfuscated>");
+                        }
+                    }
+                }
+            }
+            else {
+                stringBuilder.append(chars[i]);
+            }
+        }
+        return stringBuilder.toString();
     }
 }
