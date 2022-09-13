@@ -18,7 +18,7 @@
 package net.momirealms.customfishing;
 
 import net.kyori.adventure.bossbar.BossBar;
-import net.momirealms.customcrops.helper.Log;
+import net.momirealms.customfishing.helper.Log;
 import net.momirealms.customfishing.competition.CompetitionConfig;
 import net.momirealms.customfishing.competition.Goal;
 import net.momirealms.customfishing.competition.bossbar.BossBarConfig;
