@@ -22,6 +22,8 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.momirealms.customfishing.api.event.FishingFailure;
+import net.momirealms.customfishing.api.event.FishingSuccess;
 import net.momirealms.customfishing.competition.CompetitionSchedule;
 import net.momirealms.customfishing.competition.bossbar.BossBarManager;
 import net.momirealms.customfishing.hook.*;
@@ -480,26 +482,34 @@ public class FishListener implements Listener {
                         }
 
                         if (Math.random() < layout.getSuccessRate()[last]){
-                            if (ConfigReader.Config.loseDurability)
-                                loseDurability(player);
-                            Location location = event.getHook().getLocation();
-                            if (loot instanceof Mob mob){
-                                summonMob(player, loot, location, mob);
-                            }
-                            else if (loot instanceof DroppedItem droppedItem){
-                                if (vanillaLoot != null) {
-                                    dropVanillaLoot(player, vanillaLoot, location);
+
+                            FishingSuccess successEvent = new FishingSuccess(player, loot, ConfigReader.Config.loseDurability);
+                            Bukkit.getServer().getPluginManager().callEvent(successEvent);
+                            if(!successEvent.isCancelled()) {
+                                if (successEvent.isLoseDurability())
+                                    loseDurability(player);
+                                Location location = event.getHook().getLocation();
+                                if (loot instanceof Mob mob){
+                                    summonMob(player, loot, location, mob);
                                 }
-                                else if (ConfigReader.Config.mcMMOLoot && Math.random() < ConfigReader.Config.mcMMOLootChance){
-                                    if(dropMcMMOLoot(player, location)){
+                                else if (loot instanceof DroppedItem droppedItem){
+                                    if (vanillaLoot != null) {
+                                        dropVanillaLoot(player, vanillaLoot, location);
+                                    }
+                                    else if (ConfigReader.Config.mcMMOLoot && Math.random() < ConfigReader.Config.mcMMOLootChance){
+                                        if(dropMcMMOLoot(player, location)){
+                                            dropMyLoot(player, loot, location, droppedItem);
+                                        }
+                                    }
+                                    else {
                                         dropMyLoot(player, loot, location, droppedItem);
                                     }
+                                }else if (loot == null && vanillaLoot != null){
+                                    dropVanillaLoot(player, vanillaLoot, location);
                                 }
-                                else {
-                                    dropMyLoot(player, loot, location, droppedItem);
-                                }
-                            }else if (loot == null && vanillaLoot != null){
-                                dropVanillaLoot(player, vanillaLoot, location);
+                            }
+                            else {
+                                fail(player, loot, vanillaLoot != null);
                             }
                         }
                         else {
@@ -920,6 +930,8 @@ public class FishListener implements Listener {
     }
 
     private void fail(Player player, Loot loot, boolean isVanilla) {
+        //钓鱼失败不具有可取消性质
+        Bukkit.getServer().getPluginManager().callEvent(new FishingFailure(player));
         fishingPlayers.remove(player);
         if (!isVanilla && loot != null){
             for (ActionB action : loot.getFailureActions())
