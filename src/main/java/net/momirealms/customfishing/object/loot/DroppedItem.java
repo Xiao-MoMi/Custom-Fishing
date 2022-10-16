@@ -1,18 +1,18 @@
 package net.momirealms.customfishing.object.loot;
 
+import net.momirealms.customfishing.object.Difficulty;
 import net.momirealms.customfishing.object.LeveledEnchantment;
-
-import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 public class DroppedItem extends Loot{
 
-    boolean randomDurability;
-    List<LeveledEnchantment> randomEnchants;
-    String type;
-    String id;
+    private boolean randomDurability;
+    private LeveledEnchantment[] randomEnchants;
+    private final String material;
 
-    public DroppedItem(String key) {
-        super(key);
+    public DroppedItem(String key, Difficulty difficulty, int time, int weight, String material) {
+        super(key, difficulty, time, weight);
+        this.material = material;
     }
 
     public boolean isRandomDurability() {
@@ -23,27 +23,16 @@ public class DroppedItem extends Loot{
         this.randomDurability = randomDurability;
     }
 
-    public List<LeveledEnchantment> getRandomEnchants() {
+    @Nullable
+    public LeveledEnchantment[] getRandomEnchants() {
         return randomEnchants;
     }
 
-    public void setRandomEnchants(List<LeveledEnchantment> randomEnchants) {
+    public void setRandomEnchants(LeveledEnchantment[] randomEnchants) {
         this.randomEnchants = randomEnchants;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public String getMaterial() {
+        return material;
     }
 }

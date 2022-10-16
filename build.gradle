@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'net.momirealms'
-version = '1.1.4.3'
+version = '1.2.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -46,6 +46,7 @@ dependencies {
     compileOnly fileTree(dir:'libs',includes:['*.jar'])
     compileOnly('io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT')
     compileOnly('com.github.Archy-X:AureliumSkills:Beta1.3.6')
+    compileOnly('com.comphenix.protocol:ProtocolLib:4.8.0')
     compileOnly('redis.clients:jedis:4.2.3')
     compileOnly('me.clip:placeholderapi:2.11.1')
     compileOnly('com.sk89q.worldguard:worldguard-bukkit:7.0.7')
@@ -60,6 +61,7 @@ dependencies {
     implementation('net.kyori:adventure-text-minimessage:4.11.0')
     implementation('net.kyori:adventure-text-serializer-legacy:4.11.0')
     implementation('de.tr7zw:item-nbt-api:2.10.0')
+    implementation("org.bstats:bstats-bukkit:3.0.0")
 }
 
 def targetJavaVersion = 16
@@ -92,6 +94,7 @@ tasks.withType(JavaCompile) {
 }
 
 shadowJar {
-    relocate 'de.tr7zw', 'net.momirealms.customfishing.libs'
-    relocate 'net.kyori', 'net.momirealms.customfishing.libs'
+    relocate 'de.tr7zw', 'net.momirealms.customfishing.libs.de.tr7zw'
+    relocate 'net.kyori', 'net.momirealms.customfishing.libs.net.kyori'
+    relocate 'org.bstats', 'net.momirealms.customfishing.libs.org.bstats'
 }

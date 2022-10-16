@@ -1,106 +1,77 @@
-/*
- *  Copyright (C) <2022> <XiaoMoMi>
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package net.momirealms.customfishing.competition;
 
-import net.momirealms.customfishing.ConfigReader;
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.competition.bossbar.BossBarConfig;
 import net.momirealms.customfishing.competition.bossbar.BossBarManager;
-import net.momirealms.customfishing.competition.ranking.Ranking;
-import net.momirealms.customfishing.competition.ranking.RankingImpl;
+import net.momirealms.customfishing.competition.ranking.LocalRankingImpl;
+import net.momirealms.customfishing.competition.ranking.RankingInterface;
 import net.momirealms.customfishing.competition.ranking.RedisRankingImpl;
-import net.momirealms.customfishing.object.action.ActionB;
-import net.momirealms.customfishing.utils.AdventureUtil;
+import net.momirealms.customfishing.manager.CompetitionManager;
+import net.momirealms.customfishing.manager.ConfigManager;
+import net.momirealms.customfishing.manager.MessageManager;
+import net.momirealms.customfishing.object.action.ActionInterface;
+import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Instant;
+import java.time.LocalTime;
 import java.util.*;
 
 public class Competition {
 
-    private Goal goal;
-    private final long duration;
-    private long startTime;
-    private final int minPlayers;
-    private boolean status;
-    private BukkitTask timerTask;
-    private Ranking ranking;
-    private final BossBarConfig bossBarConfig;
-    private final List<String> startMessage;
-    private final List<String> endMessage;
-    private final List<String> endCommand;
-    private final List<String> startCommand;
-    private final List<String> joinCommand;
-    private final HashMap<String, List<ActionB>> rewardsMap;
+    public static Competition currentCompetition;
 
-    public static long remainingTime;
-    public static float progress;
-    public static CompetitionPlayer emptyPlayer = new CompetitionPlayer("XiaoMoMi",0);
+    private final CompetitionConfig competitionConfig;
+    private CompetitionGoal goal;
+    private BukkitTask timerTask;
+    private RankingInterface ranking;
+    private long startTime;
+    private long remainingTime;
+    private float progress;
+
+    private BossBarManager bossBarManager;
 
     public Competition(CompetitionConfig competitionConfig) {
-        this.duration = competitionConfig.getDuration();
-        this.goal = competitionConfig.getGoal();
-        this.minPlayers = competitionConfig.getMinPlayers();
-        this.bossBarConfig = competitionConfig.getBossBarConfig();
-        this.startMessage = competitionConfig.getStartMessage();
-        this.endMessage = competitionConfig.getEndMessage();
-        this.rewardsMap = competitionConfig.getRewards();
-        this.startCommand = competitionConfig.getStartCommand();
-        this.endCommand = competitionConfig.getEndCommand();
-        this.joinCommand = competitionConfig.getJoinCommand();
+        this.competitionConfig = competitionConfig;
     }
 
     public void begin(boolean forceStart) {
-        if (goal == Goal.RANDOM) {
-            goal = getRandomGoal();
+        if (this.goal == CompetitionGoal.RANDOM) {
+            this.goal = getRandomGoal();
         }
-        remainingTime = this.duration;
+        this.remainingTime = this.competitionConfig.getDuration();
         this.startTime = Instant.now().getEpochSecond();
 
         Collection<? extends Player> playerCollections = Bukkit.getOnlinePlayers();
-        if (playerCollections.size() >= minPlayers || forceStart) {
-            status = true;
-            if (ConfigReader.useRedis){
+        if (playerCollections.size() >= competitionConfig.getMinPlayers() || forceStart) {
+
+            currentCompetition = this;
+
+            if (ConfigManager.useRedis){
                 ranking = new RedisRankingImpl();
-            }else {
-                ranking = new RankingImpl();
+            } else {
+                ranking = new LocalRankingImpl();
             }
             startTimer();
-            if (startMessage != null){
-                playerCollections.forEach(player -> {
-                    startMessage.forEach(message -> {
-                        AdventureUtil.playerMessage(player, message);
-                    });
-                });
+            for (String startMsg : competitionConfig.getStartMessage()) {
+                for (Player player : playerCollections) {
+                    AdventureUtil.playerMessage(player, startMsg);
+                }
             }
-            if (startCommand != null){
-                startCommand.forEach(command -> {
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
-                });
+            for (String startCmd : competitionConfig.getStartCommand()) {
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), startCmd);
+            }
+            if (competitionConfig.isEnableBossBar()) {
+                bossBarManager = new BossBarManager(this);
+                bossBarManager.load();
             }
         }
         else {
-            playerCollections.forEach(player -> {
-                AdventureUtil.playerMessage(player, ConfigReader.Message.notEnoughPlayers);
-            });
+            for (Player player : playerCollections) {
+                AdventureUtil.playerMessage(player, MessageManager.notEnoughPlayers);
+            }
         }
     }
 
@@ -112,63 +83,59 @@ public class Competition {
                     end();
                 }
             }
-        }.runTaskTimer(CustomFishing.instance, 0, 20);
+        }.runTaskTimer(CustomFishing.plugin, 0, 20);
     }
 
-    private boolean decreaseTime() {
-
-        long tVac;
-        long current = Instant.now().getEpochSecond();
-
-        progress = (float) remainingTime / duration;
-
-        remainingTime = duration - (current - startTime);
-        if ((tVac = (current - startTime) + 1) != duration - remainingTime) {
-            for (long i = duration - remainingTime; i < tVac; i++) {
-                if (remainingTime <= 0) return true;
-                remainingTime--;
-            }
+    public void cancel() {
+        if (this.bossBarManager != null) {
+            bossBarManager.unload();
         }
-        return false;
+        ranking.clear();
+        this.timerTask.cancel();
+        currentCompetition = null;
     }
 
     public void end() {
-        BossBarManager.stopAllTimer();
+        if (this.bossBarManager != null) {
+            bossBarManager.unload();
+        }
         this.timerTask.cancel();
-        status = false;
         givePrize();
-        if (endMessage != null){
-            List<String> newMessage = new ArrayList<>();
-            endMessage.forEach(message -> {
-                CompetitionPlayer[] competitionPlayers = ranking.getTop3Player();
-                float first = Optional.ofNullable(competitionPlayers[0]).orElse(CompetitionPlayer.emptyPlayer).getScore();
-                float second = Optional.ofNullable(competitionPlayers[1]).orElse(CompetitionPlayer.emptyPlayer).getScore();
-                float third = Optional.ofNullable(competitionPlayers[2]).orElse(CompetitionPlayer.emptyPlayer).getScore();
-                newMessage.add(message
-                        .replace("{1st}", Optional.ofNullable(Optional.ofNullable(competitionPlayers[0]).orElse(CompetitionPlayer.emptyPlayer).getPlayer()).orElse(ConfigReader.Message.noPlayer))
-                        .replace("{2nd}", Optional.ofNullable(Optional.ofNullable(competitionPlayers[1]).orElse(CompetitionPlayer.emptyPlayer).getPlayer()).orElse(ConfigReader.Message.noPlayer))
-                        .replace("{3rd}", Optional.ofNullable(Optional.ofNullable(competitionPlayers[2]).orElse(CompetitionPlayer.emptyPlayer).getPlayer()).orElse(ConfigReader.Message.noPlayer))
-                        .replace("{1st_points}", first < 0 ? ConfigReader.Message.noScore : String.format("%.1f",(first)))
-                        .replace("{2nd_points}", second < 0 ? ConfigReader.Message.noScore : String.format("%.1f",(second)))
-                        .replace("{3rd_points}", third < 0 ? ConfigReader.Message.noScore : String.format("%.1f",(third))));
-            });
-            Bukkit.getOnlinePlayers().forEach(player -> {
-                newMessage.forEach(message -> {
-                    AdventureUtil.playerMessage(player, message);
-                });
-            });
+
+        List<String> newMessage = new ArrayList<>();
+        for (String endMsg : competitionConfig.getEndMessage()) {
+            CompetitionPlayer[] competitionPlayers = ranking.getTop3Player();
+            float first = Optional.ofNullable(competitionPlayers[0]).orElse(CompetitionPlayer.emptyPlayer).getScore();
+            float second = Optional.ofNullable(competitionPlayers[1]).orElse(CompetitionPlayer.emptyPlayer).getScore();
+            float third = Optional.ofNullable(competitionPlayers[2]).orElse(CompetitionPlayer.emptyPlayer).getScore();
+            newMessage.add(endMsg
+                    .replace("{1st}", Optional.ofNullable(Optional.ofNullable(competitionPlayers[0]).orElse(CompetitionPlayer.emptyPlayer).getPlayer()).orElse(MessageManager.noPlayer))
+                    .replace("{2nd}", Optional.ofNullable(Optional.ofNullable(competitionPlayers[1]).orElse(CompetitionPlayer.emptyPlayer).getPlayer()).orElse(MessageManager.noPlayer))
+                    .replace("{3rd}", Optional.ofNullable(Optional.ofNullable(competitionPlayers[2]).orElse(CompetitionPlayer.emptyPlayer).getPlayer()).orElse(MessageManager.noPlayer))
+                    .replace("{1st_points}", first < 0 ? MessageManager.noScore : String.format("%.1f",(first)))
+                    .replace("{2nd_points}", second < 0 ? MessageManager.noScore : String.format("%.1f",(second)))
+                    .replace("{3rd_points}", third < 0 ? MessageManager.noScore : String.format("%.1f",(third))));
         }
-        if (endCommand != null){
-            endCommand.forEach(command -> {
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
-            });
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            for (String msg : newMessage) {
+                AdventureUtil.playerMessage(player, msg);
+            }
         }
-        Bukkit.getScheduler().runTaskLaterAsynchronously(CustomFishing.instance, ()-> {
+
+        for (String endCmd : competitionConfig.getEndCommand()) {
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), endCmd);
+        }
+
+        currentCompetition = null;
+
+        Bukkit.getScheduler().runTaskLaterAsynchronously(CustomFishing.plugin, ()-> {
             ranking.clear();
-        }, 300);
+        }, 100);
     }
 
     public void givePrize(){
+        HashMap<String, ActionInterface[]> rewardsMap = competitionConfig.getRewards();
         if (ranking.getSize() != 0 && rewardsMap != null) {
             Iterator<String> iterator = ranking.getIterator();
             int i = 1;
@@ -177,19 +144,19 @@ public class Competition {
                     String playerName = iterator.next();
                     Player player = Bukkit.getPlayer(playerName);
                     if (player != null){
-                        for (ActionB action : rewardsMap.get(String.valueOf(i))) {
+                        for (ActionInterface action : rewardsMap.get(String.valueOf(i))) {
                             action.doOn(player);
                         }
                     }
                     i++;
                 }
                 else {
-                    List<ActionB> actions = rewardsMap.get("participation");
+                    ActionInterface[] actions = rewardsMap.get("participation");
                     if (actions != null) {
                         iterator.forEachRemaining(playerName -> {
                             Player player = Bukkit.getPlayer(playerName);
                             if (player != null){
-                                for (ActionB action : actions) {
+                                for (ActionInterface action : actions) {
                                     action.doOn(player);
                                 }
                             }
@@ -203,27 +170,59 @@ public class Competition {
         }
     }
 
-    public void cancel() {
-        BossBarManager.stopAllTimer();
-        ranking.clear();
-        this.timerTask.cancel();
-        status = false;
+    private boolean decreaseTime() {
+
+        long tVac;
+        long current = Instant.now().getEpochSecond();
+        int duration = competitionConfig.getDuration();
+
+        progress = (float) remainingTime / duration;
+
+        remainingTime = duration - (current - startTime);
+        if ((tVac = (current - startTime) + 1) != duration - remainingTime) {
+            for (long i = duration - remainingTime; i < tVac; i++) {
+                if (remainingTime <= 0) return true;
+                remainingTime--;
+            }
+        }
+        return false;
     }
 
-    public void refreshRanking(String player, float score) {
-        if (this.goal != Goal.TOTAL_SCORE) score = 1.0f;
-        ranking.refreshData(player, score);
+    private CompetitionGoal getRandomGoal() {
+        return CompetitionGoal.values()[new Random().nextInt(CompetitionGoal.values().length - 1)];
     }
 
-    private Goal getRandomGoal() {
-        int goal = new Random().nextInt(Goal.values().length-1);
-        return Goal.values()[goal];
+    public static boolean hasCompetitionOn() {
+        return currentCompetition != null;
     }
 
-    public long getDuration() {return duration;}
-    public long getRemainingTime() {return remainingTime;}
-    public boolean isGoingOn() {return status;}
-    public BossBarConfig getBossBarConfig() {return bossBarConfig;}
-    public Ranking getRanking() {return ranking;}
-    public List<String> getJoinCommand() {return joinCommand;}
+    public float getProgress() {
+        return progress;
+    }
+
+    public CompetitionConfig getCompetitionConfig() {
+        return competitionConfig;
+    }
+
+    public String getPlayerRank(Player player) {
+        return Optional.ofNullable(ranking.getPlayerRank(player.getName())).orElse(MessageManager.noRank);
+    }
+
+    public long getRemainingTime() {
+        return remainingTime;
+    }
+
+    public double getScore(Player player) {
+        return Optional.ofNullable(ranking.getCompetitionPlayer(player.getName())).orElse(CompetitionPlayer.emptyPlayer).getScore();
+    }
+
+    public float getFirstScore() {
+        return ranking.getFirstScore();
+    }
+
+    public String getFirstPlayer() {
+        return ranking.getFirstPlayer();
+    }
+
+
 }

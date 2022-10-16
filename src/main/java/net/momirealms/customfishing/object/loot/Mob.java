@@ -1,35 +1,32 @@
 package net.momirealms.customfishing.object.loot;
 
+import net.momirealms.customfishing.object.Difficulty;
 import net.momirealms.customfishing.object.MobVector;
+import org.jetbrains.annotations.NotNull;
 
 public class Mob extends Loot{
 
-    final String mmID;
-    int mmLevel;
-    MobVector mobVector;
+    private final String mobID;
+    private final int mobLevel;
+    private final MobVector mobVector;
 
-    public Mob(String key, String mmID) {
-        super(key);
-        this.mmID = mmID;
+    public Mob(String key, Difficulty difficulty, int time, int weight, String mobID, int level, MobVector vector) {
+        super(key, difficulty, time, weight);
+        this.mobID = mobID;
+        this.mobLevel = level;
+        this.mobVector = vector;
     }
 
-    public String getMmID() {
-        return mmID;
+    public String getMobID() {
+        return mobID;
     }
 
-    public int getMmLevel() {
-        return mmLevel;
+    public int getMobLevel() {
+        return mobLevel;
     }
 
-    public void setMmLevel(int mmLevel) {
-        this.mmLevel = mmLevel;
-    }
-
+    @NotNull
     public MobVector getMobVector() {
         return mobVector;
-    }
-
-    public void setMobVector(MobVector mobVector) {
-        this.mobVector = mobVector;
     }
 }

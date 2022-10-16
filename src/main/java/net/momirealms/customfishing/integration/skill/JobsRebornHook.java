@@ -1,0 +1,62 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package net.momirealms.customfishing.integration.skill;
+
+import com.gamingmesh.jobs.Jobs;
+import com.gamingmesh.jobs.PlayerManager;
+import com.gamingmesh.jobs.container.Job;
+import com.gamingmesh.jobs.container.JobProgression;
+import com.gamingmesh.jobs.container.JobsPlayer;
+import net.momirealms.customfishing.integration.SkillInterface;
+import org.bukkit.entity.Player;
+
+import java.util.List;
+
+public class JobsRebornHook implements SkillInterface {
+
+    private final PlayerManager playerManager;
+
+    public JobsRebornHook() {
+        this.playerManager = Jobs.getPlayerManager();
+    }
+
+    @Override
+    public void addXp(Player player, double amount) {
+        JobsPlayer jobsPlayer = playerManager.getJobsPlayer(player);
+        if (jobsPlayer != null) {
+            List<JobProgression> jobs = jobsPlayer.getJobProgression();
+            Job job = Jobs.getJob("Fisherman");
+            for (JobProgression progression : jobs)
+                if (progression.getJob().equals(job))
+                    progression.addExperience(amount);
+        }
+    }
+
+    @Override
+    public int getLevel(Player player) {
+        JobsPlayer jobsPlayer = Jobs.getPlayerManager().getJobsPlayer(player);
+        if (jobsPlayer != null) {
+            List<JobProgression> jobs = jobsPlayer.getJobProgression();
+            Job job = Jobs.getJob("Fisherman");
+            for (JobProgression progression : jobs)
+                if (progression.getJob().equals(job))
+                    return progression.getLevel();
+        }
+        return 0;
+    }
+}

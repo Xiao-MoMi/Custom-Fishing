@@ -1,5 +1,6 @@
 package net.momirealms.customfishing.object;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.Map;
 
 public class Item {
 
-    private final String material;
+    private final Material material;
     private String name;
     private List<String> lore;
     private List<ItemFlag> itemFlags;
@@ -16,19 +17,11 @@ public class Item {
     private List<LeveledEnchantment> enchantment;
     private Map<String, Object> nbt;
 
-    public Item(String material) {
+    public Item(Material material) {
         this.material = material;
     }
 
-    public Map<String, Object> getNbt() {
-        return nbt;
-    }
-
-    public void setNbt(Map<String, Object> nbt) {
-        this.nbt = nbt;
-    }
-
-    public String getMaterial() {
+    public Material getMaterial() {
         return material;
     }
 
@@ -78,5 +71,13 @@ public class Item {
 
     public void setEnchantment(List<LeveledEnchantment> enchantment) {
         this.enchantment = enchantment;
+    }
+
+    public Map<String, Object> getNbt() {
+        return nbt;
+    }
+
+    public void setNbt(Map<String, Object> nbt) {
+        this.nbt = nbt;
     }
 }

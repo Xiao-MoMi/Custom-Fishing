@@ -1,31 +1,15 @@
-/*
- *  Copyright (C) <2022> <XiaoMoMi>
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package net.momirealms.customfishing.competition.ranking;
 
 import net.momirealms.customfishing.competition.CompetitionPlayer;
-import net.momirealms.customfishing.utils.JedisUtil;
+import net.momirealms.customfishing.manager.MessageManager;
+import net.momirealms.customfishing.util.JedisUtil;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.resps.Tuple;
 
 import java.util.Iterator;
 import java.util.List;
 
-public class RedisRankingImpl implements Ranking{
+public class RedisRankingImpl implements RankingInterface {
 
     public void addPlayer(CompetitionPlayer competitionPlayer) {
         Jedis jedis = JedisUtil.getJedis();
@@ -90,13 +74,13 @@ public class RedisRankingImpl implements Ranking{
         jedis.close();
         int index = 1;
         for (Tuple tuple : players){
-            if (index == 1){
+            if (index == 1) {
                 competitionPlayers[0] = new CompetitionPlayer(tuple.getElement(), (float) tuple.getScore());
             }
-            if (index == 2){
+            if (index == 2) {
                 competitionPlayers[1] = new CompetitionPlayer(tuple.getElement(), (float) tuple.getScore());
             }
-            if (index == 3){
+            if (index == 3) {
                 competitionPlayers[2] = new CompetitionPlayer(tuple.getElement(), (float) tuple.getScore());
                 return competitionPlayers;
             }
@@ -110,5 +94,24 @@ public class RedisRankingImpl implements Ranking{
         Jedis jedis = JedisUtil.getJedis();
         jedis.zincrby("cf_competition", score, player);
         jedis.close();
+    }
+
+    @Override
+    public float getFirstScore() {
+        Jedis jedis = JedisUtil.getJedis();
+        List<Tuple> players = jedis.zrevrangeWithScores("cf_competition", 0, 0);
+        if (players == null) return 0;
+        if (players.size() == 0) return 0;
+        return (float) players.get(0).getScore();
+    }
+
+    @Override
+    public String getFirstPlayer() {
+        Jedis jedis = JedisUtil.getJedis();
+        List<String> player = jedis.zrevrange("cf_competition", 0,0);
+        jedis.close();
+        if (player == null) return MessageManager.noPlayer;
+        if (player.size() == 0) return MessageManager.noPlayer;
+        return player.get(0);
     }
 }

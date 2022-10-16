@@ -1,77 +1,44 @@
 package net.momirealms.customfishing.object.loot;
 
 import net.momirealms.customfishing.object.Difficulty;
-import net.momirealms.customfishing.object.action.ActionB;
-import net.momirealms.customfishing.requirements.Requirement;
-
-import java.util.List;
+import net.momirealms.customfishing.object.Layout;
+import net.momirealms.customfishing.object.action.ActionInterface;
+import net.momirealms.customfishing.object.requirements.RequirementInterface;
 
 public class Loot {
 
-    String key;
-    String nick;
-    Difficulty difficulty;
-    String group;
-    boolean showInFinder;
-    List<String> layout;
-    List<ActionB> successActions;
-    List<ActionB> failureActions;
-    List<ActionB> hookActions;
-    int weight;
-    int time;
-    List<Requirement> requirements;
-    double score;
+    public static Loot EMPTY = new Loot("empty", new Difficulty(1,1), 5000, 10);
 
-    public Loot(String key) {
+    protected String key;
+    protected String nick;
+    protected Difficulty difficulty;
+    protected String group;
+    protected boolean showInFinder;
+    protected Layout[] layout;
+    protected ActionInterface[] successActions;
+    protected ActionInterface[] failureActions;
+    protected ActionInterface[] hookActions;
+    protected int weight;
+    protected int time;
+    protected RequirementInterface[] requirements;
+    protected double score;
+
+    public Loot(String key, Difficulty difficulty, int time, int weight) {
         this.key = key;
-    }
-
-    public List<ActionB> getHookActions() {
-        return hookActions;
-    }
-
-    public void setHookActions(List<ActionB> hookActions) {
-        this.hookActions = hookActions;
+        this.difficulty = difficulty;
+        this.time = time;
+        this.weight = weight;
     }
 
     public String getKey() {
         return key;
     }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public List<ActionB> getSuccessActions() {
-        return successActions;
-    }
-
-    public void setSuccessActions(List<ActionB> successActions) {
-        this.successActions = successActions;
-    }
-
-    public List<ActionB> getFailureActions() {
-        return failureActions;
-    }
-
-    public void setFailureActions(List<ActionB> failureActions) {
-        this.failureActions = failureActions;
-    }
-
     public String getNick() {
         return nick;
     }
 
     public void setNick(String nick) {
         this.nick = nick;
-    }
-
-    public List<String> getLayout() {
-        return layout;
-    }
-
-    public void setLayout(List<String> layout) {
-        this.layout = layout;
     }
 
     public Difficulty getDifficulty() {
@@ -98,12 +65,40 @@ public class Loot {
         this.showInFinder = showInFinder;
     }
 
-    public int getWeight() {
-        return weight;
+    public Layout[] getLayout() {
+        return layout;
     }
 
-    public void setWeight(int weight) {
-        this.weight = weight;
+    public void setLayout(Layout[] layout) {
+        this.layout = layout;
+    }
+
+    public ActionInterface[] getSuccessActions() {
+        return successActions;
+    }
+
+    public void setSuccessActions(ActionInterface[] successActions) {
+        this.successActions = successActions;
+    }
+
+    public ActionInterface[] getFailureActions() {
+        return failureActions;
+    }
+
+    public void setFailureActions(ActionInterface[] failureActions) {
+        this.failureActions = failureActions;
+    }
+
+    public ActionInterface[] getHookActions() {
+        return hookActions;
+    }
+
+    public void setHookActions(ActionInterface[] hookActions) {
+        this.hookActions = hookActions;
+    }
+
+    public int getWeight() {
+        return weight;
     }
 
     public int getTime() {
@@ -114,11 +109,11 @@ public class Loot {
         this.time = time;
     }
 
-    public List<Requirement> getRequirements() {
+    public RequirementInterface[] getRequirements() {
         return requirements;
     }
 
-    public void setRequirements(List<Requirement> requirements) {
+    public void setRequirements(RequirementInterface[] requirements) {
         this.requirements = requirements;
     }
 

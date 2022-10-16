@@ -12,6 +12,8 @@ messages:
   no-console: 'This command cannot be executed from the console!'
   wrong-amount: 'You cannot give a player an item with a negative quantity!'
   lack-args: 'Insufficient parameters.'
+  none-args: 'None arguments!'
+  invalid-args: 'Invalid arguments!'
   cooldown: 'You''re using the fish finder too fast!'
   possible-loots: 'Possible loots here: '
   split-char: ', '

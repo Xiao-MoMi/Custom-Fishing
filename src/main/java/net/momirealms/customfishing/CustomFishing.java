@@ -17,34 +17,54 @@
 
 package net.momirealms.customfishing;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.momirealms.customfishing.command.Execute;
-import net.momirealms.customfishing.command.TabComplete;
+import net.momirealms.customfishing.commands.PluginCommand;
 import net.momirealms.customfishing.competition.CompetitionSchedule;
-import net.momirealms.customfishing.competition.bossbar.BossBarManager;
 import net.momirealms.customfishing.helper.LibraryLoader;
-import net.momirealms.customfishing.hook.Placeholders;
-import net.momirealms.customfishing.hook.skill.JobsReborn;
-import net.momirealms.customfishing.listener.*;
-import net.momirealms.customfishing.utils.AdventureUtil;
-import net.momirealms.customfishing.utils.ConfigUtil;
+import net.momirealms.customfishing.manager.FishingManager;
+import net.momirealms.customfishing.manager.IntegrationManager;
+import net.momirealms.customfishing.manager.MessageManager;
+import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.ConfigUtil;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Objects;
-
 public final class CustomFishing extends JavaPlugin {
 
-    public static JavaPlugin instance;
+    public static CustomFishing plugin;
     public static BukkitAudiences adventure;
-    public static MiniMessage miniMessage;
+    public static ProtocolManager protocolManager;
+
+    private IntegrationManager integrationManager;
+    private FishingManager fishingManager;
     private CompetitionSchedule competitionSchedule;
-    public static Placeholders placeholders;
+
+//                              _ooOoo_
+//                             o8888888o
+//                             88" . "88
+//                             (| -_- |)
+//                             O\  =  /O
+//                          ____/`---'\____
+//                        .'  \\|     |//  `.
+//                       /  \\|||  :  |||//  \
+//                      /  _||||| -:- |||||_  \
+//                      |   | \\\  -  /'| |   |
+//                      | \_|  `\`---'//  |_/ |
+//                      \  .-\__ `-. -'__/-.  /
+//                    ___`. .'  /--.--\  `. .'___
+//                 ."" '<  `.___\_<|>_/___.' _> \"".
+//                | | :  `- \`. ;`. _/; .'/ /  .' ; |
+//                \  \ `-.   \_\_`. _.'_/_/  -' _.' /
+//  ================-.`___`-.__\ \___  /__.-'_.'_.-'================
+//                              `=--=-'
+//                   佛祖保佑    永无BUG    永不卡服
 
     @Override
-    public void onLoad(){
-        instance = this;
+    public void onLoad() {
+        plugin = this;
         LibraryLoader.load("redis.clients","jedis","4.2.3","https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("org.apache.commons","commons-pool2","2.11.1","https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3","https://repo.maven.apache.org/maven2/");
@@ -52,60 +72,37 @@ public final class CustomFishing extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
         adventure = BukkitAudiences.create(this);
-        miniMessage = MiniMessage.miniMessage();
-        Objects.requireNonNull(Bukkit.getPluginCommand("customfishing")).setExecutor(new Execute());
-        Objects.requireNonNull(Bukkit.getPluginCommand("customfishing")).setTabCompleter(new TabComplete());
-        Bukkit.getPluginManager().registerEvents(new FishListener(),this);
+        protocolManager = ProtocolLibrary.getProtocolManager();
+        this.fishingManager = new FishingManager();
+        this.integrationManager = new IntegrationManager();
+        this.competitionSchedule = new CompetitionSchedule();
+        ConfigUtil.reload();
 
-        AdventureUtil.consoleMessage("[CustomFishing] Running on <white>" + Bukkit.getVersion());
-
-        Bukkit.getScheduler().runTaskAsynchronously(this, ()-> {
-
-            ConfigReader.Reload();
-
-            if (ConfigReader.Config.competition){
-                competitionSchedule = new CompetitionSchedule();
-                competitionSchedule.checkTime();
-                Bukkit.getScheduler().runTask(this, () -> Bukkit.getPluginManager().registerEvents(new BossBarManager(), this));
-            }
-
-            if (ConfigReader.Config.papi){
-                placeholders = new Placeholders();
-                Bukkit.getScheduler().runTask(this, () -> {
-                    placeholders.register();
-                    Bukkit.getPluginManager().registerEvents(new PapiUnregister(), this);
-                });
-            }
-
-            if (ConfigReader.Config.preventPick)
-                Bukkit.getScheduler().runTask(this, () -> Bukkit.getPluginManager().registerEvents(new PickUpListener(),this));
-            if (!Objects.equals(ConfigReader.Config.version, "8"))
-                ConfigUtil.update();
-            if (ConfigReader.Config.convertMMOItems)
-                Bukkit.getScheduler().runTask(this, () -> Bukkit.getPluginManager().registerEvents(new MMOItemsListener(), this));
-            if (ConfigReader.Config.disableJobXp)
-                Bukkit.getScheduler().runTask(this, () -> Bukkit.getPluginManager().registerEvents(new JobsListener(), this));
-
-            ConfigReader.tryEnableJedis();
-
-            AdventureUtil.consoleMessage("<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient><color:#E1FFFF>Plugin Enabled!");
-        });
+        PluginCommand pluginCommand = new PluginCommand();
+        Bukkit.getPluginCommand("customfishing").setExecutor(pluginCommand);
+        Bukkit.getPluginCommand("customfishing").setTabCompleter(pluginCommand);
+        AdventureUtil.consoleMessage("[CustomFishing] Plugin Enabled!");
+        new Metrics(this, 16648);
     }
 
     @Override
     public void onDisable() {
-        if (competitionSchedule != null){
-            competitionSchedule.stopCheck();
-            competitionSchedule = null;
-        }
         if (adventure != null) {
             adventure.close();
             adventure = null;
         }
-        if (instance != null){
-            instance = null;
-        }
+    }
+
+    public IntegrationManager getIntegrationManager() {
+        return integrationManager;
+    }
+
+    public FishingManager getFishingManager() {
+        return fishingManager;
+    }
+
+    public CompetitionSchedule getCompetitionSchedule() {
+        return competitionSchedule;
     }
 }

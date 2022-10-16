@@ -1,90 +1,77 @@
-/*
- *  Copyright (C) <2022> <XiaoMoMi>
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package net.momirealms.customfishing.competition;
 
-import net.momirealms.customfishing.ConfigReader;
 import net.momirealms.customfishing.CustomFishing;
-import org.bukkit.Bukkit;
+import net.momirealms.customfishing.Function;
+import net.momirealms.customfishing.manager.CompetitionManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.time.LocalTime;
 
-public class CompetitionSchedule {
+public class CompetitionSchedule extends Function {
 
-    public static Competition competition;
-    public static boolean hasBossBar;
-    private int doubleCheckTime;
-    private int checkTaskID;
-
-    public CompetitionSchedule(){
-        hasBossBar = false;
+    @Override
+    public void load() {
+        checkTime();
     }
 
-    public static boolean startCompetition(String competitionName){
-        CompetitionConfig competitionConfig = ConfigReader.CompetitionsC.get(competitionName);
+    @Override
+    public void unload() {
+        stopCheck();
+        cancelCompetition();
+    }
+
+    private BukkitTask checkTimeTask;
+    private int doubleCheckTime;
+
+    public static boolean startCompetition(String competitionName) {
+        CompetitionConfig competitionConfig = CompetitionManager.competitionsC.get(competitionName);
         if (competitionConfig == null) return false;
-        if (competition != null && competition.isGoingOn()){
-            competition.end();
+        if (Competition.currentCompetition != null) {
+            Competition.currentCompetition.end();
         }
-        competition = new Competition(competitionConfig);
-        competition.begin(true);
-        hasBossBar = competitionConfig.isEnableBossBar();
+        Competition.currentCompetition = new Competition(competitionConfig);
+        Competition.currentCompetition.begin(true);
         return true;
     }
 
-    public static void endCompetition(){
-        if (competition != null){
-            competition.end();
+    public static void cancelCompetition() {
+        if (Competition.currentCompetition != null) {
+            Competition.currentCompetition.cancel();
         }
     }
 
-    public static void cancelCompetition(){
-        if (competition != null){
-            competition.cancel();
+    public static void endCompetition() {
+        if (Competition.currentCompetition != null) {
+            Competition.currentCompetition.end();
         }
     }
 
-    public void startCompetition(CompetitionConfig competitionConfig){
-        if (competition != null && competition.isGoingOn()){
-            competition.end();
+    public void startCompetition(CompetitionConfig competitionConfig) {
+        if (Competition.currentCompetition != null) {
+            Competition.currentCompetition.end();
         }
-        competition = new Competition(competitionConfig);
-        competition.begin(false);
-        hasBossBar = competitionConfig.isEnableBossBar();
+        Competition.currentCompetition = new Competition(competitionConfig);
+        Competition.currentCompetition.begin(false);
     }
 
     public void checkTime() {
-        BukkitTask checkTimeTask = new BukkitRunnable(){
-            public void run(){
-                if (isANewMinute()){
-                    CompetitionConfig competitionConfig = ConfigReader.CompetitionsT.get(getCurrentTime());
-                    if (competitionConfig != null){
+        this.checkTimeTask = new BukkitRunnable() {
+            public void run() {
+                if (isANewMinute()) {
+                    CompetitionConfig competitionConfig = CompetitionManager.competitionsT.get(getCurrentTime());
+                    if (competitionConfig != null) {
                         startCompetition(competitionConfig);
                     }
                 }
             }
-        }.runTaskTimer(CustomFishing.instance, (60- LocalTime.now().getSecond())*20, 1200);
-        checkTaskID = checkTimeTask.getTaskId();
+        }.runTaskTimer(CustomFishing.plugin, (60 - LocalTime.now().getSecond()) * 20, 1200);
     }
 
-    public void stopCheck(){
-        Bukkit.getScheduler().cancelTask(checkTaskID);
+    public void stopCheck() {
+        if (this.checkTimeTask != null) {
+            checkTimeTask.cancel();
+        }
     }
 
     public String getCurrentTime() {
@@ -96,7 +83,7 @@ public class CompetitionSchedule {
         if (doubleCheckTime != minute) {
             doubleCheckTime = minute;
             return true;
-        }else {
+        } else {
             return false;
         }
     }

@@ -12,6 +12,8 @@ messages:
   no-console: '¡Este comando no puede ser ejecutado por la consola!'
   wrong-amount: 'No puedes dar a un jugador un artículo con una cantidad negativa.'
   lack-args: 'Parámetros insuficientes.'
+  none-args: '¡Ningún argumento!'
+  invalid-args: 'Argumentos no válidos'
   cooldown: '¡Estás usando el buscador de peces demasiado rápido!'
   possible-loots: 'Posible pesca aquí: '
   split-char: ', '

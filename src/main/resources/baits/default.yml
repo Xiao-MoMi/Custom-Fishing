@@ -10,13 +10,13 @@ simple_bait:
   modifier:
     # Change the loot weight of the specified group
     # Add or subtract weights
-    weight-PM:
+    weight-add:
       silver: 5
       gold: 3
     # Multiply or divide weights
-    weight-MQ:
+    weight-multiply:
       silver: 1.1
-      gold: 1.1
+      gold: 0.9
     # Change the time to fish (>1 for longer, <1 for shorter)
     time: 0.85
     # Change the difficulty, for example, if the original difficulty is (1-6), now it becomes (1-9)

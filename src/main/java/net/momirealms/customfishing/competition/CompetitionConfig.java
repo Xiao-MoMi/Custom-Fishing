@@ -1,64 +1,80 @@
-/*
- *  Copyright (C) <2022> <XiaoMoMi>
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package net.momirealms.customfishing.competition;
 
 import net.momirealms.customfishing.competition.bossbar.BossBarConfig;
-import net.momirealms.customfishing.object.action.ActionB;
+import net.momirealms.customfishing.object.action.ActionInterface;
 
 import java.util.HashMap;
 import java.util.List;
 
 public class CompetitionConfig {
 
-    private int duration;
-    private int minPlayers;
-    private List<String> startMessage;
-    private List<String> endMessage;
-    private List<String> startCommand;
-    private List<String> endCommand;
-    private List<String> joinCommand;
-    private Goal goal;
-    private BossBarConfig bossBarConfig;
+    private final int duration;
+    private final int minPlayers;
+    private final List<String> startMessage;
+    private final List<String> endMessage;
+    private final List<String> startCommand;
+    private final List<String> endCommand;
+    private final List<String> joinCommand;
+    private final CompetitionGoal goal;
+    private final BossBarConfig bossBarConfig;
     private final boolean enableBossBar;
-    private HashMap<String, List<ActionB>> rewards;
+    private final HashMap<String, ActionInterface[]> rewards;
 
-    public CompetitionConfig(boolean enableBossBar){this.enableBossBar = enableBossBar;}
+    public CompetitionConfig(int duration, int minPlayers, List<String> startMessage, List<String> endMessage, List<String> startCommand, List<String> endCommand, List<String> joinCommand, CompetitionGoal goal, BossBarConfig bossBarConfig, boolean enableBossBar, HashMap<String, ActionInterface[]> rewards) {
+        this.duration = duration;
+        this.minPlayers = minPlayers;
+        this.startMessage = startMessage;
+        this.endMessage = endMessage;
+        this.startCommand = startCommand;
+        this.endCommand = endCommand;
+        this.joinCommand = joinCommand;
+        this.goal = goal;
+        this.bossBarConfig = bossBarConfig;
+        this.enableBossBar = enableBossBar;
+        this.rewards = rewards;
+    }
 
-    public void setDuration(int duration) {this.duration = duration;}
-    public void setBossBarConfig(BossBarConfig bossBarConfig) {this.bossBarConfig = bossBarConfig;}
-    public void setGoal(Goal goal) {this.goal = goal;}
-    public void setEndMessage(List<String> endMessage) {this.endMessage = endMessage;}
-    public void setStartMessage(List<String> startMessage) {this.startMessage = startMessage;}
-    public void setStartCommand(List<String> startCommand) {this.startCommand = startCommand;}
-    public void setEndCommand(List<String> endCommand) {this.endCommand = endCommand;}
-    public void setJoinCommand(List<String> joinCommand) {this.joinCommand = joinCommand;}
-    public void setMinPlayers(int minPlayers) {this.minPlayers = minPlayers;}
-    public HashMap<String, List<ActionB>> getRewards() {return rewards;}
+    public int getDuration() {
+        return duration;
+    }
 
-    public Goal getGoal() {return goal;}
-    public int getMinPlayers() {return minPlayers;}
-    public int getDuration() {return duration;}
-    public BossBarConfig getBossBarConfig() {return bossBarConfig;}
-    public boolean isEnableBossBar() {return enableBossBar;}
-    public List<String> getEndMessage() {return endMessage;}
-    public List<String> getStartMessage() {return startMessage;}
-    public void setRewards(HashMap<String, List<ActionB>> rewards) {this.rewards = rewards;}
-    public List<String> getEndCommand() {return endCommand;}
-    public List<String> getJoinCommand() {return joinCommand;}
-    public List<String> getStartCommand() {return startCommand;}
+    public int getMinPlayers() {
+        return minPlayers;
+    }
+
+    public List<String> getStartMessage() {
+        return startMessage;
+    }
+
+    public List<String> getEndMessage() {
+        return endMessage;
+    }
+
+    public List<String> getStartCommand() {
+        return startCommand;
+    }
+
+    public List<String> getEndCommand() {
+        return endCommand;
+    }
+
+    public List<String> getJoinCommand() {
+        return joinCommand;
+    }
+
+    public CompetitionGoal getGoal() {
+        return goal;
+    }
+
+    public BossBarConfig getBossBarConfig() {
+        return bossBarConfig;
+    }
+
+    public boolean isEnableBossBar() {
+        return enableBossBar;
+    }
+
+    public HashMap<String, ActionInterface[]> getRewards() {
+        return rewards;
+    }
 }

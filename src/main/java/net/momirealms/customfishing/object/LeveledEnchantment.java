@@ -30,19 +30,9 @@ public class LeveledEnchantment {
         this.level = level;
     }
 
-    public void setChance(double chance) {
-        this.chance = chance;
-    }
+    public void setChance(double chance) {this.chance = chance;}
 
-    public int getLevel() {
-        return level;
-    }
-
-    public NamespacedKey getKey() {
-        return key;
-    }
-
-    public double getChance() {
-        return chance;
-    }
+    public int getLevel() {return level;}
+    public NamespacedKey getKey() {return key;}
+    public double getChance() {return chance;}
 }

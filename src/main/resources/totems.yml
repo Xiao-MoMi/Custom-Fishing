@@ -1,0 +1,55 @@
+example:
+  # Totem Core Block ID
+  core:
+    - b
+    - r
+  radius: 10
+  # seconds
+  duration: 300
+  particle: SPELL
+
+  # Potion effect type and its amplifier
+  potion-effects:
+    NIGHT_VISION: 1
+
+  # Fishing bonus
+  modifier:
+    weight-add:
+      silver: -20
+      gold: 20
+
+  # placeholders: {activator} {players_in_radius} {all_players}
+  # {world} {x} {y} {z}
+  commands:
+    - 'effect give {player_in_radius} '
+
+  messages:
+    activator:
+      - You activated a totem
+    players_in_radius:
+      - You are now in {activator}'s totem
+      - Your chance of getting gold fish is temporarily up
+    all_players:
+      - {activator} activated a totem at {world},{x},{y},{z}
+
+  # The layout of the totem
+  # The greater the layer is, the higher the y position is
+  # Totem core can be put anywhere in the layout
+  # “*” represents any type of block is allowed here
+  # “()“ represents the block is protected and will not be removed when activating
+  # “>“ represents the block would turn into another block after activating
+  # “|“ represents alternative block choice for this place
+  layer:
+    1:
+      - 'g>n   (c)   g>n'
+      - '(c)   (c)   (c)'
+      - 'g>n   (c)   g>n'
+    2:
+      - '(c)   air   (c)'
+      - 'air  r|b>h  air'
+      - '(c)   air   (c)'
+    3:
+      - '*    (c)    *'
+      - '(c)  (c)  (c)'
+      - '*    (c)    *'
+

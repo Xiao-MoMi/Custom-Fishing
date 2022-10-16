@@ -25,13 +25,8 @@
 
 package net.momirealms.customfishing.helper;
 
-import org.jetbrains.annotations.NotNull;
+import java.lang.annotation.*;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 /**
  * Represents a maven repository.
  */
@@ -45,7 +40,6 @@ public @interface Repository {
      *
      * @return the base url of the repository
      */
-    @NotNull
     String url();
 
 }

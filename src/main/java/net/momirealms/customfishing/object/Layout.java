@@ -22,37 +22,64 @@ public class Layout {
     private final int range;
     private final double[] successRate;
     private final int size;
+    private final String start;
+    private final String bar;
+    private final String pointer;
+    private final String offset;
+    private final String end;
+    private final String pointerOffset;
+    private final String title;
 
-    private String start;
-    private String bar;
-    private String pointer;
-    private String offset;
-    private String end;
-    private String pointerOffset;
-    private String title;
-
-    public Layout(int range, double[] successRate, int size){
+    public Layout(int range, double[] successRate, int size, String start, String bar, String pointer, String offset, String end, String pointerOffset, String title) {
         this.range = range;
         this.successRate = successRate;
         this.size = size;
+        this.start = start;
+        this.bar = bar;
+        this.pointer = pointer;
+        this.offset = offset;
+        this.end = end;
+        this.pointerOffset = pointerOffset;
+        this.title = title;
     }
 
-    public void setBar(String bar) {this.bar = bar;}
-    public void setEnd(String end) {this.end = end;}
-    public void setOffset(String offset) {this.offset = offset;}
-    public void setPointer(String pointer) {this.pointer = pointer;}
-    public void setPointerOffset(String pointerOffset) {this.pointerOffset = pointerOffset;}
-    public void setStart(String start) {this.start = start;}
-    public void setTitle(String title) {this.title = title;}
+    public int getRange() {
+        return range;
+    }
 
-    public int getRange(){return this.range;}
-    public double[] getSuccessRate(){return this.successRate;}
-    public int getSize(){return this.size;}
-    public String getBar() {return bar;}
-    public String getEnd() {return end;}
-    public String getOffset() {return offset;}
-    public String getPointer() {return pointer;}
-    public String getPointerOffset() {return pointerOffset;}
-    public String getStart() {return start;}
-    public String getTitle() {return title;}
+    public double[] getSuccessRate() {
+        return successRate;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public String getStart() {
+        return start;
+    }
+
+    public String getBar() {
+        return bar;
+    }
+
+    public String getPointer() {
+        return pointer;
+    }
+
+    public String getOffset() {
+        return offset;
+    }
+
+    public String getEnd() {
+        return end;
+    }
+
+    public String getPointerOffset() {
+        return pointerOffset;
+    }
+
+    public String getTitle() {
+        return title;
+    }
 }

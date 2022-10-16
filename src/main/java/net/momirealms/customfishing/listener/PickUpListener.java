@@ -15,14 +15,13 @@ public class PickUpListener implements Listener {
     public void onPickUp(PlayerAttemptPickupItemEvent event){
         ItemStack itemStack = event.getItem().getItemStack();
         NBTItem nbtItem = new NBTItem(itemStack);
-        if (nbtItem.hasKey("M_Owner")){
-            if (!Objects.equals(nbtItem.getString("M_Owner"), event.getPlayer().getName())){
-                event.setCancelled(true);
-            }
-            else {
-                nbtItem.removeKey("M_Owner");
-                itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
-            }
+        if (!nbtItem.hasKey("M_Owner")) return;
+        if (!Objects.equals(nbtItem.getString("M_Owner"), event.getPlayer().getName())){
+            event.setCancelled(true);
+        }
+        else {
+            nbtItem.removeKey("M_Owner");
+            itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
         }
     }
 
@@ -30,9 +29,8 @@ public class PickUpListener implements Listener {
     public void onMove(InventoryPickupItemEvent event){
         ItemStack itemStack = event.getItem().getItemStack();
         NBTItem nbtItem = new NBTItem(itemStack);
-        if (nbtItem.hasKey("M_Owner")){
-            nbtItem.removeKey("M_Owner");
-            itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
-        }
+        if (!nbtItem.hasKey("M_Owner")) return;
+        nbtItem.removeKey("M_Owner");
+        itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
     }
 }

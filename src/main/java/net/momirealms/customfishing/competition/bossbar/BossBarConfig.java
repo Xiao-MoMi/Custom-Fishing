@@ -17,13 +17,41 @@
 
 package net.momirealms.customfishing.competition.bossbar;
 
-import net.kyori.adventure.bossbar.BossBar;
+import org.bukkit.boss.BarColor;
 
-public record BossBarConfig(String text, BossBar.Overlay overlay,
-                            BossBar.Color color, int rate){
+public class BossBarConfig {
 
-    public BossBar.Color getColor() {return color;}
-    public int getRate() {return rate;}
-    public BossBar.Overlay getOverlay() {return overlay;}
-    public String getText() {return text;}
+    private final String[] text;
+    private final int interval;
+    private final Overlay overlay;
+    private final BarColor color;
+    private final int rate;
+
+    public BossBarConfig(String[] text, Overlay overlay, BarColor color, int rate, int interval) {
+        this.text = text;
+        this.overlay = overlay;
+        this.color = color;
+        this.rate = rate;
+        this.interval = interval;
+    }
+
+    public String[] getText() {
+        return text;
+    }
+
+    public int getInterval() {
+        return interval;
+    }
+
+    public Overlay getOverlay() {
+        return overlay;
+    }
+
+    public BarColor getColor() {
+        return color;
+    }
+
+    public int getRate() {
+        return rate;
+    }
 }

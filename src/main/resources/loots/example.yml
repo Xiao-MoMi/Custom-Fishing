@@ -7,6 +7,8 @@ rainbow_fish:
   nick: 'Example Fish'
   # Should it be displayed in fish finder?
   show-in-fishfinder: false
+  # Is this loot only available when player fish in lava
+  in-lava: false
   # The weight(relative chance) of getting this fish
   weight: 10
   # Optional

@@ -1,16 +1,19 @@
 example:
 
-  #TOTAL_SCORE
-  #CATCH_AMOUNT
+  # TOTAL_SCORE
+  # CATCH_AMOUNT
+  # RANDOM
   goal: CATCH_AMOUNT
 
+  # optional
+  # Fishing competition can also be started with a command
   start-time:
     - '5:30'
     - '17:30'
+  #seconds
+  duration: 300
 
-  duration: 300  #seconds
-
-  # Min players to begin the competition
+  # Min players to start the competition
   min-players: 2
 
   # Competition information (it will only be shown to participants)
@@ -19,7 +22,12 @@ example:
     color: YELLOW
     overlay: PROGRESS
     # https://docs.adventure.kyori.net/minimessage/format.html
-    text: '<gray>Time Left: <gold>{time}s <gray>Rank: <gold>{rank} <gray>Time Left: <gold>{minute}m{second}s <gray>Points: <gold>{point}'
+    text:
+      - '<gray>Time Left: <gold>{time}s <gray>Rank: <gold>{rank}'
+      - '<gray>Time Left: <gold>{minute}m{second}s <gray>Points: <gold>{point}'
+    # seconds
+    switch-interval: 15
+    # ticks
     refresh-rate: 10
 
   command:
@@ -51,7 +59,7 @@ example:
       - ''
       - '<blue>----------------------------------------'
 
-  # You can customize unlimited ranks' rewards by adding 4,5,6...
+  # You can customize unlimited ranks' rewards by adding ranks like 4,5,6...
   prize:
     1:
       commands:

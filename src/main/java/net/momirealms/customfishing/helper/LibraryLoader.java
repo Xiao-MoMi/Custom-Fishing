@@ -27,7 +27,6 @@ package net.momirealms.customfishing.helper;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-
 import net.momirealms.customfishing.CustomFishing;
 import org.apache.commons.lang.StringUtils;
 
@@ -46,7 +45,7 @@ import java.util.Objects;
 public final class LibraryLoader {
 
     @SuppressWarnings("Guava")
-    private static final Supplier<URLClassLoaderAccess> URL_INJECTOR = Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) CustomFishing.instance.getClass().getClassLoader()));
+    private static final Supplier<URLClassLoaderAccess> URL_INJECTOR = Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) CustomFishing.plugin.getClass().getClassLoader()));
 
     /**
      * Resolves all {@link MavenLibrary} annotations on the given object.
@@ -78,7 +77,9 @@ public final class LibraryLoader {
     }
 
     public static void load(Dependency d) {
+        //Log.info(String.format("Loading dependency %s:%s:%s from %s", d.getGroupId(), d.getArtifactId(), d.getVersion(), d.getRepoUrl()));
         String name = d.getArtifactId() + "-" + d.getVersion();
+
         File saveLocation = new File(getLibFolder(d), name + ".jar");
         if (!saveLocation.exists()) {
 
@@ -97,23 +98,28 @@ public final class LibraryLoader {
         }
 
         if (!saveLocation.exists()) {
-            throw new RuntimeException("Unable to download dependency: " + d);
+            throw new RuntimeException("Unable to download dependency: " + d.toString());
         }
 
         try {
             URL_INJECTOR.get().addURL(saveLocation.toURI().toURL());
         } catch (Exception e) {
-            throw new RuntimeException("Unable to load dependency: " + saveLocation, e);
+            throw new RuntimeException("Unable to load dependency: " + saveLocation.toString(), e);
         }
     }
 
     private static File getLibFolder(Dependency dependency) {
-        File pluginDataFolder = CustomFishing.instance.getDataFolder();
+        File pluginDataFolder = CustomFishing.plugin.getDataFolder();
         File serverDir = pluginDataFolder.getParentFile().getParentFile();
 
         File helperDir = new File(serverDir, "libraries");
         String[] split = StringUtils.split(dependency.getGroupId(), ".");
-        File jarDir = new File(helperDir, split[0] + File.separator + split[1] + File.separator + dependency.artifactId + File.separator + dependency.version );
+        File jarDir;
+        if (split.length > 1){
+            jarDir = new File(helperDir, split[0] + File.separator + split[1] + File.separator + dependency.artifactId + File.separator + dependency.version );
+        }else {
+            jarDir = new File(helperDir, dependency.getGroupId() + File.separator + dependency.artifactId + File.separator + dependency.version );
+        }
         jarDir.mkdirs();
         return jarDir;
     }

@@ -19,11 +19,13 @@ package net.momirealms.customfishing.object;
 
 public record Difficulty(int timer, int speed) {
 
-    public int getTimer() {
-        return this.timer;
+    @Override
+    public int timer() {
+        return timer;
     }
 
-    public int getSpeed() {
-        return this.speed;
+    @Override
+    public int speed() {
+        return speed;
     }
 }

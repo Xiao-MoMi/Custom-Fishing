@@ -37,23 +37,23 @@ import java.util.logging.Level;
 public final class Log {
 
     public static void info(@NotNull String s) {
-        CustomFishing.instance.getLogger().info(s);
+        CustomFishing.plugin.getLogger().info(s);
     }
 
     public static void warn(@NotNull String s) {
-        CustomFishing.instance.getLogger().warning(s);
+        CustomFishing.plugin.getLogger().warning(s);
     }
 
     public static void severe(@NotNull String s) {
-        CustomFishing.instance.getLogger().severe(s);
+        CustomFishing.plugin.getLogger().severe(s);
     }
 
     public static void warn(@NotNull String s, Throwable t) {
-        CustomFishing.instance.getLogger().log(Level.WARNING, s, t);
+        CustomFishing.plugin.getLogger().log(Level.WARNING, s, t);
     }
 
     public static void severe(@NotNull String s, Throwable t) {
-        CustomFishing.instance.getLogger().log(Level.SEVERE, s, t);
+        CustomFishing.plugin.getLogger().log(Level.SEVERE, s, t);
     }
 
     private Log() {
