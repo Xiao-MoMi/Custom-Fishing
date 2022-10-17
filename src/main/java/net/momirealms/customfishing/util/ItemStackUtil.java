@@ -4,7 +4,6 @@ import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.manager.BonusManager;
 import net.momirealms.customfishing.manager.LootManager;
@@ -192,7 +191,8 @@ public class ItemStackUtil {
 
         try {
             yamlConfiguration.save(file);
-            LootManager.load();
+            CustomFishing.plugin.getLootManager().unload();
+            CustomFishing.plugin.getLootManager().load();
         } catch (IOException e) {
             e.printStackTrace();
         }

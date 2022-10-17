@@ -1,7 +1,5 @@
 package net.momirealms.customfishing.manager;
 
-import com.gamingmesh.jobs.CMILib.ConfigReader;
-import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import net.momirealms.customfishing.util.JedisUtil;
 import org.bukkit.Bukkit;

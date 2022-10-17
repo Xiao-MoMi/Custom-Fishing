@@ -10,7 +10,6 @@ import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class CompetitionCommand extends AbstractSubCommand {
 
@@ -41,7 +40,7 @@ public class CompetitionCommand extends AbstractSubCommand {
             AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.forceEnd);
         } else if (args.get(0).equals("cancel")) {
             CompetitionSchedule.cancelCompetition();
-            AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.forceEnd);
+            AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.forceCancel);
         }
         return true;
     }
@@ -49,7 +48,12 @@ public class CompetitionCommand extends AbstractSubCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, List<String> args) {
         if (args.size() == 1) {
-            return List.of("start","end","cancel");
+            List<String> arrayList = new ArrayList<>();
+            for (String cmd : List.of("start","end","cancel")) {
+                if (cmd.startsWith(args.get(0)))
+                    arrayList.add(cmd);
+            }
+            return arrayList;
         }
         if (args.size() == 2 && args.get(0).equals("start")) {
             return competitions();

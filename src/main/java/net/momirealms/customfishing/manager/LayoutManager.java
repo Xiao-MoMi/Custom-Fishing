@@ -1,6 +1,8 @@
 package net.momirealms.customfishing.manager;
 
+import net.momirealms.customfishing.Function;
 import net.momirealms.customfishing.object.Layout;
+import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -8,11 +10,12 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Set;
 
-public class LayoutManager {
+public class LayoutManager extends Function {
 
     public static HashMap<String, Layout> LAYOUTS;
 
-    public static void load() {
+    @Override
+    public void load() {
         LAYOUTS = new HashMap<>();
         YamlConfiguration config = ConfigUtil.getConfig("bars.yml");
         Set<String> keys = config.getKeys(false);
@@ -37,5 +40,11 @@ public class LayoutManager {
             );
             LAYOUTS.put(key, layout);
         }
+        AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + LAYOUTS.size() + " <gray>bars");
+    }
+
+    @Override
+    public void unload() {
+        if (LAYOUTS != null) LAYOUTS.clear();
     }
 }

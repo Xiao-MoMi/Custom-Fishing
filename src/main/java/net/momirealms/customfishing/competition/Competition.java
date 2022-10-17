@@ -5,7 +5,6 @@ import net.momirealms.customfishing.competition.bossbar.BossBarManager;
 import net.momirealms.customfishing.competition.ranking.LocalRankingImpl;
 import net.momirealms.customfishing.competition.ranking.RankingInterface;
 import net.momirealms.customfishing.competition.ranking.RedisRankingImpl;
-import net.momirealms.customfishing.manager.CompetitionManager;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.object.action.ActionInterface;
@@ -16,7 +15,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Instant;
-import java.time.LocalTime;
 import java.util.*;
 
 public class Competition {
@@ -30,7 +28,6 @@ public class Competition {
     private long startTime;
     private long remainingTime;
     private float progress;
-
     private BossBarManager bossBarManager;
 
     public Competition(CompetitionConfig competitionConfig) {
@@ -38,6 +35,7 @@ public class Competition {
     }
 
     public void begin(boolean forceStart) {
+        this.goal = competitionConfig.getGoal();
         if (this.goal == CompetitionGoal.RANDOM) {
             this.goal = getRandomGoal();
         }
@@ -64,7 +62,7 @@ public class Competition {
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), startCmd);
             }
             if (competitionConfig.isEnableBossBar()) {
-                bossBarManager = new BossBarManager(this);
+                bossBarManager = new BossBarManager();
                 bossBarManager.load();
             }
         }
@@ -224,5 +222,22 @@ public class Competition {
         return ranking.getFirstPlayer();
     }
 
+    public boolean isJoined(Player player) {
+        return ranking.getCompetitionPlayer(player.getName()) != null;
+    }
 
+    public BossBarManager getBossBarManager() {
+        return bossBarManager;
+    }
+
+
+    public void refreshData(Player player, float score, boolean doubleScore) {
+        if (this.goal == CompetitionGoal.CATCH_AMOUNT) {
+            score = 1f;
+        }
+        if (doubleScore) {
+            score *= 2;
+        }
+        ranking.refreshData(player.getName(), score);
+    }
 }

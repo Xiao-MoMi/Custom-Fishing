@@ -1,8 +1,12 @@
-example:
+primary_fishing_totem:
   # Totem Core Block ID
   core:
     - b
     - r
+
+  activator:
+    - totem_stone
+
   radius: 10
   # seconds
   duration: 300

@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.object.requirements;
 
 import net.momirealms.customfishing.object.FishingCondition;
-import net.momirealms.customfishing.object.requirements.RequirementInterface;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.List;

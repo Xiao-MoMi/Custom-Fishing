@@ -1,6 +1,7 @@
 package net.momirealms.customfishing.manager;
 
 import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.Function;
 import net.momirealms.customfishing.object.*;
 import net.momirealms.customfishing.object.action.*;
 import net.momirealms.customfishing.object.loot.DroppedItem;
@@ -20,18 +21,16 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
-public class LootManager {
+public class LootManager extends Function {
 
     public static HashMap<String, Loot> WATERLOOTS;
     public static HashMap<String, Loot> LAVALOOTS;
     public static HashMap<String, ItemStack> LOOTITEMS;
-
-    @Nullable
-    public static Loot getLoot(String key) {
-        return WATERLOOTS.get(key);
-    }
 
     @Nullable
     public static ItemStack build(String key) {
@@ -39,7 +38,8 @@ public class LootManager {
         return itemStack == null ? null : itemStack.clone();
     }
 
-    public static void load() {
+    @Override
+    public void load() {
         WATERLOOTS = new HashMap<>();
         LAVALOOTS = new HashMap<>();
         LOOTITEMS = new HashMap<>();
@@ -48,7 +48,14 @@ public class LootManager {
         AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + (LAVALOOTS.size() + WATERLOOTS.size()) + " <gray>loots");
     }
 
-    private static void loadMobs() {
+    @Override
+    public void unload() {
+        if (WATERLOOTS != null) WATERLOOTS.clear();
+        if (LAVALOOTS != null) LAVALOOTS.clear();
+        if (LOOTITEMS != null) LOOTITEMS.clear();
+    }
+
+    private void loadMobs() {
         if (Bukkit.getPluginManager().getPlugin("MythicMobs") == null) return;
         File mob_file = new File(CustomFishing.plugin.getDataFolder() + File.separator + "mobs");
         if (!mob_file.exists()) {
@@ -79,14 +86,18 @@ public class LootManager {
                                 config.getDouble(key + ".vector.vertical",1.3)
                         ));
                 if (config.contains(key + ".nick")) loot.setNick(config.getString(key + ".nick"));
-                else loot.setNick(ChatColor.stripColor(config.getString(key + ".mythicmobsID", key)));
+                else loot.setNick(ChatColor.stripColor(config.getString(key + ".mobID", key)));
                 setActionsAndRequirements(config, loot, key);
-                WATERLOOTS.put(key, loot);
+                if (config.getBoolean(key + ".in-lava", false)) {
+                    LAVALOOTS.put(key, loot);
+                } else {
+                    WATERLOOTS.put(key, loot);
+                }
             }
         }
     }
 
-    private static void loadItems() {
+    private void loadItems() {
         File loot_file = new File(CustomFishing.plugin.getDataFolder() + File.separator + "loots");
         if (!loot_file.exists()) {
             if (!loot_file.mkdir()) return;
@@ -134,8 +145,6 @@ public class LootManager {
                 } else {
                     WATERLOOTS.put(key, loot);
                 }
-
-
                 // Construct ItemStack
                 if (material.contains(":")) {
                     continue;
@@ -148,7 +157,7 @@ public class LootManager {
         }
     }
 
-    private static void setActionsAndRequirements(YamlConfiguration config, Loot loot, String key) {
+    private void setActionsAndRequirements(YamlConfiguration config, Loot loot, String key) {
 
         if (config.contains(key + ".layout")) {
             List<Layout> layoutList = new ArrayList<>();

@@ -13,6 +13,7 @@ import net.momirealms.customfishing.api.event.FishFinderEvent;
 import net.momirealms.customfishing.api.event.FishHookEvent;
 import net.momirealms.customfishing.api.event.FishResultEvent;
 import net.momirealms.customfishing.api.event.RodCastEvent;
+import net.momirealms.customfishing.competition.Competition;
 import net.momirealms.customfishing.integration.MobInterface;
 import net.momirealms.customfishing.integration.item.McMMOTreasure;
 import net.momirealms.customfishing.listener.*;
@@ -326,7 +327,7 @@ public class FishingManager extends Function {
                 return;
             }
             if (loot instanceof Mob mob) {
-                summonMob(player, loot, location, mob);
+                summonMob(player, loot, location, mob, fishingPlayer.getScoreMultiplier());
                 return;
             }
             if (loot instanceof DroppedItem droppedItem){
@@ -335,7 +336,7 @@ public class FishingManager extends Function {
                         return;
                     }
                 }
-                dropCustomFishingLoot(player, location, droppedItem, fishingPlayer.isDouble());
+                dropCustomFishingLoot(player, location, droppedItem, fishingPlayer.isDouble(), fishingPlayer.getScoreMultiplier());
             }
         }
         else {
@@ -350,12 +351,18 @@ public class FishingManager extends Function {
         proceedReelIn(event, player, fishingPlayer);
     }
 
-    private void dropCustomFishingLoot(Player player, Location location, DroppedItem droppedItem, boolean isDouble) {
+    private void dropCustomFishingLoot(Player player, Location location, DroppedItem droppedItem, boolean isDouble, double scoreMultiplier) {
         ItemStack drop = getCustomFishingLootItemStack(droppedItem, player);
         FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CAUGHT_LOOT, isDouble, drop);
         Bukkit.getPluginManager().callEvent(fishResultEvent);
         if (fishResultEvent.isCancelled()) {
             return;
+        }
+
+        if (Competition.currentCompetition != null){
+            float score = (float) (droppedItem.getScore() * scoreMultiplier);
+            Competition.currentCompetition.refreshData(player, score, isDouble);
+            Competition.currentCompetition.getBossBarManager().tryJoin(player);
         }
 
         dropItem(player, location, fishResultEvent.isDouble(), drop);
@@ -387,6 +394,11 @@ public class FishingManager extends Function {
         Bukkit.getPluginManager().callEvent(fishResultEvent);
         if (fishResultEvent.isCancelled()) {
             return true;
+        }
+
+        if (Competition.currentCompetition != null){
+            Competition.currentCompetition.refreshData(player, 0, isDouble);
+            Competition.currentCompetition.getBossBarManager().tryJoin(player);
         }
 
         player.giveExp(new Random().nextInt(24), true);
@@ -425,19 +437,30 @@ public class FishingManager extends Function {
             return;
         }
 
+        if (Competition.currentCompetition != null){
+            Competition.currentCompetition.refreshData(player, 0, isDouble);
+            Competition.currentCompetition.getBossBarManager().tryJoin(player);
+        }
+
         player.giveExp(vanillaLoot.getXp(), true);
         AdventureUtil.playerSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
         dropItem(player, location, isDouble, itemStack);
         sendSuccessTitle(player, itemStack);
     }
 
-    private void summonMob(Player player, Loot loot, Location location, Mob mob) {
+    private void summonMob(Player player, Loot loot, Location location, Mob mob, double scoreMultiplier) {
         MobInterface mobInterface = CustomFishing.plugin.getIntegrationManager().getMobInterface();
         if (mobInterface == null) return;
 
         FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CAUGHT_MOB, false, null);
         if (fishResultEvent.isCancelled()) {
             return;
+        }
+
+        if (Competition.currentCompetition != null){
+            float score = (float) (loot.getScore() * scoreMultiplier);
+            Competition.currentCompetition.refreshData(player, score, false);
+            Competition.currentCompetition.getBossBarManager().tryJoin(player);
         }
 
         mobInterface.summon(player.getLocation(), location, mob);
@@ -672,7 +695,7 @@ public class FishingManager extends Function {
         }
         else {
             //Not null
-            layout = LayoutManager.LAYOUTS.values().stream().findAny().get();
+            layout = (Layout) LayoutManager.LAYOUTS.values().stream().toArray()[new Random().nextInt(LayoutManager.LAYOUTS.values().size())];
         }
 
         int speed;
@@ -690,10 +713,12 @@ public class FishingManager extends Function {
         }
 
         Bonus bonus = nextBonus.get(player);
-        boolean isDouble =false;
+        boolean isDouble = false;
+        double scoreMultiplier = 0;
         if (bonus != null) {
             speed += bonus.getDifficulty();
             isDouble = Math.random() < bonus.getDoubleLoot();
+            scoreMultiplier = bonus.getScore() + 1;
         }
 
         if (speed < 1){
@@ -708,7 +733,7 @@ public class FishingManager extends Function {
             return;
         }
 
-        FishingPlayer fishingPlayer = new FishingPlayer(System.currentTimeMillis() + time, player, layout, difficult, this, isDouble);
+        FishingPlayer fishingPlayer = new FishingPlayer(System.currentTimeMillis() + time, player, layout, difficult, this, isDouble, scoreMultiplier);
         fishingPlayer.runTaskTimerAsynchronously(CustomFishing.plugin, 0, 1);
         fishingPlayerCache.put(player, fishingPlayer);
 

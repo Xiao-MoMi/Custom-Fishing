@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.object;
 
 import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.competition.Competition;
 import net.momirealms.customfishing.integration.papi.PlaceholderManager;
 import org.bukkit.entity.Player;
 
@@ -70,20 +71,29 @@ public class TextCache {
 
     //返回更新结果是否不一致
     public boolean update() {
-        if (ownerPlaceholders.length == 0) return false;
-        PlaceholderManager placeholderManager = CustomFishing.plugin.getIntegrationManager().getPlaceholderManager();
-        if (placeholderManager == null) return false;
-        String string;
-        if ("%s".equals(originalValue)) {
-            string = placeholderManager.parse(owner, ownerPlaceholders[0]);
-        }
-        else {
-            Object[] values = new String[ownerPlaceholders.length];
-            for (int i = 0; i < ownerPlaceholders.length; i++) {
-                values[i] = placeholderManager.parse(owner, ownerPlaceholders[i]);
+        String string = originalValue;
+        if (ownerPlaceholders.length != 0) {
+            PlaceholderManager placeholderManager = CustomFishing.plugin.getIntegrationManager().getPlaceholderManager();
+            if (placeholderManager != null) {
+                if ("%s".equals(originalValue)) {
+                    string = placeholderManager.parse(owner, ownerPlaceholders[0]);
+                }
+                else {
+                    Object[] values = new String[ownerPlaceholders.length];
+                    for (int i = 0; i < ownerPlaceholders.length; i++) {
+                        values[i] = placeholderManager.parse(owner, ownerPlaceholders[i]);
+                    }
+                    string = String.format(originalValue, values);
+                }
             }
-            string = String.format(originalValue, values);
         }
+        string = string.replace("{rank}", Competition.currentCompetition.getPlayerRank(owner))
+                        .replace("{time}", String.valueOf(Competition.currentCompetition.getRemainingTime()))
+                        .replace("{minute}", String.format("%02d", Competition.currentCompetition.getRemainingTime() / 60))
+                        .replace("{second}",String.format("%02d", Competition.currentCompetition.getRemainingTime() % 60))
+                        .replace("{score}", String.format("%.1f", Competition.currentCompetition.getScore(owner)))
+                        .replace("{1st_score}", String.format("%.1f", Competition.currentCompetition.getFirstScore()))
+                        .replace("{1st_player}", Competition.currentCompetition.getFirstPlayer());
         if (!latestValue.equals(string)) {
             latestValue = string;
             return true;

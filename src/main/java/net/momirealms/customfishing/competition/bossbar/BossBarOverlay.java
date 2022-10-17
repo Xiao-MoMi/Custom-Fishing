@@ -15,24 +15,12 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.object.requirements;
+package net.momirealms.customfishing.competition.bossbar;
 
-import net.momirealms.customfishing.object.FishingCondition;
-import org.apache.commons.lang.StringUtils;
-
-import java.util.List;
-
-public record YPosImpl(List<String> yPos) implements RequirementInterface {
-
-    @Override
-    public boolean isConditionMet(FishingCondition fishingCondition) {
-        int y = (int) fishingCondition.getLocation().getY();
-        for (String range : yPos) {
-            String[] yMinMax = StringUtils.split(range, "~");
-            if (y > Integer.parseInt(yMinMax[0]) && y < Integer.parseInt(yMinMax[1])) {
-                return true;
-            }
-        }
-        return false;
-    }
+public enum BossBarOverlay {
+    NOTCHED_6,
+    NOTCHED_10,
+    NOTCHED_12,
+    NOTCHED_20,
+    PROGRESS
 }

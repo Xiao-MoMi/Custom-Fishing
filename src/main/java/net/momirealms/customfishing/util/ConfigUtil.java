@@ -8,7 +8,9 @@ import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.helper.Log;
-import net.momirealms.customfishing.manager.*;
+import net.momirealms.customfishing.manager.ConfigManager;
+import net.momirealms.customfishing.manager.MessageManager;
+import net.momirealms.customfishing.object.Reflection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -24,14 +26,23 @@ public class ConfigUtil {
 
     public static void reload() {
         ConfigManager.load();
-        LayoutManager.load();
         MessageManager.load();
-        LootManager.load();
-        BonusManager.load();
+        CustomFishing.plugin.getLayoutManager().unload();
+        CustomFishing.plugin.getLayoutManager().load();
+        CustomFishing.plugin.getLootManager().unload();
+        CustomFishing.plugin.getLootManager().load();
+        CustomFishing.plugin.getBonusManager().unload();
+        CustomFishing.plugin.getBonusManager().load();
         CustomFishing.plugin.getFishingManager().unload();
         CustomFishing.plugin.getFishingManager().load();
-        CustomFishing.plugin.getCompetitionSchedule().unload();
-        CustomFishing.plugin.getCompetitionSchedule().load();
+        CustomFishing.plugin.getCompetitionManager().unload();
+        CustomFishing.plugin.getCompetitionManager().load();
+        try {
+            Reflection.load();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void update(String fileName){

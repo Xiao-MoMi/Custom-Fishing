@@ -2,7 +2,6 @@ package net.momirealms.customfishing.commands.subcmd;
 
 import net.momirealms.customfishing.commands.AbstractSubCommand;
 import net.momirealms.customfishing.commands.SubCommand;
-import net.momirealms.customfishing.manager.BonusManager;
 import net.momirealms.customfishing.manager.LootManager;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.object.loot.DroppedItem;

@@ -76,9 +76,9 @@ public class Bonus {
                 this.weightMD.put(group, Optional.ofNullable(this.weightMD.get(group)).orElse(1d) + en.getValue());
             }
         }
-        if (anotherBonus.getTime() != 0) this.time *= anotherBonus.getTime();
+        if (anotherBonus.getTime() != 0) this.time += (anotherBonus.getTime() - 1);
         if (anotherBonus.getDoubleLoot() != 0) this.doubleLoot += anotherBonus.getDoubleLoot();
         if (anotherBonus.getDifficulty() != 0) this.difficulty += anotherBonus.getDifficulty();
-        if (anotherBonus.getScore() != 0) this.score *= anotherBonus.getScore();
+        if (anotherBonus.getScore() != 0) this.score += (anotherBonus.getScore() - 1);
     }
 }

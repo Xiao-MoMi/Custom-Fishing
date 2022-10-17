@@ -31,8 +31,9 @@ public class FishingPlayer extends BukkitRunnable {
     private final double[] successRate;
     private final int range;
     private final boolean isDouble;
+    private final double scoreMultiplier;
 
-    public FishingPlayer(long deadline, Player player, Layout layout, Difficulty difficulty, FishingManager fishingManager, boolean isDouble) {
+    public FishingPlayer(long deadline, Player player, Layout layout, Difficulty difficulty, FishingManager fishingManager, boolean isDouble, double scoreMultiplier) {
         this.deadline = deadline;
         this.player = player;
         this.difficulty = difficulty;
@@ -48,6 +49,7 @@ public class FishingPlayer extends BukkitRunnable {
         this.range = layout.getRange();
         this.successRate = layout.getSuccessRate();
         this.isDouble = isDouble;
+        this.scoreMultiplier = scoreMultiplier;
     }
 
     @Override
@@ -60,23 +62,18 @@ public class FishingPlayer extends BukkitRunnable {
             return;
         }
 
-        int timer = difficulty.timer() - 1;
-        int speed = difficulty.speed();
-        if (progress <= speed - 1) {
-            face = true;
-        } else if (progress >= size - speed + 1) {
-            face = false;
-        }
-        if (internalTimer < timer) {
+        if (internalTimer < difficulty.timer() - 1) {
             internalTimer++;
             return;
         } else {
-            if (face) {
-                internalTimer -= timer;
-                progress += speed;
-            } else {
-                internalTimer -= timer;
-                progress -= speed;
+            progress = getNextProgress(progress, face);
+            if (progress > size) {
+                face = !face;
+                progress = 2 * size - progress;
+            }
+            else if (progress < 0) {
+                face = !face;
+                progress = -progress;
             }
         }
         StringBuilder stringBuilder = new StringBuilder(start + bar + pointerOffset);
@@ -98,6 +95,15 @@ public class FishingPlayer extends BukkitRunnable {
         }
     }
 
+    private int getNextProgress(int i, boolean face) {
+        if (face) {
+            return i + difficulty.speed();
+        }
+        else {
+            return i - difficulty.speed();
+        }
+    }
+
     public boolean isSuccess() {
         int last = progress / range;
         return (Math.random() < successRate[last]);
@@ -105,5 +111,9 @@ public class FishingPlayer extends BukkitRunnable {
 
     public boolean isDouble() {
         return isDouble;
+    }
+
+    public double getScoreMultiplier() {
+        return scoreMultiplier;
     }
 }

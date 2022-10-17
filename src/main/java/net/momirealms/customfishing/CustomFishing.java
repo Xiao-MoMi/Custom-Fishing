@@ -21,11 +21,8 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.momirealms.customfishing.commands.PluginCommand;
-import net.momirealms.customfishing.competition.CompetitionSchedule;
 import net.momirealms.customfishing.helper.LibraryLoader;
-import net.momirealms.customfishing.manager.FishingManager;
-import net.momirealms.customfishing.manager.IntegrationManager;
-import net.momirealms.customfishing.manager.MessageManager;
+import net.momirealms.customfishing.manager.*;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import org.bstats.bukkit.Metrics;
@@ -40,7 +37,10 @@ public final class CustomFishing extends JavaPlugin {
 
     private IntegrationManager integrationManager;
     private FishingManager fishingManager;
-    private CompetitionSchedule competitionSchedule;
+    private CompetitionManager competitionManager;
+    private BonusManager bonusManager;
+    private LootManager lootManager;
+    private LayoutManager layoutManager;
 
 //                              _ooOoo_
 //                             o8888888o
@@ -76,7 +76,10 @@ public final class CustomFishing extends JavaPlugin {
         protocolManager = ProtocolLibrary.getProtocolManager();
         this.fishingManager = new FishingManager();
         this.integrationManager = new IntegrationManager();
-        this.competitionSchedule = new CompetitionSchedule();
+        this.competitionManager = new CompetitionManager();
+        this.bonusManager = new BonusManager();
+        this.lootManager = new LootManager();
+        this.layoutManager = new LayoutManager();
         ConfigUtil.reload();
 
         PluginCommand pluginCommand = new PluginCommand();
@@ -102,7 +105,19 @@ public final class CustomFishing extends JavaPlugin {
         return fishingManager;
     }
 
-    public CompetitionSchedule getCompetitionSchedule() {
-        return competitionSchedule;
+    public CompetitionManager getCompetitionManager() {
+        return competitionManager;
+    }
+
+    public BonusManager getBonusManager() {
+        return bonusManager;
+    }
+
+    public LootManager getLootManager() {
+        return lootManager;
+    }
+
+    public LayoutManager getLayoutManager() {
+        return layoutManager;
     }
 }

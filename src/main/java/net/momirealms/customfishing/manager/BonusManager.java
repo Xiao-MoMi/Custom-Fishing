@@ -1,6 +1,7 @@
 package net.momirealms.customfishing.manager;
 
 import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.Function;
 import net.momirealms.customfishing.object.Bonus;
 import net.momirealms.customfishing.object.Item;
 import net.momirealms.customfishing.object.LeveledEnchantment;
@@ -16,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 import java.util.*;
 
-public class BonusManager {
+public class BonusManager extends Function {
 
     public static HashMap<String, ItemStack> BAITITEMS;
     public static HashMap<String, Bonus> BAIT;
@@ -26,7 +27,8 @@ public class BonusManager {
 
     public static HashMap<String, ItemStack> UTILITEMS;
 
-    public static void load() {
+    @Override
+    public void load() {
         BAIT = new HashMap<>();
         BAITITEMS = new HashMap<>();
         ROD = new HashMap<>();
@@ -38,7 +40,16 @@ public class BonusManager {
         loadUtil();
     }
 
-    private static void loadUtil() {
+    @Override
+    public void unload() {
+        if (BAIT != null) BAIT.clear();
+        if (BAITITEMS != null) BAITITEMS.clear();
+        if (ROD != null) ROD.clear();
+        if (RODITEMS != null) RODITEMS.clear();
+        if (ENCHANTS != null) ENCHANTS.clear();
+    }
+
+    private void loadUtil() {
         UTILITEMS = new HashMap<>();
         File util_file = new File(CustomFishing.plugin.getDataFolder() + File.separator + "utils");
         if (!util_file.exists()) {
@@ -60,7 +71,7 @@ public class BonusManager {
         AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + UTILITEMS.size() + " <gray>utils");
     }
 
-    private static void loadEnchant() {
+    private void loadEnchant() {
         ENCHANTS = new HashMap<>();
         YamlConfiguration config = ConfigUtil.getConfig("enchant-bonus.yml");
         Set<String> keys = config.getKeys(false);
@@ -95,7 +106,7 @@ public class BonusManager {
         AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + ENCHANTS.size() + " <gray>enchantments");
     }
 
-    private static void loadBait() {
+    private void loadBait() {
         BAITITEMS = new HashMap<>();
         BAIT = new HashMap<>();
         File bait_file = new File(CustomFishing.plugin.getDataFolder() + File.separator + "baits");
@@ -120,7 +131,7 @@ public class BonusManager {
         AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + BAITITEMS.size() + " <gray>baits");
     }
 
-    private static Bonus getBonus(YamlConfiguration config, String key) {
+    private Bonus getBonus(YamlConfiguration config, String key) {
         Bonus bonus = new Bonus();
         config.getConfigurationSection(key + ".modifier").getKeys(false).forEach(modifier -> {
             switch (modifier) {
@@ -147,7 +158,7 @@ public class BonusManager {
         return bonus;
     }
 
-    private static void loadRod() {
+    private void loadRod() {
         ROD = new HashMap<>();
         RODITEMS = new HashMap<>();
         File rod_file = new File(CustomFishing.plugin.getDataFolder() + File.separator + "rods");

@@ -3,15 +3,15 @@ package net.momirealms.customfishing.manager;
 import net.momirealms.customfishing.Function;
 import net.momirealms.customfishing.competition.CompetitionConfig;
 import net.momirealms.customfishing.competition.CompetitionGoal;
+import net.momirealms.customfishing.competition.CompetitionSchedule;
 import net.momirealms.customfishing.competition.bossbar.BossBarConfig;
-import net.momirealms.customfishing.competition.bossbar.Overlay;
+import net.momirealms.customfishing.competition.bossbar.BossBarOverlay;
 import net.momirealms.customfishing.object.action.ActionInterface;
 import net.momirealms.customfishing.object.action.CommandActionImpl;
 import net.momirealms.customfishing.object.action.MessageActionImpl;
 import net.momirealms.customfishing.util.ConfigUtil;
 import org.bukkit.boss.BarColor;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.*;
 
@@ -19,31 +19,37 @@ public class CompetitionManager extends Function {
 
     public static HashMap<String, CompetitionConfig> competitionsT;
     public static HashMap<String, CompetitionConfig> competitionsC;
+    private CompetitionSchedule competitionSchedule;
 
     @Override
     public void load() {
-        competitionsC = new HashMap<>();
-        competitionsT = new HashMap<>();
-        if (ConfigManager.enableCompetition) loadCompetitions();
+        if (ConfigManager.enableCompetition) {
+            competitionsC = new HashMap<>();
+            competitionsT = new HashMap<>();
+            loadCompetitions();
+            this.competitionSchedule = new CompetitionSchedule();
+            this.competitionSchedule.load();
+        }
     }
 
     @Override
     public void unload() {
         if (competitionsC != null) competitionsC.clear();
         if (competitionsT != null) competitionsT.clear();
+        if (competitionSchedule != null) competitionSchedule.unload();
     }
 
-    public void loadCompetitions(){
+    public void loadCompetitions() {
         YamlConfiguration config = ConfigUtil.getConfig("competition.yml");
         Set<String> keys = config.getKeys(false);
         keys.forEach(key -> {
             boolean enableBsb = config.getBoolean(key + ".bossbar.enable", false);
             BossBarConfig bossBarConfig = new BossBarConfig(
                     config.getStringList(key + ".bossbar.text").toArray(new String[0]),
-                    Overlay.valueOf(config.getString(key + ".bossbar.overlay","SOLID").toUpperCase()),
+                    BossBarOverlay.valueOf(config.getString(key + ".bossbar.overlay","SOLID").toUpperCase()),
                     BarColor.valueOf(config.getString(key + ".bossbar.color","WHITE").toUpperCase()),
                     config.getInt(key + ".bossbar.refresh-rate",10),
-                    config.getInt(key + ".bossbar.switch-interval", 15)
+                    config.getInt(key + ".bossbar.switch-interval", 200)
             );
 
             HashMap<String, ActionInterface[]> rewardsMap = new HashMap<>();

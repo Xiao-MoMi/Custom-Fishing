@@ -23,11 +23,11 @@ public class BossBarConfig {
 
     private final String[] text;
     private final int interval;
-    private final Overlay overlay;
+    private final BossBarOverlay overlay;
     private final BarColor color;
     private final int rate;
 
-    public BossBarConfig(String[] text, Overlay overlay, BarColor color, int rate, int interval) {
+    public BossBarConfig(String[] text, BossBarOverlay overlay, BarColor color, int rate, int interval) {
         this.text = text;
         this.overlay = overlay;
         this.color = color;
@@ -43,7 +43,7 @@ public class BossBarConfig {
         return interval;
     }
 
-    public Overlay getOverlay() {
+    public BossBarOverlay getOverlay() {
         return overlay;
     }
 

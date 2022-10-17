@@ -1,37 +1,122 @@
-bar1:
+rainbow_1:
   range: 16
-  title: 'The fish is hooked, focus on it!'
+  title: '<#B22222>RED!'
   subtitle:
-    # <font:Namespace:Font>
-    # It's not recommended to use minecraft:default
-    # If you insist on doing that, use <font:minecraft:default>
     start: '<font:customfishing:default>'
-    bar: '뀄'
-    pointer_offset: '뀂'
-    pointer: '뀃'
-    offset: '뀁'
+    # unicodes are not in minecraft:default font
+    # So they would not affect player's chatting
+    bar: '뀋'
+    pointer_offset: '넂'
+    pointer: '뀁'
+    offset: '넀'
+    end: '</font>'
+  layout:
+    1: 1
+    2: 0
+    3: 0
+    4: 0
+    5: 0
+    6: 0
+    7: 0
+rainbow_2:
+  range: 16
+  title: '<#FFA500>ORANGE!'
+  subtitle:
+    start: '<font:customfishing:default>'
+    bar: '뀋'
+    pointer_offset: '넂'
+    pointer: '뀁'
+    offset: '넀'
+    end: '</font>'
+  layout:
+    1: 0
+    2: 1
+    3: 0
+    4: 0
+    5: 0
+    6: 0
+    7: 0
+rainbow_3:
+  range: 16
+  title: '<#808000>YELLOW!'
+  subtitle:
+    start: '<font:customfishing:default>'
+    bar: '뀋'
+    pointer_offset: '넂'
+    pointer: '뀁'
+    offset: '넀'
+    end: '</font>'
+  layout:
+    1: 0
+    2: 0
+    3: 1
+    4: 0
+    5: 0
+    6: 0
+    7: 0
+rainbow_4:
+  range: 16
+  title: '<#3CB371>GREEN!'
+  subtitle:
+    start: '<font:customfishing:default>'
+    bar: '뀋'
+    pointer_offset: '넂'
+    pointer: '뀁'
+    offset: '넀'
     end: '</font>'
   layout:
     1: 0
     2: 0
     3: 0
-    4: 0.1
-    5: 0.5
-    6: 1
-    7: 0.5
-    8: 0.1
-    9: 0
-    10: 0
-    11: 0
-bar2:
-  range: 8
-  title: 'The fish is hooked, focus on it!'
+    4: 1
+    5: 0
+    6: 0
+    7: 0
+rainbow_5:
+  range: 16
+  title: '<#00FFFF>AQUA!'
   subtitle:
     start: '<font:customfishing:default>'
-    bar: '뀅'
-    pointer_offset: '뀂'
-    pointer: '뀃'
-    offset: '뀁'
+    bar: '뀋'
+    pointer_offset: '넂'
+    pointer: '뀁'
+    offset: '넀'
+    end: '</font>'
+  layout:
+    1: 0
+    2: 0
+    3: 0
+    4: 0
+    5: 1
+    6: 0
+    7: 0
+rainbow_6:
+  range: 16
+  title: '<#1E90FF>BLUE!'
+  subtitle:
+    start: '<font:customfishing:default>'
+    bar: '뀋'
+    pointer_offset: '넂'
+    pointer: '뀁'
+    offset: '넀'
+    end: '</font>'
+  layout:
+    1: 0
+    2: 0
+    3: 0
+    4: 0
+    5: 0
+    6: 1
+    7: 0
+rainbow_7:
+  range: 16
+  title: '<#9400D3>PURPLE!'
+  subtitle:
+    start: '<font:customfishing:default>'
+    bar: '뀋'
+    pointer_offset: '넂'
+    pointer: '뀁'
+    offset: '넀'
     end: '</font>'
   layout:
     1: 0
@@ -40,85 +125,336 @@ bar2:
     4: 0
     5: 0
     6: 0
-    7: 0.1
-    8: 0.1
-    9: 0.3
-    10: 0.3
-    11: 1
-    12: 0.3
-    13: 0.1
-    14: 0
-    15: 0.1
-    16: 0.3
-    17: 1
-    18: 0.3
-    19: 0.1
-    20: 0
-    21: 0
-    22: 0
-bar3:
-  range: 8 #frame pixels, all must be the same
+    7: 1
+
+
+bar_1:
+  range: 16
   title: 'The fish is hooked, focus on it!'
   subtitle:
     start: '<font:customfishing:default>'
-    bar: '뀆' #bar unicode
-    pointer_offset: '뀂'
-    pointer: '뀃'
-    offset: '뀁'
+    bar: '뀂'
+    pointer_offset: '넁'
+    pointer: '뀁'
+    offset: '넀'
     end: '</font>'
   layout:
-    1: 1 #green
-    2: 0.3 #yellow
-    3: 0.1 #orange
-    4: 0 #red
-    5: 0 #red
-    6: 0.1 #orange
-    7: 0.3 #yellow
-    8: 0 #red
-    9: 0.3 #yellow
-    10: 0.1 #orange
-    11: 0 #red
-    12: 0.1 #orange
-    13: 0.3 #yellow
-    14: 1 #green
-    15: 0.3 #yellow
-    16: 1 #green
-    17: 0.1
-    18: 0 #red
-    19: 0.1 #orange
-    20: 0.3 #yellow
-    21: 0.1 #orange
-    22: 0 #red
-bar4:
+    1: 0
+    2: 0
+    3: 0
+    4: 0.2
+    5: 0.6
+    6: 1
+    7: 0.6
+    8: 0.2
+    9: 0
+    10: 0
+    11: 0
+bar_2:
+  range: 16
+  title: 'The fish is hooked, focus on it!'
+  subtitle:
+    start: '<font:customfishing:default>'
+    bar: '뀃'
+    pointer_offset: '넁'
+    pointer: '뀁'
+    offset: '넀'
+    end: '</font>'
+  layout:
+    1: 0
+    2: 0.2
+    3: 0.6
+    4: 1
+    5: 0.6
+    6: 0.2
+    7: 0
+    8: 0
+    9: 0
+    10: 0
+    11: 0
+bar_3:
+  range: 16
+  title: 'The fish is hooked, focus on it!'
+  subtitle:
+    start: '<font:customfishing:default>'
+    bar: '뀄'
+    pointer_offset: '넁'
+    pointer: '뀁'
+    offset: '넀'
+    end: '</font>'
+  layout:
+    1: 0
+    2: 0
+    3: 0
+    4: 0
+    5: 0
+    6: 0.2
+    7: 0.6
+    8: 1
+    9: 0.6
+    10: 0.2
+    11: 0
+bar_4:
+  range: 8
+  title: 'The fish is hooked, focus on it!'
+  subtitle:
+    start: '<font:customfishing:default>'
+    bar: '뀅'
+    pointer_offset: '넁'
+    pointer: '뀁'
+    offset: '넀'
+    end: '</font>'
+  layout:
+    1: 0
+    2: 0
+    3: 0.1
+    4: 0.1
+    5: 0
+    6: 0
+    7: 0.2
+    8: 0.2
+    9: 0.6
+    10: 0.6
+    11: 1
+    12: 0.6
+    13: 0.2
+    14: 0
+    15: 0.2
+    16: 0.6
+    17: 1
+    18: 0.6
+    19: 0.2
+    20: 0.1
+    21: 0
+    22: 0
+bar_5:
+  range: 8
+  title: 'The fish is hooked, focus on it!'
+  subtitle:
+    start: '<font:customfishing:default>'
+    bar: '뀆'
+    pointer_offset: '넁'
+    pointer: '뀁'
+    offset: '넀'
+    end: '</font>'
+  layout:
+    1: 1
+    2: 0
+    3: 0.1
+    4: 0.2
+    5: 0.2
+    6: 0.6
+    7: 0.6
+    8: 1
+    9: 0.6
+    10: 0.2
+    11: 0
+    12: 0.2
+    13: 0.6
+    14: 1
+    15: 0.6
+    16: 0.2
+    17: 0
+    18: 1
+    19: 0.2
+    20: 0.1
+    21: 0
+    22: 0
+bar_6:
   range: 8
   title: 'The fish is hooked, focus on it!'
   subtitle:
     start: '<font:customfishing:default>'
     bar: '뀇'
-    pointer_offset: '뀂'
-    pointer: '뀃'
-    offset: '뀁'
+    pointer_offset: '넁'
+    pointer: '뀁'
+    offset: '넀'
+    end: '</font>'
+  layout:
+    1: 0.1
+    2: 0.1
+    3: 0.1
+    4: 0.1
+    5: 0.1
+    6: 0.1
+    7: 0.1
+    8: 0.1
+    9: 1
+    10: 0
+    11: 1
+    12: 0
+    13: 1
+    14: 0
+    15: 0.1
+    16: 0.1
+    17: 0.1
+    18: 0.1
+    19: 0.1
+    20: 0.1
+    21: 0.1
+    22: 0.1
+bar_7:
+  range: 4
+  title: 'The fish is hooked, focus on it!'
+  subtitle:
+    start: '<font:customfishing:default>'
+    bar: '뀈'
+    pointer_offset: '넁'
+    pointer: '뀁'
+    offset: '넀'
     end: '</font>'
   layout:
     1: 0
-    2: 0.3
-    3: 0.1
-    4: 0.3
-    5: 1
-    6: 0.3
+    2: 0
+    3: 0
+    4: 0
+    5: 0
+    6: 0
     7: 0
-    8: 1
-    9: 0.1
+    8: 0
+    9: 0
     10: 0
-    11: 1
-    12: 0.1
-    13: 0.3
-    14: 1
+    11: 0
+    12: 0
+    13: 0
+    14: 0
     15: 0
-    16: 1
+    16: 0
     17: 0
-    18: 0.3
-    19: 0.1
+    18: 0
+    19: 0
     20: 0
-    21: 1
+    21: 0
     22: 0
+    23: 0
+    24: 0
+    25: 0
+    26: 0
+    27: 0
+    28: 0
+    29: 0
+    30: 0
+    31: 0
+    32: 0
+    33: 0
+    34: 0
+    35: 0.1
+    36: 0.1
+    37: 0
+    38: 0
+    39: 1
+    40: 0
+    41: 0
+    42: 0.3
+    43: 0.3
+    44: 0.3
+bar_8:
+  range: 4
+  title: 'The fish is hooked, focus on it!'
+  subtitle:
+    start: '<font:customfishing:default>'
+    bar: '뀉'
+    pointer_offset: '넁'
+    pointer: '뀁'
+    offset: '넀'
+    end: '</font>'
+  layout:
+    1: 0
+    2: 0
+    3: 0
+    4: 0
+    5: 0
+    6: 0
+    7: 0
+    8: 0
+    9: 0
+    10: 0
+    11: 0
+    12: 0
+    13: 0
+    14: 0
+    15: 0
+    16: 0
+    17: 0.2
+    18: 0.2
+    19: 0.2
+    20: 0.6
+    21: 1
+    22: 0.6
+    23: 0.2
+    24: 0.2
+    25: 0.2
+    26: 0.2
+    27: 0
+    28: 0
+    29: 0
+    30: 0
+    31: 0
+    32: 0
+    33: 0
+    34: 0
+    35: 0
+    36: 0
+    37: 0
+    38: 0
+    39: 0
+    40: 0
+    41: 0
+    42: 0
+    43: 0
+    44: 0
+bar_9:
+  range: 4
+  title: 'The fish is hooked, focus on it!'
+  subtitle:
+    start: '<font:customfishing:default>'
+    bar: '뀊'
+    pointer_offset: '넁'
+    pointer: '뀁'
+    offset: '넀'
+    end: '</font>'
+  layout:
+    1: 1
+    2: 0
+    3: 0
+    4: 0
+    5: 0
+    6: 0
+    7: 0
+    8: 0
+    9: 0
+    10: 0
+    11: 0
+    12: 0
+    13: 0
+    14: 0
+    15: 0
+    16: 0
+    17: 0
+    18: 0
+    19: 0
+    20: 0
+    21: 0
+    22: 0
+    23: 0
+    24: 0
+    25: 0
+    26: 0
+    27: 0
+    28: 0
+    29: 0
+    30: 0
+    31: 0
+    32: 0
+    33: 0
+    34: 0
+    35: 0
+    36: 0
+    37: 0
+    38: 0
+    39: 0
+    40: 0
+    41: 0
+    42: 0
+    43: 0
+    44: 1

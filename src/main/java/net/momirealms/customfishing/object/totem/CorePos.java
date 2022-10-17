@@ -15,24 +15,29 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.object.requirements;
+package net.momirealms.customfishing.object.totem;
 
-import net.momirealms.customfishing.object.FishingCondition;
-import org.apache.commons.lang.StringUtils;
+public class CorePos {
 
-import java.util.List;
+    private final int x;
+    private final int y;
+    private final int z;
 
-public record YPosImpl(List<String> yPos) implements RequirementInterface {
+    public CorePos(int x, int z, int y) {
+        this.x = x;
+        this.z = z;
+        this.y = y;
+    }
 
-    @Override
-    public boolean isConditionMet(FishingCondition fishingCondition) {
-        int y = (int) fishingCondition.getLocation().getY();
-        for (String range : yPos) {
-            String[] yMinMax = StringUtils.split(range, "~");
-            if (y > Integer.parseInt(yMinMax[0]) && y < Integer.parseInt(yMinMax[1])) {
-                return true;
-            }
-        }
-        return false;
+    public int getX() {
+        return this.x;
+    }
+
+    public int getY() {
+        return this.y;
+    }
+
+    public int getZ() {
+        return this.z;
     }
 }
