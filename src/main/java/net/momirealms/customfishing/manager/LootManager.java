@@ -1,12 +1,11 @@
 package net.momirealms.customfishing.manager;
 
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.Function;
-import net.momirealms.customfishing.object.*;
+import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.action.*;
-import net.momirealms.customfishing.object.loot.DroppedItem;
-import net.momirealms.customfishing.object.loot.Loot;
-import net.momirealms.customfishing.object.loot.Mob;
+import net.momirealms.customfishing.object.fishing.Difficulty;
+import net.momirealms.customfishing.object.fishing.Layout;
+import net.momirealms.customfishing.object.loot.*;
 import net.momirealms.customfishing.object.requirements.*;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;

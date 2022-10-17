@@ -27,21 +27,14 @@ import java.util.List;
 
 public class TextCache {
 
-    //所属玩家
     private final Player owner;
-    //初始值
-    private final String rawValue;
-    //原始文字加工后的值
     private String originalValue;
-    //最近一次替换值
     private String latestValue;
-    //持有者占位符
     private String[] ownerPlaceholders;
 
     public TextCache(Player owner, String rawValue) {
         this.owner = owner;
-        this.rawValue = rawValue;
-        analyze(this.rawValue);
+        analyze(rawValue);
     }
 
     private void analyze(String value) {
@@ -54,15 +47,6 @@ public class TextCache {
         ownerPlaceholders = placeholdersOwner.toArray(new String[0]);
         latestValue = originalValue;
         update();
-    }
-
-    public String getRawValue() {
-        return rawValue;
-    }
-
-    public String updateAndGet() {
-        update();
-        return getLatestValue();
     }
 
     public String getLatestValue() {
@@ -87,6 +71,7 @@ public class TextCache {
                 }
             }
         }
+
         string = string.replace("{rank}", Competition.currentCompetition.getPlayerRank(owner))
                         .replace("{time}", String.valueOf(Competition.currentCompetition.getRemainingTime()))
                         .replace("{minute}", String.format("%02d", Competition.currentCompetition.getRemainingTime() / 60))
@@ -94,11 +79,11 @@ public class TextCache {
                         .replace("{score}", String.format("%.1f", Competition.currentCompetition.getScore(owner)))
                         .replace("{1st_score}", String.format("%.1f", Competition.currentCompetition.getFirstScore()))
                         .replace("{1st_player}", Competition.currentCompetition.getFirstPlayer());
+
         if (!latestValue.equals(string)) {
             latestValue = string;
             return true;
         }
         return false;
     }
-
 }

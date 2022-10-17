@@ -63,7 +63,17 @@ mechanics:
   fishfinder-cooldown: 3000
 
   # Competition
-  fishing-competition: true
+  fishing-competition:
+    enable: true
+    redis: false
+
+  # Fishing bag is a place where players can store their baits, utils, rods (Fish optional)
+  fishing-bag:
+    enable: true
+    # This would add additional NBT Tags to the fish
+    can-store-fish: false
+    # File/SQLite/MySql
+    data-storage-mode: File
 
 
 titles:

@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 public record SkillXPImpl(double amount) implements ActionInterface {
 
     @Override
-    public void doOn(Player player) {
+    public void doOn(Player player, Player another) {
         CustomFishing.plugin.getIntegrationManager().getSkillInterface().addXp(player, amount);
     }
 }

@@ -78,7 +78,7 @@ public class ConfigManager {
         needRodToFish = config.getBoolean("mechanics.need-special-rod.to-fish", false);
         rodLoseDurability = config.getBoolean("mechanics.rod-lose-durability", true);
         fishFinderCoolDown = config.getInt("mechanics.fishfinder-cooldown", 3000);
-        enableCompetition = config.getBoolean("mechanics.fishing-competition", true);
+        enableCompetition = config.getBoolean("mechanics.fishing-competition.enable", true);
 
         priority = config.getString("other-settings.event-priority", "NORMAL").toUpperCase();
         disableJobsXp = config.getBoolean("other-settings.disable-JobsReborn-fishing-exp", false);
@@ -97,7 +97,12 @@ public class ConfigManager {
         failureFadeStay = config.getInt("titles.failure.fade.stay", 30) * 50;
         failureFadeOut = config.getInt("titles.failure.fade.out", 10) * 50;
 
-        tryEnableJedis();
+        useRedis = false;
+        if (enableCompetition && config.getBoolean("mechanics.fishing-competition.redis", false)) {
+            YamlConfiguration configuration = ConfigUtil.getConfig("database.yml");
+            JedisUtil.initializeRedis(configuration);
+            useRedis = true;
+        }
     }
     public static List<World> getWorldsList() {
         if (whiteOrBlack) {
@@ -107,15 +112,6 @@ public class ConfigManager {
             List<World> worldList = new ArrayList<>(Bukkit.getWorlds());
             worldList.removeAll(ConfigManager.worldList);
             return worldList;
-        }
-    }
-
-    public static void tryEnableJedis(){
-        YamlConfiguration configuration = ConfigUtil.getConfig("redis.yml");
-        useRedis = false;
-        if (configuration.getBoolean("redis.enable")){
-            JedisUtil.initializeRedis(configuration);
-            useRedis = true;
         }
     }
 }

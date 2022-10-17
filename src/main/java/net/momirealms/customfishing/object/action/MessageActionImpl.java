@@ -2,6 +2,7 @@ package net.momirealms.customfishing.object.action;
 
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public record MessageActionImpl(String[] messages, String nick) implements ActionInterface {
 
@@ -11,7 +12,7 @@ public record MessageActionImpl(String[] messages, String nick) implements Actio
     }
 
     @Override
-    public void doOn(Player player) {
+    public void doOn(Player player, @Nullable Player anotherPlayer) {
         for (String message : messages) {
             AdventureUtil.playerMessage(player,
                     message.replace("{player}", player.getName())
@@ -19,7 +20,9 @@ public record MessageActionImpl(String[] messages, String nick) implements Actio
                             .replace("{x}", String.valueOf(player.getLocation().getBlockX()))
                             .replace("{y}", String.valueOf(player.getLocation().getBlockY()))
                             .replace("{z}", String.valueOf(player.getLocation().getBlockZ()))
-                            .replace("{loot}", nick));
+                            .replace("{loot}", nick)
+                            .replace("{activator}", anotherPlayer == null ? "" : anotherPlayer.getName())
+            );
         }
     }
 }

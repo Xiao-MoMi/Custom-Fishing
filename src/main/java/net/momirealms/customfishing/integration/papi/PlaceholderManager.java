@@ -1,7 +1,7 @@
 package net.momirealms.customfishing.integration.papi;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.momirealms.customfishing.Function;
+import net.momirealms.customfishing.object.Function;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 

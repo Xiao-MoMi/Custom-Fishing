@@ -143,7 +143,7 @@ public class Competition {
                     Player player = Bukkit.getPlayer(playerName);
                     if (player != null){
                         for (ActionInterface action : rewardsMap.get(String.valueOf(i))) {
-                            action.doOn(player);
+                            action.doOn(player, null);
                         }
                     }
                     i++;
@@ -155,7 +155,7 @@ public class Competition {
                             Player player = Bukkit.getPlayer(playerName);
                             if (player != null){
                                 for (ActionInterface action : actions) {
-                                    action.doOn(player);
+                                    action.doOn(player, null);
                                 }
                             }
                         });

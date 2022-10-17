@@ -1,8 +1,8 @@
 package net.momirealms.customfishing.competition;
 
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.Function;
 import net.momirealms.customfishing.manager.CompetitionManager;
+import net.momirealms.customfishing.object.Function;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 

@@ -1,11 +1,11 @@
 package net.momirealms.customfishing.manager;
 
-import net.momirealms.customfishing.Function;
 import net.momirealms.customfishing.competition.CompetitionConfig;
 import net.momirealms.customfishing.competition.CompetitionGoal;
 import net.momirealms.customfishing.competition.CompetitionSchedule;
 import net.momirealms.customfishing.competition.bossbar.BossBarConfig;
 import net.momirealms.customfishing.competition.bossbar.BossBarOverlay;
+import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.action.ActionInterface;
 import net.momirealms.customfishing.object.action.CommandActionImpl;
 import net.momirealms.customfishing.object.action.MessageActionImpl;

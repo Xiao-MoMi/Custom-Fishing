@@ -13,7 +13,7 @@ public record CommandActionImpl(String[] commands, String nick) implements Actio
     }
 
     @Override
-    public void doOn(Player player) {
+    public void doOn(Player player, @Nullable Player anotherPlayer) {
         for (String command : commands) {
             CustomFishing.plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(),
                     command.replace("{player}", player.getName())
@@ -22,6 +22,7 @@ public record CommandActionImpl(String[] commands, String nick) implements Actio
                             .replace("{z}", String.valueOf(player.getLocation().getBlockZ()))
                             .replace("{loot}", nick)
                             .replace("{world}", player.getWorld().getName())
+                            .replace("{activator}", anotherPlayer == null ? "" : anotherPlayer.getName())
             );
         }
     }

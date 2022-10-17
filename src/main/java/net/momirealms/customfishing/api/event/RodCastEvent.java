@@ -1,6 +1,6 @@
 package net.momirealms.customfishing.api.event;
 
-import net.momirealms.customfishing.object.Bonus;
+import net.momirealms.customfishing.object.fishing.Bonus;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;

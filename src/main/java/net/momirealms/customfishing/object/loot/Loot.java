@@ -1,8 +1,8 @@
 package net.momirealms.customfishing.object.loot;
 
-import net.momirealms.customfishing.object.Difficulty;
-import net.momirealms.customfishing.object.Layout;
 import net.momirealms.customfishing.object.action.ActionInterface;
+import net.momirealms.customfishing.object.fishing.Difficulty;
+import net.momirealms.customfishing.object.fishing.Layout;
 import net.momirealms.customfishing.object.requirements.RequirementInterface;
 
 public class Loot {

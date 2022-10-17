@@ -1,13 +1,3 @@
-# Do not change
-config-version: '1'
-
-settings:
-  # Valid Options: SQLite MYSQL
-  # Only MYSQL supports pool.
-  storage-mode: SQLite
-  use-pool: false
-  disable-async: false
-
 # MySQL settings
 MySQL:
   host: localhost
@@ -15,16 +5,39 @@ MySQL:
   user: root
   password: password
   database: minecraft
-  table-name: nameplates_data
+  table-name: customfishing_data
   property:
     use-ssl: false
     encoding: utf8
     timezone: ''
     allowPublicKeyRetrieval: false
+  # Connection pool settings
+  Pool-Settings:
+    enable: false
+    maximum-pool-size: 10
+    minimum-idle: 10
+    maximum-lifetime: 180000
+    idle-timeout: 60000
 
-# Connection pool settings
-Pool-Settings:
-  maximum-pool-size: 10
-  minimum-idle: 10
-  maximum-lifetime: 180000
-  idle-timeout: 60000
+# SQLite settings
+SQLite:
+  file-name: data
+  table: npc
+
+# MongoDB settings
+MongoDB:
+  client: 'mongodb://localhost:3307'
+  database: customfishing
+  collection: customfishing.statistics
+
+# Redis server
+# Sync competition scores between servers without lag!
+Redis:
+  enable: false
+  host: localhost
+  port: 6379
+  MaxTotal: 10
+  MaxIdle: 10
+  MinIdle: 1
+  MaxWaitMillis: 30000
+  MinEvictableIdleTimeMillis: 1800000

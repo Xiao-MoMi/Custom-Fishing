@@ -1,7 +1,6 @@
 package net.momirealms.customfishing.object.loot;
 
-import net.momirealms.customfishing.object.Difficulty;
-import net.momirealms.customfishing.object.MobVector;
+import net.momirealms.customfishing.object.fishing.Difficulty;
 import org.jetbrains.annotations.NotNull;
 
 public class Mob extends Loot{

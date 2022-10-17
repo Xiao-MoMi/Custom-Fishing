@@ -1,7 +1,6 @@
 package net.momirealms.customfishing.object.loot;
 
-import net.momirealms.customfishing.object.Difficulty;
-import net.momirealms.customfishing.object.LeveledEnchantment;
+import net.momirealms.customfishing.object.fishing.Difficulty;
 import org.jetbrains.annotations.Nullable;
 
 public class DroppedItem extends Loot{

@@ -1,10 +1,10 @@
 package net.momirealms.customfishing.competition.bossbar;
 
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.Function;
 import net.momirealms.customfishing.competition.Competition;
 import net.momirealms.customfishing.listener.SimpleListener;
 import net.momirealms.customfishing.manager.MessageManager;
+import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

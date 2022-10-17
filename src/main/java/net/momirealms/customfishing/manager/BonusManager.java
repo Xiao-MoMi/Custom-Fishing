@@ -1,10 +1,10 @@
 package net.momirealms.customfishing.manager;
 
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.Function;
-import net.momirealms.customfishing.object.Bonus;
-import net.momirealms.customfishing.object.Item;
-import net.momirealms.customfishing.object.LeveledEnchantment;
+import net.momirealms.customfishing.object.Function;
+import net.momirealms.customfishing.object.fishing.Bonus;
+import net.momirealms.customfishing.object.loot.Item;
+import net.momirealms.customfishing.object.loot.LeveledEnchantment;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;
@@ -131,7 +131,7 @@ public class BonusManager extends Function {
         AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + BAITITEMS.size() + " <gray>baits");
     }
 
-    private Bonus getBonus(YamlConfiguration config, String key) {
+    public static Bonus getBonus(YamlConfiguration config, String key) {
         Bonus bonus = new Bonus();
         config.getConfigurationSection(key + ".modifier").getKeys(false).forEach(modifier -> {
             switch (modifier) {

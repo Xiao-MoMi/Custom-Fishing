@@ -1,7 +1,7 @@
 package net.momirealms.customfishing.manager;
 
-import net.momirealms.customfishing.Function;
-import net.momirealms.customfishing.object.Layout;
+import net.momirealms.customfishing.object.Function;
+import net.momirealms.customfishing.object.fishing.Layout;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import org.bukkit.configuration.file.YamlConfiguration;

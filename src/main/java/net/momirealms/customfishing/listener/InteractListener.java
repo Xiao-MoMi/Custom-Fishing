@@ -1,20 +1,20 @@
 package net.momirealms.customfishing.listener;
 
-import net.momirealms.customfishing.manager.FishingManager;
+import net.momirealms.customfishing.object.Function;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class InteractListener implements Listener {
 
-    private final FishingManager fishingManager;
+    private final Function function;
 
-    public InteractListener(FishingManager fishingManager) {
-        this.fishingManager = fishingManager;
+    public InteractListener(Function function) {
+        this.function = function;
     }
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        fishingManager.onInteract(event);
+        function.onInteract(event);
     }
 }

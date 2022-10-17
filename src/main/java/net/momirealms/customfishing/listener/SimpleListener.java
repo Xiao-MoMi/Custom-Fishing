@@ -1,6 +1,6 @@
 package net.momirealms.customfishing.listener;
 
-import net.momirealms.customfishing.Function;
+import net.momirealms.customfishing.object.Function;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;

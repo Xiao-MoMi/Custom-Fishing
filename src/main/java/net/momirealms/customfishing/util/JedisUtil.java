@@ -23,13 +23,13 @@ public class JedisUtil {
         jedisPoolConfig.setTestWhileIdle(true);
         jedisPoolConfig.setTimeBetweenEvictionRunsMillis(30000);
         jedisPoolConfig.setNumTestsPerEvictionRun(-1);
-        jedisPoolConfig.setMinEvictableIdleTimeMillis(configuration.getInt("redis.MinEvictableIdleTimeMillis",1800000));
-        jedisPoolConfig.setMaxTotal(configuration.getInt("redis.MaxTotal",8));
-        jedisPoolConfig.setMaxIdle(configuration.getInt("redis.MaxIdle",8));
-        jedisPoolConfig.setMinIdle(configuration.getInt("redis.MinIdle",1));
+        jedisPoolConfig.setMinEvictableIdleTimeMillis(configuration.getInt("Redis.MinEvictableIdleTimeMillis",1800000));
+        jedisPoolConfig.setMaxTotal(configuration.getInt("Redis.MaxTotal",8));
+        jedisPoolConfig.setMaxIdle(configuration.getInt("Redis.MaxIdle",8));
+        jedisPoolConfig.setMinIdle(configuration.getInt("Redis.MinIdle",1));
         jedisPoolConfig.setMaxWaitMillis(configuration.getInt("redis.MaxWaitMillis",30000));
 
-        jedisPool = new JedisPool(jedisPoolConfig, configuration.getString("redis.host","localhost"), configuration.getInt("redis.port",6379));
+        jedisPool = new JedisPool(jedisPoolConfig, configuration.getString("Redis.host","localhost"), configuration.getInt("Redis.port",6379));
 
         AdventureUtil.consoleMessage("[CustomFishing] <white>Redis Server Connected!");
 

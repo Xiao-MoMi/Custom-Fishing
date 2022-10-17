@@ -8,7 +8,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.Function;
 import net.momirealms.customfishing.api.event.FishFinderEvent;
 import net.momirealms.customfishing.api.event.FishHookEvent;
 import net.momirealms.customfishing.api.event.FishResultEvent;
@@ -17,8 +16,9 @@ import net.momirealms.customfishing.competition.Competition;
 import net.momirealms.customfishing.integration.MobInterface;
 import net.momirealms.customfishing.integration.item.McMMOTreasure;
 import net.momirealms.customfishing.listener.*;
-import net.momirealms.customfishing.object.*;
+import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.action.ActionInterface;
+import net.momirealms.customfishing.object.fishing.*;
 import net.momirealms.customfishing.object.loot.DroppedItem;
 import net.momirealms.customfishing.object.loot.Loot;
 import net.momirealms.customfishing.object.loot.Mob;
@@ -367,7 +367,7 @@ public class FishingManager extends Function {
 
         dropItem(player, location, fishResultEvent.isDouble(), drop);
         for (ActionInterface action : droppedItem.getSuccessActions())
-            action.doOn(player);
+            action.doOn(player, null);
         sendSuccessTitle(player, droppedItem.getNick());
     }
 
@@ -465,7 +465,7 @@ public class FishingManager extends Function {
 
         mobInterface.summon(player.getLocation(), location, mob);
         for (ActionInterface action : loot.getSuccessActions())
-            action.doOn(player);
+            action.doOn(player, null);
         sendSuccessTitle(player, loot.getNick());
     }
 
@@ -556,7 +556,7 @@ public class FishingManager extends Function {
 
         if (!isVanilla && loot != null){
             for (ActionInterface action : loot.getFailureActions())
-                action.doOn(player);
+                action.doOn(player, null);
         }
 
         AdventureUtil.playerTitle(
@@ -652,6 +652,7 @@ public class FishingManager extends Function {
         return available;
     }
 
+    @Override
     public void onInteract(PlayerInteractEvent event) {
         ItemStack itemStack = event.getItem();
         if (itemStack == null || itemStack.getType() == Material.AIR) return;
@@ -739,7 +740,7 @@ public class FishingManager extends Function {
 
         if (vanillaLoot.get(player) == null && loot != null){
             for (ActionInterface action : loot.getHookActions()) {
-                action.doOn(player);
+                action.doOn(player, null);
             }
         }
 

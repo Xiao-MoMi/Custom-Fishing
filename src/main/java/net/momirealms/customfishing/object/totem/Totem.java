@@ -17,35 +17,49 @@
 
 package net.momirealms.customfishing.object.totem;
 
-import java.util.List;
+import net.momirealms.customfishing.object.action.ActionInterface;
+import net.momirealms.customfishing.object.fishing.Bonus;
+import net.momirealms.customfishing.object.requirements.RequirementInterface;
+import org.bukkit.Particle;
 
 public class Totem {
 
     private final OriginalModel originalModel;
     private FinalModel finalModel;
-    private List<String> commands;
-    private List<String> messages;
     private final boolean cItem;
     private final boolean rItem;
+    private RequirementInterface[] requirements;
+    private final int radius;
+    private final Particle particle;
+    private final int duration;
+    private final Bonus bonus;
+    private ActionInterface[] activatorActions;
+    private ActionInterface[] nearbyActions;
 
-    public Totem(OriginalModel originalModel, boolean rItem, boolean cItem) {
+    public Totem(OriginalModel originalModel, FinalModel finalModel, boolean rItem, boolean cItem, int radius, int duration, Particle particle, Bonus bonus) {
         this.originalModel = originalModel;
+        this.finalModel = finalModel;
+        this.radius = radius;
+        this.duration = duration;
+        this.particle = particle;
+        this.bonus = bonus;
         this.rItem = rItem;
         if (rItem) this.cItem = cItem;
         else this.cItem = false;
+    }
+
+    public RequirementInterface[] getRequirements() {
+        return requirements;
+    }
+
+    public void setRequirements(RequirementInterface[] requirements) {
+        this.requirements = requirements;
     }
 
     public OriginalModel getOriginalModel() {
         return originalModel;
     }
 
-    public List<String> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<String> messages) {
-        this.messages = messages;
-    }
 
     public FinalModel getFinalModel() {
         return finalModel;
@@ -55,19 +69,43 @@ public class Totem {
         this.finalModel = finalModel;
     }
 
-    public void setCommands(List<String> commands) {
-        this.commands = commands;
-    }
-
     public boolean isrItem() {
         return rItem;
     }
 
-    public List<String> getCommands() {
-        return commands;
-    }
-
     public boolean iscItem() {
         return cItem;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public Particle getParticle() {
+        return particle;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public Bonus getBonus() {
+        return bonus;
+    }
+
+    public ActionInterface[] getActivatorActions() {
+        return activatorActions;
+    }
+
+    public void setActivatorActions(ActionInterface[] activatorActions) {
+        this.activatorActions = activatorActions;
+    }
+
+    public ActionInterface[] getNearbyActions() {
+        return nearbyActions;
+    }
+
+    public void setNearbyActions(ActionInterface[] nearbyActions) {
+        this.nearbyActions = nearbyActions;
     }
 }

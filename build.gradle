@@ -40,12 +40,19 @@ repositories {
         name = "Lumine Releases"
         url = "https://mvn.lumine.io/repository/maven-public"
     }
+    maven {
+        name = 'glaremasters repo'
+        url = 'https://repo.glaremasters.me/repository/towny/'
+    }
 }
 
 dependencies {
     compileOnly fileTree(dir:'libs',includes:['*.jar'])
     compileOnly('io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT')
+    compileOnly('com.github.angeschossen:LandsAPI:6.5.1')
     compileOnly('com.github.Archy-X:AureliumSkills:Beta1.3.6')
+    compileOnly('com.github.TechFortress:GriefPrevention:16.18')
+    compileOnly('com.palmergames.bukkit.towny:towny:0.98.2.0')
     compileOnly('com.comphenix.protocol:ProtocolLib:4.8.0')
     compileOnly('redis.clients:jedis:4.2.3')
     compileOnly('me.clip:placeholderapi:2.11.1')

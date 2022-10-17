@@ -41,6 +41,8 @@ public final class CustomFishing extends JavaPlugin {
     private BonusManager bonusManager;
     private LootManager lootManager;
     private LayoutManager layoutManager;
+    private DataManager dataManager;
+    private TotemManager totemManager;
 
 //                              _ooOoo_
 //                             o8888888o
@@ -80,6 +82,8 @@ public final class CustomFishing extends JavaPlugin {
         this.bonusManager = new BonusManager();
         this.lootManager = new LootManager();
         this.layoutManager = new LayoutManager();
+        this.dataManager = new DataManager();
+        this.totemManager = new TotemManager(integrationManager.getBlockInterface());
         ConfigUtil.reload();
 
         PluginCommand pluginCommand = new PluginCommand();
@@ -119,5 +123,13 @@ public final class CustomFishing extends JavaPlugin {
 
     public LayoutManager getLayoutManager() {
         return layoutManager;
+    }
+
+    public DataManager getDataManager() {
+        return dataManager;
+    }
+
+    public TotemManager getTotemManager() {
+        return totemManager;
     }
 }

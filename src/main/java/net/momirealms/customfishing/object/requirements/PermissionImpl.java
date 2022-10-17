@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.object.requirements;
 
-import net.momirealms.customfishing.object.FishingCondition;
+import net.momirealms.customfishing.object.fishing.FishingCondition;
 
 public record PermissionImpl(String permission) implements RequirementInterface {
 

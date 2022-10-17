@@ -22,19 +22,17 @@ primary_fishing_totem:
       silver: -20
       gold: 20
 
-  # placeholders: {activator} {players_in_radius} {all_players}
-  # {world} {x} {y} {z}
-  commands:
-    - 'effect give {player_in_radius} '
+  # placeholders: {player} {world} {x} {y} {z}
+  action:
+    commands-activator:
+      - ''
+    messages-activator:
+      - ''
+    commands-nearby-players:
+      - ''
+    messages-nearby-players:
+      - ''
 
-  messages:
-    activator:
-      - You activated a totem
-    players_in_radius:
-      - You are now in {activator}'s totem
-      - Your chance of getting gold fish is temporarily up
-    all_players:
-      - {activator} activated a totem at {world},{x},{y},{z}
 
   # The layout of the totem
   # The greater the layer is, the higher the y position is
