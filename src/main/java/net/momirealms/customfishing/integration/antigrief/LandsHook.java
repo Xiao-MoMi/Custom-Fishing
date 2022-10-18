@@ -19,7 +19,7 @@ package net.momirealms.customfishing.integration.antigrief;
 
 import me.angeschossen.lands.api.flags.Flags;
 import me.angeschossen.lands.api.land.Area;
-import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.integration.AntiGriefInterface;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -28,14 +28,14 @@ public class LandsHook implements AntiGriefInterface {
 
     @Override
     public boolean canBreak(Location location, Player player) {
-        Area area = new me.angeschossen.lands.api.integration.LandsIntegration(CustomCrops.plugin).getAreaByLoc(location);
+        Area area = new me.angeschossen.lands.api.integration.LandsIntegration(CustomFishing.plugin).getAreaByLoc(location);
         if (area != null) return area.hasFlag(player, Flags.BLOCK_BREAK, false);
         else return true;
     }
 
     @Override
     public boolean canPlace(Location location, Player player) {
-        Area area = new me.angeschossen.lands.api.integration.LandsIntegration(CustomCrops.plugin).getAreaByLoc(location);
+        Area area = new me.angeschossen.lands.api.integration.LandsIntegration(CustomFishing.plugin).getAreaByLoc(location);
         if (area != null) return area.hasFlag(player, Flags.BLOCK_PLACE, false);
         else return true;
     }

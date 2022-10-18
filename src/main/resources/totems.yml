@@ -1,16 +1,20 @@
 primary_fishing_totem:
   # Totem Core Block ID
   core:
-    - b
-    - r
+    - o
 
-  activator:
-    - totem_stone
-
-  radius: 10
+  radius: 8
   # seconds
   duration: 300
-  particle: SPELL
+  particle: DRIPPING_OBSIDIAN_TEAR
+
+  hologram:
+    enable: true
+    text:
+      - '<white>{time}s <gray>/ <white>{max_time}s'
+      - '<#87CEFA>Fishing Totem'
+
+    y-offset: 3.8
 
   # Potion effect type and its amplifier
   potion-effects:
@@ -18,11 +22,9 @@ primary_fishing_totem:
 
   # Fishing bonus
   modifier:
-    weight-add:
-      silver: -20
-      gold: 20
+    double-loot: 1
 
-  # placeholders: {player} {world} {x} {y} {z}
+  # placeholders: {activator} {player} {world} {x} {y} {z}
   action:
     commands-activator:
       - ''
@@ -42,16 +44,11 @@ primary_fishing_totem:
   # “>“ represents the block would turn into another block after activating
   # “|“ represents alternative block choice for this place
   layer:
-    1:
-      - 'g>n   (c)   g>n'
-      - '(c)   (c)   (c)'
-      - 'g>n   (c)   g>n'
-    2:
-      - '(c)   air   (c)'
-      - 'air  r|b>h  air'
-      - '(c)   air   (c)'
+    4:
+      - '(p)   (o)   (p)'
     3:
-      - '*    (c)    *'
-      - '(c)  (c)  (c)'
-      - '*    (c)    *'
-
+      - 'air   (c)   air'
+    2:
+      - 'air (pillar) air'
+    1:
+      - 'air   (a)   air'

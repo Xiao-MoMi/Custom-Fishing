@@ -14,14 +14,14 @@ public class Function {
     }
 
     public void onQuit(Player player) {
-
+        //empty
     }
 
     public void onJoin(Player player) {
-
+        //empty
     }
 
     public void onInteract(PlayerInteractEvent event) {
-
+        //empty
     }
 }

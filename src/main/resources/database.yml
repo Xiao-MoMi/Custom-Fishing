@@ -22,7 +22,7 @@ MySQL:
 # SQLite settings
 SQLite:
   file-name: data
-  table: npc
+  table: customfishing_data
 
 # MongoDB settings
 MongoDB:

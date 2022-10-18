@@ -8,11 +8,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.api.event.FishFinderEvent;
-import net.momirealms.customfishing.api.event.FishHookEvent;
-import net.momirealms.customfishing.api.event.FishResultEvent;
-import net.momirealms.customfishing.api.event.RodCastEvent;
+import net.momirealms.customfishing.api.event.*;
 import net.momirealms.customfishing.competition.Competition;
+import net.momirealms.customfishing.integration.AntiGriefInterface;
 import net.momirealms.customfishing.integration.MobInterface;
 import net.momirealms.customfishing.integration.item.McMMOTreasure;
 import net.momirealms.customfishing.listener.*;
@@ -23,6 +21,8 @@ import net.momirealms.customfishing.object.loot.DroppedItem;
 import net.momirealms.customfishing.object.loot.Loot;
 import net.momirealms.customfishing.object.loot.Mob;
 import net.momirealms.customfishing.object.requirements.RequirementInterface;
+import net.momirealms.customfishing.object.totem.ActivatedTotem;
+import net.momirealms.customfishing.object.totem.Totem;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;
 import org.apache.commons.lang.StringUtils;
@@ -64,6 +64,7 @@ public class FishingManager extends Function {
     private final HashMap<Player, Bonus> nextBonus;
     private final HashMap<Player, VanillaLoot> vanillaLoot;
     private final ConcurrentHashMap<Player, FishingPlayer> fishingPlayerCache;
+    private final ConcurrentHashMap<Location, ActivatedTotem> totemCache;
 
     public FishingManager() {
         this.playerFishListener = new PlayerFishListener(this);
@@ -74,6 +75,7 @@ public class FishingManager extends Function {
         this.nextBonus = new HashMap<>();
         this.vanillaLoot = new HashMap<>();
         this.fishingPlayerCache = new ConcurrentHashMap<>();
+        this.totemCache = new ConcurrentHashMap<>();
         load();
     }
 
@@ -180,6 +182,13 @@ public class FishingManager extends Function {
                             noSpecialRod = false;
                         }
                     }
+                }
+            }
+
+            for (ActivatedTotem activatedTotem : totemCache.values()) {
+                if (activatedTotem.getNearbyPlayerSet().contains(player)) {
+                    initialBonus.addBonus(activatedTotem.getTotem().getBonus());
+                    break;
                 }
             }
 
@@ -655,19 +664,59 @@ public class FishingManager extends Function {
     @Override
     public void onInteract(PlayerInteractEvent event) {
         ItemStack itemStack = event.getItem();
+        final Player player = event.getPlayer();
         if (itemStack == null || itemStack.getType() == Material.AIR) return;
+
         NBTItem nbtItem = new NBTItem(itemStack);
         NBTCompound cfCompound = nbtItem.getCompound("CustomFishing");
         if (cfCompound != null && cfCompound.getString("type").equals("util") && cfCompound.getString("id").equals("fishfinder")) {
+            if (isCoolDown(player, 2000)) return;
             useFinder(event.getPlayer());
             return;
         }
+
         Block block = event.getClickedBlock();
         if (block == null) return;
-        String totemID = nbtItem.getString("totem");
+        String totemID = nbtItem.getString("Totem");
         if (totemID.equals("")) return;
-        if (!TotemManager.TOTEMS.containsKey(totemID)) return;
+        Totem totem = TotemManager.TOTEMS.get(totemID);
+        if (totem == null) return;
+        if (isCoolDown(player, 1000)) return;
+        String blockID = CustomFishing.plugin.getIntegrationManager().getBlockInterface().getID(block);
+        if (blockID == null) return;
+        List<Totem> totemList = TotemManager.CORES.get(blockID);
+        if (totemList == null || !totemList.contains(totem)) return;
+        Location coreLoc = block.getLocation();
+        int type = CustomFishing.plugin.getTotemManager().checkLocationModel(totem.getOriginalModel(), coreLoc);
+        if (type == 0) return;
 
+        if (!AntiGriefInterface.testBreak(player, coreLoc)) return;
+        TotemActivationEvent totemActivationEvent = new TotemActivationEvent(player, coreLoc, totem);
+        Bukkit.getPluginManager().callEvent(totemActivationEvent);
+        if (totemActivationEvent.isCancelled()) {
+            return;
+        }
+
+        if (totemCache.get(coreLoc) != null) {
+            totemCache.get(coreLoc).stop();
+        }
+
+        CustomFishing.plugin.getTotemManager().removeModel(totem.getFinalModel(), coreLoc, type);
+        if (player.getGameMode() != GameMode.CREATIVE) itemStack.setAmount(itemStack.getAmount() - 1);
+
+        for (ActionInterface action : totem.getActivatorActions()) {
+            action.doOn(player, null);
+        }
+        for (ActionInterface action : totem.getNearbyActions()) {
+            for (Player nearby : coreLoc.getNearbyPlayers(totem.getRadius())) {
+                action.doOn(nearby, player);
+            }
+        }
+
+        Location bottomLoc = coreLoc.clone().subtract(0, totem.getOriginalModel().getCorePos().getY(), 0);
+        ActivatedTotem activatedTotem = new ActivatedTotem(bottomLoc, totem, this);
+        activatedTotem.runTaskTimer(CustomFishing.plugin, 10, 20);
+        totemCache.put(coreLoc, activatedTotem);
     }
 
     private void useFinder(Player player) {
@@ -779,5 +828,9 @@ public class FishingManager extends Function {
         String type = itemStack.getType().toString().toLowerCase();
         if (itemStack.getType().isBlock()) return GsonComponentSerializer.gson().deserialize("{\"translate\":\"block.minecraft." + type + "\"}");
         else return GsonComponentSerializer.gson().deserialize("{\"translate\":\"item.minecraft." + type + "\"}");
+    }
+
+    public void removeTotem(ActivatedTotem activatedTotem) {
+        totemCache.remove(activatedTotem);
     }
 }

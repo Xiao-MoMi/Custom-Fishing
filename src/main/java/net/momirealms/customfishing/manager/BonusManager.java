@@ -103,7 +103,7 @@ public class BonusManager extends Function {
                 ENCHANTS.put(key + ":" + level, bonus);
             });
         }
-        AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + ENCHANTS.size() + " <gray>enchantments");
+        AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + keys.size() + " <gray>enchantments");
     }
 
     private void loadBait() {

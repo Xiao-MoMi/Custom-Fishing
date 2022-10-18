@@ -38,7 +38,7 @@ rainbow_2:
     7: 0
 rainbow_3:
   range: 16
-  title: '<#808000>YELLOW!'
+  title: '<#FFFF00>YELLOW!'
   subtitle:
     start: '<font:customfishing:default>'
     bar: '뀋'

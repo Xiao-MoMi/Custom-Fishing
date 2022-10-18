@@ -16,6 +16,8 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,12 +46,21 @@ public class TotemManager extends Function {
 
     @Override
     public void load(){
-
         TOTEMS = new HashMap<>();
         CORES = new HashMap<>();
         BLOCKS = new HashMap<>();
         INVERTED = new HashMap<>();
+        loadBlocks();
+        loadTotems();
+    }
 
+    private void loadBlocks() {
+        YamlConfiguration config = ConfigUtil.getConfig("totem-blocks.yml");
+        config.getKeys(false).forEach(key -> BLOCKS.put(key, config.getString(key)));
+        config.getKeys(false).forEach(key -> INVERTED.put(config.getString(key), key));
+    }
+
+    private void loadTotems() {
         YamlConfiguration config = ConfigUtil.getConfig("totems.yml");
         for (String key : config.getKeys(false)) {
             List<String> cores = config.getStringList(key + ".core");
@@ -110,11 +121,9 @@ public class TotemManager extends Function {
             Totem totem = new Totem(
                     originalModel,
                     finalModel,
-                    config.getBoolean(key + ".require-item", false),
-                    config.getBoolean(key + ".consume-item", false),
                     config.getInt(key + ".radius", 16),
                     config.getInt(key + ".duration", 300),
-                    Particle.valueOf(config.getString(key + ".particle", "SPELL").toUpperCase()),
+                    Particle.valueOf(config.getString(key + ".particle", "SPELL_MOB").toUpperCase()),
                     BonusManager.getBonus(config, key)
             );
 
@@ -149,6 +158,28 @@ public class TotemManager extends Function {
                     }
                 });
                 totem.setRequirements(requirements.toArray(new RequirementInterface[0]));
+            }
+
+            if (config.getBoolean(key + ".hologram.enable", false)) {
+                totem.setHoloText(config.getStringList(key + ".hologram.text").toArray(new String[0]));
+                totem.setHoloOffset(config.getDouble(key + ".hologram.y-offset"));
+            }
+
+            if (config.contains(key + ".potion-effects")) {
+                List<PotionEffect> potionEffectList = new ArrayList<>();
+                for (String potion : config.getConfigurationSection(key + ".potion-effects").getKeys(false)) {
+
+                    PotionEffectType potionType = PotionEffectType.getByName(potion.toUpperCase());
+                    if (potionType == null) continue;
+                    int time = 40;
+                    if (potionType.equals(PotionEffectType.NIGHT_VISION)) time = 400;
+                    PotionEffect potionEffect = new PotionEffect(
+                            potionType,
+                            time,
+                            config.getInt(key + ".potion-effects." + potion, 1) - 1);
+                    potionEffectList.add(potionEffect);
+                }
+                totem.setPotionEffects(potionEffectList.toArray(new PotionEffect[0]));
             }
 
             TOTEMS.put(key, totem);

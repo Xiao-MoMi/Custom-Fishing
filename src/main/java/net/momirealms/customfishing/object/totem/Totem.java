@@ -21,13 +21,12 @@ import net.momirealms.customfishing.object.action.ActionInterface;
 import net.momirealms.customfishing.object.fishing.Bonus;
 import net.momirealms.customfishing.object.requirements.RequirementInterface;
 import org.bukkit.Particle;
+import org.bukkit.potion.PotionEffect;
 
 public class Totem {
 
     private final OriginalModel originalModel;
     private FinalModel finalModel;
-    private final boolean cItem;
-    private final boolean rItem;
     private RequirementInterface[] requirements;
     private final int radius;
     private final Particle particle;
@@ -35,17 +34,17 @@ public class Totem {
     private final Bonus bonus;
     private ActionInterface[] activatorActions;
     private ActionInterface[] nearbyActions;
+    private double holoOffset;
+    private String[] holoText;
+    private PotionEffect[] potionEffects;
 
-    public Totem(OriginalModel originalModel, FinalModel finalModel, boolean rItem, boolean cItem, int radius, int duration, Particle particle, Bonus bonus) {
+    public Totem(OriginalModel originalModel, FinalModel finalModel, int radius, int duration, Particle particle, Bonus bonus) {
         this.originalModel = originalModel;
         this.finalModel = finalModel;
         this.radius = radius;
         this.duration = duration;
         this.particle = particle;
         this.bonus = bonus;
-        this.rItem = rItem;
-        if (rItem) this.cItem = cItem;
-        else this.cItem = false;
     }
 
     public RequirementInterface[] getRequirements() {
@@ -67,14 +66,6 @@ public class Totem {
 
     public void setFinalModel(FinalModel finalModel) {
         this.finalModel = finalModel;
-    }
-
-    public boolean isrItem() {
-        return rItem;
-    }
-
-    public boolean iscItem() {
-        return cItem;
     }
 
     public int getRadius() {
@@ -107,5 +98,29 @@ public class Totem {
 
     public void setNearbyActions(ActionInterface[] nearbyActions) {
         this.nearbyActions = nearbyActions;
+    }
+
+    public double getHoloOffset() {
+        return holoOffset;
+    }
+
+    public void setHoloOffset(double holoOffset) {
+        this.holoOffset = holoOffset;
+    }
+
+    public String[] getHoloText() {
+        return holoText;
+    }
+
+    public void setHoloText(String[] holoText) {
+        this.holoText = holoText;
+    }
+
+    public PotionEffect[] getPotionEffects() {
+        return potionEffects;
+    }
+
+    public void setPotionEffects(PotionEffect[] potionEffects) {
+        this.potionEffects = potionEffects;
     }
 }
