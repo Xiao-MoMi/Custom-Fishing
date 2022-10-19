@@ -1,5 +1,6 @@
 package net.momirealms.customfishing.manager;
 
+import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.integration.BlockInterface;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.action.ActionInterface;
@@ -30,11 +31,6 @@ public class TotemManager extends Function {
     public static HashMap<String, List<Totem>> CORES;
     public static HashMap<String, String> BLOCKS;
     public static HashMap<String, String> INVERTED;
-    private final BlockInterface blockInterface;
-
-    public TotemManager(BlockInterface blockInterface) {
-        this.blockInterface = blockInterface;
-    }
 
     @Override
     public void unload() {
@@ -213,6 +209,8 @@ public class TotemManager extends Function {
 
     public int checkLocationModel(OriginalModel model, Location location){
 
+        BlockInterface blockInterface = CustomFishing.plugin.getIntegrationManager().getBlockInterface();
+
         CorePos corePos = model.getCorePos();
         int xOffset = corePos.getX();
         int yOffset = corePos.getY();
@@ -387,6 +385,8 @@ public class TotemManager extends Function {
 
 
     public void removeModel(FinalModel model, Location location, int id) {
+
+        BlockInterface blockInterface = CustomFishing.plugin.getIntegrationManager().getBlockInterface();
 
         CorePos corePos = model.getCorePos();
         int xOffset = corePos.getX();

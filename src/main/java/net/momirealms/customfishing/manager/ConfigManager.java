@@ -45,6 +45,8 @@ public class ConfigManager {
     public static int failureFadeStay;
     public static int failureFadeOut;
     public static boolean useRedis;
+    public static int lavaMaxTime;
+    public static int lavaMinTime;
 
     public static void load() {
         ConfigUtil.update("config.yml");
@@ -96,6 +98,9 @@ public class ConfigManager {
         failureFadeIn = config.getInt("titles.failure.fade.in", 10) * 50;
         failureFadeStay = config.getInt("titles.failure.fade.stay", 30) * 50;
         failureFadeOut = config.getInt("titles.failure.fade.out", 10) * 50;
+
+        lavaMinTime = config.getInt("mechanics.lava-fishing.min-time", 100);
+        lavaMaxTime = config.getInt("mechanics.lava-fishing.max-time", 600) - lavaMinTime;
 
         useRedis = false;
         if (enableCompetition && config.getBoolean("mechanics.fishing-competition.redis", false)) {

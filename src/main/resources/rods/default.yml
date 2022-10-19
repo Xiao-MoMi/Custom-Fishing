@@ -18,6 +18,7 @@ silver_fishing_rod:
   display:
     name: 'Silver Fishing Rod'
   custom-model-data: 3
+  can-fish-in-lave: true
   modifier:
     weight-add:
       silver: 20

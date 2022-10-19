@@ -153,6 +153,7 @@ public class BonusManager extends Function {
                 case "difficulty" -> bonus.setDifficulty(config.getInt(key + ".modifier.difficulty"));
                 case "double-loot" -> bonus.setDoubleLoot(config.getDouble(key + ".modifier.double-loot"));
                 case "score" -> bonus.setScore(config.getDouble(key + ".modifier.score"));
+                case "lava-fishing" -> bonus.setCanLavaFishing(config.getBoolean(key + ".modifier.lava-fishing", false));
             }
         });
         return bonus;

@@ -84,7 +84,7 @@ public final class CustomFishing extends JavaPlugin {
         this.lootManager = new LootManager();
         this.layoutManager = new LayoutManager();
         this.dataManager = new DataManager();
-        this.totemManager = new TotemManager(integrationManager.getBlockInterface());
+        this.totemManager = new TotemManager();
         ConfigUtil.reload();
 
         PluginCommand pluginCommand = new PluginCommand();

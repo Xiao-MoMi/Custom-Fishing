@@ -18,6 +18,7 @@ import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.action.ActionInterface;
 import net.momirealms.customfishing.object.fishing.*;
 import net.momirealms.customfishing.object.loot.DroppedItem;
+import net.momirealms.customfishing.object.fishing.BobberCheckTask;
 import net.momirealms.customfishing.object.loot.Loot;
 import net.momirealms.customfishing.object.loot.Mob;
 import net.momirealms.customfishing.object.requirements.RequirementInterface;
@@ -65,6 +66,7 @@ public class FishingManager extends Function {
     private final HashMap<Player, VanillaLoot> vanillaLoot;
     private final ConcurrentHashMap<Player, FishingPlayer> fishingPlayerCache;
     private final ConcurrentHashMap<Location, ActivatedTotem> totemCache;
+    private final ConcurrentHashMap<Player, BobberCheckTask> lavaFishing;
 
     public FishingManager() {
         this.playerFishListener = new PlayerFishListener(this);
@@ -76,6 +78,7 @@ public class FishingManager extends Function {
         this.vanillaLoot = new HashMap<>();
         this.fishingPlayerCache = new ConcurrentHashMap<>();
         this.totemCache = new ConcurrentHashMap<>();
+        this.lavaFishing = new ConcurrentHashMap<>();
         load();
     }
 
@@ -112,7 +115,7 @@ public class FishingManager extends Function {
         final FishHook fishHook = event.getHook();
 
         hooksCache.put(player, fishHook);
-        if (isCoolDown(player, 2000)) return;
+        if (isCoolDown(player, 500)) return;
 
         Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.plugin, () -> {
 
@@ -121,6 +124,7 @@ public class FishingManager extends Function {
             boolean noSpecialRod = true;
             boolean noRod = true;
             boolean noBait = true;
+            int lureLevel = 0;
 
             Bonus initialBonus = new Bonus();
             initialBonus.setDifficulty(0);
@@ -136,6 +140,7 @@ public class FishingManager extends Function {
                 if (mainHandItemType == Material.FISHING_ROD) {
                     noRod = false;
                     enchantBonus(initialBonus, mainHandItem);
+                    lureLevel = mainHandItem.getEnchantmentLevel(Enchantment.LURE);
                 }
                 NBTItem mainHandNBTItem = new NBTItem(mainHandItem);
                 NBTCompound nbtCompound = mainHandNBTItem.getCompound("CustomFishing");
@@ -163,6 +168,7 @@ public class FishingManager extends Function {
             if (offHandItemType != Material.AIR){
                 if (noRod && offHandItemType == Material.FISHING_ROD) {
                     enchantBonus(initialBonus, offHandItem);
+                    lureLevel = offHandItem.getEnchantmentLevel(Enchantment.LURE);
                 }
                 NBTItem offHandNBTItem = new NBTItem(offHandItem);
                 NBTCompound nbtCompound = offHandNBTItem.getCompound("CustomFishing");
@@ -202,14 +208,11 @@ public class FishingManager extends Function {
                 return;
             }
 
+            fishHook.setMaxWaitTime((int) (fishHook.getMaxWaitTime() * initialBonus.getTime()));
+            fishHook.setMinWaitTime((int) (fishHook.getMinWaitTime() * initialBonus.getTime()));
+
             nextBonus.put(player, initialBonus);
 
-            List<Loot> possibleLoots = getPossibleLootList(new FishingCondition(fishHook.getLocation(), player), false);
-            List<Loot> availableLoots = new ArrayList<>();
-            if (possibleLoots.size() == 0){
-                nextLoot.put(player, null);
-                return;
-            }
             if (ConfigManager.needRodForLoots && noSpecialRod){
                 if (!ConfigManager.enableVanillaLoot) AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.noRod);
                 nextLoot.put(player, null);
@@ -219,52 +222,63 @@ public class FishingManager extends Function {
             }
             if ((ConfigManager.needRodForLoots || ConfigManager.needRodToFish) && noSpecialRod) return;
 
-            HashMap<String, Integer> as = initialBonus.getWeightAS();
-            HashMap<String, Double> md = initialBonus.getWeightMD();
-
-            double[] weights = new double[possibleLoots.size()];
-            int index = 0;
-            for (Loot loot : possibleLoots){
-                double weight = loot.getWeight();
-                String group = loot.getGroup();
-                if (group != null){
-                    if (as.get(group) != null){
-                        weight += as.get(group);
-                    }
-                    if (md.get(group) != null){
-                        weight *= md.get(group);
-                    }
-                }
-                if (weight <= 0) continue;
-                availableLoots.add(loot);
-                weights[index++] = weight;
-            }
-
-            double total = Arrays.stream(weights).sum();
-            double[] weightRatios = new double[index];
-            for (int i = 0; i < index; i++){
-                weightRatios[i] = weights[i]/total;
-            }
-
-            double[] weightRange = new double[index];
-            double startPos = 0;
-            for (int i = 0; i < index; i++) {
-                weightRange[i] = startPos + weightRatios[i];
-                startPos += weightRatios[i];
-            }
-
-            double random = Math.random();
-            int pos = Arrays.binarySearch(weightRange, random);
-
-            if (pos < 0) {
-                pos = -pos - 1;
-            }
-            if (pos < weightRange.length && random < weightRange[pos]) {
-                nextLoot.put(player, availableLoots.get(pos));
-                return;
-            }
-            nextLoot.put(player, null);
+            BobberCheckTask bobberCheckTask = new BobberCheckTask(player, initialBonus, fishHook, this, lureLevel);
+            bobberCheckTask.runTaskTimer(CustomFishing.plugin, 1, 1);
         });
+    }
+
+    public void getNextLoot(Player player, Bonus initialBonus, List<Loot> possibleLoots) {
+        List<Loot> availableLoots = new ArrayList<>();
+        if (possibleLoots.size() == 0){
+            nextLoot.put(player, null);
+            return;
+        }
+
+        HashMap<String, Integer> as = initialBonus.getWeightAS();
+        HashMap<String, Double> md = initialBonus.getWeightMD();
+
+        double[] weights = new double[possibleLoots.size()];
+        int index = 0;
+        for (Loot loot : possibleLoots){
+            double weight = loot.getWeight();
+            String group = loot.getGroup();
+            if (group != null){
+                if (as.get(group) != null){
+                    weight += as.get(group);
+                }
+                if (md.get(group) != null){
+                    weight *= md.get(group);
+                }
+            }
+            if (weight <= 0) continue;
+            availableLoots.add(loot);
+            weights[index++] = weight;
+        }
+
+        double total = Arrays.stream(weights).sum();
+        double[] weightRatios = new double[index];
+        for (int i = 0; i < index; i++){
+            weightRatios[i] = weights[i]/total;
+        }
+
+        double[] weightRange = new double[index];
+        double startPos = 0;
+        for (int i = 0; i < index; i++) {
+            weightRange[i] = startPos + weightRatios[i];
+            startPos += weightRatios[i];
+        }
+
+        double random = Math.random();
+        int pos = Arrays.binarySearch(weightRange, random);
+
+        if (pos < 0) {
+            pos = -pos - 1;
+        }
+        if (pos < weightRange.length && random < weightRange[pos]) {
+            nextLoot.put(player, availableLoots.get(pos));
+            return;
+        }
+        nextLoot.put(player, null);
     }
 
     public void onCaughtFish(PlayerFishEvent event) {
@@ -356,8 +370,15 @@ public class FishingManager extends Function {
     public void onReelIn(PlayerFishEvent event) {
         final Player player = event.getPlayer();
         FishingPlayer fishingPlayer = fishingPlayerCache.remove(player);
-        if (fishingPlayer == null) return;
-        proceedReelIn(event, player, fishingPlayer);
+        if (fishingPlayer != null) {
+            proceedReelIn(event, player, fishingPlayer);
+            lavaFishing.remove(player);
+            return;
+        }
+        if (lavaFishing.containsKey(player)) {
+            showPlayerBar(player, nextLoot.get(player));
+            event.setCancelled(true);
+        }
     }
 
     private void dropCustomFishingLoot(Player player, Location location, DroppedItem droppedItem, boolean isDouble, double scoreMultiplier) {
@@ -594,16 +615,7 @@ public class FishingManager extends Function {
     }
 
     public void onInGround(PlayerFishEvent event) {
-        FishHook fishHook = event.getHook();
-
-        Block belowBlock = fishHook.getLocation().clone().subtract(0,1,0).getBlock();
-        Block inBlock = fishHook.getLocation().getBlock();
-        if (inBlock.getType() == Material.AIR && belowBlock.getType() == Material.ICE) {
-
-        }
-        else if (inBlock.getType() == Material.LAVA) {
-
-        }
+        //Empty
     }
 
     public void onMMOItemsRodCast(PlayerFishEvent event) {
@@ -629,8 +641,8 @@ public class FishingManager extends Function {
         return false;
     }
 
-    private void enchantBonus(Bonus initialBonus, ItemStack mainHandItem) {
-        Map<Enchantment, Integer> enchantments = mainHandItem.getEnchantments();
+    private void enchantBonus(Bonus initialBonus, ItemStack itemStack) {
+        Map<Enchantment, Integer> enchantments = itemStack.getEnchantments();
         for (Map.Entry<Enchantment, Integer> en : enchantments.entrySet()) {
             String key = en.getKey().getKey() + ":" + en.getValue();
             Bonus enchantBonus = BonusManager.ENCHANTS.get(key);
@@ -640,10 +652,31 @@ public class FishingManager extends Function {
         }
     }
 
-    private List<Loot> getPossibleLootList(FishingCondition fishingCondition, boolean finder) {
+    public List<Loot> getPossibleWaterLootList(FishingCondition fishingCondition, boolean finder) {
         List<Loot> available = new ArrayList<>();
         outer:
             for (Loot loot : LootManager.WATERLOOTS.values()) {
+                if (finder && !loot.isShowInFinder()) continue;
+                RequirementInterface[] requirements = loot.getRequirements();
+                if (requirements == null){
+                    available.add(loot);
+                }
+                else {
+                    for (RequirementInterface requirement : requirements){
+                        if (!requirement.isConditionMet(fishingCondition)){
+                            continue outer;
+                        }
+                    }
+                    available.add(loot);
+                }
+            }
+        return available;
+    }
+
+    public List<Loot> getPossibleLavaLootList(FishingCondition fishingCondition, boolean finder) {
+        List<Loot> available = new ArrayList<>();
+        outer:
+            for (Loot loot : LootManager.LAVALOOTS.values()) {
                 if (finder && !loot.isShowInFinder()) continue;
                 RequirementInterface[] requirements = loot.getRequirements();
                 if (requirements == null){
@@ -721,7 +754,7 @@ public class FishingManager extends Function {
 
     private void useFinder(Player player) {
         if (isCoolDown(player, ConfigManager.fishFinderCoolDown)) return;
-        List<Loot> possibleLoots = getPossibleLootList(new FishingCondition(player.getLocation(), player), true);
+        List<Loot> possibleLoots = getPossibleWaterLootList(new FishingCondition(player.getLocation(), player), true);
 
         FishFinderEvent fishFinderEvent = new FishFinderEvent(player, possibleLoots);
         Bukkit.getPluginManager().callEvent(fishFinderEvent);
@@ -739,6 +772,9 @@ public class FishingManager extends Function {
     }
 
     private void showPlayerBar(Player player, @Nullable Loot loot){
+
+        if (loot == Loot.EMPTY) return;
+
         Layout layout;
         if (loot != null && loot.getLayout() != null){
             layout = loot.getLayout()[new Random().nextInt(loot.getLayout().length)];
@@ -802,6 +838,8 @@ public class FishingManager extends Function {
         nextLoot.remove(player);
         nextBonus.remove(player);
         vanillaLoot.remove(player);
+        BobberCheckTask task = lavaFishing.remove(player);
+        if (task != null) task.stop();
         // prevent bar duplication
         FishHook fishHook = hooksCache.remove(player);
         if (fishHook != null) fishHook.remove();
@@ -832,5 +870,13 @@ public class FishingManager extends Function {
 
     public void removeTotem(ActivatedTotem activatedTotem) {
         totemCache.remove(activatedTotem);
+    }
+
+    public void addPlayerToLavaFishing(Player player, BobberCheckTask task) {
+        this.lavaFishing.put(player, task);
+    }
+
+    public void removePlayerFromLavaFishing(Player player) {
+        this.lavaFishing.remove(player);
     }
 }

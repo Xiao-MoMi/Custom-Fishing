@@ -36,10 +36,6 @@ public class IntegrationManager extends Function {
     private PlaceholderManager placeholderManager;
     private AntiGriefInterface[] antiGriefs;
 
-    public IntegrationManager() {
-        load();
-    }
-
     @Override
     public void load() {
 
@@ -67,7 +63,9 @@ public class IntegrationManager extends Function {
             this.blockInterface = new ItemsAdderBlockImpl();
         } else if (pluginManager.getPlugin("Oraxen") != null) {
             this.blockInterface = new OraxenBlockImpl();
-        } else this.blockInterface = new VanillaBlockImpl();
+        } else {
+            this.blockInterface = new VanillaBlockImpl();
+        }
 
         if (pluginManager.getPlugin("eco") != null) {
             EcoItemRegister.registerItems();

@@ -26,3 +26,7 @@ commands:
     permission: customfishing.admin
     aliases:
       - cfishing
+  fishingbag:
+    usage: /fishingbag open
+    description: fishing bag command
+    permission: customfishing.user

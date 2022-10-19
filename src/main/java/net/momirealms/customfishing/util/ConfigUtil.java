@@ -38,6 +38,8 @@ public class ConfigUtil {
         CustomFishing.plugin.getCompetitionManager().load();
         CustomFishing.plugin.getTotemManager().unload();
         CustomFishing.plugin.getTotemManager().load();
+        CustomFishing.plugin.getIntegrationManager().unload();
+        CustomFishing.plugin.getIntegrationManager().load();
         try {
             Reflection.load();
         }

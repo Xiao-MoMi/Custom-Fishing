@@ -12,6 +12,7 @@ public class Bonus {
     private double score;
     private int difficulty;
     private double doubleLoot;
+    private boolean canLavaFishing;
 
     public HashMap<String, Double> getWeightMD() {
         return weightMD;
@@ -61,9 +62,17 @@ public class Bonus {
         this.doubleLoot = doubleLoot;
     }
 
+    public boolean canLavaFishing() {
+        return canLavaFishing;
+    }
+
+    public void setCanLavaFishing(boolean canLavaFishing) {
+        this.canLavaFishing = canLavaFishing;
+    }
+
     public void addBonus(Bonus anotherBonus) {
         HashMap<String, Integer> weightAS = anotherBonus.getWeightAS();
-        if (weightAS != null){
+        if (weightAS != null) {
             for (Map.Entry<String, Integer> en : weightAS.entrySet()) {
                 String group = en.getKey();
                 this.weightAS.put(group, Optional.ofNullable(this.weightAS.get(group)).orElse(0) + en.getValue());
@@ -80,5 +89,6 @@ public class Bonus {
         if (anotherBonus.getDoubleLoot() != 0) this.doubleLoot += anotherBonus.getDoubleLoot();
         if (anotherBonus.getDifficulty() != 0) this.difficulty += anotherBonus.getDifficulty();
         if (anotherBonus.getScore() != 0) this.score += (anotherBonus.getScore() - 1);
+        if (anotherBonus.canLavaFishing()) this.canLavaFishing = true;
     }
 }

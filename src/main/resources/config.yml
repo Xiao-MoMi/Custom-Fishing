@@ -22,6 +22,7 @@ worlds:
   mode: whitelist
   list:
     - world
+    - world_nether
 
 
 mechanics:
@@ -48,7 +49,7 @@ mechanics:
 
   # The same to vanilla (refer to the wiki)
   # https://technical-minecraft.fandom.com/wiki/Fishing
-  need-open-water: true
+  need-open-water: false
 
   need-special-rod:
     # Players must use rods with CustomFishing's NBT Tags to get loots in CustomFishing but they can experience the special fishing mechanic.
@@ -74,6 +75,11 @@ mechanics:
     can-store-fish: false
     # File/SQLite/MySql
     data-storage-mode: File
+
+  lava-fishing:
+    # ticks
+    min-time: 100
+    max-time: 600
 
 
 titles:
