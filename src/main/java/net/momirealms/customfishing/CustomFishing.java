@@ -20,7 +20,9 @@ package net.momirealms.customfishing;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.momirealms.customfishing.commands.FishingBagCommand;
 import net.momirealms.customfishing.commands.PluginCommand;
+import net.momirealms.customfishing.commands.SellFishCommand;
 import net.momirealms.customfishing.helper.LibraryLoader;
 import net.momirealms.customfishing.manager.*;
 import net.momirealms.customfishing.util.AdventureUtil;
@@ -43,6 +45,7 @@ public final class CustomFishing extends JavaPlugin {
     private LayoutManager layoutManager;
     private DataManager dataManager;
     private TotemManager totemManager;
+    private SellManager sellManager;
 
 //                              _ooOoo_
 //                             o8888888o
@@ -71,6 +74,7 @@ public final class CustomFishing extends JavaPlugin {
         LibraryLoader.load("org.apache.commons","commons-pool2","2.11.1","https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3","https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("com.zaxxer","HikariCP","5.0.1","https://repo.maven.apache.org/maven2/");
+        LibraryLoader.load("net.objecthunter","exp4j","0.4.8","https://repo.maven.apache.org/maven2/");
     }
 
     @Override
@@ -85,21 +89,41 @@ public final class CustomFishing extends JavaPlugin {
         this.layoutManager = new LayoutManager();
         this.dataManager = new DataManager();
         this.totemManager = new TotemManager();
+        this.sellManager = new SellManager();
         ConfigUtil.reload();
+        registerCommands();
 
-        PluginCommand pluginCommand = new PluginCommand();
-        Bukkit.getPluginCommand("customfishing").setExecutor(pluginCommand);
-        Bukkit.getPluginCommand("customfishing").setTabCompleter(pluginCommand);
         AdventureUtil.consoleMessage("[CustomFishing] Plugin Enabled!");
         new Metrics(this, 16648);
     }
 
     @Override
     public void onDisable() {
+        this.fishingManager.unload();
+        this.integrationManager.unload();
+        this.competitionManager.unload();
+        this.bonusManager.unload();
+        this.lootManager.unload();
+        this.layoutManager.unload();
+        this.dataManager.unload();
+        this.totemManager.unload();
+        this.sellManager.unload();
         if (adventure != null) {
             adventure.close();
             adventure = null;
         }
+    }
+
+    private void registerCommands() {
+        PluginCommand pluginCommand = new PluginCommand();
+        Bukkit.getPluginCommand("customfishing").setExecutor(pluginCommand);
+        Bukkit.getPluginCommand("customfishing").setTabCompleter(pluginCommand);
+        FishingBagCommand fishingBagCommand = new FishingBagCommand();
+        Bukkit.getPluginCommand("fishingbag").setExecutor(fishingBagCommand);
+        Bukkit.getPluginCommand("fishingbag").setTabCompleter(fishingBagCommand);
+        SellFishCommand sellFishCommand = new SellFishCommand();
+        Bukkit.getPluginCommand("sellfish").setExecutor(sellFishCommand);
+        Bukkit.getPluginCommand("sellfish").setTabCompleter(sellFishCommand);
     }
 
     public IntegrationManager getIntegrationManager() {
@@ -132,5 +156,9 @@ public final class CustomFishing extends JavaPlugin {
 
     public TotemManager getTotemManager() {
         return totemManager;
+    }
+
+    public SellManager getSellManager() {
+        return sellManager;
     }
 }

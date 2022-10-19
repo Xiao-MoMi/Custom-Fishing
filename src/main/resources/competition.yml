@@ -10,6 +10,7 @@ example:
   start-time:
     - '12:30'
     - '18:30'
+
   #seconds
   duration: 300
 

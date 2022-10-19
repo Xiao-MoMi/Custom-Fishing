@@ -8,6 +8,9 @@ public class DroppedItem extends Loot{
     private boolean randomDurability;
     private LeveledEnchantment[] randomEnchants;
     private final String material;
+    private String[] size;
+    private float basicPrice;
+    private float sizeBonus;
 
     public DroppedItem(String key, Difficulty difficulty, int time, int weight, String material) {
         super(key, difficulty, time, weight);
@@ -33,5 +36,29 @@ public class DroppedItem extends Loot{
 
     public String getMaterial() {
         return material;
+    }
+
+    public String[] getSize() {
+        return size;
+    }
+
+    public void setSize(String[] size) {
+        this.size = size;
+    }
+
+    public float getBasicPrice() {
+        return basicPrice;
+    }
+
+    public void setBasicPrice(float basicPrice) {
+        this.basicPrice = basicPrice;
+    }
+
+    public float getSizeBonus() {
+        return sizeBonus;
+    }
+
+    public void setSizeBonus(float sizeBonus) {
+        this.sizeBonus = sizeBonus;
     }
 }

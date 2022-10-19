@@ -18,7 +18,6 @@ import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.action.ActionInterface;
 import net.momirealms.customfishing.object.fishing.*;
 import net.momirealms.customfishing.object.loot.DroppedItem;
-import net.momirealms.customfishing.object.fishing.BobberCheckTask;
 import net.momirealms.customfishing.object.loot.Loot;
 import net.momirealms.customfishing.object.loot.Mob;
 import net.momirealms.customfishing.object.requirements.RequirementInterface;
@@ -395,6 +394,9 @@ public class FishingManager extends Function {
             Competition.currentCompetition.getBossBarManager().tryJoin(player);
         }
 
+        ItemStackUtil.addExtraMeta(drop, droppedItem);
+        if (ConfigManager.addTagToFish) ItemStackUtil.addIdentifier(drop, "loot", droppedItem.getKey());
+
         dropItem(player, location, fishResultEvent.isDouble(), drop);
         for (ActionInterface action : droppedItem.getSuccessActions())
             action.doOn(player, null);
@@ -753,7 +755,7 @@ public class FishingManager extends Function {
     }
 
     private void useFinder(Player player) {
-        if (isCoolDown(player, ConfigManager.fishFinderCoolDown)) return;
+        if (isCoolDown(player, 1000)) return;
         List<Loot> possibleLoots = getPossibleWaterLootList(new FishingCondition(player.getLocation(), player), true);
 
         FishFinderEvent fishFinderEvent = new FishFinderEvent(player, possibleLoots);

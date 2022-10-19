@@ -1,6 +1,5 @@
 package net.momirealms.customfishing.object.fishing;
 
-import com.plotsquared.core.plot.PlotId;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.FishingManager;
@@ -71,8 +70,10 @@ public class BobberCheckTask extends BukkitRunnable {
             return;
         }
         if (fishHook.isInWater()) {
-            List<Loot> possibleLoots = fishingManager.getPossibleWaterLootList(new FishingCondition(fishHook.getLocation(), player), false);
-            fishingManager.getNextLoot(player, bonus, possibleLoots);
+            Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.plugin, () -> {
+                List<Loot> possibleLoots = fishingManager.getPossibleWaterLootList(new FishingCondition(fishHook.getLocation(), player), false);
+                fishingManager.getNextLoot(player, bonus, possibleLoots);
+            });
             stop();
             return;
         }
@@ -106,8 +107,10 @@ public class BobberCheckTask extends BukkitRunnable {
     }
 
     private void randomTime() {
-        List<Loot> possibleLoots = fishingManager.getPossibleLavaLootList(new FishingCondition(fishHook.getLocation(), player), false);
-        fishingManager.getNextLoot(player, bonus, possibleLoots);
+        Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.plugin, () -> {
+            List<Loot> possibleLoots = fishingManager.getPossibleLavaLootList(new FishingCondition(fishHook.getLocation(), player), false);
+            fishingManager.getNextLoot(player, bonus, possibleLoots);
+        });
         cancelTask();
         int random = new Random().nextInt(ConfigManager.lavaMaxTime) + ConfigManager.lavaMinTime;
         random -= lureLevel * 100;

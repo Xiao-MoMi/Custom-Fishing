@@ -3,6 +3,7 @@ package net.momirealms.customfishing.object.loot;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -79,5 +80,21 @@ public class Item {
 
     public void setNbt(Map<String, Object> nbt) {
         this.nbt = nbt;
+    }
+
+    public Item cloneWithPrice(double price){
+        Item newItem = new Item(this.material);
+        if (this.lore != null){
+            List<String> lore = new ArrayList<>();
+            for (String text : this.lore) {
+                lore.add(text.replace("{money}", String.format("%.2f", price)));
+            }
+            newItem.setLore(lore);
+        }
+        if (this.name != null){
+            newItem.setName(this.name.replace("{money}", String.format("%.2f", price)));
+        }
+        newItem.setCustomModelData(this.customModelData);
+        return newItem;
     }
 }

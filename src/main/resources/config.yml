@@ -1,11 +1,13 @@
 # don't change
-config-version: '9'
+config-version: '10'
 
-
+# cn/en/es
 lang: en
 
-
+# Plugin hooks
 integration:
+  # Sell fish
+  Vault: true
   # Skill-xp
   mcMMO: false
   MMOCore: false
@@ -15,8 +17,19 @@ integration:
   # Season condition
   CustomCrops: false
   RealisticSeasons: false
+  # Prevent players from activating totems in some regions
+  Residence: false
+  WorldGuard: false
+  Kingdoms: false
+  GriefDefender: false
+  PlotSquared: false
+  Towny: false
+  Lands: false
+  GriefPrevention: false
+  CrashClaim: false
+  BentoBox: false
 
-
+# Worlds where fishing mechanic takes effects
 worlds:
   # Mode: whitelist/blacklist
   mode: whitelist
@@ -24,21 +37,17 @@ worlds:
     - world
     - world_nether
 
-
+# Mechanic settings
 mechanics:
-
   other-loots:
-
     # Should other loots have the same fishing mechanic CustomFishing provides
     fishing-bar: true
-
     vanilla:
       # Vanilla loot is available only when 'double-reel-in' is true
       enable: true
       # 0.4 means 40% of the loots are from vanilla
       # and 60% are from CustomFishing Loot system
       ratio: 0.4
-
     mcMMO:
       # mcMMO treasure system
       # chance represents the chance to try to be a mcMMO treasure
@@ -46,42 +55,35 @@ mechanics:
       # mcMMO has a complex treasure system
       enable: false
       chance: 0.5
-
-  # The same to vanilla (refer to the wiki)
+  # The same to vanilla mechanic (refer to the wiki)
   # https://technical-minecraft.fandom.com/wiki/Fishing
   need-open-water: false
-
   need-special-rod:
     # Players must use rods with CustomFishing's NBT Tags to get loots in CustomFishing but they can experience the special fishing mechanic.
     for-loots: false
     # Players must use rods with CustomFishing's NBT Tags to experience the special fishing mechanic. Otherwise they can only fish in a vanilla way
     to-fish: false
-
   # does rod lose durability when player successfully fish
   rod-lose-durability: true
-
-  # Cool down time of fish finder(ms)
-  fishfinder-cooldown: 3000
-
   # Competition
   fishing-competition:
     enable: true
+    # Enable redis server for syncing data between servers
     redis: false
-
   # Fishing bag is a place where players can store their baits, utils, rods (Fish optional)
   fishing-bag:
     enable: true
     # This would add additional NBT Tags to the fish
     can-store-fish: false
-    # File/SQLite/MySql
+    # File/MySql
     data-storage-mode: File
-
+  # Lava fishing settings
   lava-fishing:
     # ticks
-    min-time: 100
-    max-time: 600
+    min-wait-time: 100
+    max-wait-time: 600
 
-
+# Fishing result titles
 titles:
   success:
     title:
@@ -98,7 +100,7 @@ titles:
       out: 10
   failure:
     title:
-      - '<red>Real food!</red>'
+      - '<red>Be concentrated!</red>'
       - '<red>Failure!</red>'
       - '<red>Try next time!</red>'
     subtitle:
@@ -109,20 +111,17 @@ titles:
       stay: 30
       out: 10
 
-
-
+# Other settings
 other-settings:
-
   # MONITOR HIGHEST HIGH NORMAL LOW LOWEST
   event-priority: NORMAL
-
   # If enabled, players would not be able to get job exp in vanilla way
   disable-JobsReborn-fishing-exp: false
-
   # Convert MMOItems' rod into CustomFishing's rod
   # keep the same key name both in MMOItems and CustomFishing so rods can extend the bonus of those in CustomFishing
   convert-MMOItems-rods: false
-
   # Prevent other players to pick up your fishing loot
   # This is useful for players to fish in a public area
   prevent-other-players-pick-up-loot: false
+  # Log the money player get from selling the fish in the console
+  log-earnings: true

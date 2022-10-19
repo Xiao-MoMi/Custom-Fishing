@@ -17,7 +17,7 @@ rainbow_fish:
   score: 10
   # Specify the bar. If not specified, it will be random
   layout:
-    - bar1
+    - bar_1
   # Difficulty
   # '1' represents the pointer moves every 1 tick
   # '7' represents the pointer moves 7 pixels each time
@@ -34,7 +34,16 @@ rainbow_fish:
     name: '<rainbow>✖Example Rainbow Fish✖</rainbow>'
     lore:
       - '<gray>This is a <font:uniform>rainbow fish!'
+      - '<gray>It is {size}cm long!'
   custom-model-data: 1
+
+  # Optional
+  size: 10~200
+
+  # Optional
+  price:
+    base: 50
+    bonus: 0.3
 
   # Custom NBT tags
   # If you are not sure about the NBT tag. You can use command '/cfishing import xxx'
@@ -43,11 +52,6 @@ rainbow_fish:
     itemsadder:
       namespace: '(String) momirealms'
       id: '(String) rainbow_fish'
-    SomeNBT:
-      NBTS:
-        byte: '(Byte) 127'
-        float: '(Float) 3.14159'
-    Price: '(Double) 10'
 
   # Available events: success/failure/hook
   # Available actions: message/command/exp/mending/skill-xp

@@ -127,6 +127,18 @@ public class LootManager extends Function {
                 if (config.contains(key + ".nick")) loot.setNick(config.getString(key + ".nick"));
                 else loot.setNick(ChatColor.stripColor(config.getString(key + ".display.name", key)));
                 loot.setRandomDurability(config.getBoolean(key + ".random-durability", false));
+                if (config.contains(key + ".size")) {
+                    String[] size = StringUtils.split(config.getString(key + ".size", "1~10"), "~");
+                    if (size.length != 2) {
+                        AdventureUtil.consoleMessage("<red>[CustomFishing] Wrong size found at " + key);
+                        continue;
+                    }
+                    loot.setSize(size);
+                }
+                if (config.contains(key + ".price")) {
+                    loot.setBasicPrice((float) config.getDouble(key + ".price.basic", 0));
+                    loot.setSizeBonus((float) config.getDouble(key + ".price.bonus", 0));
+                }
                 if (config.contains(key + ".random-enchantments")){
                     List<LeveledEnchantment> randomEnchants = new ArrayList<>();
                     config.getConfigurationSection(key + ".random-enchantments").getValues(false).forEach((order, enchant) -> {

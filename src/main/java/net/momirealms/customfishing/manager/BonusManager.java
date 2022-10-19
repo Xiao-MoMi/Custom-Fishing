@@ -10,6 +10,7 @@ import net.momirealms.customfishing.util.ConfigUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -184,7 +185,7 @@ public class BonusManager extends Function {
         AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + RODITEMS.size() + " <gray>rods");
     }
 
-    public static void setItemProperties(YamlConfiguration config, String key, Item item) {
+    public static void setItemProperties(ConfigurationSection config, String key, Item item) {
         item.setUnbreakable(config.getBoolean(key + ".unbreakable", false));
         if (config.contains(key + ".display.lore")) item.setLore(config.getStringList(key + ".display.lore"));
         if (config.contains(key + ".display.name")) item.setName(config.getString(key + ".display.name"));

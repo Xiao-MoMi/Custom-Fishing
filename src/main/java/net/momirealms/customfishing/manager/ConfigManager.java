@@ -1,5 +1,7 @@
 package net.momirealms.customfishing.manager;
 
+import net.momirealms.customfishing.integration.VaultHook;
+import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import net.momirealms.customfishing.util.JedisUtil;
 import org.bukkit.Bukkit;
@@ -25,7 +27,6 @@ public class ConfigManager {
     public static boolean needRodForLoots;
     public static boolean needRodToFish;
     public static boolean rodLoseDurability;
-    public static int fishFinderCoolDown;
     public static boolean enableCompetition;
     public static boolean disableJobsXp;
     public static boolean convertMMOItems;
@@ -47,6 +48,9 @@ public class ConfigManager {
     public static boolean useRedis;
     public static int lavaMaxTime;
     public static int lavaMinTime;
+    public static boolean addTagToFish;
+    public static boolean logEarning;
+    public static boolean vaultHook;
 
     public static void load() {
         ConfigUtil.update("config.yml");
@@ -79,13 +83,14 @@ public class ConfigManager {
         needRodForLoots = config.getBoolean("mechanics.need-special-rod.for-loots", false);
         needRodToFish = config.getBoolean("mechanics.need-special-rod.to-fish", false);
         rodLoseDurability = config.getBoolean("mechanics.rod-lose-durability", true);
-        fishFinderCoolDown = config.getInt("mechanics.fishfinder-cooldown", 3000);
         enableCompetition = config.getBoolean("mechanics.fishing-competition.enable", true);
 
         priority = config.getString("other-settings.event-priority", "NORMAL").toUpperCase();
         disableJobsXp = config.getBoolean("other-settings.disable-JobsReborn-fishing-exp", false);
         preventPickUp = config.getBoolean("other-settings.prevent-other-players-pick-up-loot", false);
         convertMMOItems = config.getBoolean("other-settings.convert-MMOItems-rods", false);
+        logEarning = config.getBoolean("other-settings.log-earnings", true);
+        vaultHook = config.getBoolean("integration.Vault", true);
 
         successTitle = config.getStringList("titles.success.title").toArray(new String[0]);
         successSubTitle = config.getStringList("titles.success.subtitle").toArray(new String[0]);
@@ -99,14 +104,23 @@ public class ConfigManager {
         failureFadeStay = config.getInt("titles.failure.fade.stay", 30) * 50;
         failureFadeOut = config.getInt("titles.failure.fade.out", 10) * 50;
 
-        lavaMinTime = config.getInt("mechanics.lava-fishing.min-time", 100);
-        lavaMaxTime = config.getInt("mechanics.lava-fishing.max-time", 600) - lavaMinTime;
+        lavaMinTime = config.getInt("mechanics.lava-fishing.min-wait-time", 100);
+        lavaMaxTime = config.getInt("mechanics.lava-fishing.max-wait-time", 600) - lavaMinTime;
+
+        addTagToFish = config.getBoolean("mechanics.fishing-bag.can-store-fish", false);
 
         useRedis = false;
         if (enableCompetition && config.getBoolean("mechanics.fishing-competition.redis", false)) {
             YamlConfiguration configuration = ConfigUtil.getConfig("database.yml");
             JedisUtil.initializeRedis(configuration);
             useRedis = true;
+        }
+
+        if (vaultHook) {
+            if (!VaultHook.initialize()) {
+                vaultHook = false;
+                AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to hook into Vault!");
+            }
         }
     }
     public static List<World> getWorldsList() {

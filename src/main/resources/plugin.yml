@@ -19,6 +19,8 @@ softdepend:
   - MMOItems
   - eco
   - Jobs
+  - Vault
+
 commands:
   customfishing:
     usage: /customfishing
@@ -29,4 +31,23 @@ commands:
   fishingbag:
     usage: /fishingbag open
     description: fishing bag command
-    permission: customfishing.user
+    permission: customfishing.fishingbag
+  sellfish:
+    usage: /sellfish
+    description: fishing bag command
+    permission: customfishing.sellfish
+
+permissions:
+  customfishing.*:
+    description: Gives access to all customfishing commands
+    children:
+      customfishing.admin: true
+      customfishing.fishingbag: true
+      customfishing.sellfish: true
+
+  customfishing.admin:
+    default: op
+  customfishing.fishingbag:
+    default: true
+  customfishing.sellfish:
+    default: true

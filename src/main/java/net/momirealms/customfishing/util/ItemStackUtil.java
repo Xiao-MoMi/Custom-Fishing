@@ -51,7 +51,6 @@ public class ItemStackUtil {
             NBTCompound display = nbtItem.addCompound("display");
             String name  = item.getName();
             if (name.contains("&") || name.contains("§")){
-                name = name.replaceAll("&","§");
                 name = replaceLegacy(name);
             }
             display.setString("Name", GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize("<!i>" + name)));
@@ -61,7 +60,6 @@ public class ItemStackUtil {
             List<String> lore = display.getStringList("Lore");
             item.getLore().forEach(line -> {
                 if (line.contains("&") || line.contains("§")){
-                    line = line.replaceAll("&","§");
                     line = replaceLegacy(line);
                 }
                 lore.add(GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize("<!i>" + line)));
@@ -200,6 +198,40 @@ public class ItemStackUtil {
         return true;
     }
 
+    public static void addExtraMeta(ItemStack itemStack, DroppedItem droppedItem) {
+        NBTItem nbtItem = new NBTItem(itemStack);
+        boolean changed = replaceSizeLore(droppedItem.getSize(), nbtItem);
+        if (droppedItem.getBasicPrice() != 0) {
+            NBTCompound fishMetaCompound = nbtItem.addCompound("FishMeta");
+            fishMetaCompound.setFloat("base", droppedItem.getBasicPrice());
+            changed = true;
+        }
+        if (droppedItem.getSizeBonus() != 0) {
+            NBTCompound fishMetaCompound = nbtItem.addCompound("FishMeta");
+            fishMetaCompound.setFloat("bonus", droppedItem.getSizeBonus());
+            changed = true;
+        }
+        if (changed) {
+            itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
+        }
+    }
+
+    private static boolean replaceSizeLore(String[] sizes, NBTItem nbtItem) {
+        if (sizes == null) return false;
+        float min = Float.parseFloat(sizes[0]);
+        float max = Float.parseFloat(sizes[1]);
+        if (max - min < 0) return false;
+        float size = (float) (min + Math.random() * (max - min));
+        String sizeText = String.format("%.1f", size);
+        NBTCompound nbtCompound = nbtItem.getCompound("display");
+        if (nbtCompound == null || !nbtCompound.hasKey("Lore")) return false;
+        List<String> lore = nbtCompound.getStringList("Lore");
+        lore.replaceAll(s -> s.replace("{size}", sizeText));
+        NBTCompound fishMetaCompound = nbtItem.addCompound("FishMeta");
+        fishMetaCompound.setFloat("size", size);
+        return true;
+    }
+
     public static Map<String, Object> compoundToMap(NBTCompound nbtCompound){
         Map<String, Object> map = new HashMap<>();
         nbtCompound.getKeys().forEach(key -> {
@@ -243,7 +275,7 @@ public class ItemStackUtil {
 
     public static String replaceLegacy(String s) {
         StringBuilder stringBuilder = new StringBuilder();
-        char[] chars = s.toCharArray();
+        char[] chars = s.replaceAll("&","§").toCharArray();
         for (int i = 0; i < chars.length; i++) {
             if (chars[i] == '§') {
                 if (i + 1 < chars.length) {

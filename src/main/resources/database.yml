@@ -19,21 +19,9 @@ MySQL:
     maximum-lifetime: 180000
     idle-timeout: 60000
 
-# SQLite settings
-SQLite:
-  file-name: data
-  table: customfishing_data
-
-# MongoDB settings
-MongoDB:
-  client: 'mongodb://localhost:3307'
-  database: customfishing
-  collection: customfishing.statistics
-
 # Redis server
 # Sync competition scores between servers without lag!
 Redis:
-  enable: false
   host: localhost
   port: 6379
   MaxTotal: 10

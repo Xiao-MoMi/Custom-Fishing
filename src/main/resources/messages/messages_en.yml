@@ -14,7 +14,6 @@ messages:
   lack-args: 'Insufficient parameters.'
   none-args: 'None arguments!'
   invalid-args: 'Invalid arguments!'
-  cooldown: 'You''re using the fish finder too fast!'
   possible-loots: 'Possible loots here: '
   split-char: ', '
   no-loot: 'There''s no fish in this place!'

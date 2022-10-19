@@ -40,6 +40,8 @@ public class ConfigUtil {
         CustomFishing.plugin.getTotemManager().load();
         CustomFishing.plugin.getIntegrationManager().unload();
         CustomFishing.plugin.getIntegrationManager().load();
+        CustomFishing.plugin.getSellManager().unload();
+        CustomFishing.plugin.getSellManager().load();
         try {
             Reflection.load();
         }

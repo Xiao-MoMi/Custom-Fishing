@@ -40,14 +40,14 @@ public class AdventureUtil {
     public static void consoleMessage(String s) {
         Audience au = CustomFishing.adventure.sender(Bukkit.getConsoleSender());
         MiniMessage mm = MiniMessage.miniMessage();
-        Component parsed = mm.deserialize(s);
+        Component parsed = mm.deserialize(ItemStackUtil.replaceLegacy(s));
         au.sendMessage(parsed);
     }
 
     public static void playerMessage(Player player, String s) {
         Audience au = CustomFishing.adventure.player(player);
         MiniMessage mm = MiniMessage.miniMessage();
-        Component parsed = mm.deserialize(s);
+        Component parsed = mm.deserialize(ItemStackUtil.replaceLegacy(s));
         au.sendMessage(parsed);
     }
 
@@ -55,7 +55,7 @@ public class AdventureUtil {
         Audience au = CustomFishing.adventure.player(player);
         MiniMessage mm = MiniMessage.miniMessage();
         Title.Times times = Title.Times.times(Duration.ofMillis(in), Duration.ofMillis(duration), Duration.ofMillis(out));
-        Title title = Title.title(mm.deserialize(s1), mm.deserialize(s2), times);
+        Title title = Title.title(mm.deserialize(ItemStackUtil.replaceLegacy(s1)), mm.deserialize(ItemStackUtil.replaceLegacy(s2)), times);
         au.showTitle(title);
     }
 
@@ -69,7 +69,7 @@ public class AdventureUtil {
     public static void playerActionbar(Player player, String s) {
         Audience au = CustomFishing.adventure.player(player);
         MiniMessage mm = MiniMessage.miniMessage();
-        au.sendActionBar(mm.deserialize(s));
+        au.sendActionBar(mm.deserialize(ItemStackUtil.replaceLegacy(s)));
     }
 
     public static void playerSound(Player player, Sound.Source source, Key key, float volume, float pitch) {

@@ -14,7 +14,6 @@ messages:
   lack-args: 'Parámetros insuficientes.'
   none-args: '¡Ningún argumento!'
   invalid-args: 'Argumentos no válidos'
-  cooldown: '¡Estás usando el buscador de peces demasiado rápido!'
   possible-loots: 'Posible pesca aquí: '
   split-char: ', '
   no-loot: '¡No hay peces en este lugar!'
