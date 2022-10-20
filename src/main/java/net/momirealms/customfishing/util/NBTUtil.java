@@ -50,7 +50,7 @@ public class NBTUtil {
             nbtCompound.getFloatList(key).add(Float.valueOf(value.substring(8)));
         } else if (value.startsWith("(Int) ")) {
             nbtCompound.getIntegerList(key).add(Integer.valueOf(value.substring(6)));
-        } else if (value.startsWith("(IntArray) ")){
+        } else if (value.startsWith("(IntArray) ")) {
             String[] split = value.substring(11).replace("[","").replace("]","").replaceAll("\\s", "").split(",");
             int[] array = Arrays.stream(split).mapToInt(Integer::parseInt).toArray();
             nbtCompound.getIntArrayList(key).add(array);

@@ -1,11 +1,11 @@
 # don't change
 config-version: '10'
 
-# cn/en/es
-lang: en
+# chinese/english/spanish
+lang: english
 
 # Plugin hooks
-integration:
+integrations:
   # Sell fish
   Vault: true
   # Skill-xp
@@ -28,6 +28,13 @@ integration:
   GriefPrevention: false
   CrashClaim: false
   BentoBox: false
+  # Mobs & Items
+  MythicMobs: false
+  # Items & Totem Blocks
+  ItemsAdder: false
+  Oraxen: false
+  # Items
+  MMOItems: false
 
 # Worlds where fishing mechanic takes effects
 worlds:
@@ -73,10 +80,14 @@ mechanics:
   # Fishing bag is a place where players can store their baits, utils, rods (Fish optional)
   fishing-bag:
     enable: true
-    # This would add additional NBT Tags to the fish
-    can-store-fish: false
+    bag-title: '<blue>{player}''s Fishing Bag'
+    # This would add additional NBT Tags to the loot
+    can-store-loot: false
     # File/MySql
     data-storage-mode: File
+    # Other whitelist-items
+    whitelist-items:
+      - fishing_rod
   # Lava fishing settings
   lava-fishing:
     # ticks

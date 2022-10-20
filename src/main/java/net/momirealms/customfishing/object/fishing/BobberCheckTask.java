@@ -3,6 +3,7 @@ package net.momirealms.customfishing.object.fishing;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.FishingManager;
+import net.momirealms.customfishing.manager.LootManager;
 import net.momirealms.customfishing.object.loot.Loot;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -71,7 +72,7 @@ public class BobberCheckTask extends BukkitRunnable {
         }
         if (fishHook.isInWater()) {
             Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.plugin, () -> {
-                List<Loot> possibleLoots = fishingManager.getPossibleWaterLootList(new FishingCondition(fishHook.getLocation(), player), false);
+                List<Loot> possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player), false, LootManager.WATERLOOTS.values());
                 fishingManager.getNextLoot(player, bonus, possibleLoots);
             });
             stop();
@@ -108,7 +109,7 @@ public class BobberCheckTask extends BukkitRunnable {
 
     private void randomTime() {
         Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.plugin, () -> {
-            List<Loot> possibleLoots = fishingManager.getPossibleLavaLootList(new FishingCondition(fishHook.getLocation(), player), false);
+            List<Loot> possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player), false, LootManager.LAVALOOTS.values());
             fishingManager.getNextLoot(player, bonus, possibleLoots);
         });
         cancelTask();

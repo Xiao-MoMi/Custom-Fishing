@@ -5,10 +5,12 @@ import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import net.momirealms.customfishing.util.JedisUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class ConfigManager {
@@ -51,6 +53,8 @@ public class ConfigManager {
     public static boolean addTagToFish;
     public static boolean logEarning;
     public static boolean vaultHook;
+    public static String fishingBagTitle;
+    public static HashSet<Material> bagWhiteListItems;
 
     public static void load() {
         ConfigUtil.update("config.yml");
@@ -107,7 +111,13 @@ public class ConfigManager {
         lavaMinTime = config.getInt("mechanics.lava-fishing.min-wait-time", 100);
         lavaMaxTime = config.getInt("mechanics.lava-fishing.max-wait-time", 600) - lavaMinTime;
 
-        addTagToFish = config.getBoolean("mechanics.fishing-bag.can-store-fish", false);
+        enableFishingBag = config.getBoolean("mechanics.fishing-bag.enable", true);
+        addTagToFish = config.getBoolean("mechanics.fishing-bag.can-store-loot", false);
+        fishingBagTitle = config.getString("mechanics.fishing-bag.bag-title", "Fishing Bag");
+        bagWhiteListItems = new HashSet<>();
+        for (String material : config.getStringList("mechanics.fishing-bag.whitelist-items")) {
+            bagWhiteListItems.add(Material.valueOf(material.toUpperCase()));
+        }
 
         useRedis = false;
         if (enableCompetition && config.getBoolean("mechanics.fishing-competition.redis", false)) {

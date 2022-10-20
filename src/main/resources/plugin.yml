@@ -31,7 +31,6 @@ commands:
   fishingbag:
     usage: /fishingbag open
     description: fishing bag command
-    permission: customfishing.fishingbag
   sellfish:
     usage: /sellfish
     description: fishing bag command
@@ -42,12 +41,24 @@ permissions:
     description: Gives access to all customfishing commands
     children:
       customfishing.admin: true
-      customfishing.fishingbag: true
       customfishing.sellfish: true
+      customfishing.fishingbag: true
 
   customfishing.admin:
     default: op
-  customfishing.fishingbag:
-    default: true
   customfishing.sellfish:
+    default: true
+  fishingbag.rows.1:
+    default: true
+  fishingbag.rows.2:
+    default: false
+  fishingbag.rows.3:
+    default: false
+  fishingbag.rows.4:
+    default: false
+  fishingbag.rows.5:
+    default: false
+  fishingbag.rows.6:
+    default: false
+  fishingbag.open:
     default: true

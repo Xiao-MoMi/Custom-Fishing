@@ -13,7 +13,8 @@ public class MessageManager {
     public static String unavailableArgs;
     public static String escape;
     public static String noPerm;
-    public static String notExist;
+    public static String itemNotExist;
+    public static String playerNotExist;
     public static String noConsole;
     public static String wrongAmount;
     public static String lackArgs;
@@ -42,10 +43,11 @@ public class MessageManager {
         prefix = config.getString("messages.prefix", "messages.prefix is missing");
         reload = config.getString("messages.reload", "messages.reload is missing");
         nonArgs = config.getString("messages.none-args", "messages.none-args is missing");
-        unavailableArgs = config.getString("messages.none-args", "messages.invalid-args is missing");
+        unavailableArgs = config.getString("messages.invalid-args", "messages.invalid-args is missing");
         escape = config.getString("messages.escape", "messages.escape is missing");
         noPerm = config.getString("messages.no-perm", "messages.no-perm is missing");
-        notExist = config.getString("messages.not-exist", "messages.not-exist is missing");
+        itemNotExist = config.getString("messages.item-not-exist", "messages.item-not-exist is missing");
+        playerNotExist = config.getString("messages.player-not-exist", "messages.player-not-exist is missing");
         noConsole = config.getString("messages.no-console", "messages.no-console is missing");
         wrongAmount = config.getString("messages.wrong-amount", "messages.wrong-amount is missing");
         lackArgs = config.getString("messages.lack-args", "messages.lack-args is missing");

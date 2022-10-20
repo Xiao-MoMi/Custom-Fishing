@@ -29,7 +29,7 @@ public class RodCommand extends AbstractSubCommand {
         else if (args.get(0).equalsIgnoreCase("get")) {
             if (sender instanceof Player player){
                 if (!BonusManager.RODITEMS.containsKey(args.get(1))){
-                    AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.notExist);
+                    AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.itemNotExist);
                     return true;
                 }
                 if (args.size() == 2){
@@ -58,7 +58,7 @@ public class RodCommand extends AbstractSubCommand {
                 return true;
             }
             if (!BonusManager.RODITEMS.containsKey(args.get(2))){
-                AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.notExist);
+                AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.itemNotExist);
                 return true;
             }
             if (args.size() == 3){

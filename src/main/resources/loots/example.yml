@@ -46,7 +46,7 @@ rainbow_fish:
     bonus: 0.3
 
   # Custom NBT tags
-  # If you are not sure about the NBT tag. You can use command '/cfishing import xxx'
+  # If you are not sure about the NBT tag. You can use command '/customfishing import xxx'
   # (Int) (Byte) (String) (Float) (String) (Double) (Short) (Long) (UUID) (Boolean) (IntArray) (ByteArray)
   nbt:
     itemsadder:
@@ -155,10 +155,6 @@ rainbow_fish:
 
     #Requires skill plugin
     skill-level: 10
-
-    #Requires WorldGuard
-    region:
-      - fishingpool
 
     #Requires Season Plugin
     season:

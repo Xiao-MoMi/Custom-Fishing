@@ -43,7 +43,7 @@ public final class CustomFishing extends JavaPlugin {
     private BonusManager bonusManager;
     private LootManager lootManager;
     private LayoutManager layoutManager;
-    private DataManager dataManager;
+    private BagDataManager bagDataManager;
     private TotemManager totemManager;
     private SellManager sellManager;
 
@@ -87,9 +87,9 @@ public final class CustomFishing extends JavaPlugin {
         this.bonusManager = new BonusManager();
         this.lootManager = new LootManager();
         this.layoutManager = new LayoutManager();
-        this.dataManager = new DataManager();
         this.totemManager = new TotemManager();
         this.sellManager = new SellManager();
+        this.bagDataManager = new BagDataManager();
         ConfigUtil.reload();
         registerCommands();
 
@@ -105,7 +105,7 @@ public final class CustomFishing extends JavaPlugin {
         this.bonusManager.unload();
         this.lootManager.unload();
         this.layoutManager.unload();
-        this.dataManager.unload();
+        this.bagDataManager.unload();
         this.totemManager.unload();
         this.sellManager.unload();
         if (adventure != null) {
@@ -150,8 +150,8 @@ public final class CustomFishing extends JavaPlugin {
         return layoutManager;
     }
 
-    public DataManager getDataManager() {
-        return dataManager;
+    public BagDataManager getDataManager() {
+        return bagDataManager;
     }
 
     public TotemManager getTotemManager() {
@@ -160,5 +160,9 @@ public final class CustomFishing extends JavaPlugin {
 
     public SellManager getSellManager() {
         return sellManager;
+    }
+
+    public BagDataManager getBagDataManager() {
+        return bagDataManager;
     }
 }

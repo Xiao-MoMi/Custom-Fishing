@@ -42,6 +42,8 @@ public class ConfigUtil {
         CustomFishing.plugin.getIntegrationManager().load();
         CustomFishing.plugin.getSellManager().unload();
         CustomFishing.plugin.getSellManager().load();
+        CustomFishing.plugin.getBagDataManager().unload();
+        CustomFishing.plugin.getBagDataManager().load();
         try {
             Reflection.load();
         }
@@ -56,5 +58,18 @@ public class ConfigUtil {
         } catch (IOException e){
             Log.warn(e.getMessage());
         }
+    }
+
+    public static YamlConfiguration readData(File file) {
+        if (!file.exists()) {
+            try {
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to generate data files!</red>");
+            }
+        }
+        return YamlConfiguration.loadConfiguration(file);
     }
 }

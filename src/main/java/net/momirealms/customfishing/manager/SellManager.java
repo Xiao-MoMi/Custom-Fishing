@@ -1,15 +1,21 @@
 package net.momirealms.customfishing.manager;
 
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.integration.VaultHook;
+import net.momirealms.customfishing.integration.papi.PlaceholderManager;
+import net.momirealms.customfishing.listener.InventoryListener;
+import net.momirealms.customfishing.listener.WindowPacketListener;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.loot.Item;
-import net.momirealms.customfishing.object.sell.ContainerPacketListener;
-import net.momirealms.customfishing.object.sell.InventoryListener;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;
@@ -21,7 +27,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -29,7 +37,7 @@ import java.util.*;
 
 public class SellManager extends Function {
 
-    private final ContainerPacketListener containerPacketListener;
+    private final WindowPacketListener windowPacketListener;
     private final InventoryListener inventoryListener;
     public static String formula;
     public static String title;
@@ -56,7 +64,7 @@ public class SellManager extends Function {
     private final HashMap<Player, Long> coolDown;
 
     public SellManager() {
-        this.containerPacketListener = new ContainerPacketListener();
+        this.windowPacketListener = new WindowPacketListener(this);
         this.inventoryListener = new InventoryListener(this);
         this.inventoryCache = new HashMap<>();
         this.coolDown = new HashMap<>();
@@ -65,7 +73,7 @@ public class SellManager extends Function {
     @Override
     public void load() {
         loadConfig();
-        CustomFishing.protocolManager.addPacketListener(containerPacketListener);
+        CustomFishing.protocolManager.addPacketListener(windowPacketListener);
         Bukkit.getPluginManager().registerEvents(inventoryListener, CustomFishing.plugin);
     }
 
@@ -75,7 +83,7 @@ public class SellManager extends Function {
             player.closeInventory();
         }
         this.inventoryCache.clear();
-        CustomFishing.protocolManager.removePacketListener(containerPacketListener);
+        CustomFishing.protocolManager.removePacketListener(windowPacketListener);
         HandlerList.unregisterAll(inventoryListener);
     }
 
@@ -146,7 +154,7 @@ public class SellManager extends Function {
 
     public void openGuiForPlayer(Player player) {
         player.closeInventory();
-        Inventory inventory = Bukkit.createInventory(player, guiSize, "{CustomFishing}");
+        Inventory inventory = Bukkit.createInventory(player, guiSize, "{CustomFishing_Sell}");
         for (Map.Entry<Integer, ItemStack> entry : guiItems.entrySet()) {
             inventory.setItem(entry.getKey(), entry.getValue());
         }
@@ -155,7 +163,8 @@ public class SellManager extends Function {
         if (openKey != null) AdventureUtil.playerSound(player, soundSource, openKey, 1, 1);
     }
 
-    public void onOpen(InventoryOpenEvent event) {
+    @Override
+    public void onOpenInventory(InventoryOpenEvent event) {
         final Player player = (Player) event.getPlayer();
         Inventory inventory = inventoryCache.get(player);
         if (inventory == null) return;
@@ -166,7 +175,8 @@ public class SellManager extends Function {
         }
     }
 
-    public void onClick(InventoryClickEvent event) {
+    @Override
+    public void onClickInventory(InventoryClickEvent event) {
         final Player player = (Player) event.getView().getPlayer();
         Inventory inventory = inventoryCache.get(player);
         if (inventory == null) return;
@@ -214,7 +224,8 @@ public class SellManager extends Function {
         return false;
     }
 
-    public void onClose(InventoryCloseEvent event) {
+    @Override
+    public void onCloseInventory(InventoryCloseEvent event) {
         final Player player = (Player) event.getPlayer();
         Inventory inventory = inventoryCache.remove(player);
         if (inventory == null) return;
@@ -300,5 +311,25 @@ public class SellManager extends Function {
         }
         if (successKey != null) AdventureUtil.playerSound(player, soundSource, successKey, 1, 1);
         if (ConfigManager.vaultHook) VaultHook.economy.depositPlayer(player, earnings);
+    }
+
+    @Override
+    public void onWindowTitlePacketSend(PacketContainer packet, Player player) {
+        StructureModifier<WrappedChatComponent> wrappedChatComponentStructureModifier = packet.getChatComponents();
+        WrappedChatComponent component = wrappedChatComponentStructureModifier.getValues().get(0);
+        if (component.getJson().equals("{\"text\":\"{CustomFishing_Sell}\"}")) {
+            PlaceholderManager placeholderManager = CustomFishing.plugin.getIntegrationManager().getPlaceholderManager();
+            String text = SellManager.title.replace("{player}", player.getName());
+            if (placeholderManager != null) placeholderManager.parse(player, text);
+            wrappedChatComponentStructureModifier.write(0,
+                    WrappedChatComponent.fromJson(
+                            GsonComponentSerializer.gson().serialize(
+                                    MiniMessage.miniMessage().deserialize(
+                                            ItemStackUtil.replaceLegacy(text)
+                                    )
+                            )
+                    )
+            );
+        }
     }
 }

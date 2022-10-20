@@ -53,7 +53,6 @@ public class TextCache {
         return latestValue;
     }
 
-    //返回更新结果是否不一致
     public boolean update() {
         String string = originalValue;
         if (ownerPlaceholders.length != 0) {

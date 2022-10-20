@@ -10,6 +10,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.event.*;
 import net.momirealms.customfishing.competition.Competition;
+import net.momirealms.customfishing.data.PlayerBagData;
 import net.momirealms.customfishing.integration.AntiGriefInterface;
 import net.momirealms.customfishing.integration.MobInterface;
 import net.momirealms.customfishing.integration.item.McMMOTreasure;
@@ -39,6 +40,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.Damageable;
@@ -198,7 +200,23 @@ public class FishingManager extends Function {
             }
 
             if (ConfigManager.enableFishingBag && noBait) {
-                //育儿袋
+                PlayerBagData playerBagData = BagDataManager.dataCache.get(player.getUniqueId());
+                if (playerBagData != null) {
+                    Inventory baitInv = playerBagData.getInventory();
+                    for (int i = 0; i < baitInv.getSize(); i++) {
+                        ItemStack itemStack = baitInv.getItem(i);
+                        if (itemStack == null || itemStack.getType() == Material.AIR) continue;
+                        NBTItem nbtItem = new NBTItem(itemStack);
+                        NBTCompound cfCompound = nbtItem.getCompound("CustomFishing");
+                        if (cfCompound == null) continue;
+                        if (!cfCompound.getString("type").equals("bait")) continue;
+                        Bonus baitBonus = BonusManager.BAIT.get(cfCompound.getString("id"));
+                        if (baitBonus != null) {
+                            initialBonus.addBonus(baitBonus);
+                            itemStack.setAmount(itemStack.getAmount() - 1);
+                        }
+                    }
+                }
             }
 
             RodCastEvent rodCastEvent = new RodCastEvent(player, initialBonus);
@@ -388,9 +406,11 @@ public class FishingManager extends Function {
             return;
         }
 
+        Bonus bonus = nextBonus.remove(player);
+
         if (Competition.currentCompetition != null){
             float score = (float) (droppedItem.getScore() * scoreMultiplier);
-            Competition.currentCompetition.refreshData(player, score, isDouble);
+            Competition.currentCompetition.refreshData(player, (float) (score * bonus.getScore()), isDouble);
             Competition.currentCompetition.getBossBarManager().tryJoin(player);
         }
 
@@ -427,6 +447,8 @@ public class FishingManager extends Function {
         if (fishResultEvent.isCancelled()) {
             return true;
         }
+
+        nextBonus.remove(player);
 
         if (Competition.currentCompetition != null){
             Competition.currentCompetition.refreshData(player, 0, isDouble);
@@ -469,6 +491,8 @@ public class FishingManager extends Function {
             return;
         }
 
+        nextBonus.remove(player);
+
         if (Competition.currentCompetition != null){
             Competition.currentCompetition.refreshData(player, 0, isDouble);
             Competition.currentCompetition.getBossBarManager().tryJoin(player);
@@ -489,9 +513,11 @@ public class FishingManager extends Function {
             return;
         }
 
-        if (Competition.currentCompetition != null){
+        Bonus bonus = nextBonus.remove(player);
+
+        if (Competition.currentCompetition != null) {
             float score = (float) (loot.getScore() * scoreMultiplier);
-            Competition.currentCompetition.refreshData(player, score, false);
+            Competition.currentCompetition.refreshData(player, (float) (score * bonus.getScore()), false);
             Competition.currentCompetition.getBossBarManager().tryJoin(player);
         }
 
@@ -524,6 +550,9 @@ public class FishingManager extends Function {
     }
 
     private void sendSuccessTitle(Player player, String loot) {
+
+        nextLoot.remove(player);
+
         AdventureUtil.playerTitle(
                 player,
                 ConfigManager.successTitle[new Random().nextInt(ConfigManager.successTitle.length)]
@@ -591,6 +620,9 @@ public class FishingManager extends Function {
                 action.doOn(player, null);
         }
 
+        nextLoot.remove(player);
+        nextBonus.remove(player);
+
         AdventureUtil.playerTitle(
                 player,
                 ConfigManager.failureTitle[new Random().nextInt(ConfigManager.failureTitle.length)],
@@ -654,31 +686,10 @@ public class FishingManager extends Function {
         }
     }
 
-    public List<Loot> getPossibleWaterLootList(FishingCondition fishingCondition, boolean finder) {
+    public List<Loot> getPossibleLootList(FishingCondition fishingCondition, boolean finder, Collection<Loot> values) {
         List<Loot> available = new ArrayList<>();
         outer:
-            for (Loot loot : LootManager.WATERLOOTS.values()) {
-                if (finder && !loot.isShowInFinder()) continue;
-                RequirementInterface[] requirements = loot.getRequirements();
-                if (requirements == null){
-                    available.add(loot);
-                }
-                else {
-                    for (RequirementInterface requirement : requirements){
-                        if (!requirement.isConditionMet(fishingCondition)){
-                            continue outer;
-                        }
-                    }
-                    available.add(loot);
-                }
-            }
-        return available;
-    }
-
-    public List<Loot> getPossibleLavaLootList(FishingCondition fishingCondition, boolean finder) {
-        List<Loot> available = new ArrayList<>();
-        outer:
-            for (Loot loot : LootManager.LAVALOOTS.values()) {
+            for (Loot loot : values) {
                 if (finder && !loot.isShowInFinder()) continue;
                 RequirementInterface[] requirements = loot.getRequirements();
                 if (requirements == null){
@@ -756,7 +767,9 @@ public class FishingManager extends Function {
 
     private void useFinder(Player player) {
         if (isCoolDown(player, 1000)) return;
-        List<Loot> possibleLoots = getPossibleWaterLootList(new FishingCondition(player.getLocation(), player), true);
+        FishingCondition fishingCondition = new FishingCondition(player.getLocation(), player);
+        List<Loot> possibleLoots = getPossibleLootList(fishingCondition, true, LootManager.WATERLOOTS.values());
+        possibleLoots.addAll(getPossibleLootList(fishingCondition, true, LootManager.LAVALOOTS.values()));
 
         FishFinderEvent fishFinderEvent = new FishFinderEvent(player, possibleLoots);
         Bukkit.getPluginManager().callEvent(fishFinderEvent);
@@ -782,7 +795,6 @@ public class FishingManager extends Function {
             layout = loot.getLayout()[new Random().nextInt(loot.getLayout().length)];
         }
         else {
-            //Not null
             layout = (Layout) LayoutManager.LAYOUTS.values().stream().toArray()[new Random().nextInt(LayoutManager.LAYOUTS.values().size())];
         }
 

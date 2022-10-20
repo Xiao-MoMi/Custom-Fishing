@@ -32,7 +32,7 @@ public class LootCommand extends AbstractSubCommand {
         else if (args.get(0).equalsIgnoreCase("get")) {
             if (sender instanceof Player player){
                 if (!loots().contains(args.get(1))){
-                    AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.notExist);
+                    AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.itemNotExist);
                     return true;
                 }
                 if (args.size() == 2){
@@ -61,7 +61,7 @@ public class LootCommand extends AbstractSubCommand {
                 return true;
             }
             if (!loots().contains(args.get(2))){
-                AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.notExist);
+                AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.itemNotExist);
                 return true;
             }
             if (args.size() == 3){

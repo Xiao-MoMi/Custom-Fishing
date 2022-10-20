@@ -48,92 +48,100 @@ public class IntegrationManager extends Function {
             this.placeholderManager = new PlaceholderManager();
         }
 
+        YamlConfiguration config = ConfigUtil.getConfig("config.yml");
+
+        this.blockInterface = new VanillaBlockImpl();
+
         List<ItemInterface> itemInterfaceList = new ArrayList<>();
         itemInterfaceList.add(new CustomFishingItemImpl());
-        if (pluginManager.getPlugin("ItemsAdder") != null) itemInterfaceList.add(new ItemsAdderItemImpl());
-        if (pluginManager.getPlugin("Oraxen") != null) itemInterfaceList.add(new OraxenItemImpl());
-        if (pluginManager.getPlugin("MMOItems") != null) itemInterfaceList.add(new MMOItemsItemImpl());
-        if (pluginManager.getPlugin("MythicMobs") != null) {
+        if (config.getBoolean("integrations.ItemsAdder") && pluginManager.getPlugin("ItemsAdder") != null) {
+            this.blockInterface = new ItemsAdderBlockImpl();
+            itemInterfaceList.add(new ItemsAdderItemImpl());
+            hookMessage("ItemsAdder");
+        }
+        if (config.getBoolean("integrations.Oraxen") && pluginManager.getPlugin("Oraxen") != null) {
+            this.blockInterface = new OraxenBlockImpl();
+            itemInterfaceList.add(new OraxenItemImpl());
+            hookMessage("Oraxen");
+        }
+        if (config.getBoolean("integrations.MMOItems") && pluginManager.getPlugin("MMOItems") != null) {
+            itemInterfaceList.add(new MMOItemsItemImpl());
+            hookMessage("MMOItems");
+        }
+        if (config.getBoolean("integrations.MythicMobs") && pluginManager.getPlugin("MythicMobs") != null) {
             itemInterfaceList.add(new MythicMobsItemImpl());
             this.mobInterface = new MythicMobsMobImpl();
+            hookMessage("MythicMobs");
         }
         this.itemInterfaces = itemInterfaceList.toArray(new ItemInterface[0]);
 
-        if (pluginManager.getPlugin("ItemsAdder") != null) {
-            this.blockInterface = new ItemsAdderBlockImpl();
-        } else if (pluginManager.getPlugin("Oraxen") != null) {
-            this.blockInterface = new OraxenBlockImpl();
-        } else {
-            this.blockInterface = new VanillaBlockImpl();
-        }
-
         if (pluginManager.getPlugin("eco") != null) {
             EcoItemRegister.registerItems();
+            hookMessage("eco");
         }
 
-        YamlConfiguration config = ConfigUtil.getConfig("config.yml");
-        if (config.getBoolean("integration.RealisticSeasons", false) && pluginManager.getPlugin("RealisticSeasons") != null) {
+        if (config.getBoolean("integrations.RealisticSeasons", false) && pluginManager.getPlugin("RealisticSeasons") != null) {
             this.seasonInterface = new RealisticSeasonsImpl();
             hookMessage("RealisticSeasons");
-        } else if (config.getBoolean("integration.CustomCrops", false) && pluginManager.getPlugin("CustomCrops") != null) {
+        } else if (config.getBoolean("integrations.CustomCrops", false) && pluginManager.getPlugin("CustomCrops") != null) {
             this.seasonInterface = new CustomCropsSeasonImpl();
             hookMessage("CustomCrops");
         }
-        if (config.getBoolean("integration.mcMMO", false) && Bukkit.getPluginManager().getPlugin("mcMMO") != null) {
+        if (config.getBoolean("integrations.mcMMO", false) && Bukkit.getPluginManager().getPlugin("mcMMO") != null) {
             this.skillInterface = new mcMMOImpl();
             hookMessage("mcMMO");
-        } else if (config.getBoolean("integration.MMOCore", false) && Bukkit.getPluginManager().getPlugin("MMOCore") != null) {
+        } else if (config.getBoolean("integrations.MMOCore", false) && Bukkit.getPluginManager().getPlugin("MMOCore") != null) {
             this.skillInterface = new MMOCoreImpl();
             hookMessage("MMOCore");
-        } else if (config.getBoolean("integration.AureliumSkills", false) && Bukkit.getPluginManager().getPlugin("AureliumSkills") != null) {
+        } else if (config.getBoolean("integrations.AureliumSkills", false) && Bukkit.getPluginManager().getPlugin("AureliumSkills") != null) {
             this.skillInterface = new AureliumsImpl();
             hookMessage("AureliumSkills");
-        } else if (config.getBoolean("integration.EcoSkills", false) && Bukkit.getPluginManager().getPlugin("EcoSkills") != null) {
+        } else if (config.getBoolean("integrations.EcoSkills", false) && Bukkit.getPluginManager().getPlugin("EcoSkills") != null) {
             this.skillInterface = new EcoSkillsImpl();
             hookMessage("EcoSkills");
-        } else if (config.getBoolean("integration.JobsReborn", false) && Bukkit.getPluginManager().getPlugin("Jobs") != null) {
+        } else if (config.getBoolean("integrations.JobsReborn", false) && Bukkit.getPluginManager().getPlugin("Jobs") != null) {
             this.skillInterface = new JobsRebornImpl();
             hookMessage("JobsReborn");
         }
 
         List<AntiGriefInterface> antiGriefsList = new ArrayList<>();
-        if (config.getBoolean("integration.Residence",false)){
+        if (config.getBoolean("integrations.Residence",false)){
             if (Bukkit.getPluginManager().getPlugin("Residence") == null) Log.warn("Failed to initialize Residence!");
-            else {antiGriefsList.add(new net.momirealms.customfishing.integration.antigrief.ResidenceHook());hookMessage("Residence");}
+            else {antiGriefsList.add(new ResidenceHook());hookMessage("Residence");}
         }
-        if (config.getBoolean("integration.Kingdoms",false)){
+        if (config.getBoolean("integrations.Kingdoms",false)){
             if (Bukkit.getPluginManager().getPlugin("Kingdoms") == null) Log.warn("Failed to initialize Kingdoms!");
             else {antiGriefsList.add(new KingdomsXHook());hookMessage("Kingdoms");}
         }
-        if (config.getBoolean("integration.WorldGuard",false)){
+        if (config.getBoolean("integrations.WorldGuard",false)){
             if (Bukkit.getPluginManager().getPlugin("WorldGuard") == null) Log.warn("Failed to initialize WorldGuard!");
             else {antiGriefsList.add(new WorldGuardHook());hookMessage("WorldGuard");}
         }
-        if (config.getBoolean("integration.GriefDefender",false)){
+        if (config.getBoolean("integrations.GriefDefender",false)){
             if(Bukkit.getPluginManager().getPlugin("GriefDefender") == null) Log.warn("Failed to initialize GriefDefender!");
             else {antiGriefsList.add(new GriefDefenderHook());hookMessage("GriefDefender");}
         }
-        if (config.getBoolean("integration.PlotSquared",false)){
+        if (config.getBoolean("integrations.PlotSquared",false)){
             if(Bukkit.getPluginManager().getPlugin("PlotSquared") == null) Log.warn("Failed to initialize PlotSquared!");
             else {antiGriefsList.add(new PlotSquaredHook());hookMessage("PlotSquared");}
         }
-        if (config.getBoolean("integration.Towny",false)){
+        if (config.getBoolean("integrations.Towny",false)){
             if (Bukkit.getPluginManager().getPlugin("Towny") == null) Log.warn("Failed to initialize Towny!");
             else {antiGriefsList.add(new TownyHook());hookMessage("Towny");}
         }
-        if (config.getBoolean("integration.Lands",false)){
+        if (config.getBoolean("integrations.Lands",false)){
             if (Bukkit.getPluginManager().getPlugin("Lands") == null) Log.warn("Failed to initialize Lands!");
             else {antiGriefsList.add(new LandsHook());hookMessage("Lands");}
         }
-        if (config.getBoolean("integration.GriefPrevention",false)){
+        if (config.getBoolean("integrations.GriefPrevention",false)){
             if (Bukkit.getPluginManager().getPlugin("GriefPrevention") == null) Log.warn("Failed to initialize GriefPrevention!");
             else {antiGriefsList.add(new GriefPreventionHook());hookMessage("GriefPrevention");}
         }
-        if (config.getBoolean("integration.CrashClaim",false)){
+        if (config.getBoolean("integrations.CrashClaim",false)){
             if (Bukkit.getPluginManager().getPlugin("CrashClaim") == null) Log.warn("Failed to initialize CrashClaim!");
             else {antiGriefsList.add(new CrashClaimHook());hookMessage("CrashClaim");}
         }
-        if (config.getBoolean("integration.BentoBox",false)){
+        if (config.getBoolean("integrations.BentoBox",false)){
             if (Bukkit.getPluginManager().getPlugin("BentoBox") == null) Log.warn("Failed to initialize BentoBox!");
             else {antiGriefsList.add(new BentoBoxHook());hookMessage("BentoBox");}
         }
@@ -190,7 +198,7 @@ public class IntegrationManager extends Function {
 
     @NotNull
     public ItemStack build(String key) {
-        for (ItemInterface itemInterface : itemInterfaces) {
+        for (ItemInterface itemInterface : getItemInterfaces()) {
             ItemStack itemStack = itemInterface.build(key);
             if (itemStack != null) {
                 return itemStack;
