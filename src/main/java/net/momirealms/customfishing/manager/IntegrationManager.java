@@ -52,6 +52,7 @@ public class IntegrationManager extends Function {
     private BlockInterface blockInterface;
     private PlaceholderManager placeholderManager;
     private AntiGriefInterface[] antiGriefs;
+    private VaultHook vaultHook;
 
     @Override
     public void load() {
@@ -67,8 +68,9 @@ public class IntegrationManager extends Function {
 
         YamlConfiguration config = ConfigUtil.getConfig("config.yml");
 
-        if (ConfigManager.vaultHook) {
-            if (!VaultHook.initialize()) {
+        if (ConfigManager.vaultHook && pluginManager.getPlugin("Vault") != null) {
+            vaultHook = new VaultHook();
+            if (!vaultHook.initialize()) {
                 ConfigManager.vaultHook = false;
                 Log.warn("Failed to initialize Vault!");
             }
@@ -234,5 +236,10 @@ public class IntegrationManager extends Function {
 
     private void hookMessage(String plugin){
         AdventureUtil.consoleMessage("[CustomFishing] <white>" + plugin + " Hooked!");
+    }
+
+    @Nullable
+    public VaultHook getVaultHook() {
+        return vaultHook;
     }
 }

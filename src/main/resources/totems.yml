@@ -1,4 +1,4 @@
-primary_fishing_totem:
+double_loot_fishing_totem:
   # Totem Core Block ID
   core:
     - o
@@ -11,9 +11,8 @@ primary_fishing_totem:
   hologram:
     enable: true
     text:
-      - '<white>{time}s <gray>/ <white>{max_time}s'
       - '<#87CEFA>Fishing Totem'
-
+      - '<white>{time}s <gray>/ <white>{max_time}s'
     y-offset: 3.8
 
   # Potion effect type and its amplifier
@@ -26,23 +25,22 @@ primary_fishing_totem:
 
   # placeholders: {activator} {player} {world} {x} {y} {z}
   action:
-    commands-activator:
-      - ''
+    #commands-activator: []
     messages-activator:
-      - ''
-    commands-nearby-players:
-      - ''
+      - You activated a double loot totem!
+    #commands-nearby-players: []
     messages-nearby-players:
-      - ''
+      - '{activator} activated a fishing totem!'
+      - 'Players inside of the effective range would get fishing buffs!'
 
 
   # The layout of the totem
-  # The greater the layer is, the higher the y position is
+  # The greater the layer number is, the higher the y position is
   # Totem core can be put anywhere in the layout
-  # “*” represents any type of block is allowed here
-  # “()“ represents the block is protected and will not be removed when activating
-  # “>“ represents the block would turn into another block after activating
-  # “|“ represents alternative block choice for this place
+  # “*” represents any type of block is allowed here [example *]
+  # “()“ represents the block is protected and will not be removed when activating [example (a)]
+  # “>“ represents the block would turn into another block after activating [example: a>b]
+  # “|“ represents alternative block choice for this place  [example a|b>c]
   layer:
     4:
       - '(p)   (o)   (p)'

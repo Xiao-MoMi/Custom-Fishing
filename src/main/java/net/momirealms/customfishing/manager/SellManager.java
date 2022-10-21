@@ -27,7 +27,7 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.integration.VaultHook;
+import net.momirealms.customfishing.api.event.SellFishEvent;
 import net.momirealms.customfishing.integration.papi.PlaceholderManager;
 import net.momirealms.customfishing.listener.InventoryListener;
 import net.momirealms.customfishing.listener.WindowPacketListener;
@@ -50,6 +50,8 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class SellManager extends Function {
@@ -77,14 +79,17 @@ public class SellManager extends Function {
     public static HashMap<Integer, ItemStack> guiItems;
     public static HashSet<Integer> functionIconSlots;
     public static HashMap<Material, Float> vanillaPrices = new HashMap<>();
+    public static boolean sellLimitation;
+    public static int upperLimit;
     private final HashMap<Player, Inventory> inventoryCache;
-    private final HashMap<Player, Long> coolDown;
+    private HashMap<String, Double> todayEarning;
+    private int date;
 
     public SellManager() {
         this.windowPacketListener = new WindowPacketListener(this);
         this.inventoryListener = new InventoryListener(this);
         this.inventoryCache = new HashMap<>();
-        this.coolDown = new HashMap<>();
+
     }
 
     @Override
@@ -92,6 +97,41 @@ public class SellManager extends Function {
         loadConfig();
         CustomFishing.protocolManager.addPacketListener(windowPacketListener);
         Bukkit.getPluginManager().registerEvents(inventoryListener, CustomFishing.plugin);
+        if (sellLimitation) {
+            readLimitationCache();
+        }
+    }
+
+    private void readLimitationCache() {
+        this.todayEarning = new HashMap<>();
+        YamlConfiguration data = ConfigUtil.readData(new File(CustomFishing.plugin.getDataFolder(), "sell-cache.yml"));
+        Calendar calendar = Calendar.getInstance();
+        date = calendar.get(Calendar.DATE);
+        int lastDate = data.getInt("date");
+        if (lastDate == date) {
+            ConfigurationSection configurationSection = data.getConfigurationSection("player_data");
+            if (configurationSection != null) {
+                for (String player : configurationSection.getKeys(false)) {
+                    todayEarning.put(player, configurationSection.getDouble(player));
+                }
+            }
+        }
+    }
+
+    private void unloadLimitationCache() {
+        YamlConfiguration data = new YamlConfiguration();
+        data.set("date", date);
+        for (Map.Entry<String, Double> entry : todayEarning.entrySet()) {
+            data.set("player_data." + entry.getKey(), entry.getValue());
+        }
+        try {
+            data.save(new File(CustomFishing.plugin.getDataFolder(), "sell-cache.yml"));
+        }
+        catch (IOException e) {
+            AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to unload earnings data!");
+            e.printStackTrace();
+        }
+        this.todayEarning.clear();
     }
 
     @Override
@@ -102,6 +142,7 @@ public class SellManager extends Function {
         this.inventoryCache.clear();
         CustomFishing.protocolManager.removePacketListener(windowPacketListener);
         HandlerList.unregisterAll(inventoryListener);
+        if (sellLimitation) unloadLimitationCache();
     }
 
     private void loadConfig() {
@@ -110,6 +151,8 @@ public class SellManager extends Function {
         vanillaPrices = new HashMap<>();
         YamlConfiguration config = ConfigUtil.getConfig("sell-fish.yml");
         formula = config.getString("price-formula", "{base} + {bonus} * {size}");
+        sellLimitation = config.getBoolean("sell-limitation.enable", false);
+        upperLimit = config.getInt("sell-limitation.upper-limit", 10000);
         title = config.getString("container-title");
         guiSize = config.getInt("rows") * 9;
         openKey = config.contains("sounds.open") ? Key.key(config.getString("sounds.open")) : null;
@@ -207,12 +250,38 @@ public class SellManager extends Function {
                 List<ItemStack> playerItems = getPlayerItems(inventory);
                 float totalPrice = getTotalPrice(playerItems);
                 if (totalPrice > 0) {
+
+                    if (sellLimitation) {
+                        Calendar calendar = Calendar.getInstance();
+                        int currentDate = calendar.get(Calendar.DATE);
+                        if (currentDate != date) {
+                            date = currentDate;
+                            todayEarning.clear();
+                        }
+                    }
+
+                    double earnings = Optional.ofNullable(todayEarning.get(player.getName())).orElse(0d);
+                    if (earnings + totalPrice > upperLimit) {
+                        inventory.close();
+                        AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.reachSellLimit);
+                        if (denyKey != null) AdventureUtil.playerSound(player, soundSource, denyKey, 1, 1);
+                        return;
+                    }
+
+                    SellFishEvent sellFishEvent = new SellFishEvent(player, totalPrice);
+                    Bukkit.getPluginManager().callEvent(sellFishEvent);
+                    if (sellFishEvent.isCancelled()) {
+                        return;
+                    }
+
                     for (ItemStack playerItem : playerItems) {
                         if (playerItem == null || playerItem.getType() == Material.AIR) continue;
                         if (getSingleItemPrice(playerItem) == 0) continue;
                         playerItem.setAmount(0);
                     }
-                    doActions(player, totalPrice);
+
+                    todayEarning.put(player.getName(), earnings + totalPrice);
+                    doActions(player, sellFishEvent.getMoney(), upperLimit - earnings - totalPrice);
                     inventory.close();
                 }
                 else {
@@ -239,7 +308,6 @@ public class SellManager extends Function {
         final Player player = (Player) event.getPlayer();
         Inventory inventory = inventoryCache.remove(player);
         if (inventory == null) return;
-        coolDown.remove(player);
         if (event.getInventory() == inventory) {
             returnItems(getPlayerItems(event.getInventory()), player);
             if (closeKey != null) AdventureUtil.playerSound(player, soundSource, closeKey, 1, 1);
@@ -296,31 +364,34 @@ public class SellManager extends Function {
         return price;
     }
 
-    private void doActions(Player player, float earnings) {
+    private void doActions(Player player, float earnings, double remains) {
         if (titleNotification != null) AdventureUtil.playerTitle(
                 player,
-                titleNotification.replace("{money}", String.format("%.2f", earnings)),
-                subtitleNotification.replace("{money}", String.format("%.2f", earnings)),
+                titleNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", String.format("%.2f", remains)),
+                subtitleNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", String.format("%.2f", remains)),
                 titleIn * 50,
                 titleStay * 50,
                 titleOut * 50
         );
         if (msgNotification != null) {
-            AdventureUtil.playerMessage(player, msgNotification.replace("{money}", String.format("%.2f", earnings)));
+            AdventureUtil.playerMessage(player, msgNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", String.format("%.2f", remains)));
         }
         if (actionbarNotification != null) {
-            AdventureUtil.playerActionbar(player, actionbarNotification.replace("{money}", String.format("%.2f", earnings)));
+            AdventureUtil.playerActionbar(player, actionbarNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", String.format("%.2f", remains)));
         }
         if (commands != null) {
             for (String cmd : commands) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("{player}", player.getName()).replace("{money}", String.format("%.2f", earnings)));
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("{player}", player.getName()).replace("{money}", String.format("%.2f", earnings)).replace("{remains}", String.format("%.2f", remains)));
             }
         }
         if (ConfigManager.logEarning) {
             AdventureUtil.consoleMessage("[CustomFishing] Log: " + player.getName() + " earns " + String.format("%.2f", earnings) + " from selling fish");
         }
         if (successKey != null) AdventureUtil.playerSound(player, soundSource, successKey, 1, 1);
-        if (ConfigManager.vaultHook) VaultHook.economy.depositPlayer(player, earnings);
+        if (ConfigManager.vaultHook) {
+            assert CustomFishing.plugin.getIntegrationManager().getVaultHook() != null;
+            CustomFishing.plugin.getIntegrationManager().getVaultHook().getEconomy().depositPlayer(player, earnings);
+        }
     }
 
     @Override

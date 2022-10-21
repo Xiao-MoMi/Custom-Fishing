@@ -77,7 +77,7 @@ public class BagDataManager extends Function {
                 dataStorageInterface.saveBagData(playerBagData);
             }
             AdventureUtil.consoleMessage("[CustomFishing] Fishing bag data saving for " + dataCache.size() + " online players...");
-        }, 6000, 6000);
+        }, 12000, 12000);
     }
 
     @Override

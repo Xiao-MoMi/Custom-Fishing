@@ -54,6 +54,7 @@ public class MessageManager {
     public static String noScore;
     public static String noRod;
     public static String hookOther;
+    public static String reachSellLimit;
 
     public static void load() {
         YamlConfiguration config = ConfigUtil.getConfig("messages" + File.separator + "messages_" + ConfigManager.lang +".yml");
@@ -87,5 +88,6 @@ public class MessageManager {
         noScore = config.getString("messages.no-score", "messages.no-score is missing");
         noRod = config.getString("messages.no-rod", "messages.no-rod is missing");
         hookOther = config.getString("messages.hook-other-entity","messages.hook-other-entity is missing");
+        reachSellLimit = config.getString("messages.reach-sell-limit","messages.reach-sell-limit is missing");
     }
 }

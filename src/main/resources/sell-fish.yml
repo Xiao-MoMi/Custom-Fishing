@@ -20,17 +20,17 @@ sounds:
 actions:
   message:
     enable: true
-    text: 'You earned {money} from selling the fish'
+    text: 'You earned {money}$ from selling the fish! You can still gain {remains}$ from selling fish today'
   title:
     enable: true
     title: '<green>Success'
-    subtitle: 'You earned {money} from selling the fish'
+    subtitle: 'You earned {money}$ from selling the fish'
     in: 20
     stay: 40
     out: 20
   actionbar:
     enable: true
-    text: 'You earned {money} from selling the fish'
+    text: 'You earned {money}$ from selling the fish'
   commands:
     enable: false
     value:

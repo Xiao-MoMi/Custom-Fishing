@@ -115,6 +115,7 @@ public class BonusManager extends Function {
                         case "difficulty" -> bonus.setDifficulty(config.getInt(key + "." + level + ".difficulty"));
                         case "double-loot" -> bonus.setDoubleLoot(config.getDouble(key + "." + level + ".double-loot"));
                         case "score" -> bonus.setScore(config.getDouble(key + "." + level + ".score"));
+                        case "lava-fishing" -> bonus.setCanLavaFishing(config.getBoolean(key + "." + level + ".lava-fishing"));
                     }
                 });
                 ENCHANTS.put(key + ":" + level, bonus);

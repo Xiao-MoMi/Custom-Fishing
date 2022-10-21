@@ -16,6 +16,7 @@ messages:
   none-args: '非空参数!'
   invalid-args: '无效参数!'
   possible-loots: '此处可能钓到: '
+  reach-sell-limit: '你今天已经卖了很多鱼了!明天再来吧~'
   split-char: ','
   no-loot: '这个地方什么鱼都没有!'
   competition-ongoing: '当前有一场钓鱼比赛进行中! 开始钓鱼以加入比赛获取奖励!'

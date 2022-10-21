@@ -6,25 +6,10 @@ simple_bait:
       - '<white>Reduce the time spent fishing'
       - '<white>But make it more difficult to catch fish'
   custom-model-data: 646
-  # Bait Modifier
+  # Click here to learn how modifier system works: https://www.yuque.com/docs/share/4842ac5f-b5ea-4568-acef-d510f8bc9064?# 《Modifier System》
   modifier:
-    # Change the loot weight of the specified group
-    # Add or subtract weights
-    weight-add:
-      silver: 5
-      gold: 3
-    # Multiply or divide weights
-    weight-multiply:
-      silver: 1.1
-      gold: 0.9
-    # Change the time to fish (>1 for longer, <1 for shorter)
     time: 0.85
-    # Change the difficulty, for example, if the original difficulty is (1-6), now it becomes (1-9)
-    difficulty: 3
-    # Double loot probability
-    double-loot: 0.06
-    # Multiply the score got in competition
-    score: 1.2
+    difficulty: 2
 
 wild_bait:
   material: paper
@@ -41,7 +26,7 @@ magnet_bait:
   display:
     name: '<gray>Magnet Bait'
     lore:
-      - '<white>Increases the probability of better loot by 15%.'
+      - '<white>Increases the probability of better loots by 15%.'
   custom-model-data: 695
   modifier:
     weight-MQ:

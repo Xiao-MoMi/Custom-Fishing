@@ -2,21 +2,28 @@ wooden_rod:
   display:
     name: 'Ordinary wooden fishing rod'
     lore:
-      - 'Its just an ordinary fishing rod'
-  # The same to baits.yml
+      - '<gray>Its just an ordinary fishing rod'
+      - '<gray>But it''s quite friendly to a starter!'
+  # Click here to learn how modifier system works: https://www.yuque.com/docs/share/4842ac5f-b5ea-4568-acef-d510f8bc9064?# 《Modifier System》
   modifier:
-    difficulty: 1
+    difficulty: -1
+
 nature_fishing_cane:
   display:
     name: 'Nature Fishing Cane'
+    lore:
+      - '<gray>The wild power makes it easier to be hooked'
+      - '<gray>But also increase the difficulty'
   custom-model-data: 2
   modifier:
-    weight-add:
-      silver: 5
+    time: 0.9
+    difficulty: 1
 
 silver_fishing_rod:
   display:
     name: 'Silver Fishing Rod'
+    lore:
+      - '<gray>Increase the chance of getting silver quality fish'
   custom-model-data: 3
   modifier:
     weight-add:
@@ -26,6 +33,8 @@ silver_fishing_rod:
 golden_fishing_rod:
   display:
     name: 'Golden Fishing Rod'
+    lore:
+      - '<gray>Increase the chance of getting golden quality fish'
   custom-model-data: 4
   modifier:
     weight-add:
@@ -35,8 +44,11 @@ golden_fishing_rod:
 star_fishing_rod:
   display:
     name: 'Star Fishing Rod'
+    lore:
+      - '<gray>Grants you the ability to fish in the lava'
   custom-model-data: 5
   modifier:
     weight-add:
       silver: 20
       gold: 10
+    lava-fishing: true

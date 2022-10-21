@@ -1,0 +1,6 @@
+totem_activator:
+  material: DIAMOND
+  display:
+    name: '<gradient:#F0F8FF:#87CEFA:#F0F8FF>Double Loot Fishing Totem Core'
+  nbt:
+    Totem: (String) double_loot_fishing_totem

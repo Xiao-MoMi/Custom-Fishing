@@ -16,6 +16,7 @@ messages:
   none-args: 'None arguments!'
   invalid-args: 'Invalid arguments!'
   possible-loots: 'Possible loots here: '
+  reach-sell-limit: 'You have earned a lot from selling fish! Come tomorrow.'
   split-char: ', '
   no-loot: 'There''s no fish in this place!'
   competition-ongoing: 'There is currently a fishing tournament in progress! Start fishing to join the contest for a prize!'

@@ -1,4 +1,7 @@
 # Vanilla blocks should be in capital format
+# ItemsAdder:  namespace:id: 'a'
+# Oraxen:  id: 'a'
+
 AIR: 'air'
 
 ANVIL: 'a'

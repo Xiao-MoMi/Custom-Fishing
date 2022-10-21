@@ -1,5 +1,5 @@
-# CustomFishing does not contain an enchantment system but it's able to
-# read enchantments from NBT tags and customize its bonus!
+# CustomFishing does not contain an enchantment system but it's able to read enchantments from NBT tags and customize its bonus!
+# https://www.yuque.com/docs/share/4842ac5f-b5ea-4568-acef-d510f8bc9064?# 《Modifier System》
 minecraft:luck_of_the_sea:
   #levels
   1:
@@ -25,7 +25,7 @@ minecraft:lucky_catch:
     double-loot: 0.3
 
 # You can register an enchantment in EcoEnchants called "easy_catch"
-# And then config its effects in CustomFishing!
+# And then create its effects in CustomFishing!
 minecraft:easy_catch:
   1:
     difficulty: -1

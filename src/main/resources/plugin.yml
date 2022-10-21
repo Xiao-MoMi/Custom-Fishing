@@ -3,22 +3,32 @@ version: '${version}'
 main: net.momirealms.customfishing.CustomFishing
 api-version: 1.17
 authors: [ XiaoMoMi ]
+depend:
+  - ProtocolLib
 softdepend:
+  - ItemsAdder
   - MythicMobs
+  - Oraxen
   - PlaceholderAPI
+  - Residence
+  - Kingdoms
   - WorldGuard
+  - GriefDefender
+  - PlotSquared
+  - Towny
+  - EcoEnchants
+  - Lands
+  - GriefPrevention
   - mcMMO
   - AureliumSkills
+  - CustomCrops
   - MMOCore
   - EcoSkills
-  - EcoEnchants
+  - CrashClaim
   - RealisticSeasons
-  - CustomCrops
-  - ItemsAdder
-  - Oraxen
+  - Jobs
   - MMOItems
   - eco
-  - Jobs
   - Vault
 
 commands:

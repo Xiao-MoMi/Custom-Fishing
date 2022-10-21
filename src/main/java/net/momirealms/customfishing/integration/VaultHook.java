@@ -23,14 +23,18 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class VaultHook {
 
-    public static Economy economy;
+    private Economy economy;
 
-    public static boolean initialize() {
+    public boolean initialize() {
         RegisteredServiceProvider<Economy> rsp = CustomFishing.plugin.getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
             return false;
         }
-        economy = rsp.getProvider();
+        this.economy = rsp.getProvider();
         return true;
+    }
+
+    public Economy getEconomy() {
+        return economy;
     }
 }
