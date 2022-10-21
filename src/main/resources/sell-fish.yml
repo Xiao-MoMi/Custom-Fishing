@@ -2,6 +2,11 @@ container-title: '<gradient:#A52A2A:#800000:#A52A2A>Sell Fish</gradient>'
 
 rows: 6
 
+# Limit the money player can earn per day
+sell-limitation:
+  enable: true
+  upper-limit: 10000
+
 price-formula: '{base} + {bonus} * {size}'
 
 sounds:

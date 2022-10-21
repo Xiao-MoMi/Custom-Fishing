@@ -42,6 +42,7 @@ import net.momirealms.customfishing.object.requirements.RequirementInterface;
 import net.momirealms.customfishing.object.totem.ActivatedTotem;
 import net.momirealms.customfishing.object.totem.Totem;
 import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.FakeItemUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -67,6 +68,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -146,6 +148,7 @@ public class FishingManager extends Function {
             boolean noRod = true;
             boolean noBait = true;
             int lureLevel = 0;
+            ItemStack baitItem = null;
 
             Bonus initialBonus = new Bonus();
             initialBonus.setDifficulty(0);
@@ -177,6 +180,7 @@ public class FishingManager extends Function {
                         Bonus baitBonus = BonusManager.BAIT.get(nbtCompound.getString("id"));
                         if (baitBonus != null) {
                             initialBonus.addBonus(baitBonus);
+                            baitItem = mainHandItem.clone();
                             mainHandItem.setAmount(mainHandItem.getAmount() - 1);
                             noBait = false;
                         }
@@ -199,7 +203,9 @@ public class FishingManager extends Function {
                         if (baitBonus != null){
                             initialBonus.addBonus(baitBonus);
                             offHandItem.setAmount(offHandItem.getAmount() - 1);
+                            baitItem = offHandItem.clone();
                             noBait = false;
+
                         }
                     }
                     else if (noSpecialRod && nbtCompound.getString("type").equals("rod")) {
@@ -233,6 +239,7 @@ public class FishingManager extends Function {
                         Bonus baitBonus = BonusManager.BAIT.get(cfCompound.getString("id"));
                         if (baitBonus != null) {
                             initialBonus.addBonus(baitBonus);
+                            baitItem = itemStack.clone();
                             itemStack.setAmount(itemStack.getAmount() - 1);
                             break;
                         }
@@ -256,7 +263,20 @@ public class FishingManager extends Function {
                 return;
             }
 
-            BobberCheckTask bobberCheckTask = new BobberCheckTask(player, initialBonus, fishHook, this, lureLevel);
+            int entityID = 0;
+            if (baitItem != null) {
+                baitItem.setAmount(1);
+                entityID = new Random().nextInt(1000000);
+                try {
+                    CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getSpawnPacket(entityID, fishHook.getLocation()));
+                    CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getMetaPacket(entityID, baitItem));
+                }
+                catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            BobberCheckTask bobberCheckTask = new BobberCheckTask(player, initialBonus, fishHook, this, lureLevel, entityID);
             bobberCheckTask.runTaskTimer(CustomFishing.plugin, 1, 1);
             bobberTaskCache.put(player, bobberCheckTask);
         });

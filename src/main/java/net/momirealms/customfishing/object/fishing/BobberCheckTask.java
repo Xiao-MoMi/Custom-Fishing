@@ -27,16 +27,20 @@ import net.momirealms.customfishing.manager.LootManager;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.object.loot.Loot;
 import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.FakeItemUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Random;
 
@@ -55,8 +59,10 @@ public class BobberCheckTask extends BukkitRunnable {
     private BukkitTask cache_2;
     private BukkitTask cache_3;
     private ArmorStand entityCache;
+    private int entityID;
+    private boolean land;
 
-    public BobberCheckTask(Player player, Bonus bonus, FishHook fishHook, FishingManager fishingManager, int lureLevel) {
+    public BobberCheckTask(Player player, Bonus bonus, FishHook fishHook, FishingManager fishingManager, int lureLevel, int entityID) {
         this.fishHook = fishHook;
         this.fishingManager = fishingManager;
         this.player = player;
@@ -65,11 +71,22 @@ public class BobberCheckTask extends BukkitRunnable {
         this.first_time = true;
         this.jump_timer = 0;
         this.lureLevel = lureLevel;
+        this.entityID = entityID;
+        this.land = false;
     }
 
     @Override
     public void run() {
         timer ++;
+        if (!land && entityID != 0) {
+            try {
+                CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getVelocity(entityID, fishHook.getVelocity()));
+                CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getTpPacket(entityID, fishHook.getLocation()));
+            }
+            catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
         if (timer > 3600) {
             stop();
         }
@@ -78,6 +95,7 @@ public class BobberCheckTask extends BukkitRunnable {
             return;
         }
         if (fishHook.getLocation().getBlock().getType() == Material.LAVA) {
+            land = true;
             if (!bonus.canLavaFishing()) {
                 stop();
                 return;
@@ -123,6 +141,14 @@ public class BobberCheckTask extends BukkitRunnable {
         if (entityCache != null && !entityCache.isDead()) {
             entityCache.remove();
             entityCache = null;
+        }
+        if (entityID != 0) {
+            try {
+                CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getDestroyPacket(entityID));
+            }
+            catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
         }
     }
 

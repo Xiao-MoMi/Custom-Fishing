@@ -234,13 +234,6 @@ public class SellManager extends Function {
         }
     }
 
-    public boolean isCoolDown(Player player, long delay) {
-        long time = System.currentTimeMillis();
-        if (time - (coolDown.getOrDefault(player, time - delay)) < delay) return true;
-        coolDown.put(player, time);
-        return false;
-    }
-
     @Override
     public void onCloseInventory(InventoryCloseEvent event) {
         final Player player = (Player) event.getPlayer();
