@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing.manager;
 
 import de.tr7zw.changeme.nbtapi.NBTCompound;
@@ -67,7 +84,7 @@ public class FishingManager extends Function {
     private final HashMap<Player, VanillaLoot> vanillaLoot;
     private final ConcurrentHashMap<Player, FishingPlayer> fishingPlayerCache;
     private final ConcurrentHashMap<Location, ActivatedTotem> totemCache;
-    private final ConcurrentHashMap<Player, BobberCheckTask> lavaFishing;
+    private final ConcurrentHashMap<Player, BobberCheckTask> bobberTaskCache;
 
     public FishingManager() {
         this.playerFishListener = new PlayerFishListener(this);
@@ -79,7 +96,7 @@ public class FishingManager extends Function {
         this.vanillaLoot = new HashMap<>();
         this.fishingPlayerCache = new ConcurrentHashMap<>();
         this.totemCache = new ConcurrentHashMap<>();
-        this.lavaFishing = new ConcurrentHashMap<>();
+        this.bobberTaskCache = new ConcurrentHashMap<>();
         load();
     }
 
@@ -108,6 +125,9 @@ public class FishingManager extends Function {
         if (this.pickUpListener != null) HandlerList.unregisterAll(this.pickUpListener);
         if (this.mmoItemsListener != null) HandlerList.unregisterAll(this.mmoItemsListener);
         if (this.jobsRebornXPListener != null) HandlerList.unregisterAll(this.jobsRebornXPListener);
+        for (BobberCheckTask bobberCheckTask : bobberTaskCache.values()) {
+            bobberCheckTask.stop();
+        }
     }
 
     public void onFishing(PlayerFishEvent event) {
@@ -214,6 +234,7 @@ public class FishingManager extends Function {
                         if (baitBonus != null) {
                             initialBonus.addBonus(baitBonus);
                             itemStack.setAmount(itemStack.getAmount() - 1);
+                            break;
                         }
                     }
                 }
@@ -230,17 +251,14 @@ public class FishingManager extends Function {
 
             nextBonus.put(player, initialBonus);
 
-            if (ConfigManager.needRodForLoots && noSpecialRod){
-                if (!ConfigManager.enableVanillaLoot) AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.noRod);
-                nextLoot.put(player, null);
-            }
             if (ConfigManager.needRodToFish && noSpecialRod){
                 nextLoot.put(player, Loot.EMPTY);
+                return;
             }
-            if ((ConfigManager.needRodForLoots || ConfigManager.needRodToFish) && noSpecialRod) return;
 
             BobberCheckTask bobberCheckTask = new BobberCheckTask(player, initialBonus, fishHook, this, lureLevel);
             bobberCheckTask.runTaskTimer(CustomFishing.plugin, 1, 1);
+            bobberTaskCache.put(player, bobberCheckTask);
         });
     }
 
@@ -304,11 +322,14 @@ public class FishingManager extends Function {
 
         FishingPlayer fishingPlayer = fishingPlayerCache.remove(player);
         if (fishingPlayer == null) {
+
+            Loot loot = nextLoot.get(player);
+            if (loot == Loot.EMPTY) return;
+
             if (ConfigManager.enableVanillaLoot) {
                 // Not a vanilla loot
                 if (ConfigManager.vanillaLootRatio < Math.random()) {
                     event.setCancelled(true);
-                    Loot loot = nextLoot.get(player);
                     if (loot != null) {
                         vanillaLoot.remove(player);
                     }
@@ -329,7 +350,6 @@ public class FishingManager extends Function {
             }
             else {
                 // No custom loot
-                Loot loot = nextLoot.get(player);
                 if (loot == null) {
                     item.remove();
                     event.setExpToDrop(0);
@@ -354,14 +374,12 @@ public class FishingManager extends Function {
         VanillaLoot vanilla = vanillaLoot.remove(player);
         player.removePotionEffect(PotionEffectType.SLOW);
 
-        if (ConfigManager.needOpenWater && !event.getHook().isInOpenWater()){
-            AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.notOpenWater);
-            return;
-        }
-
         if (fishingPlayer.isSuccess()) {
             if (ConfigManager.rodLoseDurability) loseDurability(player);
             Location location = event.getHook().getLocation();
+            if (location.getBlock().getType() == Material.LAVA) {
+                location.add(0,0.3,0);
+            }
             if (vanilla != null) {
                 dropVanillaLoot(player, vanilla, location, fishingPlayer.isDouble());
                 return;
@@ -389,10 +407,11 @@ public class FishingManager extends Function {
         FishingPlayer fishingPlayer = fishingPlayerCache.remove(player);
         if (fishingPlayer != null) {
             proceedReelIn(event, player, fishingPlayer);
-            lavaFishing.remove(player);
+            bobberTaskCache.remove(player);
             return;
         }
-        if (lavaFishing.containsKey(player)) {
+        BobberCheckTask bobberCheckTask = bobberTaskCache.get(player);
+        if (bobberCheckTask != null && bobberCheckTask.isHooked()) {
             showPlayerBar(player, nextLoot.get(player));
             event.setCancelled(true);
         }
@@ -465,9 +484,9 @@ public class FishingManager extends Function {
         if (itemStack.getType() == Material.AIR) return;
         Entity item = location.getWorld().dropItem(location, itemStack);
         Vector vector = player.getLocation().subtract(location).toVector().multiply(0.1);
-        vector = vector.setY((vector.getY()+0.2) * 1.2);
+        vector = vector.setY((vector.getY()+0.25) * 1.2);
         item.setVelocity(vector);
-        if (isDouble){
+        if (isDouble) {
             Entity item2 = location.getWorld().dropItem(location, itemStack);
             item2.setVelocity(vector);
         }
@@ -852,7 +871,7 @@ public class FishingManager extends Function {
         nextLoot.remove(player);
         nextBonus.remove(player);
         vanillaLoot.remove(player);
-        BobberCheckTask task = lavaFishing.remove(player);
+        BobberCheckTask task = bobberTaskCache.remove(player);
         if (task != null) task.stop();
         // prevent bar duplication
         FishHook fishHook = hooksCache.remove(player);
@@ -887,10 +906,10 @@ public class FishingManager extends Function {
     }
 
     public void addPlayerToLavaFishing(Player player, BobberCheckTask task) {
-        this.lavaFishing.put(player, task);
+        this.bobberTaskCache.put(player, task);
     }
 
     public void removePlayerFromLavaFishing(Player player) {
-        this.lavaFishing.remove(player);
+        this.bobberTaskCache.remove(player);
     }
 }

@@ -3,7 +3,7 @@ skeletalknight:
   enable: true
 
   # MythicMobsID
-  mob: SkeletalKnight
+  mobID: SkeletalKnight
 
   # The level of the mob
   level: 0
@@ -29,7 +29,7 @@ skeletalknight:
 
 piranha:
   enable: false
-  mob: piranha
+  mobID: piranha
   name: 'Piranha'
   weight: 50
   time: 1000000

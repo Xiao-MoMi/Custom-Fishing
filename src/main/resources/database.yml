@@ -1,3 +1,7 @@
+# YAML/MySQL/MariaDB
+# 存储模式
+data-storage-method: YAML
+
 # MySQL settings
 MySQL:
   host: localhost
@@ -5,15 +9,31 @@ MySQL:
   user: root
   password: password
   database: minecraft
-  table-name: customfishing_data
-  property:
-    use-ssl: false
-    encoding: utf8
-    timezone: ''
-    allowPublicKeyRetrieval: false
-  # Connection pool settings
+  table-prefix: customfishing
+  properties:
+    cachePrepStmts: 'true'
+    prepStmtCacheSize: '250'
+    prepStmtCacheSqlLimit: '2048'
+    useSSL: 'false'
+    verifyServerCertificate: 'false'
   Pool-Settings:
-    enable: false
+    maximum-pool-size: 10
+    minimum-idle: 10
+    maximum-lifetime: 180000
+    idle-timeout: 60000
+
+MariaDB:
+  host: localhost
+  port: 3306
+  user: root
+  password: password
+  database: minecraft
+  table-prefix: customfishing
+  properties:
+    cachePrepStmts: 'true'
+    prepStmtCacheSize: '250'
+    prepStmtCacheSqlLimit: '2048'
+  Pool-Settings:
     maximum-pool-size: 10
     minimum-idle: 10
     maximum-lifetime: 180000

@@ -3,15 +3,15 @@
 minecraft:luck_of_the_sea:
   #levels
   1:
-    weight-PM:
+    weight-add:
       silver: 2
       gold: 1
   2:
-    weight-PM:
+    weight-add:
       silver: 3
       gold: 2
   3:
-    weight-PM:
+    weight-add:
       silver: 4
       gold: 3
 

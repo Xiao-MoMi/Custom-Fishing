@@ -37,8 +37,10 @@ integrations:
   MMOItems: false
 
 # Worlds where fishing mechanic takes effects
+# 启用本插件的世界
 worlds:
   # Mode: whitelist/blacklist
+  # 模式：白名单/黑名单
   mode: whitelist
   list:
     - world
@@ -48,47 +50,55 @@ worlds:
 mechanics:
   other-loots:
     # Should other loots have the same fishing mechanic CustomFishing provides
+    # 其他战利品是否有插件提供的钓鱼特性
     fishing-bar: true
+    # 原版战利品
     vanilla:
-      # Vanilla loot is available only when 'double-reel-in' is true
       enable: true
-      # 0.4 means 40% of the loots are from vanilla
-      # and 60% are from CustomFishing Loot system
+      # 0.4 means 40% of the loots are from vanilla and 60% are from CustomFishing Loot system
+      # if there's no custom loot, it would definitely be a vanilla loot
+      # 0.4代表40%的战利品来自于原版，60%来自CustomFishing物品库
+      # 如果钓鱼的地方没有自定义战利品，那么下一个一定是原版战利品
       ratio: 0.4
     mcMMO:
       # mcMMO treasure system
       # chance represents the chance to try to be a mcMMO treasure
       # But it doesn't mean 50% chance of the loot would be mcMMO treasure
       # mcMMO has a complex treasure system
+      # mcMMO宝藏系统
+      # 概率代表尝试变成mcMMO宝藏的概率，但这不意味着50%概率一定会变成mcMMO宝藏
       enable: false
       chance: 0.5
-  # The same to vanilla mechanic (refer to the wiki)
-  # https://technical-minecraft.fandom.com/wiki/Fishing
-  need-open-water: false
-  need-special-rod:
-    # Players must use rods with CustomFishing's NBT Tags to get loots in CustomFishing but they can experience the special fishing mechanic.
-    for-loots: false
-    # Players must use rods with CustomFishing's NBT Tags to experience the special fishing mechanic. Otherwise they can only fish in a vanilla way
-    to-fish: false
-  # does rod lose durability when player successfully fish
+  # Does the special fishing mechanic requires special rod
+  # 是否需要特殊鱼竿才能体验钓鱼机制
+  need-special-rod-to-fish: false
+  # Does rod lose durability when player successfully fish
+  # 钓鱼成功后是否消耗耐久度
   rod-lose-durability: true
   # Competition
+  # 钓鱼比赛
   fishing-competition:
     enable: true
-    # Enable redis server for syncing data between servers
+    # Enable redis server to sync data between servers
+    # 启用Redis服务器以跨服同步比赛数据
     redis: false
   # Fishing bag is a place where players can store their baits, utils, rods (Fish optional)
+  # 渔具袋是玩家存放鱼饵，实用道具，鱼竿的地方，其中的鱼饵会在钓鱼时被消耗
   fishing-bag:
     enable: true
+    # Fishing bag window title
+    # 渔具袋的容器标题
     bag-title: '<blue>{player}''s Fishing Bag'
+    # Can fishing bag store the loots?
     # This would add additional NBT Tags to the loot
+    # 渔具袋是否能存放捕鱼战利品，这会在捕鱼战利品上增加额外NBT
     can-store-loot: false
-    # File/MySql
-    data-storage-mode: File
     # Other whitelist-items
+    # 允许放入渔具袋的其他物品白名单
     whitelist-items:
       - fishing_rod
   # Lava fishing settings
+  # 岩浆钓鱼设置
   lava-fishing:
     # ticks
     min-wait-time: 100
@@ -103,7 +113,7 @@ titles:
       - '<green>Good Job!</green>'
     subtitle:
       - 'You have captured a {loot}'
-      - 'Hi Harm Hi {loot} Here we go!'
+      - '{loot} Here we go!'
     fade:
       # ticks
       in: 10
@@ -125,14 +135,19 @@ titles:
 # Other settings
 other-settings:
   # MONITOR HIGHEST HIGH NORMAL LOW LOWEST
+  # 事件优先级
   event-priority: NORMAL
   # If enabled, players would not be able to get job exp in vanilla way
+  # 如果启用，玩家则无法通过原版方式获得Jobs经验
   disable-JobsReborn-fishing-exp: false
   # Convert MMOItems' rod into CustomFishing's rod
   # keep the same key name both in MMOItems and CustomFishing so rods can extend the bonus of those in CustomFishing
+  # 将MMOItems中的鱼竿转换为CustomFishing的鱼竿，只需要保持相同的键名即可继承效果
   convert-MMOItems-rods: false
   # Prevent other players to pick up your fishing loot
   # This is useful for players to fish in a public area
+  # 防止其他玩家抢夺捕鱼战利品
   prevent-other-players-pick-up-loot: false
   # Log the money player get from selling the fish in the console
+  # 后台记录玩家销售鱼类所得金额
   log-earnings: true

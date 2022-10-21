@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing.manager;
 
 import net.momirealms.customfishing.integration.VaultHook;
@@ -25,8 +42,6 @@ public class ConfigManager {
     public static boolean enableMcMMOLoot;
     public static double vanillaLootRatio;
     public static double mcMMOLootChance;
-    public static boolean needOpenWater;
-    public static boolean needRodForLoots;
     public static boolean needRodToFish;
     public static boolean rodLoseDurability;
     public static boolean enableCompetition;
@@ -35,13 +50,11 @@ public class ConfigManager {
     public static boolean preventPickUp;
     public static boolean enableFishingBag;
     public static boolean alwaysFishingBar;
-
     public static String[] successTitle;
     public static String[] successSubTitle;
     public static int successFadeIn;
     public static int successFadeStay;
     public static int successFadeOut;
-
     public static String[] failureTitle;
     public static String[] failureSubTitle;
     public static int failureFadeIn;
@@ -83,9 +96,7 @@ public class ConfigManager {
         vanillaLootRatio = config.getDouble("mechanics.other-loots.vanilla.ratio", 0.4);
         enableMcMMOLoot = config.getBoolean("mechanics.other-loots.mcMMO.enable", false);
         mcMMOLootChance = config.getDouble("mechanics.other-loots.mcMMO.chance", 0.5);
-        needOpenWater = config.getBoolean("mechanics.need-open-water", true);
-        needRodForLoots = config.getBoolean("mechanics.need-special-rod.for-loots", false);
-        needRodToFish = config.getBoolean("mechanics.need-special-rod.to-fish", false);
+        needRodToFish = config.getBoolean("mechanics.need-special-rod-to-fish", false);
         rodLoseDurability = config.getBoolean("mechanics.rod-lose-durability", true);
         enableCompetition = config.getBoolean("mechanics.fishing-competition.enable", true);
 
@@ -124,13 +135,6 @@ public class ConfigManager {
             YamlConfiguration configuration = ConfigUtil.getConfig("database.yml");
             JedisUtil.initializeRedis(configuration);
             useRedis = true;
-        }
-
-        if (vaultHook) {
-            if (!VaultHook.initialize()) {
-                vaultHook = false;
-                AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to hook into Vault!");
-            }
         }
     }
     public static List<World> getWorldsList() {

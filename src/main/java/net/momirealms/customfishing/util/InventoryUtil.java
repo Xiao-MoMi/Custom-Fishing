@@ -1,8 +1,26 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing.util;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.ByteArrayInputStream;
@@ -11,15 +29,17 @@ import java.io.IOException;
 
 public class InventoryUtil {
 
+    @Nullable
     public static String toBase64(ItemStack[] contents) {
         boolean convert = false;
 
-        for (ItemStack item : contents) {
-            if (item != null) {
+        for (ItemStack content : contents) {
+            if (content != null) {
                 convert = true;
                 break;
             }
         }
+
         if (convert) {
             try {
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -27,19 +47,20 @@ public class InventoryUtil {
 
                 dataOutput.writeInt(contents.length);
 
-                for (ItemStack stack : contents) {
-                    dataOutput.writeObject(stack);
+                for (ItemStack itemStack : contents) {
+                    dataOutput.writeObject(itemStack);
                 }
                 dataOutput.close();
                 byte[] byteArr = outputStream.toByteArray();
                 return Base64Coder.encodeLines(byteArr);
-            } catch (Exception e) {
-                throw new IllegalStateException("Unable to save item stacks.", e);
+            } catch (IOException e) {
+                throw new RuntimeException("[CustomFishing] Data save error", e);
             }
         }
         return null;
     }
 
+    @Nullable
     public static ItemStack[] getInventoryItems(String base64) {
         ItemStack[] itemStacks = null;
         try {
@@ -51,7 +72,7 @@ public class InventoryUtil {
     }
 
     private static ItemStack[] stacksFromBase64(String data) {
-        if (data == null) return new ItemStack[]{};
+        if (data == null || data.equals("")) return new ItemStack[]{};
 
         ByteArrayInputStream inputStream;
         try {

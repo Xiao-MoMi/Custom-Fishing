@@ -1,12 +1,36 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing.object.fishing;
 
+import com.plotsquared.core.plot.PlotId;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.FishingManager;
 import net.momirealms.customfishing.manager.LootManager;
+import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.object.loot.Loot;
+import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -30,6 +54,7 @@ public class BobberCheckTask extends BukkitRunnable {
     private BukkitTask cache_1;
     private BukkitTask cache_2;
     private BukkitTask cache_3;
+    private ArmorStand entityCache;
 
     public BobberCheckTask(Player player, Bonus bonus, FishHook fishHook, FishingManager fishingManager, int lureLevel) {
         this.fishHook = fishHook;
@@ -45,6 +70,9 @@ public class BobberCheckTask extends BukkitRunnable {
     @Override
     public void run() {
         timer ++;
+        if (timer > 3600) {
+            stop();
+        }
         if (!fishHook.isValid()) {
             stop();
             return;
@@ -56,7 +84,7 @@ public class BobberCheckTask extends BukkitRunnable {
             }
             if (hooked) {
                 jump_timer++;
-                if (jump_timer < 5) {
+                if (jump_timer < 4) {
                     return;
                 }
                 jump_timer = 0;
@@ -64,25 +92,26 @@ public class BobberCheckTask extends BukkitRunnable {
                 return;
             }
             if (first_time) {
+                if (jump_timer < 8) {
+                    jump_timer++;
+                    fishHook.setVelocity(new Vector(0,0.18 - jump_timer * 0.01,0));
+                    return;
+                }
                 first_time = false;
                 randomTime();
+                spawnArmorStand(fishHook.getLocation());
             }
-            fishHook.setVelocity(new Vector(0, 0.12,0));
             return;
         }
         if (fishHook.isInWater()) {
+            stop();
             Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.plugin, () -> {
                 List<Loot> possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player), false, LootManager.WATERLOOTS.values());
                 fishingManager.getNextLoot(player, bonus, possibleLoots);
             });
-            stop();
             return;
         }
         if (fishHook.isOnGround()) {
-            stop();
-            return;
-        }
-        if (timer > 2400) {
             stop();
         }
     }
@@ -90,6 +119,11 @@ public class BobberCheckTask extends BukkitRunnable {
     public void stop() {
         cancel();
         cancelTask();
+        fishingManager.removePlayerFromLavaFishing(player);
+        if (entityCache != null && !entityCache.isDead()) {
+            entityCache.remove();
+            entityCache = null;
+        }
     }
 
     public void cancelTask() {
@@ -119,13 +153,32 @@ public class BobberCheckTask extends BukkitRunnable {
         if (random < ConfigManager.lavaMinTime) random = ConfigManager.lavaMinTime;
         cache_1 = Bukkit.getScheduler().runTaskLater(CustomFishing.plugin, () -> {
             hooked = true;
-            fishingManager.addPlayerToLavaFishing(player, this);
+            if (entityCache != null && !entityCache.isDead()) entityCache.remove();
+            AdventureUtil.playerSound(player, Sound.Source.NEUTRAL, Key.key("minecraft:block.pointed_dripstone.drip_lava_into_cauldron"), 1, 1);
         }, random);
         cache_2 = Bukkit.getScheduler().runTaskLater(CustomFishing.plugin, () -> {
             hooked = false;
             first_time = true;
-            fishingManager.removePlayerFromLavaFishing(player);
         }, random + 40);
         cache_3 = new LavaEffect(fishHook.getLocation()).runTaskTimerAsynchronously(CustomFishing.plugin,random - 60,1);
+    }
+
+    private void spawnArmorStand(Location armorLoc) {
+        armorLoc.setY(armorLoc.getBlockY() + 0.2);
+        if (entityCache != null && !entityCache.isDead()) entityCache.remove();
+        entityCache = armorLoc.getWorld().spawn(armorLoc, ArmorStand.class, a -> {
+            a.setInvisible(true);
+            a.setCollidable(false);
+            a.setInvulnerable(true);
+            a.setVisible(false);
+            a.setCustomNameVisible(false);
+            a.setSmall(true);
+            a.setGravity(false);
+        });
+        fishHook.setHookedEntity(entityCache);
+    }
+
+    public boolean isHooked() {
+        return hooked;
     }
 }

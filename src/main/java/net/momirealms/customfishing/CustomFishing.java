@@ -36,7 +36,6 @@ public final class CustomFishing extends JavaPlugin {
     public static CustomFishing plugin;
     public static BukkitAudiences adventure;
     public static ProtocolManager protocolManager;
-
     private IntegrationManager integrationManager;
     private FishingManager fishingManager;
     private CompetitionManager competitionManager;
@@ -70,11 +69,12 @@ public final class CustomFishing extends JavaPlugin {
     @Override
     public void onLoad() {
         plugin = this;
-        LibraryLoader.load("redis.clients","jedis","4.2.3","https://repo.maven.apache.org/maven2/");
+        LibraryLoader.load("redis.clients","jedis","4.3.0","https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("org.apache.commons","commons-pool2","2.11.1","https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3","https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("com.zaxxer","HikariCP","5.0.1","https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("net.objecthunter","exp4j","0.4.8","https://repo.maven.apache.org/maven2/");
+        LibraryLoader.load("org.mariadb.jdbc","mariadb-java-client","3.0.6","https://repo.maven.apache.org/maven2/");
     }
 
     @Override
@@ -106,6 +106,7 @@ public final class CustomFishing extends JavaPlugin {
         this.lootManager.unload();
         this.layoutManager.unload();
         this.bagDataManager.unload();
+        this.bagDataManager.disable();
         this.totemManager.unload();
         this.sellManager.unload();
         if (adventure != null) {

@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing.integration.papi;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -30,10 +47,13 @@ public class CompetitionPapi extends PlaceholderExpansion {
 
     @Override
     public @Nullable String onPlaceholderRequest(Player player, @NotNull String params) {
-        if (Competition.currentCompetition == null) return "null";
+        if (Competition.currentCompetition == null) return "";
         switch (params) {
             case "rank" -> {
                 return Competition.currentCompetition.getPlayerRank(player);
+            }
+            case "score" -> {
+                return String.format("%.1f", Competition.currentCompetition.getScore(player));
             }
             case "time" -> {
                 return String.valueOf(Competition.currentCompetition.getRemainingTime());

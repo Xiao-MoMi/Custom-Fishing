@@ -18,7 +18,6 @@ messages:
   possible-loots: 'Possible loots here: '
   split-char: ', '
   no-loot: 'There''s no fish in this place!'
-  not-open-water: 'This is not open water and you will not be able to get any rewards!'
   competition-ongoing: 'There is currently a fishing tournament in progress! Start fishing to join the contest for a prize!'
   players-not-enough: 'The number of players is not enough for the fishing contest to be held as scheduled!'
   no-rank: 'No Rank'
