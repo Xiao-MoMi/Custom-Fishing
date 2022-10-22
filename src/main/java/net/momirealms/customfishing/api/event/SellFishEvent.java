@@ -27,9 +27,14 @@ public class SellFishEvent extends PlayerEvent implements Cancellable {
         cancelled = cancel;
     }
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
+    public static HandlerList getHandlerList() {
         return handlerList;
+    }
+
+    @NotNull
+    @Override
+    public HandlerList getHandlers() {
+        return getHandlerList();
     }
 
     public float getMoney() {

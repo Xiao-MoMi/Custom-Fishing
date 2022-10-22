@@ -153,7 +153,7 @@ public class LootManager extends Function {
                     loot.setSize(size);
                 }
                 if (config.contains(key + ".price")) {
-                    loot.setBasicPrice((float) config.getDouble(key + ".price.basic", 0));
+                    loot.setBasicPrice((float) config.getDouble(key + ".price.base", 0));
                     loot.setSizeBonus((float) config.getDouble(key + ".price.bonus", 0));
                 }
                 if (config.contains(key + ".random-enchantments")){

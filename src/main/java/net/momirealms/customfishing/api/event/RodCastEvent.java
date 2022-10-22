@@ -46,9 +46,14 @@ public class RodCastEvent extends PlayerEvent implements Cancellable {
         this.isCancelled = cancel;
     }
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
+    public static HandlerList getHandlerList() {
         return handlerList;
+    }
+
+    @NotNull
+    @Override
+    public HandlerList getHandlers() {
+        return getHandlerList();
     }
 
     public Bonus getBonus() {

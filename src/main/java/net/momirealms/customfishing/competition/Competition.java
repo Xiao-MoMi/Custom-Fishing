@@ -62,8 +62,6 @@ public class Competition {
         Collection<? extends Player> playerCollections = Bukkit.getOnlinePlayers();
         if (playerCollections.size() >= competitionConfig.getMinPlayers() || forceStart) {
 
-            currentCompetition = this;
-
             if (ConfigManager.useRedis){
                 ranking = new RedisRankingImpl();
             } else {
@@ -85,8 +83,9 @@ public class Competition {
         }
         else {
             for (Player player : playerCollections) {
-                AdventureUtil.playerMessage(player, MessageManager.notEnoughPlayers);
+                AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.notEnoughPlayers);
             }
+            currentCompetition = null;
         }
     }
 

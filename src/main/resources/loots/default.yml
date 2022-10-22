@@ -1,0 +1,969 @@
+rubbish:
+  material: paper
+  show-in-fishfinder: false
+  display:
+    name: '<gray>Garbage</gray>'
+    lore:
+      - '<gray>Maybe we need to protect the environment...'
+  weight: 130
+  time: 20000
+  difficulty: 1-1
+  custom-model-data: 640
+obsidian:
+  nick: '<#4B0082>Obsidian</#4B0082>'
+  material: obsidian
+  in-lava: true
+  weight: 80
+  time: 20000
+  difficulty: 1-2
+wither_skeleton_skull:
+  nick: '<black>Wither Skeleton Skull</black>'
+  material: wither_skeleton_skull
+  in-lava: true
+  weight: 1
+  time: 20000
+  difficulty: 1-6
+pufferfish:
+  nick: '<#DAA520>Pufferfish</#DAA520>'
+  material: PUFFERFISH
+  weight: 50
+  difficulty: 1-1
+cod:
+  nick: '<#FFFACD>Cod</#FFFACD>'
+  material: COD
+  weight: 300
+  difficulty: 1-1
+salmon:
+  nick: '<#D2691E>Salmon</#D2691E>'
+  material: SALMON
+  weight: 250
+  difficulty: 1-1
+tropical_fish:
+  nick: '&cT&fr&co&fp&ci&fc&ca&fl &cF&fi&cs&fh'
+  material: TROPICAL_FISH
+  weight: 50
+  difficulty: 1-1
+  requirements:
+    biome:
+      - minecraft:jungle
+      - minecraft:bamboo_jungle
+      - minecraft:sparse_jungle
+      - minecraft:warm_ocean
+      - minecraft:lukewarm_ocean
+      - minecraft:deep_lukewarm_ocean
+tuna_fish:
+  material: paper
+  nick: <gradient:#F0FFFF:#4682B4:#F0FFFF>Tuna Fish</gradient>
+  display:
+    name: '<gradient:#F0FFFF:#4682B4:#F0FFFF>Tuna Fish</gradient>'
+    lore:
+      - '<gray>Tuna is a kind of healthy food.'
+      - '<white>size: {size}cm'
+  weight: 50
+  time: 10000
+  difficulty: 1-4
+  custom-model-data: 641
+  size: 15~50
+  price:
+    base: 30
+    bonus: 0.6
+  requirements:
+    biome:
+      - minecraft:ocean
+      - minecraft:cold_ocean
+      - minecraft:deep_cold_ocean
+      - minecraft:deep_frozen_ocean
+      - minecraft:deep_lukewarm_ocean
+      - minecraft:frozen_ocean
+      - minecraft:lukewarm_ocean
+      - minecraft:warm_ocean
+tuna_fish_silver_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#F0FFFF:#4682B4:#F0FFFF>Tuna Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
+    lore:
+      - '<gray>Tuna is a kind of healthy food.'
+      - '<white>size: {size}cm'
+  weight: 20
+  time: 8000
+  difficulty: 1-5
+  group: silver
+  custom-model-data: 666
+  size: 30~100
+  price:
+    base: 50
+    bonus: 0.6
+  requirements:
+    biome:
+      - minecraft:ocean
+      - minecraft:cold_ocean
+      - minecraft:deep_cold_ocean
+      - minecraft:deep_frozen_ocean
+      - minecraft:deep_lukewarm_ocean
+      - minecraft:frozen_ocean
+      - minecraft:lukewarm_ocean
+      - minecraft:warm_ocean
+tuna_fish_golden_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#F0FFFF:#4682B4:#F0FFFF>Tuna Fish</gradient> <#FFD700>(Golden Star)</#FFD700>'
+    lore:
+      - '<gray>Tuna is a kind of healthy food.'
+      - '<white>size: {size}cm'
+  weight: 10
+  time: 5000
+  difficulty: 1-6
+  group: gold
+  custom-model-data: 667
+  size: 80~190
+  price:
+    base: 80
+    bonus: 0.7
+  requirements:
+    biome:
+      - minecraft:ocean
+      - minecraft:cold_ocean
+      - minecraft:deep_cold_ocean
+      - minecraft:deep_frozen_ocean
+      - minecraft:deep_lukewarm_ocean
+      - minecraft:frozen_ocean
+      - minecraft:lukewarm_ocean
+      - minecraft:warm_ocean
+pike_fish:
+  material: paper
+  nick: <gradient:#F0F8FF:#5F9EA0:#F0F8FF>Pike Fish</gradient>
+  display:
+    name: '<gradient:#F0F8FF:#5F9EA0:#F0F8FF>Pike Fish</gradient>'
+    lore:
+      - '<gray>It likes to inhabit at the junction'
+      - '<gray>of salt and fresh water. It can'
+      - '<gray>survive in seawater, brackish fresh'
+      - '<gray>water and inland freshwater lakes'
+      - '<white>size: {size}cm'
+  weight: 70
+  time: 7000
+  difficulty: 1-2
+  custom-model-data: 642
+  size: 5~15
+  price:
+    base: 30
+    bonus: 1.5
+  requirements:
+    biome:
+      - minecraft:ocean
+      - minecraft:river
+      - minecraft:frozen_river
+      - minecraft:frozen_ocean
+      - minecraft:lukewarm_ocean
+      - minecraft:warm_ocean
+pike_fish_silver_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#F0F8FF:#5F9EA0:#F0F8FF>Pike Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
+    lore:
+      - '<gray>It likes to inhabit at the junction'
+      - '<gray>of salt and fresh water. It can'
+      - '<gray>survive in seawater, brackish fresh'
+      - '<gray>water and inland freshwater lakes'
+      - '<white>size: {size}cm'
+  weight: 30
+  time: 7000
+  difficulty: 1-3
+  group: silver
+  size: 10~25
+  price:
+    base: 40
+    bonus: 1.5
+  custom-model-data: 664
+  requirements:
+    biome:
+      - minecraft:ocean
+      - minecraft:river
+      - minecraft:frozen_river
+      - minecraft:frozen_ocean
+      - minecraft:lukewarm_ocean
+      - minecraft:warm_ocean
+pike_fish_golden_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#F0F8FF:#5F9EA0:#F0F8FF>Pike Fish</gradient> <#FFD700>(Golden Star)</#FFD700>'
+    lore:
+      - '<gray>It likes to inhabit at the junction'
+      - '<gray>of salt and fresh water. It can'
+      - '<gray>survive in seawater, brackish fresh'
+      - '<gray>water and inland freshwater lakes'
+      - '<white>size: {size}cm'
+  weight: 10
+  time: 7000
+  difficulty: 1-4
+  group: gold
+  size: 15~30
+  price:
+    base: 50
+    bonus: 1.5
+  custom-model-data: 665
+  requirements:
+    biome:
+      - minecraft:ocean
+      - minecraft:river
+      - minecraft:frozen_river
+      - minecraft:frozen_ocean
+      - minecraft:lukewarm_ocean
+      - minecraft:warm_ocean
+gold_fish:
+  material: paper
+  display:
+    name: '<gradient:#40E0D0:#FFD700:#F0F8FF>Gold Fish</gradient>'
+    lore:
+      - '<gray>Goldfish is one of most famous ornamental'
+      - '<gray>fishes in the world. It originated in China'
+      - '<gray>and has a history of more than 1700 years'
+  weight: 50
+  price:
+    base: 70
+  time: 12000
+  difficulty: 1-1
+  custom-model-data: 643
+gold_fish_silver_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#40E0D0:#FFD700:#F0F8FF>Gold Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
+    lore:
+      - '<gray>Goldfish is one of most famous ornamental'
+      - '<gray>fishes in the world. It originated in China'
+      - '<gray>and has a history of more than 1700 years'
+  weight: 20
+  time: 11000
+  price:
+    base: 80
+  difficulty: 1-2
+  group: silver
+  custom-model-data: 658
+gold_fish_golden_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#40E0D0:#FFD700:#F0F8FF>Gold Fish</gradient> <#FFD700>(Golden Star)</#FFD700>'
+    lore:
+      - '<gray>Goldfish is one of most famous ornamental'
+      - '<gray>fishes in the world. It originated in China'
+      - '<gray>and has a history of more than 1700 years'
+  weight: 10
+  time: 10000
+  price:
+    base: 100
+  group: gold
+  difficulty: 1-3
+  custom-model-data: 659
+perch_fish:
+  material: paper
+  display:
+    name: '<gradient:#BDB76B:#2E8B57:#008B8B>Perch Fish</gradient>'
+    lore:
+      - '<gray>Living in various habitats and'
+      - '<gray>foraging at dusk and early morning'
+      - '<white>size: {size}cm'
+  weight: 100
+  time: 10000
+  difficulty: 1-2
+  custom-model-data: 644
+  size: 5~12
+  price:
+    base: 10
+    bonus: 3
+  requirements:
+    time:
+      - 0~3000
+      - 17000~19000
+perch_fish_silver_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#BDB76B:#2E8B57:#008B8B>Perch Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
+    lore:
+      - '<gray>Living in various habitats and'
+      - '<gray>foraging at dusk and early morning'
+      - '<white>size: {size}cm'
+  weight: 30
+  time: 9000
+  group: silver
+  difficulty: 1-2
+  custom-model-data: 660
+  size: 10~19
+  price:
+    base: 10
+    bonus: 3
+  requirements:
+    time:
+      - 0~3000
+      - 17000~19000
+perch_fish_golden_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#BDB76B:#2E8B57:#008B8B>Perch Fish</gradient> <#FFD700>(Golden Star)</#FFD700>'
+    lore:
+      - '<gray>Living in various habitats and'
+      - '<gray>foraging at dusk and early morning'
+      - '<white>size: {size}cm'
+  weight: 15
+  group: gold
+  time: 8000
+  difficulty: 1-1
+  custom-model-data: 661
+  size: 20~39
+  price:
+    base: 10
+    bonus: 3
+  requirements:
+    time:
+      - 0~3000
+      - 17000~19000
+mullet_fish:
+  material: paper
+  nick: <gradient:#D4F2E7:#E1FFFF:#D4F2E7>Mullet Fish</gradient>
+  display:
+    name: '<gradient:#D4F2E7:#E1FFFF:#D4F2E7>Mullet Fish</gradient>'
+    lore:
+      - '<gray>Used in traditional Chinese medicine'
+      - '<gray>to treat spleen and stomach weakness'
+      - '<white>size: {size}cm'
+  weight: 50
+  time: 10000
+  difficulty: 1-2
+  custom-model-data: 645
+  size: 1~3
+  price:
+    base: 20
+    bonus: 1.5
+mullet_fish_silver_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#D4F2E7:#E1FFFF:#D4F2E7>Mullet Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
+    lore:
+      - '<gray>Used in traditional Chinese medicine'
+      - '<gray>to treat spleen and stomach weakness'
+      - '<white>size: {size}cm'
+  weight: 20
+  group: silver
+  time: 8000
+  difficulty: 1-3
+  custom-model-data: 662
+  size: 4~9
+  price:
+    base: 30
+    bonus: 1.5
+mullet_fish_golden_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#D4F2E7:#E1FFFF:#D4F2E7>Mullet Fish</gradient> <#FFD700>(Golden Star)</#FFD700>'
+    lore:
+      - '<gray>Used in traditional Chinese medicine'
+      - '<gray>to treat spleen and stomach weakness'
+      - '<white>size: {size}cm'
+  weight: 10
+  time: 6000
+  group: gold
+  difficulty: 1-4
+  custom-model-data: 663
+  size: 10~20
+  price:
+    base: 50
+    bonus: 1.5
+sardine_fish:
+  material: paper
+  nick: <gradient:#E1FFFF:#5F9EA0>Sardine Fish</gradient>
+  display:
+    name: '<gradient:#E1FFFF:#5F9EA0>Sardine Fish</gradient>'
+    lore:
+      - '<gray>Sardine fish is rich in DHA which improves memory'
+      - '<gray>Therefore, sardine are also called "smart food"'
+      - '<white>size: {size}cm'
+  weight: 50
+  time: 8000
+  difficulty: 1-2
+  custom-model-data: 668
+  size: 1~5
+  price:
+    base: 10
+    bonus: 3.4
+sardine_fish_silver_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#E1FFFF:#5F9EA0>Sardine Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
+    lore:
+      - '<gray>Sardine fish is rich in DHA which improves memory'
+      - '<gray>Therefore, sardine are also called "smart food"'
+      - '<white>size: {size}cm'
+  weight: 20
+  time: 8000
+  group: silver
+  difficulty: 1-3
+  custom-model-data: 669
+  size: 4~8
+  price:
+    base: 13
+    bonus: 3.4
+sardine_fish_golden_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#E1FFFF:#5F9EA0>Sardine Fish</gradient> <#FFD700>(Golden Star)</#FFD700>'
+    lore:
+      - '<gray>Sardine fish is rich in DHA which improves memory'
+      - '<gray>Therefore, sardine are also called "smart food"'
+      - '<white>size: {size}cm'
+  weight: 10
+  time: 8000
+  group: gold
+  difficulty: 1-4
+  custom-model-data: 670
+  size: 7~14
+  price:
+    base: 15
+    bonus: 3.4
+carp_fish:
+  material: paper
+  nick: <gradient:#808000:#556B2F>Carp Fish</gradient>
+  display:
+    name: '<gradient:#808000:#556B2F>Carp Fish</gradient>'
+    lore:
+      - '<gray>One of the most common edible fish'
+      - '<white>size: {size}cm'
+  weight: 100
+  time: 10000
+  difficulty: 1-2
+  custom-model-data: 671
+  size: 7~19
+  price:
+    base: 10
+    bonus: 2
+  requirements:
+    biome:
+      - minecraft:river
+      - minecraft:plains
+      - minecraft:forest
+      - minecraft:swamp
+      - minecraft:dark_forest
+      - minecraft:flower_forest
+      - minecraft:birch_forest
+      - minecraft:old_growth_birch_forest
+      - minecraft:sunflower_plains
+carp_fish_silver_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#808000:#556B2F>Carp Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
+    lore:
+      - '<gray>One of the most common edible fish'
+      - '<white>size: {size}cm'
+  weight: 20
+  time: 10000
+  group: silver
+  difficulty: 1-2
+  custom-model-data: 672
+  size: 15~28
+  price:
+    base: 11
+    bonus: 2.1
+  requirements:
+    biome:
+      - minecraft:river
+      - minecraft:plains
+      - minecraft:forest
+      - minecraft:swamp
+      - minecraft:dark_forest
+      - minecraft:flower_forest
+      - minecraft:birch_forest
+      - minecraft:old_growth_birch_forest
+      - minecraft:sunflower_plains
+carp_fish_golden_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#808000:#556B2F>Carp Fish</gradient> <#FFD700>(Golden Star)</#FFD700>'
+    lore:
+      - '<gray>One of the most common edible fish'
+      - '<white>size: {size}cm'
+  weight: 10
+  time: 10000
+  group: gold
+  difficulty: 1-2
+  custom-model-data: 673
+  size: 27~48
+  price:
+    base: 12
+    bonus: 2.2
+  requirements:
+    biome:
+      - minecraft:river
+      - minecraft:plains
+      - minecraft:forest
+      - minecraft:swamp
+      - minecraft:dark_forest
+      - minecraft:flower_forest
+      - minecraft:birch_forest
+      - minecraft:old_growth_birch_forest
+      - minecraft:sunflower_plains
+cat_fish:
+  material: paper
+  display:
+    name: '<#BDB76B>Cat Fish</#BDB76B>'
+    lore:
+      - '<gray>Catfish is a fierce carnivorous fish with'
+      - '<gray>sharp jaw teeth, short intestine and stomach'
+      - '<white>size: {size}cm'
+  weight: 50
+  time: 8000
+  difficulty: 1-3
+  custom-model-data: 674
+  size: 3~12
+  price:
+    base: 27
+    bonus: 1.8
+  requirements:
+    biome:
+      - minecraft:river
+      - minecraft:plains
+      - minecraft:forest
+      - minecraft:swamp
+      - minecraft:dark_forest
+      - minecraft:flower_forest
+      - minecraft:birch_forest
+      - minecraft:old_growth_birch_forest
+      - minecraft:sunflower_plains
+cat_fish_silver_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<#BDB76B>Cat Fish</#BDB76B> <#F5F5F5>(Silver Star)</#F5F5F5>'
+    lore:
+      - '<gray>Catfish is a fierce carnivorous fish with'
+      - '<gray>sharp jaw teeth, short intestine and stomach'
+      - '<white>size: {size}cm'
+  weight: 20
+  group: silver
+  time: 8000
+  difficulty: 1-4
+  custom-model-data: 675
+  size: 10~28
+  price:
+    base: 14
+    bonus: 2.2
+  requirements:
+    biome:
+      - minecraft:river
+      - minecraft:plains
+      - minecraft:forest
+      - minecraft:swamp
+      - minecraft:dark_forest
+      - minecraft:flower_forest
+      - minecraft:birch_forest
+      - minecraft:old_growth_birch_forest
+      - minecraft:sunflower_plains
+cat_fish_golden_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<#BDB76B>Cat Fish</#BDB76B> <#FFD700>(Golden Star)</#FFD700>'
+    lore:
+      - '<gray>Catfish is a fierce carnivorous fish with'
+      - '<gray>sharp jaw teeth, short intestine and stomach'
+      - '<white>size: {size}cm'
+  weight: 10
+  time: 8000
+  group: gold
+  difficulty: 1-5
+  custom-model-data: 676
+  size: 40~70
+  price:
+    base: 16
+    bonus: 2.2
+  requirements:
+    biome:
+      - minecraft:river
+      - minecraft:plains
+      - minecraft:forest
+      - minecraft:swamp
+      - minecraft:dark_forest
+      - minecraft:flower_forest
+      - minecraft:birch_forest
+      - minecraft:old_growth_birch_forest
+      - minecraft:sunflower_plains
+octopus:
+  material: paper
+  nick: '<gradient:#D2691E:#FF6347>Octopus</gradient>'
+  display:
+    name: '<gradient:#D2691E:#FF6347>Octopus</gradient>'
+    lore:
+      - '<gray>Octopus is crazy about all kinds of utensils'
+      - '<gray>People often use pots to catch octopus'
+      - '<white>size: {size}cm'
+  weight: 50
+  time: 15000
+  difficulty: 1-1
+  custom-model-data: 677
+  size: 1~4
+  price:
+    base: 50
+    bonus: 2.2
+  requirements:
+    biome:
+      - minecraft:ocean
+      - minecraft:deep_lukewarm_ocean
+      - minecraft:frozen_ocean
+      - minecraft:lukewarm_ocean
+      - minecraft:warm_ocean
+      - minecraft:jungle
+octopus_silver_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#D2691E:#FF6347>Octopus</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
+    lore:
+      - '<gray>Octopus is crazy about all kinds of utensils'
+      - '<gray>People often use pots to catch octopus'
+      - '<white>size: {size}cm'
+  weight: 20
+  group: silver
+  time: 15000
+  difficulty: 1-1
+  custom-model-data: 678
+  size: 4~12
+  price:
+    base: 50
+    bonus: 2.2
+  requirements:
+    biome:
+      - minecraft:ocean
+      - minecraft:cold_ocean
+      - minecraft:deep_cold_ocean
+      - minecraft:deep_frozen_ocean
+      - minecraft:deep_lukewarm_ocean
+      - minecraft:frozen_ocean
+      - minecraft:lukewarm_ocean
+      - minecraft:warm_ocean
+octopus_golden_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#D2691E:#FF6347>Octopus</gradient> <#FFD700>(Golden Star)</#FFD700>'
+    lore:
+      - '<gray>Octopus is crazy about all kinds of utensils'
+      - '<gray>People often use pots to catch octopus'
+      - '<white>size: {size}cm'
+  weight: 10
+  time: 15000
+  group: gold
+  difficulty: 1-1
+  custom-model-data: 679
+  size: 12~100
+  price:
+    base: 10
+    bonus: 1.5
+  requirements:
+    biome:
+      - minecraft:ocean
+      - minecraft:cold_ocean
+      - minecraft:deep_cold_ocean
+      - minecraft:deep_frozen_ocean
+      - minecraft:deep_lukewarm_ocean
+      - minecraft:frozen_ocean
+      - minecraft:lukewarm_ocean
+      - minecraft:warm_ocean
+sunfish:
+  material: paper
+  nick: <#F5DEB3>Sunfish</#F5DEB3>
+  display:
+    name: '<#F5DEB3>Sunfish'
+    lore:
+      - '<gray>It only has one huge head'
+      - '<white>size: {size}cm'
+  weight: 50
+  time: 10000
+  difficulty: 1-2
+  custom-model-data: 680
+  size: 5~18
+  price:
+    base: 10
+    bonus: 1.5
+sunfish_silver_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<#F5DEB3>Sunfish <#F5F5F5>(Silver Star)</#F5F5F5>'
+    lore:
+      - '<gray>It only has one huge head'
+      - '<white>size: {size}cm'
+  weight: 20
+  group: silver
+  time: 10000
+  difficulty: 1-2
+  custom-model-data: 681
+  size: 17~28
+  price:
+    base: 18
+    bonus: 1.5
+sunfish_golden_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<#F5DEB3>Sunfish <#FFD700>(Golden Star)</#FFD700>'
+    lore:
+      - '<gray>It only has one huge head'
+      - '<white>size: {size}cm'
+  weight: 10
+  time: 10000
+  group: gold
+  difficulty: 1-2
+  custom-model-data: 682
+  size: 26~50
+  price:
+    base: 26
+    bonus: 1.5
+red_snapper_fish:
+  material: paper
+  display:
+    name: '<gradient:#FF4500:#FFA07A:#FF4500>Red Snapper Fish</gradient>'
+    lore:
+      - '<gray>They usually have a large family of ten or twenty'
+      - '<gray>with a male as the "head of the family"'
+      - '<white>size: {size}cm'
+  weight: 100
+  time: 10000
+  difficulty: 1-1
+  custom-model-data: 683
+  size: 1~4
+  price:
+    base: 10
+    bonus: 2.3
+red_snapper_fish_silver_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#FF4500:#FFA07A:#FF4500>Red Snapper Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
+    lore:
+      - '<gray>They usually have a large family of ten or twenty'
+      - '<gray>with a male as the "head of the family"'
+      - '<white>size: {size}cm'
+  weight: 40
+  time: 10000
+  group: silver
+  difficulty: 1-2
+  custom-model-data: 684
+  size: 3~12
+  price:
+    base: 10
+    bonus: 2.3
+red_snapper_fish_golden_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<gradient:#FF4500:#FFA07A:#FF4500>Red Snapper Fish</gradient> <#FFD700>(Golden Star)</#FFD700>'
+    lore:
+      - '<gray>They usually have a large family of ten or twenty'
+      - '<gray>with a male as the "head of the family"'
+      - '<white>size: {size}cm'
+  weight: 20
+  time: 10000
+  group: gold
+  difficulty: 1-3
+  custom-model-data: 685
+  size: 9~18
+  price:
+    base: 10
+    bonus: 2.3
+salmon_void_fish:
+  material: paper
+  in-lava: true
+  nick: <gradient:#800000:#800080>Void Salmon</gradient>
+  display:
+    name: '<gradient:#800000:#800080>Void Salmon</gradient>'
+    lore:
+      - '<gray>A fish from the hell'
+  weight: 50
+  time: 10000
+  difficulty: 1-2
+  custom-model-data: 686
+  price:
+    base: 20
+  requirements:
+    world:
+      - world_nether
+salmon_void_fish_silver_star:
+  show-in-fishfinder: false
+  in-lava: true
+  material: paper
+  display:
+    name: '<gradient:#800000:#800080>Void Salmon</gradient><#F5F5F5>(Silver Star)</#F5F5F5>'
+    lore:
+      - '<gray>A fish from the hell'
+  weight: 20
+  time: 10000
+  group: silver
+  difficulty: 1-2
+  custom-model-data: 687
+  price:
+    base: 50
+  requirements:
+    world:
+      - world_nether
+salmon_void_fish_golden_star:
+  show-in-fishfinder: false
+  in-lava: true
+  material: paper
+  display:
+    name: '<gradient:#800000:#800080>Void Salmon</gradient> <#FFD700>(Golden Star)</#FFD700>'
+    lore:
+      - '<gray>A fish from the hell'
+  weight: 10
+  time: 10000
+  group: gold
+  difficulty: 1-2
+  custom-model-data: 688
+  price:
+    base: 100
+  requirements:
+    world:
+      - world_nether
+woodskip_fish:
+  material: paper
+  nick: <#CD5C5C>Woodskip Fish</#CD5C5C>
+  display:
+    name: '<#CD5C5C>Woodskip Fish'
+    lore:
+      - '<gray>A very sensitive fish that can only'
+      - '<gray>live in pools deep in the forest'
+      - '<white>size: {size}cm'
+  weight: 50
+  time: 8000
+  difficulty: 1-2
+  custom-model-data: 689
+  size: 3~7
+  price:
+    base: 10
+    bonus: 2.3
+  requirements:
+    biome:
+      - minecraft:dark_forest
+      - minecraft:forest
+      - minecraft:flower_forest
+      - minecraft:birch_forest
+woodskip_fish_silver_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<#CD5C5C>Woodskip Fish <#F5F5F5>(Silver Star)</#F5F5F5>'
+    lore:
+      - '<gray>A very sensitive fish that can only'
+      - '<gray>live in pools deep in the forest'
+      - '<white>size: {size}cm'
+  weight: 20
+  group: silver
+  time: 7000
+  difficulty: 1-3
+  custom-model-data: 690
+  size: 7~18
+  price:
+    base: 17
+    bonus: 2.5
+  requirements:
+    biome:
+      - minecraft:dark_forest
+      - minecraft:forest
+      - minecraft:flower_forest
+      - minecraft:birch_forest
+woodskip_fish_golden_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<#CD5C5C>Woodskip Fish <#FFD700>(Golden Star)</#FFD700>'
+    lore:
+      - '<gray>A very sensitive fish that can only'
+      - '<gray>live in pools deep in the forest'
+      - '<white>size: {size}cm'
+  weight: 10
+  group: gold
+  time: 6000
+  difficulty: 1-4
+  custom-model-data: 691
+  size: 16~29
+  price:
+    base: 25
+    bonus: 2.8
+  requirements:
+    biome:
+      - minecraft:dark_forest
+      - minecraft:forest
+      - minecraft:flower_forest
+      - minecraft:birch_forest
+sturgeon_fish:
+  material: paper
+  nick: <#48D1CC>Sturgeon Fish</#48D1CC>
+  display:
+    name: '<#48D1CC>Sturgeon Fish'
+    lore:
+      - '<gray>An ancient bottom-feeder with a dwindling'
+      - '<gray>population. Females can live up to 150 years'
+      - '<white>size: {size}cm'
+  weight: 5
+  time: 10000
+  difficulty: 1-3
+  custom-model-data: 692
+  size: 1~5
+  price:
+    base: 200
+    bonus: 10
+  requirements:
+    ypos:
+      - -64~0
+sturgeon_fish_silver_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<#48D1CC>Sturgeon Fish <#F5F5F5>(Silver Star)</#F5F5F5>'
+    lore:
+      - '<gray>An ancient bottom-feeder with a dwindling'
+      - '<gray>population. Females can live up to 150 years'
+      - '<white>size: {size}cm'
+  weight: 2
+  group: silver
+  time: 10000
+  difficulty: 1-5
+  custom-model-data: 693
+  size: 5~15
+  price:
+    base: 250
+    bonus: 10
+  requirements:
+    ypos:
+      - -64~0
+sturgeon_fish_golden_star:
+  show-in-fishfinder: false
+  material: paper
+  display:
+    name: '<#48D1CC>Sturgeon Fish <#FFD700>(Golden Star)</#FFD700>'
+    lore:
+      - '<gray>An ancient bottom-feeder with a dwindling'
+      - '<gray>population. Females can live up to 150 years'
+      - '<white>size: {size}cm'
+  weight: 1
+  time: 10000
+  group: gold
+  difficulty: 1-7
+  custom-model-data: 694
+  size: 15~30
+  price:
+    base: 300
+    bonus: 10
+  requirements:
+    ypos:
+      - -64~0

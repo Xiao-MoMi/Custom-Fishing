@@ -37,6 +37,7 @@ public class SellFishCommand implements TabExecutor {
             AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.noConsole);
             return true;
         }
+        player.closeInventory();
         CustomFishing.plugin.getSellManager().openGuiForPlayer(player);
         return true;
     }

@@ -51,6 +51,7 @@ public class OpenCommand extends AbstractSubCommand {
                 AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.noPerm);
                 return true;
             }
+            player.closeInventory();
             CustomFishing.plugin.getBagDataManager().openFishingBag(player, player);
         }
         if (args.size() == 1) {
@@ -63,6 +64,7 @@ public class OpenCommand extends AbstractSubCommand {
                 AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.playerNotExist);
                 return true;
             }
+            player.closeInventory();
             CustomFishing.plugin.getBagDataManager().openFishingBag(player, offlinePlayer);
         }
         return true;

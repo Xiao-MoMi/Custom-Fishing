@@ -56,7 +56,7 @@ rainbow_3:
     7: 0
 rainbow_4:
   range: 16
-  title: '<#3CB371>GREEN!'
+  title: '<GREEN>GREEN!'
   subtitle:
     start: '<font:customfishing:default>'
     bar: '뀋'

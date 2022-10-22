@@ -51,10 +51,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -589,9 +586,6 @@ public class FishingManager extends Function {
     }
 
     private void sendSuccessTitle(Player player, String loot) {
-
-        nextLoot.remove(player);
-
         AdventureUtil.playerTitle(
                 player,
                 ConfigManager.successTitle[new Random().nextInt(ConfigManager.successTitle.length)]
@@ -659,7 +653,6 @@ public class FishingManager extends Function {
                 action.doOn(player, null);
         }
 
-        nextLoot.remove(player);
         nextBonus.remove(player);
 
         AdventureUtil.playerTitle(
@@ -674,8 +667,18 @@ public class FishingManager extends Function {
 
     public void onCaughtEntity(PlayerFishEvent event) {
         final Player player = event.getPlayer();
-        if (fishingPlayerCache.remove(player) != null && event.getCaught() != null){
-            AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.hookOther);
+        FishingPlayer fishingPlayer = fishingPlayerCache.remove(player);
+        if (fishingPlayer != null) {
+            Entity entity = event.getCaught();
+            if (entity != null && entity.getType() == EntityType.ARMOR_STAND) {
+                proceedReelIn(event, player, fishingPlayer);
+            }
+            else {
+                fishingPlayer.cancel();
+                nextBonus.remove(player);
+                nextLoot.remove(player);
+                AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.hookOther);
+            }
         }
     }
 
@@ -755,7 +758,7 @@ public class FishingManager extends Function {
         NBTItem nbtItem = new NBTItem(itemStack);
         NBTCompound cfCompound = nbtItem.getCompound("CustomFishing");
         if (cfCompound != null && cfCompound.getString("type").equals("util") && cfCompound.getString("id").equals("fishfinder")) {
-            if (isCoolDown(player, 2000)) return;
+            if (isCoolDown(player, 1000)) return;
             useFinder(event.getPlayer());
             return;
         }
@@ -805,7 +808,6 @@ public class FishingManager extends Function {
     }
 
     private void useFinder(Player player) {
-        if (isCoolDown(player, 1000)) return;
         FishingCondition fishingCondition = new FishingCondition(player.getLocation(), player);
         List<Loot> possibleLoots = getPossibleLootList(fishingCondition, true, LootManager.WATERLOOTS.values());
         possibleLoots.addAll(getPossibleLootList(fishingCondition, true, LootManager.LAVALOOTS.values()));
