@@ -56,10 +56,4 @@ public class Function {
 
     public void onOpenInventory(InventoryOpenEvent event) {
     }
-
-    public void onDragInventory(InventoryDragEvent event) {
-    }
-
-    public void onMoveItemInventory(InventoryMoveItemEvent event) {
-    }
 }

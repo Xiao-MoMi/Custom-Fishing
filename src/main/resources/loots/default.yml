@@ -9,6 +9,9 @@ rubbish:
   time: 20000
   difficulty: 1-1
   custom-model-data: 640
+  action:
+    success:
+      mending: 3
 obsidian:
   nick: '<#4B0082>Obsidian</#4B0082>'
   material: obsidian
@@ -16,6 +19,9 @@ obsidian:
   weight: 80
   time: 20000
   difficulty: 1-2
+  action:
+    success:
+      mending: 15
 wither_skeleton_skull:
   nick: '<black>Wither Skeleton Skull</black>'
   material: wither_skeleton_skull
@@ -23,16 +29,25 @@ wither_skeleton_skull:
   weight: 1
   time: 20000
   difficulty: 1-6
+  action:
+    success:
+      mending: 80
 pufferfish:
   nick: '<#DAA520>Pufferfish</#DAA520>'
   material: PUFFERFISH
   weight: 50
   difficulty: 1-1
+  action:
+    success:
+      mending: 7
 cod:
   nick: '<#FFFACD>Cod</#FFFACD>'
   material: COD
   weight: 300
   difficulty: 1-1
+  action:
+    success:
+      mending: 3
 salmon:
   nick: '<#D2691E>Salmon</#D2691E>'
   material: SALMON
@@ -43,6 +58,9 @@ tropical_fish:
   material: TROPICAL_FISH
   weight: 50
   difficulty: 1-1
+  action:
+    success:
+      mending: 4
   requirements:
     biome:
       - minecraft:jungle
@@ -63,6 +81,9 @@ tuna_fish:
   time: 10000
   difficulty: 1-4
   custom-model-data: 641
+  action:
+    success:
+      mending: 5
   size: 15~50
   price:
     base: 30
@@ -90,6 +111,9 @@ tuna_fish_silver_star:
   difficulty: 1-5
   group: silver
   custom-model-data: 666
+  action:
+    success:
+      mending: 7
   size: 30~100
   price:
     base: 50
@@ -117,6 +141,9 @@ tuna_fish_golden_star:
   difficulty: 1-6
   group: gold
   custom-model-data: 667
+  action:
+    success:
+      mending: 9
   size: 80~190
   price:
     base: 80
@@ -146,6 +173,9 @@ pike_fish:
   time: 7000
   difficulty: 1-2
   custom-model-data: 642
+  action:
+    success:
+      mending: 4
   size: 5~15
   price:
     base: 30
@@ -173,6 +203,9 @@ pike_fish_silver_star:
   time: 7000
   difficulty: 1-3
   group: silver
+  action:
+    success:
+      mending: 5
   size: 10~25
   price:
     base: 40
@@ -201,6 +234,9 @@ pike_fish_golden_star:
   time: 7000
   difficulty: 1-4
   group: gold
+  action:
+    success:
+      mending: 7
   size: 15~30
   price:
     base: 50
@@ -228,6 +264,9 @@ gold_fish:
   time: 12000
   difficulty: 1-1
   custom-model-data: 643
+  action:
+    success:
+      mending: 5
 gold_fish_silver_star:
   show-in-fishfinder: false
   material: paper
@@ -244,6 +283,9 @@ gold_fish_silver_star:
   difficulty: 1-2
   group: silver
   custom-model-data: 658
+  action:
+    success:
+      mending: 7
 gold_fish_golden_star:
   show-in-fishfinder: false
   material: paper
@@ -260,6 +302,9 @@ gold_fish_golden_star:
   group: gold
   difficulty: 1-3
   custom-model-data: 659
+  action:
+    success:
+      mending: 9
 perch_fish:
   material: paper
   display:
@@ -272,6 +317,9 @@ perch_fish:
   time: 10000
   difficulty: 1-2
   custom-model-data: 644
+  action:
+    success:
+      mending: 3
   size: 5~12
   price:
     base: 10
@@ -294,6 +342,9 @@ perch_fish_silver_star:
   group: silver
   difficulty: 1-2
   custom-model-data: 660
+  action:
+    success:
+      mending: 6
   size: 10~19
   price:
     base: 10
@@ -316,6 +367,9 @@ perch_fish_golden_star:
   time: 8000
   difficulty: 1-1
   custom-model-data: 661
+  action:
+    success:
+      mending: 12
   size: 20~39
   price:
     base: 10
@@ -337,6 +391,9 @@ mullet_fish:
   time: 10000
   difficulty: 1-2
   custom-model-data: 645
+  action:
+    success:
+      mending: 6
   size: 1~3
   price:
     base: 20
@@ -355,6 +412,9 @@ mullet_fish_silver_star:
   time: 8000
   difficulty: 1-3
   custom-model-data: 662
+  action:
+    success:
+      mending: 8
   size: 4~9
   price:
     base: 30
@@ -373,6 +433,9 @@ mullet_fish_golden_star:
   group: gold
   difficulty: 1-4
   custom-model-data: 663
+  action:
+    success:
+      mending: 12
   size: 10~20
   price:
     base: 50
@@ -390,6 +453,9 @@ sardine_fish:
   time: 8000
   difficulty: 1-2
   custom-model-data: 668
+  action:
+    success:
+      mending: 7
   size: 1~5
   price:
     base: 10
@@ -408,6 +474,9 @@ sardine_fish_silver_star:
   group: silver
   difficulty: 1-3
   custom-model-data: 669
+  action:
+    success:
+      mending: 9
   size: 4~8
   price:
     base: 13
@@ -426,6 +495,9 @@ sardine_fish_golden_star:
   group: gold
   difficulty: 1-4
   custom-model-data: 670
+  action:
+    success:
+      mending: 14
   size: 7~14
   price:
     base: 15
@@ -442,6 +514,9 @@ carp_fish:
   time: 10000
   difficulty: 1-2
   custom-model-data: 671
+  action:
+    success:
+      mending: 6
   size: 7~19
   price:
     base: 10
@@ -470,6 +545,9 @@ carp_fish_silver_star:
   group: silver
   difficulty: 1-2
   custom-model-data: 672
+  action:
+    success:
+      mending: 8
   size: 15~28
   price:
     base: 11
@@ -498,6 +576,9 @@ carp_fish_golden_star:
   group: gold
   difficulty: 1-2
   custom-model-data: 673
+  action:
+    success:
+      mending: 10
   size: 27~48
   price:
     base: 12
@@ -525,6 +606,9 @@ cat_fish:
   time: 8000
   difficulty: 1-3
   custom-model-data: 674
+  action:
+    success:
+      mending: 6
   size: 3~12
   price:
     base: 27
@@ -554,6 +638,9 @@ cat_fish_silver_star:
   time: 8000
   difficulty: 1-4
   custom-model-data: 675
+  action:
+    success:
+      mending: 10
   size: 10~28
   price:
     base: 14
@@ -583,6 +670,9 @@ cat_fish_golden_star:
   group: gold
   difficulty: 1-5
   custom-model-data: 676
+  action:
+    success:
+      mending: 13
   size: 40~70
   price:
     base: 16
@@ -611,6 +701,9 @@ octopus:
   time: 15000
   difficulty: 1-1
   custom-model-data: 677
+  action:
+    success:
+      mending: 6
   size: 1~4
   price:
     base: 50
@@ -637,6 +730,9 @@ octopus_silver_star:
   time: 15000
   difficulty: 1-1
   custom-model-data: 678
+  action:
+    success:
+      mending: 7
   size: 4~12
   price:
     base: 50
@@ -665,6 +761,9 @@ octopus_golden_star:
   group: gold
   difficulty: 1-1
   custom-model-data: 679
+  action:
+    success:
+      mending: 8
   size: 12~100
   price:
     base: 10
@@ -691,6 +790,9 @@ sunfish:
   time: 10000
   difficulty: 1-2
   custom-model-data: 680
+  action:
+    success:
+      mending: 9
   size: 5~18
   price:
     base: 10
@@ -708,6 +810,9 @@ sunfish_silver_star:
   time: 10000
   difficulty: 1-2
   custom-model-data: 681
+  action:
+    success:
+      mending: 10
   size: 17~28
   price:
     base: 18
@@ -725,6 +830,9 @@ sunfish_golden_star:
   group: gold
   difficulty: 1-2
   custom-model-data: 682
+  action:
+    success:
+      mending: 15
   size: 26~50
   price:
     base: 26
@@ -741,6 +849,9 @@ red_snapper_fish:
   time: 10000
   difficulty: 1-1
   custom-model-data: 683
+  action:
+    success:
+      mending: 10
   size: 1~4
   price:
     base: 10
@@ -759,6 +870,9 @@ red_snapper_fish_silver_star:
   group: silver
   difficulty: 1-2
   custom-model-data: 684
+  action:
+    success:
+      mending: 12
   size: 3~12
   price:
     base: 10
@@ -777,6 +891,9 @@ red_snapper_fish_golden_star:
   group: gold
   difficulty: 1-3
   custom-model-data: 685
+  action:
+    success:
+      mending: 14
   size: 9~18
   price:
     base: 10
@@ -793,6 +910,9 @@ salmon_void_fish:
   time: 10000
   difficulty: 1-2
   custom-model-data: 686
+  action:
+    success:
+      mending: 20
   price:
     base: 20
   requirements:
@@ -811,6 +931,9 @@ salmon_void_fish_silver_star:
   group: silver
   difficulty: 1-2
   custom-model-data: 687
+  action:
+    success:
+      mending: 24
   price:
     base: 50
   requirements:
@@ -829,6 +952,9 @@ salmon_void_fish_golden_star:
   group: gold
   difficulty: 1-2
   custom-model-data: 688
+  action:
+    success:
+      mending: 28
   price:
     base: 100
   requirements:
@@ -847,6 +973,9 @@ woodskip_fish:
   time: 8000
   difficulty: 1-2
   custom-model-data: 689
+  action:
+    success:
+      mending: 6
   size: 3~7
   price:
     base: 10
@@ -871,6 +1000,9 @@ woodskip_fish_silver_star:
   time: 7000
   difficulty: 1-3
   custom-model-data: 690
+  action:
+    success:
+      mending: 9
   size: 7~18
   price:
     base: 17
@@ -895,6 +1027,9 @@ woodskip_fish_golden_star:
   time: 6000
   difficulty: 1-4
   custom-model-data: 691
+  action:
+    success:
+      mending: 13
   size: 16~29
   price:
     base: 25
@@ -918,6 +1053,9 @@ sturgeon_fish:
   time: 10000
   difficulty: 1-3
   custom-model-data: 692
+  action:
+    success:
+      mending: 28
   size: 1~5
   price:
     base: 200
@@ -939,6 +1077,9 @@ sturgeon_fish_silver_star:
   time: 10000
   difficulty: 1-5
   custom-model-data: 693
+  action:
+    success:
+      mending: 35
   size: 5~15
   price:
     base: 250
@@ -960,6 +1101,9 @@ sturgeon_fish_golden_star:
   group: gold
   difficulty: 1-7
   custom-model-data: 694
+  action:
+    success:
+      mending: 42
   size: 15~30
   price:
     base: 300

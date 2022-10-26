@@ -617,17 +617,19 @@ public class FishingManager extends Function {
 
     private void loseDurability(Player player) {
         if (player.getGameMode() == GameMode.CREATIVE) return;
-        PlayerInventory inventory = player.getInventory();
-        ItemStack mainHand = inventory.getItemInMainHand();
-        if (mainHand.getType() == Material.FISHING_ROD){
-            setDurability(mainHand);
-        }
-        else {
-            ItemStack offHand = inventory.getItemInOffHand();
-            if (offHand.getType() == Material.FISHING_ROD){
-                setDurability(offHand);
+        Bukkit.getScheduler().runTaskLater(CustomFishing.plugin, () -> {
+            PlayerInventory inventory = player.getInventory();
+            ItemStack mainHand = inventory.getItemInMainHand();
+            if (mainHand.getType() == Material.FISHING_ROD){
+                setDurability(mainHand);
             }
-        }
+            else {
+                ItemStack offHand = inventory.getItemInOffHand();
+                if (offHand.getType() == Material.FISHING_ROD){
+                    setDurability(offHand);
+                }
+            }
+        }, 1);
     }
 
     private void setDurability(ItemStack rod) {

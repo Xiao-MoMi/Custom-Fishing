@@ -134,43 +134,73 @@ public class IntegrationManager extends Function {
         List<AntiGriefInterface> antiGriefsList = new ArrayList<>();
         if (config.getBoolean("integrations.Residence",false)){
             if (Bukkit.getPluginManager().getPlugin("Residence") == null) Log.warn("Failed to initialize Residence!");
-            else {antiGriefsList.add(new ResidenceHook());hookMessage("Residence");}
+            else {
+                antiGriefsList.add(new ResidenceHook());
+                hookMessage("Residence");
+            }
         }
         if (config.getBoolean("integrations.Kingdoms",false)){
             if (Bukkit.getPluginManager().getPlugin("Kingdoms") == null) Log.warn("Failed to initialize Kingdoms!");
-            else {antiGriefsList.add(new KingdomsXHook());hookMessage("Kingdoms");}
+            else {
+                antiGriefsList.add(new KingdomsXHook());
+                hookMessage("Kingdoms");
+            }
         }
         if (config.getBoolean("integrations.WorldGuard",false)){
             if (Bukkit.getPluginManager().getPlugin("WorldGuard") == null) Log.warn("Failed to initialize WorldGuard!");
-            else {antiGriefsList.add(new WorldGuardHook());hookMessage("WorldGuard");}
+            else {
+                antiGriefsList.add(new WorldGuardHook());
+                hookMessage("WorldGuard");
+            }
         }
         if (config.getBoolean("integrations.GriefDefender",false)){
             if(Bukkit.getPluginManager().getPlugin("GriefDefender") == null) Log.warn("Failed to initialize GriefDefender!");
-            else {antiGriefsList.add(new GriefDefenderHook());hookMessage("GriefDefender");}
+            else {
+                antiGriefsList.add(new GriefDefenderHook());
+                hookMessage("GriefDefender");
+            }
         }
         if (config.getBoolean("integrations.PlotSquared",false)){
             if(Bukkit.getPluginManager().getPlugin("PlotSquared") == null) Log.warn("Failed to initialize PlotSquared!");
-            else {antiGriefsList.add(new PlotSquaredHook());hookMessage("PlotSquared");}
+            else {
+                antiGriefsList.add(new PlotSquaredHook());
+                hookMessage("PlotSquared");
+            }
         }
         if (config.getBoolean("integrations.Towny",false)){
             if (Bukkit.getPluginManager().getPlugin("Towny") == null) Log.warn("Failed to initialize Towny!");
-            else {antiGriefsList.add(new TownyHook());hookMessage("Towny");}
+            else {
+                antiGriefsList.add(new TownyHook());
+                hookMessage("Towny");
+            }
         }
         if (config.getBoolean("integrations.Lands",false)){
             if (Bukkit.getPluginManager().getPlugin("Lands") == null) Log.warn("Failed to initialize Lands!");
-            else {antiGriefsList.add(new LandsHook());hookMessage("Lands");}
+            else {
+                antiGriefsList.add(new LandsHook());
+                hookMessage("Lands");
+            }
         }
         if (config.getBoolean("integrations.GriefPrevention",false)){
             if (Bukkit.getPluginManager().getPlugin("GriefPrevention") == null) Log.warn("Failed to initialize GriefPrevention!");
-            else {antiGriefsList.add(new GriefPreventionHook());hookMessage("GriefPrevention");}
+            else {
+                antiGriefsList.add(new GriefPreventionHook());
+                hookMessage("GriefPrevention");
+            }
         }
         if (config.getBoolean("integrations.CrashClaim",false)){
             if (Bukkit.getPluginManager().getPlugin("CrashClaim") == null) Log.warn("Failed to initialize CrashClaim!");
-            else {antiGriefsList.add(new CrashClaimHook());hookMessage("CrashClaim");}
+            else {
+                antiGriefsList.add(new CrashClaimHook());
+                hookMessage("CrashClaim");
+            }
         }
         if (config.getBoolean("integrations.BentoBox",false)){
             if (Bukkit.getPluginManager().getPlugin("BentoBox") == null) Log.warn("Failed to initialize BentoBox!");
-            else {antiGriefsList.add(new BentoBoxHook());hookMessage("BentoBox");}
+            else {
+                antiGriefsList.add(new BentoBoxHook());
+                hookMessage("BentoBox");
+            }
         }
         antiGriefs = antiGriefsList.toArray(new AntiGriefInterface[0]);
     }

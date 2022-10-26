@@ -31,8 +31,6 @@ public class SqlConnection {
 
     private boolean secondTry = false;
     private boolean firstTry = false;
-    private boolean isFirstTry = true;
-    public int waitTimeOut = 10;
     private HikariDataSource hikariDataSource;
     private String tablePrefix;
 
@@ -47,10 +45,9 @@ public class SqlConnection {
             hikariConfig.setDriverClassName("org.mariadb.jdbc.Driver");
             sql = "mariadb";
         }
-
-        tablePrefix = config.getString("MySQL.table-prefix");
+        tablePrefix = config.getString(storageMode + ".table-prefix");
         hikariConfig.setPoolName("[CustomFishing]");
-        hikariConfig.setJdbcUrl(String.format("jdbc:%s://%s/%s", sql, config.getString("MySQL.host") + ":" + config.getString("MySQL.port"), config.getString("MySQL.database")));
+        hikariConfig.setJdbcUrl(String.format("jdbc:%s://%s/%s", sql, config.getString(storageMode + ".host") + ":" + config.getString(storageMode + ".port"), config.getString(storageMode + ".database")));
         hikariConfig.setUsername(config.getString(storageMode + ".user"));
         hikariConfig.setPassword(config.getString(storageMode + ".password"));
         hikariConfig.setMaximumPoolSize(config.getInt(storageMode + ".Pool-Settings.maximum-pool-size"));
@@ -128,7 +125,7 @@ public class SqlConnection {
                 return getConnectionAndCheck();
             } else {
                 firstTry = true;
-                AdventureUtil.consoleMessage("<red>[CustomNameplates] Error! Failed to connect to SQL!</red>");
+                AdventureUtil.consoleMessage("<red>[CustomFishing] Error! Failed to connect to SQL!</red>");
                 close();
                 e.printStackTrace();
                 return null;

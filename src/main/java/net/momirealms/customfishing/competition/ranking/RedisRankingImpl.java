@@ -117,6 +117,7 @@ public class RedisRankingImpl implements RankingInterface {
     public float getFirstScore() {
         Jedis jedis = JedisUtil.getJedis();
         List<Tuple> players = jedis.zrevrangeWithScores("cf_competition", 0, 0);
+        jedis.close();
         if (players == null) return 0;
         if (players.size() == 0) return 0;
         return (float) players.get(0).getScore();
