@@ -1,0 +1,6 @@
+water_effect:
+  material: PAPER
+  custom-model-data: 888
+lava_effect:
+  material: PAPER
+  custom-model-data: 889

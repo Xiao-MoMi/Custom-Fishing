@@ -73,6 +73,7 @@ public class BonusManager extends Function {
             if (!util_file.mkdir()) return;
             CustomFishing.plugin.saveResource("utils" + File.separator + "fishfinder.yml", false);
             CustomFishing.plugin.saveResource("utils" + File.separator + "totem_items.yml", false);
+            CustomFishing.plugin.saveResource("utils" + File.separator + "splash_items.yml", false);
         }
         File[] files = util_file.listFiles();
         if (files == null) return;

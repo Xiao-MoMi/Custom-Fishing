@@ -450,9 +450,6 @@ public class FishingManager extends Function {
             Competition.currentCompetition.getBossBarManager().tryJoin(player);
         }
 
-        ItemStackUtil.addExtraMeta(drop, droppedItem);
-        if (ConfigManager.addTagToFish) ItemStackUtil.addIdentifier(drop, "loot", droppedItem.getKey());
-
         dropItem(player, location, fishResultEvent.isDouble(), drop);
         for (ActionInterface action : droppedItem.getSuccessActions())
             action.doOn(player, null);
@@ -470,6 +467,8 @@ public class FishingManager extends Function {
                 ItemStackUtil.addRandomDamage(drop);
             if (ConfigManager.preventPickUp)
                 ItemStackUtil.addOwner(drop, player.getName());
+            ItemStackUtil.addExtraMeta(drop, droppedItem);
+            if (ConfigManager.addTagToFish) ItemStackUtil.addIdentifier(drop, "loot", droppedItem.getKey());
         }
         return drop;
     }

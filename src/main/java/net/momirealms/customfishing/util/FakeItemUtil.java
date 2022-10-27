@@ -3,13 +3,11 @@ package net.momirealms.customfishing.util;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import io.lumine.mythic.api.packs.Pack;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

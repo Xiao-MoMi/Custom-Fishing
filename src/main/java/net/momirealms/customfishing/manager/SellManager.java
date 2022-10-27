@@ -358,6 +358,8 @@ public class SellManager extends Function {
                     .setVariable("size", size);
             price = (float) expression.evaluate();
         }
+        Double money = Optional.ofNullable(nbtItem.getDouble("Price")).orElse(0d);
+        price += money;
         if (price == 0) {
             price = Optional.ofNullable(vanillaPrices.get(itemStack.getType())).orElse(0f);
         }

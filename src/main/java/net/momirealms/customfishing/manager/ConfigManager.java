@@ -17,8 +17,6 @@
 
 package net.momirealms.customfishing.manager;
 
-import net.momirealms.customfishing.integration.VaultHook;
-import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import net.momirealms.customfishing.util.JedisUtil;
 import org.bukkit.Bukkit;
@@ -63,6 +61,12 @@ public class ConfigManager {
     public static boolean useRedis;
     public static int lavaMaxTime;
     public static int lavaMinTime;
+    public static boolean enableWaterAnimation;
+    public static boolean enableLavaAnimation;
+    public static String water_item;
+    public static String lava_item;
+    public static int water_time;
+    public static int lava_time;
     public static boolean addTagToFish;
     public static boolean logEarning;
     public static boolean vaultHook;
@@ -118,6 +122,13 @@ public class ConfigManager {
         failureFadeIn = config.getInt("titles.failure.fade.in", 10) * 50;
         failureFadeStay = config.getInt("titles.failure.fade.stay", 30) * 50;
         failureFadeOut = config.getInt("titles.failure.fade.out", 10) * 50;
+
+        enableWaterAnimation = config.getBoolean("mechanics.splash-animation.water.enable", false);
+        enableLavaAnimation = config.getBoolean("mechanics.splash-animation.lava.enable", false);
+        water_item = config.getString("mechanics.splash-animation.water.item");
+        lava_item = config.getString("mechanics.splash-animation.lava.item");
+        water_time = config.getInt("mechanics.splash-animation.water.time");
+        lava_time = config.getInt("mechanics.splash-animation.lava.time");
 
         lavaMinTime = config.getInt("mechanics.lava-fishing.min-wait-time", 100);
         lavaMaxTime = config.getInt("mechanics.lava-fishing.max-wait-time", 600) - lavaMinTime;

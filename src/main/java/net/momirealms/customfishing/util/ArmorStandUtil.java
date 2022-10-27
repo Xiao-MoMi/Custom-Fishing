@@ -19,16 +19,22 @@ package net.momirealms.customfishing.util;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.manager.BonusManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 public class ArmorStandUtil {
 
@@ -84,5 +90,36 @@ public class ArmorStandUtil {
         wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, serializer2), flag);
         wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(3, serializer1), true);
         return wrappedDataWatcher;
+    }
+
+    public static PacketContainer getEquipPacket(int id, ItemStack itemStack) {
+        PacketContainer equipPacket = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
+        equipPacket.getIntegers().write(0, id);
+        List<Pair<EnumWrappers.ItemSlot, ItemStack>> pairs = new ArrayList<>();
+        pairs.add(new Pair<>(EnumWrappers.ItemSlot.HEAD, itemStack));
+        equipPacket.getSlotStackPairLists().write(0, pairs);
+        return equipPacket;
+    }
+
+    public static void sendAnimationToPlayer(Location location, Player player, String item, int time) {
+        int id = new Random().nextInt(100000000);
+        ItemStack itemStack = BonusManager.UTILITEMS.get(item);
+        if (itemStack == null) return;
+        try {
+            CustomFishing.protocolManager.sendServerPacket(player, getSpawnPacket(id, location.clone().subtract(0,1,0)));
+            CustomFishing.protocolManager.sendServerPacket(player, getMetaPacket(id));
+            CustomFishing.protocolManager.sendServerPacket(player, getEquipPacket(id, itemStack));
+        }
+        catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        Bukkit.getScheduler().runTaskLaterAsynchronously(CustomFishing.plugin, () -> {
+            try {
+                CustomFishing.protocolManager.sendServerPacket(player, getDestroyPacket(id));
+            }
+            catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }, time);
     }
 }

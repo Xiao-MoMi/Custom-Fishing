@@ -29,6 +29,6 @@ magnet_bait:
       - '<white>Increases the probability of better loots by 15%.'
   custom-model-data: 695
   modifier:
-    weight-MQ:
+    weight-multiply:
       silver: 1.15
       gold: 1.15

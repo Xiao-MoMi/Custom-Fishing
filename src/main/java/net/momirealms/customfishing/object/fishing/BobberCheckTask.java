@@ -17,16 +17,15 @@
 
 package net.momirealms.customfishing.object.fishing;
 
-import com.plotsquared.core.plot.PlotId;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.FishingManager;
 import net.momirealms.customfishing.manager.LootManager;
-import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.object.loot.Loot;
 import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.ArmorStandUtil;
 import net.momirealms.customfishing.util.FakeItemUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -34,11 +33,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -52,15 +49,16 @@ public class BobberCheckTask extends BukkitRunnable {
     private final Bonus bonus;
     private final FishingManager fishingManager;
     private boolean hooked;
-    private boolean first_time;
+    private boolean reserve;
     private int jump_timer;
     private final int lureLevel;
     private BukkitTask cache_1;
     private BukkitTask cache_2;
     private BukkitTask cache_3;
     private ArmorStand entityCache;
-    private int entityID;
+    private final int entityID;
     private boolean land;
+    private boolean first;
 
     public BobberCheckTask(Player player, Bonus bonus, FishHook fishHook, FishingManager fishingManager, int lureLevel, int entityID) {
         this.fishHook = fishHook;
@@ -68,11 +66,12 @@ public class BobberCheckTask extends BukkitRunnable {
         this.player = player;
         this.timer = 0;
         this.bonus = bonus;
-        this.first_time = true;
+        this.reserve = true;
         this.jump_timer = 0;
         this.lureLevel = lureLevel;
         this.entityID = entityID;
         this.land = false;
+        this.first = true;
     }
 
     @Override
@@ -100,6 +99,10 @@ public class BobberCheckTask extends BukkitRunnable {
                 stop();
                 return;
             }
+            if (first) {
+                ArmorStandUtil.sendAnimationToPlayer(fishHook.getLocation(), player, ConfigManager.lava_item, ConfigManager.lava_time);
+                first = false;
+            }
             if (hooked) {
                 jump_timer++;
                 if (jump_timer < 4) {
@@ -109,13 +112,13 @@ public class BobberCheckTask extends BukkitRunnable {
                 fishHook.setVelocity(new Vector(0,0.24,0));
                 return;
             }
-            if (first_time) {
-                if (jump_timer < 8) {
+            if (reserve) {
+                if (jump_timer < 5) {
                     jump_timer++;
-                    fishHook.setVelocity(new Vector(0,0.18 - jump_timer * 0.01,0));
+                    fishHook.setVelocity(new Vector(0,0.2 - jump_timer * 0.02,0));
                     return;
                 }
-                first_time = false;
+                reserve = false;
                 randomTime();
                 spawnArmorStand(fishHook.getLocation());
             }
@@ -126,6 +129,9 @@ public class BobberCheckTask extends BukkitRunnable {
             Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.plugin, () -> {
                 List<Loot> possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player), false, LootManager.WATERLOOTS.values());
                 fishingManager.getNextLoot(player, bonus, possibleLoots);
+                if (ConfigManager.enableWaterAnimation) {
+                    ArmorStandUtil.sendAnimationToPlayer(fishHook.getLocation(), player, ConfigManager.water_item, ConfigManager.water_time);
+                }
             });
             return;
         }
@@ -184,7 +190,7 @@ public class BobberCheckTask extends BukkitRunnable {
         }, random);
         cache_2 = Bukkit.getScheduler().runTaskLater(CustomFishing.plugin, () -> {
             hooked = false;
-            first_time = true;
+            reserve = true;
         }, random + 40);
         cache_3 = new LavaEffect(fishHook.getLocation()).runTaskTimerAsynchronously(CustomFishing.plugin,random - 60,1);
     }

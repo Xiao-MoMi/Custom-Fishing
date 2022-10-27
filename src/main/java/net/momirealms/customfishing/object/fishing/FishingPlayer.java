@@ -83,7 +83,12 @@ public class FishingPlayer extends BukkitRunnable {
             internalTimer++;
             return;
         } else {
-            progress = getNextProgress(progress, face);
+            if (face) {
+                progress += difficulty.speed();
+            }
+            else {
+                progress -= difficulty.speed();
+            }
             if (progress > size) {
                 face = !face;
                 progress = 2 * size - progress;
@@ -112,14 +117,6 @@ public class FishingPlayer extends BukkitRunnable {
         }
     }
 
-    private int getNextProgress(int i, boolean face) {
-        if (face) {
-            return i + difficulty.speed();
-        }
-        else {
-            return i - difficulty.speed();
-        }
-    }
 
     public boolean isSuccess() {
         int last = progress / range;
