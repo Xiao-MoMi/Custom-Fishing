@@ -337,6 +337,11 @@ public class FishingManager extends Function {
         final Player player = event.getPlayer();
         if (!(event.getCaught() instanceof Item item)) return;
 
+        if (ConfigManager.disableBar) {
+            noBarWaterReelIn(event);
+            return;
+        }
+
         FishingPlayer fishingPlayer = fishingPlayerCache.remove(player);
         if (fishingPlayer == null) {
 
@@ -385,12 +390,66 @@ public class FishingManager extends Function {
         }
     }
 
+    private void noBarWaterReelIn(PlayerFishEvent event) {
+        Entity entity = event.getCaught();
+        if (!(entity instanceof Item item)) {
+            return;
+        }
+        entity.remove();
+        event.setExpToDrop(0);
+        final Player player = event.getPlayer();
+        Loot loot = nextLoot.remove(player);
+        VanillaLoot vanilla = vanillaLoot.remove(player);
+        Bonus bonus = nextBonus.remove(player);
+        if (vanilla != null) {
+            dropVanillaLoot(player, vanilla, item.getLocation(), bonus.getDoubleLoot() > Math.random());
+            return;
+        }
+        if (loot instanceof Mob mob) {
+            summonMob(player, loot, item.getLocation(), mob, bonus.getScore());
+            return;
+        }
+        if (loot instanceof DroppedItem droppedItem){
+            if (ConfigManager.enableMcMMOLoot && Math.random() < ConfigManager.mcMMOLootChance){
+                if (dropMcMMOLoot(player, item.getLocation(), bonus.getDoubleLoot() > Math.random())){
+                    return;
+                }
+            }
+            dropCustomFishingLoot(player, item.getLocation(), droppedItem, bonus.getDoubleLoot() > Math.random(), bonus.getScore());
+        }
+    }
+
+    private void noBarLavaReelIn(PlayerFishEvent event) {
+        final Player player = event.getPlayer();
+        BobberCheckTask bobberCheckTask = bobberTaskCache.remove(player);
+        if (bobberCheckTask != null && bobberCheckTask.isHooked()) {
+            Loot loot = nextLoot.remove(player);
+            VanillaLoot vanilla = vanillaLoot.remove(player);
+            Bonus bonus = nextBonus.remove(player);
+            if (vanilla != null) {
+                dropVanillaLoot(player, vanilla, event.getHook().getLocation(), bonus.getDoubleLoot() > Math.random());
+                return;
+            }
+            if (loot instanceof Mob mob) {
+                summonMob(player, loot, event.getHook().getLocation(), mob, bonus.getScore());
+                return;
+            }
+            if (loot instanceof DroppedItem droppedItem){
+                if (ConfigManager.enableMcMMOLoot && Math.random() < ConfigManager.mcMMOLootChance){
+                    if (dropMcMMOLoot(player, event.getHook().getLocation(), bonus.getDoubleLoot() > Math.random())){
+                        return;
+                    }
+                }
+                dropCustomFishingLoot(player, event.getHook().getLocation(), droppedItem, bonus.getDoubleLoot() > Math.random(), bonus.getScore());
+            }
+        }
+    }
+
     private void proceedReelIn(PlayerFishEvent event, Player player, FishingPlayer fishingPlayer) {
         fishingPlayer.cancel();
         Loot loot = nextLoot.remove(player);
         VanillaLoot vanilla = vanillaLoot.remove(player);
         player.removePotionEffect(PotionEffectType.SLOW);
-
         if (fishingPlayer.isSuccess()) {
             if (ConfigManager.rodLoseDurability) loseDurability(player);
             Location location = event.getHook().getLocation();
@@ -421,12 +480,19 @@ public class FishingManager extends Function {
 
     public void onReelIn(PlayerFishEvent event) {
         final Player player = event.getPlayer();
+
+        if (ConfigManager.disableBar) {
+            noBarLavaReelIn(event);
+            return;
+        }
+        //in fishing
         FishingPlayer fishingPlayer = fishingPlayerCache.remove(player);
         if (fishingPlayer != null) {
             proceedReelIn(event, player, fishingPlayer);
             bobberTaskCache.remove(player);
             return;
         }
+        //not in fishing
         BobberCheckTask bobberCheckTask = bobberTaskCache.get(player);
         if (bobberCheckTask != null && bobberCheckTask.isHooked()) {
             showPlayerBar(player, nextLoot.get(player));
@@ -500,7 +566,7 @@ public class FishingManager extends Function {
         if (itemStack.getType() == Material.AIR) return;
         Entity item = location.getWorld().dropItem(location, itemStack);
         Vector vector = player.getLocation().subtract(location).toVector().multiply(0.1);
-        vector = vector.setY((vector.getY()+0.25) * 1.2);
+        vector = vector.setY((vector.getY()+0.18) * 1.15);
         item.setVelocity(vector);
         if (isDouble) {
             Entity item2 = location.getWorld().dropItem(location, itemStack);

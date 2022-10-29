@@ -42,8 +42,9 @@ public class RodCommand extends AbstractSubCommand {
     public boolean onCommand(CommandSender sender, List<String> args) {
         if (args.size() < 2) {
             AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.lackArgs);
+            return true;
         }
-        else if (args.get(0).equalsIgnoreCase("get")) {
+        if (args.get(0).equalsIgnoreCase("get")) {
             if (sender instanceof Player player){
                 if (!BonusManager.RODITEMS.containsKey(args.get(1))){
                     AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.itemNotExist);

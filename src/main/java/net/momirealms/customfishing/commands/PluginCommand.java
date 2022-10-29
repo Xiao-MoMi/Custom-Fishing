@@ -18,10 +18,7 @@
 package net.momirealms.customfishing.commands;
 
 
-import net.momirealms.customfishing.commands.subcmd.CompetitionCommand;
-import net.momirealms.customfishing.commands.subcmd.ImportCommand;
-import net.momirealms.customfishing.commands.subcmd.ItemsCommand;
-import net.momirealms.customfishing.commands.subcmd.ReloadCommand;
+import net.momirealms.customfishing.commands.subcmd.*;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.command.Command;
@@ -62,6 +59,7 @@ public class PluginCommand implements TabExecutor {
         regSubCommand(ItemsCommand.INSTANCE);
         regSubCommand(CompetitionCommand.INSTANCE);
         regSubCommand(ImportCommand.INSTANCE);
+        regSubCommand(SellShopCommand.INSTANCE);
     }
 
     public void regSubCommand(SubCommand executor) {

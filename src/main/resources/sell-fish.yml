@@ -1,3 +1,5 @@
+# Fish got from command can't be sold! Only those from fishing would have special price NBT tags
+
 container-title: '<gradient:#A52A2A:#800000:#A52A2A>Sell Fish</gradient>'
 
 rows: 6

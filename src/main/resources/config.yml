@@ -1,5 +1,5 @@
 # don't change
-config-version: '11'
+config-version: '12'
 
 # chinese/english/spanish
 lang: english
@@ -48,6 +48,10 @@ worlds:
 
 # Mechanic settings
 mechanics:
+
+  # Disable the fishing bar totally
+  disable-bar-mechanic: false
+
   other-loots:
     # Should other loots have the same fishing mechanic CustomFishing provides
     # 其他战利品是否有插件提供的钓鱼特性
