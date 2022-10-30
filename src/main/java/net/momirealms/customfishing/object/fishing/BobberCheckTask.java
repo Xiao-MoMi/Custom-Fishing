@@ -31,6 +31,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -88,6 +89,11 @@ public class BobberCheckTask extends BukkitRunnable {
         }
         if (timer > 3600) {
             stop();
+            return;
+        }
+        if (fishHook.getHookedEntity() != null && fishHook.getHookedEntity().getType() != EntityType.ARMOR_STAND) {
+            stop();
+            return;
         }
         if (!fishHook.isValid()) {
             stop();
@@ -100,6 +106,7 @@ public class BobberCheckTask extends BukkitRunnable {
                 return;
             }
             if (first) {
+                sendRemovePacket();
                 ArmorStandUtil.sendAnimationToPlayer(fishHook.getLocation(), player, ConfigManager.lava_item, ConfigManager.lava_time);
                 first = false;
             }
@@ -148,13 +155,16 @@ public class BobberCheckTask extends BukkitRunnable {
             entityCache.remove();
             entityCache = null;
         }
-        if (entityID != 0) {
-            try {
-                CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getDestroyPacket(entityID));
-            }
-            catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+        sendRemovePacket();
+    }
+
+    private void sendRemovePacket() {
+        if (entityID == 0) return;
+        try {
+            CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getDestroyPacket(entityID));
+        }
+        catch (InvocationTargetException e) {
+            e.printStackTrace();
         }
     }
 
@@ -187,6 +197,7 @@ public class BobberCheckTask extends BukkitRunnable {
             hooked = true;
             if (entityCache != null && !entityCache.isDead()) entityCache.remove();
             AdventureUtil.playerSound(player, Sound.Source.NEUTRAL, Key.key("minecraft:block.pointed_dripstone.drip_lava_into_cauldron"), 1, 1);
+            if (ConfigManager.instantBar) fishingManager.showBar(player);
         }, random);
         cache_2 = Bukkit.getScheduler().runTaskLater(CustomFishing.plugin, () -> {
             hooked = false;

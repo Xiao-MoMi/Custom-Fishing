@@ -1,5 +1,5 @@
 # don't change
-config-version: '12'
+config-version: '13'
 
 # chinese/english/spanish
 lang: english
@@ -50,7 +50,13 @@ worlds:
 mechanics:
 
   # Disable the fishing bar totally
+  # 关闭捕鱼条
   disable-bar-mechanic: false
+  # Does the fishing bar show up instantly when the fish is hooked
+  # [Note] In this mode, vanilla loots are not available unless you add them to the loot system!
+  # 是否在鱼咬钩后立刻显示捕鱼条，而不是需要右键后才显示
+  # 注意：启用本设置会导致无法获取原版钓鱼战利品
+  instant-bar: false
 
   other-loots:
     # Should other loots have the same fishing mechanic CustomFishing provides

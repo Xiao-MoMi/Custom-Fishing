@@ -71,6 +71,7 @@ public class ConfigManager {
     public static boolean logEarning;
     public static boolean vaultHook;
     public static boolean disableBar;
+    public static boolean instantBar;
     public static String fishingBagTitle;
     public static HashSet<Material> bagWhiteListItems;
 
@@ -96,6 +97,7 @@ public class ConfigManager {
         worlds = worldList.toArray(new World[0]);
 
         disableBar = config.getBoolean("mechanics.disable-bar-mechanic", false);
+        instantBar = config.getBoolean("mechanics.instant-bar", false);
         alwaysFishingBar = config.getBoolean("mechanics.other-loots.fishing-bar", true);
         otherLootBar = config.getBoolean("mechanics.other-loots.fishing-bar", true);
         enableVanillaLoot = config.getBoolean("mechanics.other-loots.vanilla.enable", true);

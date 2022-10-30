@@ -24,6 +24,7 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.event.*;
 import net.momirealms.customfishing.competition.Competition;
@@ -255,7 +256,7 @@ public class FishingManager extends Function {
 
             nextBonus.put(player, initialBonus);
 
-            if (ConfigManager.needRodToFish && noSpecialRod){
+            if (ConfigManager.needRodToFish && noSpecialRod) {
                 nextLoot.put(player, Loot.EMPTY);
                 return;
             }
@@ -263,7 +264,7 @@ public class FishingManager extends Function {
             int entityID = 0;
             if (baitItem != null) {
                 baitItem.setAmount(1);
-                entityID = new Random().nextInt(1000000);
+                entityID = new Random().nextInt(100000000);
                 try {
                     CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getSpawnPacket(entityID, fishHook.getLocation()));
                     CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getMetaPacket(entityID, baitItem));
@@ -434,8 +435,8 @@ public class FishingManager extends Function {
                 summonMob(player, loot, event.getHook().getLocation(), mob, bonus.getScore());
                 return;
             }
-            if (loot instanceof DroppedItem droppedItem){
-                if (ConfigManager.enableMcMMOLoot && Math.random() < ConfigManager.mcMMOLootChance){
+            if (loot instanceof DroppedItem droppedItem) {
+                if (ConfigManager.enableMcMMOLoot && Math.random() < ConfigManager.mcMMOLootChance) {
                     if (dropMcMMOLoot(player, event.getHook().getLocation(), bonus.getDoubleLoot() > Math.random())){
                         return;
                     }
@@ -495,7 +496,9 @@ public class FishingManager extends Function {
         //not in fishing
         BobberCheckTask bobberCheckTask = bobberTaskCache.get(player);
         if (bobberCheckTask != null && bobberCheckTask.isHooked()) {
-            showPlayerBar(player, nextLoot.get(player));
+            Loot loot = nextLoot.get(player);
+            if (loot == Loot.EMPTY) return;
+            showPlayerBar(player, loot);
             event.setCancelled(true);
         }
     }
@@ -754,7 +757,19 @@ public class FishingManager extends Function {
     }
 
     public void onBite(PlayerFishEvent event) {
-        //Empty
+        if (ConfigManager.disableBar) return;
+        if (!ConfigManager.instantBar) return;
+        final Player player = event.getPlayer();
+        showBar(player);
+    }
+
+    public void showBar(Player player) {
+        if (fishingPlayerCache.get(player) != null) return;
+        Loot loot = nextLoot.get(player);
+        if (loot != null) {
+            if (loot == Loot.EMPTY) return;
+            showPlayerBar(player, loot);
+        }
     }
 
     public void onInGround(PlayerFishEvent event) {
@@ -895,8 +910,6 @@ public class FishingManager extends Function {
     }
 
     private void showPlayerBar(Player player, @Nullable Loot loot){
-
-        if (loot == Loot.EMPTY) return;
 
         Layout layout;
         if (loot != null && loot.getLayout() != null){
