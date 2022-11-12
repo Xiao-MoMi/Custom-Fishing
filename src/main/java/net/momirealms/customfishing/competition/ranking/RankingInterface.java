@@ -31,5 +31,9 @@ public interface RankingInterface {
     CompetitionPlayer[] getTop3Player();
     void refreshData(String player, float score);
     float getFirstScore();
+    float getSecondScore();
+    float getThirdScore();
     String getFirstPlayer();
+    String getSecondPlayer();
+    String getThirdPlayer();
 }

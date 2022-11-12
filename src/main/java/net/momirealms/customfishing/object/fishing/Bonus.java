@@ -30,6 +30,7 @@ public class Bonus {
     private int difficulty;
     private double doubleLoot;
     private boolean canLavaFishing;
+    private boolean hasSpecialRod;
 
     public HashMap<String, Double> getWeightMD() {
         return weightMD;
@@ -107,5 +108,13 @@ public class Bonus {
         if (anotherBonus.getDifficulty() != 0) this.difficulty += anotherBonus.getDifficulty();
         if (anotherBonus.getScore() != 0) this.score += (anotherBonus.getScore() - 1);
         if (anotherBonus.canLavaFishing()) this.canLavaFishing = true;
+    }
+
+    public boolean hasSpecialRod() {
+        return hasSpecialRod;
+    }
+
+    public void setHasSpecialRod(boolean hasSpecialRod) {
+        this.hasSpecialRod = hasSpecialRod;
     }
 }

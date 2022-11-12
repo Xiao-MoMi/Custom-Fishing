@@ -17,11 +17,13 @@
 
 package net.momirealms.customfishing.integration.block;
 
+import dev.lone.itemsadder.api.CustomBlock;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanicFactory;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanicListener;
 import net.momirealms.customfishing.integration.BlockInterface;
 import net.momirealms.customfishing.manager.TotemManager;
+import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -36,11 +38,16 @@ public class OraxenBlockImpl implements BlockInterface {
 
     @Override
     public void placeBlock(String id, Location location) {
-        if (BlockInterface.isVanillaItem(id)) {
-            location.getBlock().setType(Material.valueOf(id));
+        String blockID = TotemManager.INVERTED.get(id);
+        if (blockID == null) {
+            AdventureUtil.consoleMessage(id + " does not exist in totem-blocks.yml");
+            return;
+        }
+        if (BlockInterface.isVanillaItem(blockID)) {
+            BlockInterface.placeVanillaBlock(blockID, location);
         }
         else {
-            NoteBlockMechanicFactory.setBlockModel(location.getBlock(), id);
+            NoteBlockMechanicFactory.setBlockModel(location.getBlock(), blockID);
         }
     }
 

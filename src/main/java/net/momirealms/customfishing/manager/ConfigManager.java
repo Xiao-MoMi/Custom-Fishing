@@ -41,6 +41,7 @@ public class ConfigManager {
     public static double vanillaLootRatio;
     public static double mcMMOLootChance;
     public static boolean needRodToFish;
+    public static boolean needRodForLoot;
     public static boolean rodLoseDurability;
     public static boolean enableCompetition;
     public static boolean disableJobsXp;
@@ -105,6 +106,7 @@ public class ConfigManager {
         enableMcMMOLoot = config.getBoolean("mechanics.other-loots.mcMMO.enable", false);
         mcMMOLootChance = config.getDouble("mechanics.other-loots.mcMMO.chance", 0.5);
         needRodToFish = config.getBoolean("mechanics.need-special-rod-to-fish", false);
+        needRodForLoot = config.getBoolean("mechanics.need-special-rod-for-loots", false);
         rodLoseDurability = config.getBoolean("mechanics.rod-lose-durability", true);
         enableCompetition = config.getBoolean("mechanics.fishing-competition.enable", true);
 

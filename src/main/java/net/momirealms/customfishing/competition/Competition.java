@@ -234,8 +234,24 @@ public class Competition {
         return ranking.getFirstScore();
     }
 
+    public float getSecondScore() {
+        return ranking.getSecondScore();
+    }
+
+    public float getThirdScore() {
+        return ranking.getThirdScore();
+    }
+
     public String getFirstPlayer() {
         return ranking.getFirstPlayer();
+    }
+
+    public String getSecondPlayer() {
+        return ranking.getSecondPlayer();
+    }
+
+    public String getThirdPlayer() {
+        return ranking.getThirdPlayer();
     }
 
     public boolean isJoined(Player player) {

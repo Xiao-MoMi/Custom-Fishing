@@ -138,7 +138,27 @@ public class LocalRankingImpl implements RankingInterface {
     }
 
     @Override
+    public float getSecondScore() {
+        return getScoreAt(2);
+    }
+
+    @Override
+    public float getThirdScore() {
+        return getScoreAt(3);
+    }
+
+    @Override
     public String getFirstPlayer() {
         return Optional.ofNullable(getPlayerAt(1)).orElse(MessageManager.noPlayer);
+    }
+
+    @Override
+    public String getSecondPlayer() {
+        return Optional.ofNullable(getPlayerAt(2)).orElse(MessageManager.noPlayer);
+    }
+
+    @Override
+    public String getThirdPlayer() {
+        return Optional.ofNullable(getPlayerAt(3)).orElse(MessageManager.noPlayer);
     }
 }

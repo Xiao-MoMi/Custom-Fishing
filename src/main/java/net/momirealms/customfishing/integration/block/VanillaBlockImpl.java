@@ -19,6 +19,7 @@ package net.momirealms.customfishing.integration.block;
 
 import net.momirealms.customfishing.integration.BlockInterface;
 import net.momirealms.customfishing.manager.TotemManager;
+import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -32,7 +33,12 @@ public class VanillaBlockImpl implements BlockInterface {
 
     @Override
     public void placeBlock(String id, Location location) {
-        location.getBlock().setType(Material.valueOf(id));
+        String blockID = TotemManager.INVERTED.get(id);
+        if (blockID == null) {
+            AdventureUtil.consoleMessage(id + " does not exist in totem-blocks.yml");
+            return;
+        }
+        BlockInterface.placeVanillaBlock(blockID, location);
     }
 
     @Nullable

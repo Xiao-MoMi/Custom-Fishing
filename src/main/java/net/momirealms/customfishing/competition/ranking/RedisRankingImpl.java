@@ -124,9 +124,49 @@ public class RedisRankingImpl implements RankingInterface {
     }
 
     @Override
+    public float getSecondScore() {
+        Jedis jedis = JedisUtil.getJedis();
+        List<Tuple> players = jedis.zrevrangeWithScores("cf_competition", 1, 1);
+        jedis.close();
+        if (players == null) return 0;
+        if (players.size() == 0) return 0;
+        return (float) players.get(0).getScore();
+    }
+
+    @Override
+    public float getThirdScore() {
+        Jedis jedis = JedisUtil.getJedis();
+        List<Tuple> players = jedis.zrevrangeWithScores("cf_competition", 2, 2);
+        jedis.close();
+        if (players == null) return 0;
+        if (players.size() == 0) return 0;
+        return (float) players.get(0).getScore();
+    }
+
+    @Override
     public String getFirstPlayer() {
         Jedis jedis = JedisUtil.getJedis();
         List<String> player = jedis.zrevrange("cf_competition", 0,0);
+        jedis.close();
+        if (player == null) return MessageManager.noPlayer;
+        if (player.size() == 0) return MessageManager.noPlayer;
+        return player.get(0);
+    }
+
+    @Override
+    public String getSecondPlayer() {
+        Jedis jedis = JedisUtil.getJedis();
+        List<String> player = jedis.zrevrange("cf_competition", 1,1);
+        jedis.close();
+        if (player == null) return MessageManager.noPlayer;
+        if (player.size() == 0) return MessageManager.noPlayer;
+        return player.get(0);
+    }
+
+    @Override
+    public String getThirdPlayer() {
+        Jedis jedis = JedisUtil.getJedis();
+        List<String> player = jedis.zrevrange("cf_competition", 2,2);
         jedis.close();
         if (player == null) return MessageManager.noPlayer;
         if (player.size() == 0) return MessageManager.noPlayer;

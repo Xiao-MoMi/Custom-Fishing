@@ -45,8 +45,12 @@ public class JedisUtil {
         jedisPoolConfig.setMaxIdle(configuration.getInt("Redis.MaxIdle",8));
         jedisPoolConfig.setMinIdle(configuration.getInt("Redis.MinIdle",1));
         jedisPoolConfig.setMaxWaitMillis(configuration.getInt("redis.MaxWaitMillis",30000));
-
-        jedisPool = new JedisPool(jedisPoolConfig, configuration.getString("Redis.host","localhost"), configuration.getInt("Redis.port",6379));
+        if (configuration.getString("Redis.password") != null) {
+            jedisPool = new JedisPool(jedisPoolConfig, configuration.getString("Redis.host","localhost"), configuration.getInt("Redis.port",6379), 2000, configuration.getString("Redis.password"));
+        }
+        else {
+            jedisPool = new JedisPool(jedisPoolConfig, configuration.getString("Redis.host","localhost"), configuration.getInt("Redis.port",6379));
+        }
 
         AdventureUtil.consoleMessage("[CustomFishing] <white>Redis Server Connected!");
 

@@ -203,7 +203,6 @@ public class FishingManager extends Function {
                             offHandItem.setAmount(offHandItem.getAmount() - 1);
                             baitItem = offHandItem.clone();
                             noBait = false;
-
                         }
                     }
                     else if (noSpecialRod && nbtCompound.getString("type").equals("rod")) {
@@ -260,6 +259,8 @@ public class FishingManager extends Function {
                 nextLoot.put(player, Loot.EMPTY);
                 return;
             }
+
+            initialBonus.setHasSpecialRod(!noSpecialRod);
 
             int entityID = 0;
             if (baitItem != null) {

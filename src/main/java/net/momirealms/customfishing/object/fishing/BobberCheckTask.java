@@ -39,6 +39,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -134,7 +135,10 @@ public class BobberCheckTask extends BukkitRunnable {
         if (fishHook.isInWater()) {
             stop();
             Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.plugin, () -> {
-                List<Loot> possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player), false, LootManager.WATERLOOTS.values());
+                List<Loot> possibleLoots = new ArrayList<>();
+                if (!(ConfigManager.needRodForLoot && !bonus.hasSpecialRod())) {
+                    possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player), false, LootManager.WATERLOOTS.values());
+                }
                 fishingManager.getNextLoot(player, bonus, possibleLoots);
                 if (ConfigManager.enableWaterAnimation) {
                     ArmorStandUtil.sendAnimationToPlayer(fishHook.getLocation(), player, ConfigManager.water_item, ConfigManager.water_time);
@@ -185,7 +189,10 @@ public class BobberCheckTask extends BukkitRunnable {
 
     private void randomTime() {
         Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.plugin, () -> {
-            List<Loot> possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player), false, LootManager.LAVALOOTS.values());
+            List<Loot> possibleLoots = new ArrayList<>();
+            if (!(ConfigManager.needRodForLoot && !bonus.hasSpecialRod())) {
+                possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player), false, LootManager.LAVALOOTS.values());
+            }
             fishingManager.getNextLoot(player, bonus, possibleLoots);
         });
         cancelTask();

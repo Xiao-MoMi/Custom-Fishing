@@ -70,6 +70,18 @@ public class CompetitionPapi extends PlaceholderExpansion {
             case "1st_player" -> {
                 return Competition.currentCompetition.getFirstPlayer();
             }
+            case "2nd_score" -> {
+                return String.format("%.1f", Competition.currentCompetition.getSecondScore());
+            }
+            case "2nd_player" -> {
+                return Competition.currentCompetition.getSecondPlayer();
+            }
+            case "3rd_score" -> {
+                return String.format("%.1f", Competition.currentCompetition.getThirdScore());
+            }
+            case "3rd_player" -> {
+                return Competition.currentCompetition.getThirdPlayer();
+            }
         }
         return "null";
     }

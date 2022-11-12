@@ -43,6 +43,7 @@ MariaDB:
 # Sync competition scores between servers without lag!
 Redis:
   host: localhost
+  #password: 123456
   port: 6379
   MaxTotal: 10
   MaxIdle: 10

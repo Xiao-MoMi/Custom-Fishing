@@ -1,5 +1,5 @@
 # don't change
-config-version: '13'
+config-version: '14'
 
 # chinese/english/spanish
 lang: english
@@ -82,6 +82,9 @@ mechanics:
   # Does the special fishing mechanic requires special rod
   # 是否需要特殊鱼竿才能体验钓鱼机制
   need-special-rod-to-fish: false
+  # Does the CustomFishing loots requires special rod
+  # 是否需要特殊鱼竿才能获取钓鱼插件物品库的内容
+  need-special-rod-for-loots: false
   # Does rod lose durability when player successfully fish
   # 钓鱼成功后是否消耗耐久度
   rod-lose-durability: true

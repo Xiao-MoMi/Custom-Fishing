@@ -17,7 +17,10 @@
 
 package net.momirealms.customfishing.integration;
 
+import net.momirealms.customfishing.manager.TotemManager;
+import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,5 +44,9 @@ public interface BlockInterface {
             }
         }
         return true;
+    }
+
+    static void placeVanillaBlock(String id, Location location) {
+        location.getBlock().setType(Material.valueOf(id));
     }
 }
