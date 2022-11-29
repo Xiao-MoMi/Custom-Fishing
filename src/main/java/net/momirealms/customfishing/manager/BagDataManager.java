@@ -161,7 +161,7 @@ public class BagDataManager extends Function {
                     WrappedChatComponent.fromJson(
                             GsonComponentSerializer.gson().serialize(
                                     MiniMessage.miniMessage().deserialize(
-                                            ItemStackUtil.replaceLegacy(text)
+                                            AdventureUtil.replaceLegacy(text)
                                     )
                             )
                     )

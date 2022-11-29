@@ -34,6 +34,6 @@ public class MMOItemsItemImpl implements ItemInterface {
         material = material.substring(9);
         String[] split = StringUtils.split(material, ":");
         MMOItem mmoItem = MMOItems.plugin.getMMOItem(Type.get(split[0]), split[1]);
-        return mmoItem == null ? null : mmoItem.newBuilder().getItemStack();
+        return mmoItem == null ? null : mmoItem.newBuilder().build();
     }
 }

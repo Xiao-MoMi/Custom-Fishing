@@ -97,9 +97,7 @@ public class SellManager extends Function {
         loadConfig();
         CustomFishing.protocolManager.addPacketListener(windowPacketListener);
         Bukkit.getPluginManager().registerEvents(inventoryListener, CustomFishing.plugin);
-        if (sellLimitation) {
-            readLimitationCache();
-        }
+        readLimitationCache();
     }
 
     private void readLimitationCache() {
@@ -199,7 +197,7 @@ public class SellManager extends Function {
             titleIn = config.getInt("actions.title.in");
             titleStay = config.getInt("actions.title.stay");
             titleOut = config.getInt("actions.title.out");
-        } else actionbarNotification = null;
+        } else titleNotification = null;
         if (config.getBoolean("actions.commands.enable")) {
             commands = config.getStringList("actions.commands.value").toArray(new String[0]);
         } else commands = null;
@@ -261,7 +259,7 @@ public class SellManager extends Function {
                     }
 
                     double earnings = Optional.ofNullable(todayEarning.get(player.getName())).orElse(0d);
-                    if (earnings + totalPrice > upperLimit) {
+                    if (sellLimitation && earnings + totalPrice > upperLimit) {
                         inventory.close();
                         AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.reachSellLimit);
                         if (denyKey != null) AdventureUtil.playerSound(player, soundSource, denyKey, 1, 1);
@@ -369,21 +367,21 @@ public class SellManager extends Function {
     private void doActions(Player player, float earnings, double remains) {
         if (titleNotification != null) AdventureUtil.playerTitle(
                 player,
-                titleNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", String.format("%.2f", remains)),
-                subtitleNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", String.format("%.2f", remains)),
+                titleNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", sellLimitation ? String.format("%.2f", remains) : "unlimited"),
+                subtitleNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", sellLimitation ? String.format("%.2f", remains) : "unlimited"),
                 titleIn * 50,
                 titleStay * 50,
                 titleOut * 50
         );
         if (msgNotification != null) {
-            AdventureUtil.playerMessage(player, msgNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", String.format("%.2f", remains)));
+            AdventureUtil.playerMessage(player, msgNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", sellLimitation ? String.format("%.2f", remains) : "unlimited"));
         }
         if (actionbarNotification != null) {
-            AdventureUtil.playerActionbar(player, actionbarNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", String.format("%.2f", remains)));
+            AdventureUtil.playerActionbar(player, actionbarNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", sellLimitation ? String.format("%.2f", remains) : "unlimited"));
         }
         if (commands != null) {
             for (String cmd : commands) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("{player}", player.getName()).replace("{money}", String.format("%.2f", earnings)).replace("{remains}", String.format("%.2f", remains)));
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("{player}", player.getName()).replace("{money}", String.format("%.2f", earnings)).replace("{remains}", sellLimitation ? String.format("%.2f", remains) : "unlimited"));
             }
         }
         if (ConfigManager.logEarning) {
@@ -408,7 +406,7 @@ public class SellManager extends Function {
                     WrappedChatComponent.fromJson(
                             GsonComponentSerializer.gson().serialize(
                                     MiniMessage.miniMessage().deserialize(
-                                            ItemStackUtil.replaceLegacy(text)
+                                            AdventureUtil.replaceLegacy(text)
                                     )
                             )
                     )

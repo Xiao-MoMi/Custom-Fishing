@@ -25,6 +25,13 @@ public class RealisticSeasonsImpl implements SeasonInterface {
 
     @Override
     public String getSeason(World world) {
-        return SeasonsAPI.getInstance().getSeason(world).toString();
+        return switch (SeasonsAPI.getInstance().getSeason(world)) {
+            case WINTER -> "winter";
+            case SPRING -> "spring";
+            case SUMMER -> "summer";
+            case FALL -> "autumn";
+            case DISABLED -> "disabled";
+            case RESTORE -> "restore";
+        };
     }
 }

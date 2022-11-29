@@ -36,7 +36,8 @@ rainbow_fish:
       - '<gray>This is a <font:uniform>rainbow fish!'
       - '<gray>It is {size}cm long!'
   custom-model-data: 1
-
+  # breakable
+  unbreakable: false
   # Optional
   size: 10~200
 

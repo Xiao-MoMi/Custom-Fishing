@@ -638,18 +638,18 @@ public class FishingManager extends Function {
         if (text.contains("{loot}")){
             text = text.replace("{loot}","|");
             if (text.startsWith("|")){
-                component = getDisplayName(itemStack).append(MiniMessage.miniMessage().deserialize(text.substring(1)));
+                component = getDisplayName(itemStack).append(MiniMessage.miniMessage().deserialize(AdventureUtil.replaceLegacy(text.substring(1))));
             }
             else if (text.endsWith("|")){
-                component = MiniMessage.miniMessage().deserialize(text.substring(0,text.length() - 1)).append(getDisplayName(itemStack));
+                component = MiniMessage.miniMessage().deserialize(AdventureUtil.replaceLegacy(text.substring(0,text.length() - 1))).append(getDisplayName(itemStack));
             }
             else {
                 String[] titleSplit = StringUtils.split(text, "|");
-                component = MiniMessage.miniMessage().deserialize(titleSplit[0]).append(getDisplayName(itemStack)).append(MiniMessage.miniMessage().deserialize(titleSplit[1]));
+                component = MiniMessage.miniMessage().deserialize(AdventureUtil.replaceLegacy(titleSplit[0])).append(getDisplayName(itemStack)).append(MiniMessage.miniMessage().deserialize(AdventureUtil.replaceLegacy(titleSplit[1])));
             }
         }
         else {
-            component = MiniMessage.miniMessage().deserialize(text);
+            component = MiniMessage.miniMessage().deserialize(AdventureUtil.replaceLegacy(text));
         }
         return component;
     }

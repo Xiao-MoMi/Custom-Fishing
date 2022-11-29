@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.object.requirements;
 
 import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.helper.Log;
 import net.momirealms.customfishing.integration.SeasonInterface;
 import net.momirealms.customfishing.object.fishing.FishingCondition;
 

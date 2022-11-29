@@ -76,8 +76,12 @@ public class TextCache {
                         .replace("{minute}", String.format("%02d", Competition.currentCompetition.getRemainingTime() / 60))
                         .replace("{second}",String.format("%02d", Competition.currentCompetition.getRemainingTime() % 60))
                         .replace("{score}", String.format("%.1f", Competition.currentCompetition.getScore(owner)))
+                        .replace("{1st_player}", Competition.currentCompetition.getFirstPlayer())
                         .replace("{1st_score}", String.format("%.1f", Competition.currentCompetition.getFirstScore()))
-                        .replace("{1st_player}", Competition.currentCompetition.getFirstPlayer());
+                        .replace("{2nd_player}", Competition.currentCompetition.getSecondPlayer())
+                        .replace("{2nd_score}", String.format("%.1f", Competition.currentCompetition.getSecondScore()))
+                        .replace("{3rd_player}", Competition.currentCompetition.getThirdPlayer())
+                        .replace("{3rd_score}", String.format("%.1f", Competition.currentCompetition.getThirdScore()));
 
         if (!latestValue.equals(string)) {
             latestValue = string;

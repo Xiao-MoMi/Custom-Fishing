@@ -65,6 +65,7 @@ public class MySQLStorageImpl implements DataStorageInterface {
             else {
                 inventory = Bukkit.createInventory(null, 9, "{CustomFishing_Bag_" + player.getName() + "}");
             }
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -87,8 +88,11 @@ public class MySQLStorageImpl implements DataStorageInterface {
 
     private void createTableIfNotExist(String table) {
         String sql = String.format(SqlConstants.SQL_CREATE_BAG_TABLE, table);
-        try (Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+        try {
+            Connection connection = sqlConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
             statement.executeUpdate();
+            connection.close();
         } catch (SQLException ex) {
             AdventureUtil.consoleMessage("[CustomFishing] Failed to create table");
         }
@@ -96,11 +100,13 @@ public class MySQLStorageImpl implements DataStorageInterface {
 
     private void insertBagData(UUID uuid, int size, String contents) {
         String sql = String.format(SqlConstants.SQL_INSERT_BAG, sqlConnection.getTablePrefix() + "_fishingbag");
-        try (Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+        try {
+            Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, uuid.toString());
             statement.setInt(2, size);
             statement.setString(3, contents);
             statement.executeUpdate();
+            connection.close();
         } catch (SQLException ex) {
             AdventureUtil.consoleMessage("[CustomFishing] Failed to insert data for " + uuid);
         }
@@ -108,11 +114,13 @@ public class MySQLStorageImpl implements DataStorageInterface {
 
     private void updateBagData(UUID uuid, int size, String contents) {
         String sql = String.format(SqlConstants.SQL_UPDATE_BAG_BY_UUID, sqlConnection.getTablePrefix() + "_fishingbag");
-        try (Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+        try {
+            Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, size);
             statement.setString(2, contents);
             statement.setString(3, uuid.toString());
             statement.executeUpdate();
+            connection.close();
         } catch (SQLException ex) {
             AdventureUtil.consoleMessage("[CustomFishing] Failed to update data for " + uuid);
         }
@@ -121,10 +129,12 @@ public class MySQLStorageImpl implements DataStorageInterface {
     public boolean exists(UUID uuid) {
         String sql = String.format(SqlConstants.SQL_SELECT_BAG_BY_UUID, sqlConnection.getTablePrefix() + "_fishingbag");
         boolean exist;
-        try (Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+        try {
+            Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, uuid.toString());
             ResultSet rs = statement.executeQuery();
             exist = rs.next();
+            connection.close();
         } catch (SQLException ex) {
             AdventureUtil.consoleMessage("[CustomFishing] Failed to select data for " + uuid);
             return false;
