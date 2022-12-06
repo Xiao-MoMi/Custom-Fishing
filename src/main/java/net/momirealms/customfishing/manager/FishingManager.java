@@ -887,7 +887,7 @@ public class FishingManager extends Function {
         Location bottomLoc = coreLoc.clone().subtract(0, totem.getOriginalModel().getCorePos().getY(), 0);
         ActivatedTotem activatedTotem = new ActivatedTotem(bottomLoc, totem, this);
         activatedTotem.runTaskTimer(CustomFishing.plugin, 10, 20);
-        totemCache.put(coreLoc, activatedTotem);
+        totemCache.put(bottomLoc, activatedTotem);
     }
 
     private void useFinder(Player player) {
@@ -1004,8 +1004,8 @@ public class FishingManager extends Function {
         else return GsonComponentSerializer.gson().deserialize("{\"translate\":\"item.minecraft." + type + "\"}");
     }
 
-    public void removeTotem(ActivatedTotem activatedTotem) {
-        totemCache.remove(activatedTotem);
+    public void removeTotem(Location location) {
+        totemCache.remove(location);
     }
 
     public void addPlayerToLavaFishing(Player player, BobberCheckTask task) {

@@ -132,7 +132,7 @@ public class ActivatedTotem extends BukkitRunnable {
     public void stop() {
         this.particleTimerTask.cancel();
         cancel();
-        fishingManager.removeTotem(this);
+        fishingManager.removeTotem(location);
 
         if (hasHolo) {
             for (Player player : nearbyPlayerSet) {

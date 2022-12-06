@@ -69,7 +69,7 @@ public final class CustomFishing extends JavaPlugin {
     @Override
     public void onLoad() {
         plugin = this;
-        LibraryLoader.load("redis.clients","jedis","4.3.0","https://repo.maven.apache.org/maven2/");
+        LibraryLoader.load("redis.clients","jedis","4.3.1","https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("org.apache.commons","commons-pool2","2.11.1","https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3","https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("com.zaxxer","HikariCP","5.0.1","https://repo.maven.apache.org/maven2/");
