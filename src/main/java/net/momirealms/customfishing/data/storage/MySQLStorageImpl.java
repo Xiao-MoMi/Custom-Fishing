@@ -17,11 +17,14 @@
 
 package net.momirealms.customfishing.data.storage;
 
+import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.data.PlayerBagData;
+import net.momirealms.customfishing.data.PlayerSellData;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.InventoryUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -29,6 +32,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.UUID;
 
 public class MySQLStorageImpl implements DataStorageInterface {
@@ -38,7 +42,8 @@ public class MySQLStorageImpl implements DataStorageInterface {
     @Override
     public void initialize() {
         sqlConnection.createNewHikariConfiguration();
-        createTableIfNotExist(sqlConnection.getTablePrefix() + "_fishingbag");
+        createTableIfNotExist(sqlConnection.getTablePrefix() + "_fishingbag", SqlConstants.SQL_CREATE_BAG_TABLE);
+        createTableIfNotExist(sqlConnection.getTablePrefix() + "_sellcache", SqlConstants.SQL_CREATE_SELL_TABLE);
     }
 
     @Override
@@ -78,7 +83,7 @@ public class MySQLStorageImpl implements DataStorageInterface {
         Inventory inventory = playerBagData.getInventory();
         String contents = InventoryUtil.toBase64(inventory.getContents());
         if (contents == null) contents = "";
-        if (exists(uuid)) {
+        if (exists(uuid, SqlConstants.SQL_SELECT_BAG_BY_UUID, "fishingbag")) {
             updateBagData(uuid, inventory.getSize(), contents);
         }
         else {
@@ -86,8 +91,40 @@ public class MySQLStorageImpl implements DataStorageInterface {
         }
     }
 
-    private void createTableIfNotExist(String table) {
-        String sql = String.format(SqlConstants.SQL_CREATE_BAG_TABLE, table);
+    @Override
+    public void loadSellCache(Player player) {
+        try {
+            Connection connection = sqlConnection.getConnectionAndCheck();
+            String sql = String.format(SqlConstants.SQL_SELECT_SELL_BY_UUID, sqlConnection.getTablePrefix() + "_sellcache");
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, player.getUniqueId().toString());
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                int date = rs.getInt(2);
+                int money = rs.getInt(3);
+                CustomFishing.plugin.getSellManager().loadPlayerToCache(player.getUniqueId(), date, money);
+            }
+            else {
+                CustomFishing.plugin.getSellManager().loadPlayerToCache(player.getUniqueId(), Calendar.getInstance().get(Calendar.DATE), 0);
+            }
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void saveSellCache(UUID uuid, PlayerSellData playerSellData) {
+        if (exists(uuid, SqlConstants.SQL_SELECT_SELL_BY_UUID, "sellcache")) {
+            updateSellData(uuid, playerSellData.getDate(), (int) playerSellData.getMoney());
+        }
+        else {
+            insertSellData(uuid, playerSellData.getDate(), (int) playerSellData.getMoney());
+        }
+    }
+
+    private void createTableIfNotExist(String table, String sqlStat) {
+        String sql = String.format(sqlStat, table);
         try {
             Connection connection = sqlConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql);
@@ -112,6 +149,20 @@ public class MySQLStorageImpl implements DataStorageInterface {
         }
     }
 
+    private void insertSellData(UUID uuid, int date, int money) {
+        String sql = String.format(SqlConstants.SQL_INSERT_SELL, sqlConnection.getTablePrefix() + "_sellcache");
+        try {
+            Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, uuid.toString());
+            statement.setInt(2, date);
+            statement.setInt(3, money);
+            statement.executeUpdate();
+            connection.close();
+        } catch (SQLException ex) {
+            AdventureUtil.consoleMessage("[CustomFishing] Failed to insert data for " + uuid);
+        }
+    }
+
     private void updateBagData(UUID uuid, int size, String contents) {
         String sql = String.format(SqlConstants.SQL_UPDATE_BAG_BY_UUID, sqlConnection.getTablePrefix() + "_fishingbag");
         try {
@@ -126,8 +177,22 @@ public class MySQLStorageImpl implements DataStorageInterface {
         }
     }
 
-    public boolean exists(UUID uuid) {
-        String sql = String.format(SqlConstants.SQL_SELECT_BAG_BY_UUID, sqlConnection.getTablePrefix() + "_fishingbag");
+    private void updateSellData(UUID uuid, int date, int money) {
+        String sql = String.format(SqlConstants.SQL_UPDATE_SELL_BY_UUID, sqlConnection.getTablePrefix() + "_sellcache");
+        try {
+            Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, date);
+            statement.setInt(2, money);
+            statement.setString(3, uuid.toString());
+            statement.executeUpdate();
+            connection.close();
+        } catch (SQLException ex) {
+            AdventureUtil.consoleMessage("[CustomFishing] Failed to update data for " + uuid);
+        }
+    }
+
+    public boolean exists(UUID uuid, String sqlStat, String suffix) {
+        String sql = String.format(sqlStat, sqlConnection.getTablePrefix() + "_" + suffix);
         boolean exist;
         try {
             Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql);

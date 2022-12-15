@@ -18,8 +18,12 @@
 package net.momirealms.customfishing.data.storage;
 
 import net.momirealms.customfishing.data.PlayerBagData;
+import net.momirealms.customfishing.data.PlayerSellData;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+
+import java.util.UUID;
 
 public interface DataStorageInterface {
 
@@ -27,4 +31,6 @@ public interface DataStorageInterface {
     void disable();
     Inventory loadBagData(OfflinePlayer player);
     void saveBagData(PlayerBagData playerBagData);
+    void loadSellCache(Player player);
+    void saveSellCache(UUID uuid, PlayerSellData playerSellData);
 }

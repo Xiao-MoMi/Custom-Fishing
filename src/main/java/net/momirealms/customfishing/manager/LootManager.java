@@ -81,6 +81,7 @@ public class LootManager extends Function {
         File[] files = mob_file.listFiles();
         if (files == null) return;
         for (File file : files) {
+            if (!file.getName().endsWith(".yml")) continue;
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
             Set<String> keys = config.getKeys(false);
             for (String key : keys) {
@@ -123,6 +124,7 @@ public class LootManager extends Function {
         File[] files = loot_file.listFiles();
         if (files == null) return;
         for (File file : files) {
+            if (!file.getName().endsWith(".yml")) continue;
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
             Set<String> keys = config.getKeys(false);
             for (String key : keys) {

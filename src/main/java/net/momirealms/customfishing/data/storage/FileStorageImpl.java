@@ -19,27 +19,37 @@ package net.momirealms.customfishing.data.storage;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.data.PlayerBagData;
+import net.momirealms.customfishing.data.PlayerSellData;
 import net.momirealms.customfishing.util.ConfigUtil;
 import net.momirealms.customfishing.util.InventoryUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 public class FileStorageImpl implements DataStorageInterface {
 
+    private YamlConfiguration data;
+
     @Override
     public void initialize() {
-
+        data = ConfigUtil.readData(new File(CustomFishing.plugin.getDataFolder(), "sell-cache.yml"));
     }
 
     @Override
     public void disable() {
-
+        try {
+            data.save(new File(CustomFishing.plugin.getDataFolder(), "sell-cache.yml"));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -66,5 +76,19 @@ public class FileStorageImpl implements DataStorageInterface {
         catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void loadSellCache(Player player) {
+        UUID uuid = player.getUniqueId();
+        int date = data.getInt(uuid + ".date");
+        double money = data.getDouble(uuid + ".sell");
+        CustomFishing.plugin.getSellManager().loadPlayerToCache(player.getUniqueId(), date, money);
+    }
+
+    @Override
+    public void saveSellCache(UUID uuid, PlayerSellData playerSellData) {
+        data.set(uuid + ".date", playerSellData.getDate());
+        data.set(uuid + ".sell", playerSellData.getMoney());
     }
 }

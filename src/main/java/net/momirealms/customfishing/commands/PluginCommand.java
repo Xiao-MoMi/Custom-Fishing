@@ -60,6 +60,7 @@ public class PluginCommand implements TabExecutor {
         regSubCommand(CompetitionCommand.INSTANCE);
         regSubCommand(ImportCommand.INSTANCE);
         regSubCommand(SellShopCommand.INSTANCE);
+        regSubCommand(OpenBagCommand.INSTANCE);
     }
 
     public void regSubCommand(SubCommand executor) {

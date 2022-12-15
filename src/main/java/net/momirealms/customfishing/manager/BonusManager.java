@@ -136,6 +136,7 @@ public class BonusManager extends Function {
         File[] files = bait_file.listFiles();
         if (files == null) return;
         for (File file : files) {
+            if (!file.getName().endsWith(".yml")) continue;
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
             Set<String> keys = config.getKeys(false);
             for (String key : keys) {
@@ -189,6 +190,7 @@ public class BonusManager extends Function {
         File[] files = rod_file.listFiles();
         if (files == null) return;
         for (File file : files) {
+            if (!file.getName().endsWith(".yml")) continue;
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
             Set<String> keys = config.getKeys(false);
             for (String key : keys) {

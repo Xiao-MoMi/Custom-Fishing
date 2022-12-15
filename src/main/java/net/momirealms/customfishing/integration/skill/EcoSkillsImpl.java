@@ -32,7 +32,7 @@ public class EcoSkillsImpl implements SkillInterface {
 
     @Override
     public void addXp(Player player, double amount) {
-        ecoSkillsAPI.giveSkillExperience(player, Skills.FARMING, amount);
+        ecoSkillsAPI.giveSkillExperience(player, Skills.FISHING, amount);
     }
 
     @Override

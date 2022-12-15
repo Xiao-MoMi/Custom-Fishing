@@ -55,7 +55,6 @@ public class BagDataManager extends Function {
 
     public static ConcurrentHashMap<UUID, PlayerBagData> dataCache;
     public static HashSet<PlayerBagData> tempCache;
-    private final DataStorageInterface dataStorageInterface;
     private final InventoryListener inventoryListener;
     private final WindowPacketListener windowPacketListener;
     private final SimpleListener simpleListener;
@@ -64,17 +63,15 @@ public class BagDataManager extends Function {
     public BagDataManager() {
         dataCache = new ConcurrentHashMap<>();
         tempCache = new HashSet<>();
-        YamlConfiguration config = ConfigUtil.getConfig("database.yml");
-        if (config.getString("data-storage-method","YAML").equalsIgnoreCase("YAML")) {
-            this.dataStorageInterface = new FileStorageImpl();
-        } else this.dataStorageInterface = new MySQLStorageImpl();
-        this.dataStorageInterface.initialize();
+
         this.inventoryListener = new InventoryListener(this);
         this.windowPacketListener = new WindowPacketListener(this);
         this.simpleListener = new SimpleListener(this);
+
         this.timerSave = Bukkit.getScheduler().runTaskTimerAsynchronously(CustomFishing.plugin, () -> {
+            DataManager dataManager = CustomFishing.plugin.getDataManager();
             for (PlayerBagData playerBagData : dataCache.values()) {
-                dataStorageInterface.saveBagData(playerBagData);
+                dataManager.getDataStorageInterface().saveBagData(playerBagData);
             }
             AdventureUtil.consoleMessage("[CustomFishing] Fishing bag data saving for " + dataCache.size() + " online players...");
         }, 12000, 12000);
@@ -93,13 +90,13 @@ public class BagDataManager extends Function {
         HandlerList.unregisterAll(inventoryListener);
         HandlerList.unregisterAll(simpleListener);
         CustomFishing.protocolManager.removePacketListener(windowPacketListener);
-        for (PlayerBagData playerBagData : dataCache.values()) {
-            dataStorageInterface.saveBagData(playerBagData);
-        }
     }
 
     public void disable() {
-        this.dataStorageInterface.disable();
+        for (PlayerBagData playerBagData : dataCache.values()) {
+            DataManager dataManager = CustomFishing.plugin.getDataManager();
+            dataManager.getDataStorageInterface().saveBagData(playerBagData);
+        }
         dataCache.clear();
         tempCache.clear();
         timerSave.cancel();
@@ -108,7 +105,7 @@ public class BagDataManager extends Function {
     public void openFishingBag(Player viewer, OfflinePlayer ownerOffline) {
         Player owner = ownerOffline.getPlayer();
         if (owner == null) {
-            Inventory inventory = dataStorageInterface.loadBagData(ownerOffline);
+            Inventory inventory =  CustomFishing.plugin.getDataManager().getDataStorageInterface().loadBagData(ownerOffline);
             PlayerBagData playerBagData = new PlayerBagData(ownerOffline, inventory);
             tempCache.add(playerBagData);
             viewer.openInventory(inventory);
@@ -130,7 +127,7 @@ public class BagDataManager extends Function {
         PlayerBagData playerBagData = dataCache.remove(player.getUniqueId());
         if (playerBagData != null) {
             Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.plugin, () -> {
-                dataStorageInterface.saveBagData(playerBagData);
+                CustomFishing.plugin.getDataManager().getDataStorageInterface().saveBagData(playerBagData);
             });
         }
     }
@@ -143,7 +140,7 @@ public class BagDataManager extends Function {
     }
 
     public PlayerBagData readData(Player player) {
-        Inventory inventory = dataStorageInterface.loadBagData(player);
+        Inventory inventory = CustomFishing.plugin.getDataManager().getDataStorageInterface().loadBagData(player);
         PlayerBagData playerBagData = new PlayerBagData(player, inventory);
         dataCache.put(player.getUniqueId(), playerBagData);
         return playerBagData;
@@ -204,7 +201,7 @@ public class BagDataManager extends Function {
                 if (temp.getInventory() == inventory) {
                     tempCache.remove(temp);
                     Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.plugin, () -> {
-                        dataStorageInterface.saveBagData(temp);
+                        CustomFishing.plugin.getDataManager().getDataStorageInterface().saveBagData(temp);
                     });
                 }
             }

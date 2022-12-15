@@ -43,7 +43,7 @@ commands:
     description: fishing bag command
   sellfish:
     usage: /sellfish
-    description: fishing bag command
+    description: sell fish command
     permission: customfishing.sellfish
 
 permissions:

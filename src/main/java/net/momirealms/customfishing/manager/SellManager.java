@@ -28,8 +28,11 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.event.SellFishEvent;
+import net.momirealms.customfishing.data.PlayerBagData;
+import net.momirealms.customfishing.data.PlayerSellData;
 import net.momirealms.customfishing.integration.papi.PlaceholderManager;
 import net.momirealms.customfishing.listener.InventoryListener;
+import net.momirealms.customfishing.listener.SimpleListener;
 import net.momirealms.customfishing.listener.WindowPacketListener;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.loot.Item;
@@ -50,14 +53,13 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class SellManager extends Function {
 
     private final WindowPacketListener windowPacketListener;
     private final InventoryListener inventoryListener;
+    private SimpleListener simpleListener;
     public static String formula;
     public static String title;
     public static int guiSize;
@@ -82,54 +84,25 @@ public class SellManager extends Function {
     public static boolean sellLimitation;
     public static int upperLimit;
     private final HashMap<Player, Inventory> inventoryCache;
-    private HashMap<String, Double> todayEarning;
-    private int date;
+    private final HashMap<UUID, PlayerSellData> playerCache;
 
     public SellManager() {
         this.windowPacketListener = new WindowPacketListener(this);
         this.inventoryListener = new InventoryListener(this);
         this.inventoryCache = new HashMap<>();
-
+        this.simpleListener = new SimpleListener(this);
+        this.playerCache = new HashMap<>();
     }
 
     @Override
     public void load() {
+        functionIconSlots = new HashSet<>();
+        guiItems = new HashMap<>();
+        vanillaPrices = new HashMap<>();
         loadConfig();
         CustomFishing.protocolManager.addPacketListener(windowPacketListener);
         Bukkit.getPluginManager().registerEvents(inventoryListener, CustomFishing.plugin);
-        readLimitationCache();
-    }
-
-    private void readLimitationCache() {
-        this.todayEarning = new HashMap<>();
-        YamlConfiguration data = ConfigUtil.readData(new File(CustomFishing.plugin.getDataFolder(), "sell-cache.yml"));
-        Calendar calendar = Calendar.getInstance();
-        date = calendar.get(Calendar.DATE);
-        int lastDate = data.getInt("date");
-        if (lastDate == date) {
-            ConfigurationSection configurationSection = data.getConfigurationSection("player_data");
-            if (configurationSection != null) {
-                for (String player : configurationSection.getKeys(false)) {
-                    todayEarning.put(player, configurationSection.getDouble(player));
-                }
-            }
-        }
-    }
-
-    private void unloadLimitationCache() {
-        YamlConfiguration data = new YamlConfiguration();
-        data.set("date", date);
-        for (Map.Entry<String, Double> entry : todayEarning.entrySet()) {
-            data.set("player_data." + entry.getKey(), entry.getValue());
-        }
-        try {
-            data.save(new File(CustomFishing.plugin.getDataFolder(), "sell-cache.yml"));
-        }
-        catch (IOException e) {
-            AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to unload earnings data!");
-            e.printStackTrace();
-        }
-        this.todayEarning.clear();
+        Bukkit.getPluginManager().registerEvents(simpleListener, CustomFishing.plugin);
     }
 
     @Override
@@ -140,13 +113,41 @@ public class SellManager extends Function {
         this.inventoryCache.clear();
         CustomFishing.protocolManager.removePacketListener(windowPacketListener);
         HandlerList.unregisterAll(inventoryListener);
-        if (sellLimitation) unloadLimitationCache();
+        HandlerList.unregisterAll(simpleListener);
+    }
+
+    public void disable() {
+        for (Map.Entry<UUID, PlayerSellData> entry : playerCache.entrySet()) {;
+            CustomFishing.plugin.getDataManager().getDataStorageInterface().saveSellCache(entry.getKey(), entry.getValue());
+        }
+        playerCache.clear();
+    }
+
+    public void loadPlayerToCache(UUID uuid, int date, double money) {
+        playerCache.put(uuid, new PlayerSellData(money, date));
+    }
+
+    public void savePlayerToFile(UUID uuid) {
+        PlayerSellData sellData = playerCache.remove(uuid);
+        if (sellData == null) return;
+        CustomFishing.plugin.getDataManager().getDataStorageInterface().saveSellCache(uuid, sellData);
+    }
+
+    @Override
+    public void onQuit(Player player) {
+        Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.plugin, () -> {
+            savePlayerToFile(player.getUniqueId());
+        });
+    }
+
+    @Override
+    public void onJoin(Player player) {
+        Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.plugin, () -> {
+            CustomFishing.plugin.getDataManager().getDataStorageInterface().loadSellCache(player);
+        });
     }
 
     private void loadConfig() {
-        functionIconSlots = new HashSet<>();
-        guiItems = new HashMap<>();
-        vanillaPrices = new HashMap<>();
         YamlConfiguration config = ConfigUtil.getConfig("sell-fish.yml");
         formula = config.getString("price-formula", "{base} + {bonus} * {size}");
         sellLimitation = config.getBoolean("sell-limitation.enable", false);
@@ -247,19 +248,29 @@ public class SellManager extends Function {
             if (functionIconSlots.contains(clickedSlot)) {
                 List<ItemStack> playerItems = getPlayerItems(inventory);
                 float totalPrice = getTotalPrice(playerItems);
+
                 if (totalPrice > 0) {
 
-                    if (sellLimitation) {
-                        Calendar calendar = Calendar.getInstance();
-                        int currentDate = calendar.get(Calendar.DATE);
-                        if (currentDate != date) {
-                            date = currentDate;
-                            todayEarning.clear();
-                        }
+                    PlayerSellData sellData = playerCache.get(player.getUniqueId());
+
+                    if (sellData == null) {
+                        inventory.close();
+                        AdventureUtil.playerMessage(player, MessageManager.prefix + "Internal error, please contact the server owner");
+                        AdventureUtil.consoleMessage("<red>[CustomFishing] Unexpected issue, " + player.getName() + "'s sell-cache is not loaded!");
+                        if (denyKey != null) AdventureUtil.playerSound(player, soundSource, denyKey, 1, 1);
+                        return;
                     }
 
-                    double earnings = Optional.ofNullable(todayEarning.get(player.getName())).orElse(0d);
-                    if (sellLimitation && earnings + totalPrice > upperLimit) {
+                    Calendar calendar = Calendar.getInstance();
+                    int currentDate = calendar.get(Calendar.DATE);
+                    if (currentDate != sellData.getDate()) {
+                        sellData.setDate(currentDate);
+                        sellData.setMoney(0);
+                    }
+
+                    double sell = sellData.getMoney();
+
+                    if (sellLimitation && sell + totalPrice > upperLimit) {
                         inventory.close();
                         AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.reachSellLimit);
                         if (denyKey != null) AdventureUtil.playerSound(player, soundSource, denyKey, 1, 1);
@@ -278,8 +289,8 @@ public class SellManager extends Function {
                         playerItem.setAmount(0);
                     }
 
-                    todayEarning.put(player.getName(), earnings + totalPrice);
-                    doActions(player, sellFishEvent.getMoney(), upperLimit - earnings - totalPrice);
+                    sellData.setMoney(totalPrice + sell);
+                    doActions(player, sellFishEvent.getMoney(), upperLimit - sell - totalPrice);
                     inventory.close();
                 }
                 else {
