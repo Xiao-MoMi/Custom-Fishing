@@ -43,7 +43,6 @@ public class ArmorStandUtil {
         destroyPacket.getIntLists().write(0, List.of(id));
         return destroyPacket;
     }
-
     public static PacketContainer getSpawnPacket(int id, Location location) {
         PacketContainer entityPacket = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
         entityPacket.getModifier().write(0, id);

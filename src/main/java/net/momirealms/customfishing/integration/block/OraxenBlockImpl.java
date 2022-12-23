@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.integration.block;
 
-import dev.lone.itemsadder.api.CustomBlock;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanicFactory;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanicListener;

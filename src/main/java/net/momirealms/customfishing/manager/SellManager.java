@@ -28,7 +28,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.event.SellFishEvent;
-import net.momirealms.customfishing.data.PlayerBagData;
 import net.momirealms.customfishing.data.PlayerSellData;
 import net.momirealms.customfishing.integration.papi.PlaceholderManager;
 import net.momirealms.customfishing.listener.InventoryListener;

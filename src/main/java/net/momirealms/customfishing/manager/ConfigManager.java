@@ -129,6 +129,11 @@ public class ConfigManager {
         failureFadeStay = config.getInt("titles.failure.fade.stay", 30) * 50;
         failureFadeOut = config.getInt("titles.failure.fade.out", 10) * 50;
 
+        if (successTitle.length == 0) successTitle = new String[]{""};
+        if (successSubTitle.length == 0) successSubTitle = new String[]{""};
+        if (failureTitle.length == 0) failureTitle = new String[]{""};
+        if (failureSubTitle.length == 0) failureSubTitle = new String[]{""};
+
         enableWaterAnimation = config.getBoolean("mechanics.splash-animation.water.enable", false);
         enableLavaAnimation = config.getBoolean("mechanics.splash-animation.lava.enable", false);
         water_item = config.getString("mechanics.splash-animation.water.item");

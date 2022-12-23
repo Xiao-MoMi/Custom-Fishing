@@ -82,7 +82,7 @@ public class CompetitionSchedule extends Function {
                     }
                 }
             }
-        }.runTaskTimer(CustomFishing.plugin, (60 - LocalTime.now().getSecond()) * 20, 1200);
+        }.runTaskTimer(CustomFishing.plugin, 60 - LocalTime.now().getSecond(), 200);
     }
 
     public void stopCheck() {

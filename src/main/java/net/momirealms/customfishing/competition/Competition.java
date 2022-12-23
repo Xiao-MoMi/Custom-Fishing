@@ -145,7 +145,7 @@ public class Competition {
 
         Bukkit.getScheduler().runTaskLaterAsynchronously(CustomFishing.plugin, ()-> {
             ranking.clear();
-        }, 100);
+        }, 600);
     }
 
     public void givePrize(){

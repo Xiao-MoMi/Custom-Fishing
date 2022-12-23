@@ -273,11 +273,10 @@ public class ItemStackUtil {
                 }
                 case NBTTagList -> {
                     List<Object> list = new ArrayList<>();
-                    switch (nbtCompound.getListType(key)){
+                    switch (nbtCompound.getListType(key)) {
                         case NBTTagInt -> nbtCompound.getIntegerList(key).forEach(a -> list.add("(Int) " + a));
                         case NBTTagDouble -> nbtCompound.getDoubleList(key).forEach(a -> list.add("(Double) " + a));
                         case NBTTagString -> nbtCompound.getStringList(key).forEach(a -> list.add("(String) " + a));
-                        case NBTTagCompound -> nbtCompound.getCompoundList(key).forEach(a -> list.add(compoundToMap(a)));
                         case NBTTagFloat -> nbtCompound.getFloatList(key).forEach(a -> list.add("(Float) " + a));
                         case NBTTagLong -> nbtCompound.getLongList(key).forEach(a -> list.add("(Long) " + a));
                         case NBTTagIntArray -> nbtCompound.getIntArrayList(key).forEach(a -> list.add("(IntArray) " + Arrays.toString(a)));

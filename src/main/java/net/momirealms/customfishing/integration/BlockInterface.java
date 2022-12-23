@@ -17,8 +17,6 @@
 
 package net.momirealms.customfishing.integration;
 
-import net.momirealms.customfishing.manager.TotemManager;
-import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

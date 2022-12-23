@@ -30,6 +30,7 @@ softdepend:
   - MMOItems
   - eco
   - Vault
+  - BattlePass
 
 commands:
   customfishing:

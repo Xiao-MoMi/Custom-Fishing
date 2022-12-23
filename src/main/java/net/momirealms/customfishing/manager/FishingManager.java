@@ -24,7 +24,6 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.event.*;
 import net.momirealms.customfishing.competition.Competition;

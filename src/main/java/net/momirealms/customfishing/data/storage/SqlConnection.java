@@ -53,7 +53,7 @@ public class SqlConnection {
         hikariConfig.setMaximumPoolSize(config.getInt(storageMode + ".Pool-Settings.maximum-pool-size"));
         hikariConfig.setMinimumIdle(config.getInt(storageMode + ".Pool-Settings.minimum-idle"));
         hikariConfig.setMaxLifetime(config.getInt(storageMode + ".Pool-Settings.maximum-lifetime"));
-        hikariConfig.setConnectionTimeout(5000);
+        hikariConfig.setConnectionTimeout(3000);
         for (String property : config.getConfigurationSection(storageMode + ".properties").getKeys(false)) {
             hikariConfig.addDataSourceProperty(property, config.getString(storageMode + ".properties." + property));
         }
