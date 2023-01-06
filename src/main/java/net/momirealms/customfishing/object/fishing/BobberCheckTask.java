@@ -80,13 +80,8 @@ public class BobberCheckTask extends BukkitRunnable {
     public void run() {
         timer ++;
         if (!land && entityID != 0) {
-            try {
-                CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getVelocity(entityID, fishHook.getVelocity()));
-                CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getTpPacket(entityID, fishHook.getLocation()));
-            }
-            catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getVelocity(entityID, fishHook.getVelocity()));
+            CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getTpPacket(entityID, fishHook.getLocation()));
         }
         if (timer > 3600) {
             stop();
@@ -164,12 +159,7 @@ public class BobberCheckTask extends BukkitRunnable {
 
     private void sendRemovePacket() {
         if (entityID == 0) return;
-        try {
-            CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getDestroyPacket(entityID));
-        }
-        catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getDestroyPacket(entityID));
     }
 
     public void cancelTask() {

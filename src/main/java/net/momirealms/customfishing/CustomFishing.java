@@ -35,6 +35,7 @@ public final class CustomFishing extends JavaPlugin {
 
     public static CustomFishing plugin;
     public static BukkitAudiences adventure;
+    public static String version;
     public static ProtocolManager protocolManager;
     private IntegrationManager integrationManager;
     private FishingManager fishingManager;
@@ -82,6 +83,7 @@ public final class CustomFishing extends JavaPlugin {
     public void onEnable() {
         adventure = BukkitAudiences.create(this);
         protocolManager = ProtocolLibrary.getProtocolManager();
+        version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
         this.fishingManager = new FishingManager();
         this.dataManager = new DataManager();
         this.integrationManager = new IntegrationManager();

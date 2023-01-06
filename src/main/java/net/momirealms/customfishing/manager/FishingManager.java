@@ -265,13 +265,8 @@ public class FishingManager extends Function {
             if (baitItem != null) {
                 baitItem.setAmount(1);
                 entityID = new Random().nextInt(100000000);
-                try {
-                    CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getSpawnPacket(entityID, fishHook.getLocation()));
-                    CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getMetaPacket(entityID, baitItem));
-                }
-                catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+                CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getSpawnPacket(entityID, fishHook.getLocation()));
+                CustomFishing.protocolManager.sendServerPacket(player, FakeItemUtil.getMetaPacket(entityID, baitItem));
             }
 
             BobberCheckTask bobberCheckTask = new BobberCheckTask(player, initialBonus, fishHook, this, lureLevel, entityID);

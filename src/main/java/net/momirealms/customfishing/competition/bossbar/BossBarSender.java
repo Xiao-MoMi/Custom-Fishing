@@ -20,6 +20,7 @@ package net.momirealms.customfishing.competition.bossbar;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -27,13 +28,15 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.competition.Competition;
 import net.momirealms.customfishing.object.TextCache;
 import net.momirealms.customfishing.util.AdventureUtil;
-import net.momirealms.customfishing.util.Reflection;
 import org.bukkit.boss.BarColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class BossBarSender {
@@ -50,15 +53,13 @@ public class BossBarSender {
     private boolean force;
     private final BossBarConfig config;
     private boolean isShown;
-    private final BossBarManager bossBarManager;
 
     public void setText(int position) {
         this.text = texts[position];
         this.force = true;
     }
 
-    public BossBarSender(Player player, BossBarConfig config, BossBarManager bossBarManager){
-        this.bossBarManager = bossBarManager;
+    public BossBarSender(Player player, BossBarConfig config){
         String[] str = config.getText();
         this.size = str.length;
         texts = new TextCache[str.length];
@@ -75,11 +76,7 @@ public class BossBarSender {
     public void show() {
         this.isShown = true;
 
-        try {
-            CustomFishing.protocolManager.sendServerPacket(player, getPacket());
-        } catch (InvocationTargetException e){
-            AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to display bossbar for " + player.getName());
-        }
+        CustomFishing.protocolManager.sendServerPacket(player, getPacket());
 
         this.bukkitTask = new BukkitRunnable() {
             @Override
@@ -102,16 +99,48 @@ public class BossBarSender {
                     timer_1 = 0;
                     if (text.update() || force) {
                         force = false;
-                        try{
-                            CustomFishing.protocolManager.sendServerPacket(player, getPacket());
-                        }
-                        catch (InvocationTargetException e){
-                            AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to update bossbar for " + player.getName());
-                        }
+                        CustomFishing.protocolManager.sendServerPacket(player, getUpdatePacket());
+                        CustomFishing.protocolManager.sendServerPacket(player, getProgressPacket());
                     }
                 }
             }
-        }.runTaskTimerAsynchronously(CustomFishing.plugin,1,1);
+        }.runTaskTimerAsynchronously(CustomFishing.plugin,0,1);
+    }
+
+    private PacketContainer getUpdatePacket() {
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.BOSS);
+        packet.getModifier().write(0, uuid);
+        try {
+            Method sMethod = MinecraftReflection.getChatSerializerClass().getMethod("a", String.class);
+            sMethod.setAccessible(true);
+            Object chatComponent = sMethod.invoke(null, GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize(AdventureUtil.replaceLegacy(text.getLatestValue()))));
+            Class<?> packetBossClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutBoss$e");
+            Constructor<?> packetConstructor = packetBossClass.getDeclaredConstructor(MinecraftReflection.getIChatBaseComponentClass());
+            packetConstructor.setAccessible(true);
+            Object updatePacket = packetConstructor.newInstance(chatComponent);
+            packet.getModifier().write(1, updatePacket);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException |
+                 InstantiationException e) {
+            throw new RuntimeException(e);
+        }
+        return packet;
+    }
+
+
+    private PacketContainer getProgressPacket() {
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.BOSS);
+        packet.getModifier().write(0, uuid);
+        try {
+            Class<?> packetBossClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutBoss$f");
+            Constructor<?> packetConstructor = packetBossClass.getDeclaredConstructor(float.class);
+            packetConstructor.setAccessible(true);
+            Object updatePacket = packetConstructor.newInstance(Competition.currentCompetition.getProgress());
+            packet.getModifier().write(1, updatePacket);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException |
+                 InstantiationException e) {
+            throw new RuntimeException(e);
+        }
+        return packet;
     }
 
     private PacketContainer getPacket() {
@@ -137,11 +166,16 @@ public class BossBarSender {
     private void remove() {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.BOSS);
         packet.getModifier().write(0, uuid);
-        packet.getModifier().write(1, Reflection.removeBar);
-        try{
+        try {
+            Class<?> bar = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutBoss");
+            Field remove = bar.getDeclaredField("f");
+            remove.setAccessible(true);
+            packet.getModifier().write(1, remove.get(null));
             CustomFishing.protocolManager.sendServerPacket(player, packet);
-        }catch (InvocationTargetException e){
+        } catch (ClassNotFoundException e){
             AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to remove bossbar for " + player.getName());
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 

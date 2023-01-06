@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'net.momirealms'
-version = '1.2.15'
+version = '1.2.16'
 
 repositories {
     mavenCentral()
@@ -54,7 +54,6 @@ dependencies {
     compileOnly('com.github.Archy-X:AureliumSkills:Beta1.3.6')
     compileOnly('com.github.TechFortress:GriefPrevention:16.18')
     compileOnly('com.palmergames.bukkit.towny:towny:0.98.2.0')
-    compileOnly('com.comphenix.protocol:ProtocolLib:4.8.0')
     compileOnly('redis.clients:jedis:4.3.1')
     compileOnly('me.clip:placeholderapi:2.11.1')
     compileOnly('com.sk89q.worldguard:worldguard-bukkit:7.0.7')
@@ -107,4 +106,9 @@ shadowJar {
     relocate 'de.tr7zw', 'net.momirealms.customfishing.libs.de.tr7zw'
     relocate 'net.kyori', 'net.momirealms.customfishing.libs.net.kyori'
     relocate 'org.bstats', 'net.momirealms.customfishing.libs.org.bstats'
+}
+
+tasks.register("delete", Delete).get().delete("build/libs/"+project.name+"-"+project.version+".jar")
+tasks.named("build").get().dependsOn("shadowJar").finalizedBy("delete").doLast {
+    println("Deleting: "+ "build/libs/"+project.name+"-"+project.version+".jar")
 }

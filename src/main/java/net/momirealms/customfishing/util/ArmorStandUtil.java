@@ -19,10 +19,8 @@ package net.momirealms.customfishing.util;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.Pair;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.*;
+import com.google.common.collect.Lists;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
@@ -33,7 +31,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class ArmorStandUtil {
@@ -57,14 +54,34 @@ public class ArmorStandUtil {
     public static PacketContainer getMetaPacket(int id) {
         PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         metaPacket.getIntegers().write(0, id);
-        metaPacket.getWatchableCollectionModifier().write(0, createDataWatcher().getWatchableObjects());
+        if (CustomFishing.version.equals("v1_19_R2")) {
+            WrappedDataWatcher wrappedDataWatcher = createDataWatcher();
+            List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
+            wrappedDataWatcher.getWatchableObjects().stream().filter(Objects::nonNull).forEach(entry -> {
+                final WrappedDataWatcher.WrappedDataWatcherObject dataWatcherObject = entry.getWatcherObject();
+                wrappedDataValueList.add(new WrappedDataValue(dataWatcherObject.getIndex(), dataWatcherObject.getSerializer(), entry.getRawValue()));
+            });
+            metaPacket.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+        } else {
+            metaPacket.getWatchableCollectionModifier().write(0, createDataWatcher().getWatchableObjects());
+        }
         return metaPacket;
     }
 
     public static PacketContainer getMetaPacket(int id, String text) {
         PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         metaPacket.getIntegers().write(0, id);
-        metaPacket.getWatchableCollectionModifier().write(0, createDataWatcher(text).getWatchableObjects());
+        if (CustomFishing.version.equals("v1_19_R2")) {
+            WrappedDataWatcher wrappedDataWatcher = createDataWatcher(text);
+            List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
+            wrappedDataWatcher.getWatchableObjects().stream().filter(Objects::nonNull).forEach(entry -> {
+                final WrappedDataWatcher.WrappedDataWatcherObject dataWatcherObject = entry.getWatcherObject();
+                wrappedDataValueList.add(new WrappedDataValue(dataWatcherObject.getIndex(), dataWatcherObject.getSerializer(), entry.getRawValue()));
+            });
+            metaPacket.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+        } else {
+            metaPacket.getWatchableCollectionModifier().write(0, createDataWatcher(text).getWatchableObjects());
+        }
         return metaPacket;
     }
 
@@ -104,21 +121,11 @@ public class ArmorStandUtil {
         int id = new Random().nextInt(100000000);
         ItemStack itemStack = BonusManager.UTILITEMS.get(item);
         if (itemStack == null) return;
-        try {
-            CustomFishing.protocolManager.sendServerPacket(player, getSpawnPacket(id, location.clone().subtract(0,1,0)));
-            CustomFishing.protocolManager.sendServerPacket(player, getMetaPacket(id));
-            CustomFishing.protocolManager.sendServerPacket(player, getEquipPacket(id, itemStack));
-        }
-        catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        CustomFishing.protocolManager.sendServerPacket(player, getSpawnPacket(id, location.clone().subtract(0,1,0)));
+        CustomFishing.protocolManager.sendServerPacket(player, getMetaPacket(id));
+        CustomFishing.protocolManager.sendServerPacket(player, getEquipPacket(id, itemStack));
         Bukkit.getScheduler().runTaskLaterAsynchronously(CustomFishing.plugin, () -> {
-            try {
-                CustomFishing.protocolManager.sendServerPacket(player, getDestroyPacket(id));
-            }
-            catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            CustomFishing.protocolManager.sendServerPacket(player, getDestroyPacket(id));
         }, time);
     }
 }

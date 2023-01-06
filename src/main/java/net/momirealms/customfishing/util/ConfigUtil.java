@@ -61,12 +61,6 @@ public class ConfigUtil {
         CustomFishing.plugin.getSellManager().load();
         CustomFishing.plugin.getBagDataManager().unload();
         CustomFishing.plugin.getBagDataManager().load();
-        try {
-            Reflection.load();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public static void update(String fileName){

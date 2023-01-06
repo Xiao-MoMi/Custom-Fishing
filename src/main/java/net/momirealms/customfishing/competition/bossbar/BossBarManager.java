@@ -67,7 +67,7 @@ public class BossBarManager extends Function {
     public void onJoin(Player player) {
         if (Competition.currentCompetition != null){
             if (Competition.currentCompetition.isJoined(player) && cache.get(player) == null){
-                BossBarSender sender = new BossBarSender(player, Competition.currentCompetition.getCompetitionConfig().getBossBarConfig(), this);
+                BossBarSender sender = new BossBarSender(player, Competition.currentCompetition.getCompetitionConfig().getBossBarConfig());
                 if (!sender.getStatus()) {
                     sender.show();
                 }
@@ -80,7 +80,7 @@ public class BossBarManager extends Function {
 
     public void tryJoin(Player player) {
         if (cache.get(player) == null) {
-            BossBarSender sender = new BossBarSender(player, Competition.currentCompetition.getCompetitionConfig().getBossBarConfig(), this);
+            BossBarSender sender = new BossBarSender(player, Competition.currentCompetition.getCompetitionConfig().getBossBarConfig());
             if (!sender.getStatus()) {
                 sender.show();
             }

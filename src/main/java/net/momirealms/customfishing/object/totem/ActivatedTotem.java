@@ -72,29 +72,19 @@ public class ActivatedTotem extends BukkitRunnable {
         for (Player player : temp) {
             if (nearbyPlayers.remove(player)) {
                 if (hasHolo) {
-                    try {
-                        for (int i = 0; i < entityID.length; i++) {
-                            CustomFishing.protocolManager.sendServerPacket(player, ArmorStandUtil.getMetaPacket(entityID[i],
-                                    totem.getHoloText()[entityID.length - 1 - i].replace("{time}", String.valueOf(totem.getDuration() - timer))
-                                            .replace("{max_time}", String.valueOf(totem.getDuration()))
-                            ));
-                        }
-                        addPotionEffect(player);
+                    for (int i = 0; i < entityID.length; i++) {
+                        CustomFishing.protocolManager.sendServerPacket(player, ArmorStandUtil.getMetaPacket(entityID[i],
+                                totem.getHoloText()[entityID.length - 1 - i].replace("{time}", String.valueOf(totem.getDuration() - timer))
+                                        .replace("{max_time}", String.valueOf(totem.getDuration()))
+                        ));
                     }
-                    catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
+                    addPotionEffect(player);
                 }
             }
             else {
                 if (hasHolo) {
-                    try {
-                        for (int j : entityID) {
-                            CustomFishing.protocolManager.sendServerPacket(player, ArmorStandUtil.getDestroyPacket(j));
-                        }
-                    }
-                    catch (InvocationTargetException e) {
-                        e.printStackTrace();
+                    for (int j : entityID) {
+                        CustomFishing.protocolManager.sendServerPacket(player, ArmorStandUtil.getDestroyPacket(j));
                     }
                 }
                 nearbyPlayerSet.remove(player);
@@ -103,19 +93,14 @@ public class ActivatedTotem extends BukkitRunnable {
 
         for (Player newComer : nearbyPlayers) {
             if (hasHolo) {
-                try {
-                    for (int i = 0; i < entityID.length; i++) {
-                        CustomFishing.protocolManager.sendServerPacket(newComer, ArmorStandUtil.getSpawnPacket(entityID[i], location.clone().add(0.5, totem.getHoloOffset() + i * 0.4, 0.5)));
-                        CustomFishing.protocolManager.sendServerPacket(newComer, ArmorStandUtil.getMetaPacket(entityID[i],
-                                totem.getHoloText()[entityID.length - 1 - i].replace("{time}", String.valueOf(totem.getDuration() - timer))
-                                                        .replace("{max_time}", String.valueOf(totem.getDuration()))
-                        ));
-                    }
-                    addPotionEffect(newComer);
+                for (int i = 0; i < entityID.length; i++) {
+                    CustomFishing.protocolManager.sendServerPacket(newComer, ArmorStandUtil.getSpawnPacket(entityID[i], location.clone().add(0.5, totem.getHoloOffset() + i * 0.4, 0.5)));
+                    CustomFishing.protocolManager.sendServerPacket(newComer, ArmorStandUtil.getMetaPacket(entityID[i],
+                            totem.getHoloText()[entityID.length - 1 - i].replace("{time}", String.valueOf(totem.getDuration() - timer))
+                                                    .replace("{max_time}", String.valueOf(totem.getDuration()))
+                    ));
                 }
-                catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+                addPotionEffect(newComer);
             }
             nearbyPlayerSet.add(newComer);
         }
@@ -136,13 +121,8 @@ public class ActivatedTotem extends BukkitRunnable {
 
         if (hasHolo) {
             for (Player player : nearbyPlayerSet) {
-                try {
-                    for (int j : entityID) {
-                        CustomFishing.protocolManager.sendServerPacket(player, ArmorStandUtil.getDestroyPacket(j));
-                    }
-                }
-                catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                for (int j : entityID) {
+                    CustomFishing.protocolManager.sendServerPacket(player, ArmorStandUtil.getDestroyPacket(j));
                 }
             }
         }
