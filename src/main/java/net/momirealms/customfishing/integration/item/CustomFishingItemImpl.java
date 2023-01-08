@@ -19,7 +19,10 @@ package net.momirealms.customfishing.integration.item;
 
 import net.momirealms.customfishing.integration.ItemInterface;
 import net.momirealms.customfishing.manager.LootManager;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.Nullable;
 
 public class CustomFishingItemImpl implements ItemInterface {
@@ -29,5 +32,16 @@ public class CustomFishingItemImpl implements ItemInterface {
     public ItemStack build(String material) {
         if (material.contains(":")) return null;
         return LootManager.build(material);
+    }
+
+    @Override
+    public boolean loseCustomDurability(ItemStack itemStack, Player player) {
+        Damageable damageable = (Damageable) itemStack.getItemMeta();
+        Enchantment enchantment = Enchantment.DURABILITY;
+        if (Math.random() < (1 / (double) (damageable.getEnchantLevel(enchantment) + 1))){
+            damageable.setDamage(damageable.getDamage() + 1);
+            itemStack.setItemMeta(damageable);
+        }
+        return true;
     }
 }

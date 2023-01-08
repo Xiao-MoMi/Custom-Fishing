@@ -19,9 +19,11 @@ package net.momirealms.customfishing.integration.item;
 
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
+import net.Indyuce.mmoitems.api.interaction.util.DurabilityItem;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 import net.momirealms.customfishing.integration.ItemInterface;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,5 +37,15 @@ public class MMOItemsItemImpl implements ItemInterface {
         String[] split = StringUtils.split(material, ":");
         MMOItem mmoItem = MMOItems.plugin.getMMOItem(Type.get(split[0]), split[1]);
         return mmoItem == null ? null : mmoItem.newBuilder().build();
+    }
+
+    @Override
+    public boolean loseCustomDurability(ItemStack itemStack, Player player) {
+        DurabilityItem durabilityItem = new DurabilityItem(player, itemStack);
+        durabilityItem.decreaseDurability(1);
+        final ItemStack newVersion = durabilityItem.toItem();
+        if (newVersion == null) return false;
+        itemStack.setItemMeta(newVersion.getItemMeta());
+        return true;
     }
 }

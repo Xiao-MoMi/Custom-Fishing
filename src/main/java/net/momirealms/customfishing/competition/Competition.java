@@ -262,6 +262,12 @@ public class Competition {
         return bossBarManager;
     }
 
+    public void tryAddBossBarToPlayer(Player player) {
+        if (bossBarManager != null) {
+            bossBarManager.tryJoin(player);
+        }
+    }
+
 
     public void refreshData(Player player, float score, boolean doubleScore) {
         if (this.goal == CompetitionGoal.CATCH_AMOUNT) {

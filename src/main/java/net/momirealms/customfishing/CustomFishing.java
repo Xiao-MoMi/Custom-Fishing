@@ -97,6 +97,7 @@ public final class CustomFishing extends JavaPlugin {
 
         ConfigUtil.reload();
         registerCommands();
+        integrationManager.registerQuests();
 
         AdventureUtil.consoleMessage("[CustomFishing] Plugin Enabled!");
         new Metrics(this, 16648);

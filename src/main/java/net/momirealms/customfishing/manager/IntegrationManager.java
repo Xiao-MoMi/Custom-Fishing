@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.manager;
 
+import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.helper.Log;
 import net.momirealms.customfishing.integration.*;
 import net.momirealms.customfishing.integration.antigrief.*;
@@ -26,6 +27,7 @@ import net.momirealms.customfishing.integration.block.VanillaBlockImpl;
 import net.momirealms.customfishing.integration.item.*;
 import net.momirealms.customfishing.integration.mob.MythicMobsMobImpl;
 import net.momirealms.customfishing.integration.papi.PlaceholderManager;
+import net.momirealms.customfishing.integration.quest.ClueScrollHook;
 import net.momirealms.customfishing.integration.season.CustomCropsSeasonImpl;
 import net.momirealms.customfishing.integration.season.RealisticSeasonsImpl;
 import net.momirealms.customfishing.integration.skill.*;
@@ -35,7 +37,9 @@ import net.momirealms.customfishing.util.ConfigUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,7 +84,6 @@ public class IntegrationManager extends Function {
         this.blockInterface = new VanillaBlockImpl();
 
         List<ItemInterface> itemInterfaceList = new ArrayList<>();
-        itemInterfaceList.add(new CustomFishingItemImpl());
         if (config.getBoolean("integrations.ItemsAdder") && pluginManager.getPlugin("ItemsAdder") != null) {
             this.blockInterface = new ItemsAdderBlockImpl();
             itemInterfaceList.add(new ItemsAdderItemImpl());
@@ -100,6 +103,7 @@ public class IntegrationManager extends Function {
             this.mobInterface = new MythicMobsMobImpl();
             hookMessage("MythicMobs");
         }
+        itemInterfaceList.add(new CustomFishingItemImpl());
         this.itemInterfaces = itemInterfaceList.toArray(new ItemInterface[0]);
 
         if (pluginManager.getPlugin("eco") != null) {
@@ -205,6 +209,15 @@ public class IntegrationManager extends Function {
         antiGriefs = antiGriefsList.toArray(new AntiGriefInterface[0]);
     }
 
+    public void registerQuests() {
+
+        if (Bukkit.getPluginManager().isPluginEnabled("ClueScrolls")) {
+            ClueScrollHook clueScrollHook = new ClueScrollHook();
+            Bukkit.getPluginManager().registerEvents(clueScrollHook, CustomFishing.plugin);
+            hookMessage("ClueScrolls");
+        }
+    }
+
     @Override
     public void unload() {
         this.seasonInterface = null;
@@ -262,6 +275,16 @@ public class IntegrationManager extends Function {
             }
         }
         return new ItemStack(Material.AIR);
+    }
+
+    public void loseCustomDurability(ItemStack itemStack, Player player) {
+        Damageable damageable = (Damageable) itemStack.getItemMeta();
+        if (damageable.isUnbreakable()) return;
+        for (ItemInterface itemInterface : getItemInterfaces()) {
+            if (itemInterface.loseCustomDurability(itemStack, player)) {
+                return;
+            }
+        }
     }
 
     private void hookMessage(String plugin){

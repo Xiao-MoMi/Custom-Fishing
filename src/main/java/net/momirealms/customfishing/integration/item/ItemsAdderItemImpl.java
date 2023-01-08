@@ -19,6 +19,7 @@ package net.momirealms.customfishing.integration.item;
 
 import dev.lone.itemsadder.api.CustomStack;
 import net.momirealms.customfishing.integration.ItemInterface;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,5 +32,16 @@ public class ItemsAdderItemImpl implements ItemInterface {
         material = material.substring(11);
         CustomStack customStack = CustomStack.getInstance(material);
         return customStack == null ? null : customStack.getItemStack();
+    }
+
+    @Override
+    public boolean loseCustomDurability(ItemStack itemStack, Player player) {
+        CustomStack customStack = CustomStack.byItemStack(itemStack);
+        if (customStack == null) return false;
+        if (customStack.hasCustomDurability()) {
+            customStack.setDurability(customStack.getDurability() - 1);
+            return true;
+        }
+        return false;
     }
 }

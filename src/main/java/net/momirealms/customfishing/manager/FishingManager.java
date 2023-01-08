@@ -58,14 +58,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -511,7 +509,7 @@ public class FishingManager extends Function {
         if (Competition.currentCompetition != null){
             float score = (float) (droppedItem.getScore() * scoreMultiplier);
             Competition.currentCompetition.refreshData(player, (float) (score * bonus.getScore()), isDouble);
-            Competition.currentCompetition.getBossBarManager().tryJoin(player);
+            Competition.currentCompetition.tryAddBossBarToPlayer(player);
         }
 
         dropItem(player, location, fishResultEvent.isDouble(), drop);
@@ -551,7 +549,7 @@ public class FishingManager extends Function {
 
         if (Competition.currentCompetition != null){
             Competition.currentCompetition.refreshData(player, 0, isDouble);
-            Competition.currentCompetition.getBossBarManager().tryJoin(player);
+            Competition.currentCompetition.tryAddBossBarToPlayer(player);
         }
 
         player.giveExp(new Random().nextInt(24), true);
@@ -594,7 +592,7 @@ public class FishingManager extends Function {
 
         if (Competition.currentCompetition != null){
             Competition.currentCompetition.refreshData(player, 0, isDouble);
-            Competition.currentCompetition.getBossBarManager().tryJoin(player);
+            Competition.currentCompetition.tryAddBossBarToPlayer(player);
         }
 
         player.giveExp(vanillaLoot.getXp(), true);
@@ -617,7 +615,7 @@ public class FishingManager extends Function {
         if (Competition.currentCompetition != null) {
             float score = (float) (loot.getScore() * scoreMultiplier);
             Competition.currentCompetition.refreshData(player, (float) (score * bonus.getScore()), false);
-            Competition.currentCompetition.getBossBarManager().tryJoin(player);
+            Competition.currentCompetition.tryAddBossBarToPlayer(player);
         }
 
         mobInterface.summon(player.getLocation(), location, mob);
@@ -684,25 +682,15 @@ public class FishingManager extends Function {
             PlayerInventory inventory = player.getInventory();
             ItemStack mainHand = inventory.getItemInMainHand();
             if (mainHand.getType() == Material.FISHING_ROD){
-                setDurability(mainHand);
+                CustomFishing.plugin.getIntegrationManager().loseCustomDurability(mainHand, player);
             }
             else {
                 ItemStack offHand = inventory.getItemInOffHand();
                 if (offHand.getType() == Material.FISHING_ROD){
-                    setDurability(offHand);
+                    CustomFishing.plugin.getIntegrationManager().loseCustomDurability(offHand, player);
                 }
             }
         }, 1);
-    }
-
-    private void setDurability(ItemStack rod) {
-        Damageable damageable = (Damageable) rod.getItemMeta();
-        if (damageable.isUnbreakable()) return;
-        Enchantment enchantment = Enchantment.DURABILITY;
-        if (Math.random() < (1 / (double) (damageable.getEnchantLevel(enchantment) + 1))){
-            damageable.setDamage(damageable.getDamage() + 1);
-            Bukkit.getScheduler().runTaskLater(CustomFishing.plugin, () -> rod.setItemMeta(damageable),1);
-        }
     }
 
     private void fail(Player player, Loot loot, boolean isVanilla) {

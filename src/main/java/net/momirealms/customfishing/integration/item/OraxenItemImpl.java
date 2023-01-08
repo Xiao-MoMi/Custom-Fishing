@@ -20,6 +20,7 @@ package net.momirealms.customfishing.integration.item;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import io.th0rgal.oraxen.items.OraxenItems;
 import net.momirealms.customfishing.integration.ItemInterface;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,5 +33,10 @@ public class OraxenItemImpl implements ItemInterface {
         material = material.substring(7);
         ItemBuilder itemBuilder = OraxenItems.getItemById(material);
         return itemBuilder == null ? null : itemBuilder.build();
+    }
+
+    @Override
+    public boolean loseCustomDurability(ItemStack itemStack, Player player) {
+        return false;
     }
 }
