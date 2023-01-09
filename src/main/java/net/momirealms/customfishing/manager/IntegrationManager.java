@@ -27,6 +27,7 @@ import net.momirealms.customfishing.integration.block.VanillaBlockImpl;
 import net.momirealms.customfishing.integration.item.*;
 import net.momirealms.customfishing.integration.mob.MythicMobsMobImpl;
 import net.momirealms.customfishing.integration.papi.PlaceholderManager;
+import net.momirealms.customfishing.integration.quest.BattlePassCFQuest;
 import net.momirealms.customfishing.integration.quest.ClueScrollHook;
 import net.momirealms.customfishing.integration.season.CustomCropsSeasonImpl;
 import net.momirealms.customfishing.integration.season.RealisticSeasonsImpl;
@@ -215,6 +216,14 @@ public class IntegrationManager extends Function {
             ClueScrollHook clueScrollHook = new ClueScrollHook();
             Bukkit.getPluginManager().registerEvents(clueScrollHook, CustomFishing.plugin);
             hookMessage("ClueScrolls");
+        }
+        if (Bukkit.getPluginManager().isPluginEnabled("BetonQuest")) {
+
+            hookMessage("BetonQuest");
+        }
+        if (Bukkit.getPluginManager().isPluginEnabled("BattlePass")) {
+            BattlePassCFQuest.register();
+            hookMessage("BattlePass");
         }
     }
 

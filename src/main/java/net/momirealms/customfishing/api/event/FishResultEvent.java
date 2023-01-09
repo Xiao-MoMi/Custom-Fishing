@@ -32,14 +32,16 @@ public class FishResultEvent extends PlayerEvent implements Cancellable {
     private boolean isDouble;
     private final FishResult result;
     private final ItemStack loot;
+    private final String loot_id;
     private static final HandlerList handlerList = new HandlerList();
 
-    public FishResultEvent(@NotNull Player who, FishResult result, boolean isDouble, ItemStack loot) {
+    public FishResultEvent(@NotNull Player who, FishResult result, boolean isDouble, @Nullable ItemStack loot, @Nullable String loot_id) {
         super(who);
         this.cancelled = false;
         this.result = result;
         this.isDouble = isDouble;
         this.loot = loot;
+        this.loot_id = loot_id;
     }
 
     @Override
@@ -78,5 +80,10 @@ public class FishResultEvent extends PlayerEvent implements Cancellable {
 
     public void setDouble(boolean willDouble) {
         isDouble = willDouble;
+    }
+
+    @Nullable
+    public String getLoot_id() {
+        return loot_id;
     }
 }

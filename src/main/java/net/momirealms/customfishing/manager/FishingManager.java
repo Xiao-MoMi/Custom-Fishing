@@ -498,7 +498,7 @@ public class FishingManager extends Function {
 
     private void dropCustomFishingLoot(Player player, Location location, DroppedItem droppedItem, boolean isDouble, double scoreMultiplier) {
         ItemStack drop = getCustomFishingLootItemStack(droppedItem, player);
-        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CAUGHT_LOOT, isDouble, drop);
+        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CAUGHT_LOOT, isDouble, drop, droppedItem.getKey());
         Bukkit.getPluginManager().callEvent(fishResultEvent);
         if (fishResultEvent.isCancelled()) {
             return;
@@ -539,7 +539,7 @@ public class FishingManager extends Function {
         ItemStack itemStack = McMMOTreasure.getTreasure(player);
         if (itemStack == null) return false;
 
-        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CAUGHT_VANILLA, isDouble, itemStack);
+        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CAUGHT_VANILLA, isDouble, itemStack, "mcmmo");
         Bukkit.getPluginManager().callEvent(fishResultEvent);
         if (fishResultEvent.isCancelled()) {
             return true;
@@ -582,7 +582,7 @@ public class FishingManager extends Function {
             }
         }
 
-        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CAUGHT_VANILLA, isDouble, itemStack);
+        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CAUGHT_VANILLA, isDouble, itemStack, "vanilla");
         Bukkit.getPluginManager().callEvent(fishResultEvent);
         if (fishResultEvent.isCancelled()) {
             return;
@@ -605,7 +605,7 @@ public class FishingManager extends Function {
         MobInterface mobInterface = CustomFishing.plugin.getIntegrationManager().getMobInterface();
         if (mobInterface == null) return;
 
-        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CAUGHT_MOB, false, null);
+        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CAUGHT_MOB, false, null, loot.getKey());
         if (fishResultEvent.isCancelled()) {
             return;
         }
@@ -695,7 +695,7 @@ public class FishingManager extends Function {
 
     private void fail(Player player, Loot loot, boolean isVanilla) {
 
-        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.FAILURE, false, null);
+        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.FAILURE, false, null, "null");
         Bukkit.getServer().getPluginManager().callEvent(fishResultEvent);
         if (fishResultEvent.isCancelled()) {
             return;
