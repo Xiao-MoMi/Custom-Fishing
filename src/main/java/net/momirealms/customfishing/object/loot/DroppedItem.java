@@ -29,7 +29,7 @@ public class DroppedItem extends Loot{
     private float basicPrice;
     private float sizeBonus;
 
-    public DroppedItem(String key, Difficulty difficulty, int time, int weight, String material) {
+    public DroppedItem(String key, Difficulty[] difficulty, int time, int weight, String material) {
         super(key, difficulty, time, weight);
         this.material = material;
     }

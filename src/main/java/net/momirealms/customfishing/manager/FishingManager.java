@@ -906,8 +906,9 @@ public class FishingManager extends Function {
         int timer;
         int time;
         if (loot != null){
-            speed = loot.getDifficulty().speed();
-            timer = loot.getDifficulty().timer();
+            Difficulty difficulty = loot.getDifficulty()[new Random().nextInt(loot.getDifficulty().length)];
+            speed = difficulty.speed();
+            timer = difficulty.timer();
             time = loot.getTime();
         }
         else {

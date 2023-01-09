@@ -18,14 +18,10 @@
 package net.momirealms.customfishing.integration.quest;
 
 import io.github.battlepass.BattlePlugin;
-import io.github.battlepass.objects.quests.variable.QuestResult;
 import io.github.battlepass.quests.quests.external.executor.ExternalQuestExecutor;
 import io.github.battlepass.registry.quest.QuestRegistry;
-import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.event.FishResultEvent;
 import net.momirealms.customfishing.object.fishing.FishResult;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,10 +30,7 @@ public class BattlePassCFQuest extends ExternalQuestExecutor implements Listener
 
     public static void register() {
         QuestRegistry questRegistry = BattlePlugin.getApi().getQuestRegistry();
-        questRegistry.hook("customfishing", instance -> {
-            BattlePassCFQuest battlePassCFQuest = new BattlePassCFQuest(instance);
-            return battlePassCFQuest;
-        });
+        questRegistry.hook("customfishing", BattlePassCFQuest::new);
     }
 
     public BattlePassCFQuest(BattlePlugin battlePlugin) {

@@ -25,13 +25,13 @@ import net.momirealms.customfishing.object.fishing.FishResult;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class ClueScrollHook implements Listener {
+public class ClueScrollCFQuest implements Listener {
 
     private final CustomClue fishClue;
     private final CustomClue mobClue;
     private final CustomClue commonClue;
 
-    public ClueScrollHook () {
+    public ClueScrollCFQuest() {
         commonClue = ClueScrollsAPI.getInstance().registerCustomClue(CustomFishing.plugin, "fish");
         fishClue = ClueScrollsAPI.getInstance().registerCustomClue(CustomFishing.plugin, "catch_fish");
         mobClue = ClueScrollsAPI.getInstance().registerCustomClue(CustomFishing.plugin, "catch_mob");

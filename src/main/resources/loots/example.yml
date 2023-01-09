@@ -55,7 +55,7 @@ rainbow_fish:
       id: '(String) rainbow_fish'
 
   # Available events: success/failure/hook
-  # Available actions: message/command/exp/mending/skill-xp
+  # Available actions: message/command/exp/mending/skill-xp/sound
   action:
     success:
       message:

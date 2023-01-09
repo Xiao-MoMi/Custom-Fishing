@@ -24,11 +24,11 @@ import net.momirealms.customfishing.object.requirements.RequirementInterface;
 
 public class Loot {
 
-    public static Loot EMPTY = new Loot("empty", new Difficulty(1,1), 5000, 10);
+    public static Loot EMPTY = new Loot("empty", new Difficulty[]{new Difficulty(1, 1)}, 5000, 10);
 
     protected String key;
     protected String nick;
-    protected Difficulty difficulty;
+    protected Difficulty[] difficulty;
     protected String group;
     protected boolean showInFinder;
     protected Layout[] layout;
@@ -40,7 +40,7 @@ public class Loot {
     protected RequirementInterface[] requirements;
     protected double score;
 
-    public Loot(String key, Difficulty difficulty, int time, int weight) {
+    public Loot(String key, Difficulty[] difficulty, int time, int weight) {
         this.key = key;
         this.difficulty = difficulty;
         this.time = time;
@@ -58,11 +58,11 @@ public class Loot {
         this.nick = nick;
     }
 
-    public Difficulty getDifficulty() {
+    public Difficulty[] getDifficulty() {
         return difficulty;
     }
 
-    public void setDifficulty(Difficulty difficulty) {
+    public void setDifficulty(Difficulty[] difficulty) {
         this.difficulty = difficulty;
     }
 

@@ -87,13 +87,26 @@ public class LootManager extends Function {
             for (String key : keys) {
                 if (!config.getBoolean(key + ".enable", true)) continue;
                 // Bar mechanic
-                String[] diff = StringUtils.split(config.getString(key + ".difficulty", "1-1"),"-");
-                Difficulty difficulty = new Difficulty(Integer.parseInt(diff[0]), Integer.parseInt(diff[1]));
+                List<Difficulty> difficulties = new ArrayList<>();
+                List<String> difficultyList = config.getStringList(key + ".difficulty");
+                if (difficultyList.size() == 0) {
+                    String[] diff = StringUtils.split(config.getString(key + ".difficulty", "1-1"),"-");
+                    Difficulty difficulty = new Difficulty(Integer.parseInt(diff[0]), Integer.parseInt(diff[1]));
+                    difficulties.add(difficulty);
+                }
+                else {
+                    for (String difficultyStr : difficultyList) {
+                        String[] diff = StringUtils.split(difficultyStr,"-");
+                        Difficulty difficulty = new Difficulty(Integer.parseInt(diff[0]), Integer.parseInt(diff[1]));
+                        difficulties.add(difficulty);
+                    }
+                }
+
                 int weight = config.getInt(key + ".weight",10);
                 int time = config.getInt(key + ".time",10000);
                 Mob loot = new Mob(
                         key,
-                        difficulty,
+                        difficulties.toArray(new Difficulty[0]),
                         time,
                         weight,
                         config.getString(key + ".mobID", key),
@@ -132,13 +145,25 @@ public class LootManager extends Function {
 
                 String material = config.getString(key + ".material","COD");
                 // Bar mechanic
-                String[] diff = StringUtils.split(config.getString(key + ".difficulty", "1-1"),"-");
-                Difficulty difficulty = new Difficulty(Integer.parseInt(diff[0]), Integer.parseInt(diff[1]));
+                List<Difficulty> difficulties = new ArrayList<>();
+                List<String> difficultyList = config.getStringList(key + ".difficulty");
+                if (difficultyList.size() == 0) {
+                    String[] diff = StringUtils.split(config.getString(key + ".difficulty", "1-1"),"-");
+                    Difficulty difficulty = new Difficulty(Integer.parseInt(diff[0]), Integer.parseInt(diff[1]));
+                    difficulties.add(difficulty);
+                }
+                else {
+                    for (String difficultyStr : difficultyList) {
+                        String[] diff = StringUtils.split(difficultyStr,"-");
+                        Difficulty difficulty = new Difficulty(Integer.parseInt(diff[0]), Integer.parseInt(diff[1]));
+                        difficulties.add(difficulty);
+                    }
+                }
                 int weight = config.getInt(key + ".weight",10);
                 int time = config.getInt(key + ".time",10000);
                 DroppedItem loot = new DroppedItem(
                         key,
-                        difficulty,
+                        difficulties.toArray(new Difficulty[0]),
                         time,
                         weight,
                         material.contains(":") ? material : key);

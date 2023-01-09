@@ -26,7 +26,7 @@ public class Mob extends Loot{
     private final int mobLevel;
     private final MobVector mobVector;
 
-    public Mob(String key, Difficulty difficulty, int time, int weight, String mobID, int level, MobVector vector) {
+    public Mob(String key, Difficulty[] difficulty, int time, int weight, String mobID, int level, MobVector vector) {
         super(key, difficulty, time, weight);
         this.mobID = mobID;
         this.mobLevel = level;

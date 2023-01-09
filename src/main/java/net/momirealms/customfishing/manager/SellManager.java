@@ -58,7 +58,7 @@ public class SellManager extends Function {
 
     private final WindowPacketListener windowPacketListener;
     private final InventoryListener inventoryListener;
-    private SimpleListener simpleListener;
+    private final SimpleListener simpleListener;
     public static String formula;
     public static String title;
     public static int guiSize;

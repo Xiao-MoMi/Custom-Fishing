@@ -39,7 +39,7 @@ public class OriginalModel {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder("TotemModel:");
         for (int i = 0; i < height; i++) {
-            stringBuilder.append("\nlayer: "+ (i+1));
+            stringBuilder.append("\nlayer: ").append(i + 1);
             for (int j = 0; j < width; j++) {
                 stringBuilder.append("\n");
                 for (int k = 0; k < height; k++) {

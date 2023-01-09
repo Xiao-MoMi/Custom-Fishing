@@ -17,5 +17,5 @@
 
 package net.momirealms.customfishing.integration.quest;
 
-public class BetonQuestHook {
+public class BetonQuestCFQuest {
 }
