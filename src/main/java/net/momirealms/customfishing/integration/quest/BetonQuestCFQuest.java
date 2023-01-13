@@ -17,5 +17,137 @@
 
 package net.momirealms.customfishing.integration.quest;
 
-public class BetonQuestCFQuest {
+import net.momirealms.customfishing.api.event.FishResultEvent;
+import net.momirealms.customfishing.object.fishing.FishResult;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import pl.betoncraft.betonquest.BetonQuest;
+import pl.betoncraft.betonquest.Instruction;
+import pl.betoncraft.betonquest.api.Objective;
+import pl.betoncraft.betonquest.config.Config;
+import pl.betoncraft.betonquest.exceptions.InstructionParseException;
+import pl.betoncraft.betonquest.exceptions.QuestRuntimeException;
+import pl.betoncraft.betonquest.objectives.FishObjective;
+import pl.betoncraft.betonquest.utils.LogUtils;
+import pl.betoncraft.betonquest.utils.PlayerConverter;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.logging.Level;
+
+public class BetonQuestCFQuest extends Objective implements Listener {
+
+    private final HashSet<String> loot_ids = new HashSet<>();
+    private final int amount;
+    private final boolean notify;
+    private final int notifyInterval;
+
+    public BetonQuestCFQuest(Instruction instruction) throws InstructionParseException {
+        super(instruction);
+        this.template = FishData.class;
+        this.notifyInterval = instruction.getInt(instruction.getOptional("notify"), 1);
+        this.notify = instruction.hasArgument("notify") || this.notifyInterval > 1;
+        this.amount = instruction.getInt(instruction.getOptional("amount"), 1);
+        Collections.addAll(this.loot_ids, instruction.getArray());
+    }
+
+    public static void register() {
+        BetonQuest.getInstance().registerObjectives("customfishing", BetonQuestCFQuest.class);
+    }
+
+    @Override
+    public void start() {
+        Bukkit.getPluginManager().registerEvents(this, BetonQuest.getInstance());
+    }
+
+    @Override
+    public void stop() {
+        HandlerList.unregisterAll(this);
+    }
+
+    @Override
+    public String getDefaultDataInstruction() {
+        return null;
+    }
+
+    @Override
+    public String getProperty(String name, String playerID) {
+        return switch (name.toLowerCase(Locale.ROOT)) {
+            case "amount" ->
+                    Integer.toString(this.amount - ((FishObjective.FishData) this.dataMap.get(playerID)).getAmount());
+            case "left" -> Integer.toString(((FishObjective.FishData) this.dataMap.get(playerID)).getAmount());
+            case "total" -> Integer.toString(this.amount);
+            default -> "";
+        };
+    }
+
+    private boolean isValidPlayer(Player player) {
+        if (player == null) {
+            return false;
+        } else {
+            return player.isOnline() && player.isValid();
+        }
+    }
+
+    @EventHandler
+    public void onFish(FishResultEvent event) {
+        if (event.getResult() != FishResult.FAILURE) {
+            String playerID = PlayerConverter.getID(event.getPlayer());
+            if (this.containsPlayer(playerID)) {
+                if (this.loot_ids.contains(event.getLoot_id())) {
+                    if (this.checkConditions(playerID)) {
+                        if (!isValidPlayer(event.getPlayer())) {
+                            return;
+                        }
+                        FishData fishData = (FishData) this.dataMap.get(playerID);
+                        fishData.catchFish(event.isDouble() ? 1 : 2);
+                        if (fishData.finished()) {
+                            this.completeObjective(playerID);
+                        }
+                        else if (this.notify && fishData.getAmount() % this.notifyInterval == 0) {
+                            try {
+                                Config.sendNotify(this.instruction.getPackage().getName(), playerID, "loot_to_fish", new String[]{String.valueOf(fishData.getAmount())}, "loot_to_fish,info");
+                            } catch (QuestRuntimeException e1) {
+                                try {
+                                    LogUtils.getLogger().log(Level.WARNING, "The notify system was unable to play a sound for the 'loot_to_fish' category in '" + this.instruction.getObjective().getFullID() + "'. Error was: '" + e1.getMessage() + "'");
+                                } catch (InstructionParseException e2) {
+                                    LogUtils.logThrowableReport(e2);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public static class FishData extends Objective.ObjectiveData {
+        private int amount;
+
+        public FishData(String instruction, String playerID, String objID) {
+            super(instruction, playerID, objID);
+            this.amount = Integer.parseInt(instruction);
+        }
+
+        public void catchFish(int caughtAmount) {
+            this.amount -= caughtAmount;
+            this.update();
+        }
+
+        public int getAmount() {
+            return this.amount;
+        }
+
+        public String toString() {
+            return String.valueOf(this.amount);
+        }
+
+        public boolean finished() {
+            return this.amount <= 0;
+        }
+    }
 }

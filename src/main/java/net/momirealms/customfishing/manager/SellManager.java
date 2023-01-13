@@ -141,9 +141,9 @@ public class SellManager extends Function {
 
     @Override
     public void onJoin(Player player) {
-        Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.plugin, () -> {
+        Bukkit.getScheduler().runTaskLaterAsynchronously(CustomFishing.plugin, () -> {
             CustomFishing.plugin.getDataManager().getDataStorageInterface().loadSellCache(player);
-        });
+        }, 20);
     }
 
     private void loadConfig() {
@@ -160,7 +160,7 @@ public class SellManager extends Function {
         soundSource = Sound.Source.valueOf(config.getString("sounds.type","player").toUpperCase());
         if (config.contains("decorative-icons")){
             config.getConfigurationSection("decorative-icons").getKeys(false).forEach(key -> {
-                Item item = new Item(Material.valueOf(config.getString("decorative-icons." + key + ".material", "PAPER").toUpperCase()));
+                Item item = new Item(Material.valueOf(config.getString("decorative-icons." + key + ".material", "PAPER").toUpperCase()), key);
                 if (config.contains("decorative-icons." + key + ".display.name")) item.setName(config.getString("decorative-icons." + key + ".display.name"));
                 if (config.contains("decorative-icons." + key + ".display.lore")) item.setLore(config.getStringList("decorative-icons." + key + ".display.lore"));
                 if (config.contains("decorative-icons." + key + ".custom-model-data")) item.setCustomModelData(config.getInt("decorative-icons." + key + ".custom-model-data"));
@@ -171,11 +171,11 @@ public class SellManager extends Function {
             });
         }
 
-        sellIcon = new Item(Material.valueOf(config.getString("functional-icons.sell.material", "PAPER").toUpperCase()));
+        sellIcon = new Item(Material.valueOf(config.getString("functional-icons.sell.material", "PAPER").toUpperCase()), "sellIcon");
         if (config.contains("functional-icons.sell.display.name")) sellIcon.setName(config.getString("functional-icons.sell.display.name"));
         if (config.contains("functional-icons.sell.display.lore")) sellIcon.setLore(config.getStringList("functional-icons.sell.display.lore"));
         if (config.contains("functional-icons.sell.custom-model-data")) sellIcon.setCustomModelData(config.getInt("functional-icons.sell.custom-model-data"));
-        denyIcon = new Item(Material.valueOf(config.getString("functional-icons.deny.material", "PAPER").toUpperCase()));
+        denyIcon = new Item(Material.valueOf(config.getString("functional-icons.deny.material", "PAPER").toUpperCase()), "denyIcon");
         if (config.contains("functional-icons.deny.display.name")) denyIcon.setName(config.getString("functional-icons.deny.display.name"));
         if (config.contains("functional-icons.deny.display.lore")) denyIcon.setLore(config.getStringList("functional-icons.deny.display.lore"));
         if (config.contains("functional-icons.deny.custom-model-data")) denyIcon.setCustomModelData(config.getInt("functional-icons.deny.custom-model-data"));
@@ -212,6 +212,10 @@ public class SellManager extends Function {
 
     public void openGuiForPlayer(Player player) {
         player.closeInventory();
+        if (!playerCache.containsKey(player.getUniqueId())) {
+            AdventureUtil.consoleMessage("<red>Sell cache is not loaded for player " + player.getName());
+            return;
+        }
         Inventory inventory = Bukkit.createInventory(player, guiSize, "{CustomFishing_Sell}");
         for (Map.Entry<Integer, ItemStack> entry : guiItems.entrySet()) {
             inventory.setItem(entry.getKey(), entry.getValue());

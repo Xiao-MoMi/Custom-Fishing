@@ -28,6 +28,7 @@ import net.momirealms.customfishing.integration.item.*;
 import net.momirealms.customfishing.integration.mob.MythicMobsMobImpl;
 import net.momirealms.customfishing.integration.papi.PlaceholderManager;
 import net.momirealms.customfishing.integration.quest.BattlePassCFQuest;
+import net.momirealms.customfishing.integration.quest.BetonQuestCFQuest;
 import net.momirealms.customfishing.integration.quest.ClueScrollCFQuest;
 import net.momirealms.customfishing.integration.season.CustomCropsSeasonImpl;
 import net.momirealms.customfishing.integration.season.RealisticSeasonsImpl;
@@ -218,7 +219,7 @@ public class IntegrationManager extends Function {
             hookMessage("ClueScrolls");
         }
         if (Bukkit.getPluginManager().isPluginEnabled("BetonQuest")) {
-
+            BetonQuestCFQuest.register();
             hookMessage("BetonQuest");
         }
         if (Bukkit.getPluginManager().isPluginEnabled("BattlePass")) {

@@ -107,8 +107,8 @@ public class BagDataManager extends Function {
         else {
             PlayerBagData playerBagData = dataCache.get(owner.getUniqueId());
             if (playerBagData == null) {
-                AdventureUtil.consoleMessage("<red>[CustomFishing] Unexpected data for " + owner.getName());
-                tryOpen(owner, viewer, readData(owner));
+                AdventureUtil.consoleMessage("<red>[CustomFishing] Bag data is not loaded for player " + owner.getName());
+                return;
             }
             else {
                 tryOpen(owner, viewer, playerBagData);
@@ -128,16 +128,17 @@ public class BagDataManager extends Function {
 
     @Override
     public void onJoin(Player player) {
-        Bukkit.getScheduler().runTaskAsynchronously(CustomFishing.plugin, () -> {
+        Bukkit.getScheduler().runTaskLaterAsynchronously(CustomFishing.plugin, () -> {
             readData(player);
-        });
+        }, 20);
     }
 
-    public PlayerBagData readData(Player player) {
+    public void readData(Player player) {
         Inventory inventory = CustomFishing.plugin.getDataManager().getDataStorageInterface().loadBagData(player);
-        PlayerBagData playerBagData = new PlayerBagData(player, inventory);
-        dataCache.put(player.getUniqueId(), playerBagData);
-        return playerBagData;
+        if (inventory != null) {
+            PlayerBagData playerBagData = new PlayerBagData(player, inventory);
+            dataCache.put(player.getUniqueId(), playerBagData);
+        }
     }
 
     @Override

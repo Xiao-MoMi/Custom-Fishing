@@ -26,17 +26,20 @@ import java.util.Map;
 
 public class Item {
 
+    private final String key;
     private final Material material;
     private String name;
     private List<String> lore;
     private List<ItemFlag> itemFlags;
     private int customModelData;
     private boolean unbreakable;
+    private String head64;
     private List<LeveledEnchantment> enchantment;
     private Map<String, Object> nbt;
 
-    public Item(Material material) {
+    public Item(Material material, String key) {
         this.material = material;
+        this.key = key;
     }
 
     public Material getMaterial() {
@@ -99,8 +102,20 @@ public class Item {
         this.nbt = nbt;
     }
 
+    public String getHead64() {
+        return head64;
+    }
+
+    public void setHead64(String head64) {
+        this.head64 = head64;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
     public Item cloneWithPrice(double price){
-        Item newItem = new Item(this.material);
+        Item newItem = new Item(this.material, this.key);
         if (this.lore != null){
             List<String> lore = new ArrayList<>();
             for (String text : this.lore) {

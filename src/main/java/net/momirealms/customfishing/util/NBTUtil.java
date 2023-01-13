@@ -19,6 +19,7 @@ package net.momirealms.customfishing.util;
 
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NBTListCompound;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.inventory.ItemStack;
 
@@ -41,10 +42,12 @@ public class NBTUtil {
                 NBTCompound newCompound = nbtCompound.addCompound(key);
                 setTags(memorySection.getValues(false), newCompound);
             }
-            else if (map.get(key) instanceof List list){
+            else if (map.get(key) instanceof List<?> list){
                 for (Object o : list) {
                     if (o instanceof String value) {
                         setListValue(key, value, nbtCompound);
+                    } else if (o instanceof Map<?,?> map1) {
+                        setCompoundList(key, map1, nbtCompound);
                     }
                 }
             }
@@ -52,6 +55,11 @@ public class NBTUtil {
                 setSingleValue(key, value, nbtCompound);
             }
         }
+    }
+
+    private static void setCompoundList(String key, Map<?,?> map, NBTCompound nbtCompound) {
+        NBTListCompound nbtListCompound = nbtCompound.getCompoundList(key).addCompound();
+        setTags((Map<String, Object>) map, nbtListCompound);
     }
 
     private static void setListValue(String key, String value, NBTCompound nbtCompound) {

@@ -81,7 +81,7 @@ public class BonusManager extends Function {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
             Set<String> keys = config.getKeys(false);
             for (String key : keys) {
-                Item item = new Item(Material.valueOf(config.getString(key + ".material", "PAPER").toUpperCase()));
+                Item item = new Item(Material.valueOf(config.getString(key + ".material", "PAPER").toUpperCase()), key);
                 setItemProperties(config, key, item);
                 UTILITEMS.put(key, ItemStackUtil.addIdentifier(ItemStackUtil.getFromItem(item), "util", key));
             }
@@ -140,7 +140,7 @@ public class BonusManager extends Function {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
             Set<String> keys = config.getKeys(false);
             for (String key : keys) {
-                Item item = new Item(Material.valueOf(config.getString(key + ".material", "PAPER").toUpperCase()));
+                Item item = new Item(Material.valueOf(config.getString(key + ".material", "PAPER").toUpperCase()), key);
                 setItemProperties(config, key, item);
                 BAITITEMS.put(key, ItemStackUtil.addIdentifier(ItemStackUtil.getFromItem(item), "bait", key));
                 if (config.contains(key + ".modifier")) {
@@ -194,7 +194,7 @@ public class BonusManager extends Function {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
             Set<String> keys = config.getKeys(false);
             for (String key : keys) {
-                Item item = new Item(Material.FISHING_ROD);
+                Item item = new Item(Material.FISHING_ROD, key);
                 setItemProperties(config, key, item);
                 RODITEMS.put(key, ItemStackUtil.addIdentifier(ItemStackUtil.getFromItem(item), "rod", key));
                 if (config.contains(key + ".modifier")) {
@@ -229,6 +229,9 @@ public class BonusManager extends Function {
         if (config.contains(key + ".nbt")) {
             Map<String, Object> nbt = config.getConfigurationSection(key + ".nbt").getValues(false);
             item.setNbt(nbt);
+        }
+        if (config.contains(key + ".head64")) {
+            item.setHead64(config.getString(key + ".head64"));
         }
     }
 }

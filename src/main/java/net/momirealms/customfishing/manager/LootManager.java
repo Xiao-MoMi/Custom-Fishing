@@ -204,7 +204,7 @@ public class LootManager extends Function {
                 if (material.contains(":")) {
                     continue;
                 }
-                Item item = new Item(Material.valueOf(material.toUpperCase()));
+                Item item = new Item(Material.valueOf(material.toUpperCase()), key);
                 BonusManager.setItemProperties(config, key, item);
                 if (item.getMaterial() == Material.AIR) LOOTITEMS.put(key, new ItemStack(Material.AIR));
                 else LOOTITEMS.put(key, ItemStackUtil.getFromItem(item));

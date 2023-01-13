@@ -19,6 +19,8 @@ package net.momirealms.customfishing.util;
 
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NBTListCompound;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
@@ -82,6 +84,11 @@ public class ItemStackUtil {
                 lore.add(GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize("<!i>" + line)));
             });
         }
+        if (item.getHead64() != null) {
+            NBTCompound nbtCompound = nbtItem.addCompound("SkullOwner");
+            NBTListCompound texture = nbtCompound.addCompound("Properties").getCompoundList("textures").addCompound();
+            texture.setString("Value", item.getHead64());
+        }
         if (item.getNbt() != null) NBTUtil.setTags(item.getNbt(), nbtItem);
         return nbtItem.getItem();
     }
@@ -132,8 +139,7 @@ public class ItemStackUtil {
             if (loot == null) return;
         }
         if (!(loot instanceof DroppedItem droppedItem)) return;
-        String key = droppedItem.getMaterial();
-        ItemStack itemStack = CustomFishing.plugin.getIntegrationManager().build(key);
+        ItemStack itemStack = CustomFishing.plugin.getFishingManager().getCustomFishingLootItemStack(droppedItem, player);
         if (itemStack.getType() == Material.AIR) return;
         itemStack.setAmount(amount);
         player.getInventory().addItem(itemStack);
@@ -166,35 +172,6 @@ public class ItemStackUtil {
 
         YamlConfiguration yamlConfiguration = new YamlConfiguration();
         yamlConfiguration.set(fileName + ".material", itemStack.getType().toString());
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        if (itemMeta.hasCustomModelData()) {
-            yamlConfiguration.set(fileName + ".custom-model-data", itemMeta.getCustomModelData());
-        }
-        if (itemMeta.isUnbreakable()) {
-            yamlConfiguration.set(fileName + ".unbreakable", itemMeta.isUnbreakable());
-        }
-        if (itemMeta.hasEnchants()) {
-            Map<String, Integer> map = new HashMap<>();
-            itemMeta.getEnchants().forEach((enchantment, level) -> {
-                map.put(String.valueOf(enchantment.getKey()), level);
-            });
-            yamlConfiguration.createSection(fileName + ".enchantments", map);
-        }
-        if (itemMeta instanceof EnchantmentStorageMeta enchantmentStorageMeta){
-            Map<String, Integer> map = new HashMap<>();
-            enchantmentStorageMeta.getStoredEnchants().forEach(((enchantment, level) -> {
-                map.put(String.valueOf(enchantment.getKey()), level);
-            }));
-            yamlConfiguration.createSection(fileName + ".enchantments", map);
-        }
-        if (itemMeta.getItemFlags().size() > 0){
-            ArrayList<String> itemFlags = new ArrayList<>();
-            itemStack.getItemFlags().forEach(itemFlag -> {
-                itemFlags.add(itemFlag.name());
-            });
-            yamlConfiguration.set(fileName + ".item_flags", itemFlags);
-        }
-
         NBTItem nbtItem = new NBTItem(itemStack);
 
         Map<String, Object> map0 = compoundToMap(nbtItem);
@@ -252,11 +229,6 @@ public class ItemStackUtil {
     public static Map<String, Object> compoundToMap(NBTCompound nbtCompound){
         Map<String, Object> map = new HashMap<>();
         nbtCompound.getKeys().forEach(key -> {
-            if (key.equals("Enchantments")
-            || key.equals("HideFlags")
-            || key.equals("CustomModelData")
-            || key.equals("StoredEnchantments")
-            || key.equals("Unbreakable")) return;
             switch (nbtCompound.getType(key)){
                 case NBTTagByte -> map.put(key, "(Byte) " + nbtCompound.getByte(key));
                 case NBTTagInt -> map.put(key, "(Int) " + nbtCompound.getInteger(key));
@@ -274,6 +246,40 @@ public class ItemStackUtil {
                 case NBTTagList -> {
                     List<Object> list = new ArrayList<>();
                     switch (nbtCompound.getListType(key)) {
+                        case NBTTagCompound -> nbtCompound.getCompoundList(key).forEach(a -> list.add(compoundToMap(a)));
+                        case NBTTagInt -> nbtCompound.getIntegerList(key).forEach(a -> list.add("(Int) " + a));
+                        case NBTTagDouble -> nbtCompound.getDoubleList(key).forEach(a -> list.add("(Double) " + a));
+                        case NBTTagString -> nbtCompound.getStringList(key).forEach(a -> list.add("(String) " + a));
+                        case NBTTagFloat -> nbtCompound.getFloatList(key).forEach(a -> list.add("(Float) " + a));
+                        case NBTTagLong -> nbtCompound.getLongList(key).forEach(a -> list.add("(Long) " + a));
+                        case NBTTagIntArray -> nbtCompound.getIntArrayList(key).forEach(a -> list.add("(IntArray) " + Arrays.toString(a)));
+                        default -> nbtCompound.getUUIDList(key).forEach(a -> list.add("(UUID) " + a));
+                    }
+                    map.put(key, list);
+                }
+            }
+        });
+        return map;
+    }
+
+
+    public static Map<String, Object> compoundToMap(ReadWriteNBT nbtCompound){
+        Map<String, Object> map = new HashMap<>();
+        nbtCompound.getKeys().forEach(key -> {
+            switch (nbtCompound.getType(key)){
+                case NBTTagByte -> map.put(key, "(Byte) " + nbtCompound.getByte(key));
+                case NBTTagInt -> map.put(key, "(Int) " + nbtCompound.getInteger(key));
+                case NBTTagDouble -> map.put(key, "(Double) " + nbtCompound.getDouble(key));
+                case NBTTagLong -> map.put(key, "(Long) " + nbtCompound.getLong(key));
+                case NBTTagFloat -> map.put(key, "(Float) " + nbtCompound.getFloat(key));
+                case NBTTagShort -> map.put(key, "(Short) " + nbtCompound.getShort(key));
+                case NBTTagString -> map.put(key, "(String) " + nbtCompound.getString(key));
+                case NBTTagByteArray -> map.put(key, "(ByteArray) " + Arrays.toString(nbtCompound.getByteArray(key)));
+                case NBTTagIntArray -> map.put(key, "(IntArray) " + Arrays.toString(nbtCompound.getIntArray(key)));
+                case NBTTagList -> {
+                    List<Object> list = new ArrayList<>();
+                    switch (nbtCompound.getListType(key)) {
+                        case NBTTagCompound -> nbtCompound.getCompoundList(key).forEach(a -> list.add(compoundToMap(a)));
                         case NBTTagInt -> nbtCompound.getIntegerList(key).forEach(a -> list.add("(Int) " + a));
                         case NBTTagDouble -> nbtCompound.getDoubleList(key).forEach(a -> list.add("(Double) " + a));
                         case NBTTagString -> nbtCompound.getStringList(key).forEach(a -> list.add("(String) " + a));

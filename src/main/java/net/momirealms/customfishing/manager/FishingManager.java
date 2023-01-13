@@ -518,7 +518,7 @@ public class FishingManager extends Function {
         sendSuccessTitle(player, droppedItem.getNick());
     }
 
-    private ItemStack getCustomFishingLootItemStack(DroppedItem droppedItem, Player player) {
+    public ItemStack getCustomFishingLootItemStack(DroppedItem droppedItem, Player player) {
         String key = droppedItem.getMaterial();
         ItemStack drop = CustomFishing.plugin.getIntegrationManager().build(key);
 
@@ -529,6 +529,14 @@ public class FishingManager extends Function {
                 ItemStackUtil.addRandomDamage(drop);
             if (ConfigManager.preventPickUp)
                 ItemStackUtil.addOwner(drop, player.getName());
+            if (drop.getType() == Material.PLAYER_HEAD) {
+                NBTItem nbtItem = new NBTItem(drop);
+                NBTCompound nbtCompound = nbtItem.getCompound("SkullOwner");
+                if (nbtCompound != null && !nbtCompound.hasTag("Id")) {
+                    nbtCompound.setUUID("Id", UUID.randomUUID());
+                    drop.setItemMeta(nbtItem.getItem().getItemMeta());
+                }
+            }
             ItemStackUtil.addExtraMeta(drop, droppedItem);
             if (ConfigManager.addTagToFish) ItemStackUtil.addIdentifier(drop, "loot", droppedItem.getKey());
         }
