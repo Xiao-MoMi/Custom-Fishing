@@ -19,6 +19,7 @@ package net.momirealms.customfishing.integration.quest;
 
 import net.momirealms.customfishing.api.event.FishResultEvent;
 import net.momirealms.customfishing.object.fishing.FishResult;
+import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,14 +40,14 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.logging.Level;
 
-public class BetonQuestCFQuest extends Objective implements Listener {
+public class OldBetonQuestCFQuest extends Objective implements Listener {
 
     private final HashSet<String> loot_ids = new HashSet<>();
     private final int amount;
     private final boolean notify;
     private final int notifyInterval;
 
-    public BetonQuestCFQuest(Instruction instruction) throws InstructionParseException {
+    public OldBetonQuestCFQuest(Instruction instruction) throws InstructionParseException {
         super(instruction);
         this.template = FishData.class;
         this.notifyInterval = instruction.getInt(instruction.getOptional("notify"), 1);
@@ -56,7 +57,7 @@ public class BetonQuestCFQuest extends Objective implements Listener {
     }
 
     public static void register() {
-        BetonQuest.getInstance().registerObjectives("customfishing", BetonQuestCFQuest.class);
+        BetonQuest.getInstance().registerObjectives("customfishing", OldBetonQuestCFQuest.class);
     }
 
     @Override
@@ -71,7 +72,7 @@ public class BetonQuestCFQuest extends Objective implements Listener {
 
     @Override
     public String getDefaultDataInstruction() {
-        return null;
+        return Integer.toString(this.amount);
     }
 
     @Override
@@ -130,7 +131,13 @@ public class BetonQuestCFQuest extends Objective implements Listener {
 
         public FishData(String instruction, String playerID, String objID) {
             super(instruction, playerID, objID);
-            this.amount = Integer.parseInt(instruction);
+            try {
+                this.amount = Integer.parseInt(instruction);
+            }
+            catch (NumberFormatException e) {
+                AdventureUtil.consoleMessage("<>");
+                this.amount = 1;
+            }
         }
 
         public void catchFish(int caughtAmount) {
