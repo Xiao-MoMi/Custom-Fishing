@@ -62,7 +62,7 @@ decorative-icons:
     material: BLACK_STAINED_GLASS_PANE
     display:
       name: ' '
-    slot:
+    slots:
       - 1
       - 2
       - 3

@@ -27,6 +27,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.event.*;
 import net.momirealms.customfishing.competition.Competition;
+import net.momirealms.customfishing.competition.CompetitionGoal;
 import net.momirealms.customfishing.data.PlayerBagData;
 import net.momirealms.customfishing.integration.AntiGriefInterface;
 import net.momirealms.customfishing.integration.MobInterface;
@@ -149,7 +150,7 @@ public class FishingManager extends Function {
             initialBonus.setDifficulty(0);
             initialBonus.setDoubleLoot(0);
             initialBonus.setTime(1);
-            initialBonus.setScore(1);
+            initialBonus.setScore(0);
             initialBonus.setWeightMD(new HashMap<>());
             initialBonus.setWeightAS(new HashMap<>());
 
@@ -400,7 +401,7 @@ public class FishingManager extends Function {
             return;
         }
         if (loot instanceof Mob mob) {
-            summonMob(player, loot, item.getLocation(), mob, bonus.getScore());
+            summonMob(player, loot, item.getLocation(), mob, bonus.getScoreBonus());
             return;
         }
         if (loot instanceof DroppedItem droppedItem){
@@ -409,7 +410,7 @@ public class FishingManager extends Function {
                     return;
                 }
             }
-            dropCustomFishingLoot(player, item.getLocation(), droppedItem, bonus.getDoubleLoot() > Math.random(), bonus.getScore());
+            dropCustomFishingLoot(player, item.getLocation(), droppedItem, bonus.getDoubleLoot() > Math.random(), bonus.getScoreBonus());
         }
     }
 
@@ -425,7 +426,7 @@ public class FishingManager extends Function {
                 return;
             }
             if (loot instanceof Mob mob) {
-                summonMob(player, loot, event.getHook().getLocation(), mob, bonus.getScore());
+                summonMob(player, loot, event.getHook().getLocation(), mob, bonus.getScoreBonus());
                 return;
             }
             if (loot instanceof DroppedItem droppedItem) {
@@ -434,7 +435,7 @@ public class FishingManager extends Function {
                         return;
                     }
                 }
-                dropCustomFishingLoot(player, event.getHook().getLocation(), droppedItem, bonus.getDoubleLoot() > Math.random(), bonus.getScore());
+                dropCustomFishingLoot(player, event.getHook().getLocation(), droppedItem, bonus.getDoubleLoot() > Math.random(), bonus.getScoreBonus());
             }
         }
     }
@@ -443,6 +444,7 @@ public class FishingManager extends Function {
         fishingPlayer.cancel();
         Loot loot = nextLoot.remove(player);
         VanillaLoot vanilla = vanillaLoot.remove(player);
+        nextBonus.remove(player);
         player.removePotionEffect(PotionEffectType.SLOW);
         if (fishingPlayer.isSuccess()) {
             if (ConfigManager.rodLoseDurability) loseDurability(player);
@@ -504,11 +506,15 @@ public class FishingManager extends Function {
             return;
         }
 
-        Bonus bonus = nextBonus.remove(player);
-
-        if (Competition.currentCompetition != null){
-            float score = (float) (droppedItem.getScore() * scoreMultiplier);
-            Competition.currentCompetition.refreshData(player, (float) (score * bonus.getScore()), isDouble);
+        if (Competition.currentCompetition != null) {
+            float score;
+            if (Competition.currentCompetition.getGoal() == CompetitionGoal.MAX_SIZE || Competition.currentCompetition.getGoal() == CompetitionGoal.TOTAL_SIZE) {
+                score = getSize(drop);
+            }
+            else {
+                score = (float) ((float) droppedItem.getScore() * scoreMultiplier);
+            }
+            Competition.currentCompetition.refreshData(player, score, fishResultEvent.isDouble());
             Competition.currentCompetition.tryAddBossBarToPlayer(player);
         }
 
@@ -553,10 +559,8 @@ public class FishingManager extends Function {
             return true;
         }
 
-        nextBonus.remove(player);
-
-        if (Competition.currentCompetition != null){
-            Competition.currentCompetition.refreshData(player, 0, isDouble);
+        if (Competition.currentCompetition != null) {
+            Competition.currentCompetition.refreshData(player, 0, fishResultEvent.isDouble());
             Competition.currentCompetition.tryAddBossBarToPlayer(player);
         }
 
@@ -596,10 +600,8 @@ public class FishingManager extends Function {
             return;
         }
 
-        nextBonus.remove(player);
-
         if (Competition.currentCompetition != null){
-            Competition.currentCompetition.refreshData(player, 0, isDouble);
+            Competition.currentCompetition.refreshData(player, 0, fishResultEvent.isDouble());
             Competition.currentCompetition.tryAddBossBarToPlayer(player);
         }
 
@@ -618,11 +620,15 @@ public class FishingManager extends Function {
             return;
         }
 
-        Bonus bonus = nextBonus.remove(player);
-
         if (Competition.currentCompetition != null) {
-            float score = (float) (loot.getScore() * scoreMultiplier);
-            Competition.currentCompetition.refreshData(player, (float) (score * bonus.getScore()), false);
+            float score;
+            if (Competition.currentCompetition.getGoal() == CompetitionGoal.MAX_SIZE || Competition.currentCompetition.getGoal() == CompetitionGoal.TOTAL_SIZE) {
+                score = 0;
+            }
+            else {
+                score = (float) loot.getScore();
+            }
+            Competition.currentCompetition.refreshData(player, (float) (score * scoreMultiplier), false);
             Competition.currentCompetition.tryAddBossBarToPlayer(player);
         }
 
@@ -713,8 +719,6 @@ public class FishingManager extends Function {
             for (ActionInterface action : loot.getFailureActions())
                 action.doOn(player, null);
         }
-
-        nextBonus.remove(player);
 
         AdventureUtil.playerTitle(
                 player,
@@ -927,11 +931,11 @@ public class FishingManager extends Function {
 
         Bonus bonus = nextBonus.get(player);
         boolean isDouble = false;
-        double scoreMultiplier = 0;
+        double scoreMultiplier = 1;
         if (bonus != null) {
             speed += bonus.getDifficulty();
             isDouble = Math.random() < bonus.getDoubleLoot();
-            scoreMultiplier = bonus.getScore() + 1;
+            scoreMultiplier = bonus.getScoreBonus();
         }
 
         if (speed < 1){
@@ -1005,5 +1009,14 @@ public class FishingManager extends Function {
 
     public void removePlayerFromLavaFishing(Player player) {
         this.bobberTaskCache.remove(player);
+    }
+
+    public float getSize(ItemStack itemStack) {
+        NBTItem nbtItem = new NBTItem(itemStack);
+        NBTCompound fishMeta = nbtItem.getCompound("FishMeta");
+        if (fishMeta != null) {
+            return fishMeta.getFloat("size");
+        }
+        return 0;
     }
 }

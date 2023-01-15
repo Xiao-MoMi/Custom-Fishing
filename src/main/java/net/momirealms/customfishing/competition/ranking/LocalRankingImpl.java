@@ -77,6 +77,16 @@ public class LocalRankingImpl implements RankingInterface {
     }
 
     @Override
+    public float getPlayerScore(String player) {
+        for (CompetitionPlayer competitionPlayer : competitionPlayers) {
+            if (competitionPlayer.getPlayer().equals(player)) {
+                return competitionPlayer.getScore();
+            }
+        }
+        return 0;
+    }
+
+    @Override
     public CompetitionPlayer[] getTop3Player() {
         CompetitionPlayer[] competitionPlayers = new CompetitionPlayer[3];
         int index = 1;
@@ -125,6 +135,19 @@ public class LocalRankingImpl implements RankingInterface {
         if (competitionPlayer != null) {
             removePlayer(competitionPlayer);
             competitionPlayer.addScore(score);
+            addPlayer(competitionPlayer);
+        } else {
+            competitionPlayer = new CompetitionPlayer(player, score);
+            addPlayer(competitionPlayer);
+        }
+    }
+
+    @Override
+    public void setData(String player, float score) {
+        CompetitionPlayer competitionPlayer = getCompetitionPlayer(player);
+        if (competitionPlayer != null) {
+            removePlayer(competitionPlayer);
+            competitionPlayer.setScore(score);
             addPlayer(competitionPlayer);
         } else {
             competitionPlayer = new CompetitionPlayer(player, score);

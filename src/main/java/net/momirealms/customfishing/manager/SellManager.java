@@ -165,8 +165,16 @@ public class SellManager extends Function {
                 if (config.contains("decorative-icons." + key + ".display.lore")) item.setLore(config.getStringList("decorative-icons." + key + ".display.lore"));
                 if (config.contains("decorative-icons." + key + ".custom-model-data")) item.setCustomModelData(config.getInt("decorative-icons." + key + ".custom-model-data"));
                 ItemStack itemStack = ItemStackUtil.getFromItem(item);
-                for (int slot : config.getIntegerList("decorative-icons." + key + ".slot")) {
-                    guiItems.put(slot - 1, itemStack);
+                if (config.contains("decorative-icons." + key + ".slots")) {
+                    for (int slot : config.getIntegerList("decorative-icons." + key + ".slots")) {
+                        guiItems.put(slot - 1, itemStack);
+                    }
+                }
+                // for old version compatibility
+                if (config.contains("decorative-icons." + key + ".slot")) {
+                    for (int slot : config.getIntegerList("decorative-icons." + key + ".slot")) {
+                        guiItems.put(slot - 1, itemStack);
+                    }
                 }
             });
         }
@@ -354,7 +362,7 @@ public class SellManager extends Function {
         return totalPrice;
     }
 
-    private float getSingleItemPrice(ItemStack itemStack) {
+    public float getSingleItemPrice(ItemStack itemStack) {
         NBTItem nbtItem = new NBTItem(itemStack);
         NBTCompound fishMeta = nbtItem.getCompound("FishMeta");
         float price = 0;

@@ -84,6 +84,17 @@ public class RedisRankingImpl implements RankingInterface {
     }
 
     @Override
+    public float getPlayerScore(String player) {
+        Jedis jedis = JedisUtil.getJedis();
+        Double rank = jedis.zscore("cf_competition", player);
+        jedis.close();
+        if(rank == null) {
+            return 0;
+        }
+        return rank.floatValue();
+    }
+
+    @Override
     public CompetitionPlayer[] getTop3Player() {
         CompetitionPlayer[] competitionPlayers = new CompetitionPlayer[3];
         Jedis jedis = JedisUtil.getJedis();
@@ -110,6 +121,13 @@ public class RedisRankingImpl implements RankingInterface {
     public void refreshData(String player, float score) {
         Jedis jedis = JedisUtil.getJedis();
         jedis.zincrby("cf_competition", score, player);
+        jedis.close();
+    }
+
+    @Override
+    public void setData(String player, float score) {
+        Jedis jedis = JedisUtil.getJedis();
+        jedis.zadd("cf_competition", score, player);
         jedis.close();
     }
 

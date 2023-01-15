@@ -38,6 +38,11 @@ public class CompetitionPlayer implements Comparable<CompetitionPlayer>{
         this.time = System.currentTimeMillis();
     }
 
+    public void setScore(float score){
+        this.score = score;
+        this.time = System.currentTimeMillis();
+    }
+
     public float getScore() {
         return this.score;
     }

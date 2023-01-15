@@ -268,14 +268,35 @@ public class Competition {
         }
     }
 
-
     public void refreshData(Player player, float score, boolean doubleScore) {
         if (this.goal == CompetitionGoal.CATCH_AMOUNT) {
             score = 1f;
         }
-        if (doubleScore) {
-            score *= 2;
+        if (this.goal == CompetitionGoal.MAX_SIZE) {
+            doubleScore = false;
         }
-        ranking.refreshData(player.getName(), score);
+        if (this.goal == CompetitionGoal.MAX_SIZE) {
+            if (score > ranking.getPlayerScore(player.getName())) {
+                ranking.setData(player.getName(), score);
+            }
+            return;
+        }
+        ranking.refreshData(player.getName(), doubleScore ? 2 * score : score);
+    }
+
+    public CompetitionGoal getGoal() {
+        return goal;
+    }
+
+    public RankingInterface getRanking() {
+        return ranking;
+    }
+
+    public static Competition getCurrentCompetition() {
+        return currentCompetition;
+    }
+
+    public long getStartTime() {
+        return startTime;
     }
 }

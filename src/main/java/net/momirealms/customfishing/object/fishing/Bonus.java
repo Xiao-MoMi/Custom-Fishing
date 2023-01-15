@@ -56,7 +56,7 @@ public class Bonus {
         this.time = time;
     }
 
-    public double getScore() {
+    private double getScore() {
         return score;
     }
 
@@ -106,8 +106,12 @@ public class Bonus {
         if (anotherBonus.getTime() != 0) this.time += (anotherBonus.getTime() - 1);
         if (anotherBonus.getDoubleLoot() != 0) this.doubleLoot += anotherBonus.getDoubleLoot();
         if (anotherBonus.getDifficulty() != 0) this.difficulty += anotherBonus.getDifficulty();
-        if (anotherBonus.getScore() != 0) this.score += (anotherBonus.getScore() - 1);
+        if (anotherBonus.getScore() != 0) this.score += anotherBonus.getScore();
         if (anotherBonus.canLavaFishing()) this.canLavaFishing = true;
+    }
+
+    public double getScoreBonus() {
+        return score + 1;
     }
 
     public boolean hasSpecialRod() {

@@ -21,6 +21,8 @@ public enum CompetitionGoal {
 
     CATCH_AMOUNT,
     TOTAL_SCORE,
+    MAX_SIZE,
+    TOTAL_SIZE,
     RANDOM
 
 }

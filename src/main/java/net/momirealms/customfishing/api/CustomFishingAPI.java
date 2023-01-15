@@ -17,8 +17,53 @@
 
 package net.momirealms.customfishing.api;
 
+import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.competition.Competition;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
+
 public class CustomFishingAPI {
 
+    /**
+     * return null if there's no competition
+     * @return competition
+     */
+    @Nullable
+    public static Competition getCurrentCompetition() {
+        return Competition.getCurrentCompetition();
+    }
 
+    /**
+     * get a fish's size
+     * @return size
+     */
+    public static float getFishSize(ItemStack fish) {
+        return CustomFishing.plugin.getFishingManager().getSize(fish);
+    }
 
+    /**
+     * get plugin instance
+     * @return plugin instance
+     */
+    public static CustomFishing getInstance() {
+        return CustomFishing.plugin;
+    }
+
+    /**
+     * get an item's price
+     * @param itemStack item to sell
+     * @return price
+     */
+    public static double getItemPrice(ItemStack itemStack) {
+        return CustomFishing.plugin.getSellManager().getSingleItemPrice(itemStack);
+    }
+
+    /**
+     * build an itemStack instance from key
+     * @param id item_id
+     * @return itemStack
+     */
+    public static ItemStack buildItem(String id) {
+        return CustomFishing.plugin.getIntegrationManager().build(id);
+    }
 }

@@ -28,8 +28,10 @@ public interface RankingInterface {
     Iterator<String> getIterator();
     int getSize();
     String getPlayerRank(String player);
+    float getPlayerScore(String player);
     CompetitionPlayer[] getTop3Player();
     void refreshData(String player, float score);
+    void setData(String player, float score);
     float getFirstScore();
     float getSecondScore();
     float getThirdScore();

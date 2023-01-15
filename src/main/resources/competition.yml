@@ -2,6 +2,8 @@ example:
 
   # TOTAL_SCORE
   # CATCH_AMOUNT
+  # MAX_SIZE
+  # TOTAL_SIZE
   # RANDOM
   goal: CATCH_AMOUNT
 
