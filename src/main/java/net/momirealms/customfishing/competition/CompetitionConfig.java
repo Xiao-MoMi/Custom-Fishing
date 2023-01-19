@@ -20,6 +20,7 @@ package net.momirealms.customfishing.competition;
 import net.momirealms.customfishing.competition.bossbar.BossBarConfig;
 import net.momirealms.customfishing.object.action.ActionInterface;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,6 +33,8 @@ public class CompetitionConfig {
     private final List<String> startCommand;
     private final List<String> endCommand;
     private final List<String> joinCommand;
+    private List<Integer> date;
+    private List<Integer> weekday;
     private final CompetitionGoal goal;
     private final BossBarConfig bossBarConfig;
     private final boolean enableBossBar;
@@ -93,5 +96,35 @@ public class CompetitionConfig {
 
     public HashMap<String, ActionInterface[]> getRewards() {
         return rewards;
+    }
+
+    public void setDate(List<Integer> date) {
+        this.date = date;
+    }
+
+    public void setWeekday(List<Integer> weekday) {
+        this.weekday = weekday;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
+    }
+
+    public boolean canStart() {
+        if (date != null && date.size() != 0) {
+            Calendar calendar = Calendar.getInstance();
+            int dateDay = calendar.get(Calendar.DATE);
+            if (!date.contains(dateDay)) {
+                return false;
+            }
+        }
+        if (weekday != null && weekday.size() != 0) {
+            Calendar calendar = Calendar.getInstance();
+            int dateDay = calendar.get(Calendar.DAY_OF_WEEK);
+            if (!weekday.contains(dateDay)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

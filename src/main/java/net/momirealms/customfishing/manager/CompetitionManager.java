@@ -26,6 +26,7 @@ import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.action.ActionInterface;
 import net.momirealms.customfishing.object.action.CommandActionImpl;
 import net.momirealms.customfishing.object.action.MessageActionImpl;
+import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import org.bukkit.boss.BarColor;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -92,6 +93,31 @@ public class CompetitionManager extends Function {
                     enableBsb,
                     rewardsMap
             );
+
+            if (config.contains(key + ".start-weekday")) {
+                List<Integer> days = new ArrayList<>();
+                for (String weekDay : config.getStringList(key + ".start-weekday")) {
+                    switch (weekDay) {
+                        case "Sunday" -> days.add(1);
+                        case "Monday" -> days.add(2);
+                        case "Tuesday" -> days.add(3);
+                        case "Wednesday" -> days.add(4);
+                        case "Thursday" -> days.add(5);
+                        case "Friday" -> days.add(6);
+                        case "Saturday" -> days.add(7);
+                        default -> AdventureUtil.consoleMessage("unknown weekday: " + weekDay);
+                    }
+                }
+                competitionConfig.setWeekday(days);
+            }
+
+            if (config.contains(key + ".start-date")) {
+                List<Integer> days = new ArrayList<>();
+                for (String weekDay : config.getStringList(key + ".start-date")) {
+                    days.add(Integer.parseInt(weekDay));
+                }
+                competitionConfig.setDate(days);
+            }
 
             config.getStringList(key + ".start-time").forEach(time -> competitionsT.put(time, competitionConfig));
             competitionsC.put(key, competitionConfig);

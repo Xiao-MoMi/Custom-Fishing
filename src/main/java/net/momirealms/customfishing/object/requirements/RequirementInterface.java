@@ -21,4 +21,5 @@ import net.momirealms.customfishing.object.fishing.FishingCondition;
 
 public interface RequirementInterface {
     boolean isConditionMet(FishingCondition fishingCondition);
+
 }

@@ -77,7 +77,7 @@ public class CompetitionSchedule extends Function {
             public void run() {
                 if (isANewMinute()) {
                     CompetitionConfig competitionConfig = CompetitionManager.competitionsT.get(getCurrentTime());
-                    if (competitionConfig != null) {
+                    if (competitionConfig != null && competitionConfig.canStart()) {
                         startCompetition(competitionConfig);
                     }
                 }

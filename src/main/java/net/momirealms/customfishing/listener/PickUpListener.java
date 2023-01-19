@@ -32,7 +32,7 @@ public class PickUpListener implements Listener {
     public void onPickUp(PlayerAttemptPickupItemEvent event){
         ItemStack itemStack = event.getItem().getItemStack();
         NBTItem nbtItem = new NBTItem(itemStack);
-        if (!nbtItem.hasKey("M_Owner")) return;
+        if (!nbtItem.hasTag("M_Owner")) return;
         if (!Objects.equals(nbtItem.getString("M_Owner"), event.getPlayer().getName())){
             event.setCancelled(true);
         }
@@ -46,7 +46,7 @@ public class PickUpListener implements Listener {
     public void onMove(InventoryPickupItemEvent event){
         ItemStack itemStack = event.getItem().getItemStack();
         NBTItem nbtItem = new NBTItem(itemStack);
-        if (!nbtItem.hasKey("M_Owner")) return;
+        if (!nbtItem.hasTag("M_Owner")) return;
         nbtItem.removeKey("M_Owner");
         itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
     }

@@ -15,18 +15,16 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.object.requirements.papi;
+package net.momirealms.customfishing.object.action;
 
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-
-public record PapiGreater(String papi, String requirement) implements PapiRequirement{
+public record PotionEffectImpl(PotionEffect potionEffect) implements ActionInterface {
 
     @Override
-    public boolean isMet(HashMap<String, String> papiMap, Player player) {
-        double value = Double.parseDouble(papiMap.get(papi));
-        return value > Double.parseDouble(PlaceholderAPI.setPlaceholders(player, requirement));
+    public void doOn(Player player, @Nullable Player anotherPlayer) {
+        player.addPotionEffect(potionEffect);
     }
 }

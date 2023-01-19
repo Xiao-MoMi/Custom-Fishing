@@ -54,9 +54,14 @@ rainbow_fish:
       namespace: '(String) momirealms'
       id: '(String) rainbow_fish'
 
-  # Available events: success/failure/hook
-  # Available actions: message/command/exp/mending/skill-xp/sound
+  # Available events: eat/success/failure/hook
+  # Available actions: message/command/exp/mending/skill-xp/sound/potion-effect
   action:
+    eat:
+      potion-effect:
+        type: blindness
+        level: 1
+        duration: 200
     success:
       message:
         - 'You got a {loot} lol！'
@@ -180,8 +185,9 @@ rainbow_fish:
         '&&':
           condition_1:
             type: '>='
+            # compare two placeholders
             papi: '%player_health%'
-            value: 5
+            value: '%player_y%'
           condition_2:
             type: '<'
             papi: '%player_health%'

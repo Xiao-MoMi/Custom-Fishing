@@ -7,6 +7,15 @@ example:
   # RANDOM
   goal: CATCH_AMOUNT
 
+  #Optional
+  #start-weekday:
+  #  - monday
+  #  - sunday
+  #Optional
+  #start-date:
+  #  - 1
+  #  - 7
+  #  - 14
   # optional
   # Fishing competition can also be started with a command
   start-time:
