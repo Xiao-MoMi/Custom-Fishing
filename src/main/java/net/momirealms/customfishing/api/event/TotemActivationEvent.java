@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.api.event;
 
-import net.momirealms.customfishing.object.totem.Totem;
+import net.momirealms.customfishing.object.totem.TotemConfig;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -28,12 +28,12 @@ import org.jetbrains.annotations.NotNull;
 public class TotemActivationEvent extends PlayerEvent implements Cancellable {
 
     private boolean cancelled;
-    private final Totem totem;
+    private final TotemConfig totem;
     private final Location location;
     private static final HandlerList handlerList = new HandlerList();
 
 
-    public TotemActivationEvent(@NotNull Player who, Location location, Totem totem) {
+    public TotemActivationEvent(@NotNull Player who, Location location, TotemConfig totem) {
         super(who);
         this.cancelled = false;
         this.totem = totem;
@@ -60,7 +60,7 @@ public class TotemActivationEvent extends PlayerEvent implements Cancellable {
         return getHandlerList();
     }
 
-    public Totem getTotem() {
+    public TotemConfig getTotem() {
         return totem;
     }
 

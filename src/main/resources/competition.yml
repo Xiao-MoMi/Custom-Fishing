@@ -59,15 +59,16 @@ example:
       - '           <#B0C4DE>Start fishing to participate!'
       - ''
       - '<#D4F2E7>◣─────────────────────────◢'
+    # You can add unlimited player rank info by using %x_player% & %x_score%
     end:
       - '<#D4F2E7>◤─────────────────────────◥'
       - ''
       - '             <gray>[<#87CEFA>🎣<gray>]  <gradient:#F0F8FF:#87CEFA:#F0F8FF>Fishing Competition'
       - ''
       - '      <#E1FFFF>Results:'
-      - '              <gradient:#FFF8DC:#FFD700:#FFF8DC>No.①: {1st} - {1st_points}'
-      - '              <gradient:#F5FFFA:#F5F5F5:#F5FFFA>No.②: {2nd} - {2nd_points}'
-      - '              <gradient:#D2B48C:#CD853F:#D2B48C>No.③: {3rd} - {3rd_points}'
+      - '              <gradient:#FFF8DC:#FFD700:#FFF8DC>No.①: %1_player% - %1_score%'
+      - '              <gradient:#F5FFFA:#F5F5F5:#F5FFFA>No.②: %2_player% - %2_score%'
+      - '              <gradient:#D2B48C:#CD853F:#D2B48C>No.③: %3_player% - %3_score%'
       - ''
       - '<#D4F2E7>◣─────────────────────────◢'
 

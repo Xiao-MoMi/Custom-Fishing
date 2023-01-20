@@ -22,6 +22,7 @@ import net.momirealms.customfishing.competition.bossbar.BossBarManager;
 import net.momirealms.customfishing.competition.ranking.LocalRankingImpl;
 import net.momirealms.customfishing.competition.ranking.RankingInterface;
 import net.momirealms.customfishing.competition.ranking.RedisRankingImpl;
+import net.momirealms.customfishing.integration.papi.PlaceholderManager;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.object.action.ActionInterface;
@@ -117,18 +118,22 @@ public class Competition {
         givePrize();
 
         List<String> newMessage = new ArrayList<>();
+        PlaceholderManager placeholderManager = CustomFishing.plugin.getIntegrationManager().getPlaceholderManager();
+
         for (String endMsg : competitionConfig.getEndMessage()) {
-            CompetitionPlayer[] competitionPlayers = ranking.getTop3Player();
-            float first = Optional.ofNullable(competitionPlayers[0]).orElse(CompetitionPlayer.emptyPlayer).getScore();
-            float second = Optional.ofNullable(competitionPlayers[1]).orElse(CompetitionPlayer.emptyPlayer).getScore();
-            float third = Optional.ofNullable(competitionPlayers[2]).orElse(CompetitionPlayer.emptyPlayer).getScore();
-            newMessage.add(endMsg
-                    .replace("{1st}", Optional.ofNullable(Optional.ofNullable(competitionPlayers[0]).orElse(CompetitionPlayer.emptyPlayer).getPlayer()).orElse(MessageManager.noPlayer))
-                    .replace("{2nd}", Optional.ofNullable(Optional.ofNullable(competitionPlayers[1]).orElse(CompetitionPlayer.emptyPlayer).getPlayer()).orElse(MessageManager.noPlayer))
-                    .replace("{3rd}", Optional.ofNullable(Optional.ofNullable(competitionPlayers[2]).orElse(CompetitionPlayer.emptyPlayer).getPlayer()).orElse(MessageManager.noPlayer))
-                    .replace("{1st_points}", first < 0 ? MessageManager.noScore : String.format("%.1f",(first)))
-                    .replace("{2nd_points}", second < 0 ? MessageManager.noScore : String.format("%.1f",(second)))
-                    .replace("{3rd_points}", third < 0 ? MessageManager.noScore : String.format("%.1f",(third))));
+            List<String> placeholders = new ArrayList<>(placeholderManager.detectPlaceholders(endMsg));
+            for (String placeholder : placeholders) {
+                if (placeholder.endsWith("_player%")) {
+                    int rank = Integer.parseInt(placeholder.substring(1, placeholder.length() - 8));
+                    endMsg = endMsg.replace(placeholder, Optional.ofNullable(ranking.getPlayerAt(rank)).orElse(MessageManager.noPlayer));
+                }
+                else if (placeholder.endsWith("_score%")) {
+                    int rank = Integer.parseInt(placeholder.substring(1, placeholder.length() - 7));
+                    float score = ranking.getScoreAt(rank);
+                    endMsg = endMsg.replace(placeholder, score == 0 ? MessageManager.noScore : String.format("%.1f", score));
+                }
+            }
+            newMessage.add(endMsg);
         }
 
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -228,30 +233,6 @@ public class Competition {
 
     public double getScore(Player player) {
         return Optional.ofNullable(ranking.getCompetitionPlayer(player.getName())).orElse(CompetitionPlayer.emptyPlayer).getScore();
-    }
-
-    public float getFirstScore() {
-        return ranking.getFirstScore();
-    }
-
-    public float getSecondScore() {
-        return ranking.getSecondScore();
-    }
-
-    public float getThirdScore() {
-        return ranking.getThirdScore();
-    }
-
-    public String getFirstPlayer() {
-        return ranking.getFirstPlayer();
-    }
-
-    public String getSecondPlayer() {
-        return ranking.getSecondPlayer();
-    }
-
-    public String getThirdPlayer() {
-        return ranking.getThirdPlayer();
     }
 
     public boolean isJoined(Player player) {

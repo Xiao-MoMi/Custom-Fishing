@@ -423,7 +423,7 @@ public class SellManager extends Function {
         if (component.getJson().equals("{\"text\":\"{CustomFishing_Sell}\"}")) {
             PlaceholderManager placeholderManager = CustomFishing.plugin.getIntegrationManager().getPlaceholderManager();
             String text = SellManager.title.replace("{player}", player.getName());
-            if (placeholderManager != null) placeholderManager.parse(player, text);
+            placeholderManager.parse(player, text);
             wrappedChatComponentStructureModifier.write(0,
                     WrappedChatComponent.fromJson(
                             GsonComponentSerializer.gson().serialize(

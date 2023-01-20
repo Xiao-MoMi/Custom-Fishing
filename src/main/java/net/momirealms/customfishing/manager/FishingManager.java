@@ -34,6 +34,7 @@ import net.momirealms.customfishing.integration.MobInterface;
 import net.momirealms.customfishing.integration.item.McMMOTreasure;
 import net.momirealms.customfishing.listener.*;
 import net.momirealms.customfishing.object.Function;
+import net.momirealms.customfishing.object.SimpleLocation;
 import net.momirealms.customfishing.object.action.ActionInterface;
 import net.momirealms.customfishing.object.fishing.*;
 import net.momirealms.customfishing.object.loot.DroppedItem;
@@ -41,10 +42,11 @@ import net.momirealms.customfishing.object.loot.Loot;
 import net.momirealms.customfishing.object.loot.Mob;
 import net.momirealms.customfishing.object.requirements.RequirementInterface;
 import net.momirealms.customfishing.object.totem.ActivatedTotem;
-import net.momirealms.customfishing.object.totem.Totem;
+import net.momirealms.customfishing.object.totem.TotemConfig;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.FakeItemUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;
+import net.momirealms.customfishing.util.LocationUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -54,6 +56,7 @@ import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
@@ -75,18 +78,21 @@ public class FishingManager extends Function {
     private PickUpListener pickUpListener;
     private MMOItemsListener mmoItemsListener;
     private JobsRebornXPListener jobsRebornXPListener;
+    private BreakBlockListener breakBlockListener;
     private final HashMap<Player, Long> coolDown;
     private final HashMap<Player, FishHook> hooksCache;
     private final HashMap<Player, Loot> nextLoot;
     private final HashMap<Player, Bonus> nextBonus;
     private final HashMap<Player, VanillaLoot> vanillaLoot;
     private final ConcurrentHashMap<Player, FishingPlayer> fishingPlayerCache;
-    private final ConcurrentHashMap<Location, ActivatedTotem> totemCache;
+    private final ConcurrentHashMap<SimpleLocation, ActivatedTotem> totemCache;
+    private final ConcurrentHashMap<SimpleLocation, SimpleLocation> breakDetectCache;
     private final ConcurrentHashMap<Player, BobberCheckTask> bobberTaskCache;
 
     public FishingManager() {
         this.playerFishListener = new PlayerFishListener(this);
         this.interactListener = new InteractListener(this);
+        this.breakBlockListener = new BreakBlockListener(this);
         this.coolDown = new HashMap<>();
         this.hooksCache = new HashMap<>();
         this.nextLoot = new HashMap<>();
@@ -95,6 +101,7 @@ public class FishingManager extends Function {
         this.fishingPlayerCache = new ConcurrentHashMap<>();
         this.totemCache = new ConcurrentHashMap<>();
         this.bobberTaskCache = new ConcurrentHashMap<>();
+        this.breakDetectCache = new ConcurrentHashMap<>();
         load();
     }
 
@@ -102,6 +109,7 @@ public class FishingManager extends Function {
     public void load() {
         Bukkit.getPluginManager().registerEvents(this.playerFishListener, CustomFishing.plugin);
         Bukkit.getPluginManager().registerEvents(this.interactListener, CustomFishing.plugin);
+        Bukkit.getPluginManager().registerEvents(this.breakBlockListener, CustomFishing.plugin);
         if (ConfigManager.preventPickUp) {
             this.pickUpListener = new PickUpListener();
             Bukkit.getPluginManager().registerEvents(this.pickUpListener, CustomFishing.plugin);
@@ -120,6 +128,7 @@ public class FishingManager extends Function {
     public void unload() {
         HandlerList.unregisterAll(this.playerFishListener);
         HandlerList.unregisterAll(this.interactListener);
+        HandlerList.unregisterAll(this.breakBlockListener);
         if (this.pickUpListener != null) HandlerList.unregisterAll(this.pickUpListener);
         if (this.mmoItemsListener != null) HandlerList.unregisterAll(this.mmoItemsListener);
         if (this.jobsRebornXPListener != null) HandlerList.unregisterAll(this.jobsRebornXPListener);
@@ -783,7 +792,7 @@ public class FishingManager extends Function {
         if(itemStack.getType() != Material.FISHING_ROD) return;
         NBTItem nbtItem = new NBTItem(itemStack);
         if (nbtItem.getCompound("CustomFishing") != null) return;
-        if (!nbtItem.hasKey("MMOITEMS_ITEM_ID")) return;
+        if (!nbtItem.hasTag("MMOITEMS_ITEM_ID")) return;
         ItemStackUtil.addIdentifier(itemStack, "rod", nbtItem.getString("MMOITEMS_ITEM_ID"));
     }
 
@@ -844,16 +853,16 @@ public class FishingManager extends Function {
         if (block == null) return;
         String totemID = nbtItem.getString("Totem");
         if (totemID.equals("")) return;
-        Totem totem = TotemManager.TOTEMS.get(totemID);
+        TotemConfig totem = TotemManager.TOTEMS.get(totemID);
         if (totem == null) return;
         if (isCoolDown(player, 1000)) return;
         String blockID = CustomFishing.plugin.getIntegrationManager().getBlockInterface().getID(block);
         if (blockID == null) return;
-        List<Totem> totemList = TotemManager.CORES.get(blockID);
+        List<TotemConfig> totemList = TotemManager.CORES.get(blockID);
         if (totemList == null || !totemList.contains(totem)) return;
         Location coreLoc = block.getLocation();
-        int type = CustomFishing.plugin.getTotemManager().checkLocationModel(totem.getOriginalModel(), coreLoc);
-        if (type == 0) return;
+        int direction = CustomFishing.plugin.getTotemManager().checkLocationModel(totem.getOriginalModel(), coreLoc);
+        if (direction == 0) return;
 
         if (!AntiGriefInterface.testBreak(player, coreLoc)) return;
         TotemActivationEvent totemActivationEvent = new TotemActivationEvent(player, coreLoc, totem);
@@ -862,11 +871,11 @@ public class FishingManager extends Function {
             return;
         }
 
-        if (totemCache.get(coreLoc) != null) {
-            totemCache.get(coreLoc).stop();
+        if (totemCache.get(LocationUtils.getSimpleLocation(coreLoc)) != null) {
+            totemCache.get(LocationUtils.getSimpleLocation(coreLoc)).stop();
         }
 
-        CustomFishing.plugin.getTotemManager().removeModel(totem.getFinalModel(), coreLoc, type);
+        CustomFishing.plugin.getTotemManager().removeModel(totem.getFinalModel(), coreLoc, direction);
         if (player.getGameMode() != GameMode.CREATIVE) itemStack.setAmount(itemStack.getAmount() - 1);
 
         for (ActionInterface action : totem.getActivatorActions()) {
@@ -879,9 +888,9 @@ public class FishingManager extends Function {
         }
 
         Location bottomLoc = coreLoc.clone().subtract(0, totem.getOriginalModel().getCorePos().getY(), 0);
-        ActivatedTotem activatedTotem = new ActivatedTotem(bottomLoc, totem, this);
+        ActivatedTotem activatedTotem = new ActivatedTotem(bottomLoc, totem, this, direction);
         activatedTotem.runTaskTimer(CustomFishing.plugin, 10, 20);
-        totemCache.put(bottomLoc, activatedTotem);
+        totemCache.put(LocationUtils.getSimpleLocation(bottomLoc), activatedTotem);
     }
 
     private void useFinder(Player player) {
@@ -911,7 +920,7 @@ public class FishingManager extends Function {
             layout = loot.getLayout()[new Random().nextInt(loot.getLayout().length)];
         }
         else {
-            layout = (Layout) LayoutManager.LAYOUTS.values().stream().toArray()[new Random().nextInt(LayoutManager.LAYOUTS.values().size())];
+            layout = (Layout) LayoutManager.LAYOUTS.values().toArray()[new Random().nextInt(LayoutManager.LAYOUTS.values().size())];
         }
 
         int speed;
@@ -1000,11 +1009,7 @@ public class FishingManager extends Function {
     }
 
     public void removeTotem(Location location) {
-        totemCache.remove(location);
-    }
-
-    public void addPlayerToLavaFishing(Player player, BobberCheckTask task) {
-        this.bobberTaskCache.put(player, task);
+        totemCache.remove(LocationUtils.getSimpleLocation(location));
     }
 
     public void removePlayerFromLavaFishing(Player player) {
@@ -1018,5 +1023,23 @@ public class FishingManager extends Function {
             return fishMeta.getFloat("size");
         }
         return 0;
+    }
+
+    public void addTotemBreakDetectToCache(SimpleLocation part, SimpleLocation bottom) {
+        breakDetectCache.put(part, bottom);
+    }
+
+    public void removeTotemBreakDetectFromCache(SimpleLocation part) {
+        breakDetectCache.remove(part);
+    }
+
+    @Override
+    public void onBreakBlock(BlockBreakEvent event) {
+        final Block block = event.getBlock();
+        SimpleLocation bottomLoc = breakDetectCache.get(LocationUtils.getSimpleLocation(block.getLocation()));
+        if (bottomLoc == null) return;
+        ActivatedTotem activatedTotem = totemCache.get(bottomLoc);
+        if (activatedTotem == null) return;
+        activatedTotem.stop();
     }
 }

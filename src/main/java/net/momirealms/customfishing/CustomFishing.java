@@ -84,6 +84,7 @@ public final class CustomFishing extends JavaPlugin {
         adventure = BukkitAudiences.create(this);
         protocolManager = ProtocolLibrary.getProtocolManager();
         version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+
         this.fishingManager = new FishingManager();
         this.dataManager = new DataManager();
         this.integrationManager = new IntegrationManager();
@@ -91,13 +92,13 @@ public final class CustomFishing extends JavaPlugin {
         this.bonusManager = new BonusManager();
         this.lootManager = new LootManager();
         this.layoutManager = new LayoutManager();
-        this.totemManager = new TotemManager();
+        this.totemManager = new TotemManager(this);
         this.sellManager = new SellManager();
         this.bagDataManager = new BagDataManager();
 
-        ConfigUtil.reload();
+        reloadConfig();
         registerCommands();
-        integrationManager.registerQuests();
+        registerQuests();
 
         AdventureUtil.consoleMessage("[CustomFishing] Plugin Enabled!");
         new Metrics(this, 16648);
@@ -117,6 +118,7 @@ public final class CustomFishing extends JavaPlugin {
         this.sellManager.unload();
         this.sellManager.disable();
         this.dataManager.unload();
+
         if (adventure != null) {
             adventure.close();
             adventure = null;
@@ -133,6 +135,18 @@ public final class CustomFishing extends JavaPlugin {
         SellFishCommand sellFishCommand = new SellFishCommand();
         Bukkit.getPluginCommand("sellfish").setExecutor(sellFishCommand);
         Bukkit.getPluginCommand("sellfish").setTabCompleter(sellFishCommand);
+    }
+
+    public static CustomFishing getInstance() {
+        return plugin;
+    }
+
+    public void reloadConfig() {
+        ConfigUtil.reload();
+    }
+
+    private void registerQuests() {
+        this.integrationManager.registerQuests();
     }
 
     public IntegrationManager getIntegrationManager() {

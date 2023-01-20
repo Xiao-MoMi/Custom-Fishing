@@ -28,18 +28,6 @@ import java.util.List;
 
 public class RedisRankingImpl implements RankingInterface {
 
-    public void addPlayer(CompetitionPlayer competitionPlayer) {
-        Jedis jedis = JedisUtil.getJedis();
-        jedis.zadd("cf_competition", competitionPlayer.getScore(), competitionPlayer.getPlayer());
-        jedis.close();
-    }
-
-    public void removePlayer(CompetitionPlayer competitionPlayer) {
-        Jedis jedis = JedisUtil.getJedis();
-        jedis.zrem("cf_competition", competitionPlayer.getPlayer());
-        jedis.close();
-    }
-
     @Override
     public void clear() {
         Jedis jedis = JedisUtil.getJedis();
@@ -95,29 +83,6 @@ public class RedisRankingImpl implements RankingInterface {
     }
 
     @Override
-    public CompetitionPlayer[] getTop3Player() {
-        CompetitionPlayer[] competitionPlayers = new CompetitionPlayer[3];
-        Jedis jedis = JedisUtil.getJedis();
-        List<Tuple> players = jedis.zrevrangeWithScores("cf_competition", 0, -1);
-        jedis.close();
-        int index = 1;
-        for (Tuple tuple : players){
-            if (index == 1) {
-                competitionPlayers[0] = new CompetitionPlayer(tuple.getElement(), (float) tuple.getScore());
-            }
-            if (index == 2) {
-                competitionPlayers[1] = new CompetitionPlayer(tuple.getElement(), (float) tuple.getScore());
-            }
-            if (index == 3) {
-                competitionPlayers[2] = new CompetitionPlayer(tuple.getElement(), (float) tuple.getScore());
-                return competitionPlayers;
-            }
-            index++;
-        }
-        return competitionPlayers;
-    }
-
-    @Override
     public void refreshData(String player, float score) {
         Jedis jedis = JedisUtil.getJedis();
         jedis.zincrby("cf_competition", score, player);
@@ -132,62 +97,22 @@ public class RedisRankingImpl implements RankingInterface {
     }
 
     @Override
-    public float getFirstScore() {
+    public String getPlayerAt(int rank) {
         Jedis jedis = JedisUtil.getJedis();
-        List<Tuple> players = jedis.zrevrangeWithScores("cf_competition", 0, 0);
+        List<String> player = jedis.zrevrange("cf_competition", rank - 1, rank -1);
         jedis.close();
-        if (players == null) return 0;
-        if (players.size() == 0) return 0;
-        return (float) players.get(0).getScore();
-    }
-
-    @Override
-    public float getSecondScore() {
-        Jedis jedis = JedisUtil.getJedis();
-        List<Tuple> players = jedis.zrevrangeWithScores("cf_competition", 1, 1);
-        jedis.close();
-        if (players == null) return 0;
-        if (players.size() == 0) return 0;
-        return (float) players.get(0).getScore();
-    }
-
-    @Override
-    public float getThirdScore() {
-        Jedis jedis = JedisUtil.getJedis();
-        List<Tuple> players = jedis.zrevrangeWithScores("cf_competition", 2, 2);
-        jedis.close();
-        if (players == null) return 0;
-        if (players.size() == 0) return 0;
-        return (float) players.get(0).getScore();
-    }
-
-    @Override
-    public String getFirstPlayer() {
-        Jedis jedis = JedisUtil.getJedis();
-        List<String> player = jedis.zrevrange("cf_competition", 0,0);
-        jedis.close();
-        if (player == null) return MessageManager.noPlayer;
-        if (player.size() == 0) return MessageManager.noPlayer;
+        if (player == null) return null;
+        if (player.size() == 0) return null;
         return player.get(0);
     }
 
     @Override
-    public String getSecondPlayer() {
+    public float getScoreAt(int rank) {
         Jedis jedis = JedisUtil.getJedis();
-        List<String> player = jedis.zrevrange("cf_competition", 1,1);
+        List<Tuple> players = jedis.zrevrangeWithScores("cf_competition", rank - 1, rank -1);
         jedis.close();
-        if (player == null) return MessageManager.noPlayer;
-        if (player.size() == 0) return MessageManager.noPlayer;
-        return player.get(0);
-    }
-
-    @Override
-    public String getThirdPlayer() {
-        Jedis jedis = JedisUtil.getJedis();
-        List<String> player = jedis.zrevrange("cf_competition", 2,2);
-        jedis.close();
-        if (player == null) return MessageManager.noPlayer;
-        if (player.size() == 0) return MessageManager.noPlayer;
-        return player.get(0);
+        if (players == null) return 0;
+        if (players.size() == 0) return 0;
+        return (float) players.get(0).getScore();
     }
 }

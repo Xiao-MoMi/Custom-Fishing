@@ -87,26 +87,6 @@ public class LocalRankingImpl implements RankingInterface {
     }
 
     @Override
-    public CompetitionPlayer[] getTop3Player() {
-        CompetitionPlayer[] competitionPlayers = new CompetitionPlayer[3];
-        int index = 1;
-        for (CompetitionPlayer competitionPlayer : this.competitionPlayers) {
-            if (index == 1) {
-                competitionPlayers[0] = competitionPlayer;
-            }
-            if (index == 2) {
-                competitionPlayers[1] = competitionPlayer;
-            }
-            if (index == 3) {
-                competitionPlayers[2] = competitionPlayer;
-                return competitionPlayers;
-            }
-            index++;
-        }
-        return competitionPlayers;
-    }
-
-
     public String getPlayerAt(int i) {
         int index = 1;
         for (CompetitionPlayer competitionPlayer : competitionPlayers) {
@@ -118,6 +98,7 @@ public class LocalRankingImpl implements RankingInterface {
         return null;
     }
 
+    @Override
     public float getScoreAt(int i) {
         int index = 1;
         for (CompetitionPlayer competitionPlayer : competitionPlayers) {
@@ -153,35 +134,5 @@ public class LocalRankingImpl implements RankingInterface {
             competitionPlayer = new CompetitionPlayer(player, score);
             addPlayer(competitionPlayer);
         }
-    }
-
-    @Override
-    public float getFirstScore() {
-        return getScoreAt(1);
-    }
-
-    @Override
-    public float getSecondScore() {
-        return getScoreAt(2);
-    }
-
-    @Override
-    public float getThirdScore() {
-        return getScoreAt(3);
-    }
-
-    @Override
-    public String getFirstPlayer() {
-        return Optional.ofNullable(getPlayerAt(1)).orElse(MessageManager.noPlayer);
-    }
-
-    @Override
-    public String getSecondPlayer() {
-        return Optional.ofNullable(getPlayerAt(2)).orElse(MessageManager.noPlayer);
-    }
-
-    @Override
-    public String getThirdPlayer() {
-        return Optional.ofNullable(getPlayerAt(3)).orElse(MessageManager.noPlayer);
     }
 }

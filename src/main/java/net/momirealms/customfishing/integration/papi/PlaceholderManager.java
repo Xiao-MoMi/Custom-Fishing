@@ -17,9 +17,8 @@
 
 package net.momirealms.customfishing.integration.papi;
 
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.momirealms.customfishing.object.Function;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -31,24 +30,27 @@ import java.util.regex.Pattern;
 public class PlaceholderManager extends Function {
 
     private final Pattern placeholderPattern = Pattern.compile("%([^%]*)%");
-    private final CompetitionPapi competitionPapi;
+    private CompetitionPapi competitionPapi;
+    private boolean hasPlaceholderAPI = false;
 
     public PlaceholderManager() {
-        this.competitionPapi = new CompetitionPapi();
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            hasPlaceholderAPI = true;
+            this.competitionPapi = new CompetitionPapi();
+        }
         load();
     }
 
     public String parse(Player player, String text) {
-        return PlaceholderAPI.setPlaceholders(player, text);
-    }
-
-    public String parse(OfflinePlayer offlinePlayer, String text) {
-        return PlaceholderAPI.setPlaceholders(offlinePlayer, text);
+        if (hasPlaceholderAPI) {
+            return ParseUtil.setPlaceholders(player, text);
+        }
+        return text;
     }
 
     @Override
     public void load() {
-        competitionPapi.register();
+        if (competitionPapi != null) competitionPapi.register();
     }
 
     @Override

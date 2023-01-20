@@ -29,17 +29,15 @@ public class FishingCondition{
 
     private final Location location;
     private final Player player;
-    private HashMap<String, String> papiMap;
+    private final HashMap<String, String> papiMap;
 
     public FishingCondition(Location location, Player player) {
         this.location = location;
         this.player = player;
         PlaceholderManager placeholderManager = CustomFishing.plugin.getIntegrationManager().getPlaceholderManager();
-        if (placeholderManager != null) {
-            this.papiMap = new HashMap<>();
-            for (String papi : CustomPapi.allPapi) {
-                this.papiMap.put(papi, placeholderManager.parse(player, papi));
-            }
+        this.papiMap = new HashMap<>();
+        for (String papi : CustomPapi.allPapi) {
+            this.papiMap.put(papi, placeholderManager.parse(player, papi));
         }
     }
 

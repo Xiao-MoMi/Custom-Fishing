@@ -15,24 +15,24 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.competition.ranking;
+package net.momirealms.customfishing.listener;
 
-import net.momirealms.customfishing.competition.CompetitionPlayer;
-import org.jetbrains.annotations.Nullable;
+import net.momirealms.customfishing.object.Function;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 
-import java.util.Iterator;
+public class BreakBlockListener implements Listener {
 
-public interface RankingInterface {
+    private final Function function;
 
-    void clear();
-    CompetitionPlayer getCompetitionPlayer(String player);
-    Iterator<String> getIterator();
-    int getSize();
-    String getPlayerRank(String player);
-    float getPlayerScore(String player);
-    void refreshData(String player, float score);
-    void setData(String player, float score);
-    @Nullable
-    String getPlayerAt(int rank);
-    float getScoreAt(int rank);
+    public BreakBlockListener(Function function) {
+        this.function = function;
+    }
+
+    @EventHandler
+    public void onBreak(BlockBreakEvent event) {
+        if (event.isCancelled()) return;
+        function.onBreakBlock(event);
+    }
 }

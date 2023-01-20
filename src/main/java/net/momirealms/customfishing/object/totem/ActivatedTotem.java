@@ -34,15 +34,16 @@ public class ActivatedTotem extends BukkitRunnable {
 
     public static int id = 127616121;
     private int timer;
-    private final Totem totem;
+    private final TotemConfig totem;
     private final Location location;
     private final Set<Player> nearbyPlayerSet;
     private final int[] entityID;
     private final boolean hasHolo;
     private final BukkitRunnable particleTimerTask;
     private final FishingManager fishingManager;
+    private final int direction;
 
-    public ActivatedTotem(Location location, Totem totem, FishingManager fishingManager) {
+    public ActivatedTotem(Location location, TotemConfig totem, FishingManager fishingManager, int direction) {
         this.fishingManager = fishingManager;
         this.totem = totem;
         this.location = location;
@@ -54,6 +55,7 @@ public class ActivatedTotem extends BukkitRunnable {
         this.nearbyPlayerSet = Collections.synchronizedSet(new HashSet<>());
         this.particleTimerTask = new TotemParticle(location, totem.getRadius(), totem.getParticle());
         this.particleTimerTask.runTaskTimerAsynchronously(CustomFishing.plugin, 0, 4);
+        this.direction = direction;
     }
 
     @Override
@@ -109,7 +111,7 @@ public class ActivatedTotem extends BukkitRunnable {
         return nearbyPlayerSet;
     }
 
-    public Totem getTotem() {
+    public TotemConfig getTotem() {
         return totem;
     }
 
@@ -117,7 +119,7 @@ public class ActivatedTotem extends BukkitRunnable {
         this.particleTimerTask.cancel();
         cancel();
         fishingManager.removeTotem(location);
-
+        CustomFishing.plugin.getTotemManager().clearBreakDetectCache(totem.getFinalModel(), location, direction);
         if (hasHolo) {
             for (Player player : nearbyPlayerSet) {
                 for (int j : entityID) {

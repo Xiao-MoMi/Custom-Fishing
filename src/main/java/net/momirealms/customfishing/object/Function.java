@@ -19,6 +19,7 @@ package net.momirealms.customfishing.object;
 
 import com.comphenix.protocol.events.PacketContainer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -57,5 +58,8 @@ public class Function {
     }
 
     public void onOpenInventory(InventoryOpenEvent event) {
+    }
+
+    public void onBreakBlock(BlockBreakEvent event) {
     }
 }

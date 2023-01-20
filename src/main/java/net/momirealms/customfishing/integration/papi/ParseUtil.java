@@ -15,24 +15,19 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.competition.ranking;
+package net.momirealms.customfishing.integration.papi;
 
-import net.momirealms.customfishing.competition.CompetitionPlayer;
-import org.jetbrains.annotations.Nullable;
+import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
-import java.util.Iterator;
+public class ParseUtil {
 
-public interface RankingInterface {
+    public static String setPlaceholders(Player player, String text) {
+        return PlaceholderAPI.setPlaceholders(player, text);
+    }
 
-    void clear();
-    CompetitionPlayer getCompetitionPlayer(String player);
-    Iterator<String> getIterator();
-    int getSize();
-    String getPlayerRank(String player);
-    float getPlayerScore(String player);
-    void refreshData(String player, float score);
-    void setData(String player, float score);
-    @Nullable
-    String getPlayerAt(int rank);
-    float getScoreAt(int rank);
+    public static String setPlaceholders(OfflinePlayer player, String text) {
+        return PlaceholderAPI.setPlaceholders(player, text);
+    }
 }

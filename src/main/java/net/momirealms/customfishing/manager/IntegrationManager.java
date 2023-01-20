@@ -69,9 +69,8 @@ public class IntegrationManager extends Function {
         if (this.placeholderManager != null) {
             this.placeholderManager.unload();
         }
-        if (pluginManager.getPlugin("PlaceholderAPI") != null) {
-            this.placeholderManager = new PlaceholderManager();
-        }
+
+        this.placeholderManager = new PlaceholderManager();
 
         YamlConfiguration config = ConfigUtil.getConfig("config.yml");
 
@@ -267,7 +266,7 @@ public class IntegrationManager extends Function {
         return blockInterface;
     }
 
-    @Nullable
+    @NotNull
     public PlaceholderManager getPlaceholderManager() {
         return placeholderManager;
     }

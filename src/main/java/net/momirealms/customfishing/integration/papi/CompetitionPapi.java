@@ -19,9 +19,13 @@ package net.momirealms.customfishing.integration.papi;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.momirealms.customfishing.competition.Competition;
+import net.momirealms.customfishing.competition.ranking.RankingInterface;
+import net.momirealms.customfishing.manager.MessageManager;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class CompetitionPapi extends PlaceholderExpansion {
 
@@ -48,6 +52,7 @@ public class CompetitionPapi extends PlaceholderExpansion {
     @Override
     public @Nullable String onPlaceholderRequest(Player player, @NotNull String params) {
         if (Competition.currentCompetition == null) return "";
+        RankingInterface ranking = Competition.currentCompetition.getRanking();
         switch (params) {
             case "rank" -> {
                 return Competition.currentCompetition.getPlayerRank(player);
@@ -65,22 +70,22 @@ public class CompetitionPapi extends PlaceholderExpansion {
                 return String.format("%02d", Competition.currentCompetition.getRemainingTime() % 60);
             }
             case "1st_score" -> {
-                return String.format("%.1f", Competition.currentCompetition.getFirstScore());
+                return ranking.getScoreAt(1) <= 0 ? MessageManager.noScore : String.format("%.1f", ranking.getScoreAt(1));
             }
             case "1st_player" -> {
-                return Competition.currentCompetition.getFirstPlayer();
+                return Optional.ofNullable(ranking.getPlayerAt(1)).orElse(MessageManager.noPlayer);
             }
             case "2nd_score" -> {
-                return String.format("%.1f", Competition.currentCompetition.getSecondScore());
+                return ranking.getScoreAt(2) <= 0 ? MessageManager.noScore : String.format("%.1f", ranking.getScoreAt(2));
             }
             case "2nd_player" -> {
-                return Competition.currentCompetition.getSecondPlayer();
+                return Optional.ofNullable(ranking.getPlayerAt(2)).orElse(MessageManager.noPlayer);
             }
             case "3rd_score" -> {
-                return String.format("%.1f", Competition.currentCompetition.getThirdScore());
+                return ranking.getScoreAt(3) <= 0 ? MessageManager.noScore : String.format("%.1f", ranking.getScoreAt(3));
             }
             case "3rd_player" -> {
-                return Competition.currentCompetition.getThirdPlayer();
+                return Optional.ofNullable(ranking.getPlayerAt(3)).orElse(MessageManager.noPlayer);
             }
         }
         return "null";
