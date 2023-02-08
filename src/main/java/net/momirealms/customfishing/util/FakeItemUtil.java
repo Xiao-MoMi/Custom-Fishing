@@ -37,7 +37,7 @@ public class FakeItemUtil {
     public static PacketContainer getMetaPacket(int id, ItemStack itemStack) {
         PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         metaPacket.getIntegers().write(0, id);
-        if (CustomFishing.version.equals("v1_19_R2")) {
+        if (CustomFishing.getInstance().getVersionHelper().isVersionNewerThan1_19_R2()) {
             WrappedDataWatcher wrappedDataWatcher = createDataWatcher(itemStack);
             List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
             wrappedDataWatcher.getWatchableObjects().stream().filter(Objects::nonNull).forEach(entry -> {

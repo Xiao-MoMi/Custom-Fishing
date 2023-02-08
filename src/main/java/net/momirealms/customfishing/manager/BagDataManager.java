@@ -134,6 +134,7 @@ public class BagDataManager extends Function {
     }
 
     public void readData(Player player) {
+        if (player == null || !player.isOnline()) return;
         Inventory inventory = CustomFishing.plugin.getDataManager().getDataStorageInterface().loadBagData(player);
         if (inventory != null) {
             PlayerBagData playerBagData = new PlayerBagData(player, inventory);

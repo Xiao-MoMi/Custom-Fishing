@@ -51,6 +51,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.*;
 
@@ -142,6 +143,7 @@ public class SellManager extends Function {
     @Override
     public void onJoin(Player player) {
         Bukkit.getScheduler().runTaskLaterAsynchronously(CustomFishing.plugin, () -> {
+            if (player == null || !player.isOnline()) return;
             CustomFishing.plugin.getDataManager().getDataStorageInterface().loadSellCache(player);
         }, 20);
     }
@@ -344,11 +346,19 @@ public class SellManager extends Function {
     }
 
     private void returnItems(List<ItemStack> itemStacks, Player player){
-        Inventory inventory = player.getInventory();
+        PlayerInventory inventory = player.getInventory();
         for (ItemStack stack : itemStacks) {
             if (stack == null || stack.getType() == Material.AIR) continue;
-            inventory.addItem(stack);
+            if (hasEmptySlot(inventory)) inventory.addItem(stack);
+            else player.getLocation().getWorld().dropItemNaturally(player.getLocation(), stack);
         }
+    }
+
+    private boolean hasEmptySlot(PlayerInventory inventory) {
+        for (ItemStack itemStack : inventory.getStorageContents()) {
+            if (itemStack == null || itemStack.getType() == Material.AIR) return true;
+        }
+        return false;
     }
 
     private float getTotalPrice(List<ItemStack> itemStacks){

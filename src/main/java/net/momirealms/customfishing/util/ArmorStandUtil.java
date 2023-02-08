@@ -54,7 +54,7 @@ public class ArmorStandUtil {
     public static PacketContainer getMetaPacket(int id) {
         PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         metaPacket.getIntegers().write(0, id);
-        if (CustomFishing.version.equals("v1_19_R2")) {
+        if (CustomFishing.getInstance().getVersionHelper().isVersionNewerThan1_19_R2()) {
             WrappedDataWatcher wrappedDataWatcher = createDataWatcher();
             List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
             wrappedDataWatcher.getWatchableObjects().stream().filter(Objects::nonNull).forEach(entry -> {
@@ -71,7 +71,7 @@ public class ArmorStandUtil {
     public static PacketContainer getMetaPacket(int id, String text) {
         PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         metaPacket.getIntegers().write(0, id);
-        if (CustomFishing.version.equals("v1_19_R2")) {
+        if (CustomFishing.getInstance().getVersionHelper().isVersionNewerThan1_19_R2()) {
             WrappedDataWatcher wrappedDataWatcher = createDataWatcher(text);
             List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
             wrappedDataWatcher.getWatchableObjects().stream().filter(Objects::nonNull).forEach(entry -> {

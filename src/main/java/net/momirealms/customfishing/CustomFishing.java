@@ -20,10 +20,12 @@ package net.momirealms.customfishing;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.momirealms.biomeapi.BiomeAPI;
 import net.momirealms.customfishing.commands.FishingBagCommand;
 import net.momirealms.customfishing.commands.PluginCommand;
 import net.momirealms.customfishing.commands.SellFishCommand;
 import net.momirealms.customfishing.helper.LibraryLoader;
+import net.momirealms.customfishing.helper.VersionHelper;
 import net.momirealms.customfishing.manager.*;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
@@ -35,7 +37,6 @@ public final class CustomFishing extends JavaPlugin {
 
     public static CustomFishing plugin;
     public static BukkitAudiences adventure;
-    public static String version;
     public static ProtocolManager protocolManager;
     private IntegrationManager integrationManager;
     private FishingManager fishingManager;
@@ -47,6 +48,7 @@ public final class CustomFishing extends JavaPlugin {
     private TotemManager totemManager;
     private DataManager dataManager;
     private SellManager sellManager;
+    private VersionHelper versionHelper;
 
 //                              _ooOoo_
 //                             o8888888o
@@ -83,7 +85,6 @@ public final class CustomFishing extends JavaPlugin {
     public void onEnable() {
         adventure = BukkitAudiences.create(this);
         protocolManager = ProtocolLibrary.getProtocolManager();
-        version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 
         this.fishingManager = new FishingManager();
         this.dataManager = new DataManager();
@@ -95,6 +96,7 @@ public final class CustomFishing extends JavaPlugin {
         this.totemManager = new TotemManager(this);
         this.sellManager = new SellManager();
         this.bagDataManager = new BagDataManager();
+        this.versionHelper = new VersionHelper();
 
         reloadConfig();
         registerCommands();
@@ -187,5 +189,9 @@ public final class CustomFishing extends JavaPlugin {
 
     public DataManager getDataManager() {
         return dataManager;
+    }
+
+    public VersionHelper getVersionHelper() {
+        return versionHelper;
     }
 }

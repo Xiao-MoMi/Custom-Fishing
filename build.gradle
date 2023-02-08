@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'net.momirealms'
-version = '1.2.21'
+version = '1.2.23'
 
 repositories {
     mavenCentral()
@@ -48,8 +48,9 @@ repositories {
 
 dependencies {
     compileOnly fileTree(dir:'libs',includes:['*.jar'])
+    implementation fileTree(dir:'libs',includes:['BiomeAPI.jar'])
     compileOnly('io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT')
-    compileOnly 'com.github.angeschossen:LandsAPI:6.26.18'
+    compileOnly('com.github.angeschossen:LandsAPI:6.26.18')
     compileOnly('com.zaxxer:HikariCP:5.0.1')
     compileOnly('com.github.Archy-X:AureliumSkills:Beta1.3.6')
     compileOnly('com.github.TechFortress:GriefPrevention:16.18')
@@ -106,6 +107,7 @@ shadowJar {
     relocate 'de.tr7zw', 'net.momirealms.customfishing.libs.de.tr7zw'
     relocate 'net.kyori', 'net.momirealms.customfishing.libs.net.kyori'
     relocate 'org.bstats', 'net.momirealms.customfishing.libs.org.bstats'
+    relocate 'net.momirealms.biomeapi', 'net.momirealms.customfishing.libs.net.momirealms.biomeapi'
 }
 
 tasks.register("delete", Delete).get().delete("build/libs/"+project.name+"-"+project.version+".jar")

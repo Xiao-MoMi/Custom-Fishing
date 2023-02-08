@@ -17,6 +17,8 @@
 
 package net.momirealms.customfishing.object.requirements;
 
+import net.momirealms.biomeapi.BiomeAPI;
+import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.object.fishing.FishingCondition;
 
 import java.util.List;
@@ -25,7 +27,7 @@ public record BiomeImpl(List<String> biomes) implements RequirementInterface {
 
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
-        String currentBiome = fishingCondition.getLocation().getBlock().getBiome().getKey().toString();
+        String currentBiome = BiomeAPI.getBiome(fishingCondition.getLocation());
         for (String biome : biomes) {
             if (currentBiome.equalsIgnoreCase(biome)) {
                 return true;

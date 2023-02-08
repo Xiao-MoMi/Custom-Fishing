@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.competition.ranking;
 
 import net.momirealms.customfishing.competition.CompetitionPlayer;
-import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.util.JedisUtil;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.resps.Tuple;
