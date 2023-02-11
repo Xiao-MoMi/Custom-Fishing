@@ -782,7 +782,6 @@ public class FishingManager extends Function {
 
     public void onMMOItemsRodCast(PlayerFishEvent event) {
         final Player player = event.getPlayer();
-        if (isCoolDown(player, 5000)) return;
         PlayerInventory inventory = player.getInventory();
         setCustomTag(inventory.getItemInMainHand());
         setCustomTag(inventory.getItemInOffHand());
