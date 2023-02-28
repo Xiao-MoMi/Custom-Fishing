@@ -124,7 +124,7 @@ public class IntegrationManager extends Function {
             this.skillInterface = new mcMMOImpl();
             hookMessage("mcMMO");
         } else if (config.getBoolean("integrations.MMOCore", false) && Bukkit.getPluginManager().getPlugin("MMOCore") != null) {
-            this.skillInterface = new MMOCoreImpl();
+            this.skillInterface = new MMOCoreImpl(config.getString("other-settings.MMOCore-profession-name", "fishing"));
             hookMessage("MMOCore");
         } else if (config.getBoolean("integrations.AureliumSkills", false) && Bukkit.getPluginManager().getPlugin("AureliumSkills") != null) {
             this.skillInterface = new AureliumsImpl();

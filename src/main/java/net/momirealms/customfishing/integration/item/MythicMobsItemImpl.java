@@ -26,17 +26,16 @@ import org.jetbrains.annotations.Nullable;
 
 public class MythicMobsItemImpl implements ItemInterface {
 
-    private final ItemExecutor itemManager;
-
-    public MythicMobsItemImpl() {
-        this.itemManager = MythicBukkit.inst().getItemManager();
-    }
+    private ItemExecutor itemManager;
 
     @Override
     @Nullable
     public ItemStack build(String material) {
         if (!material.startsWith("MythicMobs:")) return null;
         material = material.substring(11);
+        if (itemManager == null) {
+            this.itemManager = MythicBukkit.inst().getItemManager();
+        }
         return itemManager.getItemStack(material);
     }
 

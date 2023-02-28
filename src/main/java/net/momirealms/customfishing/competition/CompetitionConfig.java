@@ -106,10 +106,6 @@ public class CompetitionConfig {
         this.weekday = weekday;
     }
 
-    public static void main(String[] args) {
-        System.out.println(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
-    }
-
     public boolean canStart() {
         if (date != null && date.size() != 0) {
             Calendar calendar = Calendar.getInstance();
@@ -121,9 +117,7 @@ public class CompetitionConfig {
         if (weekday != null && weekday.size() != 0) {
             Calendar calendar = Calendar.getInstance();
             int dateDay = calendar.get(Calendar.DAY_OF_WEEK);
-            if (!weekday.contains(dateDay)) {
-                return false;
-            }
+            return weekday.contains(dateDay);
         }
         return true;
     }

@@ -1,5 +1,5 @@
 # don't change
-config-version: '14'
+config-version: '15'
 
 # chinese/english/spanish
 lang: english
@@ -178,3 +178,5 @@ other-settings:
   # Log the money player get from selling the fish in the console
   # 后台记录玩家销售鱼类所得金额
   log-earnings: true
+  # Set the MMOCore profession name
+  MMOCore-profession-name: 'customfishing'

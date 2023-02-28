@@ -7,22 +7,22 @@ example:
   # RANDOM
   goal: CATCH_AMOUNT
 
-  #Optional
-  #start-weekday:
+  # Optional
+  # start-weekday:
   #  - monday
   #  - sunday
-  #Optional
-  #start-date:
+  # Optional
+  # start-date:
   #  - 1
   #  - 7
   #  - 14
-  # optional
+  # Optional
   # Fishing competition can also be started with a command
   start-time:
     - '12:30'
     - '18:30'
 
-  #seconds
+  # Seconds
   duration: 300
 
   # Min players to start the competition

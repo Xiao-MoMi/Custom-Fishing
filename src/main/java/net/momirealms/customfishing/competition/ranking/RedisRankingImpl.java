@@ -39,7 +39,7 @@ public class RedisRankingImpl implements RankingInterface {
         Jedis jedis = JedisUtil.getJedis();
         Double score = jedis.zscore("cf_competition", player);
         jedis.close();
-        if (score == 0) return null;
+        if (score == null || score == 0) return null;
         return new CompetitionPlayer(player, Float.parseFloat(score.toString()));
     }
 

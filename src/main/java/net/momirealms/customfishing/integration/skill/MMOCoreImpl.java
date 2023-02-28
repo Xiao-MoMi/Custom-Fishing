@@ -29,8 +29,8 @@ public class MMOCoreImpl implements SkillInterface {
     private final Profession profession;
     private final PlayerDataManager playerDataManager;
 
-    public MMOCoreImpl() {
-        profession = MMOCore.plugin.professionManager.get("fishing");
+    public MMOCoreImpl(String name) {
+        profession = MMOCore.plugin.professionManager.get(name);
         playerDataManager = MMOCore.plugin.dataProvider.getDataManager();
     }
 
