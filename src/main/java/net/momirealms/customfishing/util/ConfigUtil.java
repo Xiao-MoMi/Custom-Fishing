@@ -25,52 +25,42 @@ import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.helper.Log;
-import net.momirealms.customfishing.manager.ConfigManager;
-import net.momirealms.customfishing.manager.MessageManager;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 public class ConfigUtil {
 
+    /**
+     * Get a config by name
+     * @param configName config's name
+     * @return yaml
+     */
     public static YamlConfiguration getConfig(String configName) {
-        File file = new File(CustomFishing.plugin.getDataFolder(), configName);
-        if (!file.exists()) CustomFishing.plugin.saveResource(configName, false);
+        File file = new File(CustomFishing.getInstance().getDataFolder(), configName);
+        if (!file.exists()) CustomFishing.getInstance().saveResource(configName, false);
         return YamlConfiguration.loadConfiguration(file);
     }
 
-    public static void reload() {
-        ConfigManager.load();
-        MessageManager.load();
-        CustomFishing.plugin.getLayoutManager().unload();
-        CustomFishing.plugin.getLayoutManager().load();
-        CustomFishing.plugin.getLootManager().unload();
-        CustomFishing.plugin.getLootManager().load();
-        CustomFishing.plugin.getBonusManager().unload();
-        CustomFishing.plugin.getBonusManager().load();
-        CustomFishing.plugin.getFishingManager().unload();
-        CustomFishing.plugin.getFishingManager().load();
-        CustomFishing.plugin.getCompetitionManager().unload();
-        CustomFishing.plugin.getCompetitionManager().load();
-        CustomFishing.plugin.getTotemManager().unload();
-        CustomFishing.plugin.getTotemManager().load();
-        CustomFishing.plugin.getIntegrationManager().unload();
-        CustomFishing.plugin.getIntegrationManager().load();
-        CustomFishing.plugin.getSellManager().unload();
-        CustomFishing.plugin.getSellManager().load();
-        CustomFishing.plugin.getBagDataManager().unload();
-        CustomFishing.plugin.getBagDataManager().load();
-    }
-
+    /**
+     * Update config
+     * @param fileName config
+     */
     public static void update(String fileName){
         try {
-            YamlDocument.create(new File(CustomFishing.plugin.getDataFolder(), fileName), CustomFishing.plugin.getResource(fileName), GeneralSettings.DEFAULT, LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
+            YamlDocument.create(new File(CustomFishing.getInstance().getDataFolder(), fileName), Objects.requireNonNull(CustomFishing.getInstance().getResource(fileName)), GeneralSettings.DEFAULT, LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
         } catch (IOException e){
             Log.warn(e.getMessage());
         }
     }
 
+    /**
+     * Create a data file if not exists
+     * @param file file path
+     * @return yaml data
+     */
     public static YamlConfiguration readData(File file) {
         if (!file.exists()) {
             try {

@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.api.event;
 
-import net.momirealms.customfishing.object.totem.TotemConfig;
+import net.momirealms.customfishing.fishing.totem.TotemConfig;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

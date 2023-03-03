@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.api.event;
 
-import net.momirealms.customfishing.object.fishing.Difficulty;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -27,10 +26,10 @@ import org.jetbrains.annotations.NotNull;
 public class FishHookEvent extends PlayerEvent implements Cancellable {
 
     private boolean cancelled;
-    private final Difficulty difficulty;
+    private int difficulty;
     private static final HandlerList handlerList = new HandlerList();
 
-    public FishHookEvent(@NotNull Player who, Difficulty difficulty) {
+    public FishHookEvent(@NotNull Player who, int difficulty) {
         super(who);
         this.cancelled = false;
         this.difficulty = difficulty;
@@ -56,7 +55,11 @@ public class FishHookEvent extends PlayerEvent implements Cancellable {
         return getHandlerList();
     }
 
-    public Difficulty getDifficulty() {
+    public int getDifficulty() {
         return difficulty;
+    }
+
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
     }
 }

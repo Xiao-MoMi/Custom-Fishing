@@ -65,7 +65,7 @@ public record PlayerFishListener(
 
     public void selectState(PlayerFishEvent event) {
         if (event.isCancelled()) return;
-        if (!ConfigManager.getWorldsList().contains(event.getHook().getLocation().getWorld())) return;
+        if (!ConfigManager.getWorldsList().contains(event.getHook().getLocation().getWorld().getName())) return;
         switch (event.getState()) {
             case FISHING -> manager.onFishing(event);
             case REEL_IN -> manager.onReelIn(event);

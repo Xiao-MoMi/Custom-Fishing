@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.integration.quest;
 
 import net.momirealms.customfishing.api.event.FishResultEvent;
-import net.momirealms.customfishing.object.fishing.FishResult;
+import net.momirealms.customfishing.fishing.FishResult;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.betonquest.betonquest.BetonQuest;
 import org.betonquest.betonquest.Instruction;

@@ -52,7 +52,7 @@ public class OpenCommand extends AbstractSubCommand {
                 return true;
             }
             player.closeInventory();
-            CustomFishing.plugin.getBagDataManager().openFishingBag(player, player);
+            CustomFishing.getInstance().getBagDataManager().openFishingBag(player, player);
         }
         if (args.size() == 1) {
             if (!sender.hasPermission("customfishing.admin")) {
@@ -65,7 +65,7 @@ public class OpenCommand extends AbstractSubCommand {
                 return true;
             }
             player.closeInventory();
-            CustomFishing.plugin.getBagDataManager().openFishingBag(player, offlinePlayer);
+            CustomFishing.getInstance().getBagDataManager().openFishingBag(player, offlinePlayer);
         }
         return true;
     }

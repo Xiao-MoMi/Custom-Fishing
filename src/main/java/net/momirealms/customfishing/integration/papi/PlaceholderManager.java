@@ -38,7 +38,6 @@ public class PlaceholderManager extends Function {
             hasPlaceholderAPI = true;
             this.competitionPapi = new CompetitionPapi();
         }
-        load();
     }
 
     public String parse(Player player, String text) {

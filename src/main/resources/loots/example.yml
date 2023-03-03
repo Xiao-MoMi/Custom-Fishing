@@ -1,29 +1,28 @@
 rainbow_fish:
-
   # Enable
+  # 是否启用
   enable: false
-
   # Nick is what to show in fish finder and titles
+  # 昵称将在标题和找鱼器信息中显示
   nick: 'Example Fish'
   # Should it be displayed in fish finder?
+  # 是否能被找鱼器定位
   show-in-fishfinder: false
   # Is this loot only available when player fish in lava
+  # 是否是岩浆鱼
   in-lava: false
   # The weight(relative chance) of getting this fish
+  # 获得此鱼的权重（相对概率）
   weight: 10
   # Optional
+  # The group of this fish
+  # 鱼所在的组，可以无限自定义，以供效果识别进行权重操作
   group: normal
   # The score to get in competition
+  # 比赛中获取的分数
   score: 10
-  # Specify the bar. If not specified, it will be random
-  layout:
-    - bar_1
-  # Difficulty
-  # '1' represents the pointer moves every 1 tick
-  # '7' represents the pointer moves 7 pixels each time
-  difficulty: 1-7
-  # How long can a player fish on each bite（ms）
-  time: 5000
+
+
 
   # Basic elements of an item
   # You can use MiniMessage format in name & lore
@@ -31,17 +30,22 @@ rainbow_fish:
   # https://docs.adventure.kyori.net/minimessage/format.html
   material: COD
   display:
-    name: '<rainbow>✖Example Rainbow Fish✖</rainbow>'
+    name: '<rainbow>Rainbow Fish</rainbow>'
     lore:
       - '<gray>This is a <font:uniform>rainbow fish!'
       - '<gray>It is {size}cm long!'
   custom-model-data: 1
-  # breakable
+
+  # unbreakable
+  # 不可破坏
   unbreakable: false
   # Optional
+  # The size of the fish
+  # 鱼的大小
   size: 10~200
 
   # Optional
+  # The base price and size bonus, and you can customize price formula in sell-fish-gui.yml
   price:
     base: 50
     bonus: 0.3
@@ -54,13 +58,13 @@ rainbow_fish:
       namespace: '(String) momirealms'
       id: '(String) rainbow_fish'
 
-  # Available events: eat/success/failure/hook
+  # Available events: consume/success/failure/hook
   # Available actions: message/command/exp/mending/skill-xp/sound/potion-effect
   action:
-    eat:
+    consume:
       potion-effect:
         type: blindness
-        level: 1
+        amplifier: 1
         duration: 200
     success:
       message:

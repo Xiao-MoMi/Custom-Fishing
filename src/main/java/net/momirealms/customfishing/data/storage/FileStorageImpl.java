@@ -35,26 +35,25 @@ import java.util.UUID;
 
 public class FileStorageImpl implements DataStorageInterface {
 
-    private YamlConfiguration data;
+    private final CustomFishing plugin;
+
+    public FileStorageImpl(CustomFishing plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     public void initialize() {
-        data = ConfigUtil.readData(new File(CustomFishing.plugin.getDataFolder(), "sell-cache.yml"));
+
     }
 
     @Override
     public void disable() {
-        try {
-            data.save(new File(CustomFishing.plugin.getDataFolder(), "sell-cache.yml"));
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
     @Override
     public Inventory loadBagData(OfflinePlayer player) {
-        YamlConfiguration config = ConfigUtil.readData(new File(CustomFishing.plugin.getDataFolder(), "fishingbag_data" + File.separator + player.getUniqueId() + ".yml"));
+        YamlConfiguration config = ConfigUtil.readData(new File(plugin.getDataFolder(), "fishingbag_data" + File.separator + player.getUniqueId() + ".yml"));
         String contents = config.getString("contents");
         int size = config.getInt("size", 9);
         ItemStack[] itemStacks = InventoryUtil.getInventoryItems(contents);
@@ -71,7 +70,7 @@ public class FileStorageImpl implements DataStorageInterface {
         data.set("contents", contents);
         data.set("size", inventory.getSize());
         try {
-            data.save(new File(CustomFishing.plugin.getDataFolder(), "fishingbag_data" + File.separator + playerBagData.getPlayer().getUniqueId() + ".yml"));
+            data.save(new File(plugin.getDataFolder(), "fishingbag_data" + File.separator + playerBagData.getPlayer().getUniqueId() + ".yml"));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -81,14 +80,22 @@ public class FileStorageImpl implements DataStorageInterface {
     @Override
     public void loadSellCache(Player player) {
         UUID uuid = player.getUniqueId();
-        int date = data.getInt(uuid + ".date");
-        double money = data.getDouble(uuid + ".sell");
-        CustomFishing.plugin.getSellManager().loadPlayerToCache(player.getUniqueId(), date, money);
+        YamlConfiguration data = ConfigUtil.readData(new File(plugin.getDataFolder(), "sell-data" + File.separator + uuid + ".yml"));
+        int date = data.getInt("date");
+        double money = data.getDouble("earnings");
+        plugin.getSellManager().loadPlayerToCache(player.getUniqueId(), date, money);
     }
 
     @Override
     public void saveSellCache(UUID uuid, PlayerSellData playerSellData) {
-        data.set(uuid + ".date", playerSellData.getDate());
-        data.set(uuid + ".sell", playerSellData.getMoney());
+        YamlConfiguration data = new YamlConfiguration();
+        data.set("date", playerSellData.getDate());
+        data.set("earnings", playerSellData.getMoney());
+        try {
+            data.save(new File(plugin.getDataFolder(), "sell-data" + File.separator + uuid + ".yml"));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

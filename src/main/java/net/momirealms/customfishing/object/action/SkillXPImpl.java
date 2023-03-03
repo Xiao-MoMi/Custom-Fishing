@@ -25,7 +25,7 @@ public record SkillXPImpl(double amount) implements ActionInterface {
 
     @Override
     public void doOn(Player player, Player another) {
-        SkillInterface skillInterface = CustomFishing.plugin.getIntegrationManager().getSkillInterface();
+        SkillInterface skillInterface = CustomFishing.getInstance().getIntegrationManager().getSkillInterface();
         if (skillInterface == null) return;
         skillInterface.addXp(player, amount);
     }

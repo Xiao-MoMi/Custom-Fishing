@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.integration.quest;
 
 import net.momirealms.customfishing.api.event.FishResultEvent;
-import net.momirealms.customfishing.object.fishing.FishResult;
+import net.momirealms.customfishing.fishing.FishResult;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -135,7 +135,7 @@ public class OldBetonQuestCFQuest extends Objective implements Listener {
                 this.amount = Integer.parseInt(instruction);
             }
             catch (NumberFormatException e) {
-                AdventureUtil.consoleMessage("<>");
+                AdventureUtil.consoleMessage("[CustomFishing] NumberFormatException");
                 this.amount = 1;
             }
         }

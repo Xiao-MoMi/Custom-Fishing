@@ -28,7 +28,7 @@ public class WindowPacketListener extends PacketAdapter {
     private final Function function;
 
     public WindowPacketListener(Function function) {
-        super(CustomFishing.plugin, PacketType.Play.Server.OPEN_WINDOW);
+        super(CustomFishing.getInstance(), PacketType.Play.Server.OPEN_WINDOW);
         this.function = function;
     }
 

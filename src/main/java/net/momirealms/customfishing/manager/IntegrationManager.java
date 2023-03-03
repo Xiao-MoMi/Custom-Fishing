@@ -20,7 +20,6 @@ package net.momirealms.customfishing.manager;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.helper.Log;
 import net.momirealms.customfishing.integration.*;
-import net.momirealms.customfishing.integration.antigrief.*;
 import net.momirealms.customfishing.integration.block.ItemsAdderBlockImpl;
 import net.momirealms.customfishing.integration.block.OraxenBlockImpl;
 import net.momirealms.customfishing.integration.block.VanillaBlockImpl;
@@ -39,7 +38,6 @@ import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -57,175 +55,27 @@ public class IntegrationManager extends Function {
     private ItemInterface[] itemInterfaces;
     private MobInterface mobInterface;
     private BlockInterface blockInterface;
-    private PlaceholderManager placeholderManager;
-    private AntiGriefInterface[] antiGriefs;
+    private final PlaceholderManager placeholderManager;
     private VaultHook vaultHook;
+    private final CustomFishing plugin;
+    private final PluginManager pluginManager;
+
+    public IntegrationManager(CustomFishing plugin) {
+        this.plugin = plugin;
+        this.pluginManager = Bukkit.getPluginManager();
+        this.placeholderManager = new PlaceholderManager();
+        this.blockInterface = new VanillaBlockImpl();
+    }
 
     @Override
     public void load() {
-
-        PluginManager pluginManager = Bukkit.getPluginManager();
-
-        if (this.placeholderManager != null) {
-            this.placeholderManager.unload();
-        }
-
-        this.placeholderManager = new PlaceholderManager();
-
-        YamlConfiguration config = ConfigUtil.getConfig("config.yml");
-
-        if (ConfigManager.vaultHook && pluginManager.getPlugin("Vault") != null) {
-            vaultHook = new VaultHook();
-            if (!vaultHook.initialize()) {
-                ConfigManager.vaultHook = false;
-                Log.warn("Failed to initialize Vault!");
-            }
-            else hookMessage("Vault");
-        }
-
-        this.blockInterface = new VanillaBlockImpl();
-
-        List<ItemInterface> itemInterfaceList = new ArrayList<>();
-        if (config.getBoolean("integrations.ItemsAdder") && pluginManager.getPlugin("ItemsAdder") != null) {
-            this.blockInterface = new ItemsAdderBlockImpl();
-            itemInterfaceList.add(new ItemsAdderItemImpl());
-            hookMessage("ItemsAdder");
-        }
-        if (config.getBoolean("integrations.Oraxen") && pluginManager.getPlugin("Oraxen") != null) {
-            this.blockInterface = new OraxenBlockImpl();
-            itemInterfaceList.add(new OraxenItemImpl());
-            hookMessage("Oraxen");
-        }
-        if (config.getBoolean("integrations.MMOItems") && pluginManager.getPlugin("MMOItems") != null) {
-            itemInterfaceList.add(new MMOItemsItemImpl());
-            hookMessage("MMOItems");
-        }
-        if (config.getBoolean("integrations.MythicMobs") && pluginManager.getPlugin("MythicMobs") != null) {
-            itemInterfaceList.add(new MythicMobsItemImpl());
-            this.mobInterface = new MythicMobsMobImpl();
-            hookMessage("MythicMobs");
-        }
-        itemInterfaceList.add(new CustomFishingItemImpl());
-        this.itemInterfaces = itemInterfaceList.toArray(new ItemInterface[0]);
-
-        if (pluginManager.getPlugin("eco") != null) {
-            EcoItemRegister.registerItems();
-            hookMessage("eco");
-        }
-
-        if (config.getBoolean("integrations.RealisticSeasons", false) && pluginManager.getPlugin("RealisticSeasons") != null) {
-            this.seasonInterface = new RealisticSeasonsImpl();
-            hookMessage("RealisticSeasons");
-        } else if (config.getBoolean("integrations.CustomCrops", false) && pluginManager.getPlugin("CustomCrops") != null) {
-            this.seasonInterface = new CustomCropsSeasonImpl();
-            hookMessage("CustomCrops");
-        }
-        if (config.getBoolean("integrations.mcMMO", false) && Bukkit.getPluginManager().getPlugin("mcMMO") != null) {
-            this.skillInterface = new mcMMOImpl();
-            hookMessage("mcMMO");
-        } else if (config.getBoolean("integrations.MMOCore", false) && Bukkit.getPluginManager().getPlugin("MMOCore") != null) {
-            this.skillInterface = new MMOCoreImpl(config.getString("other-settings.MMOCore-profession-name", "fishing"));
-            hookMessage("MMOCore");
-        } else if (config.getBoolean("integrations.AureliumSkills", false) && Bukkit.getPluginManager().getPlugin("AureliumSkills") != null) {
-            this.skillInterface = new AureliumsImpl();
-            hookMessage("AureliumSkills");
-        } else if (config.getBoolean("integrations.EcoSkills", false) && Bukkit.getPluginManager().getPlugin("EcoSkills") != null) {
-            this.skillInterface = new EcoSkillsImpl();
-            hookMessage("EcoSkills");
-        } else if (config.getBoolean("integrations.JobsReborn", false) && Bukkit.getPluginManager().getPlugin("Jobs") != null) {
-            this.skillInterface = new JobsRebornImpl();
-            hookMessage("JobsReborn");
-        }
-
-        List<AntiGriefInterface> antiGriefsList = new ArrayList<>();
-        if (config.getBoolean("integrations.Residence",false)){
-            if (Bukkit.getPluginManager().getPlugin("Residence") == null) Log.warn("Failed to initialize Residence!");
-            else {
-                antiGriefsList.add(new ResidenceHook());
-                hookMessage("Residence");
-            }
-        }
-        if (config.getBoolean("integrations.Kingdoms",false)){
-            if (Bukkit.getPluginManager().getPlugin("Kingdoms") == null) Log.warn("Failed to initialize Kingdoms!");
-            else {
-                antiGriefsList.add(new KingdomsXHook());
-                hookMessage("Kingdoms");
-            }
-        }
-        if (config.getBoolean("integrations.WorldGuard",false)){
-            if (Bukkit.getPluginManager().getPlugin("WorldGuard") == null) Log.warn("Failed to initialize WorldGuard!");
-            else {
-                antiGriefsList.add(new WorldGuardHook());
-                hookMessage("WorldGuard");
-            }
-        }
-        if (config.getBoolean("integrations.GriefDefender",false)){
-            if(Bukkit.getPluginManager().getPlugin("GriefDefender") == null) Log.warn("Failed to initialize GriefDefender!");
-            else {
-                antiGriefsList.add(new GriefDefenderHook());
-                hookMessage("GriefDefender");
-            }
-        }
-        if (config.getBoolean("integrations.PlotSquared",false)){
-            if(Bukkit.getPluginManager().getPlugin("PlotSquared") == null) Log.warn("Failed to initialize PlotSquared!");
-            else {
-                antiGriefsList.add(new PlotSquaredHook());
-                hookMessage("PlotSquared");
-            }
-        }
-        if (config.getBoolean("integrations.Towny",false)){
-            if (Bukkit.getPluginManager().getPlugin("Towny") == null) Log.warn("Failed to initialize Towny!");
-            else {
-                antiGriefsList.add(new TownyHook());
-                hookMessage("Towny");
-            }
-        }
-        if (config.getBoolean("integrations.Lands",false)){
-            if (Bukkit.getPluginManager().getPlugin("Lands") == null) Log.warn("Failed to initialize Lands!");
-            else {
-                antiGriefsList.add(new LandsHook());
-                hookMessage("Lands");
-            }
-        }
-        if (config.getBoolean("integrations.GriefPrevention",false)){
-            if (Bukkit.getPluginManager().getPlugin("GriefPrevention") == null) Log.warn("Failed to initialize GriefPrevention!");
-            else {
-                antiGriefsList.add(new GriefPreventionHook());
-                hookMessage("GriefPrevention");
-            }
-        }
-        if (config.getBoolean("integrations.CrashClaim",false)){
-            if (Bukkit.getPluginManager().getPlugin("CrashClaim") == null) Log.warn("Failed to initialize CrashClaim!");
-            else {
-                antiGriefsList.add(new CrashClaimHook());
-                hookMessage("CrashClaim");
-            }
-        }
-        if (config.getBoolean("integrations.BentoBox",false)){
-            if (Bukkit.getPluginManager().getPlugin("BentoBox") == null) Log.warn("Failed to initialize BentoBox!");
-            else {
-                antiGriefsList.add(new BentoBoxHook());
-                hookMessage("BentoBox");
-            }
-        }
-        antiGriefs = antiGriefsList.toArray(new AntiGriefInterface[0]);
-    }
-
-    public void registerQuests() {
-        if (Bukkit.getPluginManager().isPluginEnabled("ClueScrolls")) {
-            ClueScrollCFQuest clueScrollCFQuest = new ClueScrollCFQuest();
-            Bukkit.getPluginManager().registerEvents(clueScrollCFQuest, CustomFishing.plugin);
-            hookMessage("ClueScrolls");
-        }
-        if (Bukkit.getPluginManager().isPluginEnabled("BetonQuest")) {
-            if (Bukkit.getPluginManager().getPlugin("BetonQuest").getDescription().getVersion().startsWith("2.")) NewBetonQuestCFQuest.register();
-            else OldBetonQuestCFQuest.register();
-            hookMessage("BetonQuest");
-        }
-        if (Bukkit.getPluginManager().isPluginEnabled("BattlePass")) {
-            BattlePassCFQuest.register();
-            hookMessage("BattlePass");
-        }
+        this.placeholderManager.load();
+        hookSeasons();
+        hookSkills();
+        hookItems();
+        hookVault();
+        hookMobs();
+        hookBlocks();
     }
 
     @Override
@@ -235,9 +85,104 @@ public class IntegrationManager extends Function {
         this.itemInterfaces = null;
         this.mobInterface = null;
         this.blockInterface = null;
-        if (this.placeholderManager != null) {
-            this.placeholderManager.unload();
-            this.placeholderManager = null;
+        this.placeholderManager.unload();
+    }
+
+    private void hookMobs() {
+        if (pluginManager.isPluginEnabled("MythicMobs")) {
+            this.mobInterface = new MythicMobsMobImpl();
+        }
+    }
+
+    private void hookBlocks() {
+        if (pluginManager.isPluginEnabled("Oraxen")) {
+            this.blockInterface = new OraxenBlockImpl();
+        }
+        else if (pluginManager.isPluginEnabled("ItemsAdder")) {
+            this.blockInterface = new ItemsAdderBlockImpl();
+        }
+    }
+
+    private void hookSeasons() {
+        if (pluginManager.isPluginEnabled("RealisticSeasons")) {
+            this.seasonInterface = new RealisticSeasonsImpl();
+            hookMessage("RealisticSeasons");
+        } else if (pluginManager.isPluginEnabled("CustomCrops")) {
+            this.seasonInterface = new CustomCropsSeasonImpl();
+            hookMessage("CustomCrops");
+        }
+    }
+
+    private void hookSkills() {
+        if (pluginManager.getPlugin("mcMMO") != null) {
+            this.skillInterface = new mcMMOImpl();
+            hookMessage("mcMMO");
+        } else if (pluginManager.getPlugin("MMOCore") != null) {
+            this.skillInterface = new MMOCoreImpl(ConfigUtil.getConfig("config.yml").getString("other-settings.MMOCore-profession-name", "fishing"));
+            hookMessage("MMOCore");
+        } else if (pluginManager.getPlugin("AureliumSkills") != null) {
+            this.skillInterface = new AureliumsImpl();
+            hookMessage("AureliumSkills");
+        } else if (pluginManager.getPlugin("EcoSkills") != null) {
+            this.skillInterface = new EcoSkillsImpl();
+            hookMessage("EcoSkills");
+        } else if (pluginManager.getPlugin("Jobs") != null) {
+            this.skillInterface = new JobsRebornImpl();
+            hookMessage("JobsReborn");
+        }
+    }
+
+    private void hookVault() {
+        if (pluginManager.isPluginEnabled("Vault")) {
+            vaultHook = new VaultHook();
+            if (!vaultHook.initialize()) {
+                Log.warn("Failed to initialize Vault!");
+            }
+            else hookMessage("Vault");
+        }
+    }
+
+    private void hookItems() {
+        List<ItemInterface> itemInterfaceList = new ArrayList<>();
+        if (pluginManager.isPluginEnabled("ItemsAdder")) {
+            itemInterfaceList.add(new ItemsAdderItemImpl());
+            hookMessage("ItemsAdder");
+        }
+        if (pluginManager.isPluginEnabled("Oraxen")) {
+            itemInterfaceList.add(new OraxenItemImpl());
+            hookMessage("Oraxen");
+        }
+        if (pluginManager.isPluginEnabled("MMOItems")) {
+            itemInterfaceList.add(new MMOItemsItemImpl());
+            hookMessage("MMOItems");
+        }
+        if (pluginManager.isPluginEnabled("MythicMobs")) {
+            itemInterfaceList.add(new MythicMobsItemImpl());
+            hookMessage("MythicMobs");
+        }
+        itemInterfaceList.add(new CustomFishingItemImpl(plugin));
+        this.itemInterfaces = itemInterfaceList.toArray(new ItemInterface[0]);
+
+        if (pluginManager.isPluginEnabled("eco")) {
+            EcoItemRegister.registerItems();
+            hookMessage("eco");
+        }
+    }
+
+    public void registerQuests() {
+        if (pluginManager.isPluginEnabled("ClueScrolls")) {
+            ClueScrollCFQuest clueScrollCFQuest = new ClueScrollCFQuest();
+            Bukkit.getPluginManager().registerEvents(clueScrollCFQuest, plugin);
+            hookMessage("ClueScrolls");
+        }
+        if (pluginManager.isPluginEnabled("BetonQuest")) {
+            if (Bukkit.getPluginManager().getPlugin("BetonQuest").getDescription().getVersion().startsWith("2.")) NewBetonQuestCFQuest.register();
+            else OldBetonQuestCFQuest.register();
+            hookMessage("BetonQuest");
+        }
+        if (pluginManager.isPluginEnabled("BattlePass")) {
+            BattlePassCFQuest.register();
+            hookMessage("BattlePass");
         }
     }
 
@@ -272,11 +217,6 @@ public class IntegrationManager extends Function {
     }
 
     @NotNull
-    public AntiGriefInterface[] getAntiGriefs() {
-        return antiGriefs;
-    }
-
-    @NotNull
     public ItemStack build(String key) {
         for (ItemInterface itemInterface : getItemInterfaces()) {
             ItemStack itemStack = itemInterface.build(key);
@@ -298,7 +238,7 @@ public class IntegrationManager extends Function {
     }
 
     private void hookMessage(String plugin){
-        AdventureUtil.consoleMessage("[CustomFishing] <white>" + plugin + " Hooked!");
+        AdventureUtil.consoleMessage("[CustomFishing] " + plugin + " hooked!");
     }
 
     @Nullable

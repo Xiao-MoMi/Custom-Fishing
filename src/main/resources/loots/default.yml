@@ -6,8 +6,6 @@ rubbish:
     lore:
       - '<gray>Maybe we need to protect the environment...'
   weight: 130
-  time: 20000
-  difficulty: 1-1
   custom-model-data: 640
   action:
     success:
@@ -16,9 +14,6 @@ obsidian:
   nick: '<#4B0082>Obsidian</#4B0082>'
   material: obsidian
   in-lava: true
-  weight: 80
-  time: 20000
-  difficulty: 1-2
   action:
     success:
       mending: 15
@@ -27,8 +22,6 @@ wither_skeleton_skull:
   material: wither_skeleton_skull
   in-lava: true
   weight: 1
-  time: 20000
-  difficulty: 1-6
   action:
     success:
       mending: 80
@@ -36,7 +29,6 @@ pufferfish:
   nick: '<#DAA520>Pufferfish</#DAA520>'
   material: PUFFERFISH
   weight: 50
-  difficulty: 1-1
   action:
     success:
       mending: 7
@@ -44,7 +36,6 @@ cod:
   nick: '<#FFFACD>Cod</#FFFACD>'
   material: COD
   weight: 300
-  difficulty: 1-1
   action:
     success:
       mending: 3
@@ -52,12 +43,10 @@ salmon:
   nick: '<#D2691E>Salmon</#D2691E>'
   material: SALMON
   weight: 250
-  difficulty: 1-1
 tropical_fish:
   nick: '&cT&fr&co&fp&ci&fc&ca&fl &cF&fi&cs&fh'
   material: TROPICAL_FISH
   weight: 50
-  difficulty: 1-1
   action:
     success:
       mending: 4
@@ -78,8 +67,6 @@ tuna_fish:
       - '<gray>Tuna is a kind of healthy food.'
       - '<white>size: {size}cm'
   weight: 50
-  time: 10000
-  difficulty: 1-4
   custom-model-data: 641
   action:
     success:
@@ -107,8 +94,6 @@ tuna_fish_silver_star:
       - '<gray>Tuna is a kind of healthy food.'
       - '<white>size: {size}cm'
   weight: 20
-  time: 8000
-  difficulty: 1-5
   group: silver
   custom-model-data: 666
   action:
@@ -137,8 +122,6 @@ tuna_fish_golden_star:
       - '<gray>Tuna is a kind of healthy food.'
       - '<white>size: {size}cm'
   weight: 10
-  time: 5000
-  difficulty: 1-6
   group: gold
   custom-model-data: 667
   action:
@@ -170,8 +153,6 @@ pike_fish:
       - '<gray>water and inland freshwater lakes'
       - '<white>size: {size}cm'
   weight: 70
-  time: 7000
-  difficulty: 1-2
   custom-model-data: 642
   action:
     success:
@@ -200,8 +181,6 @@ pike_fish_silver_star:
       - '<gray>water and inland freshwater lakes'
       - '<white>size: {size}cm'
   weight: 30
-  time: 7000
-  difficulty: 1-3
   group: silver
   action:
     success:
@@ -231,8 +210,6 @@ pike_fish_golden_star:
       - '<gray>water and inland freshwater lakes'
       - '<white>size: {size}cm'
   weight: 10
-  time: 7000
-  difficulty: 1-4
   group: gold
   action:
     success:
@@ -261,8 +238,6 @@ gold_fish:
   weight: 50
   price:
     base: 70
-  time: 12000
-  difficulty: 1-1
   custom-model-data: 643
   action:
     success:
@@ -277,10 +252,8 @@ gold_fish_silver_star:
       - '<gray>fishes in the world. It originated in China'
       - '<gray>and has a history of more than 1700 years'
   weight: 20
-  time: 11000
   price:
     base: 80
-  difficulty: 1-2
   group: silver
   custom-model-data: 658
   action:
@@ -296,11 +269,9 @@ gold_fish_golden_star:
       - '<gray>fishes in the world. It originated in China'
       - '<gray>and has a history of more than 1700 years'
   weight: 10
-  time: 10000
   price:
     base: 100
   group: gold
-  difficulty: 1-3
   custom-model-data: 659
   action:
     success:
@@ -314,8 +285,6 @@ perch_fish:
       - '<gray>foraging at dusk and early morning'
       - '<white>size: {size}cm'
   weight: 100
-  time: 10000
-  difficulty: 1-2
   custom-model-data: 644
   action:
     success:
@@ -338,9 +307,7 @@ perch_fish_silver_star:
       - '<gray>foraging at dusk and early morning'
       - '<white>size: {size}cm'
   weight: 30
-  time: 9000
   group: silver
-  difficulty: 1-2
   custom-model-data: 660
   action:
     success:
@@ -364,8 +331,6 @@ perch_fish_golden_star:
       - '<white>size: {size}cm'
   weight: 15
   group: gold
-  time: 8000
-  difficulty: 1-1
   custom-model-data: 661
   action:
     success:
@@ -388,8 +353,6 @@ mullet_fish:
       - '<gray>to treat spleen and stomach weakness'
       - '<white>size: {size}cm'
   weight: 50
-  time: 10000
-  difficulty: 1-2
   custom-model-data: 645
   action:
     success:
@@ -409,8 +372,6 @@ mullet_fish_silver_star:
       - '<white>size: {size}cm'
   weight: 20
   group: silver
-  time: 8000
-  difficulty: 1-3
   custom-model-data: 662
   action:
     success:
@@ -429,9 +390,7 @@ mullet_fish_golden_star:
       - '<gray>to treat spleen and stomach weakness'
       - '<white>size: {size}cm'
   weight: 10
-  time: 6000
   group: gold
-  difficulty: 1-4
   custom-model-data: 663
   action:
     success:
@@ -450,8 +409,6 @@ sardine_fish:
       - '<gray>Therefore, sardine are also called "smart food"'
       - '<white>size: {size}cm'
   weight: 50
-  time: 8000
-  difficulty: 1-2
   custom-model-data: 668
   action:
     success:
@@ -470,9 +427,7 @@ sardine_fish_silver_star:
       - '<gray>Therefore, sardine are also called "smart food"'
       - '<white>size: {size}cm'
   weight: 20
-  time: 8000
   group: silver
-  difficulty: 1-3
   custom-model-data: 669
   action:
     success:
@@ -491,9 +446,7 @@ sardine_fish_golden_star:
       - '<gray>Therefore, sardine are also called "smart food"'
       - '<white>size: {size}cm'
   weight: 10
-  time: 8000
   group: gold
-  difficulty: 1-4
   custom-model-data: 670
   action:
     success:
@@ -511,8 +464,6 @@ carp_fish:
       - '<gray>One of the most common edible fish'
       - '<white>size: {size}cm'
   weight: 100
-  time: 10000
-  difficulty: 1-2
   custom-model-data: 671
   action:
     success:
@@ -541,9 +492,7 @@ carp_fish_silver_star:
       - '<gray>One of the most common edible fish'
       - '<white>size: {size}cm'
   weight: 20
-  time: 10000
   group: silver
-  difficulty: 1-2
   custom-model-data: 672
   action:
     success:
@@ -572,9 +521,7 @@ carp_fish_golden_star:
       - '<gray>One of the most common edible fish'
       - '<white>size: {size}cm'
   weight: 10
-  time: 10000
   group: gold
-  difficulty: 1-2
   custom-model-data: 673
   action:
     success:
@@ -603,8 +550,6 @@ cat_fish:
       - '<gray>sharp jaw teeth, short intestine and stomach'
       - '<white>size: {size}cm'
   weight: 50
-  time: 8000
-  difficulty: 1-3
   custom-model-data: 674
   action:
     success:
@@ -635,8 +580,6 @@ cat_fish_silver_star:
       - '<white>size: {size}cm'
   weight: 20
   group: silver
-  time: 8000
-  difficulty: 1-4
   custom-model-data: 675
   action:
     success:
@@ -666,9 +609,7 @@ cat_fish_golden_star:
       - '<gray>sharp jaw teeth, short intestine and stomach'
       - '<white>size: {size}cm'
   weight: 10
-  time: 8000
   group: gold
-  difficulty: 1-5
   custom-model-data: 676
   action:
     success:
@@ -698,8 +639,6 @@ octopus:
       - '<gray>People often use pots to catch octopus'
       - '<white>size: {size}cm'
   weight: 50
-  time: 15000
-  difficulty: 1-1
   custom-model-data: 677
   action:
     success:
@@ -727,8 +666,6 @@ octopus_silver_star:
       - '<white>size: {size}cm'
   weight: 20
   group: silver
-  time: 15000
-  difficulty: 1-1
   custom-model-data: 678
   action:
     success:
@@ -757,9 +694,7 @@ octopus_golden_star:
       - '<gray>People often use pots to catch octopus'
       - '<white>size: {size}cm'
   weight: 10
-  time: 15000
   group: gold
-  difficulty: 1-1
   custom-model-data: 679
   action:
     success:
@@ -787,8 +722,6 @@ sunfish:
       - '<gray>It only has one huge head'
       - '<white>size: {size}cm'
   weight: 50
-  time: 10000
-  difficulty: 1-2
   custom-model-data: 680
   action:
     success:
@@ -807,8 +740,6 @@ sunfish_silver_star:
       - '<white>size: {size}cm'
   weight: 20
   group: silver
-  time: 10000
-  difficulty: 1-2
   custom-model-data: 681
   action:
     success:
@@ -826,9 +757,7 @@ sunfish_golden_star:
       - '<gray>It only has one huge head'
       - '<white>size: {size}cm'
   weight: 10
-  time: 10000
   group: gold
-  difficulty: 1-2
   custom-model-data: 682
   action:
     success:
@@ -846,8 +775,6 @@ red_snapper_fish:
       - '<gray>with a male as the "head of the family"'
       - '<white>size: {size}cm'
   weight: 100
-  time: 10000
-  difficulty: 1-1
   custom-model-data: 683
   action:
     success:
@@ -866,9 +793,7 @@ red_snapper_fish_silver_star:
       - '<gray>with a male as the "head of the family"'
       - '<white>size: {size}cm'
   weight: 40
-  time: 10000
   group: silver
-  difficulty: 1-2
   custom-model-data: 684
   action:
     success:
@@ -887,9 +812,7 @@ red_snapper_fish_golden_star:
       - '<gray>with a male as the "head of the family"'
       - '<white>size: {size}cm'
   weight: 20
-  time: 10000
   group: gold
-  difficulty: 1-3
   custom-model-data: 685
   action:
     success:
@@ -907,8 +830,6 @@ salmon_void_fish:
     lore:
       - '<gray>A fish from the hell'
   weight: 50
-  time: 10000
-  difficulty: 1-2
   custom-model-data: 686
   action:
     success:
@@ -927,9 +848,7 @@ salmon_void_fish_silver_star:
     lore:
       - '<gray>A fish from the hell'
   weight: 20
-  time: 10000
   group: silver
-  difficulty: 1-2
   custom-model-data: 687
   action:
     success:
@@ -948,9 +867,7 @@ salmon_void_fish_golden_star:
     lore:
       - '<gray>A fish from the hell'
   weight: 10
-  time: 10000
   group: gold
-  difficulty: 1-2
   custom-model-data: 688
   action:
     success:
@@ -970,8 +887,6 @@ woodskip_fish:
       - '<gray>live in pools deep in the forest'
       - '<white>size: {size}cm'
   weight: 50
-  time: 8000
-  difficulty: 1-2
   custom-model-data: 689
   action:
     success:
@@ -997,8 +912,6 @@ woodskip_fish_silver_star:
       - '<white>size: {size}cm'
   weight: 20
   group: silver
-  time: 7000
-  difficulty: 1-3
   custom-model-data: 690
   action:
     success:
@@ -1024,8 +937,6 @@ woodskip_fish_golden_star:
       - '<white>size: {size}cm'
   weight: 10
   group: gold
-  time: 6000
-  difficulty: 1-4
   custom-model-data: 691
   action:
     success:
@@ -1050,8 +961,6 @@ sturgeon_fish:
       - '<gray>population. Females can live up to 150 years'
       - '<white>size: {size}cm'
   weight: 5
-  time: 10000
-  difficulty: 1-3
   custom-model-data: 692
   action:
     success:
@@ -1074,8 +983,6 @@ sturgeon_fish_silver_star:
       - '<white>size: {size}cm'
   weight: 2
   group: silver
-  time: 10000
-  difficulty: 1-5
   custom-model-data: 693
   action:
     success:
@@ -1097,9 +1004,7 @@ sturgeon_fish_golden_star:
       - '<gray>population. Females can live up to 150 years'
       - '<white>size: {size}cm'
   weight: 1
-  time: 10000
   group: gold
-  difficulty: 1-7
   custom-model-data: 694
   action:
     success:

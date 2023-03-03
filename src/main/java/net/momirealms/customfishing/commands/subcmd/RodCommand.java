@@ -17,9 +17,9 @@
 
 package net.momirealms.customfishing.commands.subcmd;
 
+import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.commands.AbstractSubCommand;
 import net.momirealms.customfishing.commands.SubCommand;
-import net.momirealms.customfishing.manager.BonusManager;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;
@@ -46,7 +46,7 @@ public class RodCommand extends AbstractSubCommand {
         }
         if (args.get(0).equalsIgnoreCase("get")) {
             if (sender instanceof Player player){
-                if (!BonusManager.RODITEMS.containsKey(args.get(1))){
+                if (!CustomFishing.getInstance().getEffectManager().getRodItems().containsKey(args.get(1))){
                     AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.itemNotExist);
                     return true;
                 }
@@ -75,7 +75,7 @@ public class RodCommand extends AbstractSubCommand {
                 AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.notOnline.replace("{Player}", args.get(1)));
                 return true;
             }
-            if (!BonusManager.RODITEMS.containsKey(args.get(2))){
+            if (!CustomFishing.getInstance().getEffectManager().getRodItems().containsKey(args.get(2))){
                 AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.itemNotExist);
                 return true;
             }
@@ -139,6 +139,6 @@ public class RodCommand extends AbstractSubCommand {
     }
 
     private List<String> rods() {
-        return new ArrayList<>(BonusManager.RODITEMS.keySet());
+        return new ArrayList<>(CustomFishing.getInstance().getEffectManager().getRodItems().keySet());
     }
 }

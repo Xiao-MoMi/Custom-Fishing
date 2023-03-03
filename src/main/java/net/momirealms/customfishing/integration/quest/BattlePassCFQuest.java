@@ -21,7 +21,7 @@ import io.github.battlepass.BattlePlugin;
 import io.github.battlepass.quests.quests.external.executor.ExternalQuestExecutor;
 import io.github.battlepass.registry.quest.QuestRegistry;
 import net.momirealms.customfishing.api.event.FishResultEvent;
-import net.momirealms.customfishing.object.fishing.FishResult;
+import net.momirealms.customfishing.fishing.FishResult;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,7 +41,7 @@ public class BattlePassCFQuest extends ExternalQuestExecutor implements Listener
     public void onFishCaught(FishResultEvent event) {
         if (event.isCancelled()) return;
         Player player = event.getPlayer();
-        if (event.getResult() == FishResult.CAUGHT_LOOT || event.getResult() == FishResult.CAUGHT_VANILLA || event.getResult() == FishResult.CAUGHT_MOB) {
+        if (event.getResult() == FishResult.CATCH_SPECIAL_ITEM || event.getResult() == FishResult.CATCH_VANILLA_ITEM || event.getResult() == FishResult.CATCH_MOB) {
             this.execute("fish", player, (var1x) -> var1x.root(event.getLoot_id()));
         }
     }

@@ -26,7 +26,7 @@ public class VaultHook {
     private Economy economy;
 
     public boolean initialize() {
-        RegisteredServiceProvider<Economy> rsp = CustomFishing.plugin.getServer().getServicesManager().getRegistration(Economy.class);
+        RegisteredServiceProvider<Economy> rsp = CustomFishing.getInstance().getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
             return false;
         }

@@ -38,7 +38,7 @@ public class SellFishCommand implements TabExecutor {
             return true;
         }
         player.closeInventory();
-        CustomFishing.plugin.getSellManager().openGuiForPlayer(player);
+        CustomFishing.getInstance().getSellManager().openGuiForPlayer(player);
         return true;
     }
 

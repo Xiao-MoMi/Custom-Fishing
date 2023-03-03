@@ -17,11 +17,12 @@
 
 package net.momirealms.customfishing.manager;
 
-import net.momirealms.customfishing.competition.CompetitionConfig;
-import net.momirealms.customfishing.competition.CompetitionGoal;
-import net.momirealms.customfishing.competition.CompetitionSchedule;
-import net.momirealms.customfishing.competition.bossbar.BossBarConfig;
-import net.momirealms.customfishing.competition.bossbar.BossBarOverlay;
+import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.fishing.competition.CompetitionConfig;
+import net.momirealms.customfishing.fishing.competition.CompetitionGoal;
+import net.momirealms.customfishing.fishing.competition.CompetitionSchedule;
+import net.momirealms.customfishing.fishing.competition.bossbar.BossBarConfig;
+import net.momirealms.customfishing.fishing.competition.bossbar.BossBarOverlay;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.action.ActionInterface;
 import net.momirealms.customfishing.object.action.CommandActionImpl;
@@ -29,21 +30,30 @@ import net.momirealms.customfishing.object.action.MessageActionImpl;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import org.bukkit.boss.BarColor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
 import java.util.*;
 
 public class CompetitionManager extends Function {
 
-    public static HashMap<String, CompetitionConfig> competitionsT;
-    public static HashMap<String, CompetitionConfig> competitionsC;
+    private CustomFishing plugin;
+    // Competitions that can be triggered at a specified time
+    private final HashMap<String, CompetitionConfig> competitionsT;
+    // Competitions that can be triggered with a command
+    private final HashMap<String, CompetitionConfig> competitionsC;
     private CompetitionSchedule competitionSchedule;
+
+    public CompetitionManager(CustomFishing plugin) {
+        this.plugin = plugin;
+        this.competitionsC = new HashMap<>();
+        this.competitionsT = new HashMap<>();
+    }
 
     @Override
     public void load() {
         if (ConfigManager.enableCompetition) {
-            competitionsC = new HashMap<>();
-            competitionsT = new HashMap<>();
             loadCompetitions();
             this.competitionSchedule = new CompetitionSchedule();
             this.competitionSchedule.load();
@@ -52,13 +62,39 @@ public class CompetitionManager extends Function {
 
     @Override
     public void unload() {
-        if (competitionsC != null) competitionsC.clear();
-        if (competitionsT != null) competitionsT.clear();
-        if (competitionSchedule != null) competitionSchedule.unload();
+        this.competitionsC.clear();
+        this.competitionsT.clear();
+        if (this.competitionSchedule != null) {
+            this.competitionSchedule.unload();
+        }
     }
 
-    public void loadCompetitions() {
-        YamlConfiguration config = ConfigUtil.getConfig("competition.yml");
+    private void loadCompetitions() {
+        File competition_file = new File(plugin.getDataFolder() + File.separator + "competitions");
+        if (!competition_file.exists()) {
+            if (!competition_file.mkdir()) return;
+            plugin.saveResource("competitions" + File.separator + "default.yml", false);
+        }
+        File[] files = competition_file.listFiles();
+        if (files == null) return;
+        int amount = 0;
+        for (File file : files) {
+            if (!file.getName().endsWith(".yml")) continue;
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+            Set<String> keys = config.getKeys(false);
+            for (String key : keys) {
+                ConfigurationSection section = config.getConfigurationSection(key);
+                if (section == null) continue;
+
+
+                amount++;
+            }
+        }
+
+        AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + amount + " <gray>competition(s)");
+
+
+        YamlConfiguration config = ConfigUtil.getConfig("competitions/default.yml");
         Set<String> keys = config.getKeys(false);
         keys.forEach(key -> {
             boolean enableBsb = config.getBoolean(key + ".bossbar.enable", false);
@@ -105,7 +141,7 @@ public class CompetitionManager extends Function {
                         case "Thursday" -> days.add(5);
                         case "Friday" -> days.add(6);
                         case "Saturday" -> days.add(7);
-                        default -> AdventureUtil.consoleMessage("unknown weekday: " + weekDay);
+                        default -> AdventureUtil.consoleMessage("[CustomFishing] Unknown weekday: " + weekDay);
                     }
                 }
                 competitionConfig.setWeekday(days);
@@ -122,5 +158,13 @@ public class CompetitionManager extends Function {
             config.getStringList(key + ".start-time").forEach(time -> competitionsT.put(time, competitionConfig));
             competitionsC.put(key, competitionConfig);
         });
+    }
+
+    public HashMap<String, CompetitionConfig> getCompetitionsT() {
+        return competitionsT;
+    }
+
+    public HashMap<String, CompetitionConfig> getCompetitionsC() {
+        return competitionsC;
     }
 }

@@ -29,17 +29,13 @@ public class OpenBagCommand extends AbstractSubCommand {
             return true;
         }
         if (args.size() == 1) {
-            if (!sender.hasPermission("customfishing.admin")) {
-                AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.noPerm);
-                return true;
-            }
             Player viewer = Bukkit.getPlayer(args.get(0));
             if (viewer == null) {
                 AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.playerNotExist);
                 return true;
             }
             viewer.closeInventory();
-            CustomFishing.plugin.getBagDataManager().openFishingBag(viewer, viewer);
+            CustomFishing.getInstance().getBagDataManager().openFishingBag(viewer, viewer);
         }
         return true;
     }
@@ -47,7 +43,6 @@ public class OpenBagCommand extends AbstractSubCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, List<String> args) {
         if (!ConfigManager.enableFishingBag) return null;
-        if (!sender.hasPermission("customfishing.admin")) return null;
         if (args.size() == 1) {
             List<String> arrayList = new ArrayList<>();
             for (String cmd : online_players()) {

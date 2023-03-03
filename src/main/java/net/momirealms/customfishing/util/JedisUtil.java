@@ -35,7 +35,6 @@ public class JedisUtil {
     }
 
     public static void initializeRedis(YamlConfiguration configuration){
-
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setTestWhileIdle(true);
         jedisPoolConfig.setTimeBetweenEvictionRunsMillis(30000);
@@ -75,5 +74,16 @@ public class JedisUtil {
                 Log.warn(e.getMessage());
             }
         }
+    }
+
+    public static void closePool() {
+        if (jedisPool != null) {
+            jedisPool.close();
+            jedisPool = null;
+        }
+    }
+
+    public static boolean isPoolEnabled() {
+        return jedisPool != null;
     }
 }

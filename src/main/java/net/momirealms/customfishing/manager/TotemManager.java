@@ -18,16 +18,16 @@
 package net.momirealms.customfishing.manager;
 
 import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.fishing.requirements.*;
+import net.momirealms.customfishing.fishing.totem.CorePos;
+import net.momirealms.customfishing.fishing.totem.FinalModel;
+import net.momirealms.customfishing.fishing.totem.OriginalModel;
+import net.momirealms.customfishing.fishing.totem.TotemConfig;
 import net.momirealms.customfishing.integration.BlockInterface;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.action.ActionInterface;
 import net.momirealms.customfishing.object.action.CommandActionImpl;
 import net.momirealms.customfishing.object.action.MessageActionImpl;
-import net.momirealms.customfishing.object.requirements.*;
-import net.momirealms.customfishing.object.totem.CorePos;
-import net.momirealms.customfishing.object.totem.FinalModel;
-import net.momirealms.customfishing.object.totem.OriginalModel;
-import net.momirealms.customfishing.object.totem.TotemConfig;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import net.momirealms.customfishing.util.LocationUtils;
@@ -37,6 +37,7 @@ import org.bukkit.Particle;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,41 +48,77 @@ public class TotemManager extends Function {
 
     private final CustomFishing plugin;
 
-    public static HashMap<String, TotemConfig> TOTEMS;
-    public static HashMap<String, List<TotemConfig>> CORES;
-    public static HashMap<String, String> BLOCKS;
-    public static HashMap<String, String> INVERTED;
+    private final HashMap<String, TotemConfig> totems;
+    private final HashMap<String, List<TotemConfig>> cores;
+    private final HashMap<String, String> blockIDs;
+    private final HashMap<String, String> invertedIDs;
 
     public TotemManager(CustomFishing plugin) {
         this.plugin = plugin;
+        totems = new HashMap<>();
+        cores = new HashMap<>();
+        blockIDs = new HashMap<>();
+        invertedIDs = new HashMap<>();
     }
 
     @Override
     public void unload() {
-        if (TOTEMS != null) TOTEMS.clear();
-        if (CORES != null) CORES.clear();
-        if (BLOCKS != null) BLOCKS.clear();
-        if (INVERTED != null) INVERTED.clear();
+        totems.clear();
+        cores.clear();
+        blockIDs.clear();
+        invertedIDs.clear();
     }
 
     @Override
     public void load(){
-        TOTEMS = new HashMap<>();
-        CORES = new HashMap<>();
-        BLOCKS = new HashMap<>();
-        INVERTED = new HashMap<>();
         loadBlocks();
         loadTotems();
     }
 
+    @Nullable
+    public TotemConfig getTotem(String key) {
+        return totems.get(key);
+    }
+
+    public HashMap<String, TotemConfig> getTotems() {
+        return totems;
+    }
+
+    @Nullable
+    public List<TotemConfig> getTotemsByCoreID(String core) {
+        return cores.get(core);
+    }
+
+    public HashMap<String, List<TotemConfig>> getCores() {
+        return cores;
+    }
+
+    @Nullable
+    public String getBlockID(String block) {
+        return blockIDs.get(block);
+    }
+
+    public HashMap<String, String> getBlockIDs() {
+        return blockIDs;
+    }
+
+    @Nullable
+    public String getInvertedBlock(String id) {
+        return invertedIDs.get(id);
+    }
+
+    public HashMap<String, String> getInvertedIDs() {
+        return invertedIDs;
+    }
+
     private void loadBlocks() {
-        YamlConfiguration config = ConfigUtil.getConfig("totem-blocks.yml");
-        config.getKeys(false).forEach(key -> BLOCKS.put(key, config.getString(key)));
-        config.getKeys(false).forEach(key -> INVERTED.put(config.getString(key), key));
+        YamlConfiguration config = ConfigUtil.getConfig("totem-blocks/default.yml");
+        config.getKeys(false).forEach(key -> blockIDs.put(key, config.getString(key)));
+        config.getKeys(false).forEach(key -> invertedIDs.put(config.getString(key), key));
     }
 
     private void loadTotems() {
-        YamlConfiguration config = ConfigUtil.getConfig("totems.yml");
+        YamlConfiguration config = ConfigUtil.getConfig("totems/default.yml");
         for (String key : config.getKeys(false)) {
             List<String> cores = config.getStringList(key + ".core");
             List<String> flat = config.getStringList(key + ".layer.1");
@@ -144,13 +181,13 @@ public class TotemManager extends Function {
                     config.getInt(key + ".radius", 16),
                     config.getInt(key + ".duration", 300),
                     Particle.valueOf(config.getString(key + ".particle", "SPELL_MOB").toUpperCase()),
-                    BonusManager.getBonus(config, key)
+                    EffectManager.getEffect(config.getConfigurationSection(key + ".modifier"))
             );
 
             List<ActionInterface> actionList = new ArrayList<>();
             List<ActionInterface> nearActionList = new ArrayList<>();
             if (config.contains(key + ".action")) {
-                for (String action : config.getConfigurationSection(key + ".action").getKeys(false)) {
+                for (String action : Objects.requireNonNull(config.getConfigurationSection(key + ".action")).getKeys(false)) {
                     switch (action) {
                         case "commands-activator" -> actionList.add(new CommandActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null));
                         case "commands-nearby-players" -> nearActionList.add(new CommandActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null));
@@ -164,7 +201,7 @@ public class TotemManager extends Function {
 
             if (config.contains(key + ".requirements")) {
                 List<RequirementInterface> requirements = new ArrayList<>();
-                config.getConfigurationSection(key + ".requirements").getKeys(false).forEach(requirement -> {
+                Objects.requireNonNull(config.getConfigurationSection(key + ".requirements")).getKeys(false).forEach(requirement -> {
                     switch (requirement){
                         case "weather" -> requirements.add(new WeatherImpl(config.getStringList(key + ".requirements.weather")));
                         case "ypos" -> requirements.add(new YPosImpl(config.getStringList(key + ".requirements.ypos")));
@@ -202,20 +239,20 @@ public class TotemManager extends Function {
                 totem.setPotionEffects(potionEffectList.toArray(new PotionEffect[0]));
             }
 
-            TOTEMS.put(key, totem);
+            totems.put(key, totem);
 
             for (String core : cores) {
-                if (CORES.get(core) == null){
+                if (this.cores.get(core) == null){
                     List<TotemConfig> totems = new ArrayList<>();
                     totems.add(totem);
-                    CORES.put(core, totems);
+                    this.cores.put(core, totems);
                 }
                 else {
-                    CORES.get(core).add(totem);
+                    this.cores.get(core).add(totem);
                 }
             }
         }
-        AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + TOTEMS.size() + " <gray>totems");
+        AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + totems.size() + " <gray>totem(s)");
     }
 
     private CorePos getCorePos(List<String> cores, CorePos corePos, OriginalModel originalModel, int k, int j, int i, String content) {
@@ -233,7 +270,7 @@ public class TotemManager extends Function {
 
     public int checkLocationModel(OriginalModel model, Location location){
 
-        BlockInterface blockInterface = CustomFishing.plugin.getIntegrationManager().getBlockInterface();
+        BlockInterface blockInterface = plugin.getIntegrationManager().getBlockInterface();
 
         CorePos corePos = model.getCorePos();
         int xOffset = corePos.getX();
@@ -409,7 +446,7 @@ public class TotemManager extends Function {
 
     public void removeModel(FinalModel model, Location location, int direction) {
 
-        BlockInterface blockInterface = CustomFishing.plugin.getIntegrationManager().getBlockInterface();
+        BlockInterface blockInterface = plugin.getIntegrationManager().getBlockInterface();
 
         CorePos corePos = model.getCorePos();
         int xOffset = corePos.getX();

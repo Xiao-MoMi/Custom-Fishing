@@ -21,7 +21,6 @@ import com.willfp.eco.core.items.CustomItem;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.manager.BonusManager;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
@@ -31,9 +30,9 @@ public class EcoItemRegister {
 
     public static void registerItems() {
         // Rods
-        for (Map.Entry<String, ItemStack> entry : BonusManager.RODITEMS.entrySet()) {
+        for (Map.Entry<String, ItemStack> entry : CustomFishing.getInstance().getEffectManager().getRodItems().entrySet()) {
             new CustomItem(
-                    new NamespacedKey(CustomFishing.plugin, "rod_" + entry.getKey()),
+                    new NamespacedKey(CustomFishing.getInstance(), "rod_" + entry.getKey()),
                     itemStack -> {
                         try {
                             NBTItem nbtItem = new NBTItem(itemStack);
@@ -49,9 +48,9 @@ public class EcoItemRegister {
             ).register();
         }
         // Baits
-        for (Map.Entry<String, ItemStack> entry : BonusManager.BAITITEMS.entrySet()) {
+        for (Map.Entry<String, ItemStack> entry : CustomFishing.getInstance().getEffectManager().getBaitItems().entrySet()) {
             new CustomItem(
-                    new NamespacedKey(CustomFishing.plugin, "bait_" + entry.getKey()),
+                    new NamespacedKey(CustomFishing.getInstance(), "bait_" + entry.getKey()),
                     itemStack -> {
                         try {
                             NBTItem nbtItem = new NBTItem(itemStack);
@@ -67,9 +66,9 @@ public class EcoItemRegister {
             ).register();
         }
         // Utils
-        for (Map.Entry<String, ItemStack> entry : BonusManager.UTILITEMS.entrySet()) {
+        for (Map.Entry<String, ItemStack> entry : CustomFishing.getInstance().getEffectManager().getUtilItems().entrySet()) {
             new CustomItem(
-                    new NamespacedKey(CustomFishing.plugin, "util_" + entry.getKey()),
+                    new NamespacedKey(CustomFishing.getInstance(), "util_" + entry.getKey()),
                     itemStack -> {
                         try {
                             NBTItem nbtItem = new NBTItem(itemStack);

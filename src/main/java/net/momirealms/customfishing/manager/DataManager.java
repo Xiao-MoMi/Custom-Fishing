@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.manager;
 
+import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.data.storage.DataStorageInterface;
 import net.momirealms.customfishing.data.storage.FileStorageImpl;
 import net.momirealms.customfishing.data.storage.MySQLStorageImpl;
@@ -27,13 +28,15 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public class DataManager extends Function {
 
     private final DataStorageInterface dataStorageInterface;
+    private CustomFishing plugin;
 
-    public DataManager() {
+    public DataManager(CustomFishing plugin) {
+        this.plugin = plugin;
         YamlConfiguration config = ConfigUtil.getConfig("database.yml");
         if (config.getString("data-storage-method","YAML").equalsIgnoreCase("YAML")) {
-            this.dataStorageInterface = new FileStorageImpl();
+            this.dataStorageInterface = new FileStorageImpl(plugin);
         } else {
-            this.dataStorageInterface = new MySQLStorageImpl();
+            this.dataStorageInterface = new MySQLStorageImpl(plugin);
         }
         load();
     }

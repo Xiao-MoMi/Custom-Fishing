@@ -18,8 +18,8 @@
 package net.momirealms.customfishing.integration.papi;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import net.momirealms.customfishing.competition.Competition;
-import net.momirealms.customfishing.competition.ranking.RankingInterface;
+import net.momirealms.customfishing.fishing.competition.Competition;
+import net.momirealms.customfishing.fishing.competition.ranking.RankingInterface;
 import net.momirealms.customfishing.manager.MessageManager;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

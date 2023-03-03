@@ -20,10 +20,13 @@ package net.momirealms.customfishing.data.storage;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
+import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -33,9 +36,14 @@ public class SqlConnection {
     private boolean firstTry = false;
     private HikariDataSource hikariDataSource;
     private String tablePrefix;
+    private final MySQLStorageImpl mySQLStorage;
+
+    public SqlConnection(MySQLStorageImpl mySQLStorage) {
+        this.mySQLStorage = mySQLStorage;
+    }
 
     public void createNewHikariConfiguration() {
-
+        ConfigUtil.update("database.yml");
         YamlConfiguration config = ConfigUtil.getConfig("database.yml");
         String storageMode = config.getString("data-storage-method", "MySQL");
 
@@ -67,6 +75,17 @@ public class SqlConnection {
             hikariDataSource = new HikariDataSource(hikariConfig);
         } catch (HikariPool.PoolInitializationException e) {
             AdventureUtil.consoleMessage("[CustomFishing] Failed to create sql connection");
+        }
+
+        if (config.getBoolean("migration", false)) {
+            mySQLStorage.migrate();
+            config.set("migration", false);
+            try {
+                config.save(new File(CustomFishing.getInstance().getDataFolder(), "database.yml"));
+            }
+            catch (IOException e) {
+                AdventureUtil.consoleMessage("<RED>[CustomFishing] Error occurred when saving database config");
+            }
         }
     }
 

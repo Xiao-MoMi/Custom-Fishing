@@ -17,12 +17,12 @@
 
 package net.momirealms.customfishing.commands.subcmd;
 
+import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.commands.AbstractSubCommand;
 import net.momirealms.customfishing.commands.SubCommand;
-import net.momirealms.customfishing.manager.LootManager;
+import net.momirealms.customfishing.fishing.loot.DroppedItem;
+import net.momirealms.customfishing.fishing.loot.Loot;
 import net.momirealms.customfishing.manager.MessageManager;
-import net.momirealms.customfishing.object.loot.DroppedItem;
-import net.momirealms.customfishing.object.loot.Loot;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;
 import org.bukkit.Bukkit;
@@ -142,12 +142,12 @@ public class LootCommand extends AbstractSubCommand {
 
     private List<String> loots() {
         List<String> loots = new ArrayList<>();
-        for (Map.Entry<String, Loot> en : LootManager.WATERLOOTS.entrySet()) {
+        for (Map.Entry<String, Loot> en : CustomFishing.getInstance().getLootManager().getWaterLoots().entrySet()) {
             if (en.getValue() instanceof DroppedItem) {
                 loots.add(en.getKey());
             }
         }
-        for (Map.Entry<String, Loot> en : LootManager.LAVALOOTS.entrySet()) {
+        for (Map.Entry<String, Loot> en : CustomFishing.getInstance().getLootManager().getLavaLoots().entrySet()) {
             if (en.getValue() instanceof DroppedItem) {
                 loots.add(en.getKey());
             }

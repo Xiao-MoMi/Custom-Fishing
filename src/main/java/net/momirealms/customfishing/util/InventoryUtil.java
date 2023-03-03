@@ -29,24 +29,25 @@ import java.io.IOException;
 
 public class InventoryUtil {
 
+    /**
+     * Converts itemStacks to base64
+     * @param contents items
+     * @return base64
+     */
     @Nullable
     public static String toBase64(ItemStack[] contents) {
         boolean convert = false;
-
         for (ItemStack content : contents) {
             if (content != null) {
                 convert = true;
                 break;
             }
         }
-
         if (convert) {
             try {
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
-
                 dataOutput.writeInt(contents.length);
-
                 for (ItemStack itemStack : contents) {
                     dataOutput.writeObject(itemStack);
                 }
@@ -60,6 +61,11 @@ public class InventoryUtil {
         return null;
     }
 
+    /**
+     * Get itemStacks from base64
+     * @param base64 base64
+     * @return itemStacks
+     */
     @Nullable
     public static ItemStack[] getInventoryItems(String base64) {
         ItemStack[] itemStacks = null;
@@ -80,7 +86,6 @@ public class InventoryUtil {
         } catch (IllegalArgumentException e) {
             return new ItemStack[]{};
         }
-
         BukkitObjectInputStream dataInput = null;
         ItemStack[] stacks = null;
         try {
@@ -89,9 +94,7 @@ public class InventoryUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         if (stacks == null) return new ItemStack[]{};
-
         for (int i = 0; i < stacks.length; i++) {
             try {
                 stacks[i] = (ItemStack) dataInput.readObject();
@@ -105,11 +108,9 @@ public class InventoryUtil {
                 return null;
             }
         }
-
         try {
             dataInput.close();
         } catch (IOException ignored) {
-
         }
         return stacks;
     }

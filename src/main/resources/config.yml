@@ -1,40 +1,8 @@
-# don't change
-config-version: '15'
+# Don't change
+config-version: '16'
 
 # chinese/english/spanish
 lang: english
-
-# Plugin hooks
-integrations:
-  # Sell fish
-  Vault: true
-  # Skill-xp
-  mcMMO: false
-  MMOCore: false
-  AureliumSkills: false
-  EcoSkills: false
-  JobsReborn: false
-  # Season condition
-  CustomCrops: false
-  RealisticSeasons: false
-  # Prevent players from activating totems in some regions
-  Residence: false
-  WorldGuard: false
-  Kingdoms: false
-  GriefDefender: false
-  PlotSquared: false
-  Towny: false
-  Lands: false
-  GriefPrevention: false
-  CrashClaim: false
-  BentoBox: false
-  # Mobs & Items
-  MythicMobs: false
-  # Items & Totem Blocks
-  ItemsAdder: false
-  Oraxen: false
-  # Items
-  MMOItems: false
 
 # Worlds where fishing mechanic takes effects
 # 启用本插件的世界
@@ -48,7 +16,11 @@ worlds:
 
 # Mechanic settings
 mechanics:
-
+  # Add custom nbt tags to the loots so plugin could identify
+  # Disable this will lose the trigger actions when eating fish
+  # 为每个战利品增加特殊的CustomFishing NBT标签以被插件识别
+  # 禁用此项目将会导致吃食物触发的动作失效
+  add-custom-fishing-tags-to-loots: true
   # Disable the fishing bar totally
   # 关闭捕鱼条
   disable-bar-mechanic: false
@@ -57,7 +29,8 @@ mechanics:
   # 是否在鱼咬钩后立刻显示捕鱼条，而不是需要右键后才显示
   # 注意：启用本设置会导致无法获取原版钓鱼战利品
   instant-bar: false
-
+  # other loots
+  # 其他战利品
   other-loots:
     # Should other loots have the same fishing mechanic CustomFishing provides
     # 其他战利品是否有插件提供的钓鱼特性
@@ -85,6 +58,9 @@ mechanics:
   # Does the CustomFishing loots requires special rod
   # 是否需要特殊鱼竿才能获取钓鱼插件物品库的内容
   need-special-rod-for-loots: false
+  # Do all the rods have the ability to fish in lava
+  # 任何鱼竿都能在岩浆中钓鱼吗
+  all-rods-fish-in-lava: false
   # Does rod lose durability when player successfully fish
   # 钓鱼成功后是否消耗耐久度
   rod-lose-durability: true
@@ -102,9 +78,8 @@ mechanics:
     # Fishing bag window title
     # 渔具袋的容器标题
     bag-title: '<blue>{player}''s Fishing Bag'
-    # Can fishing bag store the loots?
-    # This would add additional NBT Tags to the loot
-    # 渔具袋是否能存放捕鱼战利品，这会在捕鱼战利品上增加额外NBT
+    # Can fishing bag store the loots? (Requires add-custom-fishing-tags-to-loots: true)
+    # 渔具袋是否能存储钓鱼战利品(需要设置add-custom-fishing-tags-to-loots: true)
     can-store-loot: false
     # Other whitelist-items
     # 允许放入渔具袋的其他物品白名单
@@ -131,16 +106,16 @@ mechanics:
       # ticks
       time: 25
 
-# Fishing result titles
 titles:
   success:
     title:
-      - '<green>Success!</green>'
       - '<green>GG!</green>'
       - '<green>Good Job!</green>'
     subtitle:
-      - 'You have captured a {loot}'
-      - '{loot} Here we go!'
+      - 'You caught a {loot}'
+      - 'Whoa! Nice catch!'
+      - 'Oh {loot} here we go!'
+      - 'Let''s see what it is!'
     fade:
       # ticks
       in: 10
@@ -149,11 +124,11 @@ titles:
   failure:
     title:
       - '<red>Be concentrated!</red>'
-      - '<red>Failure!</red>'
+      - '<red>What a pity!</red>'
       - '<red>Try next time!</red>'
+      - '<red>Bad luck</red>'
     subtitle:
-      - 'The fish escaped'
-      - 'Pay more attention on it!'
+      - 'The fish escaped...'
     fade:
       in: 10
       stay: 30
@@ -180,3 +155,23 @@ other-settings:
   log-earnings: true
   # Set the MMOCore profession name
   MMOCore-profession-name: 'customfishing'
+  # Set the offset characters' unicodes
+  # 设置左右偏移字符的unicode
+  offset-characters:
+    font: customfishing:offset_chars
+    '1': 
+    '2': 
+    '4': 
+    '8': 
+    '16': 
+    '32': 
+    '64': 
+    '128': 
+    '-1': 
+    '-2': 
+    '-4': 
+    '-8': 
+    '-16': 
+    '-32': 
+    '-64': 
+    '-128': 

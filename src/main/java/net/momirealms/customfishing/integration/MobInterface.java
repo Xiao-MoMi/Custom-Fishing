@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.integration;
 
-import net.momirealms.customfishing.object.loot.Mob;
+import net.momirealms.customfishing.fishing.loot.Mob;
 import org.bukkit.Location;
 
 public interface MobInterface {

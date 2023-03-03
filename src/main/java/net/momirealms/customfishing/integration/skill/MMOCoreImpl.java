@@ -36,7 +36,9 @@ public class MMOCoreImpl implements SkillInterface {
 
     @Override
     public void addXp(Player player, double amount) {
-        profession.giveExperience(playerDataManager.get(player), amount, null ,EXPSource.OTHER);
+        if (profession != null) {
+            profession.giveExperience(playerDataManager.get(player), amount, null ,EXPSource.OTHER);
+        }
     }
 
     @Override

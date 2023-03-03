@@ -24,12 +24,10 @@ import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.manager.BonusManager;
-import net.momirealms.customfishing.manager.LootManager;
-import net.momirealms.customfishing.object.loot.DroppedItem;
-import net.momirealms.customfishing.object.loot.Item;
-import net.momirealms.customfishing.object.loot.LeveledEnchantment;
-import net.momirealms.customfishing.object.loot.Loot;
+import net.momirealms.customfishing.fishing.loot.DroppedItem;
+import net.momirealms.customfishing.fishing.loot.Item;
+import net.momirealms.customfishing.fishing.loot.Loot;
+import net.momirealms.customfishing.object.LeveledEnchantment;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -45,8 +43,14 @@ import java.util.*;
 
 public class ItemStackUtil {
 
+    /**
+     * Build itemStack from item's config
+     * @param item item
+     * @return itemStack
+     */
     public static ItemStack getFromItem(Item item) {
         ItemStack itemStack = new ItemStack(item.getMaterial());
+        itemStack.setAmount(item.getAmount());
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (item.getCustomModelData() != 0) itemMeta.setCustomModelData(item.getCustomModelData());
         if (item.isUnbreakable()) itemMeta.setUnbreakable(true);
@@ -93,6 +97,10 @@ public class ItemStackUtil {
         return nbtItem.getItem();
     }
 
+    /**
+     * Get an itemStack with random durability
+     * @param itemStack itemStack
+     */
     public static void addRandomDamage(ItemStack itemStack){
         if (itemStack.getItemMeta() instanceof Damageable damageable){
             damageable.setDamage((int) (itemStack.getType().getMaxDurability() * Math.random()));
@@ -100,12 +108,22 @@ public class ItemStackUtil {
         }
     }
 
+    /**
+     * Adds owner tag
+     * @param itemStack itemStack
+     * @param name owner
+     */
     public static void addOwner(ItemStack itemStack, String name){
         NBTItem nbtItem = new NBTItem(itemStack);
         nbtItem.setString("M_Owner", name);
         itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
     }
 
+    /**
+     * Add random enchantments
+     * @param itemStack itemStack
+     * @param enchantments enchantments
+     */
     public static void addRandomEnchants(ItemStack itemStack, LeveledEnchantment[] enchantments){
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (itemStack.getType() == Material.ENCHANTED_BOOK){
@@ -123,6 +141,13 @@ public class ItemStackUtil {
         }
     }
 
+    /**
+     * Add customFishing tags
+     * @param itemStack itemStack
+     * @param type type
+     * @param id id
+     * @return itemStack
+     */
     public static ItemStack addIdentifier(ItemStack itemStack, String type, String id){
         NBTItem nbtItem = new NBTItem(itemStack);
         NBTCompound nbtCompound = nbtItem.addCompound("CustomFishing");
@@ -132,69 +157,60 @@ public class ItemStackUtil {
         return itemStack;
     }
 
-    public static void givePlayerLoot(Player player, String lootKey, int amount){
-        Loot loot = LootManager.WATERLOOTS.get(lootKey);
-        if (loot == null) {
-            loot = LootManager.LAVALOOTS.get(lootKey);
-            if (loot == null) return;
-        }
+    public static void givePlayerLoot(Player player, String key, int amount){
+        Loot loot = CustomFishing.getInstance().getLootManager().getLoot(key);
         if (!(loot instanceof DroppedItem droppedItem)) return;
-        ItemStack itemStack = CustomFishing.plugin.getFishingManager().getCustomFishingLootItemStack(droppedItem, player);
+        ItemStack itemStack = CustomFishing.getInstance().getFishingManager().getCustomFishingLootItemStack(droppedItem, player);
         if (itemStack.getType() == Material.AIR) return;
         itemStack.setAmount(amount);
         player.getInventory().addItem(itemStack);
     }
 
     public static void givePlayerRod(Player player, String rodKey, int amount){
-        ItemStack itemStack = BonusManager.RODITEMS.get(rodKey);
+        ItemStack itemStack = CustomFishing.getInstance().getEffectManager().getRodItem(rodKey);
+        if (itemStack == null) return;
         for (int i = 0; i < amount; i++) {
             player.getInventory().addItem(itemStack);
         }
     }
 
     public static void givePlayerBait(Player player, String baitKey, int amount){
-        ItemStack itemStack = BonusManager.BAITITEMS.get(baitKey);
+        ItemStack itemStack = CustomFishing.getInstance().getEffectManager().getBaitItem(baitKey);
         if (itemStack == null) return;
         itemStack.setAmount(amount);
         player.getInventory().addItem(itemStack);
     }
 
     public static void givePlayerUtil(Player player, String utilKey, int amount){
-        ItemStack itemStack = BonusManager.UTILITEMS.get(utilKey);
+        ItemStack itemStack = CustomFishing.getInstance().getEffectManager().getUtilItem(utilKey);
         if (itemStack == null) return;
         itemStack.setAmount(amount);
         player.getInventory().addItem(itemStack);
     }
 
     public static boolean saveToFile(ItemStack itemStack, String fileName){
-
         if (itemStack == null || itemStack.getType() == Material.AIR) return false;
-
         YamlConfiguration yamlConfiguration = new YamlConfiguration();
         yamlConfiguration.set(fileName + ".material", itemStack.getType().toString());
         NBTItem nbtItem = new NBTItem(itemStack);
-
         Map<String, Object> map0 = compoundToMap(nbtItem);
         if (map0.size() != 0) {
             yamlConfiguration.createSection(fileName + ".nbt", map0);
         }
-
-        File file = new File(CustomFishing.plugin.getDataFolder(), File.separator + "loots" + File.separator + fileName + ".yml");
-
+        File file = new File(CustomFishing.getInstance().getDataFolder(), File.separator + "loots" + File.separator + fileName + ".yml");
         try {
             yamlConfiguration.save(file);
-            CustomFishing.plugin.getLootManager().unload();
-            CustomFishing.plugin.getLootManager().load();
+            CustomFishing.getInstance().getLootManager().unload();
+            CustomFishing.getInstance().getLootManager().load();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return true;
     }
 
-    public static void addExtraMeta(ItemStack itemStack, DroppedItem droppedItem) {
+    public static void addExtraMeta(ItemStack itemStack, DroppedItem droppedItem, double sizeMultiplier) {
         NBTItem nbtItem = new NBTItem(itemStack);
-        boolean changed = replaceSizeLore(droppedItem.getSize(), nbtItem);
+        boolean changed = replaceSizeLore(droppedItem.getSize(), nbtItem, sizeMultiplier);
         if (droppedItem.getBasicPrice() != 0) {
             NBTCompound fishMetaCompound = nbtItem.addCompound("FishMeta");
             fishMetaCompound.setFloat("base", droppedItem.getBasicPrice());
@@ -210,15 +226,15 @@ public class ItemStackUtil {
         }
     }
 
-    private static boolean replaceSizeLore(String[] sizes, NBTItem nbtItem) {
+    private static boolean replaceSizeLore(String[] sizes, NBTItem nbtItem, double sizeMultiplier) {
         if (sizes == null) return false;
         float min = Float.parseFloat(sizes[0]);
         float max = Float.parseFloat(sizes[1]);
         if (max - min < 0) return false;
-        float size = (float) (min + Math.random() * (max - min));
+        float size = (float) ((min + Math.random() * (max - min)) * sizeMultiplier);
         String sizeText = String.format("%.1f", size);
         NBTCompound nbtCompound = nbtItem.getCompound("display");
-        if (nbtCompound == null || !nbtCompound.hasKey("Lore")) return false;
+        if (nbtCompound == null || !nbtCompound.hasTag("Lore")) return false;
         List<String> lore = nbtCompound.getStringList("Lore");
         lore.replaceAll(s -> s.replace("{size}", sizeText));
         NBTCompound fishMetaCompound = nbtItem.addCompound("FishMeta");

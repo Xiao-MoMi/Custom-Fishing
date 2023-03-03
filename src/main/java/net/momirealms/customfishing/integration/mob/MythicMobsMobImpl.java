@@ -24,9 +24,9 @@ import io.lumine.mythic.api.mobs.MythicMob;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.bukkit.utils.serialize.Position;
 import io.lumine.mythic.core.mobs.ActiveMob;
+import net.momirealms.customfishing.fishing.loot.Mob;
+import net.momirealms.customfishing.fishing.loot.MobVector;
 import net.momirealms.customfishing.integration.MobInterface;
-import net.momirealms.customfishing.object.loot.Mob;
-import net.momirealms.customfishing.object.loot.MobVector;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 

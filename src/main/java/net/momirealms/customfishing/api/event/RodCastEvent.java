@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.api.event;
 
-import net.momirealms.customfishing.object.fishing.Bonus;
+import net.momirealms.customfishing.fishing.Effect;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -26,14 +26,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class RodCastEvent extends PlayerEvent implements Cancellable {
 
-    private final Bonus bonus;
+    private final Effect effect;
     private boolean isCancelled;
     private static final HandlerList handlerList = new HandlerList();
 
-    public RodCastEvent(@NotNull Player who, @NotNull Bonus bonus) {
+    public RodCastEvent(@NotNull Player who, @NotNull Effect effect) {
         super(who);
         this.isCancelled = false;
-        this.bonus = bonus;
+        this.effect = effect;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class RodCastEvent extends PlayerEvent implements Cancellable {
         return getHandlerList();
     }
 
-    public Bonus getBonus() {
-        return bonus;
+    public Effect getBonus() {
+        return effect;
     }
 }

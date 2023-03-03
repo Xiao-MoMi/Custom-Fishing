@@ -17,10 +17,10 @@
 
 package net.momirealms.customfishing.commands.subcmd;
 
+import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.commands.AbstractSubCommand;
 import net.momirealms.customfishing.commands.SubCommand;
-import net.momirealms.customfishing.competition.CompetitionSchedule;
-import net.momirealms.customfishing.manager.CompetitionManager;
+import net.momirealms.customfishing.fishing.competition.CompetitionSchedule;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.command.CommandSender;
@@ -42,22 +42,23 @@ public class CompetitionCommand extends AbstractSubCommand {
             AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.lackArgs);
             return true;
         }
-        if (args.get(0).equals("start")){
-            if (args.size() < 2){
-                AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.lackArgs);
-                return true;
+        switch (args.get(0)) {
+            case "start" -> {
+                if (args.size() < 2) {
+                    AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.lackArgs);
+                    return true;
+                }
+                if (CompetitionSchedule.startCompetition(args.get(1))) AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.forceSuccess);
+                else AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.forceFailure);
             }
-            if (CompetitionSchedule.startCompetition(args.get(1))){
-                AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.forceSuccess);
-            } else {
-                AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.forceFailure);
+            case "end" -> {
+                CompetitionSchedule.endCompetition();
+                AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.forceEnd);
             }
-        } else if (args.get(0).equals("end")) {
-            CompetitionSchedule.endCompetition();
-            AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.forceEnd);
-        } else if (args.get(0).equals("cancel")) {
-            CompetitionSchedule.cancelCompetition();
-            AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.forceCancel);
+            case "cancel" -> {
+                CompetitionSchedule.cancelCompetition();
+                AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.forceCancel);
+            }
         }
         return true;
     }
@@ -79,6 +80,6 @@ public class CompetitionCommand extends AbstractSubCommand {
     }
 
     private List<String> competitions() {
-        return new ArrayList<>(CompetitionManager.competitionsC.keySet());
+        return new ArrayList<>(CustomFishing.getInstance().getCompetitionManager().getCompetitionsC().keySet());
     }
 }

@@ -20,8 +20,8 @@ package net.momirealms.customfishing.integration.block;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanicFactory;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanicListener;
+import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.integration.BlockInterface;
-import net.momirealms.customfishing.manager.TotemManager;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -37,9 +37,9 @@ public class OraxenBlockImpl implements BlockInterface {
 
     @Override
     public void placeBlock(String id, Location location) {
-        String blockID = TotemManager.INVERTED.get(id);
+        String blockID = CustomFishing.getInstance().getTotemManager().getInvertedBlock(id);
         if (blockID == null) {
-            AdventureUtil.consoleMessage(id + " does not exist in totem-blocks.yml");
+            AdventureUtil.consoleMessage(id + " does not exist in default.yml");
             return;
         }
         if (BlockInterface.isVanillaItem(blockID)) {
@@ -66,6 +66,6 @@ public class OraxenBlockImpl implements BlockInterface {
         else {
             id = mechanic.getItemID();
         }
-        return TotemManager.BLOCKS.get(id);
+        return CustomFishing.getInstance().getTotemManager().getBlockID(id);
     }
 }

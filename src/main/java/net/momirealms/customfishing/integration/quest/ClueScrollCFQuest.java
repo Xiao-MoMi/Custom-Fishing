@@ -21,7 +21,7 @@ import com.electro2560.dev.cluescrolls.api.ClueScrollsAPI;
 import com.electro2560.dev.cluescrolls.api.CustomClue;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.event.FishResultEvent;
-import net.momirealms.customfishing.object.fishing.FishResult;
+import net.momirealms.customfishing.fishing.FishResult;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -32,19 +32,19 @@ public class ClueScrollCFQuest implements Listener {
     private final CustomClue commonClue;
 
     public ClueScrollCFQuest() {
-        commonClue = ClueScrollsAPI.getInstance().registerCustomClue(CustomFishing.plugin, "fish");
-        fishClue = ClueScrollsAPI.getInstance().registerCustomClue(CustomFishing.plugin, "catch_fish");
-        mobClue = ClueScrollsAPI.getInstance().registerCustomClue(CustomFishing.plugin, "catch_mob");
+        commonClue = ClueScrollsAPI.getInstance().registerCustomClue(CustomFishing.getInstance(), "fish");
+        fishClue = ClueScrollsAPI.getInstance().registerCustomClue(CustomFishing.getInstance(), "catch_fish");
+        mobClue = ClueScrollsAPI.getInstance().registerCustomClue(CustomFishing.getInstance(), "catch_mob");
     }
 
     @EventHandler
     public void onFish(FishResultEvent event) {
         if (event.isCancelled()) return;
-        if (event.getResult() == FishResult.CAUGHT_LOOT || event.getResult() == FishResult.CAUGHT_VANILLA) {
+        if (event.getResult() == FishResult.CATCH_SPECIAL_ITEM || event.getResult() == FishResult.CATCH_VANILLA_ITEM) {
             fishClue.handle(event.getPlayer(), 1);
             commonClue.handle(event.getPlayer(), 1);
         }
-        if (event.getResult() == FishResult.CAUGHT_MOB) {
+        if (event.getResult() == FishResult.CATCH_MOB) {
             mobClue.handle(event.getPlayer(), 1);
             commonClue.handle(event.getPlayer(), 1);
         }

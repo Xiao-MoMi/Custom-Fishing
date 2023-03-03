@@ -20,88 +20,61 @@ package net.momirealms.customfishing;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.momirealms.biomeapi.BiomeAPI;
 import net.momirealms.customfishing.commands.FishingBagCommand;
-import net.momirealms.customfishing.commands.PluginCommand;
+import net.momirealms.customfishing.commands.MainCommand;
 import net.momirealms.customfishing.commands.SellFishCommand;
 import net.momirealms.customfishing.helper.LibraryLoader;
 import net.momirealms.customfishing.helper.VersionHelper;
 import net.momirealms.customfishing.manager.*;
 import net.momirealms.customfishing.util.AdventureUtil;
-import net.momirealms.customfishing.util.ConfigUtil;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class CustomFishing extends JavaPlugin {
 
-    public static CustomFishing plugin;
-    public static BukkitAudiences adventure;
-    public static ProtocolManager protocolManager;
+    private static CustomFishing plugin;
+    private static BukkitAudiences adventure;
+    private static ProtocolManager protocolManager;
     private IntegrationManager integrationManager;
     private FishingManager fishingManager;
     private CompetitionManager competitionManager;
-    private BonusManager bonusManager;
+    private EffectManager effectManager;
     private LootManager lootManager;
-    private LayoutManager layoutManager;
+    private BarMechanicManager barMechanicManager;
     private BagDataManager bagDataManager;
     private TotemManager totemManager;
     private DataManager dataManager;
     private SellManager sellManager;
+    private OffsetManager offsetManager;
     private VersionHelper versionHelper;
-
-//                              _ooOoo_
-//                             o8888888o
-//                             88" . "88
-//                             (| -_- |)
-//                             O\  =  /O
-//                          ____/`---'\____
-//                        .'  \\|     |//  `.
-//                       /  \\|||  :  |||//  \
-//                      /  _||||| -:- |||||_  \
-//                      |   | \\\  -  /'| |   |
-//                      | \_|  `\`---'//  |_/ |
-//                      \  .-\__ `-. -'__/-.  /
-//                    ___`. .'  /--.--\  `. .'___
-//                 ."" '<  `.___\_<|>_/___.' _> \"".
-//                | | :  `- \`. ;`. _/; .'/ /  .' ; |
-//                \  \ `-.   \_\_`. _.'_/_/  -' _.' /
-//  ================-.`___`-.__\ \___  /__.-'_.'_.-'================
-//                              `=--=-'
-//                   佛祖保佑    永无BUG    永不卡服
 
     @Override
     public void onLoad() {
         plugin = this;
-        LibraryLoader.load("redis.clients","jedis","4.3.1","https://repo.maven.apache.org/maven2/");
-        LibraryLoader.load("org.apache.commons","commons-pool2","2.11.1","https://repo.maven.apache.org/maven2/");
-        LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3","https://repo.maven.apache.org/maven2/");
-        LibraryLoader.load("com.zaxxer","HikariCP","5.0.1","https://repo.maven.apache.org/maven2/");
-        LibraryLoader.load("net.objecthunter","exp4j","0.4.8","https://repo.maven.apache.org/maven2/");
-        LibraryLoader.load("org.mariadb.jdbc","mariadb-java-client","3.0.6","https://repo.maven.apache.org/maven2/");
+        loadLibs();
     }
 
     @Override
     public void onEnable() {
         adventure = BukkitAudiences.create(this);
         protocolManager = ProtocolLibrary.getProtocolManager();
-
-        this.fishingManager = new FishingManager();
-        this.dataManager = new DataManager();
-        this.integrationManager = new IntegrationManager();
-        this.competitionManager = new CompetitionManager();
-        this.bonusManager = new BonusManager();
-        this.lootManager = new LootManager();
-        this.layoutManager = new LayoutManager();
+        this.versionHelper = new VersionHelper(this);
+        this.fishingManager = new FishingManager(this);
+        this.dataManager = new DataManager(this);
+        this.integrationManager = new IntegrationManager(this);
+        this.competitionManager = new CompetitionManager(this);
+        this.effectManager = new EffectManager(this);
+        this.lootManager = new LootManager(this);
+        this.barMechanicManager = new BarMechanicManager(this);
         this.totemManager = new TotemManager(this);
-        this.sellManager = new SellManager();
-        this.bagDataManager = new BagDataManager();
-        this.versionHelper = new VersionHelper();
-
-        reloadConfig();
-        registerCommands();
-        registerQuests();
-
+        this.sellManager = new SellManager(this);
+        this.bagDataManager = new BagDataManager(this);
+        this.offsetManager = new OffsetManager(this);
+        this.reload();
+        this.registerCommands();
+        this.registerQuests();
         AdventureUtil.consoleMessage("[CustomFishing] Plugin Enabled!");
         new Metrics(this, 16648);
     }
@@ -111,40 +84,46 @@ public final class CustomFishing extends JavaPlugin {
         this.fishingManager.unload();
         this.integrationManager.unload();
         this.competitionManager.unload();
-        this.bonusManager.unload();
+        this.effectManager.unload();
         this.lootManager.unload();
-        this.layoutManager.unload();
-        this.bagDataManager.unload();
+        this.barMechanicManager.unload();
         this.bagDataManager.disable();
         this.totemManager.unload();
-        this.sellManager.unload();
         this.sellManager.disable();
         this.dataManager.unload();
-
         if (adventure != null) {
             adventure.close();
-            adventure = null;
         }
     }
 
     private void registerCommands() {
-        PluginCommand pluginCommand = new PluginCommand();
-        Bukkit.getPluginCommand("customfishing").setExecutor(pluginCommand);
-        Bukkit.getPluginCommand("customfishing").setTabCompleter(pluginCommand);
+        MainCommand mainCommand = new MainCommand();
+        PluginCommand cfCommand = Bukkit.getPluginCommand("customfishing");
+        if (cfCommand != null) {
+            cfCommand.setExecutor(mainCommand);
+            cfCommand.setTabCompleter(mainCommand);
+        }
         FishingBagCommand fishingBagCommand = new FishingBagCommand();
-        Bukkit.getPluginCommand("fishingbag").setExecutor(fishingBagCommand);
-        Bukkit.getPluginCommand("fishingbag").setTabCompleter(fishingBagCommand);
+        PluginCommand fbCommand = Bukkit.getPluginCommand("fishingbag");
+        if (fbCommand != null) {
+            fbCommand.setExecutor(fishingBagCommand);
+            fbCommand.setTabCompleter(fishingBagCommand);
+        }
         SellFishCommand sellFishCommand = new SellFishCommand();
-        Bukkit.getPluginCommand("sellfish").setExecutor(sellFishCommand);
-        Bukkit.getPluginCommand("sellfish").setTabCompleter(sellFishCommand);
+        PluginCommand sfCommand = Bukkit.getPluginCommand("sellfish");
+        if (sfCommand != null) {
+            sfCommand.setExecutor(sellFishCommand);
+            sfCommand.setTabCompleter(sellFishCommand);
+        }
     }
 
-    public static CustomFishing getInstance() {
-        return plugin;
-    }
-
-    public void reloadConfig() {
-        ConfigUtil.reload();
+    private void loadLibs() {
+        LibraryLoader.load("redis.clients","jedis","4.3.1","https://repo.maven.apache.org/maven2/");
+        LibraryLoader.load("org.apache.commons","commons-pool2","2.11.1","https://repo.maven.apache.org/maven2/");
+        LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3","https://repo.maven.apache.org/maven2/");
+        LibraryLoader.load("com.zaxxer","HikariCP","5.0.1","https://repo.maven.apache.org/maven2/");
+        LibraryLoader.load("net.objecthunter","exp4j","0.4.8","https://repo.maven.apache.org/maven2/");
+        LibraryLoader.load("org.mariadb.jdbc","mariadb-java-client","3.0.6","https://repo.maven.apache.org/maven2/");
     }
 
     private void registerQuests() {
@@ -163,16 +142,12 @@ public final class CustomFishing extends JavaPlugin {
         return competitionManager;
     }
 
-    public BonusManager getBonusManager() {
-        return bonusManager;
+    public EffectManager getEffectManager() {
+        return effectManager;
     }
 
     public LootManager getLootManager() {
         return lootManager;
-    }
-
-    public LayoutManager getLayoutManager() {
-        return layoutManager;
     }
 
     public TotemManager getTotemManager() {
@@ -193,5 +168,50 @@ public final class CustomFishing extends JavaPlugin {
 
     public VersionHelper getVersionHelper() {
         return versionHelper;
+    }
+
+    public BarMechanicManager getBarMechanicManager() {
+        return barMechanicManager;
+    }
+
+    public OffsetManager getOffsetManager() {
+        return offsetManager;
+    }
+
+    public void reload() {
+        ConfigManager.load();
+        MessageManager.load();
+        getIntegrationManager().unload();
+        getIntegrationManager().load();
+        getBarMechanicManager().unload();
+        getBarMechanicManager().load();
+        getEffectManager().unload();
+        getEffectManager().load();
+        getOffsetManager().unload();
+        getOffsetManager().load();
+        getLootManager().unload();
+        getLootManager().load();
+        getTotemManager().unload();
+        getTotemManager().load();
+        getFishingManager().unload();
+        getFishingManager().load();
+        getSellManager().unload();
+        getSellManager().load();
+        getCompetitionManager().unload();
+        getCompetitionManager().load();
+        getBagDataManager().unload();
+        getBagDataManager().load();
+    }
+
+    public static BukkitAudiences getAdventure() {
+        return adventure;
+    }
+
+    public static ProtocolManager getProtocolManager() {
+        return protocolManager;
+    }
+
+    public static CustomFishing getInstance() {
+        return plugin;
     }
 }

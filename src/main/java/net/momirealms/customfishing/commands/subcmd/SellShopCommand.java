@@ -33,7 +33,7 @@ public class SellShopCommand extends AbstractSubCommand {
         }
 
         player.closeInventory();
-        CustomFishing.plugin.getSellManager().openGuiForPlayer(player);
+        CustomFishing.getInstance().getSellManager().openGuiForPlayer(player);
         return true;
     }
 

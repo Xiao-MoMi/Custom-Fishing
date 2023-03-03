@@ -7,7 +7,7 @@ messages:
   not-online: 'That player is not online!'
   item-not-exist: 'That item does not exist!'
   player-not-exist: 'That player does not exist!'
-  escape: 'It has been too long since I pulled the hook and the fish ran away!'
+  escape: 'It has been too long since the fish is hooked. Oh my god, it escaped!'
   give-item: 'Successfully given players {Player} {Amount}x {Item}.'
   get-item: 'Successfully obtained {Amount}x {Item}.'
   no-console: 'This command cannot be executed from the console!'

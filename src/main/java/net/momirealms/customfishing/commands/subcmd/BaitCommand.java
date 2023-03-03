@@ -17,9 +17,9 @@
 
 package net.momirealms.customfishing.commands.subcmd;
 
+import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.commands.AbstractSubCommand;
 import net.momirealms.customfishing.commands.SubCommand;
-import net.momirealms.customfishing.manager.BonusManager;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;
@@ -45,7 +45,7 @@ public class BaitCommand extends AbstractSubCommand {
         }
         else if (args.get(0).equalsIgnoreCase("get")) {
             if (sender instanceof Player player){
-                if (!BonusManager.BAITITEMS.containsKey(args.get(1))){
+                if (!CustomFishing.getInstance().getEffectManager().getBaitItems().containsKey(args.get(1))) {
                     AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.itemNotExist);
                     return true;
                 }
@@ -74,7 +74,7 @@ public class BaitCommand extends AbstractSubCommand {
                 AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.notOnline.replace("{Player}", args.get(1)));
                 return true;
             }
-            if (!BonusManager.BAITITEMS.containsKey(args.get(2))){
+            if (!CustomFishing.getInstance().getEffectManager().getBaitItems().containsKey(args.get(1))) {
                 AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.itemNotExist);
                 return true;
             }
@@ -138,6 +138,6 @@ public class BaitCommand extends AbstractSubCommand {
     }
 
     private List<String> baits() {
-        return new ArrayList<>(BonusManager.BAITITEMS.keySet());
+        return new ArrayList<>(CustomFishing.getInstance().getEffectManager().getBaitItems().keySet());
     }
 }

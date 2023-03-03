@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.object.action;
 
-import net.momirealms.customfishing.CustomFishing;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +31,7 @@ public record CommandActionImpl(String[] commands, String nick) implements Actio
     @Override
     public void doOn(Player player, @Nullable Player anotherPlayer) {
         for (String command : commands) {
-            CustomFishing.plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(),
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),
                     command.replace("{player}", player.getName())
                             .replace("{x}", String.valueOf(player.getLocation().getBlockX()))
                             .replace("{y}", String.valueOf(player.getLocation().getBlockY()))
