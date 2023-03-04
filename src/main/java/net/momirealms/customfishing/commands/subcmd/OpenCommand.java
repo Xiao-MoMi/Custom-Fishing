@@ -52,9 +52,9 @@ public class OpenCommand extends AbstractSubCommand {
                 return true;
             }
             player.closeInventory();
-            CustomFishing.getInstance().getBagDataManager().openFishingBag(player, player);
+            CustomFishing.getInstance().getBagDataManager().openFishingBag(player, player, false);
         }
-        if (args.size() == 1) {
+        if (args.size() >= 1) {
             if (!sender.hasPermission("customfishing.admin")) {
                 AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.noPerm);
                 return true;
@@ -65,7 +65,7 @@ public class OpenCommand extends AbstractSubCommand {
                 return true;
             }
             player.closeInventory();
-            CustomFishing.getInstance().getBagDataManager().openFishingBag(player, offlinePlayer);
+            CustomFishing.getInstance().getBagDataManager().openFishingBag(player, offlinePlayer, args.size() >= 2 && args.get(1).equals("--force"));
         }
         return true;
     }

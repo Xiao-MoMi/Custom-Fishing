@@ -589,7 +589,7 @@ public class FishingManager extends Function {
         if (itemStack.getType() == Material.AIR) return;
         Entity item = location.getWorld().dropItem(location, itemStack);
         Vector vector = player.getLocation().subtract(location).toVector().multiply(0.1);
-        vector = vector.setY((vector.getY()+0.18) * 1.15);
+        vector = vector.setY((vector.getY()+0.2) * 1.15);
         item.setVelocity(vector);
         if (isDouble) {
             Entity item2 = location.getWorld().dropItem(location, itemStack);
@@ -674,21 +674,25 @@ public class FishingManager extends Function {
     }
 
     private void sendSuccessTitle(Player player, String loot) {
-        AdventureUtil.playerTitle(
-                player,
-                ConfigManager.successTitle[new Random().nextInt(ConfigManager.successTitle.length)]
-                        .replace("{loot}", loot)
-                        .replace("{player}", player.getName()),
-                ConfigManager.successSubTitle[new Random().nextInt(ConfigManager.successSubTitle.length)]
-                        .replace("{loot}", loot)
-                        .replace("{player}", player.getName()),
-                ConfigManager.successFadeIn,
-                ConfigManager.successFadeStay,
-                ConfigManager.successFadeOut
-        );
+        if (!ConfigManager.enableSuccessTitle) return;
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            AdventureUtil.playerTitle(
+                    player,
+                    ConfigManager.successTitle[new Random().nextInt(ConfigManager.successTitle.length)]
+                            .replace("{loot}", loot)
+                            .replace("{player}", player.getName()),
+                    ConfigManager.successSubTitle[new Random().nextInt(ConfigManager.successSubTitle.length)]
+                            .replace("{loot}", loot)
+                            .replace("{player}", player.getName()),
+                    ConfigManager.successFadeIn,
+                    ConfigManager.successFadeStay,
+                    ConfigManager.successFadeOut
+            );
+        }, 8);
     }
 
     private void sendSuccessTitle(Player player, ItemStack itemStack) {
+        if (!ConfigManager.enableSuccessTitle) return;
         String title = ConfigManager.successTitle[new Random().nextInt(ConfigManager.successTitle.length)];
         Component titleComponent = getTitleComponent(itemStack, title);
         String subTitle = ConfigManager.successSubTitle[new Random().nextInt(ConfigManager.successSubTitle.length)];
@@ -734,6 +738,7 @@ public class FishingManager extends Function {
                 action.doOn(player, null);
         }
 
+        if (!ConfigManager.enableFailureTitle) return;
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             AdventureUtil.playerTitle(
                     player,

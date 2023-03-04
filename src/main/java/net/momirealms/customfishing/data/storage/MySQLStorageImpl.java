@@ -49,7 +49,7 @@ public class MySQLStorageImpl implements DataStorageInterface {
     public void initialize() {
         sqlConnection.createNewHikariConfiguration();
         createTableIfNotExist(sqlConnection.getTablePrefix() + "_fishingbag", SqlConstants.SQL_CREATE_BAG_TABLE);
-        createTableIfNotExist(sqlConnection.getTablePrefix() + "_sellcache", SqlConstants.SQL_CREATE_SELL_TABLE);
+        createTableIfNotExist(sqlConnection.getTablePrefix() + "_selldata", SqlConstants.SQL_CREATE_SELL_TABLE);
     }
 
     @Override
@@ -58,21 +58,29 @@ public class MySQLStorageImpl implements DataStorageInterface {
     }
 
     @Override
-    public Inventory loadBagData(OfflinePlayer player) {
+    public Inventory loadBagData(OfflinePlayer player, boolean force) {
         Inventory inventory = null;
-        String sql = String.format(SqlConstants.SQL_SELECT_BAG_BY_UUID, sqlConnection.getTablePrefix() + "_fishingbag");
+        String sql = String.format(SqlConstants.SQL_SELECT_BAG_BY_UUID, sqlConnection.getTablePrefix() + "_" + "fishingbag");
         try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, player.getUniqueId().toString());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                int size = rs.getInt(2);
-                String contents = rs.getString(3);
+                int version = rs.getInt(2);
+                if (!force && version != 0) {
+                    statement.close();
+                    connection.close();
+                    return null;
+                }
+                int size = rs.getInt(3);
+                String contents = rs.getString(4);
                 ItemStack[] itemStacks = InventoryUtil.getInventoryItems(contents);
                 inventory = Bukkit.createInventory(null, size, "{CustomFishing_Bag_" + player.getName() + "}");
                 if (itemStacks != null) inventory.setContents(itemStacks);
+                lockData(player.getUniqueId(), "fishingbag");
             }
             else {
                 inventory = Bukkit.createInventory(null, 9, "{CustomFishing_Bag_" + player.getName() + "}");
+                insertBagData(player.getUniqueId(), InventoryUtil.toBase64(inventory.getContents()));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -81,133 +89,139 @@ public class MySQLStorageImpl implements DataStorageInterface {
     }
 
     @Override
-    public void saveBagData(PlayerBagData playerBagData) {
+    public void saveBagData(PlayerBagData playerBagData, boolean unlock) {
         UUID uuid = playerBagData.getPlayer().getUniqueId();
         Inventory inventory = playerBagData.getInventory();
         String contents = InventoryUtil.toBase64(inventory.getContents());
         if (contents == null) contents = "";
-        if (exists(uuid, SqlConstants.SQL_SELECT_BAG_BY_UUID, "fishingbag")) {
-            updateBagData(uuid, inventory.getSize(), contents);
-        }
-        else {
-            insertBagData(uuid, inventory.getSize(), contents);
-        }
+        updateBagData(uuid, inventory.getSize(), contents, unlock);
     }
 
+    /**
+     * Whether the data is loaded
+     * @param player player
+     * @return success or not
+     */
     @Override
-    public void loadSellCache(Player player) {
-        String sql = String.format(SqlConstants.SQL_SELECT_SELL_BY_UUID, sqlConnection.getTablePrefix() + "_sellcache");
+    public PlayerSellData loadSellData(Player player, boolean force) {
+        PlayerSellData playerSellData = null;
+        String sql = String.format(SqlConstants.SQL_SELECT_SELL_BY_UUID, sqlConnection.getTablePrefix() + "_" + "selldata");
         try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, player.getUniqueId().toString());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                int date = rs.getInt(2);
-                int money = rs.getInt(3);
-                plugin.getSellManager().loadPlayerToCache(player.getUniqueId(), date, money);
+                int version = rs.getInt(2);
+                if (!force && version != 0) {
+                    statement.close();
+                    connection.close();
+                    return null;
+                }
+                int date = rs.getInt(3);
+                int money = rs.getInt(4);
+                playerSellData = new PlayerSellData(money, date);
+                lockData(player.getUniqueId(), "selldata");
             }
             else {
-                plugin.getSellManager().loadPlayerToCache(player.getUniqueId(), Calendar.getInstance().get(Calendar.DATE), 0);
+                Calendar calendar = Calendar.getInstance();
+                playerSellData = new PlayerSellData(calendar.get(Calendar.MONTH) * 100 + calendar.get(Calendar.DATE), 0);
+                insertSellData(player.getUniqueId(), playerSellData.getDate());
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return playerSellData;
     }
 
     @Override
-    public void saveSellCache(UUID uuid, PlayerSellData playerSellData) {
-        if (exists(uuid, SqlConstants.SQL_SELECT_SELL_BY_UUID, "sellcache")) {
-            updateSellData(uuid, playerSellData.getDate(), (int) playerSellData.getMoney());
-        }
-        else {
-            insertSellData(uuid, playerSellData.getDate(), (int) playerSellData.getMoney());
-        }
+    public void saveSellData(UUID uuid, PlayerSellData playerSellData, boolean unlock) {
+        updateSellData(uuid, playerSellData.getDate(), (int) playerSellData.getMoney(), unlock);
     }
 
     private void createTableIfNotExist(String table, String sqlStat) {
         String sql = String.format(sqlStat, table);
-        try (Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.executeUpdate();
         } catch (SQLException ex) {
             AdventureUtil.consoleMessage("[CustomFishing] Failed to create table");
         }
     }
 
-    private void insertBagData(UUID uuid, int size, String contents) {
-        String sql = String.format(SqlConstants.SQL_INSERT_BAG, sqlConnection.getTablePrefix() + "_fishingbag");
-        try (Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+    private void insertBagData(UUID uuid, String contents) {
+        String sql = String.format(SqlConstants.SQL_INSERT_BAG, sqlConnection.getTablePrefix() + "_" + "fishingbag");
+        try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, uuid.toString());
+            statement.setInt(2, 1);
+            statement.setInt(3, 9);
+            statement.setString(4, contents);
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            AdventureUtil.consoleMessage("[CustomFishing] Failed to insert data for " + uuid);
+        }
+    }
+
+    private void insertSellData(UUID uuid, int date) {
+        String sql = String.format(SqlConstants.SQL_INSERT_SELL, sqlConnection.getTablePrefix() + "_" + "selldata");
+        try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, uuid.toString());
+            statement.setInt(2, 1);
+            statement.setInt(3, date);
+            statement.setInt(4, 0);
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            AdventureUtil.consoleMessage("[CustomFishing] Failed to insert data for " + uuid);
+        }
+    }
+
+    private void updateBagData(UUID uuid, int size, String contents, boolean unlock) {
+        String sql = String.format(SqlConstants.SQL_UPDATE_BAG_BY_UUID, sqlConnection.getTablePrefix() + "_" + "fishingbag");
+        try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, unlock ? 0 : 1);
             statement.setInt(2, size);
             statement.setString(3, contents);
+            statement.setString(4, uuid.toString());
             statement.executeUpdate();
         } catch (SQLException ex) {
-            AdventureUtil.consoleMessage("[CustomFishing] Failed to insert data for " + uuid);
+            AdventureUtil.consoleMessage("[CustomFishing] Failed to update data for " + uuid);
         }
     }
 
-    private void insertSellData(UUID uuid, int date, int money) {
-        String sql = String.format(SqlConstants.SQL_INSERT_SELL, sqlConnection.getTablePrefix() + "_sellcache");
-        try (Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, uuid.toString());
+    private void updateSellData(UUID uuid, int date, int money, boolean unlock) {
+        String sql = String.format(SqlConstants.SQL_UPDATE_SELL_BY_UUID, sqlConnection.getTablePrefix() + "_" + "selldata");
+        try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, unlock ? 0 : 1);
             statement.setInt(2, date);
             statement.setInt(3, money);
-            statement.executeUpdate();
-        } catch (SQLException ex) {
-            AdventureUtil.consoleMessage("[CustomFishing] Failed to insert data for " + uuid);
-        }
-    }
-
-    private void updateBagData(UUID uuid, int size, String contents) {
-        String sql = String.format(SqlConstants.SQL_UPDATE_BAG_BY_UUID, sqlConnection.getTablePrefix() + "_fishingbag");
-        try (Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, size);
-            statement.setString(2, contents);
-            statement.setString(3, uuid.toString());
+            statement.setString(4, uuid.toString());
             statement.executeUpdate();
         } catch (SQLException ex) {
             AdventureUtil.consoleMessage("[CustomFishing] Failed to update data for " + uuid);
         }
-    }
-
-    private void updateSellData(UUID uuid, int date, int money) {
-        String sql = String.format(SqlConstants.SQL_UPDATE_SELL_BY_UUID, sqlConnection.getTablePrefix() + "_sellcache");
-        try (Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, date);
-            statement.setInt(2, money);
-            statement.setString(3, uuid.toString());
-            statement.executeUpdate();
-        } catch (SQLException ex) {
-            AdventureUtil.consoleMessage("[CustomFishing] Failed to update data for " + uuid);
-        }
-    }
-
-    public boolean exists(UUID uuid, String sqlStat, String suffix) {
-        String sql = String.format(sqlStat, sqlConnection.getTablePrefix() + "_" + suffix);
-        boolean exist;
-        try (Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, uuid.toString());
-            ResultSet rs = statement.executeQuery();
-            exist = rs.next();
-        } catch (SQLException ex) {
-            AdventureUtil.consoleMessage("[CustomFishing] Failed to select data for " + uuid);
-            return false;
-        }
-        return exist;
     }
 
     public void migrate() {
-        String sql_1 = String.format(SqlConstants.SQL_ALTER_TABLE, sqlConnection.getTablePrefix() + "_fishingbag");
-        try (Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql_1)) {
+        String sql_1 = String.format(SqlConstants.SQL_ALTER_TABLE, sqlConnection.getTablePrefix() + "_" + "fishingbag");
+        try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql_1)) {
             statement.executeUpdate();
             AdventureUtil.consoleMessage("<green>[CustomFishing] 1/2 tables updated");
         } catch (SQLException ex) {
             AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to migrate data");
         }
-        String sql_2 = String.format(SqlConstants.SQL_ALTER_TABLE, sqlConnection.getTablePrefix() + "_sellcache");
-        try (Connection connection = sqlConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql_2)) {
+        String sql_2 = String.format(SqlConstants.SQL_ALTER_TABLE, sqlConnection.getTablePrefix() + "_" + "selldata");
+        try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql_2)) {
             statement.executeUpdate();
             AdventureUtil.consoleMessage("<green>[CustomFishing] 2/2 tables updated");
         } catch (SQLException ex) {
             AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to migrate data");
+        }
+    }
+
+    public void lockData(UUID uuid, String table_suffix) {
+        String sql = String.format(SqlConstants.SQL_LOCK_BY_UUID, sqlConnection.getTablePrefix() + "_" + table_suffix);
+        try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql);) {
+            statement.setString(1, uuid.toString());
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to lock data for " + uuid);
         }
     }
 }

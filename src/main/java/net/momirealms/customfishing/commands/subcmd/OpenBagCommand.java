@@ -35,7 +35,7 @@ public class OpenBagCommand extends AbstractSubCommand {
                 return true;
             }
             viewer.closeInventory();
-            CustomFishing.getInstance().getBagDataManager().openFishingBag(viewer, viewer);
+            CustomFishing.getInstance().getBagDataManager().openFishingBag(viewer, viewer, false);
         }
         return true;
     }

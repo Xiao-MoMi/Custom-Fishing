@@ -29,8 +29,8 @@ public interface DataStorageInterface {
 
     void initialize();
     void disable();
-    Inventory loadBagData(OfflinePlayer player);
-    void saveBagData(PlayerBagData playerBagData);
-    void loadSellCache(Player player);
-    void saveSellCache(UUID uuid, PlayerSellData playerSellData);
+    Inventory loadBagData(OfflinePlayer player, boolean force);
+    void saveBagData(PlayerBagData playerBagData, boolean unlock);
+    PlayerSellData loadSellData(Player player, boolean force);
+    void saveSellData(UUID uuid, PlayerSellData playerSellData, boolean unlock);
 }

@@ -52,7 +52,7 @@ public class FileStorageImpl implements DataStorageInterface {
     }
 
     @Override
-    public Inventory loadBagData(OfflinePlayer player) {
+    public Inventory loadBagData(OfflinePlayer player, boolean force) {
         YamlConfiguration config = ConfigUtil.readData(new File(plugin.getDataFolder(), "fishingbag_data" + File.separator + player.getUniqueId() + ".yml"));
         String contents = config.getString("contents");
         int size = config.getInt("size", 9);
@@ -63,7 +63,7 @@ public class FileStorageImpl implements DataStorageInterface {
     }
 
     @Override
-    public void saveBagData(PlayerBagData playerBagData) {
+    public void saveBagData(PlayerBagData playerBagData, boolean unlock) {
         YamlConfiguration data = new YamlConfiguration();
         Inventory inventory = playerBagData.getInventory();
         String contents = InventoryUtil.toBase64(inventory.getContents());
@@ -78,16 +78,16 @@ public class FileStorageImpl implements DataStorageInterface {
     }
 
     @Override
-    public void loadSellCache(Player player) {
+    public PlayerSellData loadSellData(Player player, boolean force) {
         UUID uuid = player.getUniqueId();
         YamlConfiguration data = ConfigUtil.readData(new File(plugin.getDataFolder(), "sell-data" + File.separator + uuid + ".yml"));
         int date = data.getInt("date");
         double money = data.getDouble("earnings");
-        plugin.getSellManager().loadPlayerToCache(player.getUniqueId(), date, money);
+        return new PlayerSellData(money, date);
     }
 
     @Override
-    public void saveSellCache(UUID uuid, PlayerSellData playerSellData) {
+    public void saveSellData(UUID uuid, PlayerSellData playerSellData, boolean unlock) {
         YamlConfiguration data = new YamlConfiguration();
         data.set("date", playerSellData.getDate());
         data.set("earnings", playerSellData.getMoney());

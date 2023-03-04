@@ -22,7 +22,7 @@ public class ModeTwoGame extends FishingGame {
     public ModeTwoGame(CustomFishing plugin, FishingManager fishingManager, long deadline, Player player, int difficulty, ModeTwoBar modeTwoBar) {
         super(plugin, fishingManager, deadline, player, difficulty, modeTwoBar);
         this.success = false;
-        this.judgement_position = (double) modeTwoBar.getBar_effective_width() / 2;
+        this.judgement_position = (double) (modeTwoBar.getBar_effective_width() - modeTwoBar.getJudgement_area_width()) / 2;
         this.fish_position = 0;
         this.timer = 0;
         this.modeTwoBar = modeTwoBar;
@@ -73,12 +73,13 @@ public class ModeTwoGame extends FishingGame {
         String bar = "<font:" + modeTwoBar.getFont() + ">" + modeTwoBar.getBarImage()
                 + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars((int) (modeTwoBar.getJudgement_area_offset() + judgement_position)) + "</font>"
                 + modeTwoBar.getJudgement_area_image()
-                + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars((int) (modeTwoBar.getBar_effective_width() - judgement_position - modeTwoBar.getJudgement_area_width() + 1)) + "</font>"
-                + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars((int) (-modeTwoBar.getBar_effective_width() - 2 + fish_position)) + "</font>"
+                + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars((int) (modeTwoBar.getBar_effective_width() - judgement_position - modeTwoBar.getJudgement_area_width())) + "</font>"
+                + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars((int) (-modeTwoBar.getBar_effective_width() - 1 + fish_position)) + "</font>"
                 + modeTwoBar.getFish_image()
                 + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars((int) (modeTwoBar.getBar_effective_width() - fish_position - modeTwoBar.getFish_icon_width() + 1)) + "</font>"
                 + "</font>";
         if (hold_time > time_requirement) hold_time = time_requirement;
+        if (hold_time < 0) hold_time = 0;
         AdventureUtil.playerTitle(player,
                 title.replace("{progress}", modeTwoBar.getProgress()[(int) ((hold_time / time_requirement) * modeTwoBar.getProgress().length)])
                 , bar,0,500,0

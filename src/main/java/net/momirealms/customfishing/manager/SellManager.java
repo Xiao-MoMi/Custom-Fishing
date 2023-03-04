@@ -85,16 +85,18 @@ public class SellManager extends Function {
     public static HashMap<Material, Float> vanillaPrices = new HashMap<>();
     public static boolean sellLimitation;
     public static int upperLimit;
-    private final HashMap<Player, Inventory> inventoryCache;
-    private final HashMap<UUID, PlayerSellData> playerCache;
+    private final HashMap<Player, Inventory> inventoryMap;
+    private final HashMap<UUID, PlayerSellData> sellDataMap;
+    private final HashMap<UUID, Integer> triedTimes;
 
     public SellManager(CustomFishing plugin) {
         this.plugin = plugin;
         this.windowPacketListener = new WindowPacketListener(this);
         this.inventoryListener = new InventoryListener(this);
-        this.inventoryCache = new HashMap<>();
+        this.inventoryMap = new HashMap<>();
         this.joinQuitListener = new JoinQuitListener(this);
-        this.playerCache = new HashMap<>();
+        this.sellDataMap = new HashMap<>();
+        this.triedTimes = new HashMap<>();
     }
 
     @Override
@@ -110,10 +112,10 @@ public class SellManager extends Function {
 
     @Override
     public void unload() {
-        for (Player player : this.inventoryCache.keySet()) {
+        for (Player player : this.inventoryMap.keySet()) {
             player.closeInventory();
         }
-        this.inventoryCache.clear();
+        this.inventoryMap.clear();
         CustomFishing.getProtocolManager().removePacketListener(windowPacketListener);
         HandlerList.unregisterAll(inventoryListener);
         HandlerList.unregisterAll(joinQuitListener);
@@ -122,35 +124,50 @@ public class SellManager extends Function {
     public void disable() {
         unload();
         DataStorageInterface dataStorage = plugin.getDataManager().getDataStorageInterface();
-        for (Map.Entry<UUID, PlayerSellData> entry : playerCache.entrySet()) {
-            dataStorage.saveSellCache(entry.getKey(), entry.getValue());
+        for (Map.Entry<UUID, PlayerSellData> entry : sellDataMap.entrySet()) {
+            dataStorage.saveSellData(entry.getKey(), entry.getValue(), true);
         }
-        playerCache.clear();
-    }
-
-    public void loadPlayerToCache(UUID uuid, int date, double money) {
-        playerCache.put(uuid, new PlayerSellData(money, date));
-    }
-
-    public void savePlayerToFile(UUID uuid) {
-        PlayerSellData sellData = playerCache.remove(uuid);
-        if (sellData == null) return;
-        plugin.getDataManager().getDataStorageInterface().saveSellCache(uuid, sellData);
+        sellDataMap.clear();
     }
 
     @Override
     public void onQuit(Player player) {
+        UUID uuid = player.getUniqueId();
+        PlayerSellData sellData = sellDataMap.remove(uuid);
+        if (sellData == null) return;
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            savePlayerToFile(player.getUniqueId());
+            plugin.getDataManager().getDataStorageInterface().saveSellData(uuid, sellData, true);
         });
     }
 
     @Override
     public void onJoin(Player player) {
         Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-            if (player == null || !player.isOnline()) return;
-            plugin.getDataManager().getDataStorageInterface().loadSellCache(player);
+            joinReadData(player, false);
         }, 20);
+    }
+
+    public void joinReadData(Player player, boolean force) {
+        if (player == null || !player.isOnline()) return;
+        PlayerSellData sellData = plugin.getDataManager().getDataStorageInterface().loadSellData(player, force);
+        if (sellData != null) {
+            sellDataMap.put(player.getUniqueId(), sellData);
+        }
+        // If sql exception or data is locked
+        else if (!force) {
+            // can still try to load
+            if (!checkTriedTimes(player.getUniqueId())) {
+                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+                    joinReadData(player, false);
+                }, 20);
+            }
+            // tried 3 times
+            else {
+                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+                    joinReadData(player, true);
+                }, 20);
+            }
+        }
     }
 
     private void loadConfig() {
@@ -223,7 +240,7 @@ public class SellManager extends Function {
 
     public void openGuiForPlayer(Player player) {
         player.closeInventory();
-        if (!playerCache.containsKey(player.getUniqueId())) {
+        if (!sellDataMap.containsKey(player.getUniqueId())) {
             AdventureUtil.consoleMessage("<red>Sell cache is not loaded for player " + player.getName());
             return;
         }
@@ -231,7 +248,7 @@ public class SellManager extends Function {
         for (Map.Entry<Integer, ItemStack> entry : guiItems.entrySet()) {
             inventory.setItem(entry.getKey(), entry.getValue());
         }
-        inventoryCache.put(player, inventory);
+        inventoryMap.put(player, inventory);
         player.openInventory(inventory);
         if (openKey != null) AdventureUtil.playerSound(player, soundSource, openKey, 1, 1);
     }
@@ -239,7 +256,7 @@ public class SellManager extends Function {
     @Override
     public void onOpenInventory(InventoryOpenEvent event) {
         final Player player = (Player) event.getPlayer();
-        Inventory inventory = inventoryCache.get(player);
+        Inventory inventory = inventoryMap.get(player);
         if (inventory == null) return;
         if (inventory == event.getInventory()) {
             for (int slot : functionIconSlots) {
@@ -251,7 +268,7 @@ public class SellManager extends Function {
     @Override
     public void onClickInventory(InventoryClickEvent event) {
         final Player player = (Player) event.getView().getPlayer();
-        Inventory inventory = inventoryCache.get(player);
+        Inventory inventory = inventoryMap.get(player);
         if (inventory == null) return;
         boolean update = true;
         if (inventory == event.getClickedInventory()) {
@@ -265,7 +282,7 @@ public class SellManager extends Function {
 
                 if (totalPrice > 0) {
 
-                    PlayerSellData sellData = playerCache.get(player.getUniqueId());
+                    PlayerSellData sellData = sellDataMap.get(player.getUniqueId());
 
                     if (sellData == null) {
                         inventory.close();
@@ -329,7 +346,7 @@ public class SellManager extends Function {
     @Override
     public void onCloseInventory(InventoryCloseEvent event) {
         final Player player = (Player) event.getPlayer();
-        Inventory inventory = inventoryCache.remove(player);
+        Inventory inventory = inventoryMap.remove(player);
         if (inventory == null) return;
         if (event.getInventory() == inventory) {
             returnItems(getPlayerItems(event.getInventory()), player);
@@ -426,6 +443,22 @@ public class SellManager extends Function {
                             )
                     )
             );
+        }
+    }
+
+    public boolean checkTriedTimes(UUID uuid) {
+        Integer previous = triedTimes.get(uuid);
+        if (previous == null) {
+            triedTimes.put(uuid, 1);
+            return false;
+        }
+        else if (previous > 2) {
+            triedTimes.remove(uuid);
+            return true;
+        }
+        else {
+            triedTimes.put(uuid, previous + 1);
+            return false;
         }
     }
 }

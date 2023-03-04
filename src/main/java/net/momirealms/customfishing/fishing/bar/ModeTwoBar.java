@@ -14,7 +14,7 @@ public class ModeTwoBar extends FishingBar {
     private final int judgement_area_width;
     private final int fish_icon_width;
     private final String[] progress;
-    private double punishment;
+    private final double punishment;
 
     public ModeTwoBar(ConfigurationSection section) {
         super(section);

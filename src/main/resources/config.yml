@@ -108,6 +108,7 @@ mechanics:
 
 titles:
   success:
+    enable: true
     title:
       - '<green>GG!</green>'
       - '<green>Good Job!</green>'
@@ -122,6 +123,7 @@ titles:
       stay: 30
       out: 10
   failure:
+    enable: true
     title:
       - '<red>Be concentrated!</red>'
       - '<red>What a pity!</red>'

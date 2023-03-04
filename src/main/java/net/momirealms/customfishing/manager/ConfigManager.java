@@ -49,11 +49,13 @@ public class ConfigManager {
     public static boolean enableFishingBag;
     public static boolean alwaysFishingBar;
     public static boolean allRodsFishInLava;
+    public static boolean enableSuccessTitle;
     public static String[] successTitle;
     public static String[] successSubTitle;
     public static int successFadeIn;
     public static int successFadeStay;
     public static int successFadeOut;
+    public static boolean enableFailureTitle;
     public static String[] failureTitle;
     public static String[] failureSubTitle;
     public static int failureFadeIn;
@@ -127,6 +129,8 @@ public class ConfigManager {
     }
 
     private static void loadTitle(YamlConfiguration config) {
+        enableSuccessTitle = config.getBoolean("titles.success.enable", true);
+        enableFailureTitle = config.getBoolean("titles.failure.enable", true);
         successTitle = config.getStringList("titles.success.title").toArray(new String[0]);
         successSubTitle = config.getStringList("titles.success.subtitle").toArray(new String[0]);
         successFadeIn = config.getInt("titles.success.fade.in", 10) * 50;

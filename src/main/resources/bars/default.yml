@@ -504,7 +504,7 @@ bar_9:
 ###############
 # Game Type 2 #
 ###############
-pull_bar:
+bar_10:
   game-type: 2
   title: '{progress}'
   subtitle:
@@ -513,11 +513,11 @@ pull_bar:
     judgment-area: '뀍'
     fish: '뀎'
   arguments:
-    punishment: 0.1
+    punishment: 0.2
     bar-effective-area-width: 155
     judgment-area-offset: -160
     judgment-area-width: 33
-    fish-icon-width: 7
+    fish-icon-width: 8
   hold-time-requirements:
     - 3
     - 4
@@ -534,3 +534,37 @@ pull_bar:
     - '<font:customfishing:icons>뀇</font>'
     - '<font:customfishing:icons>뀈</font>'
     - '<font:customfishing:icons>뀉</font>'
+
+
+###############
+# Game Type 3 #
+###############
+bar_11:
+  game-type: 3
+  title: '{strain}'
+  subtitle:
+    font: 'customfishing:default'
+    bar: '뀌'
+    fish: '뀎'
+    struggling-fish:
+      - 1
+      - 2
+      - 1
+      - 3
+  arguments:
+    punishment: 1
+    bar-effective-area-width: 155
+    fish-start-position: 55~105
+    fish-icon-width: 8
+    success-position: 16
+  strain:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+
