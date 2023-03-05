@@ -1,5 +1,5 @@
 rubbish:
-  material: paper
+  material: cod
   show-in-fishfinder: false
   display:
     name: '<gray>Garbage</gray>'
@@ -59,7 +59,7 @@ tropical_fish:
       - minecraft:lukewarm_ocean
       - minecraft:deep_lukewarm_ocean
 tuna_fish:
-  material: paper
+  material: cod
   nick: <gradient:#F0FFFF:#4682B4:#F0FFFF>Tuna Fish</gradient>
   display:
     name: '<gradient:#F0FFFF:#4682B4:#F0FFFF>Tuna Fish</gradient>'
@@ -67,7 +67,7 @@ tuna_fish:
       - '<gray>Tuna is a kind of healthy food.'
       - '<white>size: {size}cm'
   weight: 50
-  custom-model-data: 641
+  custom-model-data: 50001
   action:
     success:
       mending: 5
@@ -87,7 +87,7 @@ tuna_fish:
       - minecraft:warm_ocean
 tuna_fish_silver_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#F0FFFF:#4682B4:#F0FFFF>Tuna Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
     lore:
@@ -95,7 +95,7 @@ tuna_fish_silver_star:
       - '<white>size: {size}cm'
   weight: 20
   group: silver
-  custom-model-data: 666
+  custom-model-data: 50002
   action:
     success:
       mending: 7
@@ -115,7 +115,7 @@ tuna_fish_silver_star:
       - minecraft:warm_ocean
 tuna_fish_golden_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#F0FFFF:#4682B4:#F0FFFF>Tuna Fish</gradient> <#FFD700>(Golden Star)</#FFD700>'
     lore:
@@ -123,7 +123,7 @@ tuna_fish_golden_star:
       - '<white>size: {size}cm'
   weight: 10
   group: gold
-  custom-model-data: 667
+  custom-model-data: 50003
   action:
     success:
       mending: 9
@@ -142,7 +142,7 @@ tuna_fish_golden_star:
       - minecraft:lukewarm_ocean
       - minecraft:warm_ocean
 pike_fish:
-  material: paper
+  material: cod
   nick: <gradient:#F0F8FF:#5F9EA0:#F0F8FF>Pike Fish</gradient>
   display:
     name: '<gradient:#F0F8FF:#5F9EA0:#F0F8FF>Pike Fish</gradient>'
@@ -153,7 +153,7 @@ pike_fish:
       - '<gray>water and inland freshwater lakes'
       - '<white>size: {size}cm'
   weight: 70
-  custom-model-data: 642
+  custom-model-data: 50004
   action:
     success:
       mending: 4
@@ -171,7 +171,7 @@ pike_fish:
       - minecraft:warm_ocean
 pike_fish_silver_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#F0F8FF:#5F9EA0:#F0F8FF>Pike Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
     lore:
@@ -189,7 +189,7 @@ pike_fish_silver_star:
   price:
     base: 40
     bonus: 1.5
-  custom-model-data: 664
+  custom-model-data: 50005
   requirements:
     biome:
       - minecraft:ocean
@@ -200,7 +200,7 @@ pike_fish_silver_star:
       - minecraft:warm_ocean
 pike_fish_golden_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#F0F8FF:#5F9EA0:#F0F8FF>Pike Fish</gradient> <#FFD700>(Golden Star)</#FFD700>'
     lore:
@@ -218,7 +218,7 @@ pike_fish_golden_star:
   price:
     base: 50
     bonus: 1.5
-  custom-model-data: 665
+  custom-model-data: 50006
   requirements:
     biome:
       - minecraft:ocean
@@ -228,7 +228,7 @@ pike_fish_golden_star:
       - minecraft:lukewarm_ocean
       - minecraft:warm_ocean
 gold_fish:
-  material: paper
+  material: cod
   display:
     name: '<gradient:#40E0D0:#FFD700:#F0F8FF>Gold Fish</gradient>'
     lore:
@@ -238,13 +238,13 @@ gold_fish:
   weight: 50
   price:
     base: 70
-  custom-model-data: 643
+  custom-model-data: 50007
   action:
     success:
       mending: 5
 gold_fish_silver_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#40E0D0:#FFD700:#F0F8FF>Gold Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
     lore:
@@ -255,13 +255,13 @@ gold_fish_silver_star:
   price:
     base: 80
   group: silver
-  custom-model-data: 658
+  custom-model-data: 50008
   action:
     success:
       mending: 7
 gold_fish_golden_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#40E0D0:#FFD700:#F0F8FF>Gold Fish</gradient> <#FFD700>(Golden Star)</#FFD700>'
     lore:
@@ -272,12 +272,12 @@ gold_fish_golden_star:
   price:
     base: 100
   group: gold
-  custom-model-data: 659
+  custom-model-data: 50009
   action:
     success:
       mending: 9
 perch_fish:
-  material: paper
+  material: cod
   display:
     name: '<gradient:#BDB76B:#2E8B57:#008B8B>Perch Fish</gradient>'
     lore:
@@ -285,7 +285,7 @@ perch_fish:
       - '<gray>foraging at dusk and early morning'
       - '<white>size: {size}cm'
   weight: 100
-  custom-model-data: 644
+  custom-model-data: 50010
   action:
     success:
       mending: 3
@@ -299,7 +299,7 @@ perch_fish:
       - 17000~19000
 perch_fish_silver_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#BDB76B:#2E8B57:#008B8B>Perch Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
     lore:
@@ -308,7 +308,7 @@ perch_fish_silver_star:
       - '<white>size: {size}cm'
   weight: 30
   group: silver
-  custom-model-data: 660
+  custom-model-data: 50011
   action:
     success:
       mending: 6
@@ -322,7 +322,7 @@ perch_fish_silver_star:
       - 17000~19000
 perch_fish_golden_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#BDB76B:#2E8B57:#008B8B>Perch Fish</gradient> <#FFD700>(Golden Star)</#FFD700>'
     lore:
@@ -331,7 +331,7 @@ perch_fish_golden_star:
       - '<white>size: {size}cm'
   weight: 15
   group: gold
-  custom-model-data: 661
+  custom-model-data: 50012
   action:
     success:
       mending: 12
@@ -344,7 +344,7 @@ perch_fish_golden_star:
       - 0~3000
       - 17000~19000
 mullet_fish:
-  material: paper
+  material: cod
   nick: <gradient:#D4F2E7:#E1FFFF:#D4F2E7>Mullet Fish</gradient>
   display:
     name: '<gradient:#D4F2E7:#E1FFFF:#D4F2E7>Mullet Fish</gradient>'
@@ -353,7 +353,7 @@ mullet_fish:
       - '<gray>to treat spleen and stomach weakness'
       - '<white>size: {size}cm'
   weight: 50
-  custom-model-data: 645
+  custom-model-data: 50013
   action:
     success:
       mending: 6
@@ -363,7 +363,7 @@ mullet_fish:
     bonus: 1.5
 mullet_fish_silver_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#D4F2E7:#E1FFFF:#D4F2E7>Mullet Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
     lore:
@@ -372,7 +372,7 @@ mullet_fish_silver_star:
       - '<white>size: {size}cm'
   weight: 20
   group: silver
-  custom-model-data: 662
+  custom-model-data: 50014
   action:
     success:
       mending: 8
@@ -382,7 +382,7 @@ mullet_fish_silver_star:
     bonus: 1.5
 mullet_fish_golden_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#D4F2E7:#E1FFFF:#D4F2E7>Mullet Fish</gradient> <#FFD700>(Golden Star)</#FFD700>'
     lore:
@@ -391,7 +391,7 @@ mullet_fish_golden_star:
       - '<white>size: {size}cm'
   weight: 10
   group: gold
-  custom-model-data: 663
+  custom-model-data: 50015
   action:
     success:
       mending: 12
@@ -400,7 +400,7 @@ mullet_fish_golden_star:
     base: 50
     bonus: 1.5
 sardine_fish:
-  material: paper
+  material: cod
   nick: <gradient:#E1FFFF:#5F9EA0>Sardine Fish</gradient>
   display:
     name: '<gradient:#E1FFFF:#5F9EA0>Sardine Fish</gradient>'
@@ -409,7 +409,7 @@ sardine_fish:
       - '<gray>Therefore, sardine are also called "smart food"'
       - '<white>size: {size}cm'
   weight: 50
-  custom-model-data: 668
+  custom-model-data: 50016
   action:
     success:
       mending: 7
@@ -419,7 +419,7 @@ sardine_fish:
     bonus: 3.4
 sardine_fish_silver_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#E1FFFF:#5F9EA0>Sardine Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
     lore:
@@ -428,7 +428,7 @@ sardine_fish_silver_star:
       - '<white>size: {size}cm'
   weight: 20
   group: silver
-  custom-model-data: 669
+  custom-model-data: 50017
   action:
     success:
       mending: 9
@@ -438,7 +438,7 @@ sardine_fish_silver_star:
     bonus: 3.4
 sardine_fish_golden_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#E1FFFF:#5F9EA0>Sardine Fish</gradient> <#FFD700>(Golden Star)</#FFD700>'
     lore:
@@ -447,7 +447,7 @@ sardine_fish_golden_star:
       - '<white>size: {size}cm'
   weight: 10
   group: gold
-  custom-model-data: 670
+  custom-model-data: 50018
   action:
     success:
       mending: 14
@@ -456,7 +456,7 @@ sardine_fish_golden_star:
     base: 15
     bonus: 3.4
 carp_fish:
-  material: paper
+  material: cod
   nick: <gradient:#808000:#556B2F>Carp Fish</gradient>
   display:
     name: '<gradient:#808000:#556B2F>Carp Fish</gradient>'
@@ -464,7 +464,7 @@ carp_fish:
       - '<gray>One of the most common edible fish'
       - '<white>size: {size}cm'
   weight: 100
-  custom-model-data: 671
+  custom-model-data: 50019
   action:
     success:
       mending: 6
@@ -485,7 +485,7 @@ carp_fish:
       - minecraft:sunflower_plains
 carp_fish_silver_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#808000:#556B2F>Carp Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
     lore:
@@ -493,7 +493,7 @@ carp_fish_silver_star:
       - '<white>size: {size}cm'
   weight: 20
   group: silver
-  custom-model-data: 672
+  custom-model-data: 50020
   action:
     success:
       mending: 8
@@ -514,7 +514,7 @@ carp_fish_silver_star:
       - minecraft:sunflower_plains
 carp_fish_golden_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#808000:#556B2F>Carp Fish</gradient> <#FFD700>(Golden Star)</#FFD700>'
     lore:
@@ -522,7 +522,7 @@ carp_fish_golden_star:
       - '<white>size: {size}cm'
   weight: 10
   group: gold
-  custom-model-data: 673
+  custom-model-data: 50021
   action:
     success:
       mending: 10
@@ -542,7 +542,7 @@ carp_fish_golden_star:
       - minecraft:old_growth_birch_forest
       - minecraft:sunflower_plains
 cat_fish:
-  material: paper
+  material: cod
   display:
     name: '<#BDB76B>Cat Fish</#BDB76B>'
     lore:
@@ -550,7 +550,7 @@ cat_fish:
       - '<gray>sharp jaw teeth, short intestine and stomach'
       - '<white>size: {size}cm'
   weight: 50
-  custom-model-data: 674
+  custom-model-data: 50022
   action:
     success:
       mending: 6
@@ -571,7 +571,7 @@ cat_fish:
       - minecraft:sunflower_plains
 cat_fish_silver_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<#BDB76B>Cat Fish</#BDB76B> <#F5F5F5>(Silver Star)</#F5F5F5>'
     lore:
@@ -580,7 +580,7 @@ cat_fish_silver_star:
       - '<white>size: {size}cm'
   weight: 20
   group: silver
-  custom-model-data: 675
+  custom-model-data: 50023
   action:
     success:
       mending: 10
@@ -601,7 +601,7 @@ cat_fish_silver_star:
       - minecraft:sunflower_plains
 cat_fish_golden_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<#BDB76B>Cat Fish</#BDB76B> <#FFD700>(Golden Star)</#FFD700>'
     lore:
@@ -610,7 +610,7 @@ cat_fish_golden_star:
       - '<white>size: {size}cm'
   weight: 10
   group: gold
-  custom-model-data: 676
+  custom-model-data: 50024
   action:
     success:
       mending: 13
@@ -630,7 +630,7 @@ cat_fish_golden_star:
       - minecraft:old_growth_birch_forest
       - minecraft:sunflower_plains
 octopus:
-  material: paper
+  material: cod
   nick: '<gradient:#D2691E:#FF6347>Octopus</gradient>'
   display:
     name: '<gradient:#D2691E:#FF6347>Octopus</gradient>'
@@ -639,7 +639,7 @@ octopus:
       - '<gray>People often use pots to catch octopus'
       - '<white>size: {size}cm'
   weight: 50
-  custom-model-data: 677
+  custom-model-data: 50025
   action:
     success:
       mending: 6
@@ -657,7 +657,7 @@ octopus:
       - minecraft:jungle
 octopus_silver_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#D2691E:#FF6347>Octopus</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
     lore:
@@ -666,7 +666,7 @@ octopus_silver_star:
       - '<white>size: {size}cm'
   weight: 20
   group: silver
-  custom-model-data: 678
+  custom-model-data: 50026
   action:
     success:
       mending: 7
@@ -686,7 +686,7 @@ octopus_silver_star:
       - minecraft:warm_ocean
 octopus_golden_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#D2691E:#FF6347>Octopus</gradient> <#FFD700>(Golden Star)</#FFD700>'
     lore:
@@ -695,7 +695,7 @@ octopus_golden_star:
       - '<white>size: {size}cm'
   weight: 10
   group: gold
-  custom-model-data: 679
+  custom-model-data: 50027
   action:
     success:
       mending: 8
@@ -714,7 +714,7 @@ octopus_golden_star:
       - minecraft:lukewarm_ocean
       - minecraft:warm_ocean
 sunfish:
-  material: paper
+  material: cod
   nick: <#F5DEB3>Sunfish</#F5DEB3>
   display:
     name: '<#F5DEB3>Sunfish'
@@ -722,7 +722,7 @@ sunfish:
       - '<gray>It only has one huge head'
       - '<white>size: {size}cm'
   weight: 50
-  custom-model-data: 680
+  custom-model-data: 50028
   action:
     success:
       mending: 9
@@ -732,7 +732,7 @@ sunfish:
     bonus: 1.5
 sunfish_silver_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<#F5DEB3>Sunfish <#F5F5F5>(Silver Star)</#F5F5F5>'
     lore:
@@ -740,7 +740,7 @@ sunfish_silver_star:
       - '<white>size: {size}cm'
   weight: 20
   group: silver
-  custom-model-data: 681
+  custom-model-data: 50029
   action:
     success:
       mending: 10
@@ -750,7 +750,7 @@ sunfish_silver_star:
     bonus: 1.5
 sunfish_golden_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<#F5DEB3>Sunfish <#FFD700>(Golden Star)</#FFD700>'
     lore:
@@ -758,7 +758,7 @@ sunfish_golden_star:
       - '<white>size: {size}cm'
   weight: 10
   group: gold
-  custom-model-data: 682
+  custom-model-data: 50030
   action:
     success:
       mending: 15
@@ -767,7 +767,7 @@ sunfish_golden_star:
     base: 26
     bonus: 1.5
 red_snapper_fish:
-  material: paper
+  material: cod
   display:
     name: '<gradient:#FF4500:#FFA07A:#FF4500>Red Snapper Fish</gradient>'
     lore:
@@ -775,7 +775,7 @@ red_snapper_fish:
       - '<gray>with a male as the "head of the family"'
       - '<white>size: {size}cm'
   weight: 100
-  custom-model-data: 683
+  custom-model-data: 50031
   action:
     success:
       mending: 10
@@ -785,7 +785,7 @@ red_snapper_fish:
     bonus: 2.3
 red_snapper_fish_silver_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#FF4500:#FFA07A:#FF4500>Red Snapper Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>'
     lore:
@@ -794,7 +794,7 @@ red_snapper_fish_silver_star:
       - '<white>size: {size}cm'
   weight: 40
   group: silver
-  custom-model-data: 684
+  custom-model-data: 50032
   action:
     success:
       mending: 12
@@ -804,7 +804,7 @@ red_snapper_fish_silver_star:
     bonus: 2.3
 red_snapper_fish_golden_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<gradient:#FF4500:#FFA07A:#FF4500>Red Snapper Fish</gradient> <#FFD700>(Golden Star)</#FFD700>'
     lore:
@@ -813,7 +813,7 @@ red_snapper_fish_golden_star:
       - '<white>size: {size}cm'
   weight: 20
   group: gold
-  custom-model-data: 685
+  custom-model-data: 50033
   action:
     success:
       mending: 14
@@ -822,7 +822,7 @@ red_snapper_fish_golden_star:
     base: 10
     bonus: 2.3
 salmon_void_fish:
-  material: paper
+  material: cod
   in-lava: true
   nick: <gradient:#800000:#800080>Void Salmon</gradient>
   display:
@@ -830,7 +830,7 @@ salmon_void_fish:
     lore:
       - '<gray>A fish from the hell'
   weight: 50
-  custom-model-data: 686
+  custom-model-data: 50034
   action:
     success:
       mending: 20
@@ -842,14 +842,14 @@ salmon_void_fish:
 salmon_void_fish_silver_star:
   show-in-fishfinder: false
   in-lava: true
-  material: paper
+  material: cod
   display:
     name: '<gradient:#800000:#800080>Void Salmon</gradient><#F5F5F5>(Silver Star)</#F5F5F5>'
     lore:
       - '<gray>A fish from the hell'
   weight: 20
   group: silver
-  custom-model-data: 687
+  custom-model-data: 50035
   action:
     success:
       mending: 24
@@ -861,14 +861,14 @@ salmon_void_fish_silver_star:
 salmon_void_fish_golden_star:
   show-in-fishfinder: false
   in-lava: true
-  material: paper
+  material: cod
   display:
     name: '<gradient:#800000:#800080>Void Salmon</gradient> <#FFD700>(Golden Star)</#FFD700>'
     lore:
       - '<gray>A fish from the hell'
   weight: 10
   group: gold
-  custom-model-data: 688
+  custom-model-data: 50036
   action:
     success:
       mending: 28
@@ -878,7 +878,7 @@ salmon_void_fish_golden_star:
     world:
       - world_nether
 woodskip_fish:
-  material: paper
+  material: cod
   nick: <#CD5C5C>Woodskip Fish</#CD5C5C>
   display:
     name: '<#CD5C5C>Woodskip Fish'
@@ -887,7 +887,7 @@ woodskip_fish:
       - '<gray>live in pools deep in the forest'
       - '<white>size: {size}cm'
   weight: 50
-  custom-model-data: 689
+  custom-model-data: 50037
   action:
     success:
       mending: 6
@@ -903,7 +903,7 @@ woodskip_fish:
       - minecraft:birch_forest
 woodskip_fish_silver_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<#CD5C5C>Woodskip Fish <#F5F5F5>(Silver Star)</#F5F5F5>'
     lore:
@@ -912,7 +912,7 @@ woodskip_fish_silver_star:
       - '<white>size: {size}cm'
   weight: 20
   group: silver
-  custom-model-data: 690
+  custom-model-data: 50038
   action:
     success:
       mending: 9
@@ -928,7 +928,7 @@ woodskip_fish_silver_star:
       - minecraft:birch_forest
 woodskip_fish_golden_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<#CD5C5C>Woodskip Fish <#FFD700>(Golden Star)</#FFD700>'
     lore:
@@ -937,7 +937,7 @@ woodskip_fish_golden_star:
       - '<white>size: {size}cm'
   weight: 10
   group: gold
-  custom-model-data: 691
+  custom-model-data: 50039
   action:
     success:
       mending: 13
@@ -952,7 +952,7 @@ woodskip_fish_golden_star:
       - minecraft:flower_forest
       - minecraft:birch_forest
 sturgeon_fish:
-  material: paper
+  material: cod
   nick: <#48D1CC>Sturgeon Fish</#48D1CC>
   display:
     name: '<#48D1CC>Sturgeon Fish'
@@ -961,7 +961,7 @@ sturgeon_fish:
       - '<gray>population. Females can live up to 150 years'
       - '<white>size: {size}cm'
   weight: 5
-  custom-model-data: 692
+  custom-model-data: 50040
   action:
     success:
       mending: 28
@@ -974,7 +974,7 @@ sturgeon_fish:
       - -64~0
 sturgeon_fish_silver_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<#48D1CC>Sturgeon Fish <#F5F5F5>(Silver Star)</#F5F5F5>'
     lore:
@@ -983,7 +983,7 @@ sturgeon_fish_silver_star:
       - '<white>size: {size}cm'
   weight: 2
   group: silver
-  custom-model-data: 693
+  custom-model-data: 50041
   action:
     success:
       mending: 35
@@ -996,7 +996,7 @@ sturgeon_fish_silver_star:
       - -64~0
 sturgeon_fish_golden_star:
   show-in-fishfinder: false
-  material: paper
+  material: cod
   display:
     name: '<#48D1CC>Sturgeon Fish <#FFD700>(Golden Star)</#FFD700>'
     lore:
@@ -1005,7 +1005,7 @@ sturgeon_fish_golden_star:
       - '<white>size: {size}cm'
   weight: 1
   group: gold
-  custom-model-data: 694
+  custom-model-data: 50042
   action:
     success:
       mending: 42

@@ -22,7 +22,8 @@ rainbow_fish:
   # 比赛中获取的分数
   score: 10
 
-
+  minigame:
+    -
 
   # Basic elements of an item
   # You can use MiniMessage format in name & lore

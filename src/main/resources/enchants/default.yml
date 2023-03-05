@@ -1,4 +1,4 @@
-# CustomFishing does not contain an enchantment system but it's able to read enchantments from NBT tags and customize its bonus!
+# CustomFishing does not contain an enchantment system but it's able to read enchantments from items and customize its bonus!
 # https://www.yuque.com/docs/share/4842ac5f-b5ea-4568-acef-d510f8bc9064?# 《Modifier System》
 minecraft:luck_of_the_sea:
   #levels

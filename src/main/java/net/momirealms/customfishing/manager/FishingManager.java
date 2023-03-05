@@ -30,6 +30,7 @@ import net.momirealms.customfishing.data.PlayerBagData;
 import net.momirealms.customfishing.fishing.*;
 import net.momirealms.customfishing.fishing.bar.FishingBar;
 import net.momirealms.customfishing.fishing.bar.ModeOneBar;
+import net.momirealms.customfishing.fishing.bar.ModeThreeBar;
 import net.momirealms.customfishing.fishing.bar.ModeTwoBar;
 import net.momirealms.customfishing.fishing.competition.Competition;
 import net.momirealms.customfishing.fishing.competition.CompetitionGoal;
@@ -38,6 +39,7 @@ import net.momirealms.customfishing.fishing.loot.Loot;
 import net.momirealms.customfishing.fishing.loot.Mob;
 import net.momirealms.customfishing.fishing.mode.FishingGame;
 import net.momirealms.customfishing.fishing.mode.ModeOneGame;
+import net.momirealms.customfishing.fishing.mode.ModeThreeGame;
 import net.momirealms.customfishing.fishing.mode.ModeTwoGame;
 import net.momirealms.customfishing.fishing.requirements.RequirementInterface;
 import net.momirealms.customfishing.fishing.totem.ActivatedTotem;
@@ -378,14 +380,14 @@ public class FishingManager extends Function {
                     else {
                         vanillaLoot.put(player, new VanillaLoot(item.getItemStack(), event.getExpToDrop()));
                     }
-                    showPlayerBar(player, loot);
+                    showFishingBar(player, loot);
                 }
                 // Is vanilla loot
                 else {
                     if (ConfigManager.alwaysFishingBar) {
                         event.setCancelled(true);
                         vanillaLoot.put(player, new VanillaLoot(item.getItemStack(), event.getExpToDrop()));
-                        showPlayerBar(player, null);
+                        showFishingBar(player, null);
                     }
                     //else vanilla fishing mechanic
                 }
@@ -399,7 +401,7 @@ public class FishingManager extends Function {
                 }
                 else {
                     event.setCancelled(true);
-                    showPlayerBar(player, loot);
+                    showFishingBar(player, loot);
                 }
             }
         }
@@ -505,7 +507,7 @@ public class FishingManager extends Function {
         if (bobberCheckTask != null && bobberCheckTask.isHooked()) {
             Loot loot = nextLoot.get(player);
             if (loot == Loot.EMPTY) return;
-            showPlayerBar(player, loot);
+            showFishingBar(player, loot);
             event.setCancelled(true);
         }
     }
@@ -784,7 +786,7 @@ public class FishingManager extends Function {
         Loot loot = nextLoot.get(player);
         if (loot != null) {
             if (loot == Loot.EMPTY) return;
-            showPlayerBar(player, loot);
+            showFishingBar(player, loot);
         }
     }
 
@@ -922,7 +924,7 @@ public class FishingManager extends Function {
         AdventureUtil.playerMessage(player, stringBuilder.substring(0, stringBuilder.length() - MessageManager.splitChar.length()));
     }
 
-    private void showPlayerBar(Player player, @Nullable Loot loot){
+    private void showFishingBar(Player player, @Nullable Loot loot){
         MiniGameConfig game;
         if (loot != null && loot.getFishingGames() != null) {
             game = loot.getFishingGames()[new Random().nextInt(loot.getFishingGames().length)];
@@ -948,13 +950,18 @@ public class FishingManager extends Function {
         FishingBar fishingBar = game.getRandomBar();
         if (fishingBar instanceof ModeOneBar modeOneBar) {
             ModeOneGame modeOneGame = new ModeOneGame(plugin, this, System.currentTimeMillis() + game.getTime() * 1000L, player, difficult, modeOneBar);
-            modeOneGame.runTaskTimer(CustomFishing.getInstance(), 0, 1);
+            modeOneGame.runTaskTimer(plugin, 0, 1);
             fishingPlayerMap.put(player, modeOneGame);
         }
         else if (fishingBar instanceof ModeTwoBar modeTwoBar) {
             ModeTwoGame modeTwoGame = new ModeTwoGame(plugin, this, System.currentTimeMillis() + game.getTime() * 1000L, player, difficult, modeTwoBar);
-            modeTwoGame.runTaskTimer(CustomFishing.getInstance(), 0, 1);
+            modeTwoGame.runTaskTimer(plugin, 0, 1);
             fishingPlayerMap.put(player, modeTwoGame);
+        }
+        else if (fishingBar instanceof ModeThreeBar modeThreeBar) {
+            ModeThreeGame modeThreeGame = new ModeThreeGame(plugin, this, System.currentTimeMillis() + game.getTime() * 1000L, player, difficult, modeThreeBar);
+            modeThreeGame.runTaskTimer(plugin, 0, 1);
+            fishingPlayerMap.put(player, modeThreeGame);
         }
         if (vanillaLoot.get(player) == null && loot != null){
             for (ActionInterface action : loot.getHookActions()) {

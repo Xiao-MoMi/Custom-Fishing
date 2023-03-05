@@ -41,6 +41,7 @@ public class Item {
     private String head64;
     private List<LeveledEnchantment> enchantment;
     private Map<String, Object> nbt;
+    private String totem;
 
     public Item(Material material, String key) {
         this.material = material;
@@ -78,6 +79,9 @@ public class Item {
         }
         if (section.contains("head64")) {
             this.setHead64(section.getString("head64"));
+        }
+        if (section.contains("totem")) {
+            this.setTotem(section.getString("totem"));
         }
     }
 
@@ -155,6 +159,14 @@ public class Item {
 
     public int getAmount() {
         return amount;
+    }
+
+    public String getTotem() {
+        return totem;
+    }
+
+    public void setTotem(String totem) {
+        this.totem = totem;
     }
 
     public Item cloneWithPrice(double price){

@@ -547,24 +547,24 @@ bar_11:
     bar: '뀌'
     fish: '뀎'
     struggling-fish:
-      - 1
-      - 2
-      - 1
-      - 3
+      - 뀑
+      - 뀐
+      - 뀑
+      - 뀒
   arguments:
-    punishment: 1
-    bar-effective-area-width: 155
-    fish-start-position: 55~105
+    bar-effective-area-width: 218
+    fish-offset: -221
+    fish-start-position: 170
     fish-icon-width: 8
-    success-position: 16
+    success-position: 21
   strain:
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-    - 6
-    - 7
-    - 8
-    - 9
+    - '<font:customfishing:icons>뀑</font>'
+    - '<font:customfishing:icons>뀒</font>'
+    - '<font:customfishing:icons>뀓</font>'
+    - '<font:customfishing:icons>뀔</font>'
+    - '<font:customfishing:icons>뀕</font>'
+    - '<font:customfishing:icons>뀖</font>'
+    - '<font:customfishing:icons>뀗</font>'
+    - '<font:customfishing:icons>뀘</font>'
+    - '<font:customfishing:icons>뀙</font>'
 

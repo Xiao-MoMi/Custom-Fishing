@@ -21,6 +21,7 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.MiniGameConfig;
 import net.momirealms.customfishing.fishing.bar.FishingBar;
 import net.momirealms.customfishing.fishing.bar.ModeOneBar;
+import net.momirealms.customfishing.fishing.bar.ModeThreeBar;
 import net.momirealms.customfishing.fishing.bar.ModeTwoBar;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.util.AdventureUtil;
@@ -77,10 +78,15 @@ public class BarMechanicManager extends Function {
                         AdventureUtil.consoleMessage("<red>[CustomFishing] Bar " + bar + " doesn't exist");
                     }
                 }
+                int[] difficulties = section.getIntegerList("difficulty").stream().mapToInt(Integer::intValue).toArray();
+                if (difficulties.length == 0) {
+                    AdventureUtil.consoleMessage("<red>[CustomFishing] Game " + key + " doesn't have difficulties");
+                    continue;
+                }
                 MiniGameConfig miniGameConfig = new MiniGameConfig(
                         section.getInt("time", 10),
                         fishingBarList.toArray(new FishingBar[0]),
-                        section.getIntegerList("difficulty").stream().mapToInt(Integer::intValue).toArray()
+                        difficulties
                 );
                 miniGames.put(key, miniGameConfig);
             }
@@ -110,6 +116,10 @@ public class BarMechanicManager extends Function {
                 else if (type == 2) {
                     ModeTwoBar modeTwoBar = new ModeTwoBar(section);
                     bars.put(key, modeTwoBar);
+                }
+                else if (type == 3) {
+                    ModeThreeBar modeThreeBar = new ModeThreeBar(section);
+                    bars.put(key, modeThreeBar);
                 }
             }
         }

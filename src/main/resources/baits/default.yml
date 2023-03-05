@@ -5,11 +5,10 @@ simple_bait:
     lore:
       - '<white>Reduce the time spent fishing'
       - '<white>But make it more difficult to catch fish'
-  custom-model-data: 646
-  # Click here to learn how effect system works: https://www.yuque.com/docs/share/4842ac5f-b5ea-4568-acef-d510f8bc9064?# 《Modifier System》
+  custom-model-data: 50001
   effect:
     time: 0.85
-    difficulty: 2
+    difficulty: 1
 
 wild_bait:
   material: paper
@@ -17,7 +16,7 @@ wild_bait:
     name: 'Wild Bait'
     lore:
       - '<white>Decreases fishing time by 30%.'
-  custom-model-data: 696
+  custom-model-data: 50002
   effect:
     time: 0.7
 
@@ -27,7 +26,7 @@ magnet_bait:
     name: '<gray>Magnet Bait'
     lore:
       - '<white>Increases the probability of better loots by 15%.'
-  custom-model-data: 695
+  custom-model-data: 50003
   effect:
     weight-multiply:
       silver: 1.15

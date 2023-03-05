@@ -93,6 +93,9 @@ public class ItemStackUtil {
             NBTListCompound texture = nbtCompound.addCompound("Properties").getCompoundList("textures").addCompound();
             texture.setString("Value", item.getHead64());
         }
+        if (item.getTotem() != null) {
+            nbtItem.setString("Totem", item.getTotem());
+        }
         if (item.getNbt() != null) NBTUtil.setTags(item.getNbt(), nbtItem);
         return nbtItem.getItem();
     }

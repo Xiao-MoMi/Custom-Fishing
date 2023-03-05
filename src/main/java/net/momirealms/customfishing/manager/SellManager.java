@@ -93,10 +93,10 @@ public class SellManager extends Function {
         this.plugin = plugin;
         this.windowPacketListener = new WindowPacketListener(this);
         this.inventoryListener = new InventoryListener(this);
-        this.inventoryMap = new HashMap<>();
         this.joinQuitListener = new JoinQuitListener(this);
         this.sellDataMap = new HashMap<>();
         this.triedTimes = new HashMap<>();
+        this.inventoryMap = new HashMap<>();
     }
 
     @Override
