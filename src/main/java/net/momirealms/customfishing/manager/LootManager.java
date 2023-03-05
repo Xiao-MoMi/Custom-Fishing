@@ -208,7 +208,7 @@ public class LootManager extends Function {
         loot.setRequirements(getRequirements(section));
     }
 
-    private ActionInterface[] getActions(ConfigurationSection section, String nick) {
+    public ActionInterface[] getActions(ConfigurationSection section, String nick) {
         List<ActionInterface> actions = new ArrayList<>();
         if (section != null) {
             for (String action : section.getKeys(false)) {
@@ -243,7 +243,7 @@ public class LootManager extends Function {
         return actions.toArray(new ActionInterface[0]);
     }
 
-    private RequirementInterface[] getRequirements(ConfigurationSection section) {
+    public RequirementInterface[] getRequirements(ConfigurationSection section) {
         List<RequirementInterface> requirements = new ArrayList<>();
         if (section != null) {
             for (String type : section.getKeys(false)) {

@@ -181,7 +181,7 @@ public class TotemManager extends Function {
                     config.getInt(key + ".radius", 16),
                     config.getInt(key + ".duration", 300),
                     Particle.valueOf(config.getString(key + ".particle", "SPELL_MOB").toUpperCase()),
-                    EffectManager.getEffect(config.getConfigurationSection(key + ".modifier"))
+                    EffectManager.getEffect(config.getConfigurationSection(key + ".effect"))
             );
 
             List<ActionInterface> actionList = new ArrayList<>();
@@ -196,26 +196,10 @@ public class TotemManager extends Function {
                     }
                 }
             }
+
             totem.setActivatorActions(actionList.toArray(new ActionInterface[0]));
             totem.setNearbyActions(nearActionList.toArray(new ActionInterface[0]));
-
-            if (config.contains(key + ".requirements")) {
-                List<RequirementInterface> requirements = new ArrayList<>();
-                Objects.requireNonNull(config.getConfigurationSection(key + ".requirements")).getKeys(false).forEach(requirement -> {
-                    switch (requirement){
-                        case "weather" -> requirements.add(new WeatherImpl(config.getStringList(key + ".requirements.weather")));
-                        case "ypos" -> requirements.add(new YPosImpl(config.getStringList(key + ".requirements.ypos")));
-                        case "season" -> requirements.add(new SeasonImpl(config.getStringList(key + ".requirements.season")));
-                        case "world" -> requirements.add(new WorldImpl(config.getStringList(key + ".requirements.world")));
-                        case "biome" -> requirements.add(new BiomeImpl(config.getStringList(key + ".requirements.biome")));
-                        case "permission" -> requirements.add(new PermissionImpl(config.getString(key + ".requirements.permission")));
-                        case "time" -> requirements.add(new TimeImpl(config.getStringList(key + ".requirements.time")));
-                        case "skill-level" -> requirements.add(new SkillLevelImpl(config.getInt(key + ".requirements.skill-level")));
-                        case "papi-condition" -> requirements.add(new CustomPapi(config.getConfigurationSection(key + ".requirements.papi-condition").getValues(false)));
-                    }
-                });
-                totem.setRequirements(requirements.toArray(new RequirementInterface[0]));
-            }
+            totem.setRequirements(plugin.getLootManager().getRequirements(config.getConfigurationSection(key + ".requirements")));
 
             if (config.getBoolean(key + ".hologram.enable", false)) {
                 totem.setHoloText(config.getStringList(key + ".hologram.text").toArray(new String[0]));
@@ -225,7 +209,6 @@ public class TotemManager extends Function {
             if (config.contains(key + ".potion-effects")) {
                 List<PotionEffect> potionEffectList = new ArrayList<>();
                 for (String potion : config.getConfigurationSection(key + ".potion-effects").getKeys(false)) {
-
                     PotionEffectType potionType = PotionEffectType.getByName(potion.toUpperCase());
                     if (potionType == null) continue;
                     int time = 40;

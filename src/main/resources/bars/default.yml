@@ -544,7 +544,7 @@ bar_11:
   title: '{strain}'
   subtitle:
     font: 'customfishing:default'
-    bar: '뀌'
+    bar: '뀓'
     fish: '뀎'
     struggling-fish:
       - 뀑

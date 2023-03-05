@@ -1,6 +1,7 @@
 # Don't change
 config-version: '16'
 
+# Wiki: https://mo-mi.gitbook.io/xiaomomi-plugins/
 # chinese/english/spanish
 lang: english
 

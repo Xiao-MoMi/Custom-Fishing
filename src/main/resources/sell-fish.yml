@@ -1,20 +1,26 @@
+# GUI标题
 container-title: '<gradient:#A52A2A:#800000:#A52A2A>Sell Fish</gradient>'
 
+# GUI行数
 rows: 6
 
 # Limit the money player can earn per day
+# 限制玩家每日的收入上限
 sell-limitation:
   enable: true
   upper-limit: 10000
 
+# 价格公式
 price-formula: '{base} + {bonus} * {size}'
 
+# 原版物品出售价格
 vanilla-item-price:
   COD: 10
   PUFFERFISH: 10
   SALMON: 10
   TROPICAL_FISH: 10
 
+# 音效设置
 sounds:
   open: minecraft:block.chest.open
   close: minecraft:block.chest.close
@@ -23,6 +29,7 @@ sounds:
   confirm: minecraft:entity.villager.trade
   type: player
 
+# 销售时发生的动作
 actions:
   message:
     enable: true
@@ -41,10 +48,11 @@ actions:
     enable: false
     value:
       - 'cmi broadcast {player} earned {money}'
-
+# 功能性的图标
 functional-icons:
   slots:
     - 50
+  # 销售信息图标
   sell:
     material: IRON_BLOCK
     display:
@@ -52,6 +60,7 @@ functional-icons:
       lore:
         - '<font:uniform><gradient:#E6E6FA:#48D1CC:#E6E6FA>You will gain {money}$</gradient></font>'
     custom-model-data: 1
+  # 拒绝图标
   deny:
     material: REDSTONE_BLOCK
     display:
@@ -60,6 +69,7 @@ functional-icons:
         - '<font:uniform><gradient:#E6E6FA:red:#E6E6FA>Nothing to sell!</gradient></font>'
     custom-model-data: 1
 
+# 装饰性的图标
 decorative-icons:
   glass-pane:
     material: BLACK_STAINED_GLASS_PANE

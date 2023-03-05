@@ -873,6 +873,14 @@ public class FishingManager extends Function {
         if (blockID == null) return;
         List<TotemConfig> totemList = plugin.getTotemManager().getTotemsByCoreID(blockID);
         if (totemList == null || !totemList.contains(totem)) return;
+
+        FishingCondition fishingCondition = new FishingCondition(block.getLocation(), player);
+        for (RequirementInterface requirement : totem.getRequirements()) {
+            if (!requirement.isConditionMet(fishingCondition)) {
+                return;
+            }
+        }
+
         Location coreLoc = block.getLocation();
         int direction = plugin.getTotemManager().checkLocationModel(totem.getOriginalModel(), coreLoc);
         if (direction == 0) return;

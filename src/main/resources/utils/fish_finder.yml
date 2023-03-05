@@ -1,7 +1,7 @@
 fishfinder:
-  material: COMPASS
+  material: PAPER
   display:
     name: '<gray>Fish Finder'
     lore:
       - '<white>Right click to see what fish can be caught in this place!'
-  custom-model-data: 50001
+  custom-model-data: 50000

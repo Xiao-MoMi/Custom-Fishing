@@ -135,8 +135,8 @@ public class EffectManager extends Function {
                 if (baitSection == null) continue;
                 Item item = new Item(baitSection, key);
                 baitItems.put(key, ItemStackUtil.addIdentifier(ItemStackUtil.getFromItem(item), "bait", key));
-                if (config.contains(key + ".effect")) {
-                    baitEffects.put(key, getEffect(config.getConfigurationSection(key + ".effect")));
+                if (baitSection.contains("effect")) {
+                    baitEffects.put(key, getEffect(baitSection.getConfigurationSection("effect")));
                 }
             }
         }
@@ -160,8 +160,8 @@ public class EffectManager extends Function {
                 if (rodSection == null) continue;
                 Item item = new Item(rodSection, key);
                 rodItems.put(key, ItemStackUtil.addIdentifier(ItemStackUtil.getFromItem(item), "rod", key));
-                if (config.contains(key + ".effect")) {
-                    rodEffects.put(key, getEffect(config.getConfigurationSection(key + ".effect")));
+                if (rodSection.contains("effect")) {
+                    rodEffects.put(key, getEffect(rodSection.getConfigurationSection("effect")));
                 }
             }
         }
