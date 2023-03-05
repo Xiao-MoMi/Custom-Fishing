@@ -21,9 +21,10 @@ rainbow_fish:
   # The score to get in competition
   # 比赛中获取的分数
   score: 10
-
-  minigame:
-    -
+  # Specify the fish's mini-games
+  # 指定鱼的小游戏
+  mini-game:
+    - rainbow
 
   # Basic elements of an item
   # You can use MiniMessage format in name & lore
@@ -36,6 +37,8 @@ rainbow_fish:
       - '<gray>This is a <font:uniform>rainbow fish!'
       - '<gray>It is {size}cm long!'
   custom-model-data: 1
+  # 数量
+  amount: 1
 
   # unbreakable
   # 不可破坏
@@ -46,7 +49,7 @@ rainbow_fish:
   size: 10~200
 
   # Optional
-  # The base price and size bonus, and you can customize price formula in sell-fish-gui.yml
+  # The base price and size bonus, and you can customize price formula in sell-fish.yml
   price:
     base: 50
     bonus: 0.3
@@ -64,9 +67,10 @@ rainbow_fish:
   action:
     consume:
       potion-effect:
-        type: blindness
-        amplifier: 1
-        duration: 200
+        effect_1:
+          type: blindness
+          amplifier: 1
+          duration: 200
     success:
       message:
         - 'You got a {loot} lol！'
@@ -78,6 +82,11 @@ rainbow_fish:
       mending: 5
       # Fishing Skill xp (requires skill plugin hook)
       skill-xp: 100
+      sound:
+        source: player
+        key: 'minecraft:block.amethyst_block.break'
+        volume: 1
+        pitch: 1
     failure:
       message:
         - 'The fish escaped！'

@@ -28,5 +28,6 @@ public class SqlConstants {
     public static final String SQL_SELECT_BAG_BY_UUID = "SELECT * FROM `%s` WHERE `uuid` = ?";
     public static final String SQL_SELECT_SELL_BY_UUID = "SELECT * FROM `%s` WHERE `uuid` = ?";
     public static final String SQL_LOCK_BY_UUID = "UPDATE `%s` SET `version` = 1 WHERE `uuid` = ?";
-    public static final String SQL_ALTER_TABLE = "ALTER TABLE `%s` ADD COLUMN `version` INT NOT NULL DEFAULT `0` AFTER `uuid`";
+    public static final String SQL_ALTER_TABLE = "ALTER TABLE `%s` ADD COLUMN `version` INT NOT NULL AFTER `uuid`";
+    public static final String SQL_DROP_TABLE = "DROP TABLE `%s`";
 }

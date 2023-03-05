@@ -22,6 +22,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 
 public class InventoryListener implements Listener {
@@ -45,5 +46,10 @@ public class InventoryListener implements Listener {
     @EventHandler
     public void onClose(InventoryCloseEvent event){
         function.onCloseInventory(event);
+    }
+
+    @EventHandler
+    public void onDrag(InventoryDragEvent event) {
+        function.onDragInventory(event);
     }
 }

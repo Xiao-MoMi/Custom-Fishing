@@ -123,7 +123,7 @@ public class MySQLStorageImpl implements DataStorageInterface {
             }
             else {
                 Calendar calendar = Calendar.getInstance();
-                playerSellData = new PlayerSellData(calendar.get(Calendar.MONTH) * 100 + calendar.get(Calendar.DATE), 0);
+                playerSellData = new PlayerSellData(0, (calendar.get(Calendar.MONTH) +1)* 100 + calendar.get(Calendar.DATE));
                 insertSellData(player.getUniqueId(), playerSellData.getDate());
             }
         } catch (SQLException e) {
@@ -202,15 +202,17 @@ public class MySQLStorageImpl implements DataStorageInterface {
         String sql_1 = String.format(SqlConstants.SQL_ALTER_TABLE, sqlConnection.getTablePrefix() + "_" + "fishingbag");
         try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql_1)) {
             statement.executeUpdate();
-            AdventureUtil.consoleMessage("<green>[CustomFishing] 1/2 tables updated");
+            AdventureUtil.consoleMessage("<green>[CustomFishing] Tables updated");
         } catch (SQLException ex) {
+            AdventureUtil.consoleMessage(ex.getSQLState());
             AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to migrate data");
         }
-        String sql_2 = String.format(SqlConstants.SQL_ALTER_TABLE, sqlConnection.getTablePrefix() + "_" + "selldata");
+        String sql_2 = String.format(SqlConstants.SQL_DROP_TABLE, sqlConnection.getTablePrefix() + "_" + "sellcache");
         try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql_2)) {
             statement.executeUpdate();
-            AdventureUtil.consoleMessage("<green>[CustomFishing] 2/2 tables updated");
+            AdventureUtil.consoleMessage("<green>[CustomFishing] Outdated table deleted");
         } catch (SQLException ex) {
+            AdventureUtil.consoleMessage(ex.getSQLState());
             AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to migrate data");
         }
     }

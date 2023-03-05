@@ -17,7 +17,7 @@ worlds:
 # Mechanic settings
 mechanics:
   # Add custom nbt tags to the loots so plugin could identify
-  # Disable this will lose the trigger actions when eating fish
+  # Disable this will be unable to trigger the actions when eating fish
   # 为每个战利品增加特殊的CustomFishing NBT标签以被插件识别
   # 禁用此项目将会导致吃食物触发的动作失效
   add-custom-fishing-tags-to-loots: true

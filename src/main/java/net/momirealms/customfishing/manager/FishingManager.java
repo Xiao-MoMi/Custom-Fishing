@@ -837,8 +837,8 @@ public class FishingManager extends Function {
                     available.add(loot);
                 }
                 else {
-                    for (RequirementInterface requirement : requirements){
-                        if (!requirement.isConditionMet(fishingCondition)){
+                    for (RequirementInterface requirement : requirements) {
+                        if (!requirement.isConditionMet(fishingCondition)) {
                             continue outer;
                         }
                     }

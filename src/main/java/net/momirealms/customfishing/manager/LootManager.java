@@ -115,6 +115,10 @@ public class LootManager extends Function {
                                 mobSection.getDouble("vector.vertical",1.3)
                         )
                 );
+
+                setActions(mobSection, loot);
+                setRequirements(mobSection.getConfigurationSection("requirements"), loot);
+
                 if (mobSection.getBoolean("in-lava", false)) lavaLoots.put(key, loot);
                 else waterLoots.put(key, loot);
             }
@@ -221,15 +225,17 @@ public class LootManager extends Function {
                             (float) section.getDouble(action + ".pitch")
                     ));
                     case "potion-effect" -> {
-                        PotionEffectType type = PotionEffectType.getByName(section.getString(action + ".type", "BLINDNESS").toUpperCase());
-                        if (type == null) AdventureUtil.consoleMessage("<red>[CustomFishing] Potion effect " + section.getString(action + ".type", "BLINDNESS") + " doesn't exists");
-                        actions.add(new PotionEffectImpl(
-                                new PotionEffect(
-                                        type == null ? PotionEffectType.LUCK : type,
-                                        section.getInt(action + ".duration"),
-                                        section.getInt(action + ".amplifier")
-                                )
-                        ));
+                        List<PotionEffect> potionEffectList = new ArrayList<>();
+                        for (String key : section.getConfigurationSection(action).getKeys(false)) {
+                            PotionEffectType type = PotionEffectType.getByName(section.getString(action + "." + key + ".type", "BLINDNESS").toUpperCase());
+                            if (type == null) AdventureUtil.consoleMessage("<red>[CustomFishing] Potion effect " + section.getString(action + "." + key + ".type", "BLINDNESS") + " doesn't exists");
+                            potionEffectList.add(new PotionEffect(
+                                    type == null ? PotionEffectType.LUCK : type,
+                                    section.getInt(action + "." + key + ".duration"),
+                                    section.getInt(action + "." + key + ".amplifier")
+                            ));
+                        }
+                        actions.add(new PotionEffectImpl(potionEffectList.toArray(new PotionEffect[0])));
                     }
                 }
             }
@@ -242,6 +248,7 @@ public class LootManager extends Function {
         if (section != null) {
             for (String type : section.getKeys(false)) {
                 switch (type) {
+                    case "biome" -> requirements.add(new BiomeImpl(section.getStringList(type)));
                     case "weather" -> requirements.add(new WeatherImpl(section.getStringList(type)));
                     case "ypos" -> requirements.add(new YPosImpl(section.getStringList(type)));
                     case "season" -> requirements.add(new SeasonImpl(section.getStringList(type)));

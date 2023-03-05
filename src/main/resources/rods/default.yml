@@ -14,7 +14,7 @@ nature_fishing_cane:
     lore:
       - '<gray>The wild power makes it easier to be hooked'
       - '<gray>But also increase the difficulty'
-  custom-model-data: 2
+  custom-model-data: 50001
   modifier:
     time: 0.9
     difficulty: 1
@@ -24,7 +24,7 @@ silver_fishing_rod:
     name: 'Silver Fishing Rod'
     lore:
       - '<gray>Increase the chance of getting silver quality fish'
-  custom-model-data: 3
+  custom-model-data: 50002
   modifier:
     weight-add:
       silver: 20
@@ -35,7 +35,7 @@ golden_fishing_rod:
     name: 'Golden Fishing Rod'
     lore:
       - '<gray>Increase the chance of getting golden quality fish'
-  custom-model-data: 4
+  custom-model-data: 50003
   modifier:
     weight-add:
       silver: -20
@@ -46,7 +46,7 @@ star_fishing_rod:
     name: 'Star Fishing Rod'
     lore:
       - '<gray>Grants you the ability to fish in the lava'
-  custom-model-data: 5
+  custom-model-data: 50004
   modifier:
     weight-add:
       silver: 20

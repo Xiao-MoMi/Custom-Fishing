@@ -49,6 +49,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -171,7 +172,7 @@ public class SellManager extends Function {
     }
 
     private void loadConfig() {
-        YamlConfiguration config = ConfigUtil.getConfig("sell-fish-gui.yml");
+        YamlConfiguration config = ConfigUtil.getConfig("sell-fish.yml");
         formula = config.getString("price-formula", "{base} + {bonus} * {size}");
         sellLimitation = config.getBoolean("sell-limitation.enable", false);
         upperLimit = config.getInt("sell-limitation.upper-limit", 10000);
@@ -203,9 +204,15 @@ public class SellManager extends Function {
         if (sellIconSection != null) {
             sellIcon = new Item(sellIconSection, "sellIcon");
         }
+        else {
+            AdventureUtil.consoleMessage("<red>[CustomFishing] Sell icon is missing");
+        }
         ConfigurationSection denyIconSection = config.getConfigurationSection("functional-icons.deny");
         if (denyIconSection != null) {
             denyIcon = new Item(denyIconSection, "denyIcon");
+        }
+        else {
+            AdventureUtil.consoleMessage("<red>[CustomFishing] Deny icon is missing");
         }
 
         for (int slot : config.getIntegerList("functional-icons.slots")) {
@@ -293,7 +300,7 @@ public class SellManager extends Function {
                     }
 
                     Calendar calendar = Calendar.getInstance();
-                    int currentDate = calendar.get(Calendar.DATE);
+                    int currentDate = (calendar.get(Calendar.MONTH) + 1) * 100 + calendar.get(Calendar.DATE);
                     if (currentDate != sellData.getDate()) {
                         sellData.setDate(currentDate);
                         sellData.setMoney(0);
@@ -344,6 +351,19 @@ public class SellManager extends Function {
     }
 
     @Override
+    public void onDragInventory(InventoryDragEvent event) {
+        final Player player = (Player) event.getView().getPlayer();
+        Inventory inventory = inventoryMap.get(player);
+        if (inventory == null) return;
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            ItemStack icon = ItemStackUtil.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory))));
+            for (int slot : functionIconSlots) {
+                inventory.setItem(slot, icon);
+            }
+        });
+    }
+
+    @Override
     public void onCloseInventory(InventoryCloseEvent event) {
         final Player player = (Player) event.getPlayer();
         Inventory inventory = inventoryMap.remove(player);
@@ -374,7 +394,7 @@ public class SellManager extends Function {
 
     private boolean hasEmptySlot(PlayerInventory inventory) {
         for (ItemStack itemStack : inventory.getStorageContents()) {
-            if (itemStack.getType() == Material.AIR) return true;
+            if (itemStack == null || itemStack.getType() == Material.AIR) return true;
         }
         return false;
     }

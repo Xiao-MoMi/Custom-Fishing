@@ -46,6 +46,7 @@ public class Item {
     public Item(Material material, String key) {
         this.material = material;
         this.key = key;
+        this.amount = 1;
     }
 
     public Item(ConfigurationSection section, String key) {

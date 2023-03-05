@@ -24,17 +24,3 @@ skeletalknight:
       - thunder
     world:
       - world
-
-piranha:
-  enable: false
-  mobID: piranha
-  name: 'Piranha'
-  weight: 50
-  time: 1000000
-  difficulty: 1-1
-  action:
-    success:
-      command:
-        - 'say {player} Caught a piranha!'
-  vector:
-    vertical: 2

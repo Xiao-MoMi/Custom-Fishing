@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -65,5 +66,8 @@ public class Function {
     }
 
     public void onConsumeItem(PlayerItemConsumeEvent event) {
+    }
+
+    public void onDragInventory(InventoryDragEvent event) {
     }
 }

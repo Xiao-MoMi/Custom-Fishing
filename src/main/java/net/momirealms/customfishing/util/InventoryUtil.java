@@ -20,6 +20,7 @@ package net.momirealms.customfishing.util;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
@@ -34,8 +35,7 @@ public class InventoryUtil {
      * @param contents items
      * @return base64
      */
-    @Nullable
-    public static String toBase64(ItemStack[] contents) {
+    public static @NotNull String toBase64(ItemStack[] contents) {
         boolean convert = false;
         for (ItemStack content : contents) {
             if (content != null) {
@@ -58,7 +58,7 @@ public class InventoryUtil {
                 throw new RuntimeException("[CustomFishing] Data save error", e);
             }
         }
-        return null;
+        return "";
     }
 
     /**

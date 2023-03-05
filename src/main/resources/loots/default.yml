@@ -6,7 +6,7 @@ rubbish:
     lore:
       - '<gray>Maybe we need to protect the environment...'
   weight: 130
-  custom-model-data: 640
+  custom-model-data: 50000
   action:
     success:
       mending: 3
