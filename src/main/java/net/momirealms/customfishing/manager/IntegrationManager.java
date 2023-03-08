@@ -63,7 +63,7 @@ public class IntegrationManager extends Function {
     public IntegrationManager(CustomFishing plugin) {
         this.plugin = plugin;
         this.pluginManager = Bukkit.getPluginManager();
-        this.placeholderManager = new PlaceholderManager();
+        this.placeholderManager = new PlaceholderManager(plugin);
         this.blockInterface = new VanillaBlockImpl();
     }
 

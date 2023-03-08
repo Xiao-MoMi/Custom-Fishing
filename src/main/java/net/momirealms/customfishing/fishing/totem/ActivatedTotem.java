@@ -35,7 +35,8 @@ public class ActivatedTotem extends BukkitRunnable {
     public static int id = 127616121;
     private int timer;
     private final TotemConfig totem;
-    private final Location location;
+    private final Location bottomLoc;
+    private final Location coreLoc;
     private final Set<Player> nearbyPlayerSet;
     private final int[] entityID;
     private final boolean hasHolo;
@@ -43,17 +44,18 @@ public class ActivatedTotem extends BukkitRunnable {
     private final FishingManager fishingManager;
     private final int direction;
 
-    public ActivatedTotem(Location location, TotemConfig totem, FishingManager fishingManager, int direction) {
+    public ActivatedTotem(Location coreLoc, TotemConfig totem, FishingManager fishingManager, int direction) {
         this.fishingManager = fishingManager;
         this.totem = totem;
-        this.location = location;
+        this.coreLoc = coreLoc;
+        this.bottomLoc = coreLoc.clone().subtract(0, totem.getOriginalModel().getCorePos().getY(), 0);
         this.entityID = new int[totem.getHoloText().length];
         for (int i = 0; i < totem.getHoloText().length; i++) {
             this.entityID[i] = id++;
         }
         this.hasHolo = totem.getHoloText() != null;
         this.nearbyPlayerSet = Collections.synchronizedSet(new HashSet<>());
-        this.particleTimerTask = new TotemParticle(location, totem.getRadius(), totem.getParticle());
+        this.particleTimerTask = new TotemParticle(bottomLoc, totem.getRadius(), totem.getParticle());
         this.particleTimerTask.runTaskTimerAsynchronously(CustomFishing.getInstance(), 0, 4);
         this.direction = direction;
     }
@@ -68,7 +70,7 @@ public class ActivatedTotem extends BukkitRunnable {
         }
 
         HashSet<Player> temp = new HashSet<>(nearbyPlayerSet);
-        Collection<Player> nearbyPlayers = location.getNearbyPlayers(totem.getRadius());
+        Collection<Player> nearbyPlayers = bottomLoc.getNearbyPlayers(totem.getRadius());
 
         for (Player player : temp) {
             if (nearbyPlayers.remove(player)) {
@@ -95,7 +97,7 @@ public class ActivatedTotem extends BukkitRunnable {
         for (Player newComer : nearbyPlayers) {
             if (hasHolo) {
                 for (int i = 0; i < entityID.length; i++) {
-                    CustomFishing.getProtocolManager().sendServerPacket(newComer, ArmorStandUtil.getSpawnPacket(entityID[i], location.clone().add(0.5, totem.getHoloOffset() + i * 0.4, 0.5)));
+                    CustomFishing.getProtocolManager().sendServerPacket(newComer, ArmorStandUtil.getSpawnPacket(entityID[i], bottomLoc.clone().add(0.5, totem.getHoloOffset() + i * 0.4, 0.5)));
                     CustomFishing.getProtocolManager().sendServerPacket(newComer, ArmorStandUtil.getMetaPacket(entityID[i],
                             totem.getHoloText()[entityID.length - 1 - i].replace("{time}", String.valueOf(totem.getDuration() - timer))
                                                     .replace("{max_time}", String.valueOf(totem.getDuration()))
@@ -118,8 +120,8 @@ public class ActivatedTotem extends BukkitRunnable {
     public void stop() {
         this.particleTimerTask.cancel();
         cancel();
-        fishingManager.removeTotem(location);
-        CustomFishing.getInstance().getTotemManager().clearBreakDetectCache(totem.getFinalModel(), location, direction);
+        fishingManager.removeTotem(coreLoc);
+        CustomFishing.getInstance().getTotemManager().clearBreakDetectCache(totem.getFinalModel(), bottomLoc, direction);
         if (hasHolo) {
             for (Player player : nearbyPlayerSet) {
                 for (int j : entityID) {

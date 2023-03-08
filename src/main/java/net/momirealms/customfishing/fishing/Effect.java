@@ -35,10 +35,6 @@ public class Effect {
     private boolean canLavaFishing;
     private boolean hasSpecialRod;
 
-    public double getSizeMultiplier() {
-        return sizeMultiplier + 1;
-    }
-
     public void setSizeMultiplier(double sizeMultiplier) {
         this.sizeMultiplier = sizeMultiplier;
     }
@@ -113,13 +109,17 @@ public class Effect {
         if (anotherEffect.getTimeModifier() != 0) this.timeModifier += (anotherEffect.getTimeModifier() - 1);
         if (anotherEffect.getDoubleLootChance() != 0) this.doubleLootChance += anotherEffect.getDoubleLootChance();
         if (anotherEffect.getDifficulty() != 0) this.difficulty += anotherEffect.getDifficulty();
-        if (anotherEffect.getScoreMultiplier() != 0) this.scoreMultiplier += anotherEffect.getScoreMultiplier();
-        if (anotherEffect.getSizeMultiplier() != 0) this.sizeMultiplier += anotherEffect.getSizeMultiplier();
+        if (anotherEffect.getScoreMultiplier() != 0) this.scoreMultiplier += (anotherEffect.getScoreMultiplier() - 1);
+        if (anotherEffect.getSizeMultiplier() != 0) this.sizeMultiplier += (anotherEffect.getSizeMultiplier() - 1);
         if (anotherEffect.canLavaFishing()) this.canLavaFishing = true;
     }
 
     public double getScoreMultiplier() {
-        return scoreMultiplier + 1;
+        return scoreMultiplier;
+    }
+
+    public double getSizeMultiplier() {
+        return sizeMultiplier;
     }
 
     public boolean hasSpecialRod() {

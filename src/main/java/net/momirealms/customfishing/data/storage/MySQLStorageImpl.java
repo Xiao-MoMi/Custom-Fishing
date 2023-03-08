@@ -18,13 +18,11 @@
 package net.momirealms.customfishing.data.storage;
 
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.data.PlayerBagData;
 import net.momirealms.customfishing.data.PlayerSellData;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.InventoryUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -58,11 +56,12 @@ public class MySQLStorageImpl implements DataStorageInterface {
     }
 
     @Override
-    public Inventory loadBagData(OfflinePlayer player, boolean force) {
+    public Inventory loadBagData(UUID uuid, boolean force) {
         Inventory inventory = null;
         String sql = String.format(SqlConstants.SQL_SELECT_BAG_BY_UUID, sqlConnection.getTablePrefix() + "_" + "fishingbag");
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
         try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, player.getUniqueId().toString());
+            statement.setString(1, uuid.toString());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 int version = rs.getInt(2);
@@ -74,13 +73,13 @@ public class MySQLStorageImpl implements DataStorageInterface {
                 int size = rs.getInt(3);
                 String contents = rs.getString(4);
                 ItemStack[] itemStacks = InventoryUtil.getInventoryItems(contents);
-                inventory = Bukkit.createInventory(null, size, "{CustomFishing_Bag_" + player.getName() + "}");
+                inventory = Bukkit.createInventory(null, size, "{CustomFishing_Bag_" + offlinePlayer.getName() + "}");
                 if (itemStacks != null) inventory.setContents(itemStacks);
-                lockData(player.getUniqueId(), "fishingbag");
+                lockData(uuid, "fishingbag");
             }
             else {
-                inventory = Bukkit.createInventory(null, 9, "{CustomFishing_Bag_" + player.getName() + "}");
-                insertBagData(player.getUniqueId(), InventoryUtil.toBase64(inventory.getContents()));
+                inventory = Bukkit.createInventory(null, 9, "{CustomFishing_Bag_" + offlinePlayer.getName() + "}");
+                insertBagData(uuid, InventoryUtil.toBase64(inventory.getContents()));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -89,25 +88,17 @@ public class MySQLStorageImpl implements DataStorageInterface {
     }
 
     @Override
-    public void saveBagData(PlayerBagData playerBagData, boolean unlock) {
-        UUID uuid = playerBagData.getPlayer().getUniqueId();
-        Inventory inventory = playerBagData.getInventory();
+    public void saveBagData(UUID uuid, Inventory inventory, boolean unlock) {
         String contents = InventoryUtil.toBase64(inventory.getContents());
-        if (contents == null) contents = "";
         updateBagData(uuid, inventory.getSize(), contents, unlock);
     }
 
-    /**
-     * Whether the data is loaded
-     * @param player player
-     * @return success or not
-     */
     @Override
-    public PlayerSellData loadSellData(Player player, boolean force) {
+    public PlayerSellData loadSellData(UUID uuid, boolean force) {
         PlayerSellData playerSellData = null;
         String sql = String.format(SqlConstants.SQL_SELECT_SELL_BY_UUID, sqlConnection.getTablePrefix() + "_" + "selldata");
         try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, player.getUniqueId().toString());
+            statement.setString(1, uuid.toString());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 int version = rs.getInt(2);
@@ -119,12 +110,12 @@ public class MySQLStorageImpl implements DataStorageInterface {
                 int date = rs.getInt(3);
                 int money = rs.getInt(4);
                 playerSellData = new PlayerSellData(money, date);
-                lockData(player.getUniqueId(), "selldata");
+                lockData(uuid, "selldata");
             }
             else {
                 Calendar calendar = Calendar.getInstance();
                 playerSellData = new PlayerSellData(0, (calendar.get(Calendar.MONTH) +1)* 100 + calendar.get(Calendar.DATE));
-                insertSellData(player.getUniqueId(), playerSellData.getDate());
+                insertSellData(uuid, playerSellData.getDate());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -135,6 +126,11 @@ public class MySQLStorageImpl implements DataStorageInterface {
     @Override
     public void saveSellData(UUID uuid, PlayerSellData playerSellData, boolean unlock) {
         updateSellData(uuid, playerSellData.getDate(), (int) playerSellData.getMoney(), unlock);
+    }
+
+    @Override
+    public StorageType getStorageType() {
+        return StorageType.SQL;
     }
 
     private void createTableIfNotExist(String table, String sqlStat) {

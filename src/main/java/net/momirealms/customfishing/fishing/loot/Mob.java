@@ -26,8 +26,8 @@ public class Mob extends Loot{
     private final int mobLevel;
     private final MobVector mobVector;
 
-    public Mob(String key, String nick, MiniGameConfig[] fishingGames, int weight, boolean showInFinder, double score, String mobID, int mobLevel, MobVector mobVector) {
-        super(key, nick, fishingGames, weight, showInFinder, score);
+    public Mob(String key, String nick, MiniGameConfig[] fishingGames, int weight, boolean showInFinder, double score, String mobID, int mobLevel, MobVector mobVector, boolean disableBar) {
+        super(key, nick, fishingGames, weight, showInFinder, score, disableBar);
         this.mobID = mobID;
         this.mobLevel = mobLevel;
         this.mobVector = mobVector;

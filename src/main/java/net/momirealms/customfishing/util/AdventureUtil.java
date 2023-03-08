@@ -32,6 +32,10 @@ import java.time.Duration;
 
 public class AdventureUtil {
 
+    public static Component getComponentFromMiniMessage(String text) {
+        return MiniMessage.miniMessage().deserialize(replaceLegacy(text));
+    }
+
     /**
      * Send a message to a command sender
      * @param sender sender

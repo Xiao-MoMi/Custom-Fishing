@@ -2,6 +2,9 @@ rainbow_fish:
   # Enable
   # 是否启用
   enable: false
+  # Disable bar mechanic for a certain loot
+  # 为某个战利品关闭捕鱼条机制
+  disable-bar-mechanic: false
   # Nick is what to show in fish finder and titles
   # 昵称将在标题和找鱼器信息中显示
   nick: 'Example Fish'

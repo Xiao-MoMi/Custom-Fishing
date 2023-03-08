@@ -25,7 +25,6 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.data.PlayerBagData;
 import net.momirealms.customfishing.listener.InventoryListener;
 import net.momirealms.customfishing.listener.JoinQuitListener;
 import net.momirealms.customfishing.listener.WindowPacketListener;
@@ -34,6 +33,7 @@ import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -43,14 +43,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BagDataManager extends Function {
 
-    private final ConcurrentHashMap<UUID, PlayerBagData> dataMap;
-    private final HashSet<PlayerBagData> tempData;
+    private final ConcurrentHashMap<UUID, Inventory> dataMap;
+    private final HashMap<UUID, Inventory> tempData;
     private final InventoryListener inventoryListener;
     private final WindowPacketListener windowPacketListener;
     private final JoinQuitListener joinQuitListener;
@@ -61,7 +61,7 @@ public class BagDataManager extends Function {
     public BagDataManager(CustomFishing plugin) {
         this.plugin = plugin;
         this.dataMap = new ConcurrentHashMap<>();
-        this.tempData = new HashSet<>();
+        this.tempData = new HashMap<>();
         this.triedTimes = new HashMap<>();
 
         this.inventoryListener = new InventoryListener(this);
@@ -71,8 +71,8 @@ public class BagDataManager extends Function {
         this.timerSave = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             AdventureUtil.consoleMessage("[CustomFishing] Saving Fishing bag data...");
             DataManager dataManager = plugin.getDataManager();
-            for (PlayerBagData playerBagData : dataMap.values()) {
-                dataManager.getDataStorageInterface().saveBagData(playerBagData, false);
+            for (Map.Entry<UUID, Inventory> entry : dataMap.entrySet()) {
+                dataManager.getDataStorageInterface().saveBagData(entry.getKey(), entry.getValue(), false);
             }
             AdventureUtil.consoleMessage("[CustomFishing] Fishing bag data saved for " + dataMap.size() + " online players.");
         }, 12000, 12000);
@@ -95,16 +95,19 @@ public class BagDataManager extends Function {
 
     public void disable() {
         unload();
-        for (PlayerBagData playerBagData : dataMap.values()) {
-            DataManager dataManager = CustomFishing.getInstance().getDataManager();
-            dataManager.getDataStorageInterface().saveBagData(playerBagData, true);
+        DataManager dataManager = plugin.getDataManager();
+        for (Map.Entry<UUID, Inventory> entry : dataMap.entrySet()) {
+            for (HumanEntity humanEntity : entry.getValue().getViewers()) {
+                humanEntity.closeInventory();
+            }
+            dataManager.getDataStorageInterface().saveBagData(entry.getKey(), entry.getValue(), false);
         }
         dataMap.clear();
         tempData.clear();
         timerSave.cancel();
     }
 
-    public PlayerBagData getPlayerBagData(UUID uuid) {
+    public Inventory getPlayerBagData(UUID uuid) {
         return dataMap.get(uuid);
     }
 
@@ -112,36 +115,36 @@ public class BagDataManager extends Function {
         Player owner = ownerOffline.getPlayer();
         //not online
         if (owner == null) {
-            Inventory inventory = plugin.getDataManager().getDataStorageInterface().loadBagData(ownerOffline, force);
+            Inventory inventory = plugin.getDataManager().getDataStorageInterface().loadBagData(ownerOffline.getUniqueId(), force);
             if (inventory == null) {
                 AdventureUtil.playerMessage(viewer, "<red>[CustomFishing] Failed to load bag data for player " + ownerOffline.getName());
                 AdventureUtil.playerMessage(viewer, "<red>This might be caused when the target player is online but on another server");
                 AdventureUtil.playerMessage(viewer, "<red>Use /fishingbag open [Player] --force to ignore this warning");
                 return;
             }
-            PlayerBagData playerBagData = new PlayerBagData(ownerOffline, inventory);
-            tempData.add(playerBagData);
+            tempData.put(ownerOffline.getUniqueId(), inventory);
             viewer.openInventory(inventory);
         }
         //online
         else {
-            PlayerBagData playerBagData = dataMap.get(owner.getUniqueId());
-            if (playerBagData == null) {
+            Inventory inventory = dataMap.get(owner.getUniqueId());
+            if (inventory == null) {
                 AdventureUtil.consoleMessage("<red>[CustomFishing] Bag data is not loaded for player " + owner.getName());
             }
             else {
-                openGui(owner, viewer, playerBagData);
+                openGui(owner, viewer, inventory);
             }
         }
     }
 
     @Override
     public void onQuit(Player player) {
-        PlayerBagData playerBagData = dataMap.remove(player.getUniqueId());
+        UUID uuid = player.getUniqueId();
+        Inventory inventory = dataMap.remove(uuid);
         triedTimes.remove(player.getUniqueId());
-        if (playerBagData != null) {
+        if (inventory != null) {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                plugin.getDataManager().getDataStorageInterface().saveBagData(playerBagData, true);
+                plugin.getDataManager().getDataStorageInterface().saveBagData(uuid, inventory, true);
             });
         }
     }
@@ -155,24 +158,19 @@ public class BagDataManager extends Function {
 
     public void joinReadData(Player player, boolean force) {
         if (player == null || !player.isOnline()) return;
-        Inventory inventory = plugin.getDataManager().getDataStorageInterface().loadBagData(player, force);
+        Inventory inventory = plugin.getDataManager().getDataStorageInterface().loadBagData(player.getUniqueId(), force);
         if (inventory != null) {
-            PlayerBagData playerBagData = new PlayerBagData(player, inventory);
-            dataMap.put(player.getUniqueId(), playerBagData);
+            dataMap.put(player.getUniqueId(), inventory);
         }
         // If sql exception or data is locked
         else if (!force) {
             // can still try to load
             if (!checkTriedTimes(player.getUniqueId())) {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-                    joinReadData(player, false);
-                }, 20);
+                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, false), 20);
             }
             // tried 3 times
             else {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-                    joinReadData(player, true);
-                }, 20);
+                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, true), 20);
             }
         }
     }
@@ -200,9 +198,8 @@ public class BagDataManager extends Function {
     @Override
     public void onClickInventory(InventoryClickEvent event) {
         final Player player = (Player) event.getWhoClicked();
-        PlayerBagData playerBagData = dataMap.get(player.getUniqueId());
-        if (playerBagData == null) return;
-        if (playerBagData.getInventory() == event.getInventory()) {
+        Inventory fishingBagInv = dataMap.get(player.getUniqueId());
+        if (fishingBagInv == event.getInventory()) {
             ItemStack currentItem = event.getCurrentItem();
             if (currentItem == null || currentItem.getType() == Material.AIR) return;
             NBTItem nbtItem = new NBTItem(currentItem);
@@ -226,9 +223,9 @@ public class BagDataManager extends Function {
     public void onCloseInventory(InventoryCloseEvent event) {
         final Player player = (Player) event.getPlayer();
         Inventory inventory = event.getInventory();
-        PlayerBagData playerBagData = dataMap.get(player.getUniqueId());
-        if (playerBagData != null) {
-            if (inventory == playerBagData.getInventory()) {
+        Inventory fishingBagInv = dataMap.get(player.getUniqueId());
+        if (fishingBagInv != null) {
+            if (inventory == fishingBagInv) {
                 for (ItemStack itemStack : event.getInventory().getContents()) {
                     if (itemStack == null || itemStack.getType() == Material.AIR) continue;
                     NBTItem nbtItem = new NBTItem(itemStack);
@@ -238,19 +235,18 @@ public class BagDataManager extends Function {
                 }
                 return;
             }
-            for (PlayerBagData temp : tempData) {
-                if (temp.getInventory() == inventory) {
-                    tempData.remove(temp);
+            for (Map.Entry<UUID, Inventory> entry : tempData.entrySet()) {
+                if (entry.getValue() == inventory) {
+                    tempData.remove(entry.getKey());
                     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                        plugin.getDataManager().getDataStorageInterface().saveBagData(temp, true);
+                        plugin.getDataManager().getDataStorageInterface().saveBagData(entry.getKey(), entry.getValue(), true);
                     });
                 }
             }
         }
     }
 
-    public void openGui(Player owner, Player viewer, PlayerBagData playerBagData) {
-        Inventory inventory = playerBagData.getInventory();
+    public void openGui(Player owner, Player viewer, Inventory inventory) {
         int size = 1;
         for (int i = 6; i > 1; i--) {
             if (owner.hasPermission("fishingbag.rows." + i)) {
@@ -259,10 +255,10 @@ public class BagDataManager extends Function {
             }
         }
         if (size * 9 != inventory.getSize()) {
-            ItemStack[] itemStacks = playerBagData.getInventory().getContents();
+            ItemStack[] itemStacks = inventory.getContents();
             Inventory newInv = Bukkit.createInventory(null, size * 9, "{CustomFishing_Bag_" + owner.getName() + "}");
             newInv.setContents(itemStacks);
-            playerBagData.setInventory(newInv);
+            dataMap.put(owner.getUniqueId(), newInv);
             viewer.openInventory(newInv);
         }
         else {
@@ -270,7 +266,7 @@ public class BagDataManager extends Function {
         }
     }
 
-    public boolean checkTriedTimes(UUID uuid) {
+    private boolean checkTriedTimes(UUID uuid) {
         Integer previous = triedTimes.get(uuid);
         if (previous == null) {
             triedTimes.put(uuid, 1);

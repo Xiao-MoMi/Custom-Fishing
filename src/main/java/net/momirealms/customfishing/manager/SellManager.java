@@ -56,6 +56,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SellManager extends Function {
 
@@ -150,7 +151,7 @@ public class SellManager extends Function {
 
     public void joinReadData(Player player, boolean force) {
         if (player == null || !player.isOnline()) return;
-        PlayerSellData sellData = plugin.getDataManager().getDataStorageInterface().loadSellData(player, force);
+        PlayerSellData sellData = plugin.getDataManager().getDataStorageInterface().loadSellData(player.getUniqueId(), force);
         if (sellData != null) {
             sellDataMap.put(player.getUniqueId(), sellData);
         }

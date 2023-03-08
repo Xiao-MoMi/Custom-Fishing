@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.manager;
 
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.fishing.requirements.*;
 import net.momirealms.customfishing.fishing.totem.CorePos;
 import net.momirealms.customfishing.fishing.totem.FinalModel;
 import net.momirealms.customfishing.fishing.totem.OriginalModel;
@@ -112,7 +111,7 @@ public class TotemManager extends Function {
     }
 
     private void loadBlocks() {
-        YamlConfiguration config = ConfigUtil.getConfig("totem-blocks/default.yml");
+        YamlConfiguration config = ConfigUtil.getConfig("totem_blocks/default.yml");
         config.getKeys(false).forEach(key -> blockIDs.put(key, config.getString(key)));
         config.getKeys(false).forEach(key -> invertedIDs.put(config.getString(key), key));
     }
@@ -427,7 +426,7 @@ public class TotemManager extends Function {
         return 0;
     }
 
-    public void removeModel(FinalModel model, Location location, int direction) {
+    public void removeModel(FinalModel model, Location coreLoc, int direction) {
 
         BlockInterface blockInterface = plugin.getIntegrationManager().getBlockInterface();
 
@@ -440,7 +439,7 @@ public class TotemManager extends Function {
         int length = model.getLength();
         int width = model.getWidth();
 
-        Location startLoc = location.clone().subtract(0, yOffset, 0);
+        Location startLoc = coreLoc.clone().subtract(0, yOffset, 0);
 
         switch (direction) {
             case 1:
@@ -455,7 +454,7 @@ public class TotemManager extends Function {
                             if (!model.getElement(x, z, i).equals("*")) {
                                 blockInterface.replaceBlock(loc.clone().add(x, 0, z), model.getElement(x, z, i));
                             }
-                            plugin.getFishingManager().addTotemBreakDetectToCache(LocationUtils.getSimpleLocation(loc.clone().add(x, 0, z)), LocationUtils.getSimpleLocation(startLoc));
+                            plugin.getFishingManager().addTotemBreakDetectToCache(LocationUtils.getSimpleLocation(loc.clone().add(x, 0, z)), LocationUtils.getSimpleLocation(coreLoc));
                         }
                 }
                 break;
@@ -471,7 +470,7 @@ public class TotemManager extends Function {
                             if (!model.getElement(x, z, i).equals("*")){
                                 blockInterface.replaceBlock(loc.clone().add(-x, 0, -z), model.getElement(x, z, i));
                             }
-                            plugin.getFishingManager().addTotemBreakDetectToCache(LocationUtils.getSimpleLocation(loc.clone().add(-x, 0, -z)), LocationUtils.getSimpleLocation(startLoc));
+                            plugin.getFishingManager().addTotemBreakDetectToCache(LocationUtils.getSimpleLocation(loc.clone().add(-x, 0, -z)), LocationUtils.getSimpleLocation(coreLoc));
                         }
                 }
                 break;
@@ -487,7 +486,7 @@ public class TotemManager extends Function {
                             if (!model.getElement(x, z, i).equals("*")){
                                 blockInterface.replaceBlock(loc.clone().add(z, 0, -x), model.getElement(x, z, i));
                             }
-                            plugin.getFishingManager().addTotemBreakDetectToCache(LocationUtils.getSimpleLocation(loc.clone().add(z, 0, -x)), LocationUtils.getSimpleLocation(startLoc));
+                            plugin.getFishingManager().addTotemBreakDetectToCache(LocationUtils.getSimpleLocation(loc.clone().add(z, 0, -x)), LocationUtils.getSimpleLocation(coreLoc));
                         }
                 }
                 break;
@@ -503,7 +502,7 @@ public class TotemManager extends Function {
                             if (!model.getElement(x, z, i).equals("*")){
                                 blockInterface.replaceBlock(loc.clone().add(-z, 0, x), model.getElement(x, z, i));
                             }
-                            plugin.getFishingManager().addTotemBreakDetectToCache(LocationUtils.getSimpleLocation(loc.clone().add(-z, 0, x)), LocationUtils.getSimpleLocation(startLoc));
+                            plugin.getFishingManager().addTotemBreakDetectToCache(LocationUtils.getSimpleLocation(loc.clone().add(-z, 0, x)), LocationUtils.getSimpleLocation(coreLoc));
                         }
                 }
                 break;
@@ -519,7 +518,7 @@ public class TotemManager extends Function {
                             if (!model.getElement(x, z, i).equals("*")){
                                 blockInterface.replaceBlock(loc.clone().add(z, 0, x), model.getElement(x, z, i));
                             }
-                            plugin.getFishingManager().addTotemBreakDetectToCache(LocationUtils.getSimpleLocation(loc.clone().add(z, 0, x)), LocationUtils.getSimpleLocation(startLoc));
+                            plugin.getFishingManager().addTotemBreakDetectToCache(LocationUtils.getSimpleLocation(loc.clone().add(z, 0, x)), LocationUtils.getSimpleLocation(coreLoc));
                         }
                 }
                 break;
@@ -535,7 +534,7 @@ public class TotemManager extends Function {
                             if (!model.getElement(x, z, i).equals("*")){
                                 blockInterface.replaceBlock(loc.clone().add(-z, 0, -x), model.getElement(x, z, i));
                             }
-                            plugin.getFishingManager().addTotemBreakDetectToCache(LocationUtils.getSimpleLocation(loc.clone().add(-z, 0, -x)), LocationUtils.getSimpleLocation(startLoc));
+                            plugin.getFishingManager().addTotemBreakDetectToCache(LocationUtils.getSimpleLocation(loc.clone().add(-z, 0, -x)), LocationUtils.getSimpleLocation(coreLoc));
                         }
                 }
                 break;
@@ -551,7 +550,7 @@ public class TotemManager extends Function {
                             if (!model.getElement(x, z, i).equals("*")){
                                 blockInterface.replaceBlock(loc.clone().add(x, 0, -z), model.getElement(x, z, i));
                             }
-                            plugin.getFishingManager().addTotemBreakDetectToCache(LocationUtils.getSimpleLocation(loc.clone().add(x, 0, -z)), LocationUtils.getSimpleLocation(startLoc));
+                            plugin.getFishingManager().addTotemBreakDetectToCache(LocationUtils.getSimpleLocation(loc.clone().add(x, 0, -z)), LocationUtils.getSimpleLocation(coreLoc));
                         }
                 }
                 break;
@@ -567,22 +566,20 @@ public class TotemManager extends Function {
                             if (!model.getElement(x, z, i).equals("*")){
                                 blockInterface.replaceBlock(loc.clone().add(-x, 0, z), model.getElement(x, z, i));
                             }
-                            plugin.getFishingManager().addTotemBreakDetectToCache(LocationUtils.getSimpleLocation(loc.clone().add(-x, 0, z)), LocationUtils.getSimpleLocation(startLoc));
+                            plugin.getFishingManager().addTotemBreakDetectToCache(LocationUtils.getSimpleLocation(loc.clone().add(-x, 0, z)), LocationUtils.getSimpleLocation(coreLoc));
                         }
                 }
                 break;
         }
     }
 
-    public void clearBreakDetectCache(FinalModel model, Location location, int direction) {
+    public void clearBreakDetectCache(FinalModel model, Location startLoc, int direction) {
         CorePos corePos = model.getCorePos();
         int xOffset = corePos.getX();
-        int yOffset = corePos.getY();
         int zOffset = corePos.getZ();
         int height = model.getHeight();
         int length = model.getLength();
         int width = model.getWidth();
-        Location startLoc = location.clone().subtract(0, yOffset, 0);
         switch (direction) {
             case 1:
                 for (int i = 0; i < height; i++) {

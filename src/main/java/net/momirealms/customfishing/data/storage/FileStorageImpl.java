@@ -18,14 +18,12 @@
 package net.momirealms.customfishing.data.storage;
 
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.data.PlayerBagData;
 import net.momirealms.customfishing.data.PlayerSellData;
 import net.momirealms.customfishing.util.ConfigUtil;
 import net.momirealms.customfishing.util.InventoryUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -52,25 +50,25 @@ public class FileStorageImpl implements DataStorageInterface {
     }
 
     @Override
-    public Inventory loadBagData(OfflinePlayer player, boolean force) {
-        YamlConfiguration config = ConfigUtil.readData(new File(plugin.getDataFolder(), "fishingbag_data" + File.separator + player.getUniqueId() + ".yml"));
+    public Inventory loadBagData(UUID uuid, boolean force) {
+        YamlConfiguration config = ConfigUtil.readData(new File(plugin.getDataFolder(), "fishingbag_data" + File.separator + uuid + ".yml"));
         String contents = config.getString("contents");
         int size = config.getInt("size", 9);
         ItemStack[] itemStacks = InventoryUtil.getInventoryItems(contents);
-        Inventory inventory = Bukkit.createInventory(null, size, "{CustomFishing_Bag_" + player.getName() + "}");
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+        Inventory inventory = Bukkit.createInventory(null, size, "{CustomFishing_Bag_" + offlinePlayer.getName() + "}");
         if (itemStacks != null) inventory.setContents(itemStacks);
         return inventory;
     }
 
     @Override
-    public void saveBagData(PlayerBagData playerBagData, boolean unlock) {
+    public void saveBagData(UUID uuid, Inventory inventory, boolean unlock) {
         YamlConfiguration data = new YamlConfiguration();
-        Inventory inventory = playerBagData.getInventory();
         String contents = InventoryUtil.toBase64(inventory.getContents());
         data.set("contents", contents);
         data.set("size", inventory.getSize());
         try {
-            data.save(new File(plugin.getDataFolder(), "fishingbag_data" + File.separator + playerBagData.getPlayer().getUniqueId() + ".yml"));
+            data.save(new File(plugin.getDataFolder(), "fishingbag_data" + File.separator + uuid + ".yml"));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -78,9 +76,8 @@ public class FileStorageImpl implements DataStorageInterface {
     }
 
     @Override
-    public PlayerSellData loadSellData(Player player, boolean force) {
-        UUID uuid = player.getUniqueId();
-        YamlConfiguration data = ConfigUtil.readData(new File(plugin.getDataFolder(), "sell-data" + File.separator + uuid + ".yml"));
+    public PlayerSellData loadSellData(UUID uuid, boolean force) {
+        YamlConfiguration data = ConfigUtil.readData(new File(plugin.getDataFolder(), "sell_data" + File.separator + uuid + ".yml"));
         int date = data.getInt("date");
         double money = data.getDouble("earnings");
         return new PlayerSellData(money, date);
@@ -92,10 +89,15 @@ public class FileStorageImpl implements DataStorageInterface {
         data.set("date", playerSellData.getDate());
         data.set("earnings", playerSellData.getMoney());
         try {
-            data.save(new File(plugin.getDataFolder(), "sell-data" + File.separator + uuid + ".yml"));
+            data.save(new File(plugin.getDataFolder(), "sell_data" + File.separator + uuid + ".yml"));
         }
         catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public StorageType getStorageType() {
+        return StorageType.YAML;
     }
 }

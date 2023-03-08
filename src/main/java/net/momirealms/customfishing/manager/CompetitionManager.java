@@ -38,7 +38,7 @@ import java.util.*;
 
 public class CompetitionManager extends Function {
 
-    private CustomFishing plugin;
+    private final CustomFishing plugin;
     // Competitions that can be triggered at a specified time
     private final HashMap<String, CompetitionConfig> competitionsT;
     // Competitions that can be triggered with a command
@@ -83,81 +83,71 @@ public class CompetitionManager extends Function {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
             Set<String> keys = config.getKeys(false);
             for (String key : keys) {
-                ConfigurationSection section = config.getConfigurationSection(key);
-                if (section == null) continue;
+                ConfigurationSection competitionSection = config.getConfigurationSection(key);
+                if (competitionSection == null) continue;
+                boolean enableBsb = competitionSection.getBoolean("bossbar.enable", false);
+                BossBarConfig bossBarConfig = new BossBarConfig(
+                        competitionSection.getStringList("bossbar.text").toArray(new String[0]),
+                        BossBarOverlay.valueOf(competitionSection.getString("bossbar.overlay","SOLID").toUpperCase()),
+                        BarColor.valueOf(competitionSection.getString("bossbar.color","WHITE").toUpperCase()),
+                        competitionSection.getInt("bossbar.refresh-rate",10),
+                        competitionSection.getInt("bossbar.switch-interval", 200)
+                );
 
+                HashMap<String, ActionInterface[]> rewardsMap = new HashMap<>();
+                Objects.requireNonNull(competitionSection.getConfigurationSection("prize")).getKeys(false).forEach(rank -> {
+                    List<ActionInterface> rewards = new ArrayList<>();
+                    if (competitionSection.contains("prize." + rank + ".messages"))
+                        rewards.add(new MessageActionImpl(competitionSection.getStringList("prize." + rank + ".messages").toArray(new String[0]), null));
+                    if (competitionSection.contains("prize." + rank + ".commands"))
+                        rewards.add(new CommandActionImpl(competitionSection.getStringList("prize." + rank + ".commands").toArray(new String[0]), null));
+                    rewardsMap.put(rank, rewards.toArray(new ActionInterface[0]));
+                });
 
+                CompetitionConfig competitionConfig = new CompetitionConfig(
+                        competitionSection.getInt("duration",600),
+                        competitionSection.getInt("min-players",1),
+                        competitionSection.getStringList("broadcast.start"),
+                        competitionSection.getStringList("broadcast.end"),
+                        competitionSection.getStringList("command.start"),
+                        competitionSection.getStringList("command.end"),
+                        competitionSection.getStringList("command.join"),
+                        CompetitionGoal.valueOf(competitionSection.getString("goal", "RANDOM")),
+                        bossBarConfig,
+                        enableBsb,
+                        rewardsMap
+                );
+
+                if (competitionSection.contains("start-weekday")) {
+                    List<Integer> days = new ArrayList<>();
+                    for (String weekDay : competitionSection.getStringList("start-weekday")) {
+                        switch (weekDay) {
+                            case "Sunday" -> days.add(1);
+                            case "Monday" -> days.add(2);
+                            case "Tuesday" -> days.add(3);
+                            case "Wednesday" -> days.add(4);
+                            case "Thursday" -> days.add(5);
+                            case "Friday" -> days.add(6);
+                            case "Saturday" -> days.add(7);
+                            default -> AdventureUtil.consoleMessage("[CustomFishing] Unknown weekday: " + weekDay);
+                        }
+                    }
+                    competitionConfig.setWeekday(days);
+                }
+
+                if (competitionSection.contains("start-date")) {
+                    List<Integer> days = new ArrayList<>();
+                    for (String weekDay : competitionSection.getStringList("start-date")) {
+                        days.add(Integer.parseInt(weekDay));
+                    }
+                    competitionConfig.setDate(days);
+                }
+                competitionSection.getStringList("start-time").forEach(time -> competitionsT.put(time, competitionConfig));
+                competitionsC.put(key, competitionConfig);
                 amount++;
             }
         }
-
         AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + amount + " <gray>competition(s)");
-
-
-        YamlConfiguration config = ConfigUtil.getConfig("competitions/default.yml");
-        Set<String> keys = config.getKeys(false);
-        keys.forEach(key -> {
-            boolean enableBsb = config.getBoolean(key + ".bossbar.enable", false);
-            BossBarConfig bossBarConfig = new BossBarConfig(
-                    config.getStringList(key + ".bossbar.text").toArray(new String[0]),
-                    BossBarOverlay.valueOf(config.getString(key + ".bossbar.overlay","SOLID").toUpperCase()),
-                    BarColor.valueOf(config.getString(key + ".bossbar.color","WHITE").toUpperCase()),
-                    config.getInt(key + ".bossbar.refresh-rate",10),
-                    config.getInt(key + ".bossbar.switch-interval", 200)
-            );
-
-            HashMap<String, ActionInterface[]> rewardsMap = new HashMap<>();
-            Objects.requireNonNull(config.getConfigurationSection(key + ".prize")).getKeys(false).forEach(rank -> {
-                List<ActionInterface> rewards = new ArrayList<>();
-                if (config.contains(key + ".prize." + rank + ".messages"))
-                    rewards.add(new MessageActionImpl(config.getStringList(key + ".prize." + rank + ".messages").toArray(new String[0]), null));
-                if (config.contains(key + ".prize." + rank + ".commands"))
-                    rewards.add(new CommandActionImpl(config.getStringList(key + ".prize." + rank + ".commands").toArray(new String[0]), null));
-                rewardsMap.put(rank, rewards.toArray(new ActionInterface[0]));
-            });
-
-            CompetitionConfig competitionConfig = new CompetitionConfig(
-                    config.getInt(key + ".duration",600),
-                    config.getInt(key + ".min-players",1),
-                    config.getStringList(key + ".broadcast.start"),
-                    config.getStringList(key + ".broadcast.end"),
-                    config.getStringList(key + ".command.start"),
-                    config.getStringList(key + ".command.end"),
-                    config.getStringList(key + ".command.join"),
-                    CompetitionGoal.valueOf(config.getString(key + ".goal", "RANDOM")),
-                    bossBarConfig,
-                    enableBsb,
-                    rewardsMap
-            );
-
-            if (config.contains(key + ".start-weekday")) {
-                List<Integer> days = new ArrayList<>();
-                for (String weekDay : config.getStringList(key + ".start-weekday")) {
-                    switch (weekDay) {
-                        case "Sunday" -> days.add(1);
-                        case "Monday" -> days.add(2);
-                        case "Tuesday" -> days.add(3);
-                        case "Wednesday" -> days.add(4);
-                        case "Thursday" -> days.add(5);
-                        case "Friday" -> days.add(6);
-                        case "Saturday" -> days.add(7);
-                        default -> AdventureUtil.consoleMessage("[CustomFishing] Unknown weekday: " + weekDay);
-                    }
-                }
-                competitionConfig.setWeekday(days);
-            }
-
-            if (config.contains(key + ".start-date")) {
-                List<Integer> days = new ArrayList<>();
-                for (String weekDay : config.getStringList(key + ".start-date")) {
-                    days.add(Integer.parseInt(weekDay));
-                }
-                competitionConfig.setDate(days);
-            }
-
-            config.getStringList(key + ".start-time").forEach(time -> competitionsT.put(time, competitionConfig));
-            competitionsC.put(key, competitionConfig);
-        });
     }
 
     public HashMap<String, CompetitionConfig> getCompetitionsT() {

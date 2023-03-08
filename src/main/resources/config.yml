@@ -1,5 +1,8 @@
 # Don't change
-config-version: '16'
+config-version: '17'
+
+# bStats
+metrics: true
 
 # Wiki: https://mo-mi.gitbook.io/xiaomomi-plugins/
 # chinese/english/spanish

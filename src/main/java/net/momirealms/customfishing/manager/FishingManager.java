@@ -22,11 +22,9 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.event.*;
-import net.momirealms.customfishing.data.PlayerBagData;
 import net.momirealms.customfishing.fishing.*;
 import net.momirealms.customfishing.fishing.bar.FishingBar;
 import net.momirealms.customfishing.fishing.bar.ModeOneBar;
@@ -54,7 +52,6 @@ import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.FakeItemUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;
 import net.momirealms.customfishing.util.LocationUtils;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -78,6 +75,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FishingManager extends Function {
 
@@ -248,9 +247,8 @@ public class FishingManager extends Function {
             }
 
             if (ConfigManager.enableFishingBag && noBait) {
-                PlayerBagData playerBagData = plugin.getBagDataManager().getPlayerBagData(player.getUniqueId());
-                if (playerBagData != null) {
-                    Inventory baitInv = playerBagData.getInventory();
+                Inventory baitInv = plugin.getBagDataManager().getPlayerBagData(player.getUniqueId());
+                if (baitInv != null) {
                     for (int i = 0; i < baitInv.getSize(); i++) {
                         ItemStack itemStack = baitInv.getItem(i);
                         if (itemStack == null || itemStack.getType() == Material.AIR) continue;
@@ -373,18 +371,22 @@ public class FishingManager extends Function {
             if (ConfigManager.enableVanillaLoot) {
                 // Not a vanilla loot
                 if (ConfigManager.vanillaLootRatio < Math.random()) {
-                    event.setCancelled(true);
                     if (loot != null) {
                         vanillaLoot.remove(player);
+                        if (loot.isDisableBar()) {
+                            noBarWaterReelIn(event);
+                            return;
+                        }
                     }
                     else {
                         vanillaLoot.put(player, new VanillaLoot(item.getItemStack(), event.getExpToDrop()));
                     }
+                    event.setCancelled(true);
                     showFishingBar(player, loot);
                 }
                 // Is vanilla loot
                 else {
-                    if (ConfigManager.alwaysFishingBar) {
+                    if (ConfigManager.otherLootHasFishingBar) {
                         event.setCancelled(true);
                         vanillaLoot.put(player, new VanillaLoot(item.getItemStack(), event.getExpToDrop()));
                         showFishingBar(player, null);
@@ -400,6 +402,10 @@ public class FishingManager extends Function {
                     AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.noLoot);
                 }
                 else {
+                    if (loot.isDisableBar()) {
+                        noBarWaterReelIn(event);
+                        return;
+                    }
                     event.setCancelled(true);
                     showFishingBar(player, loot);
                 }
@@ -507,6 +513,10 @@ public class FishingManager extends Function {
         if (bobberCheckTask != null && bobberCheckTask.isHooked()) {
             Loot loot = nextLoot.get(player);
             if (loot == Loot.EMPTY) return;
+            if (loot.isDisableBar()) {
+                noBarLavaReelIn(event);
+                return;
+            }
             showFishingBar(player, loot);
             event.setCancelled(true);
         }
@@ -521,13 +531,7 @@ public class FishingManager extends Function {
         }
 
         if (Competition.currentCompetition != null) {
-            float score;
-            if (Competition.currentCompetition.getGoal() == CompetitionGoal.MAX_SIZE || Competition.currentCompetition.getGoal() == CompetitionGoal.TOTAL_SIZE) {
-                score = getSize(drop);
-            }
-            else {
-                score = (float) ((float) droppedItem.getScore() * scoreMultiplier);
-            }
+            float score = Competition.currentCompetition.getGoal() == CompetitionGoal.MAX_SIZE || Competition.currentCompetition.getGoal() == CompetitionGoal.TOTAL_SIZE ? getSize(drop) : (float) ((float) droppedItem.getScore() * scoreMultiplier);
             Competition.currentCompetition.refreshData(player, score, fishResultEvent.isDouble());
             Competition.currentCompetition.tryAddBossBarToPlayer(player);
         }
@@ -590,8 +594,8 @@ public class FishingManager extends Function {
     private void dropItem(Player player, Location location, boolean isDouble, ItemStack itemStack) {
         if (itemStack.getType() == Material.AIR) return;
         Entity item = location.getWorld().dropItem(location, itemStack);
-        Vector vector = player.getLocation().subtract(location).toVector().multiply(0.1);
-        vector = vector.setY((vector.getY()+0.2) * 1.15);
+        Vector vector = player.getLocation().subtract(location).toVector().multiply(0.105);
+        vector = vector.setY((vector.getY()+0.19) * 1.15);
         item.setVelocity(vector);
         if (isDouble) {
             Entity item2 = location.getWorld().dropItem(location, itemStack);
@@ -637,12 +641,7 @@ public class FishingManager extends Function {
         }
 
         if (Competition.currentCompetition != null) {
-            float score;
-            if (Competition.currentCompetition.getGoal() == CompetitionGoal.MAX_SIZE || Competition.currentCompetition.getGoal() == CompetitionGoal.TOTAL_SIZE) {
-                score = 0;
-            }
-            else score = (float) loot.getScore();
-
+            float score = Competition.currentCompetition.getGoal() == CompetitionGoal.MAX_SIZE || Competition.currentCompetition.getGoal() == CompetitionGoal.TOTAL_SIZE ? 0 : (float) loot.getScore();
             Competition.currentCompetition.refreshData(player, (float) (score * scoreMultiplier), false);
             Competition.currentCompetition.tryAddBossBarToPlayer(player);
         }
@@ -655,24 +654,18 @@ public class FishingManager extends Function {
 
     @NotNull
     private Component getTitleComponent(ItemStack itemStack, String text) {
-        Component component;
-        if (text.contains("{loot}")){
-            text = text.replace("{loot}","|");
-            if (text.startsWith("|")){
-                component = getDisplayName(itemStack).append(MiniMessage.miniMessage().deserialize(AdventureUtil.replaceLegacy(text.substring(1))));
-            }
-            else if (text.endsWith("|")){
-                component = MiniMessage.miniMessage().deserialize(AdventureUtil.replaceLegacy(text.substring(0,text.length() - 1))).append(getDisplayName(itemStack));
-            }
-            else {
-                String[] titleSplit = StringUtils.split(text, "|");
-                component = MiniMessage.miniMessage().deserialize(AdventureUtil.replaceLegacy(titleSplit[0])).append(getDisplayName(itemStack)).append(MiniMessage.miniMessage().deserialize(AdventureUtil.replaceLegacy(titleSplit[1])));
-            }
+        Component titleComponent = Component.text("");
+        int startIndex = 0;
+        int lootIndex;
+        while ((lootIndex = text.indexOf("{loot}", startIndex)) != -1) {
+            String before = text.substring(startIndex, lootIndex);
+            titleComponent = titleComponent.append(AdventureUtil.getComponentFromMiniMessage(before));
+            startIndex = lootIndex + 6;
+            titleComponent = titleComponent.append(getDisplayName(itemStack));
         }
-        else {
-            component = MiniMessage.miniMessage().deserialize(AdventureUtil.replaceLegacy(text));
-        }
-        return component;
+        String after = text.substring(startIndex);
+        titleComponent = titleComponent.append(AdventureUtil.getComponentFromMiniMessage(after));
+        return titleComponent;
     }
 
     private void sendSuccessTitle(Player player, String loot) {
@@ -714,18 +707,23 @@ public class FishingManager extends Function {
     private void loseDurability(Player player) {
         if (player.getGameMode() == GameMode.CREATIVE) return;
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            PlayerInventory inventory = player.getInventory();
-            ItemStack mainHand = inventory.getItemInMainHand();
-            if (mainHand.getType() == Material.FISHING_ROD){
-                plugin.getIntegrationManager().loseCustomDurability(mainHand, player);
-            }
-            else {
-                ItemStack offHand = inventory.getItemInOffHand();
-                if (offHand.getType() == Material.FISHING_ROD){
-                    plugin.getIntegrationManager().loseCustomDurability(offHand, player);
-                }
+            ItemStack rod = getFishingRod(player);
+            if (rod != null) {
+                plugin.getIntegrationManager().loseCustomDurability(rod, player);
             }
         }, 1);
+    }
+
+    private ItemStack getFishingRod(Player player) {
+        ItemStack mainHand = player.getInventory().getItemInMainHand();
+        if (mainHand.getType() == Material.FISHING_ROD) {
+            return mainHand;
+        }
+        ItemStack offHand = player.getInventory().getItemInOffHand();
+        if (offHand.getType() == Material.FISHING_ROD) {
+            return offHand;
+        }
+        return null;
     }
 
     public void fail(Player player, Loot loot, boolean isVanilla) {
@@ -804,16 +802,13 @@ public class FishingManager extends Function {
     private void setCustomTag(ItemStack itemStack) {
         if(itemStack.getType() != Material.FISHING_ROD) return;
         NBTItem nbtItem = new NBTItem(itemStack);
-        if (nbtItem.getCompound("CustomFishing") != null) return;
-        if (!nbtItem.hasTag("MMOITEMS_ITEM_ID")) return;
+        if (nbtItem.getCompound("CustomFishing") != null || !nbtItem.hasTag("MMOITEMS_ITEM_ID")) return;
         ItemStackUtil.addIdentifier(itemStack, "rod", nbtItem.getString("MMOITEMS_ITEM_ID"));
     }
 
     public boolean isCoolDown(Player player, long delay) {
         long time = System.currentTimeMillis();
-        if (time - (coolDown.getOrDefault(player, time - delay)) < delay) return true;
-        coolDown.put(player, time);
-        return false;
+        return coolDown.computeIfAbsent(player, k -> time - delay) + delay > time;
     }
 
     private void enchantBonus(Effect initialEffect, ItemStack itemStack) {
@@ -828,24 +823,22 @@ public class FishingManager extends Function {
     }
 
     public List<Loot> getPossibleLootList(FishingCondition fishingCondition, boolean finder, Collection<Loot> values) {
-        List<Loot> available = new ArrayList<>();
-        outer:
-            for (Loot loot : values) {
-                if (finder && !loot.isShowInFinder()) continue;
-                RequirementInterface[] requirements = loot.getRequirements();
-                if (requirements == null){
-                    available.add(loot);
-                }
-                else {
-                    for (RequirementInterface requirement : requirements) {
-                        if (!requirement.isConditionMet(fishingCondition)) {
-                            continue outer;
-                        }
-                    }
-                    available.add(loot);
+        Stream<Loot> stream = values.stream();
+        if (finder) {
+            stream = stream.filter(Loot::isShowInFinder);
+        }
+        return stream.filter(loot -> {
+            RequirementInterface[] requirements = loot.getRequirements();
+            if (requirements == null) {
+                return true;
+            }
+            for (RequirementInterface requirement : requirements) {
+                if (!requirement.isConditionMet(fishingCondition)) {
+                    return false;
                 }
             }
-        return available;
+            return true;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -907,10 +900,9 @@ public class FishingManager extends Function {
             }
         }
 
-        Location bottomLoc = coreLoc.clone().subtract(0, totem.getOriginalModel().getCorePos().getY(), 0);
-        ActivatedTotem activatedTotem = new ActivatedTotem(bottomLoc, totem, this, direction);
+        ActivatedTotem activatedTotem = new ActivatedTotem(coreLoc, totem, this, direction);
         activatedTotem.runTaskTimer(plugin, 10, 20);
-        activeTotemMap.put(LocationUtils.getSimpleLocation(bottomLoc), activatedTotem);
+        activeTotemMap.put(LocationUtils.getSimpleLocation(coreLoc), activatedTotem);
     }
 
     private void useFinder(Player player) {
@@ -933,43 +925,26 @@ public class FishingManager extends Function {
     }
 
     private void showFishingBar(Player player, @Nullable Loot loot){
-        MiniGameConfig game;
-        if (loot != null && loot.getFishingGames() != null) {
-            game = loot.getFishingGames()[new Random().nextInt(loot.getFishingGames().length)];
-        }
-        else {
-            game = plugin.getBarMechanicManager().getRandomGame();
-        }
-        int difficult = game.getRandomDifficulty();
-        Effect effect = nextEffect.get(player);
-        if (effect != null) {
-            difficult += effect.getDifficulty();
-        }
-        FishHookEvent fishHookEvent = new FishHookEvent(player, difficult);
+        MiniGameConfig game = (loot != null && loot.getFishingGames() != null)
+                ? loot.getFishingGames()[new Random().nextInt(loot.getFishingGames().length)]
+                : plugin.getBarMechanicManager().getRandomGame();
+        int difficult = game.getRandomDifficulty() + nextEffect.getOrDefault(player, new Effect()).getDifficulty();
+        FishHookEvent fishHookEvent = new FishHookEvent(player, Math.max(1, difficult));
         Bukkit.getPluginManager().callEvent(fishHookEvent);
-        if (fishHookEvent.isCancelled()) {
-            return;
-        }
-        difficult = fishHookEvent.getDifficulty();
-        if (difficult < 1) {
-            difficult = 1;
-        }
-
         FishingBar fishingBar = game.getRandomBar();
+        FishingGame fishingGame = null;
         if (fishingBar instanceof ModeOneBar modeOneBar) {
-            ModeOneGame modeOneGame = new ModeOneGame(plugin, this, System.currentTimeMillis() + game.getTime() * 1000L, player, difficult, modeOneBar);
-            modeOneGame.runTaskTimer(plugin, 0, 1);
-            fishingPlayerMap.put(player, modeOneGame);
+            fishingGame = new ModeOneGame(plugin, this, System.currentTimeMillis() + game.getTime() * 1000L, player, fishHookEvent.getDifficulty(), modeOneBar);
         }
         else if (fishingBar instanceof ModeTwoBar modeTwoBar) {
-            ModeTwoGame modeTwoGame = new ModeTwoGame(plugin, this, System.currentTimeMillis() + game.getTime() * 1000L, player, difficult, modeTwoBar);
-            modeTwoGame.runTaskTimer(plugin, 0, 1);
-            fishingPlayerMap.put(player, modeTwoGame);
+            fishingGame = new ModeTwoGame(plugin, this, System.currentTimeMillis() + game.getTime() * 1000L, player, fishHookEvent.getDifficulty(), modeTwoBar);
         }
         else if (fishingBar instanceof ModeThreeBar modeThreeBar) {
-            ModeThreeGame modeThreeGame = new ModeThreeGame(plugin, this, System.currentTimeMillis() + game.getTime() * 1000L, player, difficult, modeThreeBar);
-            modeThreeGame.runTaskTimer(plugin, 0, 1);
-            fishingPlayerMap.put(player, modeThreeGame);
+            fishingGame = new ModeThreeGame(plugin, this, System.currentTimeMillis() + game.getTime() * 1000L, player, fishHookEvent.getDifficulty(), modeThreeBar);
+        }
+        if (fishingGame != null) {
+            fishingGame.runTaskTimer(plugin, 0, 1);
+            fishingPlayerMap.put(player, fishingGame);
         }
         if (vanillaLoot.get(player) == null && loot != null){
             for (ActionInterface action : loot.getHookActions()) {
@@ -987,7 +962,6 @@ public class FishingManager extends Function {
         vanillaLoot.remove(player);
         BobberCheckTask task = hookCheckTaskMap.remove(player);
         if (task != null) task.stop();
-        // prevent bar duplication
         removeBobber(player);
     }
 
@@ -1014,8 +988,8 @@ public class FishingManager extends Function {
         else return GsonComponentSerializer.gson().deserialize("{\"translate\":\"item.minecraft." + type + "\"}");
     }
 
-    public void removeTotem(Location location) {
-        activeTotemMap.remove(LocationUtils.getSimpleLocation(location));
+    public void removeTotem(Location coreLoc) {
+        activeTotemMap.remove(LocationUtils.getSimpleLocation(coreLoc));
     }
 
     public void removePlayerFromLavaFishing(Player player) {
@@ -1023,16 +997,12 @@ public class FishingManager extends Function {
     }
 
     public float getSize(ItemStack itemStack) {
-        NBTItem nbtItem = new NBTItem(itemStack);
-        NBTCompound fishMeta = nbtItem.getCompound("FishMeta");
-        if (fishMeta != null) {
-            return fishMeta.getFloat("size");
-        }
-        return 0;
+        NBTCompound fishMeta = new NBTItem(itemStack).getCompound("FishMeta");
+        return fishMeta != null ? fishMeta.getFloat("size") : 0;
     }
 
-    public void addTotemBreakDetectToCache(SimpleLocation part, SimpleLocation bottom) {
-        breakDetectionMap.put(part, bottom);
+    public void addTotemBreakDetectToCache(SimpleLocation part, SimpleLocation coreLoc) {
+        breakDetectionMap.put(part, coreLoc);
     }
 
     public void removeTotemBreakDetectFromCache(SimpleLocation part) {
@@ -1041,12 +1011,13 @@ public class FishingManager extends Function {
 
     @Override
     public void onBreakBlock(BlockBreakEvent event) {
-        final Block block = event.getBlock();
-        SimpleLocation bottomLoc = breakDetectionMap.get(LocationUtils.getSimpleLocation(block.getLocation()));
-        if (bottomLoc == null) return;
-        ActivatedTotem activatedTotem = activeTotemMap.get(bottomLoc);
-        if (activatedTotem == null) return;
-        activatedTotem.stop();
+        SimpleLocation coreLoc = breakDetectionMap.get(LocationUtils.getSimpleLocation(event.getBlock().getLocation()));
+        if (coreLoc != null) {
+            ActivatedTotem activatedTotem = activeTotemMap.get(coreLoc);
+            if (activatedTotem != null) {
+                activatedTotem.stop();
+            }
+        }
     }
 
     public void removeBobber(Player player) {
@@ -1064,8 +1035,7 @@ public class FishingManager extends Function {
     @Override
     public void onConsumeItem(PlayerItemConsumeEvent event) {
         ItemStack itemStack = event.getItem();
-        NBTItem nbtItem = new NBTItem(itemStack);
-        NBTCompound nbtCompound = nbtItem.getCompound("CustomFishing");
+        NBTCompound nbtCompound = new NBTItem(itemStack).getCompound("CustomFishing");
         if (nbtCompound == null) return;
         if (!nbtCompound.getString("type").equals("loot")) return;
         String lootKey = nbtCompound.getString("id");

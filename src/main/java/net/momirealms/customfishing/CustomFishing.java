@@ -76,7 +76,7 @@ public final class CustomFishing extends JavaPlugin {
         this.registerCommands();
         this.registerQuests();
         AdventureUtil.consoleMessage("[CustomFishing] Plugin Enabled!");
-        new Metrics(this, 16648);
+        if (ConfigManager.bStats) new Metrics(this, 16648);
     }
 
     @Override
@@ -181,6 +181,8 @@ public final class CustomFishing extends JavaPlugin {
     public void reload() {
         ConfigManager.load();
         MessageManager.load();
+        getDataManager().unload();
+        getDataManager().load();
         getIntegrationManager().unload();
         getIntegrationManager().load();
         getBarMechanicManager().unload();

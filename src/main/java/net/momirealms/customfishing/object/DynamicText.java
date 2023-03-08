@@ -41,7 +41,7 @@ public class DynamicText {
     }
 
     private void analyze(String value) {
-        List<String> placeholdersOwner = new ArrayList<>(CustomFishing.getInstance().getIntegrationManager().getPlaceholderManager().detectPlaceholders(value));
+        List<String> placeholdersOwner = new ArrayList<>(CustomFishing.getInstance().getIntegrationManager().getPlaceholderManager().detectBasicPlaceholders(value));
         String origin = value;
         for (String placeholder : placeholdersOwner) {
             origin = origin.replace(placeholder, "%s");

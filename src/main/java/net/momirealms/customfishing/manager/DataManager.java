@@ -21,23 +21,19 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.data.storage.DataStorageInterface;
 import net.momirealms.customfishing.data.storage.FileStorageImpl;
 import net.momirealms.customfishing.data.storage.MySQLStorageImpl;
+import net.momirealms.customfishing.data.storage.StorageType;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.util.ConfigUtil;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class DataManager extends Function {
 
-    private final DataStorageInterface dataStorageInterface;
-    private CustomFishing plugin;
+    private DataStorageInterface dataStorageInterface;
+    private final CustomFishing plugin;
+    private StorageType storageType;
 
     public DataManager(CustomFishing plugin) {
         this.plugin = plugin;
-        YamlConfiguration config = ConfigUtil.getConfig("database.yml");
-        if (config.getString("data-storage-method","YAML").equalsIgnoreCase("YAML")) {
-            this.dataStorageInterface = new FileStorageImpl(plugin);
-        } else {
-            this.dataStorageInterface = new MySQLStorageImpl(plugin);
-        }
         load();
     }
 
@@ -45,13 +41,33 @@ public class DataManager extends Function {
         return dataStorageInterface;
     }
 
+    private boolean loadStorageMode() {
+        YamlConfiguration config = ConfigUtil.getConfig("database.yml");
+        if (config.getString("data-storage-method","YAML").equalsIgnoreCase("YAML")) {
+            if (storageType != StorageType.YAML) {
+                this.dataStorageInterface = new FileStorageImpl(plugin);
+                this.storageType = StorageType.YAML;
+                return true;
+            }
+        } else {
+            if (storageType != StorageType.SQL) {
+                this.dataStorageInterface = new MySQLStorageImpl(plugin);
+                this.storageType = StorageType.SQL;
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void load() {
-        this.dataStorageInterface.initialize();
+        if (loadStorageMode()) this.dataStorageInterface.initialize();
     }
 
     @Override
     public void unload() {
-        this.dataStorageInterface.disable();
+        YamlConfiguration config = ConfigUtil.getConfig("database.yml");
+        StorageType st = config.getString("data-storage-method","YAML").equalsIgnoreCase("YAML") ? StorageType.YAML : StorageType.SQL;
+        if (this.dataStorageInterface != null && dataStorageInterface.getStorageType() != st) this.dataStorageInterface.disable();
     }
 }

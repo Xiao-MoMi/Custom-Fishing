@@ -158,6 +158,7 @@ public class EffectManager extends Function {
             for (String key : keys) {
                 ConfigurationSection rodSection = config.getConfigurationSection(key);
                 if (rodSection == null) continue;
+                rodSection.set("material", "fishing_rod");
                 Item item = new Item(rodSection, key);
                 rodItems.put(key, ItemStackUtil.addIdentifier(ItemStackUtil.getFromItem(item), "rod", key));
                 if (rodSection.contains("effect")) {
@@ -186,8 +187,8 @@ public class EffectManager extends Function {
                 case "time" -> effect.setTimeModifier(section.getDouble(modifier));
                 case "difficulty" -> effect.setDifficulty(section.getInt(modifier));
                 case "double-loot" -> effect.setDoubleLootChance(section.getDouble(modifier));
-                case "score" -> effect.setScoreMultiplier(section.getDouble(modifier) - 1);
-                case "size-multiply" -> effect.setSizeMultiplier(section.getDouble(modifier) - 1);
+                case "score" -> effect.setScoreMultiplier(section.getDouble(modifier));
+                case "size-multiply" -> effect.setSizeMultiplier(section.getDouble(modifier));
                 case "lava-fishing" -> effect.setCanLavaFishing(section.getBoolean(modifier, false));
             }
         }

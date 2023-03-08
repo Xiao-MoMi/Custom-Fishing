@@ -34,7 +34,6 @@ public class ConfigManager {
     public static boolean whiteOrBlack;
     public static String priority;
     public static String lang;
-    public static boolean otherLootBar;
     public static boolean enableVanillaLoot;
     public static boolean enableMcMMOLoot;
     public static double vanillaLootRatio;
@@ -47,7 +46,7 @@ public class ConfigManager {
     public static boolean convertMMOItems;
     public static boolean preventPickUp;
     public static boolean enableFishingBag;
-    public static boolean alwaysFishingBar;
+    public static boolean otherLootHasFishingBar;
     public static boolean allRodsFishInLava;
     public static boolean enableSuccessTitle;
     public static String[] successTitle;
@@ -76,13 +75,15 @@ public class ConfigManager {
     public static boolean disableBar;
     public static boolean instantBar;
     public static String fishingBagTitle;
-
+    public static boolean bStats;
     public static HashSet<Material> bagWhiteListItems;
+    public static boolean enableStatistics;
 
     public static void load() {
         ConfigUtil.update("config.yml");
         YamlConfiguration config = ConfigUtil.getConfig("config.yml");
         lang = config.getString("lang","english");
+        bStats = config.getBoolean("metrics", true);
         loadMechanics(config);
         loadTitle(config);
         loadFishingWorlds(config);
@@ -100,8 +101,7 @@ public class ConfigManager {
     private static void loadMechanics(YamlConfiguration config) {
         disableBar = config.getBoolean("mechanics.disable-bar-mechanic", false);
         instantBar = config.getBoolean("mechanics.instant-bar", false);
-        alwaysFishingBar = config.getBoolean("mechanics.other-loots.fishing-bar", true);
-        otherLootBar = config.getBoolean("mechanics.other-loots.fishing-bar", true);
+        otherLootHasFishingBar = config.getBoolean("mechanics.other-loots.fishing-bar", true);
         enableVanillaLoot = config.getBoolean("mechanics.other-loots.vanilla.enable", true);
         vanillaLootRatio = config.getDouble("mechanics.other-loots.vanilla.ratio", 0.4);
         enableMcMMOLoot = config.getBoolean("mechanics.other-loots.mcMMO.enable", false);

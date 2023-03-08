@@ -113,7 +113,8 @@ public class LootManager extends Function {
                         new MobVector(
                                 mobSection.getDouble("vector.horizontal",1.1),
                                 mobSection.getDouble("vector.vertical",1.3)
-                        )
+                        ),
+                        mobSection.getBoolean("disable-bar-mechanic", false)
                 );
 
                 setActions(mobSection, loot);
@@ -152,7 +153,8 @@ public class LootManager extends Function {
                         lootSection.getInt("weight",10),
                         lootSection.getBoolean("show-in-fishfinder", true),
                         lootSection.getDouble("score"),
-                        lootSection.getBoolean("random-durability", false)
+                        lootSection.getBoolean("random-durability", false),
+                        lootSection.getBoolean("disable-bar-mechanic", false)
                 );
 
                 if (lootSection.contains("size")) {

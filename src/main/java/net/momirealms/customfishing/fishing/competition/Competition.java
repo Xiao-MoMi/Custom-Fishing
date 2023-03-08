@@ -114,13 +114,14 @@ public class Competition {
         List<String> newMessage = new ArrayList<>();
         PlaceholderManager placeholderManager = CustomFishing.getInstance().getIntegrationManager().getPlaceholderManager();
         for (String endMsg : competitionConfig.getEndMessage()) {
-            List<String> placeholders = new ArrayList<>(placeholderManager.detectPlaceholders(endMsg));
+            List<String> placeholders = new ArrayList<>(placeholderManager.detectBetterPlaceholders(endMsg));
             for (String placeholder : placeholders) {
-                if (placeholder.endsWith("_player%")) {
+                System.out.println(placeholder);
+                if (placeholder.endsWith("_player}")) {
                     int rank = Integer.parseInt(placeholder.substring(1, placeholder.length() - 8));
                     endMsg = endMsg.replace(placeholder, Optional.ofNullable(ranking.getPlayerAt(rank)).orElse(MessageManager.noPlayer));
                 }
-                else if (placeholder.endsWith("_score%")) {
+                else if (placeholder.endsWith("_score}")) {
                     int rank = Integer.parseInt(placeholder.substring(1, placeholder.length() - 7));
                     float score = ranking.getScoreAt(rank);
                     endMsg = endMsg.replace(placeholder, score == 0 ? MessageManager.noScore : String.format("%.1f", score));

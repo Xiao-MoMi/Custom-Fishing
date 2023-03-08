@@ -23,11 +23,12 @@ import net.momirealms.customfishing.object.action.ActionInterface;
 
 public class Loot {
 
-    public static Loot EMPTY = new Loot("null", "null", new MiniGameConfig[0], 0, false, 0d);
+    public static Loot EMPTY = new Loot("null", "null", new MiniGameConfig[0], 0, false, 0d, false);
 
     protected final String key;
     protected final String nick;
     protected String group;
+    protected boolean disableBar;
     protected final boolean showInFinder;
     protected ActionInterface[] successActions;
     protected ActionInterface[] failureActions;
@@ -38,13 +39,14 @@ public class Loot {
     protected final int weight;
     protected final double score;
 
-    public Loot(String key, String nick, MiniGameConfig[] fishingGames, int weight, boolean showInFinder, double score) {
+    public Loot(String key, String nick, MiniGameConfig[] fishingGames, int weight, boolean showInFinder, double score, boolean disableBar) {
         this.key = key;
         this.nick = nick;
         this.weight = weight;
         this.showInFinder = showInFinder;
         this.score = score;
         this.fishingGames = fishingGames;
+        this.disableBar = disableBar;
     }
 
     public MiniGameConfig[] getFishingGames() {
@@ -117,5 +119,9 @@ public class Loot {
 
     public void setRequirements(RequirementInterface[] requirements) {
         this.requirements = requirements;
+    }
+
+    public boolean isDisableBar() {
+        return disableBar;
     }
 }
