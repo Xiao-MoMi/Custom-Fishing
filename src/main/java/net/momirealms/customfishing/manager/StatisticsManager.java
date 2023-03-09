@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing.manager;
 
 import net.momirealms.customfishing.CustomFishing;
@@ -9,7 +26,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,12 +53,13 @@ public class StatisticsManager extends DataFunction {
         HandlerList.unregisterAll(joinQuitListener);
     }
 
+    public void saveStatisticsDataForOnlinePlayers(boolean unlock) {
+        plugin.getDataManager().getDataStorageInterface().saveStatistics(statisticsDataMap.entrySet(), unlock);
+    }
+
     public void disable() {
         unload();
-        DataManager dataManager = plugin.getDataManager();
-        for (Map.Entry<UUID, PlayerStatisticsData> entry : statisticsDataMap.entrySet()) {
-            dataManager.getDataStorageInterface().saveStatistics(entry.getKey(), entry.getValue(), true);
-        }
+        saveStatisticsDataForOnlinePlayers(true);
         statisticsDataMap.clear();
     }
 

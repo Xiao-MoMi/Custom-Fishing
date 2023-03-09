@@ -29,7 +29,6 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.event.SellFishEvent;
 import net.momirealms.customfishing.data.PlayerSellData;
-import net.momirealms.customfishing.data.storage.DataStorageInterface;
 import net.momirealms.customfishing.fishing.loot.Item;
 import net.momirealms.customfishing.integration.papi.PlaceholderManager;
 import net.momirealms.customfishing.listener.InventoryListener;
@@ -56,6 +55,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SellManager extends DataFunction {
 
@@ -87,7 +87,7 @@ public class SellManager extends DataFunction {
     public static boolean sellLimitation;
     public static int upperLimit;
     private final HashMap<Player, Inventory> inventoryMap;
-    private final HashMap<UUID, PlayerSellData> sellDataMap;
+    private final ConcurrentHashMap<UUID, PlayerSellData> sellDataMap;
 
     public SellManager(CustomFishing plugin) {
         super();
@@ -95,7 +95,7 @@ public class SellManager extends DataFunction {
         this.windowPacketListener = new WindowPacketListener(this);
         this.inventoryListener = new InventoryListener(this);
         this.joinQuitListener = new JoinQuitListener(this);
-        this.sellDataMap = new HashMap<>();
+        this.sellDataMap = new ConcurrentHashMap<>();
         this.inventoryMap = new HashMap<>();
     }
 
@@ -123,10 +123,7 @@ public class SellManager extends DataFunction {
 
     public void disable() {
         unload();
-        DataStorageInterface dataStorage = plugin.getDataManager().getDataStorageInterface();
-        for (Map.Entry<UUID, PlayerSellData> entry : sellDataMap.entrySet()) {
-            dataStorage.saveSellData(entry.getKey(), entry.getValue(), true);
-        }
+        plugin.getDataManager().getDataStorageInterface().saveSellData(sellDataMap.entrySet(), true);
         sellDataMap.clear();
     }
 

@@ -31,6 +31,7 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class FileStorageImpl implements DataStorageInterface {
@@ -78,6 +79,14 @@ public class FileStorageImpl implements DataStorageInterface {
     }
 
     @Override
+    public void saveBagData(Set<Map.Entry<UUID, Inventory>> set, boolean unlock) {
+        for (Map.Entry<UUID, Inventory> entry : set) {
+            saveBagData(entry.getKey(), entry.getValue(), unlock);
+        }
+    }
+
+
+    @Override
     public PlayerSellData loadSellData(UUID uuid, boolean force) {
         YamlConfiguration data = ConfigUtil.readData(new File(plugin.getDataFolder(), "sell_data" + File.separator + uuid + ".yml"));
         int date = data.getInt("date");
@@ -99,6 +108,13 @@ public class FileStorageImpl implements DataStorageInterface {
     }
 
     @Override
+    public void saveSellData(Set<Map.Entry<UUID, PlayerSellData>> set, boolean unlock) {
+        for (Map.Entry<UUID, PlayerSellData> entry : set) {
+            saveSellData(entry.getKey(), entry.getValue(), unlock);
+        }
+    }
+
+    @Override
     public StorageType getStorageType() {
         return StorageType.YAML;
     }
@@ -114,6 +130,13 @@ public class FileStorageImpl implements DataStorageInterface {
         }
         catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void saveStatistics(Set<Map.Entry<UUID, PlayerStatisticsData>> set, boolean unlock) {
+        for (Map.Entry<UUID, PlayerStatisticsData> entry : set) {
+            saveStatistics(entry.getKey(), entry.getValue(), unlock);
         }
     }
 

@@ -21,6 +21,8 @@ import net.momirealms.customfishing.data.PlayerSellData;
 import net.momirealms.customfishing.data.PlayerStatisticsData;
 import org.bukkit.inventory.Inventory;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public interface DataStorageInterface {
@@ -29,9 +31,12 @@ public interface DataStorageInterface {
     void disable();
     Inventory loadBagData(UUID uuid, boolean force);
     void saveBagData(UUID uuid, Inventory inventory, boolean unlock);
+    void saveBagData(Set<Map.Entry<UUID, Inventory>> set, boolean unlock);
     PlayerSellData loadSellData(UUID uuid, boolean force);
     void saveSellData(UUID uuid, PlayerSellData playerSellData, boolean unlock);
+    void saveSellData(Set<Map.Entry<UUID, PlayerSellData>> set, boolean unlock);
     StorageType getStorageType();
     void saveStatistics(UUID uuid, PlayerStatisticsData statisticsData, boolean unlock);
+    void saveStatistics(Set<Map.Entry<UUID, PlayerStatisticsData>> set, boolean unlock);
     PlayerStatisticsData loadStatistics(UUID uuid, boolean force);
 }

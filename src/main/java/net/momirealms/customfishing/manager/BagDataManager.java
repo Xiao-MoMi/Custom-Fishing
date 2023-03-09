@@ -33,14 +33,12 @@ import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +52,6 @@ public class BagDataManager extends DataFunction {
     private final InventoryListener inventoryListener;
     private final WindowPacketListener windowPacketListener;
     private final JoinQuitListener joinQuitListener;
-    private final BukkitTask timerSave;
     private final CustomFishing plugin;
 
     public BagDataManager(CustomFishing plugin) {
@@ -66,15 +63,10 @@ public class BagDataManager extends DataFunction {
         this.inventoryListener = new InventoryListener(this);
         this.windowPacketListener = new WindowPacketListener(this);
         this.joinQuitListener = new JoinQuitListener(this);
+    }
 
-        this.timerSave = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            AdventureUtil.consoleMessage("[CustomFishing] Saving Fishing bag data...");
-            DataManager dataManager = plugin.getDataManager();
-            for (Map.Entry<UUID, Inventory> entry : dataMap.entrySet()) {
-                dataManager.getDataStorageInterface().saveBagData(entry.getKey(), entry.getValue(), false);
-            }
-            AdventureUtil.consoleMessage("[CustomFishing] Fishing bag data saved for " + dataMap.size() + " online players.");
-        }, 12000, 12000);
+    public void saveBagDataForOnlinePlayers(boolean unlock) {
+        plugin.getDataManager().getDataStorageInterface().saveBagData(dataMap.entrySet(), unlock);
     }
 
     @Override
@@ -94,16 +86,9 @@ public class BagDataManager extends DataFunction {
 
     public void disable() {
         unload();
-        DataManager dataManager = plugin.getDataManager();
-        for (Map.Entry<UUID, Inventory> entry : dataMap.entrySet()) {
-            for (HumanEntity humanEntity : entry.getValue().getViewers()) {
-                humanEntity.closeInventory();
-            }
-            dataManager.getDataStorageInterface().saveBagData(entry.getKey(), entry.getValue(), true);
-        }
+        saveBagDataForOnlinePlayers(true);
         dataMap.clear();
         tempData.clear();
-        timerSave.cancel();
     }
 
     public Inventory getPlayerBagData(UUID uuid) {

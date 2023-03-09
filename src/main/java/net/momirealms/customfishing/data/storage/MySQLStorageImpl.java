@@ -34,6 +34,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class MySQLStorageImpl implements DataStorageInterface {
@@ -49,9 +51,9 @@ public class MySQLStorageImpl implements DataStorageInterface {
     @Override
     public void initialize() {
         sqlConnection.createNewHikariConfiguration();
-        if (ConfigManager.enableFishingBag) createTableIfNotExist(sqlConnection.getTablePrefix() + "_" + "fishingbag", SqlConstants.SQL_CREATE_BAG_TABLE);
-        if (SellManager.sellLimitation) createTableIfNotExist(sqlConnection.getTablePrefix() + "_" + "selldata", SqlConstants.SQL_CREATE_SELL_TABLE);
-        if (ConfigManager.enableStatistics) createTableIfNotExist(sqlConnection.getTablePrefix() + "_" + "statistics", SqlConstants.SQL_CREATE_STATS_TABLE);
+        createTableIfNotExist(sqlConnection.getTablePrefix() + "_" + "fishingbag", SqlConstants.SQL_CREATE_BAG_TABLE);
+        createTableIfNotExist(sqlConnection.getTablePrefix() + "_" + "selldata", SqlConstants.SQL_CREATE_SELL_TABLE);
+        createTableIfNotExist(sqlConnection.getTablePrefix() + "_" + "statistics", SqlConstants.SQL_CREATE_STATS_TABLE);
     }
 
     @Override
@@ -98,8 +100,32 @@ public class MySQLStorageImpl implements DataStorageInterface {
 
     @Override
     public void saveBagData(UUID uuid, Inventory inventory, boolean unlock) {
-        String contents = InventoryUtil.toBase64(inventory.getContents());
-        updateBagData(uuid, inventory.getSize(), contents, unlock);
+        updateBagData(uuid, inventory.getSize(), InventoryUtil.toBase64(inventory.getContents()), unlock);
+    }
+
+    @Override
+    public void saveBagData(Set<Map.Entry<UUID, Inventory>> set, boolean unlock) {
+        String sql = String.format(SqlConstants.SQL_UPDATE_BAG_BY_UUID, sqlConnection.getTablePrefix() + "_" + "fishingbag");
+        try (Connection connection = sqlConnection.getConnectionAndCheck()) {
+            connection.setAutoCommit(false);
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                for (Map.Entry<UUID, Inventory> entry : set) {
+                    statement.setInt(1, unlock ? 0 : 1);
+                    statement.setInt(2, entry.getValue().getSize());
+                    statement.setString(3, InventoryUtil.toBase64(entry.getValue().getContents()));
+                    statement.setString(4, entry.getKey().toString());
+                    statement.addBatch();
+                }
+                statement.executeBatch();
+                connection.commit();
+            }
+            catch (SQLException ex) {
+                connection.rollback();
+                AdventureUtil.consoleMessage("[CustomFishing] Failed to update bag data for online players");
+            }
+        } catch (SQLException ex) {
+            AdventureUtil.consoleMessage("[CustomFishing] Failed to get connection");
+        }
     }
 
     @Override
@@ -138,6 +164,31 @@ public class MySQLStorageImpl implements DataStorageInterface {
     }
 
     @Override
+    public void saveSellData(Set<Map.Entry<UUID, PlayerSellData>> set, boolean unlock) {
+        String sql = String.format(SqlConstants.SQL_UPDATE_SELL_BY_UUID, sqlConnection.getTablePrefix() + "_" + "selldata");
+        try (Connection connection = sqlConnection.getConnectionAndCheck()) {
+            connection.setAutoCommit(false);
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                for (Map.Entry<UUID, PlayerSellData> entry : set) {
+                    statement.setInt(1, unlock ? 0 : 1);
+                    statement.setInt(2, entry.getValue().getDate());
+                    statement.setInt(3, (int) entry.getValue().getMoney());
+                    statement.setString(4, entry.getKey().toString());
+                    statement.addBatch();
+                }
+                statement.executeBatch();
+                connection.commit();
+            }
+            catch (SQLException ex) {
+                connection.rollback();
+                AdventureUtil.consoleMessage("[CustomFishing] Failed to update sell data for all the players");
+            }
+        } catch (SQLException ex) {
+            AdventureUtil.consoleMessage("[CustomFishing] Failed to get connection");
+        }
+    }
+
+    @Override
     public PlayerStatisticsData loadStatistics(UUID uuid, boolean force) {
         PlayerStatisticsData playerStatisticsData = null;
         String sql = String.format(SqlConstants.SQL_SELECT_BY_UUID, sqlConnection.getTablePrefix() + "_" + "statistics");
@@ -168,6 +219,30 @@ public class MySQLStorageImpl implements DataStorageInterface {
     @Override
     public void saveStatistics(UUID uuid, PlayerStatisticsData statisticsData, boolean unlock) {
         updateStatisticsData(uuid, statisticsData.getLongText(), unlock);
+    }
+
+    @Override
+    public void saveStatistics(Set<Map.Entry<UUID, PlayerStatisticsData>> set, boolean unlock) {
+        String sql = String.format(SqlConstants.SQL_UPDATE_STATS_BY_UUID, sqlConnection.getTablePrefix() + "_" + "statistics");
+        try (Connection connection = sqlConnection.getConnectionAndCheck()) {
+            connection.setAutoCommit(false);
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                for (Map.Entry<UUID, PlayerStatisticsData> entry : set) {
+                    statement.setInt(1, unlock ? 0 : 1);
+                    statement.setString(2, entry.getValue().getLongText());
+                    statement.setString(3, entry.getKey().toString());
+                    statement.addBatch();
+                }
+                statement.executeBatch();
+                connection.commit();
+            }
+            catch (SQLException ex) {
+                connection.rollback();
+                AdventureUtil.consoleMessage("[CustomFishing] Failed to update statistics data for online players");
+            }
+        } catch (SQLException ex) {
+            AdventureUtil.consoleMessage("[CustomFishing] Failed to get connection");
+        }
     }
 
     private void createTableIfNotExist(String table, String sqlStat) {

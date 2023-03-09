@@ -27,6 +27,7 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 public class InventoryUtil {
 
@@ -53,6 +54,7 @@ public class InventoryUtil {
                 }
                 dataOutput.close();
                 byte[] byteArr = outputStream.toByteArray();
+                outputStream.close();
                 return Base64Coder.encodeLines(byteArr);
             } catch (IOException e) {
                 throw new RuntimeException("[CustomFishing] Data save error", e);
