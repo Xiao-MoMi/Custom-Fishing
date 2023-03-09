@@ -17,8 +17,8 @@
 
 package net.momirealms.customfishing.integration.item;
 
+import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
-import io.th0rgal.oraxen.items.OraxenItems;
 import net.momirealms.customfishing.integration.ItemInterface;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

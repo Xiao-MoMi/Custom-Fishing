@@ -1,0 +1,55 @@
+# %fishingstats_amount_<id>% get the number of a certain fish caught
+# %fishingstats_hascaught_<id>% return if a player has caught this fish
+# %fishingstats_category_total_<id>% get the total number of a certain category's fish caught
+# %fishingstats_category_progress_<id>% get the player's exploration of this category of fish
+normal_fish:
+  - pufferfish
+  - cod
+  - salmon
+  - tropical_fish
+  - tuna_fish
+  - pike_fish
+  - gold_fish
+  - perch_fish
+  - mullet_fish
+  - sardine_fish
+  - carp_fish
+  - cat_fish
+  - octopus
+  - sunfish
+  - red_snapper_fish
+  - salmon_void_fish
+  - woodskip_fish
+  - sturgeon_fish
+
+sliver_star_fish:
+  - tuna_fish_silver_star
+  - pike_fish_silver_star
+  - gold_fish_silver_star
+  - perch_fish_silver_star
+  - mullet_fish_silver_star
+  - sardine_fish_silver_star
+  - carp_fish_silver_star
+  - cat_fish_silver_star
+  - octopus_silver_star
+  - sunfish_silver_star
+  - red_snapper_fish_silver_star
+  - salmon_void_fish_silver_star
+  - woodskip_fish_silver_star
+  - sturgeon_fish_silver_star
+
+golden_star_fish:
+  - tuna_fish_golden_star
+  - pike_fish_golden_star
+  - gold_fish_golden_star
+  - perch_fish_golden_star
+  - mullet_fish_golden_star
+  - sardine_fish_golden_star
+  - carp_fish_golden_star
+  - cat_fish_golden_star
+  - octopus_golden_star
+  - sunfish_golden_star
+  - red_snapper_fish_golden_star
+  - salmon_void_fish_golden_star
+  - woodskip_fish_golden_star
+  - sturgeon_fish_golden_star

@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.data.storage;
 
 import net.momirealms.customfishing.data.PlayerSellData;
+import net.momirealms.customfishing.data.PlayerStatisticsData;
 import org.bukkit.inventory.Inventory;
 
 import java.util.UUID;
@@ -31,4 +32,6 @@ public interface DataStorageInterface {
     PlayerSellData loadSellData(UUID uuid, boolean force);
     void saveSellData(UUID uuid, PlayerSellData playerSellData, boolean unlock);
     StorageType getStorageType();
+    void saveStatistics(UUID uuid, PlayerStatisticsData statisticsData, boolean unlock);
+    PlayerStatisticsData loadStatistics(UUID uuid, boolean force);
 }

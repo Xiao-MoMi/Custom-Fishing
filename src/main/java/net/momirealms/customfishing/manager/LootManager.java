@@ -47,12 +47,14 @@ public class LootManager extends Function {
     private final HashMap<String, Loot> waterLoots;
     private final HashMap<String, Loot> lavaLoots;
     private final HashMap<String, ItemStack> lootItems;
+    private final HashMap<String, List<String>> category;
 
     public LootManager(CustomFishing plugin) {
         this.plugin = plugin;
         this.waterLoots = new HashMap<>();
         this.lavaLoots = new HashMap<>();
         this.lootItems = new HashMap<>();
+        this.category = new HashMap<>();
     }
 
     @Nullable
@@ -65,7 +67,9 @@ public class LootManager extends Function {
     public void load() {
         this.loadItems();
         this.loadMobs();
+        this.loadCategories();
         AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + (this.lavaLoots.size() + this.waterLoots.size()) + " <gray>loot(s)");
+        AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + (this.category.size()) + " <gray>category(s)");
     }
 
     @Override
@@ -73,6 +77,7 @@ public class LootManager extends Function {
         this.waterLoots.clear();
         this.lavaLoots.clear();
         this.lootItems.clear();
+        this.category.clear();
     }
 
     @Nullable
@@ -82,6 +87,39 @@ public class LootManager extends Function {
             loot = this.lavaLoots.get(key);
         }
         return loot;
+    }
+
+    public boolean hasLoot(String key) {
+        boolean has = this.waterLoots.containsKey(key);
+        if (!has) {
+            has = this.lavaLoots.containsKey(key);
+        }
+        return has;
+    }
+
+    private void loadCategories() {
+        File category_file = new File(plugin.getDataFolder() + File.separator + "categories");
+        if (!category_file.exists()) {
+            if (!category_file.mkdir()) return;
+            plugin.saveResource("categories" + File.separator + "default.yml", false);
+        }
+        File[] files = category_file.listFiles();
+        if (files == null) return;
+        for (File file : files) {
+            if (!file.getName().endsWith(".yml")) continue;
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+            outer:
+                for (String key : config.getKeys(false)) {
+                    List<String> fishIDs = config.getStringList(key);
+                    for (String id : fishIDs) {
+                        if (!waterLoots.containsKey(id) && !lavaLoots.containsKey(id)) {
+                            AdventureUtil.consoleMessage("<red>[CustomFishing] Fish ID " + id + " doesn't exist in category " + key);
+                            continue outer;
+                        }
+                    }
+                    category.put(key, fishIDs);
+                }
+        }
     }
 
     private void loadMobs() {
@@ -114,7 +152,8 @@ public class LootManager extends Function {
                                 mobSection.getDouble("vector.horizontal",1.1),
                                 mobSection.getDouble("vector.vertical",1.3)
                         ),
-                        mobSection.getBoolean("disable-bar-mechanic", false)
+                        mobSection.getBoolean("disable-bar-mechanic", false),
+                        mobSection.getBoolean("disable-stats", false)
                 );
 
                 setActions(mobSection, loot);
@@ -154,7 +193,8 @@ public class LootManager extends Function {
                         lootSection.getBoolean("show-in-fishfinder", true),
                         lootSection.getDouble("score"),
                         lootSection.getBoolean("random-durability", false),
-                        lootSection.getBoolean("disable-bar-mechanic", false)
+                        lootSection.getBoolean("disable-bar-mechanic", false),
+                        lootSection.getBoolean("disable-stats", false)
                 );
 
                 if (lootSection.contains("size")) {
@@ -189,7 +229,7 @@ public class LootManager extends Function {
 
                 if (lootSection.getBoolean("in-lava", false)) lavaLoots.put(key, loot);
                 else waterLoots.put(key, loot);
-
+                //not a CustomFishing loot
                 if (material.contains(":")) continue;
 
                 Item item = new Item(lootSection, key);
@@ -204,14 +244,25 @@ public class LootManager extends Function {
         loot.setFailureActions(getActions(section.getConfigurationSection("action.failure"), loot.getNick()));
         loot.setHookActions(getActions(section.getConfigurationSection("action.hook"), loot.getNick()));
         loot.setConsumeActions(getActions(section.getConfigurationSection("action.consume"), loot.getNick()));
+        setSuccessAmountAction(section.getConfigurationSection("action.success-times"), loot);
+    }
+
+    private void setSuccessAmountAction(ConfigurationSection section, Loot loot) {
+        if (section != null) {
+            HashMap<Integer, Action[]> actionMap = new HashMap<>();
+            for (String amount : section.getKeys(false)) {
+                actionMap.put(Integer.parseInt(amount), getActions(section.getConfigurationSection(amount), loot.getNick()));
+            }
+            loot.setSuccessTimesActions(actionMap);
+        }
     }
 
     private void setRequirements(ConfigurationSection section, Loot loot) {
         loot.setRequirements(getRequirements(section));
     }
 
-    public ActionInterface[] getActions(ConfigurationSection section, String nick) {
-        List<ActionInterface> actions = new ArrayList<>();
+    public Action[] getActions(ConfigurationSection section, String nick) {
+        List<Action> actions = new ArrayList<>();
         if (section != null) {
             for (String action : section.getKeys(false)) {
                 switch (action) {
@@ -242,7 +293,7 @@ public class LootManager extends Function {
                 }
             }
         }
-        return actions.toArray(new ActionInterface[0]);
+        return actions.toArray(new Action[0]);
     }
 
     public RequirementInterface[] getRequirements(ConfigurationSection section) {
@@ -294,5 +345,10 @@ public class LootManager extends Function {
         ArrayList<Loot> loots = new ArrayList<>(getWaterLoots().values());
         loots.addAll(getLavaLoots().values());
         return loots;
+    }
+
+    @Nullable
+    public List<String> getCategories(String categoryID) {
+        return category.get(categoryID);
     }
 }

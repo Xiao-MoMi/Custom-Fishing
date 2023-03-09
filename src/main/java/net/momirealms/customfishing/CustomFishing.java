@@ -48,6 +48,7 @@ public final class CustomFishing extends JavaPlugin {
     private DataManager dataManager;
     private SellManager sellManager;
     private OffsetManager offsetManager;
+    private StatisticsManager statisticsManager;
     private VersionHelper versionHelper;
 
     @Override
@@ -72,6 +73,7 @@ public final class CustomFishing extends JavaPlugin {
         this.sellManager = new SellManager(this);
         this.bagDataManager = new BagDataManager(this);
         this.offsetManager = new OffsetManager(this);
+        this.statisticsManager = new StatisticsManager(this);
         this.reload();
         this.registerCommands();
         this.registerQuests();
@@ -90,7 +92,8 @@ public final class CustomFishing extends JavaPlugin {
         this.bagDataManager.disable();
         this.totemManager.unload();
         this.sellManager.disable();
-        this.dataManager.unload();
+        this.dataManager.disable();
+        this.statisticsManager.disable();
         if (adventure != null) {
             adventure.close();
         }
@@ -174,6 +177,10 @@ public final class CustomFishing extends JavaPlugin {
         return barMechanicManager;
     }
 
+    public StatisticsManager getStatisticsManager() {
+        return statisticsManager;
+    }
+
     public OffsetManager getOffsetManager() {
         return offsetManager;
     }
@@ -203,6 +210,8 @@ public final class CustomFishing extends JavaPlugin {
         getCompetitionManager().load();
         getBagDataManager().unload();
         getBagDataManager().load();
+        getStatisticsManager().unload();
+        getStatisticsManager().load();
     }
 
     public static BukkitAudiences getAdventure() {

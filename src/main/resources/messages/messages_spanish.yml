@@ -30,3 +30,7 @@ messages:
   no-rod: 'Hay que obtener una vara especial para conseguir botines'
   no-player: 'Ningún jugador'
   no-score: 'Sin puntuación'
+  set-statistics: 'Successfully set {Player}''s {Loot} catch amount to {Amount}'
+  reset-statistics: 'Successfully reset {Player}''s statistics'
+  negative-statistics: 'Amount should be a value no lower than zero'
+  statistics-not-exist: 'That statistics does not exist'

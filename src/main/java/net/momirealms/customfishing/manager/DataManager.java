@@ -70,4 +70,10 @@ public class DataManager extends Function {
         StorageType st = config.getString("data-storage-method","YAML").equalsIgnoreCase("YAML") ? StorageType.YAML : StorageType.SQL;
         if (this.dataStorageInterface != null && dataStorageInterface.getStorageType() != st) this.dataStorageInterface.disable();
     }
+
+    public void disable() {
+        if (this.dataStorageInterface != null) {
+            this.dataStorageInterface.disable();
+        }
+    }
 }

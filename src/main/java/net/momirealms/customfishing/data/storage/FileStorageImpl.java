@@ -19,6 +19,7 @@ package net.momirealms.customfishing.data.storage;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.data.PlayerSellData;
+import net.momirealms.customfishing.data.PlayerStatisticsData;
 import net.momirealms.customfishing.util.ConfigUtil;
 import net.momirealms.customfishing.util.InventoryUtil;
 import org.bukkit.Bukkit;
@@ -29,6 +30,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 
 public class FileStorageImpl implements DataStorageInterface {
@@ -99,5 +101,25 @@ public class FileStorageImpl implements DataStorageInterface {
     @Override
     public StorageType getStorageType() {
         return StorageType.YAML;
+    }
+
+    @Override
+    public void saveStatistics(UUID uuid, PlayerStatisticsData statisticsData, boolean unlock) {
+        YamlConfiguration data = new YamlConfiguration();
+        for (Map.Entry<String, Integer> entry : statisticsData.getAmountMap().entrySet()) {
+            data.set(entry.getKey(), entry.getValue());
+        }
+        try {
+            data.save(new File(plugin.getDataFolder(), "statistics_data" + File.separator + uuid + ".yml"));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public PlayerStatisticsData loadStatistics(UUID uuid, boolean force) {
+        YamlConfiguration data = ConfigUtil.readData(new File(plugin.getDataFolder(), "statistics_data" + File.separator + uuid + ".yml"));
+        return new PlayerStatisticsData(data);
     }
 }

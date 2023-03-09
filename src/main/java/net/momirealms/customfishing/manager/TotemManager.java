@@ -24,7 +24,7 @@ import net.momirealms.customfishing.fishing.totem.OriginalModel;
 import net.momirealms.customfishing.fishing.totem.TotemConfig;
 import net.momirealms.customfishing.integration.BlockInterface;
 import net.momirealms.customfishing.object.Function;
-import net.momirealms.customfishing.object.action.ActionInterface;
+import net.momirealms.customfishing.object.action.Action;
 import net.momirealms.customfishing.object.action.CommandActionImpl;
 import net.momirealms.customfishing.object.action.MessageActionImpl;
 import net.momirealms.customfishing.util.AdventureUtil;
@@ -183,8 +183,8 @@ public class TotemManager extends Function {
                     EffectManager.getEffect(config.getConfigurationSection(key + ".effect"))
             );
 
-            List<ActionInterface> actionList = new ArrayList<>();
-            List<ActionInterface> nearActionList = new ArrayList<>();
+            List<Action> actionList = new ArrayList<>();
+            List<Action> nearActionList = new ArrayList<>();
             if (config.contains(key + ".action")) {
                 for (String action : Objects.requireNonNull(config.getConfigurationSection(key + ".action")).getKeys(false)) {
                     switch (action) {
@@ -196,8 +196,8 @@ public class TotemManager extends Function {
                 }
             }
 
-            totem.setActivatorActions(actionList.toArray(new ActionInterface[0]));
-            totem.setNearbyActions(nearActionList.toArray(new ActionInterface[0]));
+            totem.setActivatorActions(actionList.toArray(new Action[0]));
+            totem.setNearbyActions(nearActionList.toArray(new Action[0]));
             totem.setRequirements(plugin.getLootManager().getRequirements(config.getConfigurationSection(key + ".requirements")));
 
             if (config.getBoolean(key + ".hologram.enable", false)) {

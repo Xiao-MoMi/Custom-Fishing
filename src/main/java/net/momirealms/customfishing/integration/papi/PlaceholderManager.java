@@ -38,10 +38,11 @@ public class PlaceholderManager extends Function {
     private boolean hasPlaceholderAPI = false;
 
     public PlaceholderManager(CustomFishing plugin) {
+        this.plugin = plugin;
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             hasPlaceholderAPI = true;
             this.competitionPapi = new CompetitionPapi();
-            //this.statisticsPapi = new StatisticsPapi(plugin);
+            this.statisticsPapi = new StatisticsPapi(plugin);
         }
     }
 
@@ -55,13 +56,13 @@ public class PlaceholderManager extends Function {
     @Override
     public void load() {
         if (competitionPapi != null) competitionPapi.register();
-        //if (statisticsPapi != null) statisticsPapi.register();
+        if (statisticsPapi != null) statisticsPapi.register();
     }
 
     @Override
     public void unload() {
         if (this.competitionPapi != null) competitionPapi.unregister();
-        //if (this.statisticsPapi != null) statisticsPapi.unregister();
+        if (this.statisticsPapi != null) statisticsPapi.unregister();
     }
 
     public List<String> detectBasicPlaceholders(String text){

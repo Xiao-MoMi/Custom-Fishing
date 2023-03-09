@@ -35,7 +35,7 @@ import net.momirealms.customfishing.integration.papi.PlaceholderManager;
 import net.momirealms.customfishing.listener.InventoryListener;
 import net.momirealms.customfishing.listener.JoinQuitListener;
 import net.momirealms.customfishing.listener.WindowPacketListener;
-import net.momirealms.customfishing.object.Function;
+import net.momirealms.customfishing.object.DataFunction;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;
@@ -56,9 +56,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class SellManager extends Function {
+public class SellManager extends DataFunction {
 
     private final WindowPacketListener windowPacketListener;
     private final InventoryListener inventoryListener;
@@ -89,15 +88,14 @@ public class SellManager extends Function {
     public static int upperLimit;
     private final HashMap<Player, Inventory> inventoryMap;
     private final HashMap<UUID, PlayerSellData> sellDataMap;
-    private final HashMap<UUID, Integer> triedTimes;
 
     public SellManager(CustomFishing plugin) {
+        super();
         this.plugin = plugin;
         this.windowPacketListener = new WindowPacketListener(this);
         this.inventoryListener = new InventoryListener(this);
         this.joinQuitListener = new JoinQuitListener(this);
         this.sellDataMap = new HashMap<>();
-        this.triedTimes = new HashMap<>();
         this.inventoryMap = new HashMap<>();
     }
 
@@ -464,22 +462,6 @@ public class SellManager extends Function {
                             )
                     )
             );
-        }
-    }
-
-    public boolean checkTriedTimes(UUID uuid) {
-        Integer previous = triedTimes.get(uuid);
-        if (previous == null) {
-            triedTimes.put(uuid, 1);
-            return false;
-        }
-        else if (previous > 2) {
-            triedTimes.remove(uuid);
-            return true;
-        }
-        else {
-            triedTimes.put(uuid, previous + 1);
-            return false;
         }
     }
 }

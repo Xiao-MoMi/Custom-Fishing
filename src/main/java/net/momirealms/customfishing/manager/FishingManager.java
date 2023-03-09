@@ -47,7 +47,7 @@ import net.momirealms.customfishing.integration.item.McMMOTreasure;
 import net.momirealms.customfishing.listener.*;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.SimpleLocation;
-import net.momirealms.customfishing.object.action.ActionInterface;
+import net.momirealms.customfishing.object.action.Action;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.FakeItemUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;
@@ -176,7 +176,8 @@ public class FishingManager extends Function {
             initialEffect.setDifficulty(0);
             initialEffect.setDoubleLootChance(0);
             initialEffect.setTimeModifier(1);
-            initialEffect.setScoreMultiplier(0);
+            initialEffect.setScoreMultiplier(1);
+            initialEffect.setSizeMultiplier(1);
             initialEffect.setWeightMD(new HashMap<>());
             initialEffect.setWeightAS(new HashMap<>());
 
@@ -536,9 +537,11 @@ public class FishingManager extends Function {
             Competition.currentCompetition.tryAddBossBarToPlayer(player);
         }
 
-        dropItem(player, location, fishResultEvent.isDouble(), drop);
-        for (ActionInterface action : droppedItem.getSuccessActions())
+        for (Action action : droppedItem.getSuccessActions())
             action.doOn(player, null);
+
+        dropItem(player, location, fishResultEvent.isDouble(), drop);
+        addStats(player.getUniqueId(), droppedItem, isDouble ? 2 : 1);
         sendSuccessTitle(player, droppedItem.getNick());
     }
 
@@ -603,6 +606,12 @@ public class FishingManager extends Function {
         }
     }
 
+    private void addStats(UUID uuid, Loot loot, int amount) {
+        if (!ConfigManager.enableStatistics) return;
+        if (loot.isDisableStats()) return;
+        plugin.getStatisticsManager().addFishAmount(uuid, loot, amount);
+    }
+
     private void dropVanillaLoot(Player player, VanillaLoot vanillaLoot, Location location, boolean isDouble) {
         ItemStack itemStack;
         itemStack = vanillaLoot.getItemStack();
@@ -646,9 +655,11 @@ public class FishingManager extends Function {
             Competition.currentCompetition.tryAddBossBarToPlayer(player);
         }
 
-        mobInterface.summon(player.getLocation(), location, mob);
-        for (ActionInterface action : loot.getSuccessActions())
+        for (Action action : loot.getSuccessActions())
             action.doOn(player, null);
+
+        mobInterface.summon(player.getLocation(), location, mob);
+        addStats(player.getUniqueId(), mob, 1);
         sendSuccessTitle(player, loot.getNick());
     }
 
@@ -734,7 +745,7 @@ public class FishingManager extends Function {
         }
 
         if (!isVanilla && loot != null) {
-            for (ActionInterface action : loot.getFailureActions())
+            for (Action action : loot.getFailureActions())
                 action.doOn(player, null);
         }
 
@@ -891,10 +902,10 @@ public class FishingManager extends Function {
         plugin.getTotemManager().removeModel(totem.getFinalModel(), coreLoc, direction);
         if (player.getGameMode() != GameMode.CREATIVE) itemStack.setAmount(itemStack.getAmount() - 1);
 
-        for (ActionInterface action : totem.getActivatorActions()) {
+        for (Action action : totem.getActivatorActions()) {
             action.doOn(player, null);
         }
-        for (ActionInterface action : totem.getNearbyActions()) {
+        for (Action action : totem.getNearbyActions()) {
             for (Player nearby : coreLoc.getNearbyPlayers(totem.getRadius())) {
                 action.doOn(nearby, player);
             }
@@ -947,7 +958,7 @@ public class FishingManager extends Function {
             fishingPlayerMap.put(player, fishingGame);
         }
         if (vanillaLoot.get(player) == null && loot != null){
-            for (ActionInterface action : loot.getHookActions()) {
+            for (Action action : loot.getHookActions()) {
                 action.doOn(player, null);
             }
         }
@@ -1044,7 +1055,7 @@ public class FishingManager extends Function {
         if (!(loot instanceof DroppedItem droppedItem)) return;
         final Player player = event.getPlayer();
         if (droppedItem.getConsumeActions() != null)
-            for (ActionInterface action : droppedItem.getConsumeActions())
+            for (Action action : droppedItem.getConsumeActions())
                 action.doOn(player, null);
     }
 }

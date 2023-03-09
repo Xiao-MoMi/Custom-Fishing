@@ -30,3 +30,7 @@ messages:
   no-rod: '你必须使用特殊鱼竿才能获得战利品!'
   no-player: '虚位以待'
   no-score: '无分数'
+  set-statistics: '成功将玩家 {Player} 的 {Loot} 捕获次数设置为 {Amount}'
+  reset-statistics: '成功重置玩家 {Player} 的统计数据'
+  negative-statistics: '不能设置此数据为负数'
+  statistics-not-exist: '此统计数据不存在'

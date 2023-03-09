@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public abstract class AbstractSubCommand implements SubCommand {
 
@@ -89,7 +90,7 @@ public abstract class AbstractSubCommand implements SubCommand {
         this.subCommandMap = subCommandMap;
     }
 
-    protected void giveItem(CommandSender sender, String name, String item, int amount){
+    protected void giveItemMsg(CommandSender sender, String name, String item, int amount){
         String string = MessageManager.prefix + MessageManager.giveItem.replace("{Amount}", String.valueOf(amount)).replace("{Player}",name).replace("{Item}",item);
         AdventureUtil.sendMessage(sender, string);
     }
@@ -98,5 +99,9 @@ public abstract class AbstractSubCommand implements SubCommand {
         List<String> online = new ArrayList<>();
         Bukkit.getOnlinePlayers().forEach((player -> online.add(player.getName())));
         return online;
+    }
+
+    protected List<String> filterStartingWith(List<String> list, String prefix) {
+        return list.stream().filter(s -> s.startsWith(prefix)).collect(Collectors.toList());
     }
 }

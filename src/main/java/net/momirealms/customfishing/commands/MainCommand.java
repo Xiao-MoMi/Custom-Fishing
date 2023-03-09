@@ -61,6 +61,7 @@ public class MainCommand implements TabExecutor {
         regSubCommand(ImportCommand.INSTANCE);
         regSubCommand(SellShopCommand.INSTANCE);
         regSubCommand(OpenBagCommand.INSTANCE);
+        regSubCommand(StatisticsCommand.INSTANCE);
     }
 
     public void regSubCommand(SubCommand executor) {

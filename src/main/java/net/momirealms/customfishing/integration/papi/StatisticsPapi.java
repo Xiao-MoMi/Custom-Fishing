@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class StatisticsPapi extends PlaceholderExpansion {
 
-    private CustomFishing plugin;
+    private final CustomFishing plugin;
 
     public StatisticsPapi(CustomFishing plugin) {
         this.plugin = plugin;
@@ -36,6 +36,30 @@ public class StatisticsPapi extends PlaceholderExpansion {
 
     @Override
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
+        String[] args = params.split("_", 2);
+        switch (args[0]) {
+            case "amount" -> {
+                if (args[1].equals("")) return "lack args";
+                return String.valueOf(plugin.getStatisticsManager().getFishAmount(player.getUniqueId(), args[1]));
+            }
+            case "hascaught" -> {
+                if (args[1].equals("")) return "lack args";
+                return String.valueOf(plugin.getStatisticsManager().hasFished(player.getUniqueId(), args[1]));
+            }
+            case "category" -> {
+                String[] moreArgs = args[1].split("_", 2);
+                if (moreArgs[1].equals("")) return "lack args";
+                switch (moreArgs[0]) {
+                    case "total" -> {
+                        return String.valueOf(plugin.getStatisticsManager().getCategoryTotalFishAmount(player.getUniqueId(), moreArgs[1]));
+                    }
+                    case "progress" -> {
+                        String progress = String.format("%.1f", plugin.getStatisticsManager().getCategoryUnlockProgress(player.getUniqueId(), moreArgs[1]));
+                        return progress.equals("100.0") ? "100" : progress;
+                    }
+                }
+            }
+        }
         return "null";
     }
 }

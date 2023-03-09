@@ -25,7 +25,7 @@ import net.momirealms.customfishing.fishing.competition.ranking.RedisRankingImpl
 import net.momirealms.customfishing.integration.papi.PlaceholderManager;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.MessageManager;
-import net.momirealms.customfishing.object.action.ActionInterface;
+import net.momirealms.customfishing.object.action.Action;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -148,7 +148,7 @@ public class Competition {
     }
 
     public void givePrize(){
-        HashMap<String, ActionInterface[]> rewardsMap = competitionConfig.getRewards();
+        HashMap<String, Action[]> rewardsMap = competitionConfig.getRewards();
         if (ranking.getSize() != 0 && rewardsMap != null) {
             Iterator<String> iterator = ranking.getIterator();
             int i = 1;
@@ -157,19 +157,19 @@ public class Competition {
                     String playerName = iterator.next();
                     Player player = Bukkit.getPlayer(playerName);
                     if (player != null){
-                        for (ActionInterface action : rewardsMap.get(String.valueOf(i))) {
+                        for (Action action : rewardsMap.get(String.valueOf(i))) {
                             action.doOn(player, null);
                         }
                     }
                     i++;
                 }
                 else {
-                    ActionInterface[] actions = rewardsMap.get("participation");
+                    Action[] actions = rewardsMap.get("participation");
                     if (actions != null) {
                         iterator.forEachRemaining(playerName -> {
                             Player player = Bukkit.getPlayer(playerName);
                             if (player != null){
-                                for (ActionInterface action : actions) {
+                                for (Action action : actions) {
                                     action.doOn(player, null);
                                 }
                             }

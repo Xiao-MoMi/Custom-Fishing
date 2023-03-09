@@ -17,9 +17,9 @@
 
 package net.momirealms.customfishing.integration.block;
 
+import io.th0rgal.oraxen.api.OraxenBlocks;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanicFactory;
-import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanicListener;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.integration.BlockInterface;
 import net.momirealms.customfishing.util.AdventureUtil;
@@ -58,7 +58,7 @@ public class OraxenBlockImpl implements BlockInterface {
     @Nullable
     @Override
     public String getID(Block block) {
-        NoteBlockMechanic mechanic = NoteBlockMechanicListener.getNoteBlockMechanic(block);
+        NoteBlockMechanic mechanic = OraxenBlocks.getNoteBlockMechanic(block);
         String id;
         if (mechanic == null) {
             id = block.getType().name();

@@ -24,11 +24,10 @@ import net.momirealms.customfishing.fishing.competition.CompetitionSchedule;
 import net.momirealms.customfishing.fishing.competition.bossbar.BossBarConfig;
 import net.momirealms.customfishing.fishing.competition.bossbar.BossBarOverlay;
 import net.momirealms.customfishing.object.Function;
-import net.momirealms.customfishing.object.action.ActionInterface;
+import net.momirealms.customfishing.object.action.Action;
 import net.momirealms.customfishing.object.action.CommandActionImpl;
 import net.momirealms.customfishing.object.action.MessageActionImpl;
 import net.momirealms.customfishing.util.AdventureUtil;
-import net.momirealms.customfishing.util.ConfigUtil;
 import org.bukkit.boss.BarColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -94,14 +93,14 @@ public class CompetitionManager extends Function {
                         competitionSection.getInt("bossbar.switch-interval", 200)
                 );
 
-                HashMap<String, ActionInterface[]> rewardsMap = new HashMap<>();
+                HashMap<String, Action[]> rewardsMap = new HashMap<>();
                 Objects.requireNonNull(competitionSection.getConfigurationSection("prize")).getKeys(false).forEach(rank -> {
-                    List<ActionInterface> rewards = new ArrayList<>();
+                    List<Action> rewards = new ArrayList<>();
                     if (competitionSection.contains("prize." + rank + ".messages"))
                         rewards.add(new MessageActionImpl(competitionSection.getStringList("prize." + rank + ".messages").toArray(new String[0]), null));
                     if (competitionSection.contains("prize." + rank + ".commands"))
                         rewards.add(new CommandActionImpl(competitionSection.getStringList("prize." + rank + ".commands").toArray(new String[0]), null));
-                    rewardsMap.put(rank, rewards.toArray(new ActionInterface[0]));
+                    rewardsMap.put(rank, rewards.toArray(new Action[0]));
                 });
 
                 CompetitionConfig competitionConfig = new CompetitionConfig(

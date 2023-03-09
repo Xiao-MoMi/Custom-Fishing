@@ -21,7 +21,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-public record CommandActionImpl(String[] commands, String nick) implements ActionInterface {
+public record CommandActionImpl(String[] commands, String nick) implements Action {
 
     public CommandActionImpl(String[] commands, @Nullable String nick) {
         this.commands = commands;

@@ -123,6 +123,7 @@ public class ConfigManager {
         canStoreLoot = config.getBoolean("mechanics.fishing-bag.can-store-loot", false);
         addTagToFish = config.getBoolean("mechanics.add-custom-fishing-tags-to-loots", true);
         fishingBagTitle = config.getString("mechanics.fishing-bag.bag-title", "Fishing Bag");
+        enableStatistics = config.getBoolean("mechanics.fishing-statistics.enable", true);
         bagWhiteListItems = new HashSet<>();
         for (String material : config.getStringList("mechanics.fishing-bag.whitelist-items")) bagWhiteListItems.add(Material.valueOf(material.toUpperCase()));
         redisSettings(config);

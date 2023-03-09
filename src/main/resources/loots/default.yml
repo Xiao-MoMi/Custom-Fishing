@@ -1,6 +1,8 @@
 rubbish:
   material: cod
   show-in-fishfinder: false
+  disable-stats: true
+  disable-bar-mechanic: true
   display:
     name: '<gray>Garbage</gray>'
     lore:
@@ -14,6 +16,7 @@ obsidian:
   nick: '<#4B0082>Obsidian</#4B0082>'
   material: obsidian
   in-lava: true
+  disable-stats: true
   action:
     success:
       mending: 15
@@ -21,6 +24,7 @@ wither_skeleton_skull:
   nick: '<black>Wither Skeleton Skull</black>'
   material: wither_skeleton_skull
   in-lava: true
+  disable-stats: true
   weight: 1
   action:
     success:

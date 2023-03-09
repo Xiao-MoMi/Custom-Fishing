@@ -21,7 +21,7 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.integration.SkillInterface;
 import org.bukkit.entity.Player;
 
-public record SkillXPImpl(double amount) implements ActionInterface {
+public record SkillXPImpl(double amount) implements Action {
 
     @Override
     public void doOn(Player player, Player another) {

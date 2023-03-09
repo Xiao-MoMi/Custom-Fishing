@@ -19,6 +19,9 @@ package net.momirealms.customfishing.data.storage;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.data.PlayerSellData;
+import net.momirealms.customfishing.data.PlayerStatisticsData;
+import net.momirealms.customfishing.manager.ConfigManager;
+import net.momirealms.customfishing.manager.SellManager;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.InventoryUtil;
 import org.bukkit.Bukkit;
@@ -46,8 +49,9 @@ public class MySQLStorageImpl implements DataStorageInterface {
     @Override
     public void initialize() {
         sqlConnection.createNewHikariConfiguration();
-        createTableIfNotExist(sqlConnection.getTablePrefix() + "_fishingbag", SqlConstants.SQL_CREATE_BAG_TABLE);
-        createTableIfNotExist(sqlConnection.getTablePrefix() + "_selldata", SqlConstants.SQL_CREATE_SELL_TABLE);
+        if (ConfigManager.enableFishingBag) createTableIfNotExist(sqlConnection.getTablePrefix() + "_" + "fishingbag", SqlConstants.SQL_CREATE_BAG_TABLE);
+        if (SellManager.sellLimitation) createTableIfNotExist(sqlConnection.getTablePrefix() + "_" + "selldata", SqlConstants.SQL_CREATE_SELL_TABLE);
+        if (ConfigManager.enableStatistics) createTableIfNotExist(sqlConnection.getTablePrefix() + "_" + "statistics", SqlConstants.SQL_CREATE_STATS_TABLE);
     }
 
     @Override
@@ -56,9 +60,14 @@ public class MySQLStorageImpl implements DataStorageInterface {
     }
 
     @Override
+    public StorageType getStorageType() {
+        return StorageType.SQL;
+    }
+
+    @Override
     public Inventory loadBagData(UUID uuid, boolean force) {
         Inventory inventory = null;
-        String sql = String.format(SqlConstants.SQL_SELECT_BAG_BY_UUID, sqlConnection.getTablePrefix() + "_" + "fishingbag");
+        String sql = String.format(SqlConstants.SQL_SELECT_BY_UUID, sqlConnection.getTablePrefix() + "_" + "fishingbag");
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
         try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, uuid.toString());
@@ -96,7 +105,7 @@ public class MySQLStorageImpl implements DataStorageInterface {
     @Override
     public PlayerSellData loadSellData(UUID uuid, boolean force) {
         PlayerSellData playerSellData = null;
-        String sql = String.format(SqlConstants.SQL_SELECT_SELL_BY_UUID, sqlConnection.getTablePrefix() + "_" + "selldata");
+        String sql = String.format(SqlConstants.SQL_SELECT_BY_UUID, sqlConnection.getTablePrefix() + "_" + "selldata");
         try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, uuid.toString());
             ResultSet rs = statement.executeQuery();
@@ -129,8 +138,36 @@ public class MySQLStorageImpl implements DataStorageInterface {
     }
 
     @Override
-    public StorageType getStorageType() {
-        return StorageType.SQL;
+    public PlayerStatisticsData loadStatistics(UUID uuid, boolean force) {
+        PlayerStatisticsData playerStatisticsData = null;
+        String sql = String.format(SqlConstants.SQL_SELECT_BY_UUID, sqlConnection.getTablePrefix() + "_" + "statistics");
+        try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, uuid.toString());
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                int version = rs.getInt(2);
+                if (!force && version != 0) {
+                    statement.close();
+                    connection.close();
+                    return null;
+                }
+                String longText = rs.getString(3);
+                playerStatisticsData = new PlayerStatisticsData(longText);
+                lockData(uuid, "statistics");
+            }
+            else {
+                playerStatisticsData = new PlayerStatisticsData();
+                insertStatisticsData(uuid);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return playerStatisticsData;
+    }
+
+    @Override
+    public void saveStatistics(UUID uuid, PlayerStatisticsData statisticsData, boolean unlock) {
+        updateStatisticsData(uuid, statisticsData.getLongText(), unlock);
     }
 
     private void createTableIfNotExist(String table, String sqlStat) {
@@ -168,6 +205,18 @@ public class MySQLStorageImpl implements DataStorageInterface {
         }
     }
 
+    private void insertStatisticsData(UUID uuid) {
+        String sql = String.format(SqlConstants.SQL_INSERT_STATS, sqlConnection.getTablePrefix() + "_" + "statistics");
+        try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, uuid.toString());
+            statement.setInt(2, 1);
+            statement.setString(3, "");
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            AdventureUtil.consoleMessage("[CustomFishing] Failed to insert data for " + uuid);
+        }
+    }
+
     private void updateBagData(UUID uuid, int size, String contents, boolean unlock) {
         String sql = String.format(SqlConstants.SQL_UPDATE_BAG_BY_UUID, sqlConnection.getTablePrefix() + "_" + "fishingbag");
         try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -188,6 +237,18 @@ public class MySQLStorageImpl implements DataStorageInterface {
             statement.setInt(2, date);
             statement.setInt(3, money);
             statement.setString(4, uuid.toString());
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            AdventureUtil.consoleMessage("[CustomFishing] Failed to update data for " + uuid);
+        }
+    }
+
+    private void updateStatisticsData(UUID uuid, String longText, boolean unlock) {
+        String sql = String.format(SqlConstants.SQL_UPDATE_STATS_BY_UUID, sqlConnection.getTablePrefix() + "_" + "statistics");
+        try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, unlock ? 0 : 1);
+            statement.setString(2, longText);
+            statement.setString(3, uuid.toString());
             statement.executeUpdate();
         } catch (SQLException ex) {
             AdventureUtil.consoleMessage("[CustomFishing] Failed to update data for " + uuid);

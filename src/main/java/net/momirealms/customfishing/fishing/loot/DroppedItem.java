@@ -30,8 +30,8 @@ public class DroppedItem extends Loot {
     private float basicPrice;
     private float sizeBonus;
 
-    public DroppedItem(String key, String nick, String material, MiniGameConfig[] fishingGames, int weight, boolean showInFinder, double score, boolean randomDurability, boolean disableBar) {
-        super(key, nick, fishingGames, weight, showInFinder, score, disableBar);
+    public DroppedItem(String key, String nick, String material, MiniGameConfig[] fishingGames, int weight, boolean showInFinder, double score, boolean randomDurability, boolean disableBar, boolean disableStats) {
+        super(key, nick, fishingGames, weight, showInFinder, score, disableBar, disableStats);
         this.material = material;
         this.randomDurability = randomDurability;
     }

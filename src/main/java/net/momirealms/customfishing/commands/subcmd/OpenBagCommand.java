@@ -44,12 +44,7 @@ public class OpenBagCommand extends AbstractSubCommand {
     public List<String> onTabComplete(CommandSender sender, List<String> args) {
         if (!ConfigManager.enableFishingBag) return null;
         if (args.size() == 1) {
-            List<String> arrayList = new ArrayList<>();
-            for (String cmd : online_players()) {
-                if (cmd.startsWith(args.get(0)))
-                    arrayList.add(cmd);
-            }
-            return arrayList;
+            return filterStartingWith(online_players(), args.get(0));
         }
         return super.onTabComplete(sender, args);
     }

@@ -21,6 +21,7 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.commands.AbstractSubCommand;
 import net.momirealms.customfishing.commands.SubCommand;
 import net.momirealms.customfishing.fishing.competition.CompetitionSchedule;
+import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.command.CommandSender;
@@ -38,6 +39,7 @@ public class CompetitionCommand extends AbstractSubCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, List<String> args) {
+        if (!ConfigManager.enableCompetition) return true;
         if (args.size() < 1){
             AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.lackArgs);
             return true;
@@ -65,18 +67,21 @@ public class CompetitionCommand extends AbstractSubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, List<String> args) {
+        List<String> completions = new ArrayList<>();
         if (args.size() == 1) {
-            List<String> arrayList = new ArrayList<>();
-            for (String cmd : List.of("start","end","cancel")) {
-                if (cmd.startsWith(args.get(0)))
-                    arrayList.add(cmd);
+            for (String cmd : List.of("start", "end", "cancel")) {
+                if (cmd.startsWith(args.get(0))) {
+                    completions.add(cmd);
+                }
             }
-            return arrayList;
+        } else if (args.size() == 2 && args.get(0).equals("start")) {
+            for (String cmd : competitions()) {
+                if (cmd.startsWith(args.get(1))) {
+                    completions.add(cmd);
+                }
+            }
         }
-        if (args.size() == 2 && args.get(0).equals("start")) {
-            return competitions();
-        }
-        return super.onTabComplete(sender, args);
+        return completions.isEmpty() ? null : completions;
     }
 
     private List<String> competitions() {

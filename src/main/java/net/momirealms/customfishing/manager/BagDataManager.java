@@ -28,7 +28,7 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.listener.InventoryListener;
 import net.momirealms.customfishing.listener.JoinQuitListener;
 import net.momirealms.customfishing.listener.WindowPacketListener;
-import net.momirealms.customfishing.object.Function;
+import net.momirealms.customfishing.object.DataFunction;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -47,7 +47,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class BagDataManager extends Function {
+public class BagDataManager extends DataFunction {
 
     private final ConcurrentHashMap<UUID, Inventory> dataMap;
     private final HashMap<UUID, Inventory> tempData;
@@ -56,13 +56,12 @@ public class BagDataManager extends Function {
     private final JoinQuitListener joinQuitListener;
     private final BukkitTask timerSave;
     private final CustomFishing plugin;
-    private final HashMap<UUID, Integer> triedTimes;
 
     public BagDataManager(CustomFishing plugin) {
+        super();
         this.plugin = plugin;
         this.dataMap = new ConcurrentHashMap<>();
         this.tempData = new HashMap<>();
-        this.triedTimes = new HashMap<>();
 
         this.inventoryListener = new InventoryListener(this);
         this.windowPacketListener = new WindowPacketListener(this);
@@ -100,7 +99,7 @@ public class BagDataManager extends Function {
             for (HumanEntity humanEntity : entry.getValue().getViewers()) {
                 humanEntity.closeInventory();
             }
-            dataManager.getDataStorageInterface().saveBagData(entry.getKey(), entry.getValue(), false);
+            dataManager.getDataStorageInterface().saveBagData(entry.getKey(), entry.getValue(), true);
         }
         dataMap.clear();
         tempData.clear();
@@ -263,22 +262,6 @@ public class BagDataManager extends Function {
         }
         else {
             viewer.openInventory(inventory);
-        }
-    }
-
-    private boolean checkTriedTimes(UUID uuid) {
-        Integer previous = triedTimes.get(uuid);
-        if (previous == null) {
-            triedTimes.put(uuid, 1);
-            return false;
-        }
-        else if (previous > 2) {
-            triedTimes.remove(uuid);
-            return true;
-        }
-        else {
-            triedTimes.put(uuid, previous + 1);
-            return false;
         }
     }
 }

@@ -19,27 +19,31 @@ package net.momirealms.customfishing.fishing.loot;
 
 import net.momirealms.customfishing.fishing.MiniGameConfig;
 import net.momirealms.customfishing.fishing.requirements.RequirementInterface;
-import net.momirealms.customfishing.object.action.ActionInterface;
+import net.momirealms.customfishing.object.action.Action;
+
+import java.util.HashMap;
 
 public class Loot {
 
-    public static Loot EMPTY = new Loot("null", "null", new MiniGameConfig[0], 0, false, 0d, false);
+    public static Loot EMPTY = new Loot("null", "null", new MiniGameConfig[0], 0, false, 0d, false, true);
 
     protected final String key;
     protected final String nick;
     protected String group;
+    protected boolean disableStats;
     protected boolean disableBar;
     protected final boolean showInFinder;
-    protected ActionInterface[] successActions;
-    protected ActionInterface[] failureActions;
-    protected ActionInterface[] hookActions;
-    protected ActionInterface[] consumeActions;
+    protected Action[] successActions;
+    protected Action[] failureActions;
+    protected Action[] hookActions;
+    protected Action[] consumeActions;
+    protected HashMap<Integer, Action[]> successTimesActions;
     protected RequirementInterface[] requirements;
     protected final MiniGameConfig[] fishingGames;
     protected final int weight;
     protected final double score;
 
-    public Loot(String key, String nick, MiniGameConfig[] fishingGames, int weight, boolean showInFinder, double score, boolean disableBar) {
+    public Loot(String key, String nick, MiniGameConfig[] fishingGames, int weight, boolean showInFinder, double score, boolean disableBar, boolean disableStats) {
         this.key = key;
         this.nick = nick;
         this.weight = weight;
@@ -47,6 +51,7 @@ public class Loot {
         this.score = score;
         this.fishingGames = fishingGames;
         this.disableBar = disableBar;
+        this.disableStats = disableStats;
     }
 
     public MiniGameConfig[] getFishingGames() {
@@ -73,35 +78,35 @@ public class Loot {
         return showInFinder;
     }
 
-    public ActionInterface[] getSuccessActions() {
+    public Action[] getSuccessActions() {
         return successActions;
     }
 
-    public void setSuccessActions(ActionInterface[] successActions) {
+    public void setSuccessActions(Action[] successActions) {
         this.successActions = successActions;
     }
 
-    public ActionInterface[] getFailureActions() {
+    public Action[] getFailureActions() {
         return failureActions;
     }
 
-    public ActionInterface[] getConsumeActions() {
+    public Action[] getConsumeActions() {
         return consumeActions;
     }
 
-    public void setConsumeActions(ActionInterface[] consumeActions) {
+    public void setConsumeActions(Action[] consumeActions) {
         this.consumeActions = consumeActions;
     }
 
-    public void setFailureActions(ActionInterface[] failureActions) {
+    public void setFailureActions(Action[] failureActions) {
         this.failureActions = failureActions;
     }
 
-    public ActionInterface[] getHookActions() {
+    public Action[] getHookActions() {
         return hookActions;
     }
 
-    public void setHookActions(ActionInterface[] hookActions) {
+    public void setHookActions(Action[] hookActions) {
         this.hookActions = hookActions;
     }
 
@@ -123,5 +128,17 @@ public class Loot {
 
     public boolean isDisableBar() {
         return disableBar;
+    }
+
+    public HashMap<Integer, Action[]> getSuccessTimesActions() {
+        return successTimesActions;
+    }
+
+    public void setSuccessTimesActions(HashMap<Integer, Action[]> successTimesActions) {
+        this.successTimesActions = successTimesActions;
+    }
+
+    public boolean isDisableStats() {
+        return disableStats;
     }
 }

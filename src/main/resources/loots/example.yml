@@ -5,6 +5,9 @@ rainbow_fish:
   # Disable bar mechanic for a certain loot
   # 为某个战利品关闭捕鱼条机制
   disable-bar-mechanic: false
+  # Disable statistics for a certain loot
+  # 关闭此物品的数据记录
+  disable-stats: true
   # Nick is what to show in fish finder and titles
   # 昵称将在标题和找鱼器信息中显示
   nick: 'Example Fish'
@@ -65,7 +68,7 @@ rainbow_fish:
       namespace: '(String) momirealms'
       id: '(String) rainbow_fish'
 
-  # Available events: consume/success/failure/hook
+  # Available events: consume/success/failure/hook/success-times
   # Available actions: message/command/exp/mending/skill-xp/sound/potion-effect
   action:
     consume:
@@ -100,6 +103,13 @@ rainbow_fish:
         - 'The fish is hooked！'
       command:
         - 'say Hook command example'
+    success-times:
+      1:
+        message:
+          - 'This is the first time you caught a rainbow fish!'
+      100:
+        message:
+          - 'You have caught rainbow fish for 100 times!'
 
   # Enchantments on the item
   enchantments:

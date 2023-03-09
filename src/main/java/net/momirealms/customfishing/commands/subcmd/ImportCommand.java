@@ -54,7 +54,7 @@ public class ImportCommand extends AbstractSubCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, List<String> args) {
         if (args.size() == 1) {
-            return Collections.singletonList("file_name");
+            return Collections.singletonList("<file_name>");
         }
         return super.onTabComplete(sender, args);
     }

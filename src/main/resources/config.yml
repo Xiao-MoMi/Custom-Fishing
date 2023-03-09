@@ -1,5 +1,5 @@
 # Don't change
-config-version: '17'
+config-version: '18'
 
 # bStats
 metrics: true
@@ -109,6 +109,9 @@ mechanics:
       item: lava_effect
       # ticks
       time: 25
+  # Record the statistics of player's fishing results
+  fishing-statistics:
+    enable: true
 
 titles:
   success:

@@ -22,7 +22,7 @@ import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.entity.Player;
 
-public record VanillaXPImpl(int amount, boolean mending) implements ActionInterface {
+public record VanillaXPImpl(int amount, boolean mending) implements Action {
 
     @Override
     public void doOn(Player player, Player another) {

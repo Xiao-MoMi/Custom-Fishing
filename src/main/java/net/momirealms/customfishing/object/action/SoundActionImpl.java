@@ -22,7 +22,7 @@ import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.entity.Player;
 
-public record SoundActionImpl(String source, String sound, float volume, float pitch) implements ActionInterface {
+public record SoundActionImpl(String source, String sound, float volume, float pitch) implements Action {
 
     @Override
     public void doOn(Player player, Player another) {

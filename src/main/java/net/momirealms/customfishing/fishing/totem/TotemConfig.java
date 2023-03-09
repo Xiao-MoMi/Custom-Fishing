@@ -19,7 +19,7 @@ package net.momirealms.customfishing.fishing.totem;
 
 import net.momirealms.customfishing.fishing.Effect;
 import net.momirealms.customfishing.fishing.requirements.RequirementInterface;
-import net.momirealms.customfishing.object.action.ActionInterface;
+import net.momirealms.customfishing.object.action.Action;
 import org.bukkit.Particle;
 import org.bukkit.potion.PotionEffect;
 
@@ -32,8 +32,8 @@ public class TotemConfig {
     private final Particle particle;
     private final int duration;
     private final Effect effect;
-    private ActionInterface[] activatorActions;
-    private ActionInterface[] nearbyActions;
+    private Action[] activatorActions;
+    private Action[] nearbyActions;
     private double holoOffset;
     private String[] holoText;
     private PotionEffect[] potionEffects;
@@ -84,19 +84,19 @@ public class TotemConfig {
         return effect;
     }
 
-    public ActionInterface[] getActivatorActions() {
+    public Action[] getActivatorActions() {
         return activatorActions;
     }
 
-    public void setActivatorActions(ActionInterface[] activatorActions) {
+    public void setActivatorActions(Action[] activatorActions) {
         this.activatorActions = activatorActions;
     }
 
-    public ActionInterface[] getNearbyActions() {
+    public Action[] getNearbyActions() {
         return nearbyActions;
     }
 
-    public void setNearbyActions(ActionInterface[] nearbyActions) {
+    public void setNearbyActions(Action[] nearbyActions) {
         this.nearbyActions = nearbyActions;
     }
 

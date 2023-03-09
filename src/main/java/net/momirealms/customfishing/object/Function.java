@@ -27,7 +27,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 
-public class Function {
+public abstract class Function {
 
     public void load() {
         //empty

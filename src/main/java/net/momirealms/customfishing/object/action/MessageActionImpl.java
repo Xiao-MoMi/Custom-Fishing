@@ -21,7 +21,7 @@ import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-public record MessageActionImpl(String[] messages, String nick) implements ActionInterface {
+public record MessageActionImpl(String[] messages, String nick) implements Action {
 
     public MessageActionImpl(String[] messages, String nick) {
         this.messages = messages;
