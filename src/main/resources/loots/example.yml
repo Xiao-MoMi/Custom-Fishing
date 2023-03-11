@@ -88,6 +88,8 @@ rainbow_fish:
       mending: 5
       # Fishing Skill xp (requires skill plugin hook)
       skill-xp: 100
+      # Fisherman Job xp (requires job plugin hook)
+      job-xp: 10
       sound:
         source: player
         key: 'minecraft:block.amethyst_block.break'
@@ -188,6 +190,9 @@ rainbow_fish:
 
     #Requires skill plugin
     skill-level: 10
+
+    #Requires job plugin
+    job-level: 10
 
     #Requires Season Plugin
     season:

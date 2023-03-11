@@ -18,8 +18,8 @@
 package net.momirealms.customfishing.fishing.totem;
 
 import net.momirealms.customfishing.fishing.Effect;
+import net.momirealms.customfishing.fishing.action.Action;
 import net.momirealms.customfishing.fishing.requirements.RequirementInterface;
-import net.momirealms.customfishing.object.action.Action;
 import org.bukkit.Particle;
 import org.bukkit.potion.PotionEffect;
 

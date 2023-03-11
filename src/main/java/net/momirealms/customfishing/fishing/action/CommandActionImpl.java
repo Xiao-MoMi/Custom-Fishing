@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.object.action;
+package net.momirealms.customfishing.fishing.action;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

@@ -26,6 +26,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.event.*;
 import net.momirealms.customfishing.fishing.*;
+import net.momirealms.customfishing.fishing.action.Action;
 import net.momirealms.customfishing.fishing.bar.FishingBar;
 import net.momirealms.customfishing.fishing.bar.ModeOneBar;
 import net.momirealms.customfishing.fishing.bar.ModeThreeBar;
@@ -47,7 +48,6 @@ import net.momirealms.customfishing.integration.item.McMMOTreasure;
 import net.momirealms.customfishing.listener.*;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.SimpleLocation;
-import net.momirealms.customfishing.object.action.Action;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.FakeItemUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;
@@ -186,7 +186,7 @@ public class FishingManager extends Function {
             if (mainHandItemType != Material.AIR) {
                 if (mainHandItemType == Material.FISHING_ROD) {
                     noRod = false;
-                    enchantBonus(initialEffect, mainHandItem);
+                    addEnchantEffect(initialEffect, mainHandItem);
                     lureLevel = mainHandItem.getEnchantmentLevel(Enchantment.LURE);
                 }
                 NBTItem mainHandNBTItem = new NBTItem(mainHandItem);
@@ -215,7 +215,7 @@ public class FishingManager extends Function {
             Material offHandItemType = offHandItem.getType();
             if (offHandItemType != Material.AIR){
                 if (noRod && offHandItemType == Material.FISHING_ROD) {
-                    enchantBonus(initialEffect, offHandItem);
+                    addEnchantEffect(initialEffect, offHandItem);
                     lureLevel = offHandItem.getEnchantmentLevel(Enchantment.LURE);
                 }
                 NBTItem offHandNBTItem = new NBTItem(offHandItem);
@@ -822,10 +822,8 @@ public class FishingManager extends Function {
         return coolDown.computeIfAbsent(player, k -> time - delay) + delay > time;
     }
 
-    private void enchantBonus(Effect initialEffect, ItemStack itemStack) {
-        Map<Enchantment, Integer> enchantments = itemStack.getEnchantments();
-        for (Map.Entry<Enchantment, Integer> en : enchantments.entrySet()) {
-            String key = en.getKey().getKey() + ":" + en.getValue();
+    private void addEnchantEffect(Effect initialEffect, ItemStack itemStack) {
+        for (String key : plugin.getIntegrationManager().getEnchantmentInterface().getEnchants(itemStack)) {
             Effect enchantEffect = plugin.getEffectManager().getEnchantEffect(key);
             if (enchantEffect != null) {
                 initialEffect.addEffect(enchantEffect);
@@ -940,7 +938,7 @@ public class FishingManager extends Function {
                 ? loot.getFishingGames()[new Random().nextInt(loot.getFishingGames().length)]
                 : plugin.getBarMechanicManager().getRandomGame();
         int difficult = game.getRandomDifficulty() + nextEffect.getOrDefault(player, new Effect()).getDifficulty();
-        FishHookEvent fishHookEvent = new FishHookEvent(player, Math.max(1, difficult));
+        FishHookEvent fishHookEvent = new FishHookEvent(player, Math.min(10, Math.max(1, difficult)));
         Bukkit.getPluginManager().callEvent(fishHookEvent);
         FishingBar fishingBar = game.getRandomBar();
         FishingGame fishingGame = null;

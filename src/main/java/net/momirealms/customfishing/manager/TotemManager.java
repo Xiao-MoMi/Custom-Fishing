@@ -18,15 +18,15 @@
 package net.momirealms.customfishing.manager;
 
 import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.fishing.action.Action;
+import net.momirealms.customfishing.fishing.action.CommandActionImpl;
+import net.momirealms.customfishing.fishing.action.MessageActionImpl;
 import net.momirealms.customfishing.fishing.totem.CorePos;
 import net.momirealms.customfishing.fishing.totem.FinalModel;
 import net.momirealms.customfishing.fishing.totem.OriginalModel;
 import net.momirealms.customfishing.fishing.totem.TotemConfig;
 import net.momirealms.customfishing.integration.BlockInterface;
 import net.momirealms.customfishing.object.Function;
-import net.momirealms.customfishing.object.action.Action;
-import net.momirealms.customfishing.object.action.CommandActionImpl;
-import net.momirealms.customfishing.object.action.MessageActionImpl;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import net.momirealms.customfishing.util.LocationUtils;

@@ -9,7 +9,7 @@ public record SkillLevelImpl(int level) implements RequirementInterface {
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
          SkillInterface skillInterface = CustomFishing.getInstance().getIntegrationManager().getSkillInterface();
-         if (skillInterface == null) return false;
+         if (skillInterface == null) return true;
          return skillInterface.getLevel(fishingCondition.getPlayer()) >= level;
     }
 }

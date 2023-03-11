@@ -18,15 +18,15 @@
 package net.momirealms.customfishing.manager;
 
 import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.fishing.action.Action;
+import net.momirealms.customfishing.fishing.action.CommandActionImpl;
+import net.momirealms.customfishing.fishing.action.MessageActionImpl;
 import net.momirealms.customfishing.fishing.competition.CompetitionConfig;
 import net.momirealms.customfishing.fishing.competition.CompetitionGoal;
 import net.momirealms.customfishing.fishing.competition.CompetitionSchedule;
 import net.momirealms.customfishing.fishing.competition.bossbar.BossBarConfig;
 import net.momirealms.customfishing.fishing.competition.bossbar.BossBarOverlay;
 import net.momirealms.customfishing.object.Function;
-import net.momirealms.customfishing.object.action.Action;
-import net.momirealms.customfishing.object.action.CommandActionImpl;
-import net.momirealms.customfishing.object.action.MessageActionImpl;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.boss.BarColor;
 import org.bukkit.configuration.ConfigurationSection;

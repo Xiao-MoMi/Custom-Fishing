@@ -110,7 +110,7 @@ public class EffectManager extends Function {
                 ConfigurationSection levelSection = config.getConfigurationSection(key);
                 if (levelSection == null) continue;
                 for (String level : levelSection.getKeys(false)) {
-                    enchantEffects.put(key + ":" + level, getEffect(levelSection.getConfigurationSection(key)));
+                    enchantEffects.put((key.startsWith("eco") ? "minecraft" + key.substring(3) : key) + ":" + level, getEffect(levelSection.getConfigurationSection(key)));
                 }
                 amount++;
             }

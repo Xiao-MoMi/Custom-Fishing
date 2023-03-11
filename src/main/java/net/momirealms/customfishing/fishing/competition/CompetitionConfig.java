@@ -17,8 +17,8 @@
 
 package net.momirealms.customfishing.fishing.competition;
 
+import net.momirealms.customfishing.fishing.action.Action;
 import net.momirealms.customfishing.fishing.competition.bossbar.BossBarConfig;
-import net.momirealms.customfishing.object.action.Action;
 
 import java.util.Calendar;
 import java.util.HashMap;

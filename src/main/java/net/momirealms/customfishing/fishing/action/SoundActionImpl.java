@@ -15,18 +15,17 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.object.action;
+package net.momirealms.customfishing.fishing.action;
 
-import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.integration.SkillInterface;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.entity.Player;
 
-public record SkillXPImpl(double amount) implements Action {
+public record SoundActionImpl(String source, String sound, float volume, float pitch) implements Action {
 
     @Override
     public void doOn(Player player, Player another) {
-        SkillInterface skillInterface = CustomFishing.getInstance().getIntegrationManager().getSkillInterface();
-        if (skillInterface == null) return;
-        skillInterface.addXp(player, amount);
+        AdventureUtil.playerSound(player, Sound.Source.valueOf(source.toUpperCase()), Key.key(sound), volume, pitch);
     }
 }

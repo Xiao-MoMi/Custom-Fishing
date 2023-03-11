@@ -19,11 +19,11 @@ package net.momirealms.customfishing.manager;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.MiniGameConfig;
+import net.momirealms.customfishing.fishing.action.*;
 import net.momirealms.customfishing.fishing.loot.*;
 import net.momirealms.customfishing.fishing.requirements.*;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.LeveledEnchantment;
-import net.momirealms.customfishing.object.action.*;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;
 import org.apache.commons.lang.StringUtils;
@@ -270,7 +270,8 @@ public class LootManager extends Function {
                     case "command" -> actions.add(new CommandActionImpl(section.getStringList(action).toArray(new String[0]), nick));
                     case "exp" -> actions.add(new VanillaXPImpl(section.getInt(action), false));
                     case "mending" -> actions.add(new VanillaXPImpl(section.getInt(action), true));
-                    case "skill-xp" -> actions.add(new SkillXPImpl(section.getInt(action)));
+                    case "skill-xp" -> actions.add(new SkillXPImpl(section.getDouble(action)));
+                    case "job-xp" -> actions.add(new JobXPImpl(section.getDouble(action)));
                     case "sound" -> actions.add(new SoundActionImpl(
                             section.getString(action + ".source"),
                             section.getString(action + ".key"),
@@ -309,6 +310,7 @@ public class LootManager extends Function {
                     case "permission" -> requirements.add(new PermissionImpl(section.getString(type)));
                     case "time" -> requirements.add(new TimeImpl(section.getStringList(type)));
                     case "skill-level" -> requirements.add(new SkillLevelImpl(section.getInt(type)));
+                    case "job-level" -> requirements.add(new JobLevelImpl(section.getInt(type)));
                     case "papi-condition" -> requirements.add(new CustomPapi(Objects.requireNonNull(section.getConfigurationSection(type)).getValues(false)));
                 }
             }

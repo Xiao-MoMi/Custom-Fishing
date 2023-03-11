@@ -18,8 +18,8 @@
 package net.momirealms.customfishing.fishing.loot;
 
 import net.momirealms.customfishing.fishing.MiniGameConfig;
+import net.momirealms.customfishing.fishing.action.Action;
 import net.momirealms.customfishing.fishing.requirements.RequirementInterface;
-import net.momirealms.customfishing.object.action.Action;
 
 import java.util.HashMap;
 

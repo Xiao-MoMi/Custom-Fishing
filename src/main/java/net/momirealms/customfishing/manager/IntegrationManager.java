@@ -23,7 +23,11 @@ import net.momirealms.customfishing.integration.*;
 import net.momirealms.customfishing.integration.block.ItemsAdderBlockImpl;
 import net.momirealms.customfishing.integration.block.OraxenBlockImpl;
 import net.momirealms.customfishing.integration.block.VanillaBlockImpl;
+import net.momirealms.customfishing.integration.enchantment.AEImpl;
+import net.momirealms.customfishing.integration.enchantment.VanillaImpl;
 import net.momirealms.customfishing.integration.item.*;
+import net.momirealms.customfishing.integration.job.EcoJobsImpl;
+import net.momirealms.customfishing.integration.job.JobsRebornImpl;
 import net.momirealms.customfishing.integration.mob.MythicMobsMobImpl;
 import net.momirealms.customfishing.integration.papi.PlaceholderManager;
 import net.momirealms.customfishing.integration.quest.BattlePassCFQuest;
@@ -32,7 +36,10 @@ import net.momirealms.customfishing.integration.quest.NewBetonQuestCFQuest;
 import net.momirealms.customfishing.integration.quest.OldBetonQuestCFQuest;
 import net.momirealms.customfishing.integration.season.CustomCropsSeasonImpl;
 import net.momirealms.customfishing.integration.season.RealisticSeasonsImpl;
-import net.momirealms.customfishing.integration.skill.*;
+import net.momirealms.customfishing.integration.skill.AureliumsImpl;
+import net.momirealms.customfishing.integration.skill.EcoSkillsImpl;
+import net.momirealms.customfishing.integration.skill.MMOCoreImpl;
+import net.momirealms.customfishing.integration.skill.mcMMOImpl;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
@@ -55,6 +62,8 @@ public class IntegrationManager extends Function {
     private ItemInterface[] itemInterfaces;
     private MobInterface mobInterface;
     private BlockInterface blockInterface;
+    private JobInterface jobInterface;
+    private EnchantmentInterface enchantmentInterface;
     private final PlaceholderManager placeholderManager;
     private VaultHook vaultHook;
     private final CustomFishing plugin;
@@ -72,10 +81,12 @@ public class IntegrationManager extends Function {
         this.placeholderManager.load();
         hookSeasons();
         hookSkills();
+        hookJobs();
         hookItems();
         hookVault();
         hookMobs();
         hookBlocks();
+        hookEnchants();
     }
 
     @Override
@@ -85,7 +96,23 @@ public class IntegrationManager extends Function {
         this.itemInterfaces = null;
         this.mobInterface = null;
         this.blockInterface = null;
+        this.jobInterface = null;
+        this.enchantmentInterface = null;
         this.placeholderManager.unload();
+    }
+
+    private void hookEnchants() {
+        if (pluginManager.isPluginEnabled("AdvancedEnchantments")) {
+            this.enchantmentInterface = new AEImpl();
+            hookMessage("AdvancedEnchantments");
+        }
+        else if (pluginManager.isPluginEnabled("EcoEnchants")) {
+            this.enchantmentInterface = new VanillaImpl();
+            hookMessage("EcoEnchants");
+        }
+        else {
+            this.enchantmentInterface = new VanillaImpl();
+        }
     }
 
     private void hookMobs() {
@@ -114,21 +141,28 @@ public class IntegrationManager extends Function {
     }
 
     private void hookSkills() {
-        if (pluginManager.getPlugin("mcMMO") != null) {
+        if (pluginManager.isPluginEnabled("mcMMO")) {
             this.skillInterface = new mcMMOImpl();
             hookMessage("mcMMO");
-        } else if (pluginManager.getPlugin("MMOCore") != null) {
+        } else if (pluginManager.isPluginEnabled("MMOCore")) {
             this.skillInterface = new MMOCoreImpl(ConfigUtil.getConfig("config.yml").getString("other-settings.MMOCore-profession-name", "fishing"));
             hookMessage("MMOCore");
-        } else if (pluginManager.getPlugin("AureliumSkills") != null) {
+        } else if (pluginManager.isPluginEnabled("AureliumSkills")) {
             this.skillInterface = new AureliumsImpl();
             hookMessage("AureliumSkills");
-        } else if (pluginManager.getPlugin("EcoSkills") != null) {
+        } else if (pluginManager.isPluginEnabled("EcoSkills")) {
             this.skillInterface = new EcoSkillsImpl();
             hookMessage("EcoSkills");
-        } else if (pluginManager.getPlugin("Jobs") != null) {
-            this.skillInterface = new JobsRebornImpl();
+        }
+    }
+
+    private void hookJobs() {
+        if (pluginManager.isPluginEnabled("Jobs")) {
+            this.jobInterface = new JobsRebornImpl();
             hookMessage("JobsReborn");
+        } else if (pluginManager.isPluginEnabled("EcoJobs")) {
+            this.jobInterface = new EcoJobsImpl();
+            hookMessage("EcoJobs");
         }
     }
 
@@ -214,6 +248,16 @@ public class IntegrationManager extends Function {
     @NotNull
     public PlaceholderManager getPlaceholderManager() {
         return placeholderManager;
+    }
+
+    @NotNull
+    public EnchantmentInterface getEnchantmentInterface() {
+        return enchantmentInterface;
+    }
+
+    @Nullable
+    public JobInterface getJobInterface() {
+        return jobInterface;
     }
 
     @NotNull

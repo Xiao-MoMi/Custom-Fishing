@@ -18,9 +18,9 @@
 package net.momirealms.customfishing.data;
 
 import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.fishing.action.Action;
 import net.momirealms.customfishing.fishing.loot.Loot;
 import net.momirealms.customfishing.manager.LootManager;
-import net.momirealms.customfishing.object.action.Action;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;

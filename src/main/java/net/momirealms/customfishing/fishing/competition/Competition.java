@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.fishing.competition;
 
 import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.fishing.action.Action;
 import net.momirealms.customfishing.fishing.competition.bossbar.BossBarManager;
 import net.momirealms.customfishing.fishing.competition.ranking.LocalRankingImpl;
 import net.momirealms.customfishing.fishing.competition.ranking.RankingInterface;
@@ -25,7 +26,6 @@ import net.momirealms.customfishing.fishing.competition.ranking.RedisRankingImpl
 import net.momirealms.customfishing.integration.papi.PlaceholderManager;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.MessageManager;
-import net.momirealms.customfishing.object.action.Action;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -116,7 +116,6 @@ public class Competition {
         for (String endMsg : competitionConfig.getEndMessage()) {
             List<String> placeholders = new ArrayList<>(placeholderManager.detectBetterPlaceholders(endMsg));
             for (String placeholder : placeholders) {
-                System.out.println(placeholder);
                 if (placeholder.endsWith("_player}")) {
                     int rank = Integer.parseInt(placeholder.substring(1, placeholder.length() - 8));
                     endMsg = endMsg.replace(placeholder, Optional.ofNullable(ranking.getPlayerAt(rank)).orElse(MessageManager.noPlayer));

@@ -15,19 +15,19 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.integration.skill;
+package net.momirealms.customfishing.integration.job;
 
 import com.gamingmesh.jobs.Jobs;
 import com.gamingmesh.jobs.PlayerManager;
 import com.gamingmesh.jobs.container.Job;
 import com.gamingmesh.jobs.container.JobProgression;
 import com.gamingmesh.jobs.container.JobsPlayer;
-import net.momirealms.customfishing.integration.SkillInterface;
+import net.momirealms.customfishing.integration.JobInterface;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class JobsRebornImpl implements SkillInterface {
+public class JobsRebornImpl implements JobInterface {
 
     private final PlayerManager playerManager;
 

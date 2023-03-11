@@ -15,17 +15,18 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.object.action;
+package net.momirealms.customfishing.fishing.action;
 
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
-import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.jetbrains.annotations.Nullable;
 
-public record SoundActionImpl(String source, String sound, float volume, float pitch) implements Action {
+public record PotionEffectImpl(PotionEffect[] potionEffects) implements Action {
 
     @Override
-    public void doOn(Player player, Player another) {
-        AdventureUtil.playerSound(player, Sound.Source.valueOf(source.toUpperCase()), Key.key(sound), volume, pitch);
+    public void doOn(Player player, @Nullable Player anotherPlayer) {
+        for (PotionEffect potionEffect : potionEffects) {
+            player.addPotionEffect(potionEffect);
+        }
     }
 }

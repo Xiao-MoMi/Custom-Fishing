@@ -24,6 +24,8 @@ softdepend:
   - BattlePass
   - ClueScrolls
   - BetonQuest
+  - AdvancedEnchantments
+  - EcoJobs
 
 commands:
   customfishing:

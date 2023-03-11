@@ -15,13 +15,18 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.object.action;
+package net.momirealms.customfishing.fishing.action;
 
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 
-public interface Action {
+public record VanillaXPImpl(int amount, boolean mending) implements Action {
 
-    void doOn(Player player, @Nullable Player anotherPlayer);
-
+    @Override
+    public void doOn(Player player, Player another) {
+        player.giveExp(amount, mending);
+        AdventureUtil.playerSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
+    }
 }

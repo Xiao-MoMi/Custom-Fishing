@@ -15,18 +15,18 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.object.action;
+package net.momirealms.customfishing.fishing.action;
 
+import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.integration.SkillInterface;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.jetbrains.annotations.Nullable;
 
-public record PotionEffectImpl(PotionEffect[] potionEffects) implements Action {
+public record SkillXPImpl(double amount) implements Action {
 
     @Override
-    public void doOn(Player player, @Nullable Player anotherPlayer) {
-        for (PotionEffect potionEffect : potionEffects) {
-            player.addPotionEffect(potionEffect);
-        }
+    public void doOn(Player player, Player another) {
+        SkillInterface skillInterface = CustomFishing.getInstance().getIntegrationManager().getSkillInterface();
+        if (skillInterface == null) return;
+        skillInterface.addXp(player, amount);
     }
 }

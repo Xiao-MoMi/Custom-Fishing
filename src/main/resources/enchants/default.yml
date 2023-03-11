@@ -1,5 +1,5 @@
 # CustomFishing does not contain an enchantment system but it's able to read enchantments from items and customize its bonus!
-# https://www.yuque.com/docs/share/4842ac5f-b5ea-4568-acef-d510f8bc9064?# 《Modifier System》
+# Vanilla enchants
 minecraft:luck_of_the_sea:
   #levels
   1:
@@ -16,7 +16,7 @@ minecraft:luck_of_the_sea:
       gold: 3
 
 # lucky_catch from EcoEnchants
-minecraft:lucky_catch:
+eco:lucky_catch:
   1:
     double-loot: 0.1
   2:
@@ -26,8 +26,17 @@ minecraft:lucky_catch:
 
 # You can register an enchantment in EcoEnchants called "easy_catch"
 # And then create its effects in CustomFishing!
-minecraft:easy_catch:
+eco:easy_catch:
   1:
     difficulty: -1
   2:
     difficulty: -2
+
+# AdvancedEnchantments support
+AE:lucky:
+  1:
+    double-loot: 0.1
+  2:
+    double-loot: 0.2
+  3:
+    double-loot: 0.3
