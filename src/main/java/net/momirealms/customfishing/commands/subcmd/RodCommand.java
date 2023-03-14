@@ -79,11 +79,11 @@ public class RodCommand extends AbstractSubCommand {
                 AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.itemNotExist);
                 return true;
             }
-            if (args.size() == 3){
+            if (args.size() == 3) {
                 ItemStackUtil.givePlayerRod(player, args.get(2), 1);
                 super.giveItemMsg(sender, args.get(1), args.get(2), 1);
             } else {
-                if (Integer.parseInt(args.get(3)) < 1){
+                if (Integer.parseInt(args.get(3)) < 1) {
                     AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.wrongAmount);
                     return true;
                 }

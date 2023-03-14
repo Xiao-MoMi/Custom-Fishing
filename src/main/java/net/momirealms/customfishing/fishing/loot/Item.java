@@ -31,7 +31,7 @@ import java.util.Objects;
 public class Item {
 
     private final String key;
-    private int amount;
+    private final int amount;
     private final Material material;
     private String name;
     private List<String> lore;
@@ -42,6 +42,8 @@ public class Item {
     private List<LeveledEnchantment> enchantment;
     private Map<String, Object> nbt;
     private String totem;
+    private boolean headStackable;
+    private String[] cfTag;
 
     public Item(Material material, String key) {
         this.material = material;
@@ -80,6 +82,7 @@ public class Item {
         }
         if (section.contains("head64")) {
             this.setHead64(section.getString("head64"));
+            this.setHeadStackable(section.getBoolean("head-stackable", false));
         }
         if (section.contains("totem")) {
             this.setTotem(section.getString("totem"));
@@ -168,6 +171,22 @@ public class Item {
 
     public void setTotem(String totem) {
         this.totem = totem;
+    }
+
+    public boolean isHeadStackable() {
+        return headStackable;
+    }
+
+    public void setHeadStackable(boolean headStackable) {
+        this.headStackable = headStackable;
+    }
+
+    public String[] getCfTag() {
+        return cfTag;
+    }
+
+    public void setCfTag(String[] cfTag) {
+        this.cfTag = cfTag;
     }
 
     public Item cloneWithPrice(double price){

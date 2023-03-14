@@ -4,7 +4,6 @@ wooden_rod:
     lore:
       - '<gray>Its just an ordinary fishing rod'
       - '<gray>But it''s quite friendly to a starter!'
-  # Click here to learn how modifier system works: https://www.yuque.com/docs/share/4842ac5f-b5ea-4568-acef-d510f8bc9064?# 《Modifier System》
   effect:
     difficulty: -1
 

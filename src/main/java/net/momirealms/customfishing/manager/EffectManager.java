@@ -26,6 +26,7 @@ import net.momirealms.customfishing.util.ItemStackUtil;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -36,12 +37,13 @@ import java.util.Set;
 public class EffectManager extends Function {
 
     private final CustomFishing plugin;
-    private final HashMap<String, ItemStack> baitItems;
+    private final HashMap<String, Item> baitItems;
     private final HashMap<String, Effect> baitEffects;
-    private final HashMap<String, ItemStack> rodItems;
+    private final HashMap<String, Item> rodItems;
     private final HashMap<String, Effect> rodEffects;
+    private final HashMap<String, Item> utilItems;
+    private final HashMap<String, Effect> utilEffects;
     private final HashMap<String, Effect> enchantEffects;
-    private final HashMap<String, ItemStack> utilItems;
 
     public EffectManager(CustomFishing plugin) {
         this.plugin = plugin;
@@ -51,6 +53,7 @@ public class EffectManager extends Function {
         this.rodItems = new HashMap<>();
         this.utilItems = new HashMap<>();
         this.enchantEffects = new HashMap<>();
+        this.utilEffects = new HashMap<>();
     }
 
     @Override
@@ -67,7 +70,9 @@ public class EffectManager extends Function {
         this.baitItems.clear();
         this.rodEffects.clear();
         this.rodItems.clear();
+        this.utilItems.clear();
         this.enchantEffects.clear();
+        this.utilEffects.clear();
     }
 
     private void loadUtil() {
@@ -77,6 +82,7 @@ public class EffectManager extends Function {
             plugin.saveResource("utils" + File.separator + "fish_finder.yml", false);
             plugin.saveResource("utils" + File.separator + "totem_items.yml", false);
             plugin.saveResource("utils" + File.separator + "splash_items.yml", false);
+            plugin.saveResource("utils" + File.separator + "fisherman_talismans.yml", false);
         }
         File[] files = util_file.listFiles();
         if (files == null) return;
@@ -85,10 +91,14 @@ public class EffectManager extends Function {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
             Set<String> keys = config.getKeys(false);
             for (String key : keys) {
-                ConfigurationSection itemSection = config.getConfigurationSection(key);
-                if (itemSection == null) continue;
-                Item item = new Item(itemSection, key);
-                utilItems.put(key, ItemStackUtil.addIdentifier(ItemStackUtil.getFromItem(item), "util", key));
+                ConfigurationSection utilSection = config.getConfigurationSection(key);
+                if (utilSection == null) continue;
+                Item item = new Item(utilSection, key);
+                item.setCfTag(new String[] {"util", key});
+                utilItems.put(key, item);
+                if (utilSection.contains("effect")) {
+                    utilEffects.put(key, getEffect(utilSection.getConfigurationSection("effect")));
+                }
             }
         }
         AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + utilItems.size() + " <gray>util(s)");
@@ -134,7 +144,8 @@ public class EffectManager extends Function {
                 ConfigurationSection baitSection = config.getConfigurationSection(key);
                 if (baitSection == null) continue;
                 Item item = new Item(baitSection, key);
-                baitItems.put(key, ItemStackUtil.addIdentifier(ItemStackUtil.getFromItem(item), "bait", key));
+                item.setCfTag(new String[] {"bait", key});
+                baitItems.put(key, item);
                 if (baitSection.contains("effect")) {
                     baitEffects.put(key, getEffect(baitSection.getConfigurationSection("effect")));
                 }
@@ -160,7 +171,8 @@ public class EffectManager extends Function {
                 if (rodSection == null) continue;
                 rodSection.set("material", "fishing_rod");
                 Item item = new Item(rodSection, key);
-                rodItems.put(key, ItemStackUtil.addIdentifier(ItemStackUtil.getFromItem(item), "rod", key));
+                item.setCfTag(new String[] {"rod", key});
+                rodItems.put(key, item);
                 if (rodSection.contains("effect")) {
                     rodEffects.put(key, getEffect(rodSection.getConfigurationSection("effect")));
                 }
@@ -196,11 +208,12 @@ public class EffectManager extends Function {
     }
 
     @Nullable
-    public ItemStack getBaitItem(String key) {
+    public Item getBaitItem(String key) {
         return baitItems.get(key);
     }
 
-    public HashMap<String, ItemStack> getBaitItems() {
+    @NotNull
+    public HashMap<String, Item> getBaitItems() {
         return baitItems;
     }
 
@@ -209,16 +222,18 @@ public class EffectManager extends Function {
         return baitEffects.get(key);
     }
 
+    @NotNull
     public HashMap<String, Effect> getBaitEffects() {
         return baitEffects;
     }
 
     @Nullable
-    public ItemStack getRodItem(String key) {
+    public Item getRodItem(String key) {
         return rodItems.get(key);
     }
 
-    public HashMap<String, ItemStack> getRodItems() {
+    @NotNull
+    public HashMap<String, Item> getRodItems() {
         return rodItems;
     }
 
@@ -227,6 +242,7 @@ public class EffectManager extends Function {
         return rodEffects.get(key);
     }
 
+    @NotNull
     public HashMap<String, Effect> getRodEffects() {
         return rodEffects;
     }
@@ -236,16 +252,28 @@ public class EffectManager extends Function {
         return enchantEffects.get(key);
     }
 
+    @NotNull
     public HashMap<String, Effect> getEnchantEffects() {
         return enchantEffects;
     }
 
     @Nullable
-    public ItemStack getUtilItem(String key) {
+    public Item getUtilItem(String key) {
         return utilItems.get(key);
     }
 
-    public HashMap<String, ItemStack> getUtilItems() {
+    @NotNull
+    public HashMap<String, Item> getUtilItems() {
         return utilItems;
+    }
+
+    @NotNull
+    public HashMap<String, Effect> getUtilEffects() {
+        return utilEffects;
+    }
+
+    @Nullable
+    public Effect getUtilEffect(String key) {
+        return utilEffects.get(key);
     }
 }

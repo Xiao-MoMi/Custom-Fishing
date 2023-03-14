@@ -29,6 +29,10 @@ public class ModeThreeBar extends FishingBar {
     private final int fish_offset;
     private final int fish_start_position;
     private final int success_position;
+    private final double ultimate_strain;
+    private final double normal_increase;
+    private final double struggling_increase;
+    private final double strain_loss;
 
     public ModeThreeBar(ConfigurationSection section) {
         super(section);
@@ -40,6 +44,10 @@ public class ModeThreeBar extends FishingBar {
         this.fish_offset = section.getInt("arguments.fish-offset");
         this.fish_start_position = section.getInt("arguments.fish-start-position");
         this.success_position = section.getInt("arguments.success-position");
+        this.ultimate_strain = section.getDouble("arguments.ultimate-strain", 50);
+        this.normal_increase = section.getDouble("arguments.normal-pull-strain-increase", 1);
+        this.struggling_increase = section.getDouble("arguments.struggling-strain-increase", 2);
+        this.strain_loss = section.getDouble("arguments.loosening-strain-loss", 2);
     }
 
     public String getFish_image() {
@@ -72,5 +80,21 @@ public class ModeThreeBar extends FishingBar {
 
     public String[] getStruggling_fish_image() {
         return struggling_fish_image;
+    }
+
+    public double getUltimate_strain() {
+        return ultimate_strain;
+    }
+
+    public double getNormal_increase() {
+        return normal_increase;
+    }
+
+    public double getStruggling_increase() {
+        return struggling_increase;
+    }
+
+    public double getStrain_loss() {
+        return strain_loss;
     }
 }

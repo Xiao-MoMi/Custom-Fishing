@@ -52,11 +52,11 @@ public class LootCommand extends AbstractSubCommand {
                     AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.itemNotExist);
                     return true;
                 }
-                if (args.size() == 2){
+                if (args.size() == 2) {
                     ItemStackUtil.givePlayerLoot(player, args.get(1), 1);
                     AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.getItem.replace("{Amount}", "1").replace("{Item}", args.get(1)));
                 } else {
-                    if (Integer.parseInt(args.get(2)) < 1){
+                    if (Integer.parseInt(args.get(2)) < 1) {
                         AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.wrongAmount);
                         return true;
                     }

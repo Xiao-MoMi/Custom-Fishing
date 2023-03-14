@@ -95,8 +95,7 @@ public class ModeTwoGame extends FishingGame {
                 + modeTwoBar.getFish_image()
                 + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars((int) (modeTwoBar.getBar_effective_width() - fish_position - modeTwoBar.getFish_icon_width() + 1)) + "</font>"
                 + "</font>";
-        if (hold_time > time_requirement) hold_time = time_requirement;
-        if (hold_time < 0) hold_time = 0;
+        hold_time = Math.max(0, Math.min(hold_time, time_requirement));
         AdventureUtil.playerTitle(player,
                 title.replace("{progress}", modeTwoBar.getProgress()[(int) ((hold_time / time_requirement) * modeTwoBar.getProgress().length)])
                 , bar,0,500,0
@@ -114,21 +113,21 @@ public class ModeTwoGame extends FishingGame {
 
     private void fraction() {
         if (judgement_velocity > 0) {
-            judgement_velocity -= 0.15;
+            judgement_velocity -= modeTwoBar.getWater_resistance();
             if (judgement_velocity < 0) judgement_velocity = 0;
         }
         else {
-            judgement_velocity += 0.15;
+            judgement_velocity += modeTwoBar.getWater_resistance();
             if (judgement_velocity > 0) judgement_velocity = 0;
         }
     }
 
     private void reduceV() {
-        fish_velocity -= 0.3;
+        fish_velocity -= modeTwoBar.getLoosening_loss();
     }
 
     private void addV() {
-        fish_velocity += 0.45;
+        fish_velocity += modeTwoBar.getPulling_strength();
     }
 
     private void calibrate() {

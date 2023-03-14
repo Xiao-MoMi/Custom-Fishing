@@ -27,6 +27,7 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.loot.DroppedItem;
 import net.momirealms.customfishing.fishing.loot.Item;
 import net.momirealms.customfishing.fishing.loot.Loot;
+import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.object.LeveledEnchantment;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -88,8 +89,14 @@ public class ItemStackUtil {
                 lore.add(GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize("<!i>" + line)));
             });
         }
+        if (item.getCfTag() != null) {
+            NBTCompound cfCompound = nbtItem.addCompound("CustomFishing");
+            cfCompound.setString("type", item.getCfTag()[0]);
+            cfCompound.setString("id", item.getCfTag()[1]);
+        }
         if (item.getHead64() != null) {
             NBTCompound nbtCompound = nbtItem.addCompound("SkullOwner");
+            nbtCompound.setUUID("Id", item.isHeadStackable() ? UUID.nameUUIDFromBytes(item.getKey().getBytes()) : UUID.randomUUID());
             NBTListCompound texture = nbtCompound.addCompound("Properties").getCompoundList("textures").addCompound();
             texture.setString("Value", item.getHead64());
         }
@@ -170,23 +177,26 @@ public class ItemStackUtil {
     }
 
     public static void givePlayerRod(Player player, String rodKey, int amount){
-        ItemStack itemStack = CustomFishing.getInstance().getEffectManager().getRodItem(rodKey);
-        if (itemStack == null) return;
+        Item item = CustomFishing.getInstance().getEffectManager().getRodItem(rodKey);
+        if (item == null) return;
+        ItemStack itemStack = getFromItem(item);
         for (int i = 0; i < amount; i++) {
             player.getInventory().addItem(itemStack);
         }
     }
 
     public static void givePlayerBait(Player player, String baitKey, int amount){
-        ItemStack itemStack = CustomFishing.getInstance().getEffectManager().getBaitItem(baitKey);
-        if (itemStack == null) return;
+        Item item = CustomFishing.getInstance().getEffectManager().getBaitItem(baitKey);
+        if (item == null) return;
+        ItemStack itemStack = getFromItem(item);
         itemStack.setAmount(amount);
         player.getInventory().addItem(itemStack);
     }
 
     public static void givePlayerUtil(Player player, String utilKey, int amount){
-        ItemStack itemStack = CustomFishing.getInstance().getEffectManager().getUtilItem(utilKey);
-        if (itemStack == null) return;
+        Item item = CustomFishing.getInstance().getEffectManager().getUtilItem(utilKey);
+        if (item == null) return;
+        ItemStack itemStack = getFromItem(item);
         itemStack.setAmount(amount);
         player.getInventory().addItem(itemStack);
     }

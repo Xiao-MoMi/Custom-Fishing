@@ -41,6 +41,10 @@ public class RodCastEvent extends PlayerEvent implements Cancellable {
         return this.isCancelled;
     }
 
+    /**
+     * If cancelled, PlayerFishEvent would also be cancelled
+     * @param cancel true if you wish to cancel this event
+     */
     @Override
     public void setCancelled(boolean cancel) {
         this.isCancelled = cancel;

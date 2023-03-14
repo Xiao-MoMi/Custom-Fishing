@@ -101,7 +101,7 @@ public class StatisticsManager extends DataFunction {
     public void addFishAmount(UUID uuid, Loot loot, int amount) {
         PlayerStatisticsData statisticsData = statisticsDataMap.get(uuid);
         if (statisticsData != null) {
-            statisticsData.addFishAmount(loot, amount, uuid);
+            statisticsData.addFishAmount(loot, uuid, amount);
         }
     }
 
@@ -109,6 +109,14 @@ public class StatisticsManager extends DataFunction {
         PlayerStatisticsData statisticsData = statisticsDataMap.get(uuid);
         if (statisticsData != null) {
             return statisticsData.getFishAmount(key);
+        }
+        return -1;
+    }
+
+    public int getTotalFishAmount(UUID uuid) {
+        PlayerStatisticsData statisticsData = statisticsDataMap.get(uuid);
+        if (statisticsData != null) {
+            return statisticsData.getTotalCatchAmount();
         }
         return -1;
     }

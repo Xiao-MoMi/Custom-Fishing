@@ -85,15 +85,15 @@ public class CustomPapi implements RequirementInterface {
     private List<PapiRequirement> getRequirements(Map<String, Object> map) {
         List<PapiRequirement> papiRequirements = new ArrayList<>();
         map.keySet().forEach(key -> {
-            if (key.startsWith("&&")){
+            if (key.startsWith("&&")) {
                 if (map.get(key) instanceof MemorySection map2){
                     addAndRequirements(papiRequirements, map2.getValues(false));
                 }
-            }else if (key.startsWith("||")){
+            } else if (key.startsWith("||")) {
                 if (map.get(key) instanceof MemorySection map2){
                     addOrRequirements(papiRequirements, map2.getValues(false));
                 }
-            }else {
+            } else {
                 if (map.get(key) instanceof MemorySection map2){
                     String type = map2.getString("type");
                     if (type == null) return;

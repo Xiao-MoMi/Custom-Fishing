@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.fishing.loot.Item;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -116,13 +117,13 @@ public class ArmorStandUtil {
         return equipPacket;
     }
 
-    public static void sendAnimationToPlayer(Location location, Player player, String item, int time) {
+    public static void sendAnimationToPlayer(Location location, Player player, String key, int time) {
         int id = new Random().nextInt(Integer.MAX_VALUE);
-        ItemStack itemStack = CustomFishing.getInstance().getEffectManager().getUtilItem(item);
-        if (itemStack == null) return;
+        Item item = CustomFishing.getInstance().getEffectManager().getUtilItem(key);
+        if (item == null) return;
         CustomFishing.getProtocolManager().sendServerPacket(player, getSpawnPacket(id, location.clone().subtract(0,1,0)));
         CustomFishing.getProtocolManager().sendServerPacket(player, getMetaPacket(id));
-        CustomFishing.getProtocolManager().sendServerPacket(player, getEquipPacket(id, itemStack));
+        CustomFishing.getProtocolManager().sendServerPacket(player, getEquipPacket(id, ItemStackUtil.getFromItem(item)));
         Bukkit.getScheduler().runTaskLaterAsynchronously(CustomFishing.getInstance(), () -> {
             CustomFishing.getProtocolManager().sendServerPacket(player, getDestroyPacket(id));
         }, time);

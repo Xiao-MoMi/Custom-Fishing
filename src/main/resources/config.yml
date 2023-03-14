@@ -1,5 +1,5 @@
 # Don't change
-config-version: '18'
+config-version: '19'
 
 # bStats
 metrics: true
@@ -36,9 +36,6 @@ mechanics:
   # other loots
   # 其他战利品
   other-loots:
-    # Should other loots have the same fishing mechanic CustomFishing provides
-    # 其他战利品是否有插件提供的钓鱼特性
-    fishing-bar: true
     # 原版战利品
     vanilla:
       enable: true

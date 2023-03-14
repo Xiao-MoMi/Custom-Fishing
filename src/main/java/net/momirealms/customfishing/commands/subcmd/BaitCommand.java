@@ -74,7 +74,7 @@ public class BaitCommand extends AbstractSubCommand {
                 AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.notOnline.replace("{Player}", args.get(1)));
                 return true;
             }
-            if (!CustomFishing.getInstance().getEffectManager().getBaitItems().containsKey(args.get(1))) {
+            if (!CustomFishing.getInstance().getEffectManager().getBaitItems().containsKey(args.get(2))) {
                 AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.itemNotExist);
                 return true;
             }

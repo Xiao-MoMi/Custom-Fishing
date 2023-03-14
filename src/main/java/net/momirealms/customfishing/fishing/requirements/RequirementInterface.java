@@ -20,6 +20,6 @@ package net.momirealms.customfishing.fishing.requirements;
 import net.momirealms.customfishing.fishing.FishingCondition;
 
 public interface RequirementInterface {
-    boolean isConditionMet(FishingCondition fishingCondition);
 
+    boolean isConditionMet(FishingCondition fishingCondition);
 }

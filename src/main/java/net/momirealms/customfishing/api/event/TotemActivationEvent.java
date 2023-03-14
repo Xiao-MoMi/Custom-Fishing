@@ -32,7 +32,6 @@ public class TotemActivationEvent extends PlayerEvent implements Cancellable {
     private final Location location;
     private static final HandlerList handlerList = new HandlerList();
 
-
     public TotemActivationEvent(@NotNull Player who, Location location, TotemConfig totem) {
         super(who);
         this.cancelled = false;

@@ -36,6 +36,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -46,8 +47,9 @@ public class LootManager extends Function {
     private final CustomFishing plugin;
     private final HashMap<String, Loot> waterLoots;
     private final HashMap<String, Loot> lavaLoots;
-    private final HashMap<String, ItemStack> lootItems;
+    private final HashMap<String, Item> lootItems;
     private final HashMap<String, List<String>> category;
+    private Loot vanilla_loot;
 
     public LootManager(CustomFishing plugin) {
         this.plugin = plugin;
@@ -59,12 +61,22 @@ public class LootManager extends Function {
 
     @Nullable
     public ItemStack build(String key) {
-        ItemStack itemStack = this.lootItems.get(key);
-        return itemStack == null ? null : itemStack.clone();
+        Item item = lootItems.get(key);
+        return item == null || item.getMaterial() == Material.AIR ? new ItemStack(Material.AIR) : ItemStackUtil.getFromItem(item);
     }
 
     @Override
     public void load() {
+        this.vanilla_loot = new Loot(
+                "vanilla",
+                "vanilla",
+                null,
+                0,
+                false,
+                0,
+                false,
+                false
+        );
         this.loadItems();
         this.loadMobs();
         this.loadCategories();
@@ -78,6 +90,7 @@ public class LootManager extends Function {
         this.lavaLoots.clear();
         this.lootItems.clear();
         this.category.clear();
+        this.vanilla_loot = null;
     }
 
     @Nullable
@@ -183,7 +196,6 @@ public class LootManager extends Function {
                 if (lootSection == null) continue;
                 if (!lootSection.getBoolean("enable", true)) continue;
                 String material = lootSection.getString("material","COD");
-
                 DroppedItem loot = new DroppedItem(
                         key,
                         lootSection.contains("nick") ? lootSection.getString("nick") : AdventureUtil.replaceLegacy(lootSection.getString("display.name", key)),
@@ -226,15 +238,17 @@ public class LootManager extends Function {
 
                 setActions(lootSection, loot);
                 setRequirements(lootSection.getConfigurationSection("requirements"), loot);
-
+                if (key.equals("vanilla")) {
+                    vanilla_loot = loot;
+                    continue;
+                }
                 if (lootSection.getBoolean("in-lava", false)) lavaLoots.put(key, loot);
                 else waterLoots.put(key, loot);
                 //not a CustomFishing loot
                 if (material.contains(":")) continue;
-
                 Item item = new Item(lootSection, key);
-                if (item.getMaterial() == Material.AIR) lootItems.put(key, new ItemStack(Material.AIR));
-                else lootItems.put(key, ItemStackUtil.getFromItem(item));
+                if (ConfigManager.addTagToFish) item.setCfTag(new String[] {"loot", key});
+                lootItems.put(key, item);
             }
         }
     }
@@ -352,5 +366,10 @@ public class LootManager extends Function {
     @Nullable
     public List<String> getCategories(String categoryID) {
         return category.get(categoryID);
+    }
+
+    @NotNull
+    public Loot getVanilla_loot() {
+        return vanilla_loot;
     }
 }

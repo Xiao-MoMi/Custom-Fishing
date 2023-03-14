@@ -46,7 +46,6 @@ public class ConfigManager {
     public static boolean convertMMOItems;
     public static boolean preventPickUp;
     public static boolean enableFishingBag;
-    public static boolean otherLootHasFishingBar;
     public static boolean allRodsFishInLava;
     public static boolean enableSuccessTitle;
     public static String[] successTitle;
@@ -101,7 +100,6 @@ public class ConfigManager {
     private static void loadMechanics(YamlConfiguration config) {
         disableBar = config.getBoolean("mechanics.disable-bar-mechanic", false);
         instantBar = config.getBoolean("mechanics.instant-bar", false);
-        otherLootHasFishingBar = config.getBoolean("mechanics.other-loots.fishing-bar", true);
         enableVanillaLoot = config.getBoolean("mechanics.other-loots.vanilla.enable", true);
         vanillaLootRatio = config.getDouble("mechanics.other-loots.vanilla.ratio", 0.4);
         enableMcMMOLoot = config.getBoolean("mechanics.other-loots.mcMMO.enable", false);

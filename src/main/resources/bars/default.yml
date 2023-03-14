@@ -518,6 +518,9 @@ bar_10:
     judgment-area-offset: -160
     judgment-area-width: 33
     fish-icon-width: 8
+    water-resistance: 0.15
+    pulling-strength: 0.45
+    loosening-strength-loss: 0.3
   hold-time-requirements:
     - 3
     - 4
@@ -557,6 +560,10 @@ bar_11:
     fish-start-position: 170
     fish-icon-width: 8
     success-position: 21
+    ultimate-strain: 50
+    normal-pull-strain-increase: 1
+    struggling-strain-increase: 2
+    loosening-strain-loss: 2
   strain:
     - '<font:customfishing:icons>뀑</font>'
     - '<font:customfishing:icons>뀒</font>'

@@ -32,6 +32,9 @@ public class ModeTwoBar extends FishingBar {
     private final int fish_icon_width;
     private final String[] progress;
     private final double punishment;
+    private final double water_resistance;
+    private final double pulling_strength;
+    private final double loosening_loss;
 
     public ModeTwoBar(ConfigurationSection section) {
         super(section);
@@ -44,6 +47,9 @@ public class ModeTwoBar extends FishingBar {
         this.fish_icon_width = section.getInt("arguments.fish-icon-width");
         this.punishment = section.getDouble("arguments.punishment");
         this.progress = section.getStringList("progress").toArray(new String[0]);
+        this.water_resistance = section.getDouble("arguments.water-resistance", 0.15);
+        this.pulling_strength = section.getDouble("arguments.pulling-strength", 0.45);
+        this.loosening_loss = section.getDouble("arguments.loosening-strength-loss", 0.3);
     }
 
     public int getRandomTimeRequirement() {
@@ -80,5 +86,17 @@ public class ModeTwoBar extends FishingBar {
 
     public double getPunishment() {
         return punishment;
+    }
+
+    public double getWater_resistance() {
+        return water_resistance;
+    }
+
+    public double getPulling_strength() {
+        return pulling_strength;
+    }
+
+    public double getLoosening_loss() {
+        return loosening_loss;
     }
 }

@@ -64,6 +64,7 @@ public final class CustomFishing extends JavaPlugin {
         this.versionHelper = new VersionHelper(this);
         this.fishingManager = new FishingManager(this);
         this.dataManager = new DataManager(this);
+        this.statisticsManager = new StatisticsManager(this);
         this.integrationManager = new IntegrationManager(this);
         this.competitionManager = new CompetitionManager(this);
         this.effectManager = new EffectManager(this);
@@ -73,7 +74,6 @@ public final class CustomFishing extends JavaPlugin {
         this.sellManager = new SellManager(this);
         this.bagDataManager = new BagDataManager(this);
         this.offsetManager = new OffsetManager(this);
-        this.statisticsManager = new StatisticsManager(this);
         this.reload();
         this.registerCommands();
         this.registerQuests();

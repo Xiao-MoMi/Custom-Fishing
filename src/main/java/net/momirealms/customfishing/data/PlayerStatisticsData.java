@@ -32,27 +32,33 @@ import java.util.stream.Collectors;
 public class PlayerStatisticsData {
 
     private final ConcurrentHashMap<String, Integer> amountMap;
-    private final LootManager lootManager;
+    private int total_catch_amount;
 
     public PlayerStatisticsData() {
         this.amountMap = new ConcurrentHashMap<>();
-        this.lootManager = CustomFishing.getInstance().getLootManager();
+        this.total_catch_amount = 0;
     }
 
     public PlayerStatisticsData(ConfigurationSection section) {
-        this.lootManager = CustomFishing.getInstance().getLootManager();
         this.amountMap = new ConcurrentHashMap<>();
+        this.total_catch_amount = 0;
         for (String key : section.getKeys(false)) {
-            amountMap.put(key, section.getInt(key));
+            int amount = section.getInt(key);
+            total_catch_amount += amount;
+            amountMap.put(key, amount);
         }
     }
 
     public PlayerStatisticsData(String longText) {
-        this.lootManager = CustomFishing.getInstance().getLootManager();
+        this.total_catch_amount = 0;
         this.amountMap = (ConcurrentHashMap<String, Integer>) Arrays.stream(longText.split(";"))
                 .map(element -> element.split(":"))
                 .filter(pair -> pair.length == 2)
-                .collect(Collectors.toConcurrentMap(pair -> pair[0], pair -> Integer.parseInt(pair[1])));
+                .collect(Collectors.toConcurrentMap(pair -> pair[0], pair -> {
+                    int amount = Integer.parseInt(pair[1]);
+                    total_catch_amount += amount;
+                    return amount;
+                }));
     }
 
     public String getLongText() {
@@ -63,14 +69,19 @@ public class PlayerStatisticsData {
         return joiner.toString();
     }
 
-    public void addFishAmount(Loot loot, int amount, UUID uuid) {
+    public void addFishAmount(Loot loot, UUID uuid, int amount) {
         Integer previous = amountMap.get(loot.getKey());
         if (previous == null) previous = 0;
         int after = previous + amount;
         amountMap.put(loot.getKey(), after);
+        total_catch_amount += amount;
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) return;
-        HashMap<Integer, Action[]> actionMap = loot.getSuccessTimesActions();
+        doSuccessTimesAction(previous, after, player, loot);
+    }
+
+    private void doSuccessTimesAction(Integer previous, int after, Player player, Loot vanilla) {
+        HashMap<Integer, Action[]> actionMap = vanilla.getSuccessTimesActions();
         if (actionMap != null) {
             for (Map.Entry<Integer, Action[]> entry : actionMap.entrySet()) {
                 if (entry.getKey() > previous && entry.getKey() <= after) {
@@ -97,7 +108,7 @@ public class PlayerStatisticsData {
      * @return percent
      */
     public double getCategoryUnlockProgress(String category) {
-        List<String> categories = lootManager.getCategories(category);
+        List<String> categories = CustomFishing.getInstance().getLootManager().getCategories(category);
         if (categories == null) return -1d;
         double total = categories.size();
         double unlocked = 0;
@@ -110,7 +121,7 @@ public class PlayerStatisticsData {
     }
 
     public int getCategoryTotalFishAmount(String category) {
-        List<String> categories = lootManager.getCategories(category);
+        List<String> categories = CustomFishing.getInstance().getLootManager().getCategories(category);
         if (categories == null) return -1;
         int total = 0;
         for (String value : categories) {
@@ -129,5 +140,9 @@ public class PlayerStatisticsData {
 
     public void setData(String key, int value) {
         amountMap.put(key, value);
+    }
+
+    public int getTotalCatchAmount() {
+        return total_catch_amount;
     }
 }

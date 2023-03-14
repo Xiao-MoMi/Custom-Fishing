@@ -59,17 +59,17 @@ public class ModeThreeGame extends FishingGame {
         }
         if (player.isSneaking()) {
             if (struggling_time > 0) {
-                strain += (2 + ((double) difficulty / 5));
+                strain += (modeThreeBar.getStruggling_increase() + ((double) difficulty / 5));
                 fish_position -= 1;
             }
             else {
-                strain += 1;
+                strain += modeThreeBar.getNormal_increase();
                 fish_position -= 2;
             }
         }
         else {
             fish_position++;
-            strain -= 2;
+            strain -= modeThreeBar.getStrain_loss();
         }
         if (fish_position < modeThreeBar.getSuccess_position() - modeThreeBar.getFish_icon_width() - 1) {
             cancel();
@@ -82,7 +82,7 @@ public class ModeThreeGame extends FishingGame {
             fishingManager.removeFishingPlayer(player);
             return;
         }
-        if (fish_position + modeThreeBar.getFish_icon_width() > modeThreeBar.getBar_effective_width() || strain > 50) {
+        if (fish_position + modeThreeBar.getFish_icon_width() > modeThreeBar.getBar_effective_width() || strain > modeThreeBar.getUltimate_strain()) {
             cancel();
             FishHook fishHook = fishingManager.getBobber(player);
             if (fishHook != null) {
@@ -102,10 +102,9 @@ public class ModeThreeGame extends FishingGame {
                 + (struggling_time > 0 ? modeThreeBar.getStruggling_fish_image()[timer] : modeThreeBar.getFish_image())
                 + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars(modeThreeBar.getBar_effective_width() - fish_position - modeThreeBar.getFish_icon_width()) + "</font>"
                 + "</font>";
-        if (strain > 50) strain = 50;
-        if (strain < 0) strain = 0;
+        strain = Math.max(0, Math.min(strain, modeThreeBar.getUltimate_strain()));
         AdventureUtil.playerTitle(player,
-                title.replace("{strain}", modeThreeBar.getStrain()[(int) ((strain / 50) * modeThreeBar.getStrain().length)])
+                title.replace("{strain}", modeThreeBar.getStrain()[(int) ((strain / modeThreeBar.getUltimate_strain()) * modeThreeBar.getStrain().length)])
                 , bar,0,500,0
         );
     }
