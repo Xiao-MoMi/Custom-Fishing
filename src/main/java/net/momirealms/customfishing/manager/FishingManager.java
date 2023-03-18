@@ -586,14 +586,14 @@ public class FishingManager extends Function {
         return getCustomFishingLootItemStack(droppedItem, player, 1);
     }
 
-    public ItemStack getCustomFishingLootItemStack(DroppedItem droppedItem, Player player, double sizeMultiplier) {
+    public ItemStack getCustomFishingLootItemStack(DroppedItem droppedItem, @Nullable Player player, double sizeMultiplier) {
         ItemStack drop = plugin.getIntegrationManager().build(droppedItem.getMaterial());
         if (drop.getType() != Material.AIR) {
             if (droppedItem.getRandomEnchants() != null)
                 ItemStackUtil.addRandomEnchants(drop, droppedItem.getRandomEnchants());
             if (droppedItem.isRandomDurability())
                 ItemStackUtil.addRandomDamage(drop);
-            if (ConfigManager.preventPickUp)
+            if (ConfigManager.preventPickUp && player != null)
                 ItemStackUtil.addOwner(drop, player.getName());
             ItemStackUtil.addExtraMeta(drop, droppedItem, sizeMultiplier);
         }

@@ -323,8 +323,8 @@ public class SellManager extends DataFunction {
                         playerItem.setAmount(0);
                     }
 
-                    sellData.setMoney(totalPrice + sell);
-                    doActions(player, sellFishEvent.getMoney(), upperLimit - sell - totalPrice);
+                    sellData.setMoney(sellFishEvent.getMoney() + sell);
+                    doActions(player, sellFishEvent.getMoney(), upperLimit - sell - sellFishEvent.getMoney());
                     inventory.close();
                 }
                 else {

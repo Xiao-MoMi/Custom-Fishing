@@ -60,7 +60,7 @@ public class RodCastEvent extends PlayerEvent implements Cancellable {
         return getHandlerList();
     }
 
-    public Effect getBonus() {
+    public Effect getEffect() {
         return effect;
     }
 }
