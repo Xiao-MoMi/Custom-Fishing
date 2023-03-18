@@ -173,10 +173,8 @@ public class ConfigManager {
             }
             useRedis = true;
         }
-        else {
-            if (JedisUtil.isPoolEnabled()) {
-                JedisUtil.closePool();
-            }
+        else if (useRedis && JedisUtil.isPoolEnabled()) {
+            JedisUtil.closePool();
             useRedis = false;
         }
     }

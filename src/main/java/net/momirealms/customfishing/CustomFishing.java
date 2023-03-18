@@ -32,6 +32,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.TimeZone;
+
 public final class CustomFishing extends JavaPlugin {
 
     private static CustomFishing plugin;
@@ -83,20 +85,18 @@ public final class CustomFishing extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        this.fishingManager.unload();
-        this.integrationManager.unload();
-        this.competitionManager.unload();
-        this.effectManager.unload();
-        this.lootManager.unload();
-        this.barMechanicManager.unload();
-        this.bagDataManager.disable();
-        this.totemManager.unload();
-        this.sellManager.disable();
-        this.dataManager.disable();
-        this.statisticsManager.disable();
-        if (adventure != null) {
-            adventure.close();
-        }
+        if (this.fishingManager != null) this.fishingManager.unload();
+        if (this.integrationManager != null) this.integrationManager.unload();
+        if (this.competitionManager != null) this.competitionManager.unload();
+        if (this.effectManager != null) this.effectManager.unload();
+        if (this.lootManager != null) this.lootManager.unload();
+        if (this.barMechanicManager != null) this.barMechanicManager.unload();
+        if (this.totemManager != null) this.totemManager.unload();
+        if (this.bagDataManager != null) this.bagDataManager.disable();
+        if (this.sellManager != null) this.sellManager.disable();
+        if (this.statisticsManager != null) this.statisticsManager.disable();
+        if (this.dataManager != null) this.dataManager.disable();
+        if (adventure != null) adventure.close();
     }
 
     private void registerCommands() {
@@ -121,12 +121,14 @@ public final class CustomFishing extends JavaPlugin {
     }
 
     private void loadLibs() {
-        LibraryLoader.load("redis.clients","jedis","4.3.1","https://repo.maven.apache.org/maven2/");
-        LibraryLoader.load("org.apache.commons","commons-pool2","2.11.1","https://repo.maven.apache.org/maven2/");
-        LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3","https://repo.maven.apache.org/maven2/");
-        LibraryLoader.load("com.zaxxer","HikariCP","5.0.1","https://repo.maven.apache.org/maven2/");
-        LibraryLoader.load("net.objecthunter","exp4j","0.4.8","https://repo.maven.apache.org/maven2/");
-        LibraryLoader.load("org.mariadb.jdbc","mariadb-java-client","3.0.6","https://repo.maven.apache.org/maven2/");
+        TimeZone timeZone = TimeZone.getDefault();
+        String libRepo = timeZone.getID().startsWith("Asia") ? "https://maven.aliyun.com/repository/public/" : "https://repo.maven.apache.org/maven2/";
+        LibraryLoader.load("org.apache.commons","commons-pool2","2.11.1", libRepo);
+        LibraryLoader.load("redis.clients","jedis","4.3.1", libRepo);
+        LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3", libRepo);
+        LibraryLoader.load("com.zaxxer","HikariCP","5.0.1", libRepo);
+        LibraryLoader.load("net.objecthunter","exp4j","0.4.8", libRepo);
+        LibraryLoader.load("org.mariadb.jdbc","mariadb-java-client","3.1.2", libRepo);
     }
 
     private void registerQuests() {

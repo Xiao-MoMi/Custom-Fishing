@@ -34,15 +34,18 @@ import java.util.Optional;
 
 public class MythicMobsMobImpl implements MobInterface {
 
-    private final MobManager mobManager;
+    private MythicBukkit mythicBukkit;
 
     public MythicMobsMobImpl() {
-        this.mobManager = MythicBukkit.inst().getMobManager();
+        this.mythicBukkit = MythicBukkit.inst();
     }
 
     @Override
     public void summon(Location playerLoc, Location summonLoc, Mob mob){
-        Optional<MythicMob> mythicMob = mobManager.getMythicMob(mob.getMobID());
+        if (this.mythicBukkit == null || mythicBukkit.isClosed()) {
+            this.mythicBukkit = MythicBukkit.inst();
+        }
+        Optional<MythicMob> mythicMob = mythicBukkit.getMobManager().getMythicMob(mob.getMobID());
         if (mythicMob.isPresent()) {
             MythicMob theMob = mythicMob.get();
             Position position = Position.of(summonLoc);

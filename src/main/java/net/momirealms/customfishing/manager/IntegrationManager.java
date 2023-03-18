@@ -116,7 +116,7 @@ public class IntegrationManager extends Function {
     }
 
     private void hookMobs() {
-        if (pluginManager.isPluginEnabled("MythicMobs")) {
+        if (pluginManager.isPluginEnabled("MythicMobs") && pluginManager.getPlugin("MythicMobs").getDescription().getVersion().startsWith("5")) {
             this.mobInterface = new MythicMobsMobImpl();
         }
     }
@@ -190,7 +190,7 @@ public class IntegrationManager extends Function {
             itemInterfaceList.add(new MMOItemsItemImpl());
             hookMessage("MMOItems");
         }
-        if (pluginManager.isPluginEnabled("MythicMobs")) {
+        if (pluginManager.isPluginEnabled("MythicMobs") && pluginManager.getPlugin("MythicMobs").getDescription().getVersion().startsWith("5")) {
             itemInterfaceList.add(new MythicMobsItemImpl());
             hookMessage("MythicMobs");
         }
@@ -210,7 +210,7 @@ public class IntegrationManager extends Function {
             hookMessage("ClueScrolls");
         }
         if (pluginManager.isPluginEnabled("BetonQuest")) {
-            if (Bukkit.getPluginManager().getPlugin("BetonQuest").getDescription().getVersion().startsWith("2.")) NewBetonQuestCFQuest.register();
+            if (Bukkit.getPluginManager().getPlugin("BetonQuest").getDescription().getVersion().startsWith("2")) NewBetonQuestCFQuest.register();
             else OldBetonQuestCFQuest.register();
             hookMessage("BetonQuest");
         }

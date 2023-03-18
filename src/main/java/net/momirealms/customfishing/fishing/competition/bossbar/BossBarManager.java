@@ -65,17 +65,19 @@ public class BossBarManager extends Function {
 
     @Override
     public void onJoin(Player player) {
-        if (Competition.currentCompetition != null){
-            if (Competition.currentCompetition.isJoined(player) && cache.get(player) == null){
-                BossBarSender sender = new BossBarSender(player, Competition.currentCompetition.getCompetitionConfig().getBossBarConfig());
-                if (!sender.getStatus()) {
-                    sender.show();
+        Bukkit.getScheduler().runTaskLater(CustomFishing.getInstance(), () -> {
+            if (Competition.currentCompetition != null){
+                if (Competition.currentCompetition.isJoined(player) && cache.get(player) == null){
+                    BossBarSender sender = new BossBarSender(player, Competition.currentCompetition.getCompetitionConfig().getBossBarConfig());
+                    if (!sender.getStatus()) {
+                        sender.show();
+                    }
+                    cache.put(player, sender);
+                } else {
+                    AdventureUtil.playerMessage(player, MessageManager.competitionOn);
                 }
-                cache.put(player, sender);
-            } else {
-                AdventureUtil.playerMessage(player, MessageManager.competitionOn);
             }
-        }
+        }, 5);
     }
 
     public void tryJoin(Player player) {
