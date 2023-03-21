@@ -180,7 +180,7 @@ public class TotemManager extends Function {
                     config.getInt(key + ".radius", 16),
                     config.getInt(key + ".duration", 300),
                     Particle.valueOf(config.getString(key + ".particle", "SPELL_MOB").toUpperCase()),
-                    EffectManager.getEffect(config.getConfigurationSection(key + ".effect"))
+                    ConfigUtil.getEffect(config.getConfigurationSection(key + ".effect"))
             );
 
             List<Action> actionList = new ArrayList<>();
@@ -198,7 +198,7 @@ public class TotemManager extends Function {
 
             totem.setActivatorActions(actionList.toArray(new Action[0]));
             totem.setNearbyActions(nearActionList.toArray(new Action[0]));
-            totem.setRequirements(plugin.getLootManager().getRequirements(config.getConfigurationSection(key + ".requirements")));
+            totem.setRequirements(ConfigUtil.getRequirementsWithMsg(config.getConfigurationSection(key + ".requirements")));
 
             if (config.getBoolean(key + ".hologram.enable", false)) {
                 totem.setHoloText(config.getStringList(key + ".hologram.text").toArray(new String[0]));

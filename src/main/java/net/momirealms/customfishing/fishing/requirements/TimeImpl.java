@@ -19,10 +19,18 @@ package net.momirealms.customfishing.fishing.requirements;
 
 import net.momirealms.customfishing.fishing.FishingCondition;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public record TimeImpl(List<String> times) implements RequirementInterface {
+public class TimeImpl extends Requirement implements RequirementInterface {
+
+    private final List<String> times;
+
+    public TimeImpl(@Nullable String[] msg, List<String> times) {
+        super(msg);
+        this.times = times;
+    }
 
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
@@ -33,6 +41,7 @@ public record TimeImpl(List<String> times) implements RequirementInterface {
                 return true;
             }
         }
+        notMetMessage(fishingCondition.getPlayer());
         return false;
     }
 }

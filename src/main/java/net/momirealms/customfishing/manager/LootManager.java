@@ -25,6 +25,7 @@ import net.momirealms.customfishing.fishing.requirements.*;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.LeveledEnchantment;
 import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.ConfigUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -254,10 +255,10 @@ public class LootManager extends Function {
     }
 
     private void setActions(ConfigurationSection section, Loot loot) {
-        loot.setSuccessActions(getActions(section.getConfigurationSection("action.success"), loot.getNick()));
-        loot.setFailureActions(getActions(section.getConfigurationSection("action.failure"), loot.getNick()));
-        loot.setHookActions(getActions(section.getConfigurationSection("action.hook"), loot.getNick()));
-        loot.setConsumeActions(getActions(section.getConfigurationSection("action.consume"), loot.getNick()));
+        loot.setSuccessActions(ConfigUtil.getActions(section.getConfigurationSection("action.success"), loot.getNick()));
+        loot.setFailureActions(ConfigUtil.getActions(section.getConfigurationSection("action.failure"), loot.getNick()));
+        loot.setHookActions(ConfigUtil.getActions(section.getConfigurationSection("action.hook"), loot.getNick()));
+        loot.setConsumeActions(ConfigUtil.getActions(section.getConfigurationSection("action.consume"), loot.getNick()));
         setSuccessAmountAction(section.getConfigurationSection("action.success-times"), loot);
     }
 
@@ -265,72 +266,17 @@ public class LootManager extends Function {
         if (section != null) {
             HashMap<Integer, Action[]> actionMap = new HashMap<>();
             for (String amount : section.getKeys(false)) {
-                actionMap.put(Integer.parseInt(amount), getActions(section.getConfigurationSection(amount), loot.getNick()));
+                actionMap.put(Integer.parseInt(amount), ConfigUtil.getActions(section.getConfigurationSection(amount), loot.getNick()));
             }
             loot.setSuccessTimesActions(actionMap);
         }
     }
 
     private void setRequirements(ConfigurationSection section, Loot loot) {
-        loot.setRequirements(getRequirements(section));
+        loot.setRequirements(ConfigUtil.getRequirements(section));
     }
 
-    public Action[] getActions(ConfigurationSection section, String nick) {
-        List<Action> actions = new ArrayList<>();
-        if (section != null) {
-            for (String action : section.getKeys(false)) {
-                switch (action) {
-                    case "message" -> actions.add(new MessageActionImpl(section.getStringList(action).toArray(new String[0]), nick));
-                    case "command" -> actions.add(new CommandActionImpl(section.getStringList(action).toArray(new String[0]), nick));
-                    case "exp" -> actions.add(new VanillaXPImpl(section.getInt(action), false));
-                    case "mending" -> actions.add(new VanillaXPImpl(section.getInt(action), true));
-                    case "skill-xp" -> actions.add(new SkillXPImpl(section.getDouble(action)));
-                    case "job-xp" -> actions.add(new JobXPImpl(section.getDouble(action)));
-                    case "sound" -> actions.add(new SoundActionImpl(
-                            section.getString(action + ".source"),
-                            section.getString(action + ".key"),
-                            (float) section.getDouble(action + ".volume"),
-                            (float) section.getDouble(action + ".pitch")
-                    ));
-                    case "potion-effect" -> {
-                        List<PotionEffect> potionEffectList = new ArrayList<>();
-                        for (String key : section.getConfigurationSection(action).getKeys(false)) {
-                            PotionEffectType type = PotionEffectType.getByName(section.getString(action + "." + key + ".type", "BLINDNESS").toUpperCase());
-                            if (type == null) AdventureUtil.consoleMessage("<red>[CustomFishing] Potion effect " + section.getString(action + "." + key + ".type", "BLINDNESS") + " doesn't exists");
-                            potionEffectList.add(new PotionEffect(
-                                    type == null ? PotionEffectType.LUCK : type,
-                                    section.getInt(action + "." + key + ".duration"),
-                                    section.getInt(action + "." + key + ".amplifier")
-                            ));
-                        }
-                        actions.add(new PotionEffectImpl(potionEffectList.toArray(new PotionEffect[0])));
-                    }
-                }
-            }
-        }
-        return actions.toArray(new Action[0]);
-    }
 
-    public RequirementInterface[] getRequirements(ConfigurationSection section) {
-        List<RequirementInterface> requirements = new ArrayList<>();
-        if (section != null) {
-            for (String type : section.getKeys(false)) {
-                switch (type) {
-                    case "biome" -> requirements.add(new BiomeImpl(section.getStringList(type)));
-                    case "weather" -> requirements.add(new WeatherImpl(section.getStringList(type)));
-                    case "ypos" -> requirements.add(new YPosImpl(section.getStringList(type)));
-                    case "season" -> requirements.add(new SeasonImpl(section.getStringList(type)));
-                    case "world" -> requirements.add(new WorldImpl(section.getStringList(type)));
-                    case "permission" -> requirements.add(new PermissionImpl(section.getString(type)));
-                    case "time" -> requirements.add(new TimeImpl(section.getStringList(type)));
-                    case "skill-level" -> requirements.add(new SkillLevelImpl(section.getInt(type)));
-                    case "job-level" -> requirements.add(new JobLevelImpl(section.getInt(type)));
-                    case "papi-condition" -> requirements.add(new CustomPapi(Objects.requireNonNull(section.getConfigurationSection(type)).getValues(false)));
-                }
-            }
-        }
-        return requirements.toArray(new RequirementInterface[0]);
-    }
 
     private MiniGameConfig[] getMiniGames(ConfigurationSection section) {
         String[] games = section.getStringList("mini-game").size() == 0 ? new String[]{section.getString("mini-game", null)} : section.getStringList("mini-game").toArray(new String[0]);

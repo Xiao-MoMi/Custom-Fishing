@@ -102,7 +102,7 @@ public class BagDataManager extends DataFunction {
             Inventory inventory = plugin.getDataManager().getDataStorageInterface().loadBagData(ownerOffline.getUniqueId(), force);
             if (inventory == null) {
                 AdventureUtil.playerMessage(viewer, "<red>[CustomFishing] Failed to load bag data for player " + ownerOffline.getName());
-                AdventureUtil.playerMessage(viewer, "<red>This might be caused when the target player is online but on another server");
+                AdventureUtil.playerMessage(viewer, "<red>This might be caused by the target player is online but on another server");
                 AdventureUtil.playerMessage(viewer, "<red>Use /fishingbag open [Player] --force to ignore this warning");
                 return;
             }

@@ -3,40 +3,59 @@
 minecraft:luck_of_the_sea:
   #levels
   1:
-    weight-add:
-      silver: 2
-      gold: 1
+    effect:
+      weight-add:
+        silver: 2
+        gold: 1
   2:
-    weight-add:
-      silver: 3
-      gold: 2
+    effect:
+      weight-add:
+        silver: 3
+        gold: 2
   3:
-    weight-add:
-      silver: 4
-      gold: 3
+    effect:
+      weight-add:
+        silver: 4
+        gold: 3
+  4:
+    effect:
+      weight-add:
+        silver: 6
+        gold: 5
+    # https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing/requirements
+    requirements:
+      permission: luck_of_the_sea.admin
 
 # lucky_catch from EcoEnchants
 eco:lucky_catch:
   1:
-    double-loot: 0.1
+    effect:
+      double-loot: 0.1
   2:
-    double-loot: 0.2
+    effect:
+      double-loot: 0.2
   3:
-    double-loot: 0.3
+    effect:
+      double-loot: 0.3
 
 # You can register an enchantment in EcoEnchants called "easy_catch"
 # And then create its effects in CustomFishing!
 eco:easy_catch:
   1:
-    difficulty: -1
+    effect:
+      difficulty: -1
   2:
-    difficulty: -2
+    effect:
+      difficulty: -2
 
 # AdvancedEnchantments support
 AE:lucky:
   1:
-    double-loot: 0.1
+    effect:
+      double-loot: 0.1
   2:
-    double-loot: 0.2
+    effect:
+      double-loot: 0.2
   3:
-    double-loot: 0.3
+    effect:
+      double-loot: 0.3

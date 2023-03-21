@@ -21,6 +21,7 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.bar.ModeOneBar;
 import net.momirealms.customfishing.manager.FishingManager;
 import net.momirealms.customfishing.util.AdventureUtil;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 
 public class ModeOneGame extends FishingGame {
@@ -37,7 +38,7 @@ public class ModeOneGame extends FishingGame {
 
     @Override
     public void run() {
-        if (timeOut() || switchItem()) return;
+        super.run();
         if (face) progress += difficulty;
         else progress -= difficulty;
         if (progress > modeOneBar.getTotalWidth()) {

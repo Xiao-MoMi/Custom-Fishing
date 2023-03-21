@@ -17,28 +17,23 @@
 
 package net.momirealms.customfishing.fishing.requirements;
 
-import net.momirealms.customfishing.fishing.FishingCondition;
-import org.bukkit.World;
+import net.momirealms.customfishing.util.AdventureUtil;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+public abstract class Requirement {
 
-public class WorldImpl extends Requirement implements RequirementInterface {
+    protected String[] msg;
 
-    private final List<String> worlds;
-
-    public WorldImpl(@Nullable String[] msg, List<String> worlds) {
-        super(msg);
-        this.worlds = worlds;
+    protected Requirement(@Nullable String[] msg) {
+        this.msg = msg;
     }
 
-    @Override
-    public boolean isConditionMet(FishingCondition fishingCondition) {
-        World world = fishingCondition.getLocation().getWorld();
-        if (worlds.contains(world.getName())) {
-            return true;
+    public void notMetMessage(Player player) {
+        if (msg != null) {
+            for (String str : msg) {
+                AdventureUtil.playerMessage(player, str);
+            }
         }
-        notMetMessage(fishingCondition.getPlayer());
-        return false;
     }
 }

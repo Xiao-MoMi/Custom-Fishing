@@ -31,3 +31,6 @@ magnet_bait:
     weight-multiply:
       silver: 1.15
       gold: 1.15
+  # https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing/requirements
+  requirements:
+    permission: magnet_bait.use

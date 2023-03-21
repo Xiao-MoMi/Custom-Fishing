@@ -48,7 +48,7 @@ public class ModeTwoGame extends FishingGame {
 
     @Override
     public void run() {
-        if (timeOut() || switchItem()) return;
+        super.run();
         if (player.isSneaking()) addV();
         else reduceV();
         if (timer < 20) {

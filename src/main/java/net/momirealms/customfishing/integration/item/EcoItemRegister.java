@@ -24,7 +24,6 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.loot.Item;
 import net.momirealms.customfishing.util.ItemStackUtil;
 import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 

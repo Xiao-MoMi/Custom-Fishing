@@ -20,10 +20,18 @@ package net.momirealms.customfishing.fishing.requirements;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.FishingCondition;
 import net.momirealms.customfishing.integration.SeasonInterface;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public record SeasonImpl(List<String> seasons) implements RequirementInterface {
+public class SeasonImpl extends Requirement implements RequirementInterface {
+
+    private final List<String> seasons;
+
+    public SeasonImpl(@Nullable String[] msg, List<String> seasons) {
+        super(msg);
+        this.seasons = seasons;
+    }
 
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
@@ -35,6 +43,7 @@ public record SeasonImpl(List<String> seasons) implements RequirementInterface {
                 return true;
             }
         }
+        notMetMessage(fishingCondition.getPlayer());
         return false;
     }
 }

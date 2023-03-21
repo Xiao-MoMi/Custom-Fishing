@@ -26,12 +26,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-public class CustomPapi implements RequirementInterface {
+public class CustomPapi extends Requirement implements RequirementInterface {
 
     public static HashSet<String> allPapi = new HashSet<>();
     private PapiRequirement papiRequirement;
 
-    public CustomPapi(Map<String, Object> expressions){
+    public CustomPapi(String[] msg, Map<String, Object> expressions){
+        super(msg);
         expressions.keySet().forEach(key -> {
             if (key.startsWith("&&")){
                 List<PapiRequirement> papiRequirements = new ArrayList<>();

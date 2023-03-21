@@ -11,7 +11,7 @@ double_loot_fishing_totem:
   hologram:
     enable: true
     text:
-      - '<#87CEFA>Fishing Totem'
+      - '<#87CEFA>{player}''s Fishing Totem'
       - '<white>{time}s <gray>/ <white>{max_time}s'
     y-offset: 3.8
 
@@ -27,12 +27,23 @@ double_loot_fishing_totem:
   action:
     #commands-activator: []
     messages-activator:
-      - You activated a double loot totem!
+      - '<gold>[CustomFishing] You activated a double loot totem!'
     #commands-nearby-players: []
     messages-nearby-players:
-      - '{activator} activated a fishing totem!'
-      - 'Players inside of the effective range would get fishing buffs!'
+      - '<blue>[!] {activator} activated a fishing totem!'
+      - '<blue>[!] Players inside of the effective range would get fishing buffs!'
 
+  # https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing/requirements
+  requirements:
+    requirement_1:
+      type: permission
+      message: '<red>You don''t have permission to activate this totem!'
+      value: double_loot_fishing_totem.activate
+    requirement_2:
+      type: world
+      message: '<red>You can only activate this totem in Nether.'
+      value:
+        - world_nether
 
   # The layout of the totem
   # 图腾的摆放放

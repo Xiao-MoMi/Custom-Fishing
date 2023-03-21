@@ -22,10 +22,9 @@ import net.momirealms.customfishing.fishing.Effect;
 import net.momirealms.customfishing.fishing.loot.Item;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.util.AdventureUtil;
-import net.momirealms.customfishing.util.ItemStackUtil;
+import net.momirealms.customfishing.util.ConfigUtil;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -96,9 +95,11 @@ public class EffectManager extends Function {
                 Item item = new Item(utilSection, key);
                 item.setCfTag(new String[] {"util", key});
                 utilItems.put(key, item);
-                if (utilSection.contains("effect")) {
-                    utilEffects.put(key, getEffect(utilSection.getConfigurationSection("effect")));
+                Effect effect = ConfigUtil.getEffect(utilSection.getConfigurationSection("effect"));
+                if (utilSection.contains("requirements")) {
+                    effect.setRequirements(ConfigUtil.getRequirements(utilSection.getConfigurationSection("requirements")));
                 }
+                utilEffects.put(key, effect);
             }
         }
         AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + utilItems.size() + " <gray>util(s)");
@@ -120,7 +121,11 @@ public class EffectManager extends Function {
                 ConfigurationSection levelSection = config.getConfigurationSection(key);
                 if (levelSection == null) continue;
                 for (String level : levelSection.getKeys(false)) {
-                    enchantEffects.put((key.startsWith("eco") ? "minecraft" + key.substring(3) : key) + ":" + level, getEffect(levelSection.getConfigurationSection(key)));
+                    Effect effect = ConfigUtil.getEffect(levelSection.getConfigurationSection(level + ".effect"));
+                    if (levelSection.contains(level + ".requirements")) {
+                        effect.setRequirements(ConfigUtil.getRequirements(levelSection.getConfigurationSection(level + ".requirements")));
+                    }
+                    enchantEffects.put((key.startsWith("eco") ? "minecraft" + key.substring(3) : key) + ":" + level, effect);
                 }
                 amount++;
             }
@@ -146,9 +151,11 @@ public class EffectManager extends Function {
                 Item item = new Item(baitSection, key);
                 item.setCfTag(new String[] {"bait", key});
                 baitItems.put(key, item);
-                if (baitSection.contains("effect")) {
-                    baitEffects.put(key, getEffect(baitSection.getConfigurationSection("effect")));
+                Effect effect = ConfigUtil.getEffect(baitSection.getConfigurationSection("effect"));
+                if (baitSection.contains("requirements")) {
+                    effect.setRequirements(ConfigUtil.getRequirements(baitSection.getConfigurationSection("requirements")));
                 }
+                baitEffects.put(key, effect);
             }
         }
         AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + baitItems.size() + " <gray>bait(s)");
@@ -173,38 +180,14 @@ public class EffectManager extends Function {
                 Item item = new Item(rodSection, key);
                 item.setCfTag(new String[] {"rod", key});
                 rodItems.put(key, item);
-                if (rodSection.contains("effect")) {
-                    rodEffects.put(key, getEffect(rodSection.getConfigurationSection("effect")));
+                Effect effect = ConfigUtil.getEffect(rodSection.getConfigurationSection("effect"));
+                if (rodSection.contains("requirements")) {
+                    effect.setRequirements(ConfigUtil.getRequirementsWithMsg(rodSection.getConfigurationSection("requirements")));
                 }
+                rodEffects.put(key, effect);
             }
         }
         AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + rodItems.size() + " <gray>rod(s)");
-    }
-
-    public static Effect getEffect(ConfigurationSection section) {
-        Effect effect = new Effect();
-        if (section == null) return effect;
-        for (String modifier : section.getKeys(false)) {
-            switch (modifier) {
-                case "weight-add" -> {
-                    HashMap<String, Integer> as = new HashMap<>();
-                    Objects.requireNonNull(section.getConfigurationSection(modifier)).getValues(false).forEach((group, value) -> as.put(group, (Integer) value));
-                    effect.setWeightAS(as);
-                }
-                case "weight-multiply" -> {
-                    HashMap<String, Double> md = new HashMap<>();
-                    Objects.requireNonNull(section.getConfigurationSection(modifier)).getValues(false).forEach((group, value) -> md.put(group, Double.parseDouble(String.valueOf(value))-1));
-                    effect.setWeightMD(md);
-                }
-                case "time" -> effect.setTimeModifier(section.getDouble(modifier));
-                case "difficulty" -> effect.setDifficulty(section.getInt(modifier));
-                case "double-loot" -> effect.setDoubleLootChance(section.getDouble(modifier));
-                case "score" -> effect.setScoreMultiplier(section.getDouble(modifier));
-                case "size-multiply" -> effect.setSizeMultiplier(section.getDouble(modifier));
-                case "lava-fishing" -> effect.setCanLavaFishing(section.getBoolean(modifier, false));
-            }
-        }
-        return effect;
     }
 
     @Nullable

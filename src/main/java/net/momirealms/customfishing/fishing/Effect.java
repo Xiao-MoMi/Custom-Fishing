@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.fishing;
 
+import net.momirealms.customfishing.fishing.requirements.RequirementInterface;
 import net.momirealms.customfishing.manager.ConfigManager;
 
 import java.util.HashMap;
@@ -34,6 +35,7 @@ public class Effect {
     private double doubleLootChance;
     private boolean canLavaFishing;
     private boolean hasSpecialRod;
+    private RequirementInterface[] requirements;
 
     public void setSizeMultiplier(double sizeMultiplier) {
         this.sizeMultiplier = sizeMultiplier;
@@ -91,7 +93,22 @@ public class Effect {
         this.canLavaFishing = canLavaFishing;
     }
 
-    public void addEffect(Effect anotherEffect) {
+    public RequirementInterface[] getRequirements() {
+        return requirements;
+    }
+
+    public void setRequirements(RequirementInterface[] requirements) {
+        this.requirements = requirements;
+    }
+
+    public boolean addEffect(Effect anotherEffect, FishingCondition fishingCondition) {
+        if (anotherEffect.getRequirements() != null) {
+            for (RequirementInterface requirement : anotherEffect.getRequirements()) {
+                if (!requirement.isConditionMet(fishingCondition)) {
+                    return false;
+                }
+            }
+        }
         HashMap<String, Integer> weightAS = anotherEffect.getWeightAS();
         if (weightAS != null) {
             for (Map.Entry<String, Integer> en : weightAS.entrySet()) {
@@ -112,6 +129,7 @@ public class Effect {
         if (anotherEffect.getScoreMultiplier() != 0) this.scoreMultiplier += (anotherEffect.getScoreMultiplier() - 1);
         if (anotherEffect.getSizeMultiplier() != 0) this.sizeMultiplier += (anotherEffect.getSizeMultiplier() - 1);
         if (anotherEffect.canLavaFishing()) this.canLavaFishing = true;
+        return true;
     }
 
     public double getScoreMultiplier() {

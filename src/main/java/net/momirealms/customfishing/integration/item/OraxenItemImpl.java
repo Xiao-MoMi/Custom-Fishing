@@ -17,13 +17,12 @@
 
 package net.momirealms.customfishing.integration.item;
 
-import io.th0rgal.oraxen.OraxenPlugin;
-import io.th0rgal.oraxen.api.OraxenFurniture;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.durability.DurabilityMechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.durability.DurabilityMechanicFactory;
 import net.momirealms.customfishing.integration.ItemInterface;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +44,9 @@ public class OraxenItemImpl implements ItemInterface {
         if (mechanic == null) {
             return false;
         }
-        mechanic.changeDurability(itemStack, -1);
+        if (Math.random() < (1 / (double) (itemStack.getEnchantmentLevel(Enchantment.DURABILITY) + 1))) {
+            mechanic.changeDurability(itemStack, -1);
+        }
         return true;
     }
 }

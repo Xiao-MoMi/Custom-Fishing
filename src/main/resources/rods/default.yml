@@ -51,3 +51,14 @@ star_fishing_rod:
       silver: 20
       gold: 10
     lava-fishing: true
+  # https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing/requirements
+  requirements:
+    requirement_1:
+      type: permission
+      message: '<red>You don''t have permission to use this rod!'
+      value: star_fishing_rod.use
+    requirement_2:
+      type: world
+      message: '<red>You can only use this rod in Nether.'
+      value:
+        - world_nether

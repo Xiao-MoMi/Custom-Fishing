@@ -43,8 +43,7 @@ public class CustomFishingItemImpl implements ItemInterface {
     @Override
     public boolean loseCustomDurability(ItemStack itemStack, Player player) {
         Damageable damageable = (Damageable) itemStack.getItemMeta();
-        Enchantment enchantment = Enchantment.DURABILITY;
-        if (Math.random() < (1 / (double) (damageable.getEnchantLevel(enchantment) + 1))){
+        if (Math.random() < (1 / (double) (damageable.getEnchantLevel(Enchantment.DURABILITY) + 1))) {
             damageable.setDamage(damageable.getDamage() + 1);
             itemStack.setItemMeta(damageable);
         }

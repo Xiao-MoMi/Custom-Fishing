@@ -18,8 +18,16 @@
 package net.momirealms.customfishing.fishing.requirements;
 
 import net.momirealms.customfishing.fishing.FishingCondition;
+import org.jetbrains.annotations.Nullable;
 
-public record PermissionImpl(String permission) implements RequirementInterface {
+public class PermissionImpl extends Requirement implements RequirementInterface {
+
+    private final String permission;
+
+    public PermissionImpl(@Nullable String[] msg, String permission) {
+        super(msg);
+        this.permission = permission;
+    }
 
     public String getPermission() {
         return this.permission;
@@ -27,6 +35,10 @@ public record PermissionImpl(String permission) implements RequirementInterface 
 
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
-        return fishingCondition.getPlayer().hasPermission(permission);
+        if (fishingCondition.getPlayer().hasPermission(permission)) {
+            return true;
+        }
+        notMetMessage(fishingCondition.getPlayer());
+        return false;
     }
 }

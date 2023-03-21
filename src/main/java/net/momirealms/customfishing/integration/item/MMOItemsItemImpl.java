@@ -23,6 +23,7 @@ import net.Indyuce.mmoitems.api.interaction.util.DurabilityItem;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 import net.momirealms.customfishing.integration.ItemInterface;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -42,10 +43,12 @@ public class MMOItemsItemImpl implements ItemInterface {
     @Override
     public boolean loseCustomDurability(ItemStack itemStack, Player player) {
         DurabilityItem durabilityItem = new DurabilityItem(player, itemStack);
-        durabilityItem.decreaseDurability(1);
-        final ItemStack newVersion = durabilityItem.toItem();
-        if (newVersion == null) return false;
-        itemStack.setItemMeta(newVersion.getItemMeta());
+        if (Math.random() < (1 / (double) (itemStack.getEnchantmentLevel(Enchantment.DURABILITY) + 1))) {
+            durabilityItem.decreaseDurability(1);
+            final ItemStack newVersion = durabilityItem.toItem();
+            if (newVersion == null) return false;
+            itemStack.setItemMeta(newVersion.getItemMeta());
+        }
         return true;
     }
 }

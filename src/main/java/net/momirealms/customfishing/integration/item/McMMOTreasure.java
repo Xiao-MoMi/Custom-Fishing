@@ -49,7 +49,7 @@ public class McMMOTreasure {
         FishingTreasure treasure = getFishingTreasure(player, fishingManager.getLootTier());
         ItemStack treasureDrop;
         if (treasure != null) {
-            if(treasure instanceof FishingTreasureBook) {
+            if (treasure instanceof FishingTreasureBook) {
                 treasureDrop = ItemUtils.createEnchantBook((FishingTreasureBook) treasure);
             } else {
                 treasureDrop = treasure.getDrop().clone();

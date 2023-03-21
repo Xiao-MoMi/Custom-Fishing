@@ -44,7 +44,7 @@ public class ModeThreeGame extends FishingGame {
 
     @Override
     public void run() {
-        if (timeOut() || switchItem()) return;
+        super.run();
         timer++;
         if (timer >= timer_max) {
             timer = 0;

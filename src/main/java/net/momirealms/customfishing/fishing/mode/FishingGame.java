@@ -24,6 +24,7 @@ import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.manager.OffsetManager;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Material;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffectType;
@@ -38,6 +39,7 @@ public abstract class FishingGame extends BukkitRunnable {
     protected Player player;
     protected int difficulty;
     protected String title;
+    protected FishHook fishHook;
 
     public FishingGame(CustomFishing plugin, FishingManager fishingManager, long deadline, Player player, int difficulty, FishingBar fishingBar) {
         this.offsetManager = plugin.getOffsetManager();
@@ -46,11 +48,14 @@ public abstract class FishingGame extends BukkitRunnable {
         this.deadline = deadline;
         this.difficulty = difficulty;
         this.title = fishingBar.getRandomTitle();
+        this.fishHook = fishingManager.getBobber(player);
     }
 
     @Override
     public void run() {
-
+        timeOutCheck();
+        switchItemCheck();
+        invalidHookCheck();
     }
 
     public void showBar() {
@@ -61,26 +66,30 @@ public abstract class FishingGame extends BukkitRunnable {
         return false;
     }
 
-    protected boolean timeOut() {
+    protected void timeOutCheck() {
         if (System.currentTimeMillis() > deadline) {
             AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.escape);
             cancel();
             fishingManager.removeFishingPlayer(player);
             fishingManager.removeBobber(player);
             fishingManager.fail(player, null, true);
-            return true;
         }
-        return false;
     }
 
-    protected boolean switchItem() {
+    protected void switchItemCheck() {
         PlayerInventory playerInventory = player.getInventory();
         if (playerInventory.getItemInMainHand().getType() != Material.FISHING_ROD && playerInventory.getItemInOffHand().getType() != Material.FISHING_ROD) {
             cancel();
             fishingManager.removeFishingPlayer(player);
             player.removePotionEffect(PotionEffectType.SLOW);
-            return true;
         }
-        return false;
+    }
+
+    protected void invalidHookCheck() {
+        if (fishHook == null || !fishHook.isValid()) {
+            cancel();
+            fishingManager.removeFishingPlayer(player);
+            player.removePotionEffect(PotionEffectType.SLOW);
+        }
     }
 }

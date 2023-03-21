@@ -19,10 +19,18 @@ package net.momirealms.customfishing.fishing.requirements;
 
 import net.momirealms.biomeapi.BiomeAPI;
 import net.momirealms.customfishing.fishing.FishingCondition;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public record BiomeImpl(List<String> biomes) implements RequirementInterface {
+public class BiomeImpl extends Requirement implements RequirementInterface {
+
+    private final List<String> biomes;
+
+    public BiomeImpl(@Nullable String[] msg, List<String> biomes) {
+        super(msg);
+        this.biomes = biomes;
+    }
 
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
@@ -32,6 +40,7 @@ public record BiomeImpl(List<String> biomes) implements RequirementInterface {
                 return true;
             }
         }
+        notMetMessage(fishingCondition.getPlayer());
         return false;
     }
 }

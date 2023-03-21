@@ -1,3 +1,7 @@
+# https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing/item-library
+vanilla:
+  disable-stats: false
+  disable-bar-mechanic: false
 rubbish:
   material: cod
   show-in-fishfinder: false

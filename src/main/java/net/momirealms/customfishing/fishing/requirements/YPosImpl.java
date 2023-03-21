@@ -19,10 +19,18 @@ package net.momirealms.customfishing.fishing.requirements;
 
 import net.momirealms.customfishing.fishing.FishingCondition;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public record YPosImpl(List<String> yPos) implements RequirementInterface {
+public class YPosImpl extends Requirement implements RequirementInterface {
+
+    private final List<String> yPos;
+
+    public YPosImpl(@Nullable String[] msg, List<String> yPos) {
+        super(msg);
+        this.yPos = yPos;
+    }
 
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
@@ -33,6 +41,7 @@ public record YPosImpl(List<String> yPos) implements RequirementInterface {
                 return true;
             }
         }
+        notMetMessage(fishingCondition.getPlayer());
         return false;
     }
 }

@@ -42,6 +42,7 @@ public class AdventureUtil {
      * @param s message
      */
     public static void sendMessage(CommandSender sender, String s) {
+        if (s == null) return;
         if (sender instanceof Player player) playerMessage(player, s);
         else consoleMessage(s);
     }
@@ -51,6 +52,7 @@ public class AdventureUtil {
      * @param s message
      */
     public static void consoleMessage(String s) {
+        if (s == null) return;
         Audience au = CustomFishing.getAdventure().sender(Bukkit.getConsoleSender());
         MiniMessage mm = MiniMessage.miniMessage();
         Component parsed = mm.deserialize(replaceLegacy(s));
@@ -63,6 +65,7 @@ public class AdventureUtil {
      * @param s message
      */
     public static void playerMessage(Player player, String s) {
+        if (s == null) return;
         Audience au = CustomFishing.getAdventure().player(player);
         MiniMessage mm = MiniMessage.miniMessage();
         Component parsed = mm.deserialize(replaceLegacy(s));
@@ -134,7 +137,7 @@ public class AdventureUtil {
      */
     public static String replaceLegacy(String s) {
         StringBuilder stringBuilder = new StringBuilder();
-        char[] chars = s.replaceAll("&","§").toCharArray();
+        char[] chars = s.replace("&","§").toCharArray();
         for (int i = 0; i < chars.length; i++) {
             if (chars[i] == '§') {
                 if (i + 1 < chars.length) {

@@ -3,13 +3,25 @@ package net.momirealms.customfishing.fishing.requirements;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.FishingCondition;
 import net.momirealms.customfishing.integration.SkillInterface;
+import org.jetbrains.annotations.Nullable;
 
-public record SkillLevelImpl(int level) implements RequirementInterface {
+public class SkillLevelImpl extends Requirement implements RequirementInterface {
+
+    private final int level;
+
+    public SkillLevelImpl(@Nullable String[] msg, int level) {
+        super(msg);
+        this.level = level;
+    }
 
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
          SkillInterface skillInterface = CustomFishing.getInstance().getIntegrationManager().getSkillInterface();
          if (skillInterface == null) return true;
-         return skillInterface.getLevel(fishingCondition.getPlayer()) >= level;
+         if (skillInterface.getLevel(fishingCondition.getPlayer()) >= level) {
+             return true;
+         }
+         notMetMessage(fishingCondition.getPlayer());
+         return false;
     }
 }

@@ -19,6 +19,7 @@ package net.momirealms.customfishing.integration.item;
 
 import dev.lone.itemsadder.api.CustomStack;
 import net.momirealms.customfishing.integration.ItemInterface;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +40,9 @@ public class ItemsAdderItemImpl implements ItemInterface {
         CustomStack customStack = CustomStack.byItemStack(itemStack);
         if (customStack == null) return false;
         if (customStack.hasCustomDurability()) {
-            customStack.setDurability(customStack.getDurability() - 1);
+            if (Math.random() < (1 / (double) (itemStack.getEnchantmentLevel(Enchantment.DURABILITY) + 1))) {
+                customStack.setDurability(customStack.getDurability() - 1);
+            }
             return true;
         }
         return false;

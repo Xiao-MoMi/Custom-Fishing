@@ -19,26 +19,32 @@ package net.momirealms.customfishing.fishing.requirements;
 
 import net.momirealms.customfishing.fishing.FishingCondition;
 import org.bukkit.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public record WeatherImpl(List<String> weathers) implements RequirementInterface {
+public class WeatherImpl extends Requirement implements RequirementInterface {
+
+    private final List<String> weathers;
+
+    public WeatherImpl(@Nullable String[] msg, List<String> weathers) {
+        super(msg);
+        this.weathers = weathers;
+    }
 
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
         World world = fishingCondition.getLocation().getWorld();
-        if (world != null) {
-            String currentWeather;
-            if (world.isThundering()) currentWeather = "thunder";
-            else if (world.isClearWeather()) currentWeather = "clear";
-            else currentWeather = "rain";
-            for (String weather : weathers) {
-                if (weather.equalsIgnoreCase(currentWeather)) {
-                    return true;
-                }
+        String currentWeather;
+        if (world.isThundering()) currentWeather = "thunder";
+        else if (world.isClearWeather()) currentWeather = "clear";
+        else currentWeather = "rain";
+        for (String weather : weathers) {
+            if (weather.equalsIgnoreCase(currentWeather)) {
+                return true;
             }
-            return false;
         }
+        notMetMessage(fishingCondition.getPlayer());
         return false;
     }
 }

@@ -27,7 +27,6 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.loot.DroppedItem;
 import net.momirealms.customfishing.fishing.loot.Item;
 import net.momirealms.customfishing.fishing.loot.Loot;
-import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.object.LeveledEnchantment;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;

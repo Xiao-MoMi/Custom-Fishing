@@ -158,7 +158,7 @@ rainbow_fish:
   item_flags:
     - HIDE_ENCHANTS
 
-  # Optional
+  # https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing/requirements
   requirements:
 
     #Biome

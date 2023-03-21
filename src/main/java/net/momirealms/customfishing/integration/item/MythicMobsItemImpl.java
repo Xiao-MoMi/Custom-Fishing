@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.integration.item;
 
 import io.lumine.mythic.bukkit.MythicBukkit;
-import io.lumine.mythic.core.items.ItemExecutor;
 import net.momirealms.customfishing.integration.ItemInterface;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

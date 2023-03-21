@@ -57,8 +57,6 @@ public class ModeOneBar extends FishingBar {
         return totalWidth;
     }
 
-
-
     public String getPointerImage() {
         return pointerImage;
     }

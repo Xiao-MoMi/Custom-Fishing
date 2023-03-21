@@ -59,7 +59,6 @@ public class TotemConfig {
         return originalModel;
     }
 
-
     public FinalModel getFinalModel() {
         return finalModel;
     }

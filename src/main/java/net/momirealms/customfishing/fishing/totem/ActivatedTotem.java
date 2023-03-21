@@ -32,7 +32,7 @@ import java.util.Set;
 
 public class ActivatedTotem extends BukkitRunnable {
 
-    public static int id = 127616121;
+    public static int id = 121616121;
     private int timer;
     private final TotemConfig totem;
     private final Location bottomLoc;
@@ -43,8 +43,9 @@ public class ActivatedTotem extends BukkitRunnable {
     private final BukkitRunnable particleTimerTask;
     private final FishingManager fishingManager;
     private final int direction;
+    private final String activator;
 
-    public ActivatedTotem(Location coreLoc, TotemConfig totem, FishingManager fishingManager, int direction) {
+    public ActivatedTotem(Location coreLoc, TotemConfig totem, FishingManager fishingManager, int direction, String activator) {
         this.fishingManager = fishingManager;
         this.totem = totem;
         this.coreLoc = coreLoc;
@@ -58,6 +59,7 @@ public class ActivatedTotem extends BukkitRunnable {
         this.particleTimerTask = new TotemParticle(bottomLoc, totem.getRadius(), totem.getParticle());
         this.particleTimerTask.runTaskTimerAsynchronously(CustomFishing.getInstance(), 0, 4);
         this.direction = direction;
+        this.activator = activator;
     }
 
     @Override
@@ -77,8 +79,10 @@ public class ActivatedTotem extends BukkitRunnable {
                 if (hasHolo) {
                     for (int i = 0; i < entityID.length; i++) {
                         CustomFishing.getProtocolManager().sendServerPacket(player, ArmorStandUtil.getMetaPacket(entityID[i],
-                                totem.getHoloText()[entityID.length - 1 - i].replace("{time}", String.valueOf(totem.getDuration() - timer))
+                                totem.getHoloText()[entityID.length - 1 - i]
+                                        .replace("{time}", String.valueOf(totem.getDuration() - timer))
                                         .replace("{max_time}", String.valueOf(totem.getDuration()))
+                                        .replace("{player}", activator)
                         ));
                     }
                     addPotionEffect(player);
@@ -99,8 +103,10 @@ public class ActivatedTotem extends BukkitRunnable {
                 for (int i = 0; i < entityID.length; i++) {
                     CustomFishing.getProtocolManager().sendServerPacket(newComer, ArmorStandUtil.getSpawnPacket(entityID[i], bottomLoc.clone().add(0.5, totem.getHoloOffset() + i * 0.4, 0.5)));
                     CustomFishing.getProtocolManager().sendServerPacket(newComer, ArmorStandUtil.getMetaPacket(entityID[i],
-                            totem.getHoloText()[entityID.length - 1 - i].replace("{time}", String.valueOf(totem.getDuration() - timer))
-                                                    .replace("{max_time}", String.valueOf(totem.getDuration()))
+                            totem.getHoloText()[entityID.length - 1 - i]
+                                    .replace("{time}", String.valueOf(totem.getDuration() - timer))
+                                    .replace("{max_time}", String.valueOf(totem.getDuration()))
+                                    .replace("{player}", activator)
                     ));
                 }
                 addPotionEffect(newComer);

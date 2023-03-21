@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.integration.job;
 
-import com.willfp.ecojobs.EcoJobsPlugin;
 import com.willfp.ecojobs.api.EcoJobsAPI;
 import com.willfp.ecojobs.jobs.Job;
 import com.willfp.ecojobs.jobs.Jobs;
