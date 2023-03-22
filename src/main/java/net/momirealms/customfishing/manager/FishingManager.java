@@ -777,7 +777,7 @@ public class FishingManager extends Function {
             return;
         }
 
-        if (!isVanilla && loot != null) {
+        if (!isVanilla && loot != null && loot.getFailureActions() != null) {
             for (Action action : loot.getFailureActions())
                 action.doOn(player, null);
         }

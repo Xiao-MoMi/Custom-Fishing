@@ -79,8 +79,8 @@ public class OldBetonQuestCFQuest extends Objective implements Listener {
     public String getProperty(String name, String playerID) {
         return switch (name.toLowerCase(Locale.ROOT)) {
             case "amount" ->
-                    Integer.toString(this.amount - ((FishObjective.FishData) this.dataMap.get(playerID)).getAmount());
-            case "left" -> Integer.toString(((FishObjective.FishData) this.dataMap.get(playerID)).getAmount());
+                    Integer.toString(this.amount - ((OldBetonQuestCFQuest.FishData) this.dataMap.get(playerID)).getAmount());
+            case "left" -> Integer.toString(((OldBetonQuestCFQuest.FishData) this.dataMap.get(playerID)).getAmount());
             case "total" -> Integer.toString(this.amount);
             default -> "";
         };
