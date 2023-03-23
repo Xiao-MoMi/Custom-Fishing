@@ -30,7 +30,6 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.event.SellFishEvent;
 import net.momirealms.customfishing.data.PlayerSellData;
 import net.momirealms.customfishing.fishing.loot.Item;
-import net.momirealms.customfishing.integration.papi.PlaceholderManager;
 import net.momirealms.customfishing.listener.InventoryListener;
 import net.momirealms.customfishing.listener.JoinQuitListener;
 import net.momirealms.customfishing.listener.WindowPacketListener;

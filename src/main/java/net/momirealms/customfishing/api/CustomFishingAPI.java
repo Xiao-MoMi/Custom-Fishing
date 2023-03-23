@@ -100,4 +100,20 @@ public class CustomFishingAPI {
     public static int getCertainLootCatchAmount(String id, UUID uuid) {
         return CustomFishing.getInstance().getStatisticsManager().getFishAmount(uuid, id);
     }
+
+    /**
+     * If an item exists in item library
+     * @param type type
+     * @param key key
+     * @return exist
+     */
+    public static boolean doesItemExist(String type, String key) {
+        return switch (type) {
+            case "loot" -> CustomFishing.getInstance().getLootManager().hasLoot(key);
+            case "rod" -> CustomFishing.getInstance().getEffectManager().getRodItem(key) != null;
+            case "bait" -> CustomFishing.getInstance().getEffectManager().getBaitItem(key) != null;
+            case "util" -> CustomFishing.getInstance().getEffectManager().getUtilItem(key) != null;
+            default -> false;
+        };
+    }
 }

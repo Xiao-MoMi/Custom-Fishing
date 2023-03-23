@@ -17,10 +17,12 @@
 
 package net.momirealms.customfishing.commands;
 
+import net.momirealms.customfishing.api.CustomFishingAPI;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,22 +31,20 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public abstract class AbstractSubCommand implements SubCommand {
+public abstract class AbstractSubCommand {
 
     private final String command;
-    private Map<String, SubCommand> subCommandMap;
+    private Map<String, AbstractSubCommand> subCommandMap;
 
-    public AbstractSubCommand(String command, Map<String, SubCommand> subCommandMap) {
+    public AbstractSubCommand(String command) {
         this.command = command;
-        this.subCommandMap = subCommandMap;
     }
 
-    @Override
     public boolean onCommand(CommandSender sender, List<String> args) {
         if (subCommandMap == null || args.size() < 1) {
             return true;
         }
-        SubCommand subCommand = subCommandMap.get(args.get(0));
+        AbstractSubCommand subCommand = subCommandMap.get(args.get(0));
         if (subCommand == null) {
             AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.unavailableArgs);
         } else {
@@ -53,7 +53,6 @@ public abstract class AbstractSubCommand implements SubCommand {
         return true;
     }
 
-    @Override
     public List<String> onTabComplete(CommandSender sender, List<String> args) {
         if (subCommandMap == null)
             return Collections.singletonList("");
@@ -62,37 +61,65 @@ public abstract class AbstractSubCommand implements SubCommand {
             returnList.removeIf(str -> !str.startsWith(args.get(0)));
             return returnList;
         }
-        SubCommand subCmd = subCommandMap.get(args.get(0));
+        AbstractSubCommand subCmd = subCommandMap.get(args.get(0));
         if (subCmd != null)
             return subCommandMap.get(args.get(0)).onTabComplete(sender, args.subList(1, args.size()));
         return Collections.singletonList("");
     }
 
-    @Override
     public String getSubCommand() {
         return command;
     }
 
-    @Override
-    public Map<String, SubCommand> getSubCommands() {
+    public Map<String, AbstractSubCommand> getSubCommands() {
         return Collections.unmodifiableMap(subCommandMap);
     }
 
-    @Override
-    public void regSubCommand(SubCommand command) {
+    public void regSubCommand(AbstractSubCommand command) {
         if (subCommandMap == null) {
             subCommandMap = new ConcurrentHashMap<>();
         }
         subCommandMap.put(command.getSubCommand(), command);
     }
 
-    public void setSubCommandMap(Map<String, SubCommand> subCommandMap) {
-        this.subCommandMap = subCommandMap;
+    protected boolean noConsoleExecute(CommandSender commandSender) {
+        if (!(commandSender instanceof Player)) {
+            AdventureUtil.consoleMessage(MessageManager.prefix + MessageManager.noConsole);
+            return true;
+        }
+        return false;
     }
 
-    protected void giveItemMsg(CommandSender sender, String name, String item, int amount){
-        String string = MessageManager.prefix + MessageManager.giveItem.replace("{Amount}", String.valueOf(amount)).replace("{Player}",name).replace("{Item}",item);
-        AdventureUtil.sendMessage(sender, string);
+    protected boolean itemNotExist(CommandSender commandSender, String type, String key) {
+        if (!CustomFishingAPI.doesItemExist(type, key)) {
+            AdventureUtil.sendMessage(commandSender, MessageManager.prefix + MessageManager.itemNotExist);
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean playerNotOnline(CommandSender commandSender, String player) {
+        if (Bukkit.getPlayer(player) == null) {
+            AdventureUtil.sendMessage(commandSender, MessageManager.prefix + MessageManager.notOnline.replace("{Player}", player));
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean lackArgs(CommandSender commandSender, int required, int current) {
+        if (required > current) {
+            AdventureUtil.sendMessage(commandSender, MessageManager.prefix + MessageManager.lackArgs);
+            return true;
+        }
+        return false;
+    }
+
+    protected void giveItemMsg(CommandSender sender, String name, String item, int amount) {
+        AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.giveItem.replace("{Amount}", String.valueOf(amount)).replace("{Player}",name).replace("{Item}",item));
+    }
+
+    protected void getItemMsg(CommandSender sender, String item, int amount) {
+        AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.getItem.replace("{Amount}", String.valueOf(amount)).replace("{Item}", item));
     }
 
     protected List<String> online_players() {

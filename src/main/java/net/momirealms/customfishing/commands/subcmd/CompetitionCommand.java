@@ -19,7 +19,6 @@ package net.momirealms.customfishing.commands.subcmd;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.commands.AbstractSubCommand;
-import net.momirealms.customfishing.commands.SubCommand;
 import net.momirealms.customfishing.fishing.competition.CompetitionSchedule;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.MessageManager;
@@ -31,19 +30,15 @@ import java.util.List;
 
 public class CompetitionCommand extends AbstractSubCommand {
 
-    public static final SubCommand INSTANCE = new CompetitionCommand();
+    public static final CompetitionCommand INSTANCE = new CompetitionCommand();
 
     public CompetitionCommand() {
-        super("competition", null);
+        super("competition");
     }
 
     @Override
     public boolean onCommand(CommandSender sender, List<String> args) {
-        if (!ConfigManager.enableCompetition) return true;
-        if (args.size() < 1){
-            AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.lackArgs);
-            return true;
-        }
+        if (!ConfigManager.enableCompetition || super.lackArgs(sender, 1, args.size())) return true;
         switch (args.get(0)) {
             case "start" -> {
                 if (args.size() < 2) {

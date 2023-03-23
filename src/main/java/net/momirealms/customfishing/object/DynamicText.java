@@ -18,15 +18,11 @@
 package net.momirealms.customfishing.object;
 
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.fishing.competition.Competition;
-import net.momirealms.customfishing.fishing.competition.ranking.RankingInterface;
 import net.momirealms.customfishing.integration.papi.PlaceholderManager;
-import net.momirealms.customfishing.manager.MessageManager;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class DynamicText {
 

@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.integration.job;
 
 import com.gamingmesh.jobs.Jobs;
-import com.gamingmesh.jobs.PlayerManager;
 import com.gamingmesh.jobs.container.Job;
 import com.gamingmesh.jobs.container.JobProgression;
 import com.gamingmesh.jobs.container.JobsPlayer;

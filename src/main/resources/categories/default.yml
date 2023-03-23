@@ -3,10 +3,6 @@
 # %fishingstats_category_total_<id>% get the total number of a certain category's fish caught
 # %fishingstats_category_progress_<id>% get the player's exploration of this category of fish
 normal_fish:
-  - pufferfish
-  - cod
-  - salmon
-  - tropical_fish
   - tuna_fish
   - pike_fish
   - gold_fish

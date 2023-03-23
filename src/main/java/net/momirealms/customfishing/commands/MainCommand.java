@@ -19,71 +19,17 @@ package net.momirealms.customfishing.commands;
 
 
 import net.momirealms.customfishing.commands.subcmd.*;
-import net.momirealms.customfishing.manager.MessageManager;
-import net.momirealms.customfishing.util.AdventureUtil;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
-import org.jetbrains.annotations.NotNull;
+import net.momirealms.customfishing.commands.subcmd.item.ItemsCommand;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-public class MainCommand implements TabExecutor {
-
-    private final Map<String, SubCommand> subCommandMap;
+public class MainCommand extends AbstractMainCommand {
 
     public MainCommand() {
-        subCommandMap = new ConcurrentHashMap<>();
-        regDefaultSubCommands();
-    }
-
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        List<String> argList = Arrays.asList(args);
-        if (argList.size() < 1) {
-            AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.nonArgs);
-            return true;
-        }
-        SubCommand subCommand = subCommandMap.get(argList.get(0));
-        if (subCommand != null)
-            return subCommand.onCommand(sender, argList.subList(1, argList.size()));
-        else {
-            AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.unavailableArgs);
-            return true;
-        }
-    }
-
-    private void regDefaultSubCommands() {
         regSubCommand(ReloadCommand.INSTANCE);
         regSubCommand(ItemsCommand.INSTANCE);
         regSubCommand(CompetitionCommand.INSTANCE);
-        regSubCommand(ImportCommand.INSTANCE);
         regSubCommand(SellShopCommand.INSTANCE);
         regSubCommand(OpenBagCommand.INSTANCE);
         regSubCommand(StatisticsCommand.INSTANCE);
-    }
-
-    public void regSubCommand(SubCommand executor) {
-        subCommandMap.put(executor.getSubCommand(), executor);
-    }
-
-    @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-        List<String> argList = Arrays.asList(args);
-        if (argList.size() <= 1) {
-            List<String> returnList = new ArrayList<>(subCommandMap.keySet());
-            returnList.removeIf(str -> !str.startsWith(args[0]));
-            return returnList;
-        }
-        SubCommand subCommand = subCommandMap.get(argList.get(0));
-        if (subCommand != null)
-            return subCommand.onTabComplete(sender, argList.subList(1, argList.size()));
-        else
-            return Collections.singletonList("");
-    }
-
-    public Map<String, SubCommand> getSubCommandMap() {
-        return subCommandMap;
+        regSubCommand(HelpCommand.INSTANCE);
     }
 }

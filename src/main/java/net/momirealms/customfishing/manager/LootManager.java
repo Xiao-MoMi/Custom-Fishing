@@ -19,9 +19,8 @@ package net.momirealms.customfishing.manager;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.MiniGameConfig;
-import net.momirealms.customfishing.fishing.action.*;
+import net.momirealms.customfishing.fishing.action.Action;
 import net.momirealms.customfishing.fishing.loot.*;
-import net.momirealms.customfishing.fishing.requirements.*;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.LeveledEnchantment;
 import net.momirealms.customfishing.util.AdventureUtil;
@@ -35,8 +34,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -171,7 +168,7 @@ public class LootManager extends Function {
                 );
 
                 setActions(mobSection, loot);
-                setRequirements(mobSection.getConfigurationSection("requirements"), loot);
+                loot.setRequirements(ConfigUtil.getRequirements(mobSection.getConfigurationSection("requirements")));
 
                 if (mobSection.getBoolean("in-lava", false)) lavaLoots.put(key, loot);
                 else waterLoots.put(key, loot);
@@ -238,7 +235,7 @@ public class LootManager extends Function {
                 }
 
                 setActions(lootSection, loot);
-                setRequirements(lootSection.getConfigurationSection("requirements"), loot);
+                loot.setRequirements(ConfigUtil.getRequirements(lootSection.getConfigurationSection("requirements")));
                 if (key.equals("vanilla")) {
                     vanilla_loot = loot;
                     continue;
@@ -272,12 +269,6 @@ public class LootManager extends Function {
         }
     }
 
-    private void setRequirements(ConfigurationSection section, Loot loot) {
-        loot.setRequirements(ConfigUtil.getRequirements(section));
-    }
-
-
-
     private MiniGameConfig[] getMiniGames(ConfigurationSection section) {
         String[] games = section.getStringList("mini-game").size() == 0 ? new String[]{section.getString("mini-game", null)} : section.getStringList("mini-game").toArray(new String[0]);
         MiniGameConfig[] gameConfigs = new MiniGameConfig[games.length];
@@ -306,6 +297,21 @@ public class LootManager extends Function {
     public ArrayList<Loot> getAllLoots() {
         ArrayList<Loot> loots = new ArrayList<>(getWaterLoots().values());
         loots.addAll(getLavaLoots().values());
+        return loots;
+    }
+
+    public ArrayList<String> getAllKeys() {
+        ArrayList<String> loots = new ArrayList<>();
+        for (Map.Entry<String, Loot> en : CustomFishing.getInstance().getLootManager().getWaterLoots().entrySet()) {
+            if (en.getValue() instanceof DroppedItem) {
+                loots.add(en.getKey());
+            }
+        }
+        for (Map.Entry<String, Loot> en : CustomFishing.getInstance().getLootManager().getLavaLoots().entrySet()) {
+            if (en.getValue() instanceof DroppedItem) {
+                loots.add(en.getKey());
+            }
+        }
         return loots;
     }
 

@@ -20,7 +20,6 @@ package net.momirealms.customfishing.commands.subcmd;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.commands.AbstractSubCommand;
-import net.momirealms.customfishing.commands.SubCommand;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.command.CommandSender;
@@ -29,20 +28,17 @@ import java.util.List;
 
 public final class ReloadCommand extends AbstractSubCommand {
 
-    public static final SubCommand INSTANCE = new ReloadCommand();
+    public static final ReloadCommand INSTANCE = new ReloadCommand();
 
     private ReloadCommand() {
-        super("reload", null);
+        super("reload");
     }
 
     @Override
     public boolean onCommand(CommandSender sender, List<String> args) {
-        if (args.size() < 1) {
-            long time1 = System.currentTimeMillis();
-            CustomFishing.getInstance().reload();
-            AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.reload.replace("{time}", String.valueOf(System.currentTimeMillis() - time1)));
-            return true;
-        }
-        return super.onCommand(sender, args);
+        long time1 = System.currentTimeMillis();
+        CustomFishing.getInstance().reload();
+        AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.reload.replace("{time}", String.valueOf(System.currentTimeMillis() - time1)));
+        return true;
     }
 }

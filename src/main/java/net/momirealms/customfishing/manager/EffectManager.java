@@ -30,7 +30,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Set;
 
 public class EffectManager extends Function {
