@@ -17,7 +17,7 @@ public class JobLevelImpl extends Requirement implements RequirementInterface {
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
         JobInterface jobInterface = CustomFishing.getInstance().getIntegrationManager().getJobInterface();
-        if (jobInterface == null) return true;
+        if (jobInterface == null || fishingCondition.getPlayer() == null) return true;
         if (jobInterface.getLevel(fishingCondition.getPlayer()) >= level) {
             return true;
         }

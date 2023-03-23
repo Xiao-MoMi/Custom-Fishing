@@ -53,12 +53,10 @@ public class ModeOneGame extends FishingGame {
 
     @Override
     public void showBar() {
-        String bar =
-                "<font:" + modeOneBar.getFont() + ">" + modeOneBar.getBarImage()
+        String bar = "<font:" + modeOneBar.getFont() + ">" + modeOneBar.getBarImage()
                         + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars(modeOneBar.getPointerOffset() + progress) + "</font>"
                         + modeOneBar.getPointerImage()
                         + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars(modeOneBar.getTotalWidth() - progress - modeOneBar.getPointerWidth()) + "</font></font>";
-
         AdventureUtil.playerTitle(player, title, bar,0,500,0);
     }
 

@@ -205,6 +205,7 @@ public class ItemStackUtil {
         File file = new File(CustomFishing.getInstance().getDataFolder(), File.separator + "loots" + File.separator + "imported.yml");
         YamlConfiguration data = ConfigUtil.readData(file);
         data.set(key + ".material", itemStack.getType().toString());
+        data.set(key + ".amount", itemStack.getAmount());
         NBTItem nbtItem = new NBTItem(itemStack);
         Map<String, Object> map0 = compoundToMap(nbtItem);
         if (map0.size() != 0) {

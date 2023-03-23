@@ -441,6 +441,18 @@ public class SellManager extends DataFunction {
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("{player}", player.getName()).replace("{money}", String.format("%.2f", earnings)).replace("{remains}", sellLimitation ? String.format("%.2f", remains) : "unlimited"));
     }
 
+    public double getTodayEarning(Player player) {
+        PlayerSellData playerSellData = sellDataMap.get(player.getUniqueId());
+        if (playerSellData == null) return 0d;
+        Calendar calendar = Calendar.getInstance();
+        int currentDate = (calendar.get(Calendar.MONTH) + 1) * 100 + calendar.get(Calendar.DATE);
+        if (currentDate != playerSellData.getDate()) {
+            playerSellData.setDate(currentDate);
+            playerSellData.setMoney(0);
+        }
+        return playerSellData.getMoney();
+    }
+
     @Override
     public void onWindowTitlePacketSend(PacketContainer packet, Player player) {
         StructureModifier<WrappedChatComponent> wrappedChatComponentStructureModifier = packet.getChatComponents();

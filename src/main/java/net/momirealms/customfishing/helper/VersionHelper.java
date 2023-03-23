@@ -34,21 +34,23 @@ import java.net.URLConnection;
 public class VersionHelper {
 
     private boolean isNewerThan1_19_R2;
-    private String version;
+    private String serverVersion;
     private final CustomFishing plugin;
     private final boolean isSpigot;
+    private final String pluginVersion;
 
     public VersionHelper(CustomFishing plugin) {
         this.plugin = plugin;
         isVersionNewerThan1_19_R2();
         disableUseLessInfo();
         isSpigot = plugin.getServer().getName().equals("CraftBukkit");
+        pluginVersion = plugin.getDescription().getVersion();
     }
 
     public boolean isVersionNewerThan1_19_R2() {
-        if (version == null) {
-            version = plugin.getServer().getClass().getPackage().getName().split("\\.")[3];
-            String[] split = version.split("_");
+        if (serverVersion == null) {
+            serverVersion = plugin.getServer().getClass().getPackage().getName().split("\\.")[3];
+            String[] split = serverVersion.split("_");
             int main_ver = Integer.parseInt(split[1]);
             if (main_ver >= 20) isNewerThan1_19_R2 = true;
             else if (main_ver == 19) isNewerThan1_19_R2 = Integer.parseInt(split[2].substring(1)) >= 2;
@@ -66,7 +68,7 @@ public class VersionHelper {
             field.setAccessible(true);
             MinecraftVersion minecraftVersion;
             try {
-                minecraftVersion = MinecraftVersion.valueOf(version.replace("v", "MC"));
+                minecraftVersion = MinecraftVersion.valueOf(serverVersion.replace("v", "MC"));
             } catch (IllegalArgumentException ex) {
                 minecraftVersion = MinecraftVersion.UNKNOWN;
             }
@@ -173,5 +175,9 @@ public class VersionHelper {
 
     public boolean isSpigot() {
         return isSpigot;
+    }
+
+    public String getPluginVersion() {
+        return pluginVersion;
     }
 }

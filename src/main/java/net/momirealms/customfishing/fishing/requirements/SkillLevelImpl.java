@@ -17,7 +17,7 @@ public class SkillLevelImpl extends Requirement implements RequirementInterface 
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
          SkillInterface skillInterface = CustomFishing.getInstance().getIntegrationManager().getSkillInterface();
-         if (skillInterface == null) return true;
+         if (skillInterface == null || fishingCondition.getPlayer() == null) return true;
          if (skillInterface.getLevel(fishingCondition.getPlayer()) >= level) {
              return true;
          }

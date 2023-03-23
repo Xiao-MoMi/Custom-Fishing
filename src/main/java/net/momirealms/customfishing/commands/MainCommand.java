@@ -31,5 +31,6 @@ public class MainCommand extends AbstractMainCommand {
         regSubCommand(OpenBagCommand.INSTANCE);
         regSubCommand(StatisticsCommand.INSTANCE);
         regSubCommand(HelpCommand.INSTANCE);
+        regSubCommand(AboutCommand.INSTANCE);
     }
 }

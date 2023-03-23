@@ -72,6 +72,7 @@ public class CustomPapi extends Requirement implements RequirementInterface {
 
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
+        if (fishingCondition.getPlayer() == null) return true;
         return  papiRequirement.isMet(fishingCondition.getPapiMap(), fishingCondition.getPlayer());
     }
 

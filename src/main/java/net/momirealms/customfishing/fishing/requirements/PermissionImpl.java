@@ -35,7 +35,7 @@ public class PermissionImpl extends Requirement implements RequirementInterface 
 
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
-        if (fishingCondition.getPlayer().hasPermission(permission)) {
+        if (fishingCondition.getPlayer() == null || fishingCondition.getPlayer().hasPermission(permission)) {
             return true;
         }
         notMetMessage(fishingCondition.getPlayer());
