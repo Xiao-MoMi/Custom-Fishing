@@ -1,8 +1,11 @@
 # Don't change
-config-version: '19'
+config-version: '20'
 
 # bStats
 metrics: true
+
+# Check update
+update-checker: true
 
 # Wiki: https://mo-mi.gitbook.io/xiaomomi-plugins/
 # chinese/english/spanish

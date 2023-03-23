@@ -19,14 +19,28 @@ package net.momirealms.customfishing.fishing.action;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
+import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.util.AdventureUtil;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 
 public record VanillaXPImpl(int amount, boolean mending) implements Action {
 
     @Override
     public void doOn(Player player, Player another) {
-        player.giveExp(amount, mending);
-        AdventureUtil.playerSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
+        if (CustomFishing.getInstance().getVersionHelper().isSpigot()) {
+            if (mending) {
+                player.getLocation().getWorld().spawn(player.getLocation(), ExperienceOrb.class, e -> e.setExperience(amount));
+            }
+            else {
+                player.giveExp(amount);
+                AdventureUtil.playerSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
+            }
+        }
+        else {
+            player.giveExp(amount, mending);
+            AdventureUtil.playerSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
+        }
     }
 }

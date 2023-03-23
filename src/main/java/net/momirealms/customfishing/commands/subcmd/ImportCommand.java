@@ -43,7 +43,10 @@ public class ImportCommand extends AbstractSubCommand {
             return true;
         } else if (sender instanceof Player player) {
             if (ItemStackUtil.saveToFile(player.getInventory().getItemInMainHand(), args.get(0))) {
-                AdventureUtil.playerMessage(player, MessageManager.prefix + "Done! File is saved to /CustomFishing/loots/" + args.get(0) + ".yml");
+                AdventureUtil.playerMessage(player, MessageManager.prefix + "Done! File is saved to /CustomFishing/loots/imported.yml");
+            }
+            else {
+                AdventureUtil.playerMessage(player, MessageManager.prefix + "<red>Error. The item can't be null or there already exists loot with that key name");
             }
         } else {
             AdventureUtil.consoleMessage(MessageManager.prefix + MessageManager.noConsole);
@@ -54,7 +57,7 @@ public class ImportCommand extends AbstractSubCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, List<String> args) {
         if (args.size() == 1) {
-            return Collections.singletonList("<file_name>");
+            return Collections.singletonList("<key>");
         }
         return super.onTabComplete(sender, args);
     }

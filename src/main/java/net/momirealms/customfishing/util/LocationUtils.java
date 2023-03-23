@@ -17,12 +17,17 @@
 
 package net.momirealms.customfishing.util;
 
+import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.object.SimpleLocation;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class LocationUtils {
 
@@ -53,5 +58,20 @@ public class LocationUtils {
 
     public static String getStringLocation(Location location) {
         return location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
+    }
+
+    public static Collection<Player> getNearbyPlayers(Location location, double radius) {
+        Collection<Player> nearbyPlayers;
+        if (CustomFishing.getInstance().getVersionHelper().isSpigot()) {
+            nearbyPlayers = location.getWorld().getNearbyEntities(location, radius, radius, radius)
+                    .stream()
+                    .filter(entity -> entity instanceof Player)
+                    .map(entity -> (Player) entity)
+                    .collect(Collectors.toList());
+        }
+        else {
+            nearbyPlayers = location.getNearbyPlayers(radius);
+        }
+        return nearbyPlayers;
     }
 }

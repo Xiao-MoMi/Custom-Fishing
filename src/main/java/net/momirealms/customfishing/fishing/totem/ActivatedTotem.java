@@ -20,6 +20,7 @@ package net.momirealms.customfishing.fishing.totem;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.manager.FishingManager;
 import net.momirealms.customfishing.util.ArmorStandUtil;
+import net.momirealms.customfishing.util.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -29,6 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ActivatedTotem extends BukkitRunnable {
 
@@ -72,7 +74,7 @@ public class ActivatedTotem extends BukkitRunnable {
         }
 
         HashSet<Player> temp = new HashSet<>(nearbyPlayerSet);
-        Collection<Player> nearbyPlayers = bottomLoc.getNearbyPlayers(totem.getRadius());
+        Collection<Player> nearbyPlayers = LocationUtils.getNearbyPlayers(bottomLoc, totem.getRadius());
 
         for (Player player : temp) {
             if (nearbyPlayers.remove(player)) {

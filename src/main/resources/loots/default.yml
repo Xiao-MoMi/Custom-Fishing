@@ -1,7 +1,7 @@
 # https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing/item-library
 vanilla:
   disable-stats: false
-  disable-bar-mechanic: false
+  disable-bar-mechanic: true
 rubbish:
   material: cod
   show-in-fishfinder: false
@@ -33,39 +33,6 @@ wither_skeleton_skull:
   action:
     success:
       mending: 80
-pufferfish:
-  nick: '<#DAA520>Pufferfish</#DAA520>'
-  material: PUFFERFISH
-  weight: 50
-  action:
-    success:
-      mending: 7
-cod:
-  nick: '<#FFFACD>Cod</#FFFACD>'
-  material: COD
-  weight: 300
-  action:
-    success:
-      mending: 3
-salmon:
-  nick: '<#D2691E>Salmon</#D2691E>'
-  material: SALMON
-  weight: 250
-tropical_fish:
-  nick: '&cT&fr&co&fp&ci&fc&ca&fl &cF&fi&cs&fh'
-  material: TROPICAL_FISH
-  weight: 50
-  action:
-    success:
-      mending: 4
-  requirements:
-    biome:
-      - minecraft:jungle
-      - minecraft:bamboo_jungle
-      - minecraft:sparse_jungle
-      - minecraft:warm_ocean
-      - minecraft:lukewarm_ocean
-      - minecraft:deep_lukewarm_ocean
 tuna_fish:
   material: cod
   nick: <gradient:#F0FFFF:#4682B4:#F0FFFF>Tuna Fish</gradient>

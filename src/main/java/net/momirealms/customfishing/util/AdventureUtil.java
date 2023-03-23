@@ -29,6 +29,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AdventureUtil {
 
@@ -132,16 +136,16 @@ public class AdventureUtil {
 
     /**
      * Replace the legacy codes with MiniMessage Format
-     * @param s text
+     * @param str text
      * @return MiniMessage format text
      */
-    public static String replaceLegacy(String s) {
+    public static String replaceLegacy(String str) {
         StringBuilder stringBuilder = new StringBuilder();
-        char[] chars = s.replace("&","§").toCharArray();
+        char[] chars = str.replace("&","§").toCharArray();
         for (int i = 0; i < chars.length; i++) {
             if (chars[i] == '§') {
                 if (i + 1 < chars.length) {
-                    switch (chars[i+1]){
+                    switch (chars[i+1]) {
                         case '0' -> {i++;stringBuilder.append("<black>");}
                         case '1' -> {i++;stringBuilder.append("<dark_blue>");}
                         case '2' -> {i++;stringBuilder.append("<dark_green>");}
@@ -173,5 +177,50 @@ public class AdventureUtil {
             }
         }
         return stringBuilder.toString();
+    }
+
+    public static String replaceMiniMessage(String str) {
+        String result = str.replace("&","§");
+        List<String> miniFormat = new ArrayList<>();
+        Pattern pattern = Pattern.compile("<.*?>");
+        Matcher matcher = pattern.matcher(str);
+        while (matcher.find()) miniFormat.add(matcher.group());
+        for (String mini : miniFormat) {
+            StringBuilder replacer = new StringBuilder();
+            switch (mini) {
+                case "<black>" -> replacer = new StringBuilder("§0");
+                case "<dark_blue>" -> replacer = new StringBuilder("§1");
+                case "<dark_green>" -> replacer = new StringBuilder("§2");
+                case "<dark_aqua>" -> replacer = new StringBuilder("§3");
+                case "<dark_red>" -> replacer = new StringBuilder("§4");
+                case "<dark_purple>" -> replacer = new StringBuilder("§5");
+                case "<gold>" -> replacer = new StringBuilder("§6");
+                case "<gray>" -> replacer = new StringBuilder("§7");
+                case "<dark_gray>" -> replacer = new StringBuilder("§8");
+                case "<blue>" -> replacer = new StringBuilder("§9");
+                case "<green>" -> replacer = new StringBuilder("§a");
+                case "<aqua>" -> replacer = new StringBuilder("§b");
+                case "<red>" -> replacer = new StringBuilder("§c");
+                case "<light_purple>" -> replacer = new StringBuilder("§d");
+                case "<yellow>" -> replacer = new StringBuilder("§e");
+                case "<white>" -> replacer = new StringBuilder("§f");
+                case "<reset>" -> replacer = new StringBuilder("§r");
+                case "<bold>" -> replacer = new StringBuilder("§l");
+                case "<strikethrough>" -> replacer = new StringBuilder("§m");
+                case "<italic>" -> replacer = new StringBuilder("§o");
+                case "<underlined>" -> replacer = new StringBuilder("§n");
+                case "<obfuscated>" -> replacer = new StringBuilder("§k");
+                default -> {
+                    if (mini.length() == 9 && mini.charAt(1) == '#') {
+                        replacer = new StringBuilder("§x");
+                        for (int i = 2; i < 8; i++) {
+                            replacer.append("§").append(mini.charAt(i));
+                        }
+                    }
+                }
+            }
+            result = result.replace(mini, replacer.toString());
+        }
+        return result;
     }
 }

@@ -77,12 +77,14 @@ public class ConfigManager {
     public static boolean bStats;
     public static HashSet<Material> bagWhiteListItems;
     public static boolean enableStatistics;
+    public static boolean updateChecker;
 
     public static void load() {
         ConfigUtil.update("config.yml");
         YamlConfiguration config = ConfigUtil.getConfig("config.yml");
         lang = config.getString("lang","english");
         bStats = config.getBoolean("metrics", true);
+        updateChecker = config.getBoolean("update-checker", true);
         loadMechanics(config);
         loadTitle(config);
         loadFishingWorlds(config);

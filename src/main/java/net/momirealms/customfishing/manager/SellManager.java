@@ -247,7 +247,7 @@ public class SellManager extends DataFunction {
             AdventureUtil.consoleMessage("<red>Sell cache is not loaded for player " + player.getName());
             return;
         }
-        Inventory inventory = Bukkit.createInventory(player, guiSize, "{CustomFishing_Sell}");
+        Inventory inventory = plugin.getVersionHelper().isSpigot() ? Bukkit.createInventory(player, guiSize, AdventureUtil.replaceMiniMessage(SellManager.title.replace("{player}", player.getName()))) : Bukkit.createInventory(player, guiSize, "{CustomFishing_Sell}");
         for (Map.Entry<Integer, ItemStack> entry : guiItems.entrySet()) {
             inventory.setItem(entry.getKey(), entry.getValue());
         }

@@ -200,18 +200,18 @@ public class ItemStackUtil {
         player.getInventory().addItem(itemStack);
     }
 
-    public static boolean saveToFile(ItemStack itemStack, String fileName){
-        if (itemStack == null || itemStack.getType() == Material.AIR) return false;
-        YamlConfiguration yamlConfiguration = new YamlConfiguration();
-        yamlConfiguration.set(fileName + ".material", itemStack.getType().toString());
+    public static boolean saveToFile(ItemStack itemStack, String key){
+        if (itemStack == null || itemStack.getType() == Material.AIR || CustomFishing.getInstance().getLootManager().hasLoot(key)) return false;
+        File file = new File(CustomFishing.getInstance().getDataFolder(), File.separator + "loots" + File.separator + "imported.yml");
+        YamlConfiguration data = ConfigUtil.readData(file);
+        data.set(key + ".material", itemStack.getType().toString());
         NBTItem nbtItem = new NBTItem(itemStack);
         Map<String, Object> map0 = compoundToMap(nbtItem);
         if (map0.size() != 0) {
-            yamlConfiguration.createSection(fileName + ".nbt", map0);
+            data.createSection(key + ".nbt", map0);
         }
-        File file = new File(CustomFishing.getInstance().getDataFolder(), File.separator + "loots" + File.separator + fileName + ".yml");
         try {
-            yamlConfiguration.save(file);
+            data.save(file);
             CustomFishing.getInstance().getLootManager().unload();
             CustomFishing.getInstance().getLootManager().load();
         } catch (IOException e) {

@@ -27,6 +27,7 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.event.*;
 import net.momirealms.customfishing.fishing.*;
 import net.momirealms.customfishing.fishing.action.Action;
+import net.momirealms.customfishing.fishing.action.VanillaXPImpl;
 import net.momirealms.customfishing.fishing.bar.FishingBar;
 import net.momirealms.customfishing.fishing.bar.ModeOneBar;
 import net.momirealms.customfishing.fishing.bar.ModeThreeBar;
@@ -617,7 +618,7 @@ public class FishingManager extends Function {
         }
 
         doVanillaActions(player, location, itemStack, fishResultEvent.isDouble());
-        player.giveExp(new Random().nextInt(24), true);
+        new VanillaXPImpl(new Random().nextInt(24), true).doOn(player, null);
         return true;
     }
 
@@ -637,7 +638,7 @@ public class FishingManager extends Function {
         }
 
         doVanillaActions(player, location, itemStack, fishResultEvent.isDouble());
-        player.giveExp(vanillaLoot.getXp(), true);
+        new VanillaXPImpl(vanillaLoot.getXp(), true).doOn(player, null);
     }
 
     private void doVanillaActions(Player player, Location location, ItemStack itemStack, boolean isDouble) {
@@ -913,7 +914,7 @@ public class FishingManager extends Function {
             }
         if (totem.getNearbyActions() != null)
             for (Action action : totem.getNearbyActions()) {
-                for (Player nearby : coreLoc.getNearbyPlayers(totem.getRadius())) {
+                for (Player nearby : LocationUtils.getNearbyPlayers(coreLoc, totem.getRadius())) {
                     action.doOn(nearby, player);
                 }
             }

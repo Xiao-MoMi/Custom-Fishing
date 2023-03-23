@@ -240,7 +240,7 @@ public class BagDataManager extends DataFunction {
         }
         if (size * 9 != inventory.getSize()) {
             ItemStack[] itemStacks = inventory.getContents();
-            Inventory newInv = Bukkit.createInventory(null, size * 9, "{CustomFishing_Bag_" + owner.getName() + "}");
+            Inventory newInv = plugin.getVersionHelper().isSpigot() ? Bukkit.createInventory(null, size * 9, AdventureUtil.replaceMiniMessage(ConfigManager.fishingBagTitle.replace("{player}", owner.getName()))) : Bukkit.createInventory(null, size * 9, "{CustomFishing_Bag_" + owner.getName() + "}");
             newInv.setContents(itemStacks);
             dataMap.put(owner.getUniqueId(), newInv);
             viewer.openInventory(newInv);
