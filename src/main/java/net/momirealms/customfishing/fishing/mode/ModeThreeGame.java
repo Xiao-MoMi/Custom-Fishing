@@ -82,7 +82,7 @@ public class ModeThreeGame extends FishingGame {
             fishingManager.removeFishingPlayer(player);
             return;
         }
-        if (fish_position + modeThreeBar.getFish_icon_width() > modeThreeBar.getBar_effective_width() || strain > modeThreeBar.getUltimate_strain()) {
+        if (fish_position + modeThreeBar.getFish_icon_width() > modeThreeBar.getBar_effective_width() || strain >= modeThreeBar.getUltimate_strain()) {
             cancel();
             FishHook fishHook = fishingManager.getBobber(player);
             if (fishHook != null) {
