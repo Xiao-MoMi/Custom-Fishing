@@ -925,6 +925,10 @@ public class FishingManager extends Function {
     }
 
     private void useFinder(Player player) {
+        if (!ConfigManager.getWorldsList().contains(player.getWorld().getName())) {
+            return;
+        }
+
         FishingCondition fishingCondition = new FishingCondition(player.getLocation(), player);
         List<Loot> possibleLoots = getPossibleLootList(fishingCondition, true, plugin.getLootManager().getAllLoots());
 

@@ -447,14 +447,11 @@ public class SellManager extends DataFunction {
         StructureModifier<WrappedChatComponent> wrappedChatComponentStructureModifier = packet.getChatComponents();
         WrappedChatComponent component = wrappedChatComponentStructureModifier.getValues().get(0);
         if (component.getJson().equals("{\"text\":\"{CustomFishing_Sell}\"}")) {
-            PlaceholderManager placeholderManager = plugin.getIntegrationManager().getPlaceholderManager();
-            String text = SellManager.title.replace("{player}", player.getName());
-            placeholderManager.parse(player, text);
             wrappedChatComponentStructureModifier.write(0,
                     WrappedChatComponent.fromJson(
                             GsonComponentSerializer.gson().serialize(
                                     MiniMessage.miniMessage().deserialize(
-                                            AdventureUtil.replaceLegacy(text)
+                                            AdventureUtil.replaceLegacy(plugin.getIntegrationManager().getPlaceholderManager().parse(player, SellManager.title))
                                     )
                             )
                     )

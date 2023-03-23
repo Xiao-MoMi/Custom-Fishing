@@ -29,15 +29,9 @@ import java.util.List;
 
 public class JobsRebornImpl implements JobInterface {
 
-    private final PlayerManager playerManager;
-
-    public JobsRebornImpl() {
-        this.playerManager = Jobs.getPlayerManager();
-    }
-
     @Override
     public void addXp(Player player, double amount) {
-        JobsPlayer jobsPlayer = playerManager.getJobsPlayer(player);
+        JobsPlayer jobsPlayer = Jobs.getPlayerManager().getJobsPlayer(player);
         if (jobsPlayer != null) {
             List<JobProgression> jobs = jobsPlayer.getJobProgression();
             Job job = Jobs.getJob("Fisherman");

@@ -18,13 +18,15 @@
 package net.momirealms.customfishing.integration.papi;
 
 import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.fishing.competition.Competition;
+import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.object.Function;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +35,7 @@ public class PlaceholderManager extends Function {
     private CustomFishing plugin;
     private final Pattern basicPattern = Pattern.compile("%([^%]*)%");
     private final Pattern betterPattern = Pattern.compile("\\{(.+?)\\}");
+    private final Pattern allPattern = Pattern.compile("%([^%]*)%|\\{(.+?)\\}");
     private CompetitionPapi competitionPapi;
     private StatisticsPapi statisticsPapi;
     private boolean hasPlaceholderAPI = false;
@@ -44,13 +47,6 @@ public class PlaceholderManager extends Function {
             this.competitionPapi = new CompetitionPapi();
             this.statisticsPapi = new StatisticsPapi(plugin);
         }
-    }
-
-    public String parse(Player player, String text) {
-        if (hasPlaceholderAPI) {
-            return ParseUtil.setPlaceholders(player, text);
-        }
-        return text;
     }
 
     @Override
@@ -65,19 +61,99 @@ public class PlaceholderManager extends Function {
         if (this.statisticsPapi != null) statisticsPapi.unregister();
     }
 
-    public List<String> detectBasicPlaceholders(String text){
-        if (text == null || !text.contains("%")) return Collections.emptyList();
+    public String parse(Player player, String text) {
+        if (hasPlaceholderAPI) {
+            return ParseUtil.setPlaceholders(player, parseInner(player, text));
+        }
+        else {
+            return parseInner(player, text);
+        }
+    }
+
+    public String parseInner(Player player, String text) {
+        List<String> papis = detectBetterPlaceholders(text);
+        for (String papi : papis) {
+            text = text.replace(papi, parseSingleInner(player, papi));
+        }
+        return text;
+    }
+
+    public String parseSinglePlaceholder(Player player, String placeholder) {
+        if (placeholder.startsWith("{")) {
+            return parseSingleInner(player, placeholder);
+        }
+        else if (hasPlaceholderAPI) {
+            return ParseUtil.setPlaceholders(player, placeholder);
+        }
+        return placeholder;
+    }
+
+    public List<String> detectBasicPlaceholders(String text) {
         List<String> placeholders = new ArrayList<>();
         Matcher matcher = basicPattern.matcher(text);
         while (matcher.find()) placeholders.add(matcher.group());
         return placeholders;
     }
 
-    public List<String> detectBetterPlaceholders(String text){
-        if (text == null || !(text.contains("{") && text.contains("}"))) return Collections.emptyList();
+    public List<String> detectBetterPlaceholders(String text) {
         List<String> placeholders = new ArrayList<>();
         Matcher matcher = betterPattern.matcher(text);
         while (matcher.find()) placeholders.add(matcher.group());
         return placeholders;
+    }
+
+    public List<String> detectAllPlaceholders(String text) {
+        List<String> placeholders = new ArrayList<>();
+        Matcher matcher = allPattern.matcher(text);
+        while (matcher.find()) placeholders.add(matcher.group());
+        return placeholders;
+    }
+
+    public List<String> detectPlaceholders(String text) {
+        return hasPlaceholderAPI ? detectAllPlaceholders(text) : detectBetterPlaceholders(text);
+    }
+
+    public String parseSingleInner(Player player, String placeholder) {
+        switch (placeholder) {
+            case "{player}" -> {
+                return player.getName();
+            }
+            case "{rank}" -> {
+                return Competition.currentCompetition.getPlayerRank(player);
+            }
+            case "{time}" -> {
+                return String.valueOf(Competition.currentCompetition.getRemainingTime());
+            }
+            case "{minute}" -> {
+                return String.format("%02d", Competition.currentCompetition.getRemainingTime() / 60);
+            }
+            case "{second}" -> {
+                return String.format("%02d", Competition.currentCompetition.getRemainingTime() % 60);
+            }
+            case "{score}" -> {
+                return String.format("%.1f", Competition.currentCompetition.getScore(player));
+            }
+            case "{1st_player}" -> {
+                return Optional.ofNullable(Competition.currentCompetition.getRanking().getPlayerAt(1)).orElse(MessageManager.noPlayer);
+            }
+            case "{1st_score}" -> {
+                return Competition.currentCompetition.getRanking().getScoreAt(1) <= 0 ? MessageManager.noScore : String.format("%.1f", Competition.currentCompetition.getRanking().getScoreAt(1));
+            }
+            case "{2nd_player}" -> {
+                return Optional.ofNullable(Competition.currentCompetition.getRanking().getPlayerAt(2)).orElse(MessageManager.noPlayer);
+            }
+            case "{2nd_score}" -> {
+                return Competition.currentCompetition.getRanking().getScoreAt(2) <= 0 ? MessageManager.noScore : String.format("%.1f", Competition.currentCompetition.getRanking().getScoreAt(2));
+            }
+            case "{3rd_player}" -> {
+                return Optional.ofNullable(Competition.currentCompetition.getRanking().getPlayerAt(3)).orElse(MessageManager.noPlayer);
+            }
+            case "{3rd_score}" -> {
+                return Competition.currentCompetition.getRanking().getScoreAt(3) <= 0 ? MessageManager.noScore : String.format("%.1f", Competition.currentCompetition.getRanking().getScoreAt(3));
+            }
+            default -> {
+                return placeholder;
+            }
+        }
     }
 }
