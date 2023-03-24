@@ -23,9 +23,9 @@ import net.momirealms.customfishing.fishing.action.Action;
 import net.momirealms.customfishing.fishing.loot.*;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.LeveledEnchantment;
-import net.momirealms.customfishing.util.AdventureUtil;
-import net.momirealms.customfishing.util.ConfigUtil;
-import net.momirealms.customfishing.util.ItemStackUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
+import net.momirealms.customfishing.util.ConfigUtils;
+import net.momirealms.customfishing.util.ItemStackUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -60,7 +60,7 @@ public class LootManager extends Function {
     @Nullable
     public ItemStack build(String key) {
         Item item = lootItems.get(key);
-        return item == null || item.getMaterial() == Material.AIR ? new ItemStack(Material.AIR) : ItemStackUtil.getFromItem(item);
+        return item == null || item.getMaterial() == Material.AIR ? new ItemStack(Material.AIR) : ItemStackUtils.getFromItem(item);
     }
 
     @Override
@@ -78,8 +78,8 @@ public class LootManager extends Function {
         this.loadItems();
         this.loadMobs();
         this.loadCategories();
-        AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + (this.lavaLoots.size() + this.waterLoots.size()) + " <gray>loot(s)");
-        AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + (this.category.size()) + " <gray>category(s)");
+        AdventureUtils.consoleMessage("[CustomFishing] Loaded <green>" + (this.lavaLoots.size() + this.waterLoots.size()) + " <gray>loot(s)");
+        AdventureUtils.consoleMessage("[CustomFishing] Loaded <green>" + (this.category.size()) + " <gray>category(s)");
     }
 
     @Override
@@ -124,7 +124,7 @@ public class LootManager extends Function {
                     List<String> fishIDs = config.getStringList(key);
                     for (String id : fishIDs) {
                         if (!waterLoots.containsKey(id) && !lavaLoots.containsKey(id)) {
-                            AdventureUtil.consoleMessage("<red>[CustomFishing] Fish ID " + id + " doesn't exist in category " + key);
+                            AdventureUtils.consoleMessage("<red>[CustomFishing] Fish ID " + id + " doesn't exist in category " + key);
                             continue outer;
                         }
                     }
@@ -152,7 +152,7 @@ public class LootManager extends Function {
                 if (!mobSection.getBoolean("enable", true)) continue;
                 Mob loot = new Mob(
                         key,
-                        mobSection.contains("nick") ? mobSection.getString("nick") : AdventureUtil.replaceLegacy(mobSection.getString("mobID", key)),
+                        mobSection.contains("nick") ? mobSection.getString("nick") : AdventureUtils.replaceLegacy(mobSection.getString("mobID", key)),
                         getMiniGames(mobSection),
                         mobSection.getInt("weight",10),
                         mobSection.getBoolean("show-in-fishfinder", true),
@@ -168,7 +168,7 @@ public class LootManager extends Function {
                 );
 
                 setActions(mobSection, loot);
-                loot.setRequirements(ConfigUtil.getRequirements(mobSection.getConfigurationSection("requirements")));
+                loot.setRequirements(ConfigUtils.getRequirements(mobSection.getConfigurationSection("requirements")));
 
                 if (mobSection.getBoolean("in-lava", false)) lavaLoots.put(key, loot);
                 else waterLoots.put(key, loot);
@@ -196,7 +196,7 @@ public class LootManager extends Function {
                 String material = lootSection.getString("material","COD");
                 DroppedItem loot = new DroppedItem(
                         key,
-                        lootSection.contains("nick") ? lootSection.getString("nick") : AdventureUtil.replaceLegacy(lootSection.getString("display.name", key)),
+                        lootSection.contains("nick") ? lootSection.getString("nick") : AdventureUtils.replaceLegacy(lootSection.getString("display.name", key)),
                         material.contains(":") ? material : key,
                         getMiniGames(lootSection),
                         lootSection.getInt("weight",10),
@@ -210,7 +210,7 @@ public class LootManager extends Function {
                 if (lootSection.contains("size")) {
                     String[] size = StringUtils.split(lootSection.getString("size", "1~10"), "~");
                     if (size.length != 2) {
-                        AdventureUtil.consoleMessage("<red>[CustomFishing] Wrong size found at " + key);
+                        AdventureUtils.consoleMessage("<red>[CustomFishing] Wrong size found at " + key);
                         continue;
                     }
                     loot.setSize(size);
@@ -238,7 +238,7 @@ public class LootManager extends Function {
                 }
 
                 setActions(lootSection, loot);
-                loot.setRequirements(ConfigUtil.getRequirements(lootSection.getConfigurationSection("requirements")));
+                loot.setRequirements(ConfigUtils.getRequirements(lootSection.getConfigurationSection("requirements")));
                 if (key.equals("vanilla")) {
                     vanilla_loot = loot;
                     continue;
@@ -255,10 +255,10 @@ public class LootManager extends Function {
     }
 
     private void setActions(ConfigurationSection section, Loot loot) {
-        loot.setSuccessActions(ConfigUtil.getActions(section.getConfigurationSection("action.success"), loot.getNick()));
-        loot.setFailureActions(ConfigUtil.getActions(section.getConfigurationSection("action.failure"), loot.getNick()));
-        loot.setHookActions(ConfigUtil.getActions(section.getConfigurationSection("action.hook"), loot.getNick()));
-        loot.setConsumeActions(ConfigUtil.getActions(section.getConfigurationSection("action.consume"), loot.getNick()));
+        loot.setSuccessActions(ConfigUtils.getActions(section.getConfigurationSection("action.success"), loot.getNick()));
+        loot.setFailureActions(ConfigUtils.getActions(section.getConfigurationSection("action.failure"), loot.getNick()));
+        loot.setHookActions(ConfigUtils.getActions(section.getConfigurationSection("action.hook"), loot.getNick()));
+        loot.setConsumeActions(ConfigUtils.getActions(section.getConfigurationSection("action.consume"), loot.getNick()));
         setSuccessAmountAction(section.getConfigurationSection("action.success-times"), loot);
     }
 
@@ -266,7 +266,7 @@ public class LootManager extends Function {
         if (section != null) {
             HashMap<Integer, Action[]> actionMap = new HashMap<>();
             for (String amount : section.getKeys(false)) {
-                actionMap.put(Integer.parseInt(amount), ConfigUtil.getActions(section.getConfigurationSection(amount), loot.getNick()));
+                actionMap.put(Integer.parseInt(amount), ConfigUtils.getActions(section.getConfigurationSection(amount), loot.getNick()));
             }
             loot.setSuccessTimesActions(actionMap);
         }
@@ -281,7 +281,7 @@ public class LootManager extends Function {
             }
             MiniGameConfig gameConfig = plugin.getBarMechanicManager().getGameConfig(games[i]);
             if (gameConfig == null) {
-                AdventureUtil.consoleMessage("<red>[CustomFishing] Mini game " + games[i] + " doesn't exist");
+                AdventureUtils.consoleMessage("<red>[CustomFishing] Mini game " + games[i] + " doesn't exist");
                 return null;
             }
             gameConfigs[i] = gameConfig;

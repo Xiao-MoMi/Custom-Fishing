@@ -22,7 +22,7 @@ import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.loot.Item;
-import net.momirealms.customfishing.util.ItemStackUtil;
+import net.momirealms.customfishing.util.ItemStackUtils;
 import org.bukkit.NamespacedKey;
 
 import java.util.Map;
@@ -45,7 +45,7 @@ public class EcoItemRegister {
                             return false;
                         }
                     },
-                    ItemStackUtil.getFromItem(entry.getValue())
+                    ItemStackUtils.getFromItem(entry.getValue())
             ).register();
         }
         // Baits
@@ -63,7 +63,7 @@ public class EcoItemRegister {
                             return false;
                         }
                     },
-                    ItemStackUtil.getFromItem(entry.getValue())
+                    ItemStackUtils.getFromItem(entry.getValue())
             ).register();
         }
         // Utils
@@ -81,7 +81,7 @@ public class EcoItemRegister {
                             return false;
                         }
                     },
-                    ItemStackUtil.getFromItem(entry.getValue())
+                    ItemStackUtils.getFromItem(entry.getValue())
             ).register();
         }
     }

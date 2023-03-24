@@ -20,7 +20,7 @@ package net.momirealms.customfishing.fishing.mode;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.bar.ModeThreeBar;
 import net.momirealms.customfishing.manager.FishingManager;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 
@@ -103,7 +103,7 @@ public class ModeThreeGame extends FishingGame {
                 + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars(modeThreeBar.getBar_effective_width() - fish_position - modeThreeBar.getFish_icon_width()) + "</font>"
                 + "</font>";
         strain = Math.max(0, Math.min(strain, modeThreeBar.getUltimate_strain()));
-        AdventureUtil.playerTitle(player,
+        AdventureUtils.playerTitle(player,
                 title.replace("{strain}", modeThreeBar.getStrain()[(int) ((strain / modeThreeBar.getUltimate_strain()) * modeThreeBar.getStrain().length)])
                 , bar,0,500,0
         );

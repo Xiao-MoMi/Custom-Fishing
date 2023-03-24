@@ -20,8 +20,8 @@ package net.momirealms.customfishing.commands.subcmd.item;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.commands.AbstractSubCommand;
 import net.momirealms.customfishing.manager.MessageManager;
-import net.momirealms.customfishing.util.AdventureUtil;
-import net.momirealms.customfishing.util.ItemStackUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
+import net.momirealms.customfishing.util.ItemStackUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -56,15 +56,16 @@ public class LootCommand extends AbstractSubCommand {
                     || itemNotExist(sender, "loot", args.get(1))
             ) return true;
             if (args.size() == 2){
-                ItemStackUtil.givePlayerLoot(Bukkit.getPlayer(args.get(0)), args.get(1), 1);
-                super.giveItemMsg(sender, args.get(0), args.get(1), 1);
+                int amount = ItemStackUtils.givePlayerLoot(Bukkit.getPlayer(args.get(0)), args.get(1), 0);
+                if (amount > 0)
+                    super.giveItemMsg(sender, args.get(0), args.get(1), amount);
             }
             else if (args.size() == 3) {
                 if (Integer.parseInt(args.get(2)) < 1) {
-                    AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.wrongAmount);
+                    AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.wrongAmount);
                     return true;
                 }
-                ItemStackUtil.givePlayerLoot(Bukkit.getPlayer(args.get(0)), args.get(1), Integer.parseInt(args.get(2)));
+                ItemStackUtils.givePlayerLoot(Bukkit.getPlayer(args.get(0)), args.get(1), Integer.parseInt(args.get(2)));
                 super.giveItemMsg(sender, args.get(0), args.get(1), Integer.parseInt(args.get(2)));
             }
             return true;
@@ -98,14 +99,15 @@ public class LootCommand extends AbstractSubCommand {
                     || super.itemNotExist(sender, "loot", args.get(0))
             ) return true;
             if (args.size() == 1){
-                ItemStackUtil.givePlayerLoot((Player) sender, args.get(0), 1);
-                super.getItemMsg(sender, args.get(0), 1);
+                int amount = ItemStackUtils.givePlayerLoot((Player) sender, args.get(0), 0);
+                if (amount > 0)
+                    super.getItemMsg(sender, args.get(0), amount);
             } else {
                 if (Integer.parseInt(args.get(1)) < 1){
-                    AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.wrongAmount);
+                    AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.wrongAmount);
                     return true;
                 }
-                ItemStackUtil.givePlayerLoot((Player) sender, args.get(0), Integer.parseInt(args.get(1)));
+                ItemStackUtils.givePlayerLoot((Player) sender, args.get(0), Integer.parseInt(args.get(1)));
                 super.getItemMsg(sender, args.get(0), Integer.parseInt(args.get(1)));
             }
             return true;
@@ -136,8 +138,8 @@ public class LootCommand extends AbstractSubCommand {
                     || lackArgs(sender, 1, args.size())
             ) return true;
             Player player = (Player) sender;
-            if (ItemStackUtil.saveToFile(player.getInventory().getItemInMainHand(), args.get(0))) AdventureUtil.playerMessage(player, MessageManager.prefix + "Done! File is saved to /CustomFishing/loots/imported.yml");
-            else AdventureUtil.playerMessage(player, MessageManager.prefix + "<red>Error. The item can't be null or there already exists loot with that key name");
+            if (ItemStackUtils.saveToFile(player.getInventory().getItemInMainHand(), args.get(0))) AdventureUtils.playerMessage(player, MessageManager.prefix + "Done! File is saved to /CustomFishing/loots/imported.yml");
+            else AdventureUtils.playerMessage(player, MessageManager.prefix + "<red>Error. The item can't be null or there already exists loot with that key name");
             return true;
         }
 

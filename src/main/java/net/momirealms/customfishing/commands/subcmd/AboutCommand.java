@@ -19,7 +19,7 @@ package net.momirealms.customfishing.commands.subcmd;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.commands.AbstractSubCommand;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
@@ -34,11 +34,11 @@ public class AboutCommand extends AbstractSubCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, List<String> args) {
-        AdventureUtil.sendMessage(sender, "<#00BFFF>\uD83C\uDFA3 CustomFishing <gray>- <#87CEEB>" + CustomFishing.getInstance().getVersionHelper().getPluginVersion());
-        AdventureUtil.sendMessage(sender, "<#B0C4DE>A fishing plugin that provides innovative mechanics and powerful loot system");
-        AdventureUtil.sendMessage(sender, "<#DA70D6>\uD83E\uDDEA Author: <#FFC0CB>XiaoMoMi");
-        AdventureUtil.sendMessage(sender, "<#FF7F50>\uD83D\uDD25 Contributors: <#FFA07A>0ft3n<white>, <#FFA07A>Peng_Lx<white>, <#FFA07A>Masaki");
-        AdventureUtil.sendMessage(sender, "<#FFD700>⭐ <click:open_url:https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing>Document</click> <#A9A9A9>| <#FAFAD2>⛏ <click:open_url:https://github.com/Xiao-MoMi/Custom-Fishing>Github</click> <#A9A9A9>| <#48D1CC>\uD83D\uDD14 <click:open_url:https://polymart.org/resource/customfishing.2723>Polymart</click>");
+        AdventureUtils.sendMessage(sender, "<#00BFFF>\uD83C\uDFA3 CustomFishing <gray>- <#87CEEB>" + CustomFishing.getInstance().getVersionHelper().getPluginVersion());
+        AdventureUtils.sendMessage(sender, "<#B0C4DE>A fishing plugin that provides innovative mechanics and powerful loot system");
+        AdventureUtils.sendMessage(sender, "<#DA70D6>\uD83E\uDDEA Author: <#FFC0CB>XiaoMoMi");
+        AdventureUtils.sendMessage(sender, "<#FF7F50>\uD83D\uDD25 Contributors: <#FFA07A>0ft3n<white>, <#FFA07A>Peng_Lx<white>, <#FFA07A>Masaki");
+        AdventureUtils.sendMessage(sender, "<#FFD700>⭐ <click:open_url:https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing>Document</click> <#A9A9A9>| <#FAFAD2>⛏ <click:open_url:https://github.com/Xiao-MoMi/Custom-Fishing>Github</click> <#A9A9A9>| <#48D1CC>\uD83D\uDD14 <click:open_url:https://polymart.org/resource/customfishing.2723>Polymart</click>");
         return true;
     }
 }

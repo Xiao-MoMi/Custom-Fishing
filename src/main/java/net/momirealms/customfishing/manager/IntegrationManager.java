@@ -41,8 +41,8 @@ import net.momirealms.customfishing.integration.skill.EcoSkillsImpl;
 import net.momirealms.customfishing.integration.skill.MMOCoreImpl;
 import net.momirealms.customfishing.integration.skill.mcMMOImpl;
 import net.momirealms.customfishing.object.Function;
-import net.momirealms.customfishing.util.AdventureUtil;
-import net.momirealms.customfishing.util.ConfigUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
+import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -145,7 +145,7 @@ public class IntegrationManager extends Function {
             this.skillInterface = new mcMMOImpl();
             hookMessage("mcMMO");
         } else if (pluginManager.isPluginEnabled("MMOCore")) {
-            this.skillInterface = new MMOCoreImpl(ConfigUtil.getConfig("config.yml").getString("other-settings.MMOCore-profession-name", "fishing"));
+            this.skillInterface = new MMOCoreImpl(ConfigUtils.getConfig("config.yml").getString("other-settings.MMOCore-profession-name", "fishing"));
             hookMessage("MMOCore");
         } else if (pluginManager.isPluginEnabled("AureliumSkills")) {
             this.skillInterface = new AureliumsImpl();
@@ -282,7 +282,7 @@ public class IntegrationManager extends Function {
     }
 
     private void hookMessage(String plugin){
-        AdventureUtil.consoleMessage("[CustomFishing] " + plugin + " hooked!");
+        AdventureUtils.consoleMessage("[CustomFishing] " + plugin + " hooked!");
     }
 
     @Nullable

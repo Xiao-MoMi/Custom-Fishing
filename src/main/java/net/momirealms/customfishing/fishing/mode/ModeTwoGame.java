@@ -20,7 +20,7 @@ package net.momirealms.customfishing.fishing.mode;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.bar.ModeTwoBar;
 import net.momirealms.customfishing.manager.FishingManager;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 
@@ -96,7 +96,7 @@ public class ModeTwoGame extends FishingGame {
                 + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars((int) (modeTwoBar.getBar_effective_width() - fish_position - modeTwoBar.getFish_icon_width() + 1)) + "</font>"
                 + "</font>";
         hold_time = Math.max(0, Math.min(hold_time, time_requirement));
-        AdventureUtil.playerTitle(player,
+        AdventureUtils.playerTitle(player,
                 title.replace("{progress}", modeTwoBar.getProgress()[(int) ((hold_time / time_requirement) * modeTwoBar.getProgress().length)])
                 , bar,0,500,0
         );

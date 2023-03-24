@@ -26,7 +26,7 @@ import net.momirealms.customfishing.fishing.competition.ranking.RedisRankingImpl
 import net.momirealms.customfishing.integration.papi.PlaceholderManager;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.MessageManager;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -67,7 +67,7 @@ public class Competition {
             startTimer();
             for (String startMsg : competitionConfig.getStartMessage())
                 for (Player player : playerCollections)
-                    AdventureUtil.playerMessage(player, startMsg);
+                    AdventureUtils.playerMessage(player, startMsg);
 
             for (String startCmd : competitionConfig.getStartCommand()) Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), startCmd);
 
@@ -78,7 +78,7 @@ public class Competition {
         }
         else {
             for (Player player : playerCollections) {
-                AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.notEnoughPlayers);
+                AdventureUtils.playerMessage(player, MessageManager.prefix + MessageManager.notEnoughPlayers);
             }
             currentCompetition = null;
         }
@@ -131,7 +131,7 @@ public class Competition {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             for (String msg : newMessage) {
-                AdventureUtil.playerMessage(player, msg);
+                AdventureUtils.playerMessage(player, msg);
             }
         }
 

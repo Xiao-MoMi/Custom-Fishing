@@ -23,8 +23,8 @@ import net.momirealms.customfishing.data.storage.FileStorageImpl;
 import net.momirealms.customfishing.data.storage.MySQLStorageImpl;
 import net.momirealms.customfishing.data.storage.StorageType;
 import net.momirealms.customfishing.object.Function;
-import net.momirealms.customfishing.util.AdventureUtil;
-import net.momirealms.customfishing.util.ConfigUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
+import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitTask;
@@ -45,7 +45,7 @@ public class DataManager extends Function {
     }
 
     private boolean loadStorageMode() {
-        YamlConfiguration config = ConfigUtil.getConfig("database.yml");
+        YamlConfiguration config = ConfigUtils.getConfig("database.yml");
         if (config.getString("data-storage-method","YAML").equalsIgnoreCase("YAML")) {
             if (storageType != StorageType.YAML) {
                 this.dataStorageInterface = new FileStorageImpl(plugin);
@@ -68,22 +68,22 @@ public class DataManager extends Function {
         this.timerSave = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             //long time1 = System.currentTimeMillis();
             if (ConfigManager.enableFishingBag) {
-                AdventureUtil.consoleMessage("[CustomFishing] Saving fishing bag data...");
+                AdventureUtils.consoleMessage("[CustomFishing] Saving fishing bag data...");
                 plugin.getBagDataManager().saveBagDataForOnlinePlayers(false);
             }
             if (ConfigManager.enableStatistics) {
-                AdventureUtil.consoleMessage("[CustomFishing] Saving statistics data...");
+                AdventureUtils.consoleMessage("[CustomFishing] Saving statistics data...");
                 plugin.getStatisticsManager().saveStatisticsDataForOnlinePlayers(false);
             }
             //AdventureUtil.consoleMessage("[CustomFishing] Data saved for all online players. Took " + (System.currentTimeMillis() - time1) + " ms.");
-            AdventureUtil.consoleMessage("[CustomFishing] Data saved for all online players.");
+            AdventureUtils.consoleMessage("[CustomFishing] Data saved for all online players.");
         }, 24000, 24000);
     }
 
     @Override
     public void unload() {
         if (timerSave != null) timerSave.cancel();
-        YamlConfiguration config = ConfigUtil.getConfig("database.yml");
+        YamlConfiguration config = ConfigUtils.getConfig("database.yml");
         StorageType st = config.getString("data-storage-method","YAML").equalsIgnoreCase("YAML") ? StorageType.YAML : StorageType.SQL;
         if (this.dataStorageInterface != null && dataStorageInterface.getStorageType() != st) this.dataStorageInterface.disable();
     }

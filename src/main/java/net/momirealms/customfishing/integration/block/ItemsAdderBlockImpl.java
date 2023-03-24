@@ -20,7 +20,7 @@ package net.momirealms.customfishing.integration.block;
 import dev.lone.itemsadder.api.CustomBlock;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.integration.BlockInterface;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -42,7 +42,7 @@ public class ItemsAdderBlockImpl implements BlockInterface {
     public void placeBlock(String id, Location location) {
         String blockID = CustomFishing.getInstance().getTotemManager().getInvertedBlock(id);
         if (blockID == null) {
-            AdventureUtil.consoleMessage(id + " does not exist in default.yml");
+            AdventureUtils.consoleMessage(id + " does not exist in default.yml");
             return;
         }
         if (BlockInterface.isVanillaItem(blockID)) {

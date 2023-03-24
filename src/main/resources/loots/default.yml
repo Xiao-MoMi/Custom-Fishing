@@ -19,6 +19,7 @@ rubbish:
 obsidian:
   nick: '<#4B0082>Obsidian</#4B0082>'
   material: obsidian
+  show-in-fishfinder: false
   in-lava: true
   disable-stats: true
   action:
@@ -27,6 +28,7 @@ obsidian:
 wither_skeleton_skull:
   nick: '<black>Wither Skeleton Skull</black>'
   material: wither_skeleton_skull
+  show-in-fishfinder: false
   in-lava: true
   disable-stats: true
   weight: 1

@@ -19,7 +19,7 @@ package net.momirealms.customfishing.integration.block;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.integration.BlockInterface;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -35,7 +35,7 @@ public class VanillaBlockImpl implements BlockInterface {
     public void placeBlock(String id, Location location) {
         String blockID = CustomFishing.getInstance().getTotemManager().getInvertedBlock(id);
         if (blockID == null) {
-            AdventureUtil.consoleMessage(id + " does not exist in default.yml");
+            AdventureUtils.consoleMessage(id + " does not exist in default.yml");
             return;
         }
         BlockInterface.placeVanillaBlock(blockID, location);

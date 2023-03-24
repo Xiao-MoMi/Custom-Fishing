@@ -26,7 +26,7 @@ import net.momirealms.customfishing.fishing.loot.DroppedItem;
 import net.momirealms.customfishing.fishing.loot.Item;
 import net.momirealms.customfishing.fishing.loot.Loot;
 import net.momirealms.customfishing.manager.ConfigManager;
-import net.momirealms.customfishing.util.ItemStackUtil;
+import net.momirealms.customfishing.util.ItemStackUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -169,7 +169,7 @@ public class CustomFishingAPI {
      */
     public static ItemStack getRodItemByID(String id) {
         Item item = CustomFishing.getInstance().getEffectManager().getRodItem(id);
-        return item == null ? null : ItemStackUtil.getFromItem(item);
+        return item == null ? null : ItemStackUtils.getFromItem(item);
     }
 
     /**
@@ -180,7 +180,7 @@ public class CustomFishingAPI {
      */
     public static ItemStack getBaitItemByID(String id) {
         Item item = CustomFishing.getInstance().getEffectManager().getBaitItem(id);
-        return item == null ? null : ItemStackUtil.getFromItem(item);
+        return item == null ? null : ItemStackUtils.getFromItem(item);
     }
 
     /**
@@ -191,7 +191,7 @@ public class CustomFishingAPI {
      */
     public static ItemStack getUtilItemByID(String id) {
         Item item = CustomFishing.getInstance().getEffectManager().getUtilItem(id);
-        return item == null ? null : ItemStackUtil.getFromItem(item);
+        return item == null ? null : ItemStackUtils.getFromItem(item);
     }
 
     /**

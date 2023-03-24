@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.fishing.requirements;
 
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +32,7 @@ public abstract class Requirement {
     public void notMetMessage(Player player) {
         if (msg != null && player != null) {
             for (String str : msg) {
-                AdventureUtil.playerMessage(player, str);
+                AdventureUtils.playerMessage(player, str);
             }
         }
     }

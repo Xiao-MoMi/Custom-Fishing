@@ -19,7 +19,7 @@ package net.momirealms.customfishing.integration.quest;
 
 import net.momirealms.customfishing.api.event.FishResultEvent;
 import net.momirealms.customfishing.fishing.FishResult;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.betonquest.betonquest.BetonQuest;
 import org.betonquest.betonquest.Instruction;
 import org.betonquest.betonquest.VariableNumber;
@@ -96,7 +96,7 @@ public class NewBetonQuestCFQuest extends CountingObjective implements Listener 
         try {
             targetLocation = playerLocation.getLocation(profile);
         } catch (final org.betonquest.betonquest.exceptions.QuestRuntimeException e) {
-            AdventureUtil.consoleMessage(e.getMessage());
+            AdventureUtils.consoleMessage(e.getMessage());
             return true;
         }
         final int range = rangeVar.getInt(profile);

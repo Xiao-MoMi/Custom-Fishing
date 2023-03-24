@@ -19,13 +19,13 @@ package net.momirealms.customfishing.fishing.action;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.entity.Player;
 
 public record SoundActionImpl(String source, String sound, float volume, float pitch) implements Action {
 
     @Override
     public void doOn(Player player, Player another) {
-        AdventureUtil.playerSound(player, Sound.Source.valueOf(source.toUpperCase()), Key.key(sound), volume, pitch);
+        AdventureUtils.playerSound(player, Sound.Source.valueOf(source.toUpperCase()), Key.key(sound), volume, pitch);
     }
 }

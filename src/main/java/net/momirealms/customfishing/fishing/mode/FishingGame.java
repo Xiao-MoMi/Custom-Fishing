@@ -22,7 +22,7 @@ import net.momirealms.customfishing.fishing.bar.FishingBar;
 import net.momirealms.customfishing.manager.FishingManager;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.manager.OffsetManager;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -68,7 +68,7 @@ public abstract class FishingGame extends BukkitRunnable {
 
     protected void timeOutCheck() {
         if (System.currentTimeMillis() > deadline) {
-            AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.escape);
+            AdventureUtils.playerMessage(player, MessageManager.prefix + MessageManager.escape);
             cancel();
             fishingManager.removeFishingPlayer(player);
             fishingManager.removeHook(player);

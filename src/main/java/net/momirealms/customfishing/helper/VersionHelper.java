@@ -21,7 +21,7 @@ import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.manager.ConfigManager;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.Bukkit;
 
 import java.io.BufferedReader;
@@ -105,19 +105,19 @@ public class VersionHelper {
                 inputStream.close();
 
                 if (!compareVer(newest, current)) {
-                    AdventureUtil.consoleMessage(ConfigManager.lang.equalsIgnoreCase("chinese") ? "[CustomFishing] 当前已是最新版本" : "[CustomFishing] You are using the latest version.");
+                    AdventureUtils.consoleMessage(ConfigManager.lang.equalsIgnoreCase("chinese") ? "[CustomFishing] 当前已是最新版本" : "[CustomFishing] You are using the latest version.");
                     return;
                 }
 
                 if (ConfigManager.lang.equalsIgnoreCase("chinese")) {
-                    AdventureUtil.consoleMessage("[CustomFishing] 当前版本: <red>" + current);
-                    AdventureUtil.consoleMessage("[CustomFishing] 最新版本: <green>" + newest);
-                    AdventureUtil.consoleMessage("[CustomFishing] 请到 <u>售后群<!u> 或 <u>https://polymart.org/resource/customfishing.2723<!u> 获取最新版本.");
+                    AdventureUtils.consoleMessage("[CustomFishing] 当前版本: <red>" + current);
+                    AdventureUtils.consoleMessage("[CustomFishing] 最新版本: <green>" + newest);
+                    AdventureUtils.consoleMessage("[CustomFishing] 请到 <u>售后群<!u> 或 <u>https://polymart.org/resource/customfishing.2723<!u> 获取最新版本.");
                 }
                 else {
-                    AdventureUtil.consoleMessage("[CustomFishing] Current version: <red>" + current);
-                    AdventureUtil.consoleMessage("[CustomFishing] Latest version: <green>" + newest);
-                    AdventureUtil.consoleMessage("[CustomFishing] Update is available: <u>https://polymart.org/resource/customfishing.2723<!u>");
+                    AdventureUtils.consoleMessage("[CustomFishing] Current version: <red>" + current);
+                    AdventureUtils.consoleMessage("[CustomFishing] Latest version: <green>" + newest);
+                    AdventureUtils.consoleMessage("[CustomFishing] Update is available: <u>https://polymart.org/resource/customfishing.2723<!u>");
                 }
             } catch (Exception exception) {
                 Log.warn("Error occurred when checking update");

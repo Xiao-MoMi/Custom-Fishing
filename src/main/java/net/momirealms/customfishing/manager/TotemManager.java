@@ -27,8 +27,8 @@ import net.momirealms.customfishing.fishing.totem.OriginalModel;
 import net.momirealms.customfishing.fishing.totem.TotemConfig;
 import net.momirealms.customfishing.integration.BlockInterface;
 import net.momirealms.customfishing.object.Function;
-import net.momirealms.customfishing.util.AdventureUtil;
-import net.momirealms.customfishing.util.ConfigUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
+import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.LocationUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
@@ -111,13 +111,13 @@ public class TotemManager extends Function {
     }
 
     private void loadBlocks() {
-        YamlConfiguration config = ConfigUtil.getConfig("totem_blocks/default.yml");
+        YamlConfiguration config = ConfigUtils.getConfig("totem_blocks/default.yml");
         config.getKeys(false).forEach(key -> blockIDs.put(key, config.getString(key)));
         config.getKeys(false).forEach(key -> invertedIDs.put(config.getString(key), key));
     }
 
     private void loadTotems() {
-        YamlConfiguration config = ConfigUtil.getConfig("totems/default.yml");
+        YamlConfiguration config = ConfigUtils.getConfig("totems/default.yml");
         for (String key : config.getKeys(false)) {
             List<String> cores = config.getStringList(key + ".core");
             List<String> flat = config.getStringList(key + ".layer.1");
@@ -130,13 +130,13 @@ public class TotemManager extends Function {
             for (int k = 0; k < height; k++) {
                 List<String> layer = config.getStringList(key + ".layer." + (k+1));
                 if (layer.size() != width) {
-                    AdventureUtil.consoleMessage("<red>[CustomFishing] Each layer should have the same size! Error exists in totem:" + key + " layer:" + (k + 1));
+                    AdventureUtils.consoleMessage("<red>[CustomFishing] Each layer should have the same size! Error exists in totem:" + key + " layer:" + (k + 1));
                     return;
                 }
                 for (int j = 0; j < width; j++) {
                     String[] args = layer.get(j).split("\\s+");
                     if (args.length != length) {
-                        AdventureUtil.consoleMessage("<red>[CustomFishing] Each layer should have the same size! Error exists in totem:" + key + " layer:" + (k + 1) + " line:" + (k + 1));
+                        AdventureUtils.consoleMessage("<red>[CustomFishing] Each layer should have the same size! Error exists in totem:" + key + " layer:" + (k + 1) + " line:" + (k + 1));
                         return;
                     }
                     for (int i = 0; i < length; i++) {
@@ -166,7 +166,7 @@ public class TotemManager extends Function {
                 }
             }
             if(corePos == null) {
-                AdventureUtil.consoleMessage("<red>[CustomTotems] No core block set for totem:" + key);
+                AdventureUtils.consoleMessage("<red>[CustomTotems] No core block set for totem:" + key);
                 return;
             }
             else {
@@ -180,7 +180,7 @@ public class TotemManager extends Function {
                     config.getInt(key + ".radius", 16),
                     config.getInt(key + ".duration", 300),
                     Particle.valueOf(config.getString(key + ".particle", "SPELL_MOB").toUpperCase()),
-                    ConfigUtil.getEffect(config.getConfigurationSection(key + ".effect"))
+                    ConfigUtils.getEffect(config.getConfigurationSection(key + ".effect"))
             );
 
             List<Action> actionList = new ArrayList<>();
@@ -198,7 +198,7 @@ public class TotemManager extends Function {
 
             totem.setActivatorActions(actionList.toArray(new Action[0]));
             totem.setNearbyActions(nearActionList.toArray(new Action[0]));
-            totem.setRequirements(ConfigUtil.getRequirementsWithMsg(config.getConfigurationSection(key + ".requirements")));
+            totem.setRequirements(ConfigUtils.getRequirementsWithMsg(config.getConfigurationSection(key + ".requirements")));
 
             if (config.getBoolean(key + ".hologram.enable", false)) {
                 totem.setHoloText(config.getStringList(key + ".hologram.text").toArray(new String[0]));
@@ -234,7 +234,7 @@ public class TotemManager extends Function {
                 }
             }
         }
-        AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + totems.size() + " <gray>totem(s)");
+        AdventureUtils.consoleMessage("[CustomFishing] Loaded <green>" + totems.size() + " <gray>totem(s)");
     }
 
     private CorePos getCorePos(List<String> cores, CorePos corePos, OriginalModel originalModel, int k, int j, int i, String content) {

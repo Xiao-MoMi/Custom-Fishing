@@ -20,8 +20,8 @@ package net.momirealms.customfishing.commands.subcmd.item;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.commands.AbstractSubCommand;
 import net.momirealms.customfishing.manager.MessageManager;
-import net.momirealms.customfishing.util.AdventureUtil;
-import net.momirealms.customfishing.util.ItemStackUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
+import net.momirealms.customfishing.util.ItemStackUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -54,14 +54,14 @@ public class UtilCommand extends AbstractSubCommand {
                     || super.itemNotExist(sender, "util", args.get(0))
             ) return true;
             if (args.size() == 1){
-                ItemStackUtil.givePlayerUtil((Player) sender, args.get(0), 1);
+                ItemStackUtils.givePlayerUtil((Player) sender, args.get(0), 0);
                 super.getItemMsg(sender, args.get(0), 1);
             } else {
                 if (Integer.parseInt(args.get(1)) < 1){
-                    AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.wrongAmount);
+                    AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.wrongAmount);
                     return true;
                 }
-                ItemStackUtil.givePlayerUtil((Player) sender, args.get(0), Integer.parseInt(args.get(1)));
+                ItemStackUtils.givePlayerUtil((Player) sender, args.get(0), Integer.parseInt(args.get(1)));
                 super.getItemMsg(sender, args.get(0), Integer.parseInt(args.get(1)));
             }
             return true;
@@ -93,15 +93,15 @@ public class UtilCommand extends AbstractSubCommand {
                     || itemNotExist(sender, "util", args.get(1))
             ) return true;
             if (args.size() == 2){
-                ItemStackUtil.givePlayerUtil(Bukkit.getPlayer(args.get(0)), args.get(1), 1);
+                ItemStackUtils.givePlayerUtil(Bukkit.getPlayer(args.get(0)), args.get(1), 0);
                 super.giveItemMsg(sender, args.get(0), args.get(1), 1);
             }
             else if (args.size() == 3) {
                 if (Integer.parseInt(args.get(2)) < 1) {
-                    AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.wrongAmount);
+                    AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.wrongAmount);
                     return true;
                 }
-                ItemStackUtil.givePlayerUtil(Bukkit.getPlayer(args.get(0)), args.get(1), Integer.parseInt(args.get(2)));
+                ItemStackUtils.givePlayerUtil(Bukkit.getPlayer(args.get(0)), args.get(1), Integer.parseInt(args.get(2)));
                 super.giveItemMsg(sender, args.get(0), args.get(1), Integer.parseInt(args.get(2)));
             }
             return true;

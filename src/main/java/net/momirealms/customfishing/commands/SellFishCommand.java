@@ -19,7 +19,7 @@ package net.momirealms.customfishing.commands;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.manager.MessageManager;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -34,7 +34,7 @@ public class SellFishCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.noConsole);
+            AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.noConsole);
             return true;
         }
         player.closeInventory();

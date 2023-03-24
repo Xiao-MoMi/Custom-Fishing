@@ -23,9 +23,9 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.loot.Loot;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.FishingManager;
-import net.momirealms.customfishing.util.AdventureUtil;
-import net.momirealms.customfishing.util.ArmorStandUtil;
-import net.momirealms.customfishing.util.FakeItemUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
+import net.momirealms.customfishing.util.ArmorStandUtils;
+import net.momirealms.customfishing.util.FakeItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -80,8 +80,8 @@ public class BobberCheckTask extends BukkitRunnable {
     public void run() {
         timer ++;
         if (!land && entityID != 0) {
-            CustomFishing.getProtocolManager().sendServerPacket(player, FakeItemUtil.getVelocity(entityID, fishHook.getVelocity()));
-            CustomFishing.getProtocolManager().sendServerPacket(player, FakeItemUtil.getTpPacket(entityID, fishHook.getLocation()));
+            CustomFishing.getProtocolManager().sendServerPacket(player, FakeItemUtils.getVelocity(entityID, fishHook.getVelocity()));
+            CustomFishing.getProtocolManager().sendServerPacket(player, FakeItemUtils.getTpPacket(entityID, fishHook.getLocation()));
         }
         if (timer > 3600) {
             stop();
@@ -103,7 +103,7 @@ public class BobberCheckTask extends BukkitRunnable {
             }
             if (first) {
                 sendRemovePacket();
-                ArmorStandUtil.sendAnimationToPlayer(fishHook.getLocation(), player, ConfigManager.lava_item, ConfigManager.lava_time);
+                ArmorStandUtils.sendAnimationToPlayer(fishHook.getLocation(), player, ConfigManager.lava_item, ConfigManager.lava_time);
                 first = false;
             }
             if (hooked) {
@@ -136,7 +136,7 @@ public class BobberCheckTask extends BukkitRunnable {
                 }
                 fishingManager.getNextLoot(player, effect, possibleLoots);
                 if (ConfigManager.enableWaterAnimation) {
-                    ArmorStandUtil.sendAnimationToPlayer(fishHook.getLocation(), player, ConfigManager.water_item, ConfigManager.water_time);
+                    ArmorStandUtils.sendAnimationToPlayer(fishHook.getLocation(), player, ConfigManager.water_item, ConfigManager.water_time);
                 }
             });
             return;
@@ -159,7 +159,7 @@ public class BobberCheckTask extends BukkitRunnable {
 
     private void sendRemovePacket() {
         if (entityID == 0) return;
-        CustomFishing.getProtocolManager().sendServerPacket(player, FakeItemUtil.getDestroyPacket(entityID));
+        CustomFishing.getProtocolManager().sendServerPacket(player, FakeItemUtils.getDestroyPacket(entityID));
     }
 
     public void cancelTask() {
@@ -193,7 +193,7 @@ public class BobberCheckTask extends BukkitRunnable {
         task_1 = Bukkit.getScheduler().runTaskLater(plugin, () -> {
             hooked = true;
             if (hookedEntity != null && !hookedEntity.isDead()) hookedEntity.remove();
-            AdventureUtil.playerSound(player, Sound.Source.NEUTRAL, Key.key("minecraft:block.pointed_dripstone.drip_lava_into_cauldron"), 1, 1);
+            AdventureUtils.playerSound(player, Sound.Source.NEUTRAL, Key.key("minecraft:block.pointed_dripstone.drip_lava_into_cauldron"), 1, 1);
             if (ConfigManager.instantBar) fishingManager.showBar(player);
         }, random);
         task_2 = Bukkit.getScheduler().runTaskLater(plugin, () -> {

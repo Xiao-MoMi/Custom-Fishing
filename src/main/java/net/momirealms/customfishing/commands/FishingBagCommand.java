@@ -20,7 +20,7 @@ package net.momirealms.customfishing.commands;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.MessageManager;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -48,7 +48,7 @@ public class FishingBagCommand extends AbstractMainCommand {
             Player player = (Player) sender;
             if (args.size() == 0) {
                 if (!sender.hasPermission("fishingbag.open")) {
-                    AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.noPerm);
+                    AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.noPerm);
                     return true;
                 }
                 player.closeInventory();
@@ -56,12 +56,12 @@ public class FishingBagCommand extends AbstractMainCommand {
             }
             if (args.size() >= 1) {
                 if (!sender.hasPermission("customfishing.admin")) {
-                    AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.noPerm);
+                    AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.noPerm);
                     return true;
                 }
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayerIfCached(args.get(0));
                 if (offlinePlayer == null) {
-                    AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.playerNotExist);
+                    AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.playerNotExist);
                     return true;
                 }
                 player.closeInventory();

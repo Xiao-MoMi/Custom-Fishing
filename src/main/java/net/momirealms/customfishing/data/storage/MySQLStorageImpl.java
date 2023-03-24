@@ -21,8 +21,8 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.data.PlayerSellData;
 import net.momirealms.customfishing.data.PlayerStatisticsData;
 import net.momirealms.customfishing.manager.ConfigManager;
-import net.momirealms.customfishing.util.AdventureUtil;
-import net.momirealms.customfishing.util.InventoryUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
+import net.momirealms.customfishing.util.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.Inventory;
@@ -79,16 +79,16 @@ public class MySQLStorageImpl implements DataStorageInterface {
                 }
                 int size = rs.getInt(3);
                 String contents = rs.getString(4);
-                ItemStack[] itemStacks = InventoryUtil.getInventoryItems(contents);
-                if (plugin.getVersionHelper().isSpigot()) inventory = Bukkit.createInventory(null, size, AdventureUtil.replaceMiniMessage(ConfigManager.fishingBagTitle.replace("{player}", Optional.ofNullable(offlinePlayer.getName()).orElse(""))));
+                ItemStack[] itemStacks = InventoryUtils.getInventoryItems(contents);
+                if (plugin.getVersionHelper().isSpigot()) inventory = Bukkit.createInventory(null, size, AdventureUtils.replaceMiniMessage(ConfigManager.fishingBagTitle.replace("{player}", Optional.ofNullable(offlinePlayer.getName()).orElse(""))));
                 else inventory = Bukkit.createInventory(null, size, "{CustomFishing_Bag_" + offlinePlayer.getName() + "}");
                 if (itemStacks != null) inventory.setContents(itemStacks);
                 lockData(uuid, "fishingbag");
             }
             else {
-                if (plugin.getVersionHelper().isSpigot()) inventory = Bukkit.createInventory(null, 9, AdventureUtil.replaceMiniMessage(ConfigManager.fishingBagTitle.replace("{player}", Optional.ofNullable(offlinePlayer.getName()).orElse(""))));
+                if (plugin.getVersionHelper().isSpigot()) inventory = Bukkit.createInventory(null, 9, AdventureUtils.replaceMiniMessage(ConfigManager.fishingBagTitle.replace("{player}", Optional.ofNullable(offlinePlayer.getName()).orElse(""))));
                 else inventory = Bukkit.createInventory(null, 9, "{CustomFishing_Bag_" + offlinePlayer.getName() + "}");
-                insertBagData(uuid, InventoryUtil.toBase64(inventory.getContents()));
+                insertBagData(uuid, InventoryUtils.toBase64(inventory.getContents()));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -98,7 +98,7 @@ public class MySQLStorageImpl implements DataStorageInterface {
 
     @Override
     public void saveBagData(UUID uuid, Inventory inventory, boolean unlock) {
-        updateBagData(uuid, inventory.getSize(), InventoryUtil.toBase64(inventory.getContents()), unlock);
+        updateBagData(uuid, inventory.getSize(), InventoryUtils.toBase64(inventory.getContents()), unlock);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class MySQLStorageImpl implements DataStorageInterface {
                 for (Map.Entry<UUID, Inventory> entry : set) {
                     statement.setInt(1, unlock ? 0 : 1);
                     statement.setInt(2, entry.getValue().getSize());
-                    statement.setString(3, InventoryUtil.toBase64(entry.getValue().getContents()));
+                    statement.setString(3, InventoryUtils.toBase64(entry.getValue().getContents()));
                     statement.setString(4, entry.getKey().toString());
                     statement.addBatch();
                 }
@@ -119,10 +119,10 @@ public class MySQLStorageImpl implements DataStorageInterface {
             }
             catch (SQLException ex) {
                 connection.rollback();
-                AdventureUtil.consoleMessage("[CustomFishing] Failed to update bag data for online players");
+                AdventureUtils.consoleMessage("[CustomFishing] Failed to update bag data for online players");
             }
         } catch (SQLException ex) {
-            AdventureUtil.consoleMessage("[CustomFishing] Failed to get connection");
+            AdventureUtils.consoleMessage("[CustomFishing] Failed to get connection");
         }
     }
 
@@ -179,10 +179,10 @@ public class MySQLStorageImpl implements DataStorageInterface {
             }
             catch (SQLException ex) {
                 connection.rollback();
-                AdventureUtil.consoleMessage("[CustomFishing] Failed to update sell data for all the players");
+                AdventureUtils.consoleMessage("[CustomFishing] Failed to update sell data for all the players");
             }
         } catch (SQLException ex) {
-            AdventureUtil.consoleMessage("[CustomFishing] Failed to get connection");
+            AdventureUtils.consoleMessage("[CustomFishing] Failed to get connection");
         }
     }
 
@@ -236,10 +236,10 @@ public class MySQLStorageImpl implements DataStorageInterface {
             }
             catch (SQLException ex) {
                 connection.rollback();
-                AdventureUtil.consoleMessage("[CustomFishing] Failed to update statistics data for online players");
+                AdventureUtils.consoleMessage("[CustomFishing] Failed to update statistics data for online players");
             }
         } catch (SQLException ex) {
-            AdventureUtil.consoleMessage("[CustomFishing] Failed to get connection");
+            AdventureUtils.consoleMessage("[CustomFishing] Failed to get connection");
         }
     }
 
@@ -248,7 +248,7 @@ public class MySQLStorageImpl implements DataStorageInterface {
         try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.executeUpdate();
         } catch (SQLException ex) {
-            AdventureUtil.consoleMessage("[CustomFishing] Failed to create table");
+            AdventureUtils.consoleMessage("[CustomFishing] Failed to create table");
         }
     }
 
@@ -261,7 +261,7 @@ public class MySQLStorageImpl implements DataStorageInterface {
             statement.setString(4, contents);
             statement.executeUpdate();
         } catch (SQLException ex) {
-            AdventureUtil.consoleMessage("[CustomFishing] Failed to insert data for " + uuid);
+            AdventureUtils.consoleMessage("[CustomFishing] Failed to insert data for " + uuid);
         }
     }
 
@@ -274,7 +274,7 @@ public class MySQLStorageImpl implements DataStorageInterface {
             statement.setInt(4, 0);
             statement.executeUpdate();
         } catch (SQLException ex) {
-            AdventureUtil.consoleMessage("[CustomFishing] Failed to insert data for " + uuid);
+            AdventureUtils.consoleMessage("[CustomFishing] Failed to insert data for " + uuid);
         }
     }
 
@@ -286,7 +286,7 @@ public class MySQLStorageImpl implements DataStorageInterface {
             statement.setString(3, "");
             statement.executeUpdate();
         } catch (SQLException ex) {
-            AdventureUtil.consoleMessage("[CustomFishing] Failed to insert data for " + uuid);
+            AdventureUtils.consoleMessage("[CustomFishing] Failed to insert data for " + uuid);
         }
     }
 
@@ -299,7 +299,7 @@ public class MySQLStorageImpl implements DataStorageInterface {
             statement.setString(4, uuid.toString());
             statement.executeUpdate();
         } catch (SQLException ex) {
-            AdventureUtil.consoleMessage("[CustomFishing] Failed to update data for " + uuid);
+            AdventureUtils.consoleMessage("[CustomFishing] Failed to update data for " + uuid);
         }
     }
 
@@ -312,7 +312,7 @@ public class MySQLStorageImpl implements DataStorageInterface {
             statement.setString(4, uuid.toString());
             statement.executeUpdate();
         } catch (SQLException ex) {
-            AdventureUtil.consoleMessage("[CustomFishing] Failed to update data for " + uuid);
+            AdventureUtils.consoleMessage("[CustomFishing] Failed to update data for " + uuid);
         }
     }
 
@@ -324,7 +324,7 @@ public class MySQLStorageImpl implements DataStorageInterface {
             statement.setString(3, uuid.toString());
             statement.executeUpdate();
         } catch (SQLException ex) {
-            AdventureUtil.consoleMessage("[CustomFishing] Failed to update data for " + uuid);
+            AdventureUtils.consoleMessage("[CustomFishing] Failed to update data for " + uuid);
         }
     }
 
@@ -332,18 +332,18 @@ public class MySQLStorageImpl implements DataStorageInterface {
         String sql_1 = String.format(SqlConstants.SQL_ALTER_TABLE, sqlConnection.getTablePrefix() + "_" + "fishingbag");
         try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql_1)) {
             statement.executeUpdate();
-            AdventureUtil.consoleMessage("<green>[CustomFishing] Tables updated");
+            AdventureUtils.consoleMessage("<green>[CustomFishing] Tables updated");
         } catch (SQLException ex) {
-            AdventureUtil.consoleMessage(ex.getSQLState());
-            AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to migrate data");
+            AdventureUtils.consoleMessage(ex.getSQLState());
+            AdventureUtils.consoleMessage("<red>[CustomFishing] Failed to migrate data");
         }
         String sql_2 = String.format(SqlConstants.SQL_DROP_TABLE, sqlConnection.getTablePrefix() + "_" + "sellcache");
         try (Connection connection = sqlConnection.getConnectionAndCheck(); PreparedStatement statement = connection.prepareStatement(sql_2)) {
             statement.executeUpdate();
-            AdventureUtil.consoleMessage("<green>[CustomFishing] Outdated table deleted");
+            AdventureUtils.consoleMessage("<green>[CustomFishing] Outdated table deleted");
         } catch (SQLException ex) {
-            AdventureUtil.consoleMessage(ex.getSQLState());
-            AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to migrate data");
+            AdventureUtils.consoleMessage(ex.getSQLState());
+            AdventureUtils.consoleMessage("<red>[CustomFishing] Failed to migrate data");
         }
     }
 
@@ -353,7 +353,7 @@ public class MySQLStorageImpl implements DataStorageInterface {
             statement.setString(1, uuid.toString());
             statement.executeUpdate();
         } catch (SQLException ex) {
-            AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to lock data for " + uuid);
+            AdventureUtils.consoleMessage("<red>[CustomFishing] Failed to lock data for " + uuid);
         }
     }
 }

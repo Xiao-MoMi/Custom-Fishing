@@ -29,7 +29,7 @@ import net.momirealms.customfishing.listener.InventoryListener;
 import net.momirealms.customfishing.listener.JoinQuitListener;
 import net.momirealms.customfishing.listener.WindowPacketListener;
 import net.momirealms.customfishing.object.InventoryFunction;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -59,7 +59,6 @@ public class BagDataManager extends InventoryFunction {
         this.plugin = plugin;
         this.dataMap = new ConcurrentHashMap<>();
         this.tempData = new HashMap<>();
-
         this.inventoryListener = new InventoryListener(this);
         this.windowPacketListener = new WindowPacketListener(this);
         this.joinQuitListener = new JoinQuitListener(this);
@@ -102,9 +101,9 @@ public class BagDataManager extends InventoryFunction {
         if (owner == null) {
             Inventory inventory = plugin.getDataManager().getDataStorageInterface().loadBagData(ownerOffline.getUniqueId(), force);
             if (inventory == null) {
-                AdventureUtil.playerMessage(viewer, "<red>[CustomFishing] Failed to load bag data for player " + ownerOffline.getName());
-                AdventureUtil.playerMessage(viewer, "<red>This might be caused by the target player is online but on another server");
-                AdventureUtil.playerMessage(viewer, "<red>Use /fishingbag open [Player] --force to ignore this warning");
+                AdventureUtils.playerMessage(viewer, "<red>[CustomFishing] Failed to load bag data for player " + ownerOffline.getName());
+                AdventureUtils.playerMessage(viewer, "<red>This might be caused by the target player is online but on another server");
+                AdventureUtils.playerMessage(viewer, "<red>Use /fishingbag open [Player] --force to ignore this warning");
                 return;
             }
             tempData.put(ownerOffline.getUniqueId(), inventory);
@@ -114,10 +113,10 @@ public class BagDataManager extends InventoryFunction {
         else {
             Inventory inventory = dataMap.get(owner.getUniqueId());
             if (inventory == null) {
-                AdventureUtil.consoleMessage("<red>[CustomFishing] Bag data is not loaded for player " + owner.getName());
+                AdventureUtils.consoleMessage("<red>[CustomFishing] Bag data is not loaded for player " + owner.getName());
             }
             else {
-                openGui(owner, viewer, inventory);
+                openBagGUI(owner, viewer, inventory);
             }
         }
     }
@@ -172,7 +171,7 @@ public class BagDataManager extends InventoryFunction {
                     WrappedChatComponent.fromJson(
                             GsonComponentSerializer.gson().serialize(
                                     MiniMessage.miniMessage().deserialize(
-                                            AdventureUtil.replaceLegacy(text)
+                                            AdventureUtils.replaceLegacy(text)
                                     )
                             )
                     )
@@ -231,7 +230,7 @@ public class BagDataManager extends InventoryFunction {
         }
     }
 
-    public void openGui(Player owner, Player viewer, Inventory inventory) {
+    public void openBagGUI(Player owner, Player viewer, Inventory inventory) {
         int size = 1;
         for (int i = 6; i > 1; i--) {
             if (owner.hasPermission("fishingbag.rows." + i)) {
@@ -241,7 +240,7 @@ public class BagDataManager extends InventoryFunction {
         }
         if (size * 9 != inventory.getSize()) {
             ItemStack[] itemStacks = inventory.getContents();
-            Inventory newInv = plugin.getVersionHelper().isSpigot() ? Bukkit.createInventory(null, size * 9, AdventureUtil.replaceMiniMessage(ConfigManager.fishingBagTitle.replace("{player}", owner.getName()))) : Bukkit.createInventory(null, size * 9, "{CustomFishing_Bag_" + owner.getName() + "}");
+            Inventory newInv = plugin.getVersionHelper().isSpigot() ? Bukkit.createInventory(null, size * 9, AdventureUtils.replaceMiniMessage(ConfigManager.fishingBagTitle.replace("{player}", owner.getName()))) : Bukkit.createInventory(null, size * 9, "{CustomFishing_Bag_" + owner.getName() + "}");
             newInv.setContents(itemStacks);
             dataMap.put(owner.getUniqueId(), newInv);
             viewer.openInventory(newInv);

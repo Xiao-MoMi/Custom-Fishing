@@ -22,7 +22,7 @@ import net.momirealms.customfishing.commands.AbstractSubCommand;
 import net.momirealms.customfishing.fishing.loot.Loot;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.MessageManager;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -56,18 +56,18 @@ public class StatisticsCommand extends AbstractSubCommand {
             ) return true;
             int amount = Integer.parseInt(args.get(2));
             if (amount < 0) {
-                AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.negativeStatistics);
+                AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.negativeStatistics);
                 return true;
             }
             Loot loot = CustomFishing.getInstance().getLootManager().getLoot(args.get(1));
             if (loot == null || loot.isDisableStats()) {
-                AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.statisticsNotExists);
+                AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.statisticsNotExists);
                 return true;
             }
             Player player = Bukkit.getPlayer(args.get(0));
             assert player != null;
             CustomFishing.getInstance().getStatisticsManager().setData(player.getUniqueId(), args.get(1), amount);
-            AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.setStatistics.replace("{Player}", args.get(0)).replace("{Amount}", args.get(2)).replace("{Loot}", args.get(1)));
+            AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.setStatistics.replace("{Player}", args.get(0)).replace("{Amount}", args.get(2)).replace("{Loot}", args.get(1)));
             return true;
         }
 
@@ -105,8 +105,8 @@ public class StatisticsCommand extends AbstractSubCommand {
             ) return true;
             Player player = Bukkit.getPlayer(args.get(0));
             assert player != null;
-            if (CustomFishing.getInstance().getStatisticsManager().reset(player.getUniqueId())) AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.resetStatistics.replace("{Player}", args.get(0)));
-            else AdventureUtil.sendMessage(sender, MessageManager.prefix + "Internal Error, player's data is not loaded");
+            if (CustomFishing.getInstance().getStatisticsManager().reset(player.getUniqueId())) AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.resetStatistics.replace("{Player}", args.get(0)));
+            else AdventureUtils.sendMessage(sender, MessageManager.prefix + "Internal Error, player's data is not loaded");
             return true;
         }
 

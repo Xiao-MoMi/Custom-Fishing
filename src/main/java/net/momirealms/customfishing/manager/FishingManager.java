@@ -49,9 +49,9 @@ import net.momirealms.customfishing.integration.item.McMMOTreasure;
 import net.momirealms.customfishing.listener.*;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.object.SimpleLocation;
-import net.momirealms.customfishing.util.AdventureUtil;
-import net.momirealms.customfishing.util.FakeItemUtil;
-import net.momirealms.customfishing.util.ItemStackUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
+import net.momirealms.customfishing.util.FakeItemUtils;
+import net.momirealms.customfishing.util.ItemStackUtils;
 import net.momirealms.customfishing.util.LocationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -310,8 +310,8 @@ public class FishingManager extends Function {
         if (baitItem != null) {
             baitItem.setAmount(1);
             entityID = new Random().nextInt(Integer.MAX_VALUE);
-            CustomFishing.getProtocolManager().sendServerPacket(player, FakeItemUtil.getSpawnPacket(entityID, fishHook.getLocation()));
-            CustomFishing.getProtocolManager().sendServerPacket(player, FakeItemUtil.getMetaPacket(entityID, baitItem));
+            CustomFishing.getProtocolManager().sendServerPacket(player, FakeItemUtils.getSpawnPacket(entityID, fishHook.getLocation()));
+            CustomFishing.getProtocolManager().sendServerPacket(player, FakeItemUtils.getMetaPacket(entityID, baitItem));
         }
 
         BobberCheckTask bobberCheckTask = new BobberCheckTask(plugin, player, initialEffect, fishHook, this, lureLevel, entityID);
@@ -426,7 +426,7 @@ public class FishingManager extends Function {
                 if (loot == null) {
                     item.remove();
                     event.setExpToDrop(0);
-                    AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.noLoot);
+                    AdventureUtils.playerMessage(player, MessageManager.prefix + MessageManager.noLoot);
                 }
                 else {
                     if (loot.isDisableBar()) {
@@ -485,7 +485,7 @@ public class FishingManager extends Function {
                 fishingGame.cancel();
                 nextEffect.remove(player);
                 nextLoot.remove(player);
-                AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.hookOther);
+                AdventureUtils.playerMessage(player, MessageManager.prefix + MessageManager.hookOther);
             }
         }
     }
@@ -597,12 +597,12 @@ public class FishingManager extends Function {
         ItemStack drop = plugin.getIntegrationManager().build(droppedItem.getMaterial());
         if (drop.getType() != Material.AIR) {
             if (droppedItem.getRandomEnchants() != null)
-                ItemStackUtil.addRandomEnchants(drop, droppedItem.getRandomEnchants());
+                ItemStackUtils.addRandomEnchants(drop, droppedItem.getRandomEnchants());
             if (droppedItem.isRandomDurability())
-                ItemStackUtil.addRandomDamage(drop);
+                ItemStackUtils.addRandomDamage(drop);
             if (ConfigManager.preventPickUp && player != null)
-                ItemStackUtil.addOwner(drop, player.getName());
-            ItemStackUtil.addExtraMeta(drop, droppedItem, sizeMultiplier);
+                ItemStackUtils.addOwner(drop, player.getName());
+            ItemStackUtils.addExtraMeta(drop, droppedItem, sizeMultiplier);
         }
         return drop;
     }
@@ -654,7 +654,7 @@ public class FishingManager extends Function {
             for (Action action : vanilla.getSuccessActions())
                 action.doOn(player, null);
 
-        AdventureUtil.playerSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
+        AdventureUtils.playerSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
         dropItem(player, location, isDouble, itemStack);
         sendSuccessTitle(player, itemStack);
     }
@@ -708,18 +708,18 @@ public class FishingManager extends Function {
         int lootIndex;
         while ((lootIndex = text.indexOf("{loot}", startIndex)) != -1) {
             String before = text.substring(startIndex, lootIndex);
-            titleComponent = titleComponent.append(AdventureUtil.getComponentFromMiniMessage(before));
+            titleComponent = titleComponent.append(AdventureUtils.getComponentFromMiniMessage(before));
             startIndex = lootIndex + 6;
             titleComponent = titleComponent.append(getDisplayName(itemStack));
         }
         String after = text.substring(startIndex);
-        titleComponent = titleComponent.append(AdventureUtil.getComponentFromMiniMessage(after));
+        titleComponent = titleComponent.append(AdventureUtils.getComponentFromMiniMessage(after));
         return titleComponent;
     }
 
     private void sendSuccessTitle(Player player, String loot) {
         if (!ConfigManager.enableSuccessTitle) return;
-        Bukkit.getScheduler().runTaskLater(plugin, () -> AdventureUtil.playerTitle(
+        Bukkit.getScheduler().runTaskLater(plugin, () -> AdventureUtils.playerTitle(
                 player,
                 ConfigManager.successTitle[new Random().nextInt(ConfigManager.successTitle.length)]
                         .replace("{loot}", loot)
@@ -739,7 +739,7 @@ public class FishingManager extends Function {
         Component titleComponent = getTitleComponent(itemStack, title);
         String subTitle = ConfigManager.successSubTitle[new Random().nextInt(ConfigManager.successSubTitle.length)];
         Component subtitleComponent = getTitleComponent(itemStack, subTitle);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> AdventureUtil.playerTitle(
+        Bukkit.getScheduler().runTaskLater(plugin, () -> AdventureUtils.playerTitle(
                 player,
                 titleComponent,
                 subtitleComponent,
@@ -784,7 +784,7 @@ public class FishingManager extends Function {
         }
 
         if (!ConfigManager.enableFailureTitle) return;
-        Bukkit.getScheduler().runTaskLater(plugin, () -> AdventureUtil.playerTitle(
+        Bukkit.getScheduler().runTaskLater(plugin, () -> AdventureUtils.playerTitle(
                 player,
                 ConfigManager.failureTitle[new Random().nextInt(ConfigManager.failureTitle.length)],
                 ConfigManager.failureSubTitle[new Random().nextInt(ConfigManager.failureSubTitle.length)],
@@ -814,7 +814,7 @@ public class FishingManager extends Function {
         if(itemStack.getType() != Material.FISHING_ROD) return;
         NBTItem nbtItem = new NBTItem(itemStack);
         if (nbtItem.getCompound("CustomFishing") != null || !nbtItem.hasTag("MMOITEMS_ITEM_ID")) return;
-        ItemStackUtil.addIdentifier(itemStack, "rod", nbtItem.getString("MMOITEMS_ITEM_ID"));
+        ItemStackUtils.addIdentifier(itemStack, "rod", nbtItem.getString("MMOITEMS_ITEM_ID"));
     }
 
     public boolean isCoolDown(Player player, long delay) {
@@ -931,12 +931,12 @@ public class FishingManager extends Function {
         }
 
         if (possibleLoots.size() == 0) {
-            AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.noLoot);
+            AdventureUtils.playerMessage(player, MessageManager.prefix + MessageManager.noLoot);
             return;
         }
         StringJoiner stringJoiner = new StringJoiner(MessageManager.splitChar);
         possibleLoots.forEach(loot -> stringJoiner.add(loot.getNick()));
-        AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.possibleLoots + stringJoiner);
+        AdventureUtils.playerMessage(player, MessageManager.prefix + MessageManager.possibleLoots + stringJoiner);
     }
 
     private void showFishingBar(Player player, @NotNull Loot loot) {

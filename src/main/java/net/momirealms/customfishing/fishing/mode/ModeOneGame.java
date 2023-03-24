@@ -20,7 +20,7 @@ package net.momirealms.customfishing.fishing.mode;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.bar.ModeOneBar;
 import net.momirealms.customfishing.manager.FishingManager;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.entity.Player;
 
 public class ModeOneGame extends FishingGame {
@@ -57,7 +57,7 @@ public class ModeOneGame extends FishingGame {
                         + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars(modeOneBar.getPointerOffset() + progress) + "</font>"
                         + modeOneBar.getPointerImage()
                         + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars(modeOneBar.getTotalWidth() - progress - modeOneBar.getPointerWidth()) + "</font></font>";
-        AdventureUtil.playerTitle(player, title, bar,0,500,0);
+        AdventureUtils.playerTitle(player, title, bar,0,500,0);
     }
 
     @Override

@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.manager;
 
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.util.ConfigUtil;
+import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -62,7 +62,7 @@ public class MessageManager {
     public static String statisticsNotExists;
 
     public static void load() {
-        YamlConfiguration config = ConfigUtil.getConfig("messages" + File.separator + "messages_" + ConfigManager.lang +".yml");
+        YamlConfiguration config = ConfigUtils.getConfig("messages" + File.separator + "messages_" + ConfigManager.lang +".yml");
         prefix = getOrSet(config, "prefix", "<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient>");
         reload = getOrSet(config, "reload", "<white>Reloaded. Took <green>{time}ms.");
         nonArgs = getOrSet(config, "none-args", "Arguments cannot be none.");

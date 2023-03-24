@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.commands;
 
 import net.momirealms.customfishing.manager.MessageManager;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -38,14 +38,14 @@ public abstract class AbstractMainCommand implements TabExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         List<String> argList = Arrays.asList(args);
         if (argList.size() < 1) {
-            AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.nonArgs);
+            AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.nonArgs);
             return true;
         }
         AbstractSubCommand subCommand = subCommandMap.get(argList.get(0));
         if (subCommand != null)
             return subCommand.onCommand(sender, argList.subList(1, argList.size()));
         else {
-            AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.unavailableArgs);
+            AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.unavailableArgs);
             return true;
         }
     }

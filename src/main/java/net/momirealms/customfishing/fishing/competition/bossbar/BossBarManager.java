@@ -22,7 +22,7 @@ import net.momirealms.customfishing.fishing.competition.Competition;
 import net.momirealms.customfishing.listener.JoinQuitListener;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.object.Function;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -74,7 +74,7 @@ public class BossBarManager extends Function {
                     }
                     cache.put(player, sender);
                 } else {
-                    AdventureUtil.playerMessage(player, MessageManager.competitionOn);
+                    AdventureUtils.playerMessage(player, MessageManager.competitionOn);
                 }
             }
         }, 5);

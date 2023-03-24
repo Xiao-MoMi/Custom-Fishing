@@ -2,7 +2,7 @@ package net.momirealms.customfishing.manager;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.object.Function;
-import net.momirealms.customfishing.util.ConfigUtil;
+import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -29,7 +29,7 @@ public class OffsetManager extends Function {
     }
 
     private void loadConfig() {
-        YamlConfiguration config = ConfigUtil.getConfig("config.yml");
+        YamlConfiguration config = ConfigUtils.getConfig("config.yml");
         ConfigurationSection section = config.getConfigurationSection("other-settings.offset-characters");
         if (section != null) {
             font = section.getString("font", "customfishing:offset_chars");

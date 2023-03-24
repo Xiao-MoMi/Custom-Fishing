@@ -27,7 +27,7 @@ import net.momirealms.customfishing.fishing.competition.CompetitionSchedule;
 import net.momirealms.customfishing.fishing.competition.bossbar.BossBarConfig;
 import net.momirealms.customfishing.fishing.competition.bossbar.BossBarOverlay;
 import net.momirealms.customfishing.object.Function;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.boss.BarColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -128,7 +128,7 @@ public class CompetitionManager extends Function {
                             case "Thursday" -> days.add(5);
                             case "Friday" -> days.add(6);
                             case "Saturday" -> days.add(7);
-                            default -> AdventureUtil.consoleMessage("[CustomFishing] Unknown weekday: " + weekDay);
+                            default -> AdventureUtils.consoleMessage("[CustomFishing] Unknown weekday: " + weekDay);
                         }
                     }
                     competitionConfig.setWeekday(days);
@@ -146,7 +146,7 @@ public class CompetitionManager extends Function {
                 amount++;
             }
         }
-        AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + amount + " <gray>competition(s)");
+        AdventureUtils.consoleMessage("[CustomFishing] Loaded <green>" + amount + " <gray>competition(s)");
     }
 
     public HashMap<String, CompetitionConfig> getCompetitionsT() {

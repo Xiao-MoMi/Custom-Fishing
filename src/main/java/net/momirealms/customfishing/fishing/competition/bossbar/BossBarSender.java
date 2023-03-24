@@ -27,7 +27,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.competition.Competition;
 import net.momirealms.customfishing.object.DynamicText;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.boss.BarColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -75,9 +75,7 @@ public class BossBarSender {
 
     public void show() {
         this.isShown = true;
-
         CustomFishing.getProtocolManager().sendServerPacket(player, getPacket());
-
         this.bukkitTask = new BukkitRunnable() {
             @Override
             public void run() {
@@ -113,14 +111,13 @@ public class BossBarSender {
         try {
             Method sMethod = MinecraftReflection.getChatSerializerClass().getMethod("a", String.class);
             sMethod.setAccessible(true);
-            Object chatComponent = sMethod.invoke(null, GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize(AdventureUtil.replaceLegacy(text.getLatestValue()))));
+            Object chatComponent = sMethod.invoke(null, GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize(AdventureUtils.replaceLegacy(text.getLatestValue()))));
             Class<?> packetBossClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutBoss$e");
             Constructor<?> packetConstructor = packetBossClass.getDeclaredConstructor(MinecraftReflection.getIChatBaseComponentClass());
             packetConstructor.setAccessible(true);
             Object updatePacket = packetConstructor.newInstance(chatComponent);
             packet.getModifier().write(1, updatePacket);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException |
-                 InstantiationException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException e) {
             throw new RuntimeException(e);
         }
         return packet;
@@ -136,8 +133,7 @@ public class BossBarSender {
             packetConstructor.setAccessible(true);
             Object updatePacket = packetConstructor.newInstance(Competition.currentCompetition.getProgress());
             packet.getModifier().write(1, updatePacket);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException |
-                 InstantiationException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException e) {
             throw new RuntimeException(e);
         }
         return packet;
@@ -172,8 +168,8 @@ public class BossBarSender {
             remove.setAccessible(true);
             packet.getModifier().write(1, remove.get(null));
             CustomFishing.getProtocolManager().sendServerPacket(player, packet);
-        } catch (ClassNotFoundException e){
-            AdventureUtil.consoleMessage("<red>[CustomFishing] Failed to remove bossbar for " + player.getName());
+        } catch (ClassNotFoundException e) {
+            AdventureUtils.consoleMessage("<red>[CustomFishing] Failed to remove bossbar for " + player.getName());
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }

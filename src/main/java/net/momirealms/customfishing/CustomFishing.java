@@ -26,7 +26,7 @@ import net.momirealms.customfishing.commands.SellFishCommand;
 import net.momirealms.customfishing.helper.LibraryLoader;
 import net.momirealms.customfishing.helper.VersionHelper;
 import net.momirealms.customfishing.manager.*;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -79,7 +79,7 @@ public final class CustomFishing extends JavaPlugin {
         this.reload();
         this.registerCommands();
         this.registerQuests();
-        AdventureUtil.consoleMessage("[CustomFishing] Plugin Enabled!");
+        AdventureUtils.consoleMessage("[CustomFishing] Plugin Enabled!");
         if (ConfigManager.bStats) new Metrics(this, 16648);
         if (ConfigManager.updateChecker) this.versionHelper.checkUpdate();
     }

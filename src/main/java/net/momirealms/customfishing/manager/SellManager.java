@@ -34,9 +34,9 @@ import net.momirealms.customfishing.listener.InventoryListener;
 import net.momirealms.customfishing.listener.JoinQuitListener;
 import net.momirealms.customfishing.listener.WindowPacketListener;
 import net.momirealms.customfishing.object.InventoryFunction;
-import net.momirealms.customfishing.util.AdventureUtil;
-import net.momirealms.customfishing.util.ConfigUtil;
-import net.momirealms.customfishing.util.ItemStackUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
+import net.momirealms.customfishing.util.ConfigUtils;
+import net.momirealms.customfishing.util.ItemStackUtils;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.Bukkit;
@@ -167,7 +167,7 @@ public class SellManager extends InventoryFunction {
     }
 
     private void loadConfig() {
-        YamlConfiguration config = ConfigUtil.getConfig("sell-fish.yml");
+        YamlConfiguration config = ConfigUtils.getConfig("sell-fish.yml");
         formula = config.getString("price-formula", "{base} + {bonus} * {size}");
         sellLimitation = config.getBoolean("sell-limitation.enable", false);
         upperLimit = config.getInt("sell-limitation.upper-limit", 10000);
@@ -185,7 +185,7 @@ public class SellManager extends InventoryFunction {
                     ConfigurationSection item_section = dec_section.getConfigurationSection(key);
                     if (item_section == null) continue;
                     Item item = new Item(item_section, key);
-                    ItemStack itemStack = ItemStackUtil.getFromItem(item);
+                    ItemStack itemStack = ItemStackUtils.getFromItem(item);
                     if (item_section.contains("slots")) {
                         for (int slot : item_section.getIntegerList("slots")) {
                             guiItems.put(slot - 1, itemStack);
@@ -200,18 +200,18 @@ public class SellManager extends InventoryFunction {
             sellIcon = new Item(sellIconSection, "sellIcon");
         }
         else {
-            AdventureUtil.consoleMessage("<red>[CustomFishing] Sell icon is missing");
+            AdventureUtils.consoleMessage("<red>[CustomFishing] Sell icon is missing");
         }
         ConfigurationSection denyIconSection = config.getConfigurationSection("functional-icons.deny");
         if (denyIconSection != null) {
             denyIcon = new Item(denyIconSection, "denyIcon");
         }
         else {
-            AdventureUtil.consoleMessage("<red>[CustomFishing] Deny icon is missing");
+            AdventureUtils.consoleMessage("<red>[CustomFishing] Deny icon is missing");
         }
 
         for (int slot : config.getIntegerList("functional-icons.slots")) {
-            guiItems.put(slot - 1, ItemStackUtil.getFromItem(sellIcon));
+            guiItems.put(slot - 1, ItemStackUtils.getFromItem(sellIcon));
             functionIconSlots.add(slot - 1);
         }
 
@@ -243,19 +243,19 @@ public class SellManager extends InventoryFunction {
     public void openGuiForPlayer(Player player) {
         player.closeInventory();
         if (!sellDataMap.containsKey(player.getUniqueId())) {
-            AdventureUtil.consoleMessage("<red>Sell cache is not loaded for player " + player.getName());
+            AdventureUtils.consoleMessage("<red>Sell cache is not loaded for player " + player.getName());
             return;
         }
-        Inventory inventory = plugin.getVersionHelper().isSpigot() ? Bukkit.createInventory(player, guiSize, AdventureUtil.replaceMiniMessage(SellManager.title.replace("{player}", player.getName()))) : Bukkit.createInventory(player, guiSize, "{CustomFishing_Sell}");
+        Inventory inventory = plugin.getVersionHelper().isSpigot() ? Bukkit.createInventory(player, guiSize, AdventureUtils.replaceMiniMessage(SellManager.title.replace("{player}", player.getName()))) : Bukkit.createInventory(player, guiSize, "{CustomFishing_Sell}");
         for (Map.Entry<Integer, ItemStack> entry : guiItems.entrySet()) {
             inventory.setItem(entry.getKey(), entry.getValue());
         }
         for (int slot : functionIconSlots) {
-            inventory.setItem(slot, ItemStackUtil.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory)))));
+            inventory.setItem(slot, ItemStackUtils.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory)))));
         }
         inventoryMap.put(player, inventory);
         player.openInventory(inventory);
-        if (openKey != null) AdventureUtil.playerSound(player, soundSource, openKey, 1, 1);
+        if (openKey != null) AdventureUtils.playerSound(player, soundSource, openKey, 1, 1);
     }
 
     @Override
@@ -279,9 +279,9 @@ public class SellManager extends InventoryFunction {
 
                     if (sellData == null) {
                         inventory.close();
-                        AdventureUtil.playerMessage(player, MessageManager.prefix + "Your data is not loaded! Try to rejoin the server");
-                        AdventureUtil.consoleMessage("<red>[CustomFishing] Unexpected issue, " + player.getName() + "'s sell-cache is not loaded!");
-                        if (denyKey != null) AdventureUtil.playerSound(player, soundSource, denyKey, 1, 1);
+                        AdventureUtils.playerMessage(player, MessageManager.prefix + "Your data is not loaded! Try to rejoin the server");
+                        AdventureUtils.consoleMessage("<red>[CustomFishing] Unexpected issue, " + player.getName() + "'s sell-cache is not loaded!");
+                        if (denyKey != null) AdventureUtils.playerSound(player, soundSource, denyKey, 1, 1);
                         return;
                     }
 
@@ -296,8 +296,8 @@ public class SellManager extends InventoryFunction {
 
                     if (sellLimitation && sell + totalPrice > upperLimit) {
                         inventory.close();
-                        AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.reachSellLimit);
-                        if (denyKey != null) AdventureUtil.playerSound(player, soundSource, denyKey, 1, 1);
+                        AdventureUtils.playerMessage(player, MessageManager.prefix + MessageManager.reachSellLimit);
+                        if (denyKey != null) AdventureUtils.playerSound(player, soundSource, denyKey, 1, 1);
                         return;
                     }
 
@@ -319,16 +319,16 @@ public class SellManager extends InventoryFunction {
                 }
                 else {
                     for (int slot : functionIconSlots) {
-                        inventory.setItem(slot, ItemStackUtil.getFromItem(denyIcon));
+                        inventory.setItem(slot, ItemStackUtils.getFromItem(denyIcon));
                     }
                     update = false;
-                    if (denyKey != null) AdventureUtil.playerSound(player, soundSource, denyKey, 1, 1);
+                    if (denyKey != null) AdventureUtils.playerSound(player, soundSource, denyKey, 1, 1);
                 }
             }
         }
         if (update) {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                ItemStack icon = ItemStackUtil.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory))));
+                ItemStack icon = ItemStackUtils.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory))));
                 for (int slot : functionIconSlots) {
                     inventory.setItem(slot, icon);
                 }
@@ -342,7 +342,7 @@ public class SellManager extends InventoryFunction {
         Inventory inventory = inventoryMap.get(player);
         if (inventory == null) return;
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            ItemStack icon = ItemStackUtil.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory))));
+            ItemStack icon = ItemStackUtils.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory))));
             for (int slot : functionIconSlots) {
                 inventory.setItem(slot, icon);
             }
@@ -356,7 +356,7 @@ public class SellManager extends InventoryFunction {
         if (inventory == null) return;
         if (event.getInventory() == inventory) {
             returnItems(getPlayerItems(event.getInventory()), player);
-            if (closeKey != null) AdventureUtil.playerSound(player, soundSource, closeKey, 1, 1);
+            if (closeKey != null) AdventureUtils.playerSound(player, soundSource, closeKey, 1, 1);
         }
     }
 
@@ -421,11 +421,11 @@ public class SellManager extends InventoryFunction {
     }
 
     private void doActions(Player player, float earnings, double remains) {
-        if (titleNotification != null) AdventureUtil.playerTitle(player, titleNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", sellLimitation ? String.format("%.2f", remains) : "unlimited"), subtitleNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", sellLimitation ? String.format("%.2f", remains) : "unlimited"), titleIn * 50, titleStay * 50, titleOut * 50);
-        if (msgNotification != null) AdventureUtil.playerMessage(player, msgNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", sellLimitation ? String.format("%.2f", remains) : "unlimited"));
-        if (actionbarNotification != null) AdventureUtil.playerActionbar(player, actionbarNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", sellLimitation ? String.format("%.2f", remains) : "unlimited"));
-        if (ConfigManager.logEarning) AdventureUtil.consoleMessage("[CustomFishing] Log: " + player.getName() + " earns " + String.format("%.2f", earnings) + " from selling fish");
-        if (successKey != null) AdventureUtil.playerSound(player, soundSource, successKey, 1, 1);
+        if (titleNotification != null) AdventureUtils.playerTitle(player, titleNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", sellLimitation ? String.format("%.2f", remains) : "unlimited"), subtitleNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", sellLimitation ? String.format("%.2f", remains) : "unlimited"), titleIn * 50, titleStay * 50, titleOut * 50);
+        if (msgNotification != null) AdventureUtils.playerMessage(player, msgNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", sellLimitation ? String.format("%.2f", remains) : "unlimited"));
+        if (actionbarNotification != null) AdventureUtils.playerActionbar(player, actionbarNotification.replace("{money}", String.format("%.2f", earnings)).replace("{remains}", sellLimitation ? String.format("%.2f", remains) : "unlimited"));
+        if (ConfigManager.logEarning) AdventureUtils.consoleMessage("[CustomFishing] Log: " + player.getName() + " earns " + String.format("%.2f", earnings) + " from selling fish");
+        if (successKey != null) AdventureUtils.playerSound(player, soundSource, successKey, 1, 1);
         if (plugin.getIntegrationManager().getVaultHook() != null) plugin.getIntegrationManager().getVaultHook().getEconomy().depositPlayer(player, earnings);
         if (commands != null)
             for (String cmd : commands)
@@ -453,7 +453,7 @@ public class SellManager extends InventoryFunction {
                     WrappedChatComponent.fromJson(
                             GsonComponentSerializer.gson().serialize(
                                     MiniMessage.miniMessage().deserialize(
-                                            AdventureUtil.replaceLegacy(plugin.getIntegrationManager().getPlaceholderManager().parse(player, SellManager.title))
+                                            AdventureUtils.replaceLegacy(plugin.getIntegrationManager().getPlaceholderManager().parse(player, SellManager.title))
                                     )
                             )
                     )

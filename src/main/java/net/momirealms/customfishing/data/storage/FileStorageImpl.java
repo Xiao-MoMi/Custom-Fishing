@@ -20,8 +20,8 @@ package net.momirealms.customfishing.data.storage;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.data.PlayerSellData;
 import net.momirealms.customfishing.data.PlayerStatisticsData;
-import net.momirealms.customfishing.util.ConfigUtil;
-import net.momirealms.customfishing.util.InventoryUtil;
+import net.momirealms.customfishing.util.ConfigUtils;
+import net.momirealms.customfishing.util.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -54,10 +54,10 @@ public class FileStorageImpl implements DataStorageInterface {
 
     @Override
     public Inventory loadBagData(UUID uuid, boolean force) {
-        YamlConfiguration config = ConfigUtil.readData(new File(plugin.getDataFolder(), "fishingbag_data" + File.separator + uuid + ".yml"));
+        YamlConfiguration config = ConfigUtils.readData(new File(plugin.getDataFolder(), "fishingbag_data" + File.separator + uuid + ".yml"));
         String contents = config.getString("contents");
         int size = config.getInt("size", 9);
-        ItemStack[] itemStacks = InventoryUtil.getInventoryItems(contents);
+        ItemStack[] itemStacks = InventoryUtils.getInventoryItems(contents);
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
         Inventory inventory = Bukkit.createInventory(null, size, "{CustomFishing_Bag_" + offlinePlayer.getName() + "}");
         if (itemStacks != null) inventory.setContents(itemStacks);
@@ -67,7 +67,7 @@ public class FileStorageImpl implements DataStorageInterface {
     @Override
     public void saveBagData(UUID uuid, Inventory inventory, boolean unlock) {
         YamlConfiguration data = new YamlConfiguration();
-        String contents = InventoryUtil.toBase64(inventory.getContents());
+        String contents = InventoryUtils.toBase64(inventory.getContents());
         data.set("contents", contents);
         data.set("size", inventory.getSize());
         try {
@@ -88,7 +88,7 @@ public class FileStorageImpl implements DataStorageInterface {
 
     @Override
     public PlayerSellData loadSellData(UUID uuid, boolean force) {
-        YamlConfiguration data = ConfigUtil.readData(new File(plugin.getDataFolder(), "sell_data" + File.separator + uuid + ".yml"));
+        YamlConfiguration data = ConfigUtils.readData(new File(plugin.getDataFolder(), "sell_data" + File.separator + uuid + ".yml"));
         int date = data.getInt("date");
         double money = data.getDouble("earnings");
         return new PlayerSellData(money, date);
@@ -142,7 +142,7 @@ public class FileStorageImpl implements DataStorageInterface {
 
     @Override
     public PlayerStatisticsData loadStatistics(UUID uuid, boolean force) {
-        YamlConfiguration data = ConfigUtil.readData(new File(plugin.getDataFolder(), "statistics_data" + File.separator + uuid + ".yml"));
+        YamlConfiguration data = ConfigUtils.readData(new File(plugin.getDataFolder(), "statistics_data" + File.separator + uuid + ".yml"));
         return new PlayerStatisticsData(data);
     }
 }

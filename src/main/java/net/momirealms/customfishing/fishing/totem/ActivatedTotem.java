@@ -19,7 +19,7 @@ package net.momirealms.customfishing.fishing.totem;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.manager.FishingManager;
-import net.momirealms.customfishing.util.ArmorStandUtil;
+import net.momirealms.customfishing.util.ArmorStandUtils;
 import net.momirealms.customfishing.util.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -79,7 +79,7 @@ public class ActivatedTotem extends BukkitRunnable {
             if (nearbyPlayers.remove(player)) {
                 if (hasHolo) {
                     for (int i = 0; i < entityID.length; i++) {
-                        CustomFishing.getProtocolManager().sendServerPacket(player, ArmorStandUtil.getMetaPacket(entityID[i],
+                        CustomFishing.getProtocolManager().sendServerPacket(player, ArmorStandUtils.getMetaPacket(entityID[i],
                                 totem.getHoloText()[entityID.length - 1 - i]
                                         .replace("{time}", String.valueOf(totem.getDuration() - timer))
                                         .replace("{max_time}", String.valueOf(totem.getDuration()))
@@ -92,7 +92,7 @@ public class ActivatedTotem extends BukkitRunnable {
             else {
                 if (hasHolo) {
                     for (int j : entityID) {
-                        CustomFishing.getProtocolManager().sendServerPacket(player, ArmorStandUtil.getDestroyPacket(j));
+                        CustomFishing.getProtocolManager().sendServerPacket(player, ArmorStandUtils.getDestroyPacket(j));
                     }
                 }
                 nearbyPlayerSet.remove(player);
@@ -102,8 +102,8 @@ public class ActivatedTotem extends BukkitRunnable {
         for (Player newComer : nearbyPlayers) {
             if (hasHolo) {
                 for (int i = 0; i < entityID.length; i++) {
-                    CustomFishing.getProtocolManager().sendServerPacket(newComer, ArmorStandUtil.getSpawnPacket(entityID[i], bottomLoc.clone().add(0.5, totem.getHoloOffset() + i * 0.4, 0.5)));
-                    CustomFishing.getProtocolManager().sendServerPacket(newComer, ArmorStandUtil.getMetaPacket(entityID[i],
+                    CustomFishing.getProtocolManager().sendServerPacket(newComer, ArmorStandUtils.getSpawnPacket(entityID[i], bottomLoc.clone().add(0.5, totem.getHoloOffset() + i * 0.4, 0.5)));
+                    CustomFishing.getProtocolManager().sendServerPacket(newComer, ArmorStandUtils.getMetaPacket(entityID[i],
                             totem.getHoloText()[entityID.length - 1 - i]
                                     .replace("{time}", String.valueOf(totem.getDuration() - timer))
                                     .replace("{max_time}", String.valueOf(totem.getDuration()))
@@ -132,7 +132,7 @@ public class ActivatedTotem extends BukkitRunnable {
         if (hasHolo) {
             for (Player player : nearbyPlayerSet) {
                 for (int j : entityID) {
-                    CustomFishing.getProtocolManager().sendServerPacket(player, ArmorStandUtil.getDestroyPacket(j));
+                    CustomFishing.getProtocolManager().sendServerPacket(player, ArmorStandUtils.getDestroyPacket(j));
                 }
             }
         }

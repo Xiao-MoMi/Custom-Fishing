@@ -24,7 +24,7 @@ import net.momirealms.customfishing.fishing.bar.ModeOneBar;
 import net.momirealms.customfishing.fishing.bar.ModeThreeBar;
 import net.momirealms.customfishing.fishing.bar.ModeTwoBar;
 import net.momirealms.customfishing.object.Function;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -75,12 +75,12 @@ public class BarMechanicManager extends Function {
                         fishingBarList.add(bars.get(bar));
                     }
                     else {
-                        AdventureUtil.consoleMessage("<red>[CustomFishing] Bar " + bar + " doesn't exist");
+                        AdventureUtils.consoleMessage("<red>[CustomFishing] Bar " + bar + " doesn't exist");
                     }
                 }
                 int[] difficulties = section.getIntegerList("difficulty").stream().mapToInt(Integer::intValue).toArray();
                 if (difficulties.length == 0) {
-                    AdventureUtil.consoleMessage("<red>[CustomFishing] Game " + key + " doesn't have difficulties");
+                    AdventureUtils.consoleMessage("<red>[CustomFishing] Game " + key + " doesn't have difficulties");
                     continue;
                 }
                 MiniGameConfig miniGameConfig = new MiniGameConfig(
@@ -91,7 +91,7 @@ public class BarMechanicManager extends Function {
                 miniGames.put(key, miniGameConfig);
             }
         }
-        AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + miniGames.size() + " <gray>game(s)");
+        AdventureUtils.consoleMessage("[CustomFishing] Loaded <green>" + miniGames.size() + " <gray>game(s)");
     }
 
     private void loadBars() {
@@ -123,7 +123,7 @@ public class BarMechanicManager extends Function {
                 }
             }
         }
-        AdventureUtil.consoleMessage("[CustomFishing] Loaded <green>" + bars.size() + " <gray>bar(s)");
+        AdventureUtils.consoleMessage("[CustomFishing] Loaded <green>" + bars.size() + " <gray>bar(s)");
     }
 
     public MiniGameConfig getGameConfig(String game) {

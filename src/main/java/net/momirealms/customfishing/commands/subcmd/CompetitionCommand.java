@@ -22,7 +22,7 @@ import net.momirealms.customfishing.commands.AbstractSubCommand;
 import net.momirealms.customfishing.fishing.competition.CompetitionSchedule;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.MessageManager;
-import net.momirealms.customfishing.util.AdventureUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -42,19 +42,19 @@ public class CompetitionCommand extends AbstractSubCommand {
         switch (args.get(0)) {
             case "start" -> {
                 if (args.size() < 2) {
-                    AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.lackArgs);
+                    AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.lackArgs);
                     return true;
                 }
-                if (CompetitionSchedule.startCompetition(args.get(1))) AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.forceSuccess);
-                else AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.forceFailure);
+                if (CompetitionSchedule.startCompetition(args.get(1))) AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.forceSuccess);
+                else AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.forceFailure);
             }
             case "end" -> {
                 CompetitionSchedule.endCompetition();
-                AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.forceEnd);
+                AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.forceEnd);
             }
             case "cancel" -> {
                 CompetitionSchedule.cancelCompetition();
-                AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.forceCancel);
+                AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.forceCancel);
             }
         }
         return true;

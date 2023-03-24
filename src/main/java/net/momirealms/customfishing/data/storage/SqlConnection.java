@@ -21,8 +21,8 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.util.AdventureUtil;
-import net.momirealms.customfishing.util.ConfigUtil;
+import net.momirealms.customfishing.util.AdventureUtils;
+import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -43,8 +43,8 @@ public class SqlConnection {
     }
 
     public void createNewHikariConfiguration() {
-        ConfigUtil.update("database.yml");
-        YamlConfiguration config = ConfigUtil.getConfig("database.yml");
+        ConfigUtils.update("database.yml");
+        YamlConfiguration config = ConfigUtils.getConfig("database.yml");
         String storageMode = config.getString("data-storage-method", "MySQL");
 
         HikariConfig hikariConfig = new HikariConfig();
@@ -74,7 +74,7 @@ public class SqlConnection {
         try {
             hikariDataSource = new HikariDataSource(hikariConfig);
         } catch (HikariPool.PoolInitializationException e) {
-            AdventureUtil.consoleMessage("[CustomFishing] Failed to create sql connection");
+            AdventureUtils.consoleMessage("[CustomFishing] Failed to create sql connection");
         }
 
         if (config.getBoolean("migration", false)) {
@@ -84,7 +84,7 @@ public class SqlConnection {
                 config.save(new File(CustomFishing.getInstance().getDataFolder(), "database.yml"));
             }
             catch (IOException e) {
-                AdventureUtil.consoleMessage("<RED>[CustomFishing] Error occurred when saving database config");
+                AdventureUtils.consoleMessage("<RED>[CustomFishing] Error occurred when saving database config");
             }
         }
     }
@@ -95,13 +95,13 @@ public class SqlConnection {
             Connection connection = getConnection();
             connection.close();
             if (secondTry) {
-                AdventureUtil.consoleMessage("[CustomFishing] Successfully reconnect to SQL!");
+                AdventureUtils.consoleMessage("[CustomFishing] Successfully reconnect to SQL!");
             } else {
                 secondTry = true;
             }
             return true;
         } catch (SQLException e) {
-            AdventureUtil.consoleMessage("<red>[CustomFishing] Error! Failed to connect to SQL!</red>");
+            AdventureUtils.consoleMessage("<red>[CustomFishing] Error! Failed to connect to SQL!</red>");
             e.printStackTrace();
             close();
             return false;
@@ -145,7 +145,7 @@ public class SqlConnection {
                 return getConnectionAndCheck();
             } else {
                 firstTry = true;
-                AdventureUtil.consoleMessage("<red>[CustomFishing] Error! Failed to connect to SQL!</red>");
+                AdventureUtils.consoleMessage("<red>[CustomFishing] Error! Failed to connect to SQL!</red>");
                 close();
                 e.printStackTrace();
                 return null;

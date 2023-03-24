@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.fishing.competition.ranking;
 
 import net.momirealms.customfishing.fishing.competition.CompetitionPlayer;
-import net.momirealms.customfishing.util.JedisUtil;
+import net.momirealms.customfishing.util.JedisUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.resps.Tuple;
 
@@ -29,14 +29,14 @@ public class RedisRankingImpl implements RankingInterface {
 
     @Override
     public void clear() {
-        Jedis jedis = JedisUtil.getJedis();
+        Jedis jedis = JedisUtils.getJedis();
         jedis.zremrangeByRank("cf_competition",0,-1);
         jedis.close();
     }
 
     @Override
     public CompetitionPlayer getCompetitionPlayer(String player) {
-        Jedis jedis = JedisUtil.getJedis();
+        Jedis jedis = JedisUtils.getJedis();
         Double score = jedis.zscore("cf_competition", player);
         jedis.close();
         if (score == null || score == 0) return null;
@@ -45,7 +45,7 @@ public class RedisRankingImpl implements RankingInterface {
 
     @Override
     public Iterator<String> getIterator() {
-        Jedis jedis = JedisUtil.getJedis();
+        Jedis jedis = JedisUtils.getJedis();
         List<String> players = jedis.zrevrange("cf_competition", 0, -1);
         jedis.close();
         return players.iterator();
@@ -53,7 +53,7 @@ public class RedisRankingImpl implements RankingInterface {
 
     @Override
     public int getSize() {
-        Jedis jedis = JedisUtil.getJedis();
+        Jedis jedis = JedisUtils.getJedis();
         long size = jedis.zcard("cf_competition");
         jedis.close();
         return (int) size;
@@ -61,7 +61,7 @@ public class RedisRankingImpl implements RankingInterface {
 
     @Override
     public String getPlayerRank(String player) {
-        Jedis jedis = JedisUtil.getJedis();
+        Jedis jedis = JedisUtils.getJedis();
         Long rank = jedis.zrevrank("cf_competition", player);
         jedis.close();
         if(rank == null){
@@ -72,7 +72,7 @@ public class RedisRankingImpl implements RankingInterface {
 
     @Override
     public float getPlayerScore(String player) {
-        Jedis jedis = JedisUtil.getJedis();
+        Jedis jedis = JedisUtils.getJedis();
         Double rank = jedis.zscore("cf_competition", player);
         jedis.close();
         if(rank == null) {
@@ -83,21 +83,21 @@ public class RedisRankingImpl implements RankingInterface {
 
     @Override
     public void refreshData(String player, float score) {
-        Jedis jedis = JedisUtil.getJedis();
+        Jedis jedis = JedisUtils.getJedis();
         jedis.zincrby("cf_competition", score, player);
         jedis.close();
     }
 
     @Override
     public void setData(String player, float score) {
-        Jedis jedis = JedisUtil.getJedis();
+        Jedis jedis = JedisUtils.getJedis();
         jedis.zadd("cf_competition", score, player);
         jedis.close();
     }
 
     @Override
     public String getPlayerAt(int rank) {
-        Jedis jedis = JedisUtil.getJedis();
+        Jedis jedis = JedisUtils.getJedis();
         List<String> player = jedis.zrevrange("cf_competition", rank - 1, rank -1);
         jedis.close();
         if (player == null) return null;
@@ -107,7 +107,7 @@ public class RedisRankingImpl implements RankingInterface {
 
     @Override
     public float getScoreAt(int rank) {
-        Jedis jedis = JedisUtil.getJedis();
+        Jedis jedis = JedisUtils.getJedis();
         List<Tuple> players = jedis.zrevrangeWithScores("cf_competition", rank - 1, rank -1);
         jedis.close();
         if (players == null) return 0;

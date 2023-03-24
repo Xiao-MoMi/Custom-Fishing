@@ -17,8 +17,8 @@
 
 package net.momirealms.customfishing.manager;
 
-import net.momirealms.customfishing.util.ConfigUtil;
-import net.momirealms.customfishing.util.JedisUtil;
+import net.momirealms.customfishing.util.ConfigUtils;
+import net.momirealms.customfishing.util.JedisUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -80,8 +80,8 @@ public class ConfigManager {
     public static boolean updateChecker;
 
     public static void load() {
-        ConfigUtil.update("config.yml");
-        YamlConfiguration config = ConfigUtil.getConfig("config.yml");
+        ConfigUtils.update("config.yml");
+        YamlConfiguration config = ConfigUtils.getConfig("config.yml");
         lang = config.getString("lang","english");
         bStats = config.getBoolean("metrics", true);
         updateChecker = config.getBoolean("update-checker", true);
@@ -169,14 +169,14 @@ public class ConfigManager {
 
     private static void redisSettings(YamlConfiguration config) {
         if (enableCompetition && config.getBoolean("mechanics.fishing-competition.redis", false)) {
-            if (!JedisUtil.isPoolEnabled()) {
-                YamlConfiguration configuration = ConfigUtil.getConfig("database.yml");
-                JedisUtil.initializeRedis(configuration);
+            if (!JedisUtils.isPoolEnabled()) {
+                YamlConfiguration configuration = ConfigUtils.getConfig("database.yml");
+                JedisUtils.initializeRedis(configuration);
             }
             useRedis = true;
         }
-        else if (useRedis && JedisUtil.isPoolEnabled()) {
-            JedisUtil.closePool();
+        else if (useRedis && JedisUtils.isPoolEnabled()) {
+            JedisUtils.closePool();
             useRedis = false;
         }
     }
