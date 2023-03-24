@@ -63,6 +63,7 @@ public class Competition {
 
             if (ConfigManager.useRedis) this.ranking = new RedisRankingImpl();
             else this.ranking = new LocalRankingImpl();
+            this.ranking.clear();
 
             startTimer();
             for (String startMsg : competitionConfig.getStartMessage())
@@ -243,7 +244,7 @@ public class Competition {
         if (this.goal == CompetitionGoal.CATCH_AMOUNT) {
             score = 1f;
         }
-        if (this.goal == CompetitionGoal.MAX_SIZE) {
+        if (this.goal == CompetitionGoal.MAX_SIZE || this.goal == CompetitionGoal.TOTAL_SIZE) {
             doubleScore = false;
         }
         if (this.goal == CompetitionGoal.MAX_SIZE) {
