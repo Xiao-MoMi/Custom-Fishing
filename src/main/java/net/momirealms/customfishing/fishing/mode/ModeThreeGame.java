@@ -74,20 +74,20 @@ public class ModeThreeGame extends FishingGame {
         if (fish_position < modeThreeBar.getSuccess_position() - modeThreeBar.getFish_icon_width() - 1) {
             cancel();
             success = true;
-            FishHook fishHook = fishingManager.getBobber(player);
+            FishHook fishHook = fishingManager.getHook(player);
             if (fishHook != null) {
                 fishingManager.proceedReelIn(fishHook.getLocation(), player, this);
-                fishingManager.removeBobber(player);
+                fishingManager.removeHook(player);
             }
             fishingManager.removeFishingPlayer(player);
             return;
         }
         if (fish_position + modeThreeBar.getFish_icon_width() > modeThreeBar.getBar_effective_width() || strain >= modeThreeBar.getUltimate_strain()) {
             cancel();
-            FishHook fishHook = fishingManager.getBobber(player);
+            FishHook fishHook = fishingManager.getHook(player);
             if (fishHook != null) {
                 fishingManager.proceedReelIn(fishHook.getLocation(), player, this);
-                fishingManager.removeBobber(player);
+                fishingManager.removeHook(player);
             }
             fishingManager.removeFishingPlayer(player);
             return;

@@ -57,6 +57,7 @@ public class StatisticsManager extends DataFunction {
         plugin.getDataManager().getDataStorageInterface().saveStatistics(statisticsDataMap.entrySet(), unlock);
     }
 
+    @Override
     public void disable() {
         unload();
         saveStatisticsDataForOnlinePlayers(true);
@@ -89,7 +90,7 @@ public class StatisticsManager extends DataFunction {
             statisticsDataMap.put(player.getUniqueId(), statisticsData);
         }
         else if (!force) {
-            if (!checkTriedTimes(player.getUniqueId())) {
+            if (checkTriedTimes(player.getUniqueId())) {
                 Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, false), 20);
             }
             else {

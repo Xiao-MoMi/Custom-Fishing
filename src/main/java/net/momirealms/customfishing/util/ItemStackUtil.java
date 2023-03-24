@@ -58,11 +58,11 @@ public class ItemStackUtil {
         if (item.getEnchantment() != null) {
             if (itemStack.getType() == Material.ENCHANTED_BOOK){
                 EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemMeta;
-                item.getEnchantment().forEach(enchantment -> meta.addStoredEnchant(Objects.requireNonNull(Enchantment.getByKey(enchantment.getKey())),enchantment.getLevel(),true));
+                item.getEnchantment().forEach(enchantment -> meta.addStoredEnchant(Objects.requireNonNull(Enchantment.getByKey(enchantment.key())),enchantment.level(),true));
                 itemStack.setItemMeta(meta);
             }
             else {
-                item.getEnchantment().forEach(enchantment -> itemMeta.addEnchant(Objects.requireNonNull(Enchantment.getByKey(enchantment.getKey())),enchantment.getLevel(),true));
+                item.getEnchantment().forEach(enchantment -> itemMeta.addEnchant(Objects.requireNonNull(Enchantment.getByKey(enchantment.key())),enchantment.level(),true));
                 itemStack.setItemMeta(itemMeta);
             }
         }
@@ -138,13 +138,13 @@ public class ItemStackUtil {
         if (itemStack.getType() == Material.ENCHANTED_BOOK){
             EnchantmentStorageMeta meta = (EnchantmentStorageMeta)itemMeta;
             for (LeveledEnchantment enchantment : enchantments) {
-                if (enchantment.getChance() > Math.random()) meta.addStoredEnchant(Objects.requireNonNull(Enchantment.getByKey(enchantment.getKey())),enchantment.getLevel(),true);
+                if (enchantment.chance() > Math.random()) meta.addStoredEnchant(Objects.requireNonNull(Enchantment.getByKey(enchantment.key())),enchantment.level(),true);
             }
             itemStack.setItemMeta(meta);
         }
         else {
             for (LeveledEnchantment enchantment : enchantments) {
-                if (enchantment.getChance() > Math.random()) itemMeta.addEnchant(Objects.requireNonNull(Enchantment.getByKey(enchantment.getKey())),enchantment.getLevel(),true);
+                if (enchantment.chance() > Math.random()) itemMeta.addEnchant(Objects.requireNonNull(Enchantment.getByKey(enchantment.key())),enchantment.level(),true);
             }
             itemStack.setItemMeta(itemMeta);
         }
@@ -255,9 +255,9 @@ public class ItemStackUtil {
         return true;
     }
 
-    public static Map<String, Object> compoundToMap(NBTCompound nbtCompound){
+    public static Map<String, Object> compoundToMap(ReadWriteNBT nbtCompound){
         Map<String, Object> map = new HashMap<>();
-        nbtCompound.getKeys().forEach(key -> {
+        for (String key : nbtCompound.getKeys()) {
             switch (nbtCompound.getType(key)){
                 case NBTTagByte -> map.put(key, "(Byte) " + nbtCompound.getByte(key));
                 case NBTTagInt -> map.put(key, "(Int) " + nbtCompound.getInteger(key));
@@ -282,45 +282,11 @@ public class ItemStackUtil {
                         case NBTTagFloat -> nbtCompound.getFloatList(key).forEach(a -> list.add("(Float) " + a));
                         case NBTTagLong -> nbtCompound.getLongList(key).forEach(a -> list.add("(Long) " + a));
                         case NBTTagIntArray -> nbtCompound.getIntArrayList(key).forEach(a -> list.add("(IntArray) " + Arrays.toString(a)));
-                        default -> nbtCompound.getUUIDList(key).forEach(a -> list.add("(UUID) " + a));
                     }
-                    map.put(key, list);
+                    if (list.size() != 0) map.put(key, list);
                 }
             }
-        });
-        return map;
-    }
-
-
-    public static Map<String, Object> compoundToMap(ReadWriteNBT nbtCompound){
-        Map<String, Object> map = new HashMap<>();
-        nbtCompound.getKeys().forEach(key -> {
-            switch (nbtCompound.getType(key)){
-                case NBTTagByte -> map.put(key, "(Byte) " + nbtCompound.getByte(key));
-                case NBTTagInt -> map.put(key, "(Int) " + nbtCompound.getInteger(key));
-                case NBTTagDouble -> map.put(key, "(Double) " + nbtCompound.getDouble(key));
-                case NBTTagLong -> map.put(key, "(Long) " + nbtCompound.getLong(key));
-                case NBTTagFloat -> map.put(key, "(Float) " + nbtCompound.getFloat(key));
-                case NBTTagShort -> map.put(key, "(Short) " + nbtCompound.getShort(key));
-                case NBTTagString -> map.put(key, "(String) " + nbtCompound.getString(key));
-                case NBTTagByteArray -> map.put(key, "(ByteArray) " + Arrays.toString(nbtCompound.getByteArray(key)));
-                case NBTTagIntArray -> map.put(key, "(IntArray) " + Arrays.toString(nbtCompound.getIntArray(key)));
-                case NBTTagList -> {
-                    List<Object> list = new ArrayList<>();
-                    switch (nbtCompound.getListType(key)) {
-                        case NBTTagCompound -> nbtCompound.getCompoundList(key).forEach(a -> list.add(compoundToMap(a)));
-                        case NBTTagInt -> nbtCompound.getIntegerList(key).forEach(a -> list.add("(Int) " + a));
-                        case NBTTagDouble -> nbtCompound.getDoubleList(key).forEach(a -> list.add("(Double) " + a));
-                        case NBTTagString -> nbtCompound.getStringList(key).forEach(a -> list.add("(String) " + a));
-                        case NBTTagFloat -> nbtCompound.getFloatList(key).forEach(a -> list.add("(Float) " + a));
-                        case NBTTagLong -> nbtCompound.getLongList(key).forEach(a -> list.add("(Long) " + a));
-                        case NBTTagIntArray -> nbtCompound.getIntArrayList(key).forEach(a -> list.add("(IntArray) " + Arrays.toString(a)));
-                        default -> nbtCompound.getUUIDList(key).forEach(a -> list.add("(UUID) " + a));
-                    }
-                    map.put(key, list);
-                }
-            }
-        });
+        }
         return map;
     }
 }

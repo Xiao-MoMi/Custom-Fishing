@@ -21,13 +21,13 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.object.Function;
+import net.momirealms.customfishing.object.InventoryFunction;
 
 public class WindowPacketListener extends PacketAdapter {
 
-    private final Function function;
+    private final InventoryFunction function;
 
-    public WindowPacketListener(Function function) {
+    public WindowPacketListener(InventoryFunction function) {
         super(CustomFishing.getInstance(), PacketType.Play.Server.OPEN_WINDOW);
         this.function = function;
     }

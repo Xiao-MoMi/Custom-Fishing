@@ -33,7 +33,7 @@ import net.momirealms.customfishing.fishing.loot.Item;
 import net.momirealms.customfishing.listener.InventoryListener;
 import net.momirealms.customfishing.listener.JoinQuitListener;
 import net.momirealms.customfishing.listener.WindowPacketListener;
-import net.momirealms.customfishing.object.DataFunction;
+import net.momirealms.customfishing.object.InventoryFunction;
 import net.momirealms.customfishing.util.AdventureUtil;
 import net.momirealms.customfishing.util.ConfigUtil;
 import net.momirealms.customfishing.util.ItemStackUtil;
@@ -48,7 +48,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -56,7 +55,7 @@ import org.bukkit.inventory.PlayerInventory;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SellManager extends DataFunction {
+public class SellManager extends InventoryFunction {
 
     private final WindowPacketListener windowPacketListener;
     private final InventoryListener inventoryListener;
@@ -120,6 +119,7 @@ public class SellManager extends DataFunction {
         HandlerList.unregisterAll(joinQuitListener);
     }
 
+    @Override
     public void disable() {
         unload();
         plugin.getDataManager().getDataStorageInterface().saveSellData(sellDataMap.entrySet(), true);
@@ -152,7 +152,7 @@ public class SellManager extends DataFunction {
         // If sql exception or data is locked
         else if (!force) {
             // can still try to load
-            if (!checkTriedTimes(player.getUniqueId())) {
+            if (checkTriedTimes(player.getUniqueId())) {
                 Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
                     joinReadData(player, false);
                 }, 20);
@@ -250,21 +250,12 @@ public class SellManager extends DataFunction {
         for (Map.Entry<Integer, ItemStack> entry : guiItems.entrySet()) {
             inventory.setItem(entry.getKey(), entry.getValue());
         }
+        for (int slot : functionIconSlots) {
+            inventory.setItem(slot, ItemStackUtil.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory)))));
+        }
         inventoryMap.put(player, inventory);
         player.openInventory(inventory);
         if (openKey != null) AdventureUtil.playerSound(player, soundSource, openKey, 1, 1);
-    }
-
-    @Override
-    public void onOpenInventory(InventoryOpenEvent event) {
-        final Player player = (Player) event.getPlayer();
-        Inventory inventory = inventoryMap.get(player);
-        if (inventory == null) return;
-        if (inventory == event.getInventory()) {
-            for (int slot : functionIconSlots) {
-                inventory.setItem(slot, ItemStackUtil.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory)))));
-            }
-        }
     }
 
     @Override

@@ -48,7 +48,7 @@ public abstract class FishingGame extends BukkitRunnable {
         this.deadline = deadline;
         this.difficulty = difficulty;
         this.title = fishingBar.getRandomTitle();
-        this.fishHook = fishingManager.getBobber(player);
+        this.fishHook = fishingManager.getHook(player);
     }
 
     @Override
@@ -71,7 +71,7 @@ public abstract class FishingGame extends BukkitRunnable {
             AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.escape);
             cancel();
             fishingManager.removeFishingPlayer(player);
-            fishingManager.removeBobber(player);
+            fishingManager.removeHook(player);
             fishingManager.fail(player, null, true);
         }
     }

@@ -29,25 +29,25 @@ import java.util.Objects;
 public class PickUpListener implements Listener {
 
     @EventHandler
-    public void onPickUp(PlayerAttemptPickupItemEvent event){
+    public void onPickUp(PlayerAttemptPickupItemEvent event) {
         ItemStack itemStack = event.getItem().getItemStack();
         NBTItem nbtItem = new NBTItem(itemStack);
-        if (!nbtItem.hasTag("M_Owner")) return;
-        if (!Objects.equals(nbtItem.getString("M_Owner"), event.getPlayer().getName())){
+        if (!nbtItem.hasTag("TempOwner")) return;
+        if (!Objects.equals(nbtItem.getString("TempOwner"), event.getPlayer().getName())) {
             event.setCancelled(true);
         }
         else {
-            nbtItem.removeKey("M_Owner");
+            nbtItem.removeKey("TempOwner");
             itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
         }
     }
 
     @EventHandler
-    public void onMove(InventoryPickupItemEvent event){
+    public void onMove(InventoryPickupItemEvent event) {
         ItemStack itemStack = event.getItem().getItemStack();
         NBTItem nbtItem = new NBTItem(itemStack);
-        if (!nbtItem.hasTag("M_Owner")) return;
-        nbtItem.removeKey("M_Owner");
+        if (!nbtItem.hasTag("TempOwner")) return;
+        nbtItem.removeKey("TempOwner");
         itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
     }
 }

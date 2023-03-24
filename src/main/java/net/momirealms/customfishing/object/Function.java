@@ -17,13 +17,9 @@
 
 package net.momirealms.customfishing.object;
 
-import com.comphenix.protocol.events.PacketContainer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 
@@ -34,6 +30,10 @@ public abstract class Function {
     }
 
     public void unload() {
+        //empty
+    }
+
+    public void disable() {
         //empty
     }
 
@@ -49,25 +49,15 @@ public abstract class Function {
         //empty
     }
 
-    public void onWindowTitlePacketSend(PacketContainer packet, Player receiver) {
-
-    }
-
-    public void onCloseInventory(InventoryCloseEvent event) {
-    }
-
-    public void onClickInventory(InventoryClickEvent event) {
-    }
-
-    public void onOpenInventory(InventoryOpenEvent event) {
-    }
-
     public void onBreakBlock(BlockBreakEvent event) {
+        //empty
     }
 
     public void onConsumeItem(PlayerItemConsumeEvent event) {
+        //empty
     }
 
     public void onDragInventory(InventoryDragEvent event) {
+        //empty
     }
 }

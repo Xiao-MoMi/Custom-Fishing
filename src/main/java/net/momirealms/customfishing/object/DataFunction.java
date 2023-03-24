@@ -32,15 +32,15 @@ public abstract class DataFunction extends Function {
         Integer previous = triedTimes.get(uuid);
         if (previous == null) {
             triedTimes.put(uuid, 1);
-            return false;
+            return true;
         }
         else if (previous > 2) {
             triedTimes.remove(uuid);
-            return true;
+            return false;
         }
         else {
             triedTimes.put(uuid, previous + 1);
-            return false;
+            return true;
         }
     }
 }

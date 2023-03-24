@@ -28,7 +28,7 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.listener.InventoryListener;
 import net.momirealms.customfishing.listener.JoinQuitListener;
 import net.momirealms.customfishing.listener.WindowPacketListener;
-import net.momirealms.customfishing.object.DataFunction;
+import net.momirealms.customfishing.object.InventoryFunction;
 import net.momirealms.customfishing.util.AdventureUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -45,7 +45,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class BagDataManager extends DataFunction {
+public class BagDataManager extends InventoryFunction {
 
     private final ConcurrentHashMap<UUID, Inventory> dataMap;
     private final HashMap<UUID, Inventory> tempData;
@@ -84,6 +84,7 @@ public class BagDataManager extends DataFunction {
         CustomFishing.getProtocolManager().removePacketListener(windowPacketListener);
     }
 
+    @Override
     public void disable() {
         unload();
         saveBagDataForOnlinePlayers(true);
@@ -149,7 +150,7 @@ public class BagDataManager extends DataFunction {
         // If sql exception or data is locked
         else if (!force) {
             // can still try to load
-            if (!checkTriedTimes(player.getUniqueId())) {
+            if (checkTriedTimes(player.getUniqueId())) {
                 Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, false), 20);
             }
             // tried 3 times

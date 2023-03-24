@@ -105,7 +105,7 @@ public class StatisticsCommand extends AbstractSubCommand {
             ) return true;
             Player player = Bukkit.getPlayer(args.get(0));
             assert player != null;
-            if (CustomFishing.getInstance().getStatisticsManager().reset(player.getUniqueId())) AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.resetStatistics);
+            if (CustomFishing.getInstance().getStatisticsManager().reset(player.getUniqueId())) AdventureUtil.sendMessage(sender, MessageManager.prefix + MessageManager.resetStatistics.replace("{Player}", args.get(0)));
             else AdventureUtil.sendMessage(sender, MessageManager.prefix + "Internal Error, player's data is not loaded");
             return true;
         }

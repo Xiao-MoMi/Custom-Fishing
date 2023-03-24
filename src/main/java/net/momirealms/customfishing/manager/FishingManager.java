@@ -794,10 +794,6 @@ public class FishingManager extends Function {
         ), 8);
     }
 
-    public void onFailedAttempt(PlayerFishEvent event) {
-        //Empty
-    }
-
     public void showBar(Player player) {
         if (fishingPlayerMap.get(player) != null) return;
         Loot loot = nextLoot.get(player);
@@ -805,10 +801,6 @@ public class FishingManager extends Function {
             if (loot == Loot.EMPTY) return;
             showFishingBar(player, loot);
         }
-    }
-
-    public void onInGround(PlayerFishEvent event) {
-        //Empty
     }
 
     public void onMMOItemsRodCast(PlayerFishEvent event) {
@@ -942,9 +934,9 @@ public class FishingManager extends Function {
             AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.noLoot);
             return;
         }
-        StringBuilder stringBuilder = new StringBuilder(MessageManager.prefix + MessageManager.possibleLoots);
-        possibleLoots.forEach(loot -> stringBuilder.append(loot.getNick()).append(MessageManager.splitChar));
-        AdventureUtil.playerMessage(player, stringBuilder.substring(0, stringBuilder.length() - MessageManager.splitChar.length()));
+        StringJoiner stringJoiner = new StringJoiner(MessageManager.splitChar);
+        possibleLoots.forEach(loot -> stringJoiner.add(loot.getNick()));
+        AdventureUtil.playerMessage(player, MessageManager.prefix + MessageManager.possibleLoots + stringJoiner);
     }
 
     private void showFishingBar(Player player, @NotNull Loot loot) {
@@ -988,7 +980,7 @@ public class FishingManager extends Function {
         vanillaLoot.remove(player);
         BobberCheckTask task = hookCheckTaskMap.remove(player);
         if (task != null) task.stop();
-        removeBobber(player);
+        removeHook(player);
     }
 
     public void removeFishingPlayer(Player player) {
@@ -1041,7 +1033,7 @@ public class FishingManager extends Function {
         }
     }
 
-    public void removeBobber(Player player) {
+    public void removeHook(Player player) {
         FishHook fishHook = hooks.remove(player);
         if (fishHook != null) {
             fishHook.remove();
@@ -1049,7 +1041,7 @@ public class FishingManager extends Function {
     }
 
     @Nullable
-    public FishHook getBobber(Player player) {
+    public FishHook getHook(Player player) {
         return hooks.get(player);
     }
 

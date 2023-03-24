@@ -88,6 +88,7 @@ public class DataManager extends Function {
         if (this.dataStorageInterface != null && dataStorageInterface.getStorageType() != st) this.dataStorageInterface.disable();
     }
 
+    @Override
     public void disable() {
         if (this.dataStorageInterface != null) {
             this.dataStorageInterface.disable();

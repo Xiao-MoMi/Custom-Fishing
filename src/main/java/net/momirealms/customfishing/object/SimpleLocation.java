@@ -19,24 +19,7 @@ package net.momirealms.customfishing.object;
 
 import java.util.Objects;
 
-public class SimpleLocation {
-
-    private final int x;
-    private final int y;
-    private final int z;
-    private final String worldName;
-
-    public SimpleLocation(String worldName, int x, int y, int z){
-        this.worldName = worldName;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    public int getX() {return x;}
-    public int getZ() {return z;}
-    public int getY() {return y;}
-    public String getWorldName() {return worldName;}
+public record SimpleLocation(String worldName, int x, int y, int z) {
 
     @Override
     public boolean equals(Object obj) {
@@ -47,7 +30,7 @@ public class SimpleLocation {
             return false;
         }
         final SimpleLocation other = (SimpleLocation) obj;
-        if (!Objects.equals(worldName, other.getWorldName())) {
+        if (!Objects.equals(worldName, other.worldName())) {
             return false;
         }
         if (Double.doubleToLongBits(this.x) != Double.doubleToLongBits(other.x)) {

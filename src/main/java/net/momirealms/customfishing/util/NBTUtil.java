@@ -30,88 +30,100 @@ import java.util.UUID;
 
 public class NBTUtil {
 
-    public static NBTItem getNBTItem(Map<String, Object> nbt, ItemStack itemStack){
+    public static NBTItem setNBTToItemStack(Map<String, Object> nbt, ItemStack itemStack){
         NBTItem nbtItem = new NBTItem(itemStack);
         setTags(nbt, nbtItem);
         return nbtItem;
     }
 
+    @SuppressWarnings("unchecked")
     public static void setTags(Map<String, Object> map, NBTCompound nbtCompound) {
-        for (String key : map.keySet()) {
-            if (map.get(key) instanceof MemorySection memorySection){
-                NBTCompound newCompound = nbtCompound.addCompound(key);
-                setTags(memorySection.getValues(false), newCompound);
-            }
-            else if (map.get(key) instanceof List<?> list){
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (value instanceof MemorySection memorySection) {
+                setTags(memorySection.getValues(false), nbtCompound.addCompound(key));
+            } else if (value instanceof List<?> list) {
                 for (Object o : list) {
-                    if (o instanceof String value) {
-                        setListValue(key, value, nbtCompound);
-                    } else if (o instanceof Map<?,?> map1) {
-                        setCompoundList(key, map1, nbtCompound);
+                    if (o instanceof String stringValue) {
+                        setListValue(key, stringValue, nbtCompound);
+                    } else if (o instanceof Map<?, ?> mapValue) {
+                        setCompoundList(key, (Map<String, Object>) mapValue, nbtCompound);
                     }
                 }
-            }
-            else if (map.get(key) instanceof String value) {
-                setSingleValue(key, value, nbtCompound);
+            } else if (value instanceof String stringValue) {
+                setSingleValue(key, stringValue, nbtCompound);
             }
         }
     }
 
-    private static void setCompoundList(String key, Map<?,?> map, NBTCompound nbtCompound) {
+    private static void setCompoundList(String key, Map<String, Object> map, NBTCompound nbtCompound) {
         NBTListCompound nbtListCompound = nbtCompound.getCompoundList(key).addCompound();
-        setTags((Map<String, Object>) map, nbtListCompound);
+        setTags(map, nbtListCompound);
     }
 
     private static void setListValue(String key, String value, NBTCompound nbtCompound) {
-        if (value.startsWith("(String) ")) {
-            nbtCompound.getStringList(key).add(value.substring(9));
-        } else if (value.startsWith("(UUID) ")) {
-            nbtCompound.getUUIDList(key).add(UUID.fromString(value.substring(7)));
-        } else if (value.startsWith("(Double) ")) {
-            nbtCompound.getDoubleList(key).add(Double.valueOf(value.substring(9)));
-        } else if (value.startsWith("(Long) ")) {
-            nbtCompound.getLongList(key).add(Long.valueOf(value.substring(7)));
-        } else if (value.startsWith("(Float) ")) {
-            nbtCompound.getFloatList(key).add(Float.valueOf(value.substring(8)));
-        } else if (value.startsWith("(Int) ")) {
-            nbtCompound.getIntegerList(key).add(Integer.valueOf(value.substring(6)));
-        } else if (value.startsWith("(IntArray) ")) {
-            String[] split = value.substring(11).replace("[","").replace("]","").replaceAll("\\s", "").split(",");
-            int[] array = Arrays.stream(split).mapToInt(Integer::parseInt).toArray();
-            nbtCompound.getIntArrayList(key).add(array);
+        String[] parts = getTypeAndData(value);
+        String type = parts[0]; String data = parts[1];
+        switch (type) {
+            case "String" -> nbtCompound.getStringList(key).add(data);
+            case "UUID" -> nbtCompound.getUUIDList(key).add(UUID.fromString(data));
+            case "Double" -> nbtCompound.getDoubleList(key).add(Double.valueOf(data));
+            case "Long" -> nbtCompound.getLongList(key).add(Long.valueOf(data));
+            case "Float" -> nbtCompound.getFloatList(key).add(Float.valueOf(data));
+            case "Int" -> nbtCompound.getIntegerList(key).add(Integer.valueOf(data));
+            case "IntArray" -> {
+                String[] split = data.replace("[", "").replace("]", "").replaceAll("\\s", "").split(",");
+                int[] array = Arrays.stream(split).mapToInt(Integer::parseInt).toArray();
+                nbtCompound.getIntArrayList(key).add(array);
+            }
+            default -> throw new IllegalArgumentException("Invalid value type: " + type);
         }
     }
 
     private static void setSingleValue(String key, String value, NBTCompound nbtCompound) {
-        if (value.startsWith("(Int) ")){
-            nbtCompound.setInteger(key, Integer.valueOf(value.substring(6)));
-        } else if (value.startsWith("(String) ")){
-            nbtCompound.setString(key, value.substring(9));
-        } else if (value.startsWith("(Long) ")){
-            nbtCompound.setLong(key, Long.valueOf(value.substring(7)));
-        } else if (value.startsWith("(Float) ")){
-            nbtCompound.setFloat(key, Float.valueOf(value.substring(8)));
-        } else if (value.startsWith("(Double) ")){
-            nbtCompound.setDouble(key, Double.valueOf(value.substring(9)));
-        } else if (value.startsWith("(Short) ")){
-            nbtCompound.setShort(key, Short.valueOf(value.substring(8)));
-        } else if (value.startsWith("(Boolean) ")){
-            nbtCompound.setBoolean(key, Boolean.valueOf(value.substring(10)));
-        } else if (value.startsWith("(UUID) ")){
-            nbtCompound.setUUID(key, UUID.fromString(value.substring(7)));
-        } else if (value.startsWith("(Byte) ")){
-            nbtCompound.setByte(key, Byte.valueOf(value.substring(7)));
-        } else if (value.startsWith("(ByteArray) ")){
-            String[] split = value.substring(12).replace("[","").replace("]","").replaceAll("\\s", "").split(",");
-            byte[] bytes = new byte[split.length];
-            for (int i = 0; i < split.length; i++){
-                bytes[i] = Byte.parseByte(split[i]);
+        String[] parts = getTypeAndData(value);
+        String type = parts[0]; String data = parts[1];
+        switch (type) {
+            case "Int" -> nbtCompound.setInteger(key, Integer.valueOf(data));
+            case "String" -> nbtCompound.setString(key, data);
+            case "Long" -> nbtCompound.setLong(key, Long.valueOf(data));
+            case "Float" -> nbtCompound.setFloat(key, Float.valueOf(data));
+            case "Double" -> nbtCompound.setDouble(key, Double.valueOf(data));
+            case "Short" -> nbtCompound.setShort(key, Short.valueOf(data));
+            case "Boolean" -> nbtCompound.setBoolean(key, Boolean.valueOf(data));
+            case "UUID" -> nbtCompound.setUUID(key, UUID.nameUUIDFromBytes(data.getBytes()));
+            case "Byte" -> nbtCompound.setByte(key, Byte.valueOf(data));
+            case "ByteArray" -> {
+                String[] split = splitValue(value);
+                byte[] bytes = new byte[split.length];
+                for (int i = 0; i < split.length; i++){
+                    bytes[i] = Byte.parseByte(split[i]);
+                }
+                nbtCompound.setByteArray(key, bytes);
             }
-            nbtCompound.setByteArray(key, bytes);
-        } else if (value.startsWith("(IntArray) ")){
-            String[] split = value.substring(11).replace("[","").replace("]","").replaceAll("\\s", "").split(",");
-            int[] array = Arrays.stream(split).mapToInt(Integer::parseInt).toArray();
-            nbtCompound.setIntArray(key, array);
+            case "IntArray" -> {
+                String[] split = splitValue(value);
+                int[] array = Arrays.stream(split).mapToInt(Integer::parseInt).toArray();
+                nbtCompound.setIntArray(key, array);
+            }
+            default -> throw new IllegalArgumentException("Invalid value type: " + type);
         }
+    }
+
+    private static String[] getTypeAndData(String str) {
+        String[] parts = str.split("\\s+", 2);
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Invalid value format: " + str);
+        }
+        String type = parts[0].substring(1, parts[0].length() - 1);
+        String data = parts[1];
+        return new String[]{type, data};
+    }
+
+    private static String[] splitValue(String value) {
+        return value.substring(value.indexOf('[') + 1, value.lastIndexOf(']'))
+                .replaceAll("\\s", "")
+                .split(",");
     }
 }

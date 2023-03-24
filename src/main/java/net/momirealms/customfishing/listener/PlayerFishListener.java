@@ -24,8 +24,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 
-public record PlayerFishListener(
-        FishingManager manager) implements Listener {
+public record PlayerFishListener(FishingManager manager) implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onFishMONITOR(PlayerFishEvent event) {
@@ -71,9 +70,7 @@ public record PlayerFishListener(
             case REEL_IN -> manager.onReelIn(event);
             case CAUGHT_ENTITY -> manager.onCaughtEntity(event);
             case CAUGHT_FISH -> manager.onCaughtFish(event);
-            case FAILED_ATTEMPT -> manager.onFailedAttempt(event);
             case BITE -> manager.onBite(event);
-            case IN_GROUND -> manager.onInGround(event);
         }
     }
 }

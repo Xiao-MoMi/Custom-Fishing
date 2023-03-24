@@ -64,7 +64,8 @@ public class Item {
             Objects.requireNonNull(section.getConfigurationSection("enchantments")).getKeys(false).forEach(enchant -> {
                 LeveledEnchantment leveledEnchantment = new LeveledEnchantment(
                         NamespacedKey.fromString(enchant),
-                        section.getInt("enchantments." + enchant)
+                        section.getInt("enchantments." + enchant),
+                        1
                 );
                 enchantmentList.add(leveledEnchantment);
             });

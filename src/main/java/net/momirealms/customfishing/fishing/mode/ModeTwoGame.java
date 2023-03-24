@@ -74,10 +74,10 @@ public class ModeTwoGame extends FishingGame {
         if (hold_time >= time_requirement) {
             cancel();
             success = true;
-            FishHook fishHook = fishingManager.getBobber(player);
+            FishHook fishHook = fishingManager.getHook(player);
             if (fishHook != null) {
                 fishingManager.proceedReelIn(fishHook.getLocation(), player, this);
-                fishingManager.removeBobber(player);
+                fishingManager.removeHook(player);
             }
             fishingManager.removeFishingPlayer(player);
             return;

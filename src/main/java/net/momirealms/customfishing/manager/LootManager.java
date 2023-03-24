@@ -225,8 +225,11 @@ public class LootManager extends Function {
                     if (enchantSection != null) {
                         for (Map.Entry<String, Object> entry : enchantSection.getValues(false).entrySet()) {
                             if (entry.getValue() instanceof MemorySection memorySection){
-                                LeveledEnchantment enchantment = new LeveledEnchantment(NamespacedKey.fromString(memorySection.getString("enchant", "minecraft:sharpness")), memorySection.getInt("level"));
-                                enchantment.setChance(memorySection.getDouble("chance"));
+                                LeveledEnchantment enchantment = new LeveledEnchantment(
+                                        NamespacedKey.fromString(memorySection.getString("enchant", "minecraft:sharpness")),
+                                        memorySection.getInt("level"),
+                                        memorySection.getDouble("chance")
+                                );
                                 randomEnchants.add(enchantment);
                             }
                         }

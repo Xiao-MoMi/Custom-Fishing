@@ -41,9 +41,9 @@ public class LocationUtils {
 
     @Nullable
     public static Location getLocation(SimpleLocation location) {
-        World world = Bukkit.getWorld(location.getWorldName());
+        World world = Bukkit.getWorld(location.worldName());
         if (world == null) return null;
-        return new Location(world, location.getX(), location.getY(), location.getZ());
+        return new Location(world, location.x(), location.y(), location.z());
     }
 
     public static SimpleLocation getSimpleLocation(String location, String world) {
