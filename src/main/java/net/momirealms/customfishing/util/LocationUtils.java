@@ -74,4 +74,11 @@ public class LocationUtils {
         }
         return nearbyPlayers;
     }
+
+    public static double getDistance(Location location1, Location location2) {
+        double deltaX = location1.getX() - location2.getX();
+        double deltaY = location1.getY() - location2.getY();
+        double deltaZ = location1.getZ() - location2.getZ();
+        return Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+    }
 }

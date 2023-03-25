@@ -21,6 +21,8 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.bar.ModeThreeBar;
 import net.momirealms.customfishing.manager.FishingManager;
 import net.momirealms.customfishing.util.AdventureUtils;
+import net.momirealms.customfishing.util.LocationUtils;
+import org.bukkit.Location;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 
@@ -57,20 +59,8 @@ public class ModeThreeGame extends FishingGame {
         else {
             struggling_time--;
         }
-        if (player.isSneaking()) {
-            if (struggling_time > 0) {
-                strain += (modeThreeBar.getStruggling_increase() + ((double) difficulty / 5));
-                fish_position -= 1;
-            }
-            else {
-                strain += modeThreeBar.getNormal_increase();
-                fish_position -= 2;
-            }
-        }
-        else {
-            fish_position++;
-            strain -= modeThreeBar.getStrain_loss();
-        }
+        if (player.isSneaking()) pull();
+        else loosen();
         if (fish_position < modeThreeBar.getSuccess_position() - modeThreeBar.getFish_icon_width() - 1) {
             cancel();
             success = true;
@@ -93,6 +83,22 @@ public class ModeThreeGame extends FishingGame {
             return;
         }
         showBar();
+    }
+
+    public void pull() {
+        if (struggling_time > 0) {
+            strain += (modeThreeBar.getStruggling_increase() + ((double) difficulty / 5));
+            fish_position -= 1;
+        }
+        else {
+            strain += modeThreeBar.getNormal_increase();
+            fish_position -= 2;
+        }
+    }
+
+    public void loosen() {
+        fish_position++;
+        strain -= modeThreeBar.getStrain_loss();
     }
 
     @Override

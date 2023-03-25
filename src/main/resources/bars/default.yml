@@ -513,6 +513,8 @@ bar_10:
     judgment-area: '뀍'
     fish: '뀎'
   arguments:
+    # sneak / move
+    pull-method: sneak
     punishment: 0.2
     bar-effective-area-width: 155
     judgment-area-offset: -160
@@ -522,11 +524,11 @@ bar_10:
     pulling-strength: 0.45
     loosening-strength-loss: 0.3
   hold-time-requirements:
+    - 2
+    - 2
+    - 3
     - 3
     - 4
-    - 5
-    - 6
-    - 7
   progress:
     - '<font:customfishing:icons>뀁</font>'
     - '<font:customfishing:icons>뀂</font>'
@@ -557,7 +559,7 @@ bar_11:
   arguments:
     bar-effective-area-width: 218
     fish-offset: -221
-    fish-start-position: 170
+    fish-start-position: 165
     fish-icon-width: 8
     success-position: 21
     ultimate-strain: 50

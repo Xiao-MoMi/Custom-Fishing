@@ -35,6 +35,7 @@ public class ModeTwoBar extends FishingBar {
     private final double water_resistance;
     private final double pulling_strength;
     private final double loosening_loss;
+    private final boolean sneakMode;
 
     public ModeTwoBar(ConfigurationSection section) {
         super(section);
@@ -50,6 +51,7 @@ public class ModeTwoBar extends FishingBar {
         this.water_resistance = section.getDouble("arguments.water-resistance", 0.15);
         this.pulling_strength = section.getDouble("arguments.pulling-strength", 0.45);
         this.loosening_loss = section.getDouble("arguments.loosening-strength-loss", 0.3);
+        this.sneakMode = section.getString("arguments.pull-method", "sneak").equalsIgnoreCase("sneak");
     }
 
     public int getRandomTimeRequirement() {
@@ -98,5 +100,9 @@ public class ModeTwoBar extends FishingBar {
 
     public double getLoosening_loss() {
         return loosening_loss;
+    }
+
+    public boolean isSneakMode() {
+        return sneakMode;
     }
 }

@@ -951,11 +951,13 @@ public class FishingManager extends Function {
         }
         FishingBar fishingBar = game.getRandomBar();
         FishingGame fishingGame = null;
+        Location hookLoc = getHookLocation(player);
+        if (hookLoc == null) return;
         if (fishingBar instanceof ModeOneBar modeOneBar) {
             fishingGame = new ModeOneGame(plugin, this, System.currentTimeMillis() + game.getTime() * 1000L, player, miniGameStartEvent.getDifficulty(), modeOneBar);
         }
         else if (fishingBar instanceof ModeTwoBar modeTwoBar) {
-            fishingGame = new ModeTwoGame(plugin, this, System.currentTimeMillis() + game.getTime() * 1000L, player, miniGameStartEvent.getDifficulty(), modeTwoBar);
+            fishingGame = new ModeTwoGame(plugin, this, System.currentTimeMillis() + game.getTime() * 1000L, player, miniGameStartEvent.getDifficulty(), modeTwoBar, hookLoc);
         }
         else if (fishingBar instanceof ModeThreeBar modeThreeBar) {
             fishingGame = new ModeThreeGame(plugin, this, System.currentTimeMillis() + game.getTime() * 1000L, player, miniGameStartEvent.getDifficulty(), modeThreeBar);
@@ -1043,6 +1045,15 @@ public class FishingManager extends Function {
     @Nullable
     public FishHook getHook(Player player) {
         return hooks.get(player);
+    }
+
+    @Nullable
+    public Location getHookLocation(Player player) {
+        FishHook fishHook = hooks.get(player);
+        if (fishHook != null) {
+            return fishHook.getLocation();
+        }
+        return null;
     }
 
     @Override

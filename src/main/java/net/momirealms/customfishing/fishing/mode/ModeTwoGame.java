@@ -21,6 +21,8 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.bar.ModeTwoBar;
 import net.momirealms.customfishing.manager.FishingManager;
 import net.momirealms.customfishing.util.AdventureUtils;
+import net.momirealms.customfishing.util.LocationUtils;
+import org.bukkit.Location;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 
@@ -35,8 +37,10 @@ public class ModeTwoGame extends FishingGame {
     private double fish_velocity;
     private int timer;
     private final int time_requirement;
+    private final Location hookLoc;
+    private double distance;
 
-    public ModeTwoGame(CustomFishing plugin, FishingManager fishingManager, long deadline, Player player, int difficulty, ModeTwoBar modeTwoBar) {
+    public ModeTwoGame(CustomFishing plugin, FishingManager fishingManager, long deadline, Player player, int difficulty, ModeTwoBar modeTwoBar, Location hookLoc) {
         super(plugin, fishingManager, deadline, player, difficulty, modeTwoBar);
         this.success = false;
         this.judgement_position = (double) (modeTwoBar.getBar_effective_width() - modeTwoBar.getJudgement_area_width()) / 2;
@@ -44,14 +48,24 @@ public class ModeTwoGame extends FishingGame {
         this.timer = 0;
         this.modeTwoBar = modeTwoBar;
         this.time_requirement = modeTwoBar.getRandomTimeRequirement();
+        this.hookLoc = hookLoc;
+        this.distance = LocationUtils.getDistance(player.getLocation(), hookLoc);
     }
 
     @Override
     public void run() {
         super.run();
-        if (player.isSneaking()) addV();
-        else reduceV();
-        if (timer < 20) {
+        if (modeTwoBar.isSneakMode()) {
+            if (player.isSneaking()) addV(true);
+            else reduceV();
+        }
+        else {
+            double newDistance = LocationUtils.getDistance(player.getLocation(), hookLoc);
+            if (distance < newDistance) addV(true);
+            else if (distance > newDistance) addV(false);
+            distance = newDistance;
+        }
+        if (timer < 30) {
             timer++;
         }
         else {
@@ -65,7 +79,7 @@ public class ModeTwoGame extends FishingGame {
         fraction();
         calibrate();
 
-        if (fish_position >= judgement_position && fish_position + modeTwoBar.getFish_icon_width() <= judgement_position + modeTwoBar.getJudgement_area_width()) {
+        if (fish_position >= judgement_position - 2 && fish_position + modeTwoBar.getFish_icon_width() <= judgement_position + modeTwoBar.getJudgement_area_width() + 2) {
             hold_time++;
         }
         else {
@@ -104,10 +118,10 @@ public class ModeTwoGame extends FishingGame {
 
     private void burst() {
         if (Math.random() < (judgement_position / modeTwoBar.getBar_effective_width())) {
-            judgement_velocity = -2 - Math.random() * difficulty;
+            judgement_velocity = -1 - 0.8 * Math.random() * difficulty;
         }
         else {
-            judgement_velocity = 2 + Math.random() * difficulty;
+            judgement_velocity = 1 + 0.8 * Math.random() * difficulty;
         }
     }
 
@@ -126,8 +140,9 @@ public class ModeTwoGame extends FishingGame {
         fish_velocity -= modeTwoBar.getLoosening_loss();
     }
 
-    private void addV() {
-        fish_velocity += modeTwoBar.getPulling_strength();
+    private void addV(boolean add) {
+        if (add) fish_velocity += modeTwoBar.getPulling_strength();
+        else fish_velocity -= modeTwoBar.getPulling_strength();
     }
 
     private void calibrate() {

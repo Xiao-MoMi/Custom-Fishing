@@ -244,9 +244,6 @@ public class Competition {
         if (this.goal == CompetitionGoal.CATCH_AMOUNT) {
             score = 1f;
         }
-        if (this.goal == CompetitionGoal.MAX_SIZE || this.goal == CompetitionGoal.TOTAL_SIZE) {
-            doubleScore = false;
-        }
         if (this.goal == CompetitionGoal.MAX_SIZE) {
             if (score > ranking.getPlayerScore(player.getName())) {
                 ranking.setData(player.getName(), score);
