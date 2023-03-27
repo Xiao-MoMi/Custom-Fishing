@@ -1,5 +1,5 @@
 # Don't change
-config-version: '20'
+config-version: '21'
 
 # bStats
 metrics: true
@@ -145,6 +145,8 @@ titles:
 
 # Other settings
 other-settings:
+  # Hide the data saving information
+  hide-data-saving-info: false
   # MONITOR HIGHEST HIGH NORMAL LOW LOWEST
   # 事件优先级
   event-priority: NORMAL

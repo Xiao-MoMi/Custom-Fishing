@@ -68,15 +68,15 @@ public class DataManager extends Function {
         this.timerSave = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             //long time1 = System.currentTimeMillis();
             if (ConfigManager.enableFishingBag) {
-                AdventureUtils.consoleMessage("[CustomFishing] Saving fishing bag data...");
+                if (!ConfigManager.hideSaveInfo) AdventureUtils.consoleMessage("[CustomFishing] Saving fishing bag data...");
                 plugin.getBagDataManager().saveBagDataForOnlinePlayers(false);
             }
             if (ConfigManager.enableStatistics) {
-                AdventureUtils.consoleMessage("[CustomFishing] Saving statistics data...");
+                if (!ConfigManager.hideSaveInfo) AdventureUtils.consoleMessage("[CustomFishing] Saving statistics data...");
                 plugin.getStatisticsManager().saveStatisticsDataForOnlinePlayers(false);
             }
             //AdventureUtil.consoleMessage("[CustomFishing] Data saved for all online players. Took " + (System.currentTimeMillis() - time1) + " ms.");
-            AdventureUtils.consoleMessage("[CustomFishing] Data saved for all online players.");
+            if (!ConfigManager.hideSaveInfo) AdventureUtils.consoleMessage("[CustomFishing] Data saved for all online players.");
         }, 24000, 24000);
     }
 

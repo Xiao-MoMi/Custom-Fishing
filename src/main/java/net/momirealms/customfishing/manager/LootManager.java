@@ -157,8 +157,8 @@ public class LootManager extends Function {
                         mobSection.getInt("weight",10),
                         mobSection.getBoolean("show-in-fishfinder", true),
                         mobSection.getDouble("score",10d),
-                        mobSection.getString(key + ".mobID", key),
-                        mobSection.getInt(key + ".level", 0),
+                        mobSection.getString("mobID", key),
+                        mobSection.getInt("level", 0),
                         new MobVector(
                                 mobSection.getDouble("vector.horizontal",1.1),
                                 mobSection.getDouble("vector.vertical",1.3)

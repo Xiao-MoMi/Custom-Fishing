@@ -78,6 +78,7 @@ public class ConfigManager {
     public static HashSet<Material> bagWhiteListItems;
     public static boolean enableStatistics;
     public static boolean updateChecker;
+    public static boolean hideSaveInfo;
 
     public static void load() {
         ConfigUtils.update("config.yml");
@@ -97,6 +98,7 @@ public class ConfigManager {
         preventPickUp = config.getBoolean("other-settings.prevent-other-players-pick-up-loot", false);
         convertMMOItems = config.getBoolean("other-settings.convert-MMOItems-rods", false);
         logEarning = config.getBoolean("other-settings.log-earnings", true);
+        hideSaveInfo = config.getBoolean("other-settings.hide-data-saving-info", false);
     }
 
     private static void loadMechanics(YamlConfiguration config) {

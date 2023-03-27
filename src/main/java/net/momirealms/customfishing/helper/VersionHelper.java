@@ -147,7 +147,7 @@ public class VersionHelper {
                     String[] currentHotfix = currentPart[1].split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
                     // hotfix2 & hotfix
                     if (newHotfix.length == 2 && currentHotfix.length == 1) return true;
-                    // hotfix3 & hotfix2
+                        // hotfix3 & hotfix2
                     else if (newHotfix.length > 1 && currentHotfix.length > 1) {
                         int newHotfixNum = Integer.parseInt(newHotfix[1]);
                         int currentHotfixNum = Integer.parseInt(currentHotfix[1]);
