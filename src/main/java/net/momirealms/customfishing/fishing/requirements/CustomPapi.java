@@ -20,89 +20,51 @@ package net.momirealms.customfishing.fishing.requirements;
 import net.momirealms.customfishing.fishing.FishingCondition;
 import net.momirealms.customfishing.fishing.requirements.papi.*;
 import org.bukkit.configuration.MemorySection;
+import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CustomPapi extends Requirement implements RequirementInterface {
 
     public static HashSet<String> allPapi = new HashSet<>();
-    private PapiRequirement papiRequirement;
+    private final List<PapiRequirement> papiRequirement;
 
     public CustomPapi(String[] msg, Map<String, Object> expressions){
         super(msg);
-        expressions.keySet().forEach(key -> {
-            if (key.startsWith("&&")){
-                List<PapiRequirement> papiRequirements = new ArrayList<>();
-                if (expressions.get(key) instanceof MemorySection map2){
-                    addAndRequirements(papiRequirements, map2.getValues(false));
-                }
-                papiRequirement = new ExpressionAnd(papiRequirements);
-            }
-            else if (key.startsWith("||")){
-                List<PapiRequirement> papiRequirements = new ArrayList<>();
-                if (expressions.get(key) instanceof MemorySection map2){
-                    addOrRequirements(papiRequirements, map2.getValues(false));
-                }
-                papiRequirement = new ExpressionOr(papiRequirements);
-            }
-            else {
-                if (expressions.get(key) instanceof MemorySection map){
-                    String type = map.getString("type");
-                    if (type == null) return;
-                    String papi = map.getString("papi");
-                    if (papi == null) return;
-                    String value = map.getString("value");
-                    if (value == null) return;
-                    allPapi.add(papi);
-                    switch (type){
-                        case "==" -> papiRequirement = new PapiEquals(papi, value);
-                        case "!=" -> papiRequirement = new PapiNotEquals(papi, value);
-                        case ">=" -> papiRequirement = new PapiNoLess(papi, value);
-                        case "<=" -> papiRequirement = new PapiNoLarger(papi, value);
-                        case "<" -> papiRequirement = new PapiSmaller(papi, value);
-                        case ">" -> papiRequirement = new PapiGreater(papi, value);
-                    }
-                }
-            }
-        });
+        papiRequirement = getRequirements(expressions);
     }
 
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
+        Player player = fishingCondition.getPlayer();
         if (fishingCondition.getPlayer() == null) return true;
-        return  papiRequirement.isMet(fishingCondition.getPapiMap(), fishingCondition.getPlayer());
-    }
-
-    private void addAndRequirements(List<PapiRequirement> requirements, Map<String, Object> map){
-        requirements.add(new ExpressionAnd(getRequirements(map)));
-    }
-
-    private void addOrRequirements(List<PapiRequirement> requirements, Map<String, Object> map){
-        requirements.add(new ExpressionOr(getRequirements(map)));
+        HashMap<String, String> papiMap = fishingCondition.getPapiMap();
+        for (PapiRequirement requirement : papiRequirement) {
+            if (!requirement.isMet(papiMap, player)) {
+                notMetMessage(player);
+                return false;
+            }
+        }
+        return true;
     }
 
     private List<PapiRequirement> getRequirements(Map<String, Object> map) {
         List<PapiRequirement> papiRequirements = new ArrayList<>();
         map.keySet().forEach(key -> {
             if (key.startsWith("&&")) {
-                if (map.get(key) instanceof MemorySection map2){
-                    addAndRequirements(papiRequirements, map2.getValues(false));
+                if (map.get(key) instanceof MemorySection map2) {
+                    papiRequirements.add(new ExpressionAnd(getRequirements(map2.getValues(false))));
                 }
             } else if (key.startsWith("||")) {
-                if (map.get(key) instanceof MemorySection map2){
-                    addOrRequirements(papiRequirements, map2.getValues(false));
+                if (map.get(key) instanceof MemorySection map2) {
+                    papiRequirements.add(new ExpressionOr(getRequirements(map2.getValues(false))));
                 }
             } else {
-                if (map.get(key) instanceof MemorySection map2){
+                if (map.get(key) instanceof MemorySection map2) {
                     String type = map2.getString("type");
-                    if (type == null) return;
                     String papi = map2.getString("papi");
-                    if (papi == null) return;
                     String value = map2.getString("value");
-                    if (value == null) return;
+                    if (value == null || papi == null || type == null) return;
                     allPapi.add(papi);
                     switch (type){
                         case "==" -> papiRequirements.add(new PapiEquals(papi, value));

@@ -23,6 +23,7 @@ import com.zaxxer.hikari.pool.HikariPool;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.util.AdventureUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -46,7 +47,6 @@ public class SqlConnection {
         ConfigUtils.update("database.yml");
         YamlConfiguration config = ConfigUtils.getConfig("database.yml");
         String storageMode = config.getString("data-storage-method", "MySQL");
-
         HikariConfig hikariConfig = new HikariConfig();
         String sql = "mysql";
         if (storageMode.equalsIgnoreCase("MariaDB")) {
@@ -62,15 +62,13 @@ public class SqlConnection {
         hikariConfig.setMinimumIdle(config.getInt(storageMode + ".Pool-Settings.minimum-idle"));
         hikariConfig.setMaxLifetime(config.getInt(storageMode + ".Pool-Settings.maximum-lifetime"));
         hikariConfig.setConnectionTimeout(3000);
-        for (String property : config.getConfigurationSection(storageMode + ".properties").getKeys(false)) {
-            hikariConfig.addDataSourceProperty(property, config.getString(storageMode + ".properties." + property));
+        hikariConfig.setIdleTimeout(hikariConfig.getMinimumIdle() < hikariConfig.getMaximumPoolSize() ? config.getInt(storageMode + ".Pool-Settings.idle-timeout") : 0);
+        ConfigurationSection section = config.getConfigurationSection(storageMode + ".properties");
+        if (section != null) {
+            for (String property : section.getKeys(false)) {
+                hikariConfig.addDataSourceProperty(property, config.getString(storageMode + ".properties." + property));
+            }
         }
-        if (hikariConfig.getMinimumIdle() < hikariConfig.getMaximumPoolSize()) {
-            hikariConfig.setIdleTimeout(config.getInt(storageMode + ".Pool-Settings.idle-timeout"));
-        } else {
-            hikariConfig.setIdleTimeout(0);
-        }
-
         try {
             hikariDataSource = new HikariDataSource(hikariConfig);
         } catch (HikariPool.PoolInitializationException e) {

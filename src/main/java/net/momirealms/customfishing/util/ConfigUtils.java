@@ -35,10 +35,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class ConfigUtils {
 
@@ -97,6 +94,7 @@ public class ConfigUtils {
                     case "time" -> requirements.add(new TimeImpl(null, section.getStringList(type)));
                     case "skill-level" -> requirements.add(new SkillLevelImpl(null, section.getInt(type)));
                     case "job-level" -> requirements.add(new JobLevelImpl(null, section.getInt(type)));
+                    case "date" -> requirements.add(new DateImpl(null, new HashSet<>(section.getStringList(type))));
                     case "papi-condition" -> requirements.add(new CustomPapi(null, Objects.requireNonNull(section.getConfigurationSection(type)).getValues(false)));
                 }
             }
@@ -124,6 +122,7 @@ public class ConfigUtils {
                     case "time" -> requirements.add(new TimeImpl(msg, innerSec.getStringList("value")));
                     case "skill-level" -> requirements.add(new SkillLevelImpl(msg, innerSec.getInt("value")));
                     case "job-level" -> requirements.add(new JobLevelImpl(msg, innerSec.getInt("value")));
+                    case "date" -> requirements.add(new DateImpl(msg, new HashSet<>(section.getStringList(type))));
                     case "papi-condition" -> requirements.add(new CustomPapi(msg, Objects.requireNonNull(innerSec.getConfigurationSection("value")).getValues(false)));
                 }
             }
