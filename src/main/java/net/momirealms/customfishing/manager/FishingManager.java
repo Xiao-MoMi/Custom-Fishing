@@ -382,10 +382,10 @@ public class FishingManager extends Function {
         final Player player = event.getPlayer();
         if (!(event.getCaught() instanceof Item item)) return;
 
-        if (ConfigManager.disableBar) {
-            noBarWaterReelIn(event);
-            return;
-        }
+//        if (ConfigManager.disableBar) {
+//            noBarWaterReelIn(event);
+//            return;
+//        }
 
         FishingGame fishingGame = fishingPlayerMap.remove(player);
         // if the player is noy playing the game
@@ -399,7 +399,7 @@ public class FishingManager extends Function {
                 if (ConfigManager.vanillaLootRatio < Math.random()) {
                     if (loot != null) {
                         vanillaLoot.remove(player);
-                        if (loot.isDisableBar()) {
+                        if (loot.isDisableBar() || ConfigManager.disableBar) {
                             noBarWaterReelIn(event);
                             return;
                         }
@@ -407,13 +407,17 @@ public class FishingManager extends Function {
                     }
                     else {
                         vanillaLoot.put(player, new VanillaLoot(item.getItemStack(), event.getExpToDrop()));
+                        if (ConfigManager.disableBar) {
+                            noBarWaterReelIn(event);
+                            return;
+                        }
                         showFishingBar(player, plugin.getLootManager().getVanilla_loot());
                     }
                     event.setCancelled(true);
                 }
                 // Is vanilla loot
                 else {
-                    if (!plugin.getLootManager().getVanilla_loot().isDisableBar()) {
+                    if (!plugin.getLootManager().getVanilla_loot().isDisableBar() && !ConfigManager.disableBar) {
                         event.setCancelled(true);
                         vanillaLoot.put(player, new VanillaLoot(item.getItemStack(), event.getExpToDrop()));
                         showFishingBar(player, plugin.getLootManager().getVanilla_loot());
@@ -424,12 +428,12 @@ public class FishingManager extends Function {
             else {
                 // No custom loot
                 if (loot == null) {
-                    item.remove();
-                    event.setExpToDrop(0);
+                    event.setCancelled(true);
+                    removeHook(player);
                     AdventureUtils.playerMessage(player, MessageManager.prefix + MessageManager.noLoot);
                 }
                 else {
-                    if (loot.isDisableBar()) {
+                    if (loot.isDisableBar() || ConfigManager.disableBar) {
                         noBarWaterReelIn(event);
                         return;
                     }
@@ -439,8 +443,8 @@ public class FishingManager extends Function {
             }
         }
         else {
-            item.remove();
-            event.setExpToDrop(0);
+            event.setCancelled(true);
+            removeHook(player);
             proceedReelIn(event.getHook().getLocation(), player, fishingGame);
         }
     }

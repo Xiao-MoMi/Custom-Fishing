@@ -73,7 +73,6 @@ public class IntegrationManager extends Function {
         this.plugin = plugin;
         this.pluginManager = Bukkit.getPluginManager();
         this.placeholderManager = new PlaceholderManager(plugin);
-        this.blockInterface = new VanillaBlockImpl();
     }
 
     @Override
@@ -127,6 +126,9 @@ public class IntegrationManager extends Function {
         }
         else if (pluginManager.isPluginEnabled("ItemsAdder")) {
             this.blockInterface = new ItemsAdderBlockImpl();
+        }
+        else {
+            this.blockInterface = new VanillaBlockImpl();
         }
     }
 
