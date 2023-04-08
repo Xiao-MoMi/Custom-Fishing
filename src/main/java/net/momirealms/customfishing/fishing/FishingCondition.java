@@ -22,6 +22,7 @@ import net.momirealms.customfishing.fishing.requirements.CustomPapi;
 import net.momirealms.customfishing.integration.papi.PlaceholderManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
@@ -29,19 +30,19 @@ public class FishingCondition{
 
     private final Location location;
     private final Player player;
+    private final String rod_id;
     private final HashMap<String, String> papiMap;
 
-    public FishingCondition(Location location, Player player) {
+    public FishingCondition(Location location, Player player, @Nullable String rod_id) {
         this.location = location;
         this.player = player;
-        if (player == null) {
-            papiMap = new HashMap<>();
-            return;
-        }
-        PlaceholderManager placeholderManager = CustomFishing.getInstance().getIntegrationManager().getPlaceholderManager();
+        this.rod_id = rod_id;
         this.papiMap = new HashMap<>();
-        for (String papi : CustomPapi.allPapi) {
-            this.papiMap.put(papi, placeholderManager.parse(player, papi));
+        if (player != null) {
+            PlaceholderManager placeholderManager = CustomFishing.getInstance().getIntegrationManager().getPlaceholderManager();
+            for (String papi : CustomPapi.allPapi) {
+                this.papiMap.put(papi, placeholderManager.parse(player, papi));
+            }
         }
     }
 
@@ -55,6 +56,10 @@ public class FishingCondition{
 
     public Player getPlayer() {
         return player;
+    }
+
+    public String getRod_id() {
+        return rod_id;
     }
 
     @Override

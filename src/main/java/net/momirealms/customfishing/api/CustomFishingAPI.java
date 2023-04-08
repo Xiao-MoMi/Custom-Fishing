@@ -115,7 +115,7 @@ public class CustomFishingAPI {
      * @return loots
      */
     public static List<Loot> getLootsAt(Location location, Player player) {
-        return CustomFishing.getInstance().getFishingManager().getPossibleLootList(new FishingCondition(location, player), false, CustomFishing.getInstance().getLootManager().getAllLoots());
+        return CustomFishing.getInstance().getFishingManager().getPossibleLootList(new FishingCondition(location, player, null), false, CustomFishing.getInstance().getLootManager().getAllLoots());
     }
 
     /**
@@ -124,7 +124,7 @@ public class CustomFishingAPI {
      * @return loots
      */
     public static List<Loot> getLootsAt(Location location) {
-        return CustomFishing.getInstance().getFishingManager().getPossibleLootList(new FishingCondition(location, null), false, CustomFishing.getInstance().getLootManager().getAllLoots());
+        return CustomFishing.getInstance().getFishingManager().getPossibleLootList(new FishingCondition(location, null, null), false, CustomFishing.getInstance().getLootManager().getAllLoots());
     }
 
     /**
@@ -239,5 +239,65 @@ public class CustomFishingAPI {
      */
     public static double getTodayEarning(Player player) {
         return CustomFishing.getInstance().getSellManager().getTodayEarning(player);
+    }
+
+    /**
+     * return null if the itemStack is not a CustomFishing rod
+     * @param itemStack itemStack
+     * @return rod id
+     */
+    public static String getRodID(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR) return null;
+        NBTItem nbtItem = new NBTItem(itemStack);
+        NBTCompound nbtCompound = nbtItem.getCompound("CustomFishing");
+        if (nbtCompound == null) return null;
+        String type = nbtCompound.getString("type");
+        if (!type.equals("rod")) return null;
+        return nbtCompound.getString("id");
+    }
+
+    /**
+     * return null if the itemStack is not a CustomFishing util
+     * @param itemStack itemStack
+     * @return util id
+     */
+    public static String getUtilID(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR) return null;
+        NBTItem nbtItem = new NBTItem(itemStack);
+        NBTCompound nbtCompound = nbtItem.getCompound("CustomFishing");
+        if (nbtCompound == null) return null;
+        String type = nbtCompound.getString("type");
+        if (!type.equals("util")) return null;
+        return nbtCompound.getString("id");
+    }
+
+    /**
+     * return null if the itemStack is not a CustomFishing bait
+     * @param itemStack itemStack
+     * @return bait id
+     */
+    public static String getBaitID(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR) return null;
+        NBTItem nbtItem = new NBTItem(itemStack);
+        NBTCompound nbtCompound = nbtItem.getCompound("CustomFishing");
+        if (nbtCompound == null) return null;
+        String type = nbtCompound.getString("type");
+        if (!type.equals("bait")) return null;
+        return nbtCompound.getString("id");
+    }
+
+    /**
+     * return null if the itemStack is not a CustomFishing loot
+     * @param itemStack itemStack
+     * @return loot id
+     */
+    public static String getLootID(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR) return null;
+        NBTItem nbtItem = new NBTItem(itemStack);
+        NBTCompound nbtCompound = nbtItem.getCompound("CustomFishing");
+        if (nbtCompound == null) return null;
+        String type = nbtCompound.getString("type");
+        if (!type.equals("loot")) return null;
+        return nbtCompound.getString("id");
     }
 }

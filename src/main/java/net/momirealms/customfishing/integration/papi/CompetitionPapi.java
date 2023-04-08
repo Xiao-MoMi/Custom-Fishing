@@ -41,7 +41,7 @@ public class CompetitionPapi extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return "1.2";
+        return "1.3";
     }
 
     @Override

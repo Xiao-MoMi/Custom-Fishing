@@ -60,8 +60,9 @@ public class BobberCheckTask extends BukkitRunnable {
     private final int entityID;
     private boolean land;
     private boolean first;
+    private final String rod;
 
-    public BobberCheckTask(CustomFishing plugin, Player player, Effect effect, FishHook fishHook, FishingManager fishingManager, int lureLevel, int entityID) {
+    public BobberCheckTask(CustomFishing plugin, Player player, Effect effect, FishHook fishHook, FishingManager fishingManager, int lureLevel, int entityID, String rod) {
         this.fishHook = fishHook;
         this.plugin = plugin;
         this.fishingManager = fishingManager;
@@ -74,6 +75,7 @@ public class BobberCheckTask extends BukkitRunnable {
         this.entityID = entityID;
         this.land = false;
         this.first = true;
+        this.rod = rod;
     }
 
     @Override
@@ -132,7 +134,7 @@ public class BobberCheckTask extends BukkitRunnable {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 List<Loot> possibleLoots = new ArrayList<>();
                 if (!(ConfigManager.needRodForLoot && !effect.hasSpecialRod())) {
-                    possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player), false, plugin.getLootManager().getWaterLoots().values());
+                    possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player, rod), false, plugin.getLootManager().getWaterLoots().values());
                 }
                 fishingManager.getNextLoot(player, effect, possibleLoots);
                 if (ConfigManager.enableWaterAnimation) {
@@ -181,7 +183,7 @@ public class BobberCheckTask extends BukkitRunnable {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             List<Loot> possibleLoots = new ArrayList<>();
             if (!(ConfigManager.needRodForLoot && !effect.hasSpecialRod())) {
-                possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player), false, plugin.getLootManager().getLavaLoots().values());
+                possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player, rod), false, plugin.getLootManager().getLavaLoots().values());
             }
             fishingManager.getNextLoot(player, effect, possibleLoots);
         });

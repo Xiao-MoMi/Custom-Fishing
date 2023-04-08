@@ -18,11 +18,10 @@ public class DateImpl extends Requirement implements RequirementInterface {
     public boolean isConditionMet(FishingCondition fishingCondition) {
         Calendar calendar = Calendar.getInstance();
         String current = (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DATE);
-        boolean met = dates.contains(current);
-        if (!met) {
-            notMetMessage(fishingCondition.getPlayer());
-            return false;
+        if (dates.contains(current)) {
+            return true;
         }
-        return true;
+        notMetMessage(fishingCondition.getPlayer());
+        return false;
     }
 }

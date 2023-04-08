@@ -21,13 +21,13 @@ import net.momirealms.biomeapi.BiomeAPI;
 import net.momirealms.customfishing.fishing.FishingCondition;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.HashSet;
 
 public class BiomeImpl extends Requirement implements RequirementInterface {
 
-    private final List<String> biomes;
+    private final HashSet<String> biomes;
 
-    public BiomeImpl(@Nullable String[] msg, List<String> biomes) {
+    public BiomeImpl(@Nullable String[] msg, HashSet<String> biomes) {
         super(msg);
         this.biomes = biomes;
     }
@@ -35,10 +35,8 @@ public class BiomeImpl extends Requirement implements RequirementInterface {
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
         String currentBiome = BiomeAPI.getBiome(fishingCondition.getLocation());
-        for (String biome : biomes) {
-            if (currentBiome.equalsIgnoreCase(biome)) {
-                return true;
-            }
+        if (biomes.contains(currentBiome)) {
+            return true;
         }
         notMetMessage(fishingCondition.getPlayer());
         return false;

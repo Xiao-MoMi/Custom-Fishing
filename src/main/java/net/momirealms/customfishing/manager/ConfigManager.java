@@ -79,6 +79,7 @@ public class ConfigManager {
     public static boolean enableStatistics;
     public static boolean updateChecker;
     public static boolean hideSaveInfo;
+    public static boolean baitAnimation;
 
     public static void load() {
         ConfigUtils.update("config.yml");
@@ -126,6 +127,7 @@ public class ConfigManager {
         addTagToFish = config.getBoolean("mechanics.add-custom-fishing-tags-to-loots", true);
         fishingBagTitle = config.getString("mechanics.fishing-bag.bag-title", "Fishing Bag");
         enableStatistics = config.getBoolean("mechanics.fishing-statistics.enable", true);
+        baitAnimation = config.getBoolean("mechanics.bait-animation", true);
         bagWhiteListItems = new HashSet<>();
         for (String material : config.getStringList("mechanics.fishing-bag.whitelist-items")) bagWhiteListItems.add(Material.valueOf(material.toUpperCase()));
         redisSettings(config);

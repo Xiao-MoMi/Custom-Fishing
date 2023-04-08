@@ -34,3 +34,8 @@ magnet_bait:
   # https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing/requirements
   requirements:
     permission: magnet_bait.use
+    rod:
+      - nature_fishing_cane
+      - silver_fishing_rod
+      - golden_fishing_rod
+      - star_fishing_rod

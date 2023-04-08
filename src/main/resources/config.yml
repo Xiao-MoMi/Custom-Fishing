@@ -1,5 +1,5 @@
 # Don't change
-config-version: '21'
+config-version: '22'
 
 # bStats
 metrics: true
@@ -8,7 +8,7 @@ metrics: true
 update-checker: true
 
 # Wiki: https://mo-mi.gitbook.io/xiaomomi-plugins/
-# chinese/english/spanish
+# chinese/english/spanish/turkish
 lang: english
 
 # Worlds where fishing mechanic takes effects
@@ -23,8 +23,7 @@ worlds:
 
 # Mechanic settings
 mechanics:
-  # Add custom nbt tags to the loots so plugin could identify
-  # Disable this will be unable to trigger the actions when eating fish
+  # Add custom nbt tags to the loots so plugin could identify them for consume actions
   # 为每个战利品增加特殊的CustomFishing NBT标签以被插件识别
   # 禁用此项目将会导致吃食物触发的动作失效
   add-custom-fishing-tags-to-loots: true
@@ -112,7 +111,8 @@ mechanics:
   # Record the statistics of player's fishing results
   fishing-statistics:
     enable: true
-
+  # enable bait animation
+  bait-animation: true
 titles:
   success:
     enable: true

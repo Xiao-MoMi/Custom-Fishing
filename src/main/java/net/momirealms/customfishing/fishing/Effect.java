@@ -34,8 +34,14 @@ public class Effect {
     private int difficulty;
     private double doubleLootChance;
     private boolean canLavaFishing;
-    private boolean hasSpecialRod;
+    private String specialRodID;
     private RequirementInterface[] requirements;
+
+    public Effect() {
+        this.sizeMultiplier = 1;
+        this.scoreMultiplier = 1;
+        this.timeModifier = 1;
+    }
 
     public void setSizeMultiplier(double sizeMultiplier) {
         this.sizeMultiplier = sizeMultiplier;
@@ -123,11 +129,11 @@ public class Effect {
                 this.weightMD.put(group, Optional.ofNullable(this.weightMD.get(group)).orElse(1d) + en.getValue());
             }
         }
-        if (anotherEffect.getTimeModifier() != 0) this.timeModifier += (anotherEffect.getTimeModifier() - 1);
-        if (anotherEffect.getDoubleLootChance() != 0) this.doubleLootChance += anotherEffect.getDoubleLootChance();
-        if (anotherEffect.getDifficulty() != 0) this.difficulty += anotherEffect.getDifficulty();
-        if (anotherEffect.getScoreMultiplier() != 0) this.scoreMultiplier += (anotherEffect.getScoreMultiplier() - 1);
-        if (anotherEffect.getSizeMultiplier() != 0) this.sizeMultiplier += (anotherEffect.getSizeMultiplier() - 1);
+        this.timeModifier += (anotherEffect.getTimeModifier() - 1);
+        this.scoreMultiplier += (anotherEffect.getScoreMultiplier() - 1);
+        this.sizeMultiplier += (anotherEffect.getSizeMultiplier() - 1);
+        this.doubleLootChance += anotherEffect.getDoubleLootChance();
+        this.difficulty += anotherEffect.getDifficulty();
         if (anotherEffect.canLavaFishing()) this.canLavaFishing = true;
         return true;
     }
@@ -141,10 +147,14 @@ public class Effect {
     }
 
     public boolean hasSpecialRod() {
-        return hasSpecialRod;
+        return specialRodID != null;
     }
 
-    public void setHasSpecialRod(boolean hasSpecialRod) {
-        this.hasSpecialRod = hasSpecialRod;
+    public void setSpecialRodID(String specialRodID) {
+        this.specialRodID = specialRodID;
+    }
+
+    public String getSpecialRodID() {
+        return specialRodID;
     }
 }

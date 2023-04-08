@@ -166,7 +166,7 @@ public class LootManager extends Function {
                         mobSection.getBoolean("disable-bar-mechanic", false),
                         mobSection.getBoolean("disable-stats", false)
                 );
-
+                if (mobSection.contains("group")) loot.setGroup(mobSection.getString("group"));
                 setActions(mobSection, loot);
                 loot.setRequirements(ConfigUtils.getRequirements(mobSection.getConfigurationSection("requirements")));
 
@@ -206,7 +206,7 @@ public class LootManager extends Function {
                         lootSection.getBoolean("disable-bar-mechanic", false),
                         lootSection.getBoolean("disable-stats", false)
                 );
-
+                if (lootSection.contains("group")) loot.setGroup(lootSection.getString("group"));
                 if (lootSection.contains("size")) {
                     String[] size = StringUtils.split(lootSection.getString("size", "1~10"), "~");
                     if (size.length != 2) {
@@ -298,19 +298,19 @@ public class LootManager extends Function {
     }
 
     public ArrayList<Loot> getAllLoots() {
-        ArrayList<Loot> loots = new ArrayList<>(getWaterLoots().values());
+        ArrayList<Loot> loots = new ArrayList<>(waterLoots.values());
         loots.addAll(getLavaLoots().values());
         return loots;
     }
 
     public ArrayList<String> getAllKeys() {
         ArrayList<String> loots = new ArrayList<>();
-        for (Map.Entry<String, Loot> en : CustomFishing.getInstance().getLootManager().getWaterLoots().entrySet()) {
+        for (Map.Entry<String, Loot> en : waterLoots.entrySet()) {
             if (en.getValue() instanceof DroppedItem) {
                 loots.add(en.getKey());
             }
         }
-        for (Map.Entry<String, Loot> en : CustomFishing.getInstance().getLootManager().getLavaLoots().entrySet()) {
+        for (Map.Entry<String, Loot> en : lavaLoots.entrySet()) {
             if (en.getValue() instanceof DroppedItem) {
                 loots.add(en.getKey());
             }

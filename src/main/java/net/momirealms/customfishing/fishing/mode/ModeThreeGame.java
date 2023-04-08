@@ -21,8 +21,6 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.bar.ModeThreeBar;
 import net.momirealms.customfishing.manager.FishingManager;
 import net.momirealms.customfishing.util.AdventureUtils;
-import net.momirealms.customfishing.util.LocationUtils;
-import org.bukkit.Location;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 
@@ -64,20 +62,20 @@ public class ModeThreeGame extends FishingGame {
         if (fish_position < modeThreeBar.getSuccess_position() - modeThreeBar.getFish_icon_width() - 1) {
             cancel();
             success = true;
-            FishHook fishHook = fishingManager.getHook(player);
+            FishHook fishHook = fishingManager.getHook(player.getUniqueId());
             if (fishHook != null) {
                 fishingManager.proceedReelIn(fishHook.getLocation(), player, this);
-                fishingManager.removeHook(player);
+                fishingManager.removeHook(player.getUniqueId());
             }
             fishingManager.removeFishingPlayer(player);
             return;
         }
         if (fish_position + modeThreeBar.getFish_icon_width() > modeThreeBar.getBar_effective_width() || strain >= modeThreeBar.getUltimate_strain()) {
             cancel();
-            FishHook fishHook = fishingManager.getHook(player);
+            FishHook fishHook = fishingManager.getHook(player.getUniqueId());
             if (fishHook != null) {
                 fishingManager.proceedReelIn(fishHook.getLocation(), player, this);
-                fishingManager.removeHook(player);
+                fishingManager.removeHook(player.getUniqueId());
             }
             fishingManager.removeFishingPlayer(player);
             return;

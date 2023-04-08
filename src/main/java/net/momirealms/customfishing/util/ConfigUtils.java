@@ -85,7 +85,7 @@ public class ConfigUtils {
             List<RequirementInterface> requirements = new ArrayList<>();
             for (String type : section.getKeys(false)) {
                 switch (type) {
-                    case "biome" -> requirements.add(new BiomeImpl(null, section.getStringList(type)));
+                    case "biome" -> requirements.add(new BiomeImpl(null, new HashSet<>(section.getStringList(type))));
                     case "weather" -> requirements.add(new WeatherImpl(null, section.getStringList(type)));
                     case "ypos" -> requirements.add(new YPosImpl(null, section.getStringList(type)));
                     case "season" -> requirements.add(new SeasonImpl(null, section.getStringList(type)));
@@ -95,6 +95,7 @@ public class ConfigUtils {
                     case "skill-level" -> requirements.add(new SkillLevelImpl(null, section.getInt(type)));
                     case "job-level" -> requirements.add(new JobLevelImpl(null, section.getInt(type)));
                     case "date" -> requirements.add(new DateImpl(null, new HashSet<>(section.getStringList(type))));
+                    case "rod" -> requirements.add(new RodImpl(null, new HashSet<>(section.getStringList(type))));
                     case "papi-condition" -> requirements.add(new CustomPapi(null, Objects.requireNonNull(section.getConfigurationSection(type)).getValues(false)));
                 }
             }
@@ -113,7 +114,7 @@ public class ConfigUtils {
                 if (type == null) continue;
                 String[] msg = innerSec.getStringList("message").size() == 0 ? (innerSec.getString("message") == null ? null : new String[]{innerSec.getString("message")}) : innerSec.getStringList("message").toArray(new String[0]);
                 switch (type) {
-                    case "biome" -> requirements.add(new BiomeImpl(msg, innerSec.getStringList("value")));
+                    case "biome" -> requirements.add(new BiomeImpl(msg, new HashSet<>(innerSec.getStringList("value"))));
                     case "weather" -> requirements.add(new WeatherImpl(msg, innerSec.getStringList("value")));
                     case "ypos" -> requirements.add(new YPosImpl(msg, innerSec.getStringList("value")));
                     case "season" -> requirements.add(new SeasonImpl(msg, innerSec.getStringList("value")));
@@ -122,7 +123,8 @@ public class ConfigUtils {
                     case "time" -> requirements.add(new TimeImpl(msg, innerSec.getStringList("value")));
                     case "skill-level" -> requirements.add(new SkillLevelImpl(msg, innerSec.getInt("value")));
                     case "job-level" -> requirements.add(new JobLevelImpl(msg, innerSec.getInt("value")));
-                    case "date" -> requirements.add(new DateImpl(msg, new HashSet<>(section.getStringList(type))));
+                    case "date" -> requirements.add(new DateImpl(msg, new HashSet<>(innerSec.getStringList("value"))));
+                    case "rod" -> requirements.add(new RodImpl(msg, new HashSet<>(innerSec.getStringList("value"))));
                     case "papi-condition" -> requirements.add(new CustomPapi(msg, Objects.requireNonNull(innerSec.getConfigurationSection("value")).getValues(false)));
                 }
             }
