@@ -27,17 +27,19 @@ public class EcoJobsImpl implements JobInterface {
 
     @Override
     public void addXp(Player player, double amount) {
-        Job job = EcoJobsAPI.getInstance().getActiveJob(player);
-        if (job == null) return;
-        if (job.getId().equals("fisherman")) {
-            EcoJobsAPI.getInstance().giveJobExperience(player, job, amount);
+        for (Job job : EcoJobsAPI.getActiveJobs(player)) {
+            if (job.getId().equals("fisherman")) {
+                EcoJobsAPI.giveJobExperience(player, job, amount);
+            }
         }
     }
 
     @Override
     public int getLevel(Player player) {
-        Job job = Jobs.getByID("fisherman");
-        if (job == null) return 0;
-        return EcoJobsAPI.getInstance().getJobLevel(player, job);
+//        Job job = Jobs.getByID("fisherman");
+//        if (job == null) return 0;
+//        return EcoJobsAPI.getJobLevel(player, job);
+        //TODO com.willfp.libreforge.loader.configs.ConfigCategory
+        return 0;
     }
 }
