@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.fishing.requirements;
 
 import net.momirealms.customfishing.fishing.FishingCondition;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -36,7 +35,7 @@ public class TimeImpl extends Requirement implements RequirementInterface {
     public boolean isConditionMet(FishingCondition fishingCondition) {
         long time = fishingCondition.getLocation().getWorld().getTime();
         for (String range : times) {
-            String[] timeMinMax = StringUtils.split(range, "~");
+            String[] timeMinMax = range.split("~");
             if (time > Long.parseLong(timeMinMax[0]) && time < Long.parseLong(timeMinMax[1])) {
                 return true;
             }

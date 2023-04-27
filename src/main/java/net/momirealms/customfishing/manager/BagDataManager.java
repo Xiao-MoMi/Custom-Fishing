@@ -127,17 +127,13 @@ public class BagDataManager extends InventoryFunction {
         Inventory inventory = dataMap.remove(uuid);
         triedTimes.remove(player.getUniqueId());
         if (inventory != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                plugin.getDataManager().getDataStorageInterface().saveBagData(uuid, inventory, true);
-            });
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getDataManager().getDataStorageInterface().saveBagData(uuid, inventory, true));
         }
     }
 
     @Override
     public void onJoin(Player player) {
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-            joinReadData(player, false);
-        }, 15);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, false), 15);
     }
 
     public void joinReadData(Player player, boolean force) {
@@ -145,16 +141,11 @@ public class BagDataManager extends InventoryFunction {
         Inventory inventory = plugin.getDataManager().getDataStorageInterface().loadBagData(player.getUniqueId(), force);
         if (inventory != null) {
             dataMap.put(player.getUniqueId(), inventory);
-        }
-        // If sql exception or data is locked
-        else if (!force) {
-            // can still try to load
+        } else if (!force) {
             if (checkTriedTimes(player.getUniqueId())) {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, false), 20);
-            }
-            // tried 3 times
-            else {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, true), 20);
+                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, false), 50);
+            } else {
+                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, true), 50);
             }
         }
     }

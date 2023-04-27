@@ -28,7 +28,6 @@ package net.momirealms.customfishing.helper;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import net.momirealms.customfishing.CustomFishing;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -77,7 +76,7 @@ public final class LibraryLoader {
     }
 
     public static void load(Dependency d) {
-        Log.info(String.format("Loading dependency %s:%s:%s from %s", d.getGroupId(), d.getArtifactId(), d.getVersion(), d.getRepoUrl()));
+        //Log.info(String.format("Loading dependency %s:%s:%s from %s", d.getGroupId(), d.getArtifactId(), d.getVersion(), d.getRepoUrl()));
         String name = d.getArtifactId() + "-" + d.getVersion();
 
         File saveLocation = new File(getLibFolder(d), name + ".jar");
@@ -113,7 +112,7 @@ public final class LibraryLoader {
         File serverDir = pluginDataFolder.getParentFile().getParentFile();
 
         File helperDir = new File(serverDir, "libraries");
-        String[] split = StringUtils.split(dependency.getGroupId(), ".");
+        String[] split = dependency.getGroupId().split("\\.");
         File jarDir;
         StringJoiner stringJoiner = new StringJoiner(File.separator);
         for (String str : split) {

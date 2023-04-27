@@ -30,7 +30,6 @@ import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.util.AdventureUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.LocationUtils;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -146,13 +145,13 @@ public class TotemManager extends Function {
                             finalModel.setElement("*", i, j, k);
                         }
                         else if (args[i].contains(">")) {
-                            String before = StringUtils.split(args[i],">")[0];
-                            String after = StringUtils.split(args[i],">")[1];
+                            String before = args[i].split(">")[0];
+                            String after = args[i].split(">")[1];
                             finalModel.setElement(after, i, j, k);
                             corePos = getCorePos(cores, corePos, originalModel, k, j, i, before);
                         }
                         else {
-                            String[] elements = StringUtils.split(args[i], "|");
+                            String[] elements = args[i].split("\\|");
                             originalModel.setElement(elements, i, j, k);
                             for (String core : cores) {
                                 for (String element : elements) {
@@ -238,7 +237,7 @@ public class TotemManager extends Function {
     }
 
     private CorePos getCorePos(List<String> cores, CorePos corePos, OriginalModel originalModel, int k, int j, int i, String content) {
-        String[] elements = StringUtils.split(content, "|");
+        String[] elements = content.split("\\|");
         originalModel.setElement(elements, i, j, k);
         for (String core : cores) {
             for (String element : elements) {

@@ -19,7 +19,6 @@ package net.momirealms.customfishing.integration.job;
 
 import com.willfp.ecojobs.api.EcoJobsAPI;
 import com.willfp.ecojobs.jobs.Job;
-import com.willfp.ecojobs.jobs.Jobs;
 import net.momirealms.customfishing.integration.JobInterface;
 import org.bukkit.entity.Player;
 

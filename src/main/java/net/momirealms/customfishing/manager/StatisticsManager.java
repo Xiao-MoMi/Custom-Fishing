@@ -88,13 +88,11 @@ public class StatisticsManager extends DataFunction {
         PlayerStatisticsData statisticsData = plugin.getDataManager().getDataStorageInterface().loadStatistics(player.getUniqueId(), force);
         if (statisticsData != null) {
             statisticsDataMap.put(player.getUniqueId(), statisticsData);
-        }
-        else if (!force) {
+        } else if (!force) {
             if (checkTriedTimes(player.getUniqueId())) {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, false), 20);
-            }
-            else {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, true), 20);
+                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, false), 50);
+            } else {
+                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, true), 50);
             }
         }
     }

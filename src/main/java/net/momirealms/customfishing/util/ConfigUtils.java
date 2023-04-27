@@ -67,6 +67,7 @@ public class ConfigUtils {
      * @param file file path
      * @return yaml data
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static YamlConfiguration readData(File file) {
         if (!file.exists()) {
             try {

@@ -22,7 +22,6 @@ import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.interaction.util.DurabilityItem;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 import net.momirealms.customfishing.integration.ItemInterface;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +34,7 @@ public class MMOItemsItemImpl implements ItemInterface {
     public ItemStack build(String material) {
         if (!material.startsWith("MMOItems:")) return null;
         material = material.substring(9);
-        String[] split = StringUtils.split(material, ":");
+        String[] split = material.split(":");
         MMOItem mmoItem = MMOItems.plugin.getMMOItem(Type.get(split[0]), split[1].toUpperCase());
         return mmoItem == null ? null : mmoItem.newBuilder().build();
     }

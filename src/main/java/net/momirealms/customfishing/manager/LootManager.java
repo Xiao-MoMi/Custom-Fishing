@@ -26,7 +26,6 @@ import net.momirealms.customfishing.object.LeveledEnchantment;
 import net.momirealms.customfishing.util.AdventureUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.ItemStackUtils;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -208,7 +207,7 @@ public class LootManager extends Function {
                 );
                 if (lootSection.contains("group")) loot.setGroup(lootSection.getString("group"));
                 if (lootSection.contains("size")) {
-                    String[] size = StringUtils.split(lootSection.getString("size", "1~10"), "~");
+                    String[] size = lootSection.getString("size", "1~10").split("~");
                     if (size.length != 2) {
                         AdventureUtils.consoleMessage("<red>[CustomFishing] Wrong size found at " + key);
                         continue;

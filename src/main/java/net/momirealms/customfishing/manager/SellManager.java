@@ -49,8 +49,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -84,7 +86,6 @@ public class SellManager extends InventoryFunction {
     public static HashMap<Material, Float> vanillaPrices = new HashMap<>();
     public static boolean sellLimitation;
     public static int upperLimit;
-    private final HashMap<Player, Inventory> inventoryMap;
     private final ConcurrentHashMap<UUID, PlayerSellData> sellDataMap;
 
     public SellManager(CustomFishing plugin) {
@@ -94,7 +95,6 @@ public class SellManager extends InventoryFunction {
         this.inventoryListener = new InventoryListener(this);
         this.joinQuitListener = new JoinQuitListener(this);
         this.sellDataMap = new ConcurrentHashMap<>();
-        this.inventoryMap = new HashMap<>();
     }
 
     @Override
@@ -110,13 +110,13 @@ public class SellManager extends InventoryFunction {
 
     @Override
     public void unload() {
-        for (Player player : this.inventoryMap.keySet()) {
-            player.closeInventory();
-        }
-        this.inventoryMap.clear();
         CustomFishing.getProtocolManager().removePacketListener(windowPacketListener);
         HandlerList.unregisterAll(inventoryListener);
         HandlerList.unregisterAll(joinQuitListener);
+        msgNotification = null;
+        actionbarNotification = null;
+        commands = null;
+        titleNotification = null;
     }
 
     @Override
@@ -131,16 +131,12 @@ public class SellManager extends InventoryFunction {
         UUID uuid = player.getUniqueId();
         PlayerSellData sellData = sellDataMap.remove(uuid);
         if (sellData == null) return;
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            plugin.getDataManager().getDataStorageInterface().saveSellData(uuid, sellData, true);
-        });
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getDataManager().getDataStorageInterface().saveSellData(uuid, sellData, true));
     }
 
     @Override
     public void onJoin(Player player) {
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-            joinReadData(player, false);
-        }, 20);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, false), 20);
     }
 
     public void joinReadData(Player player, boolean force) {
@@ -148,20 +144,15 @@ public class SellManager extends InventoryFunction {
         PlayerSellData sellData = plugin.getDataManager().getDataStorageInterface().loadSellData(player.getUniqueId(), force);
         if (sellData != null) {
             sellDataMap.put(player.getUniqueId(), sellData);
-        }
-        // If sql exception or data is locked
-        else if (!force) {
-            // can still try to load
+        } else if (!force) {
             if (checkTriedTimes(player.getUniqueId())) {
                 Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
                     joinReadData(player, false);
-                }, 20);
-            }
-            // tried 3 times
-            else {
+                }, 50);
+            } else {
                 Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
                     joinReadData(player, true);
-                }, 20);
+                }, 50);
             }
         }
     }
@@ -173,11 +164,46 @@ public class SellManager extends InventoryFunction {
         upperLimit = config.getInt("sell-limitation.upper-limit", 10000);
         title = config.getString("container-title");
         guiSize = config.getInt("rows") * 9;
+        setSounds(config);
+        setActions(config);
+        setIcons(config);
+        ConfigurationSection configurationSection = config.getConfigurationSection("vanilla-item-price");
+        if (configurationSection != null) {
+            for (String vanilla : configurationSection.getKeys(false)) {
+                vanillaPrices.put(Material.valueOf(vanilla.toUpperCase()), (float) configurationSection.getDouble(vanilla));
+            }
+        }
+    }
+
+    @SuppressWarnings("all")
+    private void setSounds(ConfigurationSection config) {
         openKey = config.contains("sounds.open") ? Key.key(config.getString("sounds.open")) : null;
         closeKey = config.contains("sounds.close") ? Key.key(config.getString("sounds.close")) : null;
         successKey = config.contains("sounds.success") ? Key.key(config.getString("sounds.success")) : null;
         denyKey = config.contains("sounds.deny") ? Key.key(config.getString("sounds.deny")) : null;
         soundSource = Sound.Source.valueOf(config.getString("sounds.type","player").toUpperCase());
+    }
+
+    private void setActions(ConfigurationSection config) {
+        if (config.getBoolean("actions.message.enable", false)) {
+            msgNotification = config.getString("actions.message.text");
+        }
+        if (config.getBoolean("actions.actionbar.enable", false)) {
+            actionbarNotification = config.getString("actions.actionbar.text");
+        }
+        if (config.getBoolean("actions.title.enable", false)) {
+            titleNotification = config.getString("actions.title.title");
+            subtitleNotification = config.getString("actions.title.subtitle");
+            titleIn = config.getInt("actions.title.in");
+            titleStay = config.getInt("actions.title.stay");
+            titleOut = config.getInt("actions.title.out");
+        }
+        if (config.getBoolean("actions.commands.enable")) {
+            commands = config.getStringList("actions.commands.value").toArray(new String[0]);
+        }
+    }
+
+    private void setIcons(ConfigurationSection config) {
         if (config.contains("decorative-icons")){
             ConfigurationSection dec_section = config.getConfigurationSection("decorative-icons");
             if (dec_section != null) {
@@ -194,49 +220,21 @@ public class SellManager extends InventoryFunction {
                 }
             }
         }
-
         ConfigurationSection sellIconSection = config.getConfigurationSection("functional-icons.sell");
         if (sellIconSection != null) {
             sellIcon = new Item(sellIconSection, "sellIcon");
-        }
-        else {
+        } else {
             AdventureUtils.consoleMessage("<red>[CustomFishing] Sell icon is missing");
         }
         ConfigurationSection denyIconSection = config.getConfigurationSection("functional-icons.deny");
         if (denyIconSection != null) {
             denyIcon = new Item(denyIconSection, "denyIcon");
-        }
-        else {
+        } else {
             AdventureUtils.consoleMessage("<red>[CustomFishing] Deny icon is missing");
         }
-
         for (int slot : config.getIntegerList("functional-icons.slots")) {
             guiItems.put(slot - 1, ItemStackUtils.getFromItem(sellIcon));
             functionIconSlots.add(slot - 1);
-        }
-
-        if (config.getBoolean("actions.message.enable", false)) {
-            msgNotification = config.getString("actions.message.text");
-        } else msgNotification = null;
-        if (config.getBoolean("actions.actionbar.enable", false)) {
-            actionbarNotification = config.getString("actions.actionbar.text");
-        } else actionbarNotification = null;
-        if (config.getBoolean("actions.title.enable", false)) {
-            titleNotification = config.getString("actions.title.title");
-            subtitleNotification = config.getString("actions.title.subtitle");
-            titleIn = config.getInt("actions.title.in");
-            titleStay = config.getInt("actions.title.stay");
-            titleOut = config.getInt("actions.title.out");
-        } else titleNotification = null;
-        if (config.getBoolean("actions.commands.enable")) {
-            commands = config.getStringList("actions.commands.value").toArray(new String[0]);
-        } else commands = null;
-
-        ConfigurationSection configurationSection = config.getConfigurationSection("vanilla-item-price");
-        if (configurationSection != null) {
-            for (String vanilla : configurationSection.getKeys(false)) {
-                vanillaPrices.put(Material.valueOf(vanilla.toUpperCase()), (float) configurationSection.getDouble(vanilla));
-            }
         }
     }
 
@@ -246,25 +244,29 @@ public class SellManager extends InventoryFunction {
             AdventureUtils.consoleMessage("<red>Sell cache is not loaded for player " + player.getName());
             return;
         }
-        Inventory inventory = plugin.getVersionHelper().isSpigot() ? Bukkit.createInventory(player, guiSize, AdventureUtils.replaceMiniMessage(SellManager.title.replace("{player}", player.getName()))) : Bukkit.createInventory(player, guiSize, "{CustomFishing_Sell}");
-        for (Map.Entry<Integer, ItemStack> entry : guiItems.entrySet()) {
-            inventory.setItem(entry.getKey(), entry.getValue());
-        }
-        for (int slot : functionIconSlots) {
-            inventory.setItem(slot, ItemStackUtils.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory)))));
-        }
-        inventoryMap.put(player, inventory);
-        player.openInventory(inventory);
-        if (openKey != null) AdventureUtils.playerSound(player, soundSource, openKey, 1, 1);
+        SellGUI sellGUI = new SellGUI(player);
+        sellGUI.open();
     }
 
     @Override
     public void onClickInventory(InventoryClickEvent event) {
         final Player player = (Player) event.getView().getPlayer();
-        Inventory inventory = inventoryMap.get(player);
-        if (inventory == null) return;
+        Inventory inventory = event.getInventory();
+        if (!(inventory.getHolder() instanceof SellGUI)) return;
+        Inventory clickedInventory = event.getClickedInventory();
+        if (clickedInventory == null) return;
         boolean update = true;
-        if (inventory == event.getClickedInventory()) {
+        if (clickedInventory == player.getInventory()) {
+            if (event.isShiftClick()) {
+                event.setCancelled(true);
+                int empty_slot = getEmptySlot(inventory);
+                if (empty_slot == -1) return;
+                ItemStack clicked = event.getCurrentItem();
+                if (clicked == null || clicked.getType() == Material.AIR) return;
+                inventory.setItem(empty_slot, clicked.clone());
+                clicked.setAmount(0);
+            }
+        } else {
             int clickedSlot = event.getSlot();
             if (guiItems.containsKey(clickedSlot)) {
                 event.setCancelled(true);
@@ -272,9 +274,7 @@ public class SellManager extends InventoryFunction {
             if (functionIconSlots.contains(clickedSlot)) {
                 List<ItemStack> playerItems = getPlayerItems(inventory);
                 float totalPrice = getTotalPrice(playerItems);
-
                 if (totalPrice > 0) {
-
                     PlayerSellData sellData = sellDataMap.get(player.getUniqueId());
 
                     if (sellData == null) {
@@ -326,6 +326,7 @@ public class SellManager extends InventoryFunction {
                 }
             }
         }
+
         if (update) {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 ItemStack icon = ItemStackUtils.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory))));
@@ -338,9 +339,14 @@ public class SellManager extends InventoryFunction {
 
     @Override
     public void onDragInventory(InventoryDragEvent event) {
-        final Player player = (Player) event.getView().getPlayer();
-        Inventory inventory = inventoryMap.get(player);
-        if (inventory == null) return;
+        Inventory inventory = event.getInventory();
+        if (!(inventory.getHolder() instanceof SellGUI)) return;
+        for (int i : event.getRawSlots()) {
+            if (guiItems.containsKey(i)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             ItemStack icon = ItemStackUtils.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory))));
             for (int slot : functionIconSlots) {
@@ -352,12 +358,10 @@ public class SellManager extends InventoryFunction {
     @Override
     public void onCloseInventory(InventoryCloseEvent event) {
         final Player player = (Player) event.getPlayer();
-        Inventory inventory = inventoryMap.remove(player);
-        if (inventory == null) return;
-        if (event.getInventory() == inventory) {
-            returnItems(getPlayerItems(event.getInventory()), player);
-            if (closeKey != null) AdventureUtils.playerSound(player, soundSource, closeKey, 1, 1);
-        }
+        Inventory inventory = event.getInventory();
+        if (!(inventory.getHolder() instanceof SellGUI)) return;
+        returnItems(getPlayerItems(inventory), player);
+        if (closeKey != null) AdventureUtils.playerSound(player, soundSource, closeKey, 1, 1);
     }
 
     private List<ItemStack> getPlayerItems(Inventory inventory) {
@@ -367,6 +371,17 @@ public class SellManager extends InventoryFunction {
             items.add(inventory.getItem(i));
         }
         return items;
+    }
+
+    private int getEmptySlot(Inventory inventory) {
+        for (int i = 0; i < guiSize; i++) {
+            if (guiItems.containsKey(i)) continue;
+            ItemStack item = inventory.getItem(i);
+            if (item == null || item.getType() == Material.AIR) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private void returnItems(List<ItemStack> itemStacks, Player player){
@@ -458,6 +473,33 @@ public class SellManager extends InventoryFunction {
                             )
                     )
             );
+        }
+    }
+
+    public class SellGUI implements InventoryHolder {
+
+        private final Inventory inventory;
+        private final Player player;
+
+        @Override
+        public @NotNull Inventory getInventory() {
+            return inventory;
+        }
+
+        public SellGUI(Player player) {
+            this.player = player;
+            this.inventory = plugin.getVersionHelper().isSpigot() ? Bukkit.createInventory(this, guiSize, AdventureUtils.replaceMiniMessage(SellManager.title.replace("{player}", player.getName()))) : Bukkit.createInventory(this, guiSize, "{CustomFishing_Sell}");
+        }
+
+        public void open() {
+            for (Map.Entry<Integer, ItemStack> entry : guiItems.entrySet()) {
+                inventory.setItem(entry.getKey(), entry.getValue());
+            }
+            for (int slot : functionIconSlots) {
+                inventory.setItem(slot, ItemStackUtils.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory)))));
+            }
+            if (openKey != null) AdventureUtils.playerSound(player, soundSource, openKey, 1, 1);
+            player.openInventory(inventory);
         }
     }
 }

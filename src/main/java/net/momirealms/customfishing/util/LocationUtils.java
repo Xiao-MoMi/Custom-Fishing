@@ -19,7 +19,6 @@ package net.momirealms.customfishing.util;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.object.SimpleLocation;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -35,29 +34,11 @@ public class LocationUtils {
         return new SimpleLocation(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
-    public static Location getItemFrameBlockLocation(Location frameLoc) {
-        return new Location(frameLoc.getWorld(), frameLoc.getBlockX(), frameLoc.getBlockY(), frameLoc.getBlockZ());
-    }
-
     @Nullable
     public static Location getLocation(SimpleLocation location) {
         World world = Bukkit.getWorld(location.worldName());
         if (world == null) return null;
         return new Location(world, location.x(), location.y(), location.z());
-    }
-
-    public static SimpleLocation getSimpleLocation(String location, String world) {
-        String[] loc = StringUtils.split(location, ",");
-        return new SimpleLocation(world, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
-    }
-
-    public static Location getLocation(String location, World world) {
-        String[] loc = StringUtils.split(location, ",");
-        return new Location(world, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
-    }
-
-    public static String getStringLocation(Location location) {
-        return location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
     }
 
     public static Collection<Player> getNearbyPlayers(Location location, double radius) {

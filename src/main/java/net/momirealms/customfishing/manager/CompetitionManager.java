@@ -119,15 +119,15 @@ public class CompetitionManager extends Function {
 
                 if (competitionSection.contains("start-weekday")) {
                     List<Integer> days = new ArrayList<>();
-                    for (String weekDay : competitionSection.getStringList("start-weekday")) {
+                    for (String weekDay : competitionSection.getStringList("start-weekday").stream().map(String::toLowerCase).toList()) {
                         switch (weekDay) {
-                            case "Sunday" -> days.add(1);
-                            case "Monday" -> days.add(2);
-                            case "Tuesday" -> days.add(3);
-                            case "Wednesday" -> days.add(4);
-                            case "Thursday" -> days.add(5);
-                            case "Friday" -> days.add(6);
-                            case "Saturday" -> days.add(7);
+                            case "sunday" -> days.add(1);
+                            case "monday" -> days.add(2);
+                            case "tuesday" -> days.add(3);
+                            case "wednesday" -> days.add(4);
+                            case "thursday" -> days.add(5);
+                            case "friday" -> days.add(6);
+                            case "saturday" -> days.add(7);
                             default -> AdventureUtils.consoleMessage("[CustomFishing] Unknown weekday: " + weekDay);
                         }
                     }

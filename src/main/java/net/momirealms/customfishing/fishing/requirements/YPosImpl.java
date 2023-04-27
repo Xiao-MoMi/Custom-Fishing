@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.fishing.requirements;
 
 import net.momirealms.customfishing.fishing.FishingCondition;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -36,7 +35,7 @@ public class YPosImpl extends Requirement implements RequirementInterface {
     public boolean isConditionMet(FishingCondition fishingCondition) {
         int y = (int) fishingCondition.getLocation().getY();
         for (String range : yPos) {
-            String[] yMinMax = StringUtils.split(range, "~");
+            String[] yMinMax = range.split("~");
             if (y > Integer.parseInt(yMinMax[0]) && y < Integer.parseInt(yMinMax[1])) {
                 return true;
             }
