@@ -67,7 +67,7 @@ public class BossBarManager extends Function {
     public void onJoin(Player player) {
         Bukkit.getScheduler().runTaskLater(CustomFishing.getInstance(), () -> {
             if (Competition.currentCompetition != null){
-                if (Competition.currentCompetition.isJoined(player) && cache.get(player) == null){
+                if (Competition.currentCompetition.isJoined(player) && cache.get(player) == null) {
                     BossBarSender sender = new BossBarSender(player, Competition.currentCompetition.getCompetitionConfig().getBossBarConfig());
                     if (!sender.getStatus()) {
                         sender.show();

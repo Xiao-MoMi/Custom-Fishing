@@ -75,7 +75,7 @@ public class BossBarSender {
 
     public void show() {
         this.isShown = true;
-        CustomFishing.getProtocolManager().sendServerPacket(player, getPacket());
+        CustomFishing.getProtocolManager().sendServerPacket(player, getCreatePacket());
         this.bukkitTask = new BukkitRunnable() {
             @Override
             public void run() {
@@ -123,7 +123,6 @@ public class BossBarSender {
         return packet;
     }
 
-
     private PacketContainer getProgressPacket() {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.BOSS);
         packet.getModifier().write(0, uuid);
@@ -139,7 +138,7 @@ public class BossBarSender {
         return packet;
     }
 
-    private PacketContainer getPacket() {
+    private PacketContainer getCreatePacket() {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.BOSS);
         packet.getModifier().write(0, uuid);
         InternalStructure internalStructure = packet.getStructures().read(1);
@@ -154,12 +153,12 @@ public class BossBarSender {
     }
 
     public void hide() {
-        remove();
+        sendRemovePacket();
         if (bukkitTask != null) bukkitTask.cancel();
         this.isShown = false;
     }
 
-    private void remove() {
+    private void sendRemovePacket() {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.BOSS);
         packet.getModifier().write(0, uuid);
         try {

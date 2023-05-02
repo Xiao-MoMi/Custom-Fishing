@@ -125,11 +125,11 @@ public final class CustomFishing extends JavaPlugin {
         TimeZone timeZone = TimeZone.getDefault();
         String libRepo = timeZone.getID().startsWith("Asia") ? "https://maven.aliyun.com/repository/public/" : "https://repo.maven.apache.org/maven2/";
         LibraryLoader.load("org.apache.commons","commons-pool2","2.11.1", libRepo);
-        LibraryLoader.load("redis.clients","jedis","4.3.1", libRepo);
+        LibraryLoader.load("redis.clients","jedis","4.3.2", libRepo);
         LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3", libRepo);
         LibraryLoader.load("com.zaxxer","HikariCP","5.0.1", libRepo);
         LibraryLoader.load("net.objecthunter","exp4j","0.4.8", libRepo);
-        LibraryLoader.load("org.mariadb.jdbc","mariadb-java-client","3.1.2", libRepo);
+        LibraryLoader.load("org.mariadb.jdbc","mariadb-java-client","3.1.4", libRepo);
     }
 
     private void registerQuests() {

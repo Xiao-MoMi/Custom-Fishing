@@ -81,7 +81,7 @@ public class CompetitionSchedule extends Function {
                     }
                 }
             }
-        }.runTaskTimer(CustomFishing.getInstance(), 60 - LocalTime.now().getSecond(), 100);
+        }.runTaskTimer(CustomFishing.getInstance(), 20, 20);
     }
 
     public void stopCheck() {

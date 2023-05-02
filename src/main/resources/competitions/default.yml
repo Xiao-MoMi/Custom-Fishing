@@ -19,6 +19,7 @@ example:
   # Optional
   # Fishing competition can also be started with a command
   start-time:
+    - '8:30'
     - '12:30'
     - '18:30'
 

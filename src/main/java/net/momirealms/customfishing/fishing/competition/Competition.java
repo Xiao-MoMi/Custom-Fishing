@@ -38,7 +38,6 @@ import java.util.*;
 public class Competition {
 
     public static Competition currentCompetition;
-
     private final CompetitionConfig competitionConfig;
     private CompetitionGoal goal;
     private BukkitTask timerTask;
@@ -142,9 +141,7 @@ public class Competition {
 
         currentCompetition = null;
 
-        Bukkit.getScheduler().runTaskLaterAsynchronously(CustomFishing.getInstance(), ()-> {
-            ranking.clear();
-        }, 600);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(CustomFishing.getInstance(), ()-> ranking.clear(), 60);
     }
 
     public void givePrize(){

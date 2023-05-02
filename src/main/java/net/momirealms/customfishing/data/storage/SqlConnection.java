@@ -55,7 +55,7 @@ public class SqlConnection {
         }
         tablePrefix = config.getString(storageMode + ".table-prefix");
         hikariConfig.setPoolName("[CustomFishing]");
-        hikariConfig.setJdbcUrl(String.format("jdbc:%s://%s/%s", sql, config.getString(storageMode + ".host") + ":" + config.getString(storageMode + ".port"), config.getString(storageMode + ".database")));
+        hikariConfig.setJdbcUrl("jdbc:" + sql + "://" + config.getString(storageMode + ".host") + ":" + config.getString(storageMode + ".port") + "/" + config.getString(storageMode + ".database"));
         hikariConfig.setUsername(config.getString(storageMode + ".user"));
         hikariConfig.setPassword(config.getString(storageMode + ".password"));
         hikariConfig.setMaximumPoolSize(config.getInt(storageMode + ".Pool-Settings.maximum-pool-size"));

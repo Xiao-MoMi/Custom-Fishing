@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'net.momirealms'
-version = '1.3.0.13'
+version = '1.3.0.13.1'
 
 repositories {
     mavenCentral()
@@ -27,14 +27,14 @@ dependencies {
     compileOnly('io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT')
     compileOnly('com.zaxxer:HikariCP:5.0.1')
     compileOnly('com.github.Archy-X:AureliumSkills:Beta1.3.6')
-    compileOnly('redis.clients:jedis:4.3.1')
+    compileOnly('redis.clients:jedis:4.3.2')
     compileOnly('me.clip:placeholderapi:2.11.3')
     compileOnly('io.lumine:Mythic-Dist:5.2.1')
     compileOnly('dev.dejvokep:boosted-yaml:1.3')
     compileOnly('com.github.Zrips:Jobs:4.17.2')
     compileOnly('com.github.LoneDev6:api-itemsadder:3.4.1-r4')
     compileOnly('net.objecthunter:exp4j:0.4.8')
-    compileOnly('org.mariadb.jdbc:mariadb-java-client:3.1.2')
+    compileOnly('org.mariadb.jdbc:mariadb-java-client:3.1.4')
     compileOnly('com.google.code.gson:gson:2.10.1')
     compileOnly('com.willfp:EcoEnchants:9.17.5')
     compileOnly('com.willfp:EcoSkills:2.2.6')
