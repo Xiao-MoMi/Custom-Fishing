@@ -130,6 +130,7 @@ public final class CustomFishing extends JavaPlugin {
         LibraryLoader.load("com.zaxxer","HikariCP","5.0.1", libRepo);
         LibraryLoader.load("net.objecthunter","exp4j","0.4.8", libRepo);
         LibraryLoader.load("org.mariadb.jdbc","mariadb-java-client","3.1.4", libRepo);
+        LibraryLoader.load("mysql","mysql-connector-java","8.0.30", libRepo);
     }
 
     private void registerQuests() {
