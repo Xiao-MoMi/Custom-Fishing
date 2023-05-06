@@ -35,3 +35,7 @@ messages:
   reset-statistics: '{Player} adlı oyuncunun istatistikleri başarıyla sıfırlandı.'
   negative-statistics: 'Miktar sıfırdan düşük olmayan bir şey olmalı.'
   statistics-not-exist: 'Böyle bir istatistik(ler) bulunamadı.'
+  total_score: 'Total score'
+  catch_amount: 'Catch amount'
+  max_size: 'Max size'
+  total_size: 'Total size'

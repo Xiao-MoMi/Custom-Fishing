@@ -34,3 +34,7 @@ messages:
   reset-statistics: '成功重置玩家 {Player} 的统计数据'
   negative-statistics: '不能设置此数据为负数'
   statistics-not-exist: '此统计数据不存在'
+  total_score: '总分数'
+  catch_amount: '捕鱼总数'
+  max_size: '最大尺寸'
+  total_size: '总尺寸'

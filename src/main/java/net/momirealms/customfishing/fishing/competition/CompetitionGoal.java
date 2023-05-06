@@ -17,12 +17,23 @@
 
 package net.momirealms.customfishing.fishing.competition;
 
+import net.momirealms.customfishing.manager.MessageManager;
+
 public enum CompetitionGoal {
 
-    CATCH_AMOUNT,
-    TOTAL_SCORE,
-    MAX_SIZE,
-    TOTAL_SIZE,
-    RANDOM
+    CATCH_AMOUNT(MessageManager.CATCH_AMOUNT),
+    TOTAL_SCORE(MessageManager.TOTAL_SCORE),
+    MAX_SIZE(MessageManager.MAX_SIZE),
+    TOTAL_SIZE(MessageManager.TOTAL_SIZE),
+    RANDOM("Random");
+
+    private final String display;
+    CompetitionGoal(String display) {
+        this.display = display;
+    }
+
+    public String getDisplay() {
+        return display;
+    }
 
 }

@@ -69,6 +69,9 @@ public class CompetitionPapi extends PlaceholderExpansion {
             case "second" -> {
                 return String.format("%02d", Competition.currentCompetition.getRemainingTime() % 60);
             }
+            case "goal" -> {
+                return Competition.currentCompetition.getGoal().getDisplay();
+            }
             case "1st_score" -> {
                 return ranking.getScoreAt(1) <= 0 ? MessageManager.noScore : String.format("%.1f", ranking.getScoreAt(1));
             }

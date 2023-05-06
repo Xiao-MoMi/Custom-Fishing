@@ -60,6 +60,10 @@ public class MessageManager {
     public static String resetStatistics;
     public static String negativeStatistics;
     public static String statisticsNotExists;
+    public static String TOTAL_SCORE;
+    public static String CATCH_AMOUNT;
+    public static String MAX_SIZE;
+    public static String TOTAL_SIZE;
 
     public static void load() {
         YamlConfiguration config = ConfigUtils.getConfig("messages" + File.separator + "messages_" + ConfigManager.lang +".yml");
@@ -96,6 +100,10 @@ public class MessageManager {
         resetStatistics = getOrSet(config, "reset-statistics", "Successfully reset {Player}''s statistics.");
         negativeStatistics = getOrSet(config, "negative-statistics", "Amount should be a value no lower than zero.");
         statisticsNotExists = getOrSet(config, "statistics-not-exist", "The statistics does not exist.");
+        TOTAL_SCORE = getOrSet(config, "total_score", "Total score");
+        CATCH_AMOUNT = getOrSet(config, "catch_amount", "Catch amount");
+        MAX_SIZE = getOrSet(config, "max_size", "Max size");
+        TOTAL_SIZE = getOrSet(config, "total_size", "Total size");
         try {
             config.save(new File(CustomFishing.getInstance().getDataFolder(), "messages" + File.separator + "messages_" + ConfigManager.lang +".yml"));
         } catch (IOException ignore) {

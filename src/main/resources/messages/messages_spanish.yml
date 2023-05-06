@@ -34,3 +34,7 @@ messages:
   reset-statistics: 'Reseteado con exito {Player} estadisticas'
   negative-statistics: 'El tiempo no puede ser inferior a 0'
   statistics-not-exist: 'Esta estadistica no existe'
+  total_score: 'Total score'
+  catch_amount: 'Catch amount'
+  max_size: 'Max size'
+  total_size: 'Total size'

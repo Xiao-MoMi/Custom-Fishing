@@ -34,3 +34,7 @@ messages:
   reset-statistics: 'Successfully reset {Player}''s statistics.'
   negative-statistics: 'Amount should be a value no lower than zero.'
   statistics-not-exist: 'The statistics does not exist.'
+  total_score: 'Total score'
+  catch_amount: 'Catch amount'
+  max_size: 'Max size'
+  total_size: 'Total size'

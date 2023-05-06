@@ -124,6 +124,9 @@ public class PlaceholderManager extends Function {
             case "{time}" -> {
                 return String.valueOf(Competition.currentCompetition.getRemainingTime());
             }
+            case "{goal}" -> {
+                return Competition.currentCompetition.getGoal().getDisplay();
+            }
             case "{minute}" -> {
                 return String.format("%02d", Competition.currentCompetition.getRemainingTime() / 60);
             }
