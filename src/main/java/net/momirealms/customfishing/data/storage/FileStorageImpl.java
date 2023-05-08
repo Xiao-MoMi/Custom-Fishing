@@ -20,6 +20,7 @@ package net.momirealms.customfishing.data.storage;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.data.PlayerSellData;
 import net.momirealms.customfishing.data.PlayerStatisticsData;
+import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.InventoryUtils;
 import org.bukkit.Bukkit;
@@ -59,7 +60,7 @@ public class FileStorageImpl implements DataStorageInterface {
         int size = config.getInt("size", 9);
         ItemStack[] itemStacks = InventoryUtils.getInventoryItems(contents);
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        Inventory inventory = Bukkit.createInventory(null, size, "{CustomFishing_Bag_" + offlinePlayer.getName() + "}");
+        Inventory inventory = InventoryUtils.createInventory(null, size, plugin.getIntegrationManager().getPlaceholderManager().parse(offlinePlayer, ConfigManager.fishingBagTitle));
         if (itemStacks != null) inventory.setContents(itemStacks);
         return inventory;
     }

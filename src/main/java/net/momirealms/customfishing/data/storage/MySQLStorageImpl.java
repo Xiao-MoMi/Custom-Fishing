@@ -32,7 +32,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 public class MySQLStorageImpl implements DataStorageInterface {
 
@@ -80,14 +83,12 @@ public class MySQLStorageImpl implements DataStorageInterface {
                 int size = rs.getInt(3);
                 String contents = rs.getString(4);
                 ItemStack[] itemStacks = InventoryUtils.getInventoryItems(contents);
-                if (plugin.getVersionHelper().isSpigot()) inventory = Bukkit.createInventory(null, size, AdventureUtils.replaceMiniMessage(ConfigManager.fishingBagTitle.replace("{player}", Optional.ofNullable(offlinePlayer.getName()).orElse(""))));
-                else inventory = Bukkit.createInventory(null, size, "{CustomFishing_Bag_" + offlinePlayer.getName() + "}");
+                inventory = InventoryUtils.createInventory(null, size, plugin.getIntegrationManager().getPlaceholderManager().parse(offlinePlayer, ConfigManager.fishingBagTitle));
                 if (itemStacks != null) inventory.setContents(itemStacks);
                 lockData(uuid, "fishingbag");
             }
             else {
-                if (plugin.getVersionHelper().isSpigot()) inventory = Bukkit.createInventory(null, 9, AdventureUtils.replaceMiniMessage(ConfigManager.fishingBagTitle.replace("{player}", Optional.ofNullable(offlinePlayer.getName()).orElse(""))));
-                else inventory = Bukkit.createInventory(null, 9, "{CustomFishing_Bag_" + offlinePlayer.getName() + "}");
+                inventory = InventoryUtils.createInventory(null, 9, plugin.getIntegrationManager().getPlaceholderManager().parse(offlinePlayer, ConfigManager.fishingBagTitle));
                 insertBagData(uuid, InventoryUtils.toBase64(inventory.getContents()));
             }
         } catch (SQLException e) {

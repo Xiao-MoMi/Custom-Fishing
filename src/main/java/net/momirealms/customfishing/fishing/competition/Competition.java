@@ -28,6 +28,7 @@ import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -211,7 +212,7 @@ public class Competition {
         return competitionConfig;
     }
 
-    public String getPlayerRank(Player player) {
+    public String getPlayerRank(OfflinePlayer player) {
         return Optional.ofNullable(ranking.getPlayerRank(player.getName())).orElse(MessageManager.noRank);
     }
 
@@ -219,7 +220,7 @@ public class Competition {
         return remainingTime;
     }
 
-    public double getScore(Player player) {
+    public double getScore(OfflinePlayer player) {
         return Optional.ofNullable(ranking.getCompetitionPlayer(player.getName())).orElse(CompetitionPlayer.emptyPlayer).getScore();
     }
 

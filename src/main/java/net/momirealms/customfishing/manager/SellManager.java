@@ -17,15 +17,10 @@
 
 package net.momirealms.customfishing.manager;
 
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.event.SellFishEvent;
 import net.momirealms.customfishing.data.PlayerSellData;
@@ -36,6 +31,7 @@ import net.momirealms.customfishing.listener.WindowPacketListener;
 import net.momirealms.customfishing.object.InventoryFunction;
 import net.momirealms.customfishing.util.AdventureUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
+import net.momirealms.customfishing.util.InventoryUtils;
 import net.momirealms.customfishing.util.ItemStackUtils;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
@@ -459,23 +455,6 @@ public class SellManager extends InventoryFunction {
         return playerSellData.getMoney();
     }
 
-    @Override
-    public void onWindowTitlePacketSend(PacketContainer packet, Player player) {
-        StructureModifier<WrappedChatComponent> wrappedChatComponentStructureModifier = packet.getChatComponents();
-        WrappedChatComponent component = wrappedChatComponentStructureModifier.getValues().get(0);
-        if (component.getJson().equals("{\"text\":\"{CustomFishing_Sell}\"}")) {
-            wrappedChatComponentStructureModifier.write(0,
-                    WrappedChatComponent.fromJson(
-                            GsonComponentSerializer.gson().serialize(
-                                    MiniMessage.miniMessage().deserialize(
-                                            AdventureUtils.replaceLegacy(plugin.getIntegrationManager().getPlaceholderManager().parse(player, SellManager.title))
-                                    )
-                            )
-                    )
-            );
-        }
-    }
-
     public class SellGUI implements InventoryHolder {
 
         private final Inventory inventory;
@@ -488,7 +467,7 @@ public class SellManager extends InventoryFunction {
 
         public SellGUI(Player player) {
             this.player = player;
-            this.inventory = plugin.getVersionHelper().isSpigot() ? Bukkit.createInventory(this, guiSize, AdventureUtils.replaceMiniMessage(SellManager.title.replace("{player}", player.getName()))) : Bukkit.createInventory(this, guiSize, "{CustomFishing_Sell}");
+            this.inventory = InventoryUtils.createInventory(this, guiSize, plugin.getIntegrationManager().getPlaceholderManager().parse(player, SellManager.title));
         }
 
         public void open() {

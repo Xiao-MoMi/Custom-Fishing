@@ -17,6 +17,12 @@
 
 package net.momirealms.customfishing.util;
 
+import net.kyori.adventure.text.Component;
+import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.object.Reflection;
+import org.bukkit.Bukkit;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
@@ -27,6 +33,8 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class InventoryUtils {
 
@@ -114,5 +122,30 @@ public class InventoryUtils {
         } catch (IOException ignored) {
         }
         return stacks;
+    }
+
+    @NotNull
+    public static Inventory createInventory(InventoryHolder inventoryHolder, int size, Component component) {
+        try {
+            Method createInvMethod = Reflection.bukkitClass.getMethod("createInventory", InventoryHolder.class, int.class, Reflection.componentClass);
+            return (Inventory) createInvMethod.invoke(null, inventoryHolder, size, AdventureUtils.getPaperComponent(component));
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException exception) {
+            exception.printStackTrace();
+            throw new RuntimeException("Failed to create inventory");
+        }
+    }
+
+    public static Inventory createInventory(InventoryHolder inventoryHolder, int size, String title) {
+        if (CustomFishing.getInstance().getVersionHelper().isSpigot()) {
+            return Bukkit.createInventory(inventoryHolder, size, AdventureUtils.replaceMiniMessage(title));
+        } else {
+            try {
+                Method createInvMethod = Reflection.bukkitClass.getMethod("createInventory", InventoryHolder.class, int.class, Reflection.componentClass);
+                return (Inventory) createInvMethod.invoke(null, inventoryHolder, size, AdventureUtils.getPaperComponent(AdventureUtils.getComponentFromMiniMessage(title)));
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException exception) {
+                exception.printStackTrace();
+                throw new RuntimeException("Failed to create inventory");
+            }
+        }
     }
 }

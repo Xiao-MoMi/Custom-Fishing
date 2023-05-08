@@ -21,16 +21,23 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.object.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -248,5 +255,62 @@ public class AdventureUtils {
             result = result.replace(mini, replacer.toString());
         }
         return result;
+    }
+
+    public static Object getPaperComponent(Component component) {
+        try {
+            Object newComponent;
+            if (component instanceof TextComponent textComponent) {
+                Method textComponentMethod = Reflection.componentClass.getMethod("text", String.class);
+                newComponent = textComponentMethod.invoke(null, textComponent.content());
+                TextColor textColor = textComponent.color();
+                if (textColor != null) {
+                    String hex = textColor.asHexString();
+                    Method setColorMethod = Reflection.textComponentClass.getMethod("color", Reflection.textColorClass);
+                    Method getColorFromHex = Reflection.textColorClass.getMethod("fromHexString", String.class);
+                    Object hexColor = getColorFromHex.invoke(null, hex);
+                    newComponent = setColorMethod.invoke(newComponent, hexColor);
+                }
+                Key fontKey = textComponent.font();
+                if (fontKey != null) {
+                    String namespacedKey = fontKey.asString();
+                    Method setKeyMethod = Reflection.textComponentClass.getMethod("font", Reflection.keyClass);
+                    Method keyMethod = Reflection.keyClass.getMethod("key", String.class);
+                    Object key = keyMethod.invoke(null, namespacedKey);
+                    newComponent = setKeyMethod.invoke(newComponent, key);
+                }
+                for (Map.Entry<TextDecoration, TextDecoration.State> entry : textComponent.decorations().entrySet()) {
+                    String dec = entry.getKey().name();
+                    Method getTextDecoration = Reflection.textDecorationClass.getDeclaredMethod("valueOf", String.class);
+                    Object textDecoration = getTextDecoration.invoke(null, dec);
+                    String stat = entry.getValue().name();
+                    Method getState = Reflection.textDecorationStateClass.getDeclaredMethod("valueOf", String.class);
+                    Object state = getState.invoke(null, stat);
+                    Method applyDecorationMethod = Reflection.textComponentClass.getMethod("decoration", Reflection.textDecorationClass, Reflection.textDecorationStateClass);
+                    newComponent = applyDecorationMethod.invoke(newComponent, textDecoration, state);
+                }
+                newComponent = setChildrenComponents(textComponent, newComponent);
+            } else {
+                Method textComponentMethod = Reflection.componentClass.getMethod("text", String.class);
+                newComponent = textComponentMethod.invoke(null, "");
+                newComponent = setChildrenComponents(component, newComponent);
+            }
+            return newComponent;
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException exception) {
+            exception.printStackTrace();
+            return null;
+        }
+    }
+
+    private static Object setChildrenComponents(Component component, Object newComponent) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        List<Object> children = new ArrayList<>();
+        for (Component child : component.children()) {
+            children.add(getPaperComponent(child));
+        }
+        if (children.size() != 0) {
+            Method childrenMethod = Reflection.componentClass.getMethod("children", List.class);
+            newComponent = childrenMethod.invoke(newComponent, children);
+        }
+        return newComponent;
     }
 }

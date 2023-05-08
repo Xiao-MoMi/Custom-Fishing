@@ -22,7 +22,7 @@ import net.momirealms.customfishing.fishing.competition.Competition;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.object.Function;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,16 +61,15 @@ public class PlaceholderManager extends Function {
         if (this.statisticsPapi != null) statisticsPapi.unregister();
     }
 
-    public String parse(Player player, String text) {
+    public String parse(OfflinePlayer player, String text) {
         if (hasPlaceholderAPI) {
             return ParseUtil.setPlaceholders(player, parseInner(player, text));
-        }
-        else {
+        } else {
             return parseInner(player, text);
         }
     }
 
-    public String parseInner(Player player, String text) {
+    public String parseInner(OfflinePlayer player, String text) {
         List<String> papis = detectBetterPlaceholders(text);
         for (String papi : papis) {
             text = text.replace(papi, parseSingleInner(player, papi));
@@ -78,11 +77,10 @@ public class PlaceholderManager extends Function {
         return text;
     }
 
-    public String parseSinglePlaceholder(Player player, String placeholder) {
+    public String parseSinglePlaceholder(OfflinePlayer player, String placeholder) {
         if (placeholder.startsWith("{")) {
             return parseSingleInner(player, placeholder);
-        }
-        else if (hasPlaceholderAPI) {
+        } else if (hasPlaceholderAPI) {
             return ParseUtil.setPlaceholders(player, placeholder);
         }
         return placeholder;
@@ -113,7 +111,7 @@ public class PlaceholderManager extends Function {
         return hasPlaceholderAPI ? detectAllPlaceholders(text) : detectBetterPlaceholders(text);
     }
 
-    public String parseSingleInner(Player player, String placeholder) {
+    public String parseSingleInner(OfflinePlayer player, String placeholder) {
         switch (placeholder) {
             case "{player}" -> {
                 return player.getName();

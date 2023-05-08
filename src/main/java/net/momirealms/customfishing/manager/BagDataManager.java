@@ -17,19 +17,15 @@
 
 package net.momirealms.customfishing.manager;
 
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.listener.InventoryListener;
 import net.momirealms.customfishing.listener.JoinQuitListener;
 import net.momirealms.customfishing.listener.WindowPacketListener;
 import net.momirealms.customfishing.object.InventoryFunction;
 import net.momirealms.customfishing.util.AdventureUtils;
+import net.momirealms.customfishing.util.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -151,26 +147,6 @@ public class BagDataManager extends InventoryFunction {
     }
 
     @Override
-    public void onWindowTitlePacketSend(PacketContainer packet, Player receiver) {
-        StructureModifier<WrappedChatComponent> wrappedChatComponentStructureModifier = packet.getChatComponents();
-        WrappedChatComponent component = wrappedChatComponentStructureModifier.getValues().get(0);
-        String windowTitleJson = component.getJson();
-        if (windowTitleJson.startsWith("{\"text\":\"{CustomFishing_Bag_")) {
-            String player = windowTitleJson.substring(28, windowTitleJson.length() - 3);
-            String text = ConfigManager.fishingBagTitle.replace("{player}", player);
-            wrappedChatComponentStructureModifier.write(0,
-                    WrappedChatComponent.fromJson(
-                            GsonComponentSerializer.gson().serialize(
-                                    MiniMessage.miniMessage().deserialize(
-                                            AdventureUtils.replaceLegacy(text)
-                                    )
-                            )
-                    )
-            );
-        }
-    }
-
-    @Override
     public void onClickInventory(InventoryClickEvent event) {
         final Player player = (Player) event.getWhoClicked();
         Inventory fishingBagInv = dataMap.get(player.getUniqueId());
@@ -178,18 +154,16 @@ public class BagDataManager extends InventoryFunction {
             ItemStack currentItem = event.getCurrentItem();
             if (currentItem == null || currentItem.getType() == Material.AIR) return;
             NBTItem nbtItem = new NBTItem(currentItem);
-            if (!nbtItem.hasTag("CustomFishing") && !ConfigManager.bagWhiteListItems.contains(currentItem.getType())) {
-                event.setCancelled(true);
-                return;
-            }
             NBTCompound nbtCompound = nbtItem.getCompound("CustomFishing");
-            if (nbtCompound == null) {
+            if (nbtCompound == null && !ConfigManager.bagWhiteListItems.contains(currentItem.getType())) {
                 event.setCancelled(true);
                 return;
             }
-            String type = nbtCompound.getString("type");
-            if (!ConfigManager.canStoreLoot && type.equals("loot")) {
-                event.setCancelled(true);
+            if (nbtCompound != null) {
+                String type = nbtCompound.getString("type");
+                if (!ConfigManager.canStoreLoot && type.equals("loot")) {
+                    event.setCancelled(true);
+                }
             }
         }
     }
@@ -231,7 +205,7 @@ public class BagDataManager extends InventoryFunction {
         }
         if (size * 9 != inventory.getSize()) {
             ItemStack[] itemStacks = inventory.getContents();
-            Inventory newInv = plugin.getVersionHelper().isSpigot() ? Bukkit.createInventory(null, size * 9, AdventureUtils.replaceMiniMessage(ConfigManager.fishingBagTitle.replace("{player}", owner.getName()))) : Bukkit.createInventory(null, size * 9, "{CustomFishing_Bag_" + owner.getName() + "}");
+            Inventory newInv = InventoryUtils.createInventory(null, size * 9, plugin.getIntegrationManager().getPlaceholderManager().parse(owner, ConfigManager.fishingBagTitle));
             newInv.setContents(itemStacks);
             dataMap.put(owner.getUniqueId(), newInv);
             viewer.openInventory(newInv);

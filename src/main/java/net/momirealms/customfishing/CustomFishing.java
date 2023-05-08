@@ -26,6 +26,8 @@ import net.momirealms.customfishing.commands.SellFishCommand;
 import net.momirealms.customfishing.helper.LibraryLoader;
 import net.momirealms.customfishing.helper.VersionHelper;
 import net.momirealms.customfishing.manager.*;
+import net.momirealms.customfishing.object.Reflection;
+import net.momirealms.customfishing.scheduler.Scheduler;
 import net.momirealms.customfishing.util.AdventureUtils;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -52,6 +54,7 @@ public final class CustomFishing extends JavaPlugin {
     private OffsetManager offsetManager;
     private StatisticsManager statisticsManager;
     private VersionHelper versionHelper;
+    private Scheduler scheduler;
 
     @Override
     public void onLoad() {
@@ -76,9 +79,11 @@ public final class CustomFishing extends JavaPlugin {
         this.sellManager = new SellManager(this);
         this.bagDataManager = new BagDataManager(this);
         this.offsetManager = new OffsetManager(this);
+        this.scheduler = new Scheduler(this);
         this.reload();
         this.registerCommands();
         this.registerQuests();
+        Reflection.load();
         AdventureUtils.consoleMessage("[CustomFishing] Plugin Enabled!");
         if (ConfigManager.bStats) new Metrics(this, 16648);
         if (ConfigManager.updateChecker) this.versionHelper.checkUpdate();
@@ -97,6 +102,7 @@ public final class CustomFishing extends JavaPlugin {
         if (this.sellManager != null) this.sellManager.disable();
         if (this.statisticsManager != null) this.statisticsManager.disable();
         if (this.dataManager != null) this.dataManager.disable();
+        if (this.scheduler != null) scheduler.disable();
         if (adventure != null) adventure.close();
     }
 
@@ -187,6 +193,10 @@ public final class CustomFishing extends JavaPlugin {
 
     public OffsetManager getOffsetManager() {
         return offsetManager;
+    }
+    
+    public Scheduler getScheduler() {
+        return scheduler;
     }
 
     public void reload() {
