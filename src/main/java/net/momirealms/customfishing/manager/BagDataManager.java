@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class BagDataManager extends InventoryFunction {
 
@@ -94,7 +95,7 @@ public class BagDataManager extends InventoryFunction {
     public void openFishingBag(Player viewer, OfflinePlayer ownerOffline, boolean force) {
         Player owner = ownerOffline.getPlayer();
         //not online
-        if (owner == null) {
+        if (owner == null || !owner.isOnline()) {
             Inventory inventory = plugin.getDataManager().getDataStorageInterface().loadBagData(ownerOffline.getUniqueId(), force);
             if (inventory == null) {
                 AdventureUtils.playerMessage(viewer, "<red>[CustomFishing] Failed to load bag data for player " + ownerOffline.getName());
@@ -104,14 +105,11 @@ public class BagDataManager extends InventoryFunction {
             }
             tempData.put(ownerOffline.getUniqueId(), inventory);
             viewer.openInventory(inventory);
-        }
-        //online
-        else {
+        } else {
             Inventory inventory = dataMap.get(owner.getUniqueId());
             if (inventory == null) {
                 AdventureUtils.consoleMessage("<red>[CustomFishing] Bag data is not loaded for player " + owner.getName());
-            }
-            else {
+            } else {
                 openBagGUI(owner, viewer, inventory);
             }
         }
@@ -123,13 +121,13 @@ public class BagDataManager extends InventoryFunction {
         Inventory inventory = dataMap.remove(uuid);
         triedTimes.remove(player.getUniqueId());
         if (inventory != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getDataManager().getDataStorageInterface().saveBagData(uuid, inventory, true));
+            plugin.getScheduler().runTaskAsync(() -> plugin.getDataManager().getDataStorageInterface().saveBagData(uuid, inventory, true));
         }
     }
 
     @Override
     public void onJoin(Player player) {
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, false), 15);
+        plugin.getScheduler().runTaskAsyncLater(() -> joinReadData(player, false), 750, TimeUnit.MILLISECONDS);
     }
 
     public void joinReadData(Player player, boolean force) {
@@ -139,9 +137,9 @@ public class BagDataManager extends InventoryFunction {
             dataMap.put(player.getUniqueId(), inventory);
         } else if (!force) {
             if (checkTriedTimes(player.getUniqueId())) {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, false), 50);
+                plugin.getScheduler().runTaskAsyncLater(() -> joinReadData(player, false), 2500, TimeUnit.MILLISECONDS);
             } else {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, true), 50);
+                plugin.getScheduler().runTaskAsyncLater(() -> joinReadData(player, true), 2500, TimeUnit.MILLISECONDS);
             }
         }
     }
@@ -187,7 +185,7 @@ public class BagDataManager extends InventoryFunction {
             for (Map.Entry<UUID, Inventory> entry : tempData.entrySet()) {
                 if (entry.getValue() == inventory) {
                     tempData.remove(entry.getKey());
-                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                    plugin.getScheduler().runTaskAsync(() -> {
                         plugin.getDataManager().getDataStorageInterface().saveBagData(entry.getKey(), entry.getValue(), true);
                     });
                 }

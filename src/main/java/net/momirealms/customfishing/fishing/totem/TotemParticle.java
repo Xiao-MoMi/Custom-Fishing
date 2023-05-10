@@ -17,12 +17,15 @@
 
 package net.momirealms.customfishing.fishing.totem;
 
+import net.momirealms.customfishing.CustomFishing;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.scheduler.BukkitRunnable;
 
-public class TotemParticle extends BukkitRunnable {
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
+public class TotemParticle implements Runnable {
 
     private final Location bottomLoc;
     private final int radius;
@@ -31,6 +34,7 @@ public class TotemParticle extends BukkitRunnable {
     private int timer;
     private final Particle particle;
     private final World world;
+    private final ScheduledFuture<?> task;
 
     public TotemParticle(Location bottomLoc, int radius, Particle particle) {
         this.bottomLoc = bottomLoc.clone().add(0.5,0,0.5);
@@ -39,6 +43,7 @@ public class TotemParticle extends BukkitRunnable {
         this.angle_1 = 360 / (double) radius;
         this.angle_2 = 72 / (double) radius;
         this.world = bottomLoc.getWorld();
+        this.task = CustomFishing.getInstance().getScheduler().runTaskTimerAsync(this, 200, 200, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -52,5 +57,13 @@ public class TotemParticle extends BukkitRunnable {
             double angle = temp_angle * Math.PI / 180;
             world.spawnParticle(particle, bottomLoc.clone().add(Math.cos(angle) * radius, 0.5, Math.sin(angle) * radius), 1 ,0, 0,0, 0);
         }
+    }
+
+    public void cancel() {
+        this.task.cancel(false);
+    }
+
+    public boolean isCancelled() {
+        return this.task.isCancelled();
     }
 }

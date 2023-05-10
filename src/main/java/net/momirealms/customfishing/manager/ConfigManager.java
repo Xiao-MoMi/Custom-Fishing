@@ -22,11 +22,13 @@ import net.momirealms.customfishing.util.JedisUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 public class ConfigManager {
 
@@ -80,6 +82,9 @@ public class ConfigManager {
     public static boolean updateChecker;
     public static boolean hideSaveInfo;
     public static boolean baitAnimation;
+    public static int corePoolSize;
+    public static int maximumPoolSize;
+    public static int keepAliveTime;
 
     public static void load() {
         ConfigUtils.update("config.yml");
@@ -87,74 +92,77 @@ public class ConfigManager {
         lang = config.getString("lang","english");
         bStats = config.getBoolean("metrics", true);
         updateChecker = config.getBoolean("update-checker", true);
-        loadMechanics(config);
-        loadTitle(config);
-        loadFishingWorlds(config);
-        loadOtherSettings(config);
+        loadMechanics(Objects.requireNonNull(config.getConfigurationSection("mechanics")));
+        loadTitle(Objects.requireNonNull(config.getConfigurationSection("titles")));
+        loadFishingWorlds(Objects.requireNonNull(config.getConfigurationSection("worlds")));
+        loadOtherSettings(Objects.requireNonNull(config.getConfigurationSection("other-settings")));
     }
 
-    private static void loadOtherSettings(YamlConfiguration config) {
-        priority = config.getString("other-settings.event-priority", "NORMAL").toUpperCase();
-        disableJobsXp = config.getBoolean("other-settings.disable-JobsReborn-fishing-exp", false);
-        preventPickUp = config.getBoolean("other-settings.prevent-other-players-pick-up-loot", false);
-        convertMMOItems = config.getBoolean("other-settings.convert-MMOItems-rods", false);
-        logEarning = config.getBoolean("other-settings.log-earnings", true);
-        hideSaveInfo = config.getBoolean("other-settings.hide-data-saving-info", false);
+    private static void loadOtherSettings(ConfigurationSection config) {
+        priority = config.getString("event-priority", "NORMAL").toUpperCase();
+        disableJobsXp = config.getBoolean("disable-JobsReborn-fishing-exp", false);
+        preventPickUp = config.getBoolean("prevent-other-players-pick-up-loot", false);
+        convertMMOItems = config.getBoolean("convert-MMOItems-rods", false);
+        logEarning = config.getBoolean("log-earnings", true);
+        hideSaveInfo = config.getBoolean("hide-data-saving-info", false);
+        corePoolSize = config.getInt("thread-pool-settings.corePoolSize", 1);
+        maximumPoolSize = config.getInt("thread-pool-settings.maximumPoolSize", 4);
+        keepAliveTime = config.getInt("thread-pool-settings.keepAliveTime", 10);
     }
 
-    private static void loadMechanics(YamlConfiguration config) {
-        disableBar = config.getBoolean("mechanics.disable-bar-mechanic", false);
-        instantBar = config.getBoolean("mechanics.instant-bar", false);
-        enableVanillaLoot = config.getBoolean("mechanics.other-loots.vanilla.enable", true);
-        vanillaLootRatio = config.getDouble("mechanics.other-loots.vanilla.ratio", 0.4);
-        enableMcMMOLoot = config.getBoolean("mechanics.other-loots.mcMMO.enable", false);
-        mcMMOLootChance = config.getDouble("mechanics.other-loots.mcMMO.chance", 0.5);
-        needRodToFish = config.getBoolean("mechanics.need-special-rod-to-fish", false);
-        needRodForLoot = config.getBoolean("mechanics.need-special-rod-for-loots", false);
-        rodLoseDurability = config.getBoolean("mechanics.rod-lose-durability", true);
-        enableCompetition = config.getBoolean("mechanics.fishing-competition.enable", true);
-        enableWaterAnimation = config.getBoolean("mechanics.splash-animation.water.enable", false);
-        enableLavaAnimation = config.getBoolean("mechanics.splash-animation.lava.enable", false);
-        allRodsFishInLava = config.getBoolean("mechanics.all-rods-fish-in-lava", false);
-        water_item = config.getString("mechanics.splash-animation.water.item");
-        lava_item = config.getString("mechanics.splash-animation.lava.item");
-        water_time = config.getInt("mechanics.splash-animation.water.time");
-        lava_time = config.getInt("mechanics.splash-animation.lava.time");
-        lavaMinTime = config.getInt("mechanics.lava-fishing.min-wait-time", 100);
-        lavaMaxTime = config.getInt("mechanics.lava-fishing.max-wait-time", 600) - lavaMinTime;
-        enableFishingBag = config.getBoolean("mechanics.fishing-bag.enable", true);
-        canStoreLoot = config.getBoolean("mechanics.fishing-bag.can-store-loot", false);
-        addTagToFish = config.getBoolean("mechanics.add-custom-fishing-tags-to-loots", true);
-        fishingBagTitle = config.getString("mechanics.fishing-bag.bag-title", "Fishing Bag");
-        enableStatistics = config.getBoolean("mechanics.fishing-statistics.enable", true);
-        baitAnimation = config.getBoolean("mechanics.bait-animation", true);
+    private static void loadMechanics(ConfigurationSection config) {
+        disableBar = config.getBoolean("disable-bar-mechanic", false);
+        instantBar = config.getBoolean("instant-bar", false);
+        enableVanillaLoot = config.getBoolean("other-loots.vanilla.enable", true);
+        vanillaLootRatio = config.getDouble("other-loots.vanilla.ratio", 0.4);
+        enableMcMMOLoot = config.getBoolean("other-loots.mcMMO.enable", false);
+        mcMMOLootChance = config.getDouble("other-loots.mcMMO.chance", 0.5);
+        needRodToFish = config.getBoolean("need-special-rod-to-fish", false);
+        needRodForLoot = config.getBoolean("need-special-rod-for-loots", false);
+        rodLoseDurability = config.getBoolean("rod-lose-durability", true);
+        enableCompetition = config.getBoolean("fishing-competition.enable", true);
+        enableWaterAnimation = config.getBoolean("splash-animation.water.enable", false);
+        enableLavaAnimation = config.getBoolean("splash-animation.lava.enable", false);
+        allRodsFishInLava = config.getBoolean("all-rods-fish-in-lava", false);
+        water_item = config.getString("splash-animation.water.item");
+        lava_item = config.getString("splash-animation.lava.item");
+        water_time = config.getInt("splash-animation.water.time");
+        lava_time = config.getInt("splash-animation.lava.time");
+        lavaMinTime = config.getInt("lava-fishing.min-wait-time", 100);
+        lavaMaxTime = config.getInt("lava-fishing.max-wait-time", 600) - lavaMinTime;
+        enableFishingBag = config.getBoolean("fishing-bag.enable", true);
+        canStoreLoot = config.getBoolean("fishing-bag.can-store-loot", false);
+        addTagToFish = config.getBoolean("add-custom-fishing-tags-to-loots", true);
+        fishingBagTitle = config.getString("fishing-bag.bag-title", "Fishing Bag");
+        enableStatistics = config.getBoolean("fishing-statistics.enable", true);
+        baitAnimation = config.getBoolean("bait-animation", true);
         bagWhiteListItems = new HashSet<>();
-        for (String material : config.getStringList("mechanics.fishing-bag.whitelist-items")) bagWhiteListItems.add(Material.valueOf(material.toUpperCase()));
+        for (String material : config.getStringList("fishing-bag.whitelist-items")) bagWhiteListItems.add(Material.valueOf(material.toUpperCase()));
         redisSettings(config);
     }
 
-    private static void loadTitle(YamlConfiguration config) {
-        enableSuccessTitle = config.getBoolean("titles.success.enable", true);
-        enableFailureTitle = config.getBoolean("titles.failure.enable", true);
-        successTitle = config.getStringList("titles.success.title").toArray(new String[0]);
-        successSubTitle = config.getStringList("titles.success.subtitle").toArray(new String[0]);
-        successFadeIn = config.getInt("titles.success.fade.in", 10) * 50;
-        successFadeStay = config.getInt("titles.success.fade.stay", 30) * 50;
-        successFadeOut = config.getInt("titles.success.fade.out", 10) * 50;
-        failureTitle = config.getStringList("titles.failure.title").toArray(new String[0]);
-        failureSubTitle = config.getStringList("titles.failure.subtitle").toArray(new String[0]);
-        failureFadeIn = config.getInt("titles.failure.fade.in", 10) * 50;
-        failureFadeStay = config.getInt("titles.failure.fade.stay", 30) * 50;
-        failureFadeOut = config.getInt("titles.failure.fade.out", 10) * 50;
+    private static void loadTitle(ConfigurationSection config) {
+        enableSuccessTitle = config.getBoolean("success.enable", true);
+        enableFailureTitle = config.getBoolean("failure.enable", true);
+        successTitle = config.getStringList("success.title").toArray(new String[0]);
+        successSubTitle = config.getStringList("success.subtitle").toArray(new String[0]);
+        successFadeIn = config.getInt("success.fade.in", 10) * 50;
+        successFadeStay = config.getInt("success.fade.stay", 30) * 50;
+        successFadeOut = config.getInt("success.fade.out", 10) * 50;
+        failureTitle = config.getStringList("failure.title").toArray(new String[0]);
+        failureSubTitle = config.getStringList("failure.subtitle").toArray(new String[0]);
+        failureFadeIn = config.getInt("failure.fade.in", 10) * 50;
+        failureFadeStay = config.getInt("failure.fade.stay", 30) * 50;
+        failureFadeOut = config.getInt("failure.fade.out", 10) * 50;
         if (successTitle.length == 0) successTitle = new String[]{""};
         if (successSubTitle.length == 0) successSubTitle = new String[]{""};
         if (failureTitle.length == 0) failureTitle = new String[]{""};
         if (failureSubTitle.length == 0) failureSubTitle = new String[]{""};
     }
 
-    private static void loadFishingWorlds(YamlConfiguration config) {
-        whiteOrBlack = config.getString("worlds.mode","whitelist").equals("whitelist");
-        worldList = config.getStringList("worlds.list");
+    private static void loadFishingWorlds(ConfigurationSection config) {
+        whiteOrBlack = config.getString("mode","whitelist").equals("whitelist");
+        worldList = config.getStringList("list");
     }
 
     public static List<String> getWorldsList() {
@@ -171,8 +179,8 @@ public class ConfigManager {
         }
     }
 
-    private static void redisSettings(YamlConfiguration config) {
-        if (enableCompetition && config.getBoolean("mechanics.fishing-competition.redis", false)) {
+    private static void redisSettings(ConfigurationSection config) {
+        if (enableCompetition && config.getBoolean("fishing-competition.redis", false)) {
             if (!JedisUtils.isPoolEnabled()) {
                 YamlConfiguration configuration = ConfigUtils.getConfig("database.yml");
                 JedisUtils.initializeRedis(configuration);

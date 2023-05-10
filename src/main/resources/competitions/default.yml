@@ -40,6 +40,7 @@ example:
       - '<gray>[<#87CEFA>🎣<gray>] <gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{minute}m{second}s <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Goal: <#E6E6FA>{goal}'
     refresh-rate: 10
     switch-interval: 200
+    only-show-to-participants: true
 
   command:
     start:

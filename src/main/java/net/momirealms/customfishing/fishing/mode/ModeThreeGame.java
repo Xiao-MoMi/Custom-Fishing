@@ -24,6 +24,8 @@ import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.TimeUnit;
+
 public class ModeThreeGame extends FishingGame {
 
     private final ModeThreeBar modeThreeBar;
@@ -40,6 +42,7 @@ public class ModeThreeGame extends FishingGame {
         this.success = false;
         this.modeThreeBar = modeThreeBar;
         this.timer_max = modeThreeBar.getStruggling_fish_image().length;
+        this.gameTask = plugin.getScheduler().runTaskTimer(this, 50, 40, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -60,7 +63,6 @@ public class ModeThreeGame extends FishingGame {
         if (player.isSneaking()) pull();
         else loosen();
         if (fish_position < modeThreeBar.getSuccess_position() - modeThreeBar.getFish_icon_width() - 1) {
-            cancel();
             success = true;
             FishHook fishHook = fishingManager.getHook(player.getUniqueId());
             if (fishHook != null) {
@@ -68,16 +70,17 @@ public class ModeThreeGame extends FishingGame {
                 fishingManager.removeHook(player.getUniqueId());
             }
             fishingManager.removeFishingPlayer(player);
+            cancel();
             return;
         }
         if (fish_position + modeThreeBar.getFish_icon_width() > modeThreeBar.getBar_effective_width() || strain >= modeThreeBar.getUltimate_strain()) {
-            cancel();
             FishHook fishHook = fishingManager.getHook(player.getUniqueId());
             if (fishHook != null) {
                 fishingManager.proceedReelIn(fishHook.getLocation(), player, this);
                 fishingManager.removeHook(player.getUniqueId());
             }
             fishingManager.removeFishingPlayer(player);
+            cancel();
             return;
         }
         showBar();
@@ -87,8 +90,7 @@ public class ModeThreeGame extends FishingGame {
         if (struggling_time > 0) {
             strain += (modeThreeBar.getStruggling_increase() + ((double) difficulty / 5));
             fish_position -= 1;
-        }
-        else {
+        } else {
             strain += modeThreeBar.getNormal_increase();
             fish_position -= 2;
         }

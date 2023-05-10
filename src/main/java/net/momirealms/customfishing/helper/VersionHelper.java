@@ -22,7 +22,6 @@ import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.util.AdventureUtils;
-import org.bukkit.Bukkit;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -37,6 +36,7 @@ public class VersionHelper {
     private String serverVersion;
     private final CustomFishing plugin;
     private final boolean isSpigot;
+    private final boolean isFolia;
     private final String pluginVersion;
 
     public VersionHelper(CustomFishing plugin) {
@@ -44,6 +44,7 @@ public class VersionHelper {
         isVersionNewerThan1_19_R2();
         disableUseLessInfo();
         isSpigot = plugin.getServer().getName().equals("CraftBukkit");
+        isFolia = plugin.getServer().getName().equals("DirtyFolia");
         pluginVersion = plugin.getDescription().getVersion();
     }
 
@@ -93,7 +94,7 @@ public class VersionHelper {
     }
 
     public void checkUpdate() {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        plugin.getScheduler().runTaskAsync(() -> {
             try {
                 URL url = new URL("https://api.polymart.org/v1/getResourceInfoSimple/?resource_id=2723&key=version");
                 URLConnection conn = url.openConnection();
@@ -179,5 +180,9 @@ public class VersionHelper {
 
     public String getPluginVersion() {
         return pluginVersion;
+    }
+
+    public boolean isFolia() {
+        return isFolia;
     }
 }

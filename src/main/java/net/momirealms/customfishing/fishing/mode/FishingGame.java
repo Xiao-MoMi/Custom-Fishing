@@ -28,9 +28,10 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
-public abstract class FishingGame extends BukkitRunnable {
+import java.util.concurrent.ScheduledFuture;
+
+public abstract class FishingGame implements Runnable {
 
     protected OffsetManager offsetManager;
     protected long deadline;
@@ -40,6 +41,7 @@ public abstract class FishingGame extends BukkitRunnable {
     protected int difficulty;
     protected String title;
     protected FishHook fishHook;
+    protected ScheduledFuture<?> gameTask;
 
     public FishingGame(CustomFishing plugin, FishingManager fishingManager, long deadline, Player player, int difficulty, FishingBar fishingBar) {
         this.offsetManager = plugin.getOffsetManager();
@@ -90,6 +92,12 @@ public abstract class FishingGame extends BukkitRunnable {
             cancel();
             fishingManager.removeFishingPlayer(player);
             player.removePotionEffect(PotionEffectType.SLOW);
+        }
+    }
+
+    public void cancel() {
+        if (!this.gameTask.isCancelled()) {
+            this.gameTask.cancel(false);
         }
     }
 }

@@ -31,13 +31,11 @@ public record VanillaXPImpl(int amount, boolean mending) implements Action {
         if (CustomFishing.getInstance().getVersionHelper().isSpigot()) {
             if (mending) {
                 player.getLocation().getWorld().spawn(player.getLocation(), ExperienceOrb.class, e -> e.setExperience(amount));
-            }
-            else {
+            } else {
                 player.giveExp(amount);
                 AdventureUtils.playerSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
             }
-        }
-        else {
+        } else {
             player.giveExp(amount, mending);
             AdventureUtils.playerSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
         }

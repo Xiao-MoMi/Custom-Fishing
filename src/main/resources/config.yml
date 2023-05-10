@@ -1,5 +1,5 @@
 # Don't change
-config-version: '22'
+config-version: '23'
 
 # bStats
 metrics: true
@@ -145,6 +145,14 @@ titles:
 
 # Other settings
 other-settings:
+  # Thread pool settings
+  thread-pool-settings:
+    # 核心线程池大小
+    corePoolSize: 1
+    # 最大线程池大小
+    maximumPoolSize: 4
+    # seconds (秒)
+    keepAliveTime: 10
   # Hide the data saving information
   hide-data-saving-info: false
   # MONITOR HIGHEST HIGH NORMAL LOW LOWEST

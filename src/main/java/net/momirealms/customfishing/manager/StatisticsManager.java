@@ -28,6 +28,7 @@ import org.bukkit.event.HandlerList;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class StatisticsManager extends DataFunction {
 
@@ -70,17 +71,13 @@ public class StatisticsManager extends DataFunction {
         PlayerStatisticsData playerStatisticsData = statisticsDataMap.remove(uuid);
         triedTimes.remove(player.getUniqueId());
         if (playerStatisticsData != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                plugin.getDataManager().getDataStorageInterface().saveStatistics(uuid, playerStatisticsData, true);
-            });
+            plugin.getScheduler().runTaskAsync(() -> plugin.getDataManager().getDataStorageInterface().saveStatistics(uuid, playerStatisticsData, true));
         }
     }
 
     @Override
     public void onJoin(Player player) {
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-            joinReadData(player, false);
-        }, 10);
+        plugin.getScheduler().runTaskAsyncLater(() -> joinReadData(player, false), 500, TimeUnit.MILLISECONDS);
     }
 
     public void joinReadData(Player player, boolean force) {
@@ -90,9 +87,9 @@ public class StatisticsManager extends DataFunction {
             statisticsDataMap.put(player.getUniqueId(), statisticsData);
         } else if (!force) {
             if (checkTriedTimes(player.getUniqueId())) {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, false), 50);
+                plugin.getScheduler().runTaskAsyncLater(() -> joinReadData(player, false), 2500, TimeUnit.MILLISECONDS);
             } else {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, true), 50);
+                plugin.getScheduler().runTaskAsyncLater(() -> joinReadData(player, true), 2500, TimeUnit.MILLISECONDS);
             }
         }
     }

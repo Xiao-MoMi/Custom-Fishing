@@ -79,7 +79,7 @@ public class TotemConfig {
         return duration;
     }
 
-    public Effect getBonus() {
+    public Effect getEffect() {
         return effect;
     }
 

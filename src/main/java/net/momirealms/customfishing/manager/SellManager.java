@@ -52,6 +52,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class SellManager extends InventoryFunction {
 
@@ -127,12 +128,12 @@ public class SellManager extends InventoryFunction {
         UUID uuid = player.getUniqueId();
         PlayerSellData sellData = sellDataMap.remove(uuid);
         if (sellData == null) return;
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getDataManager().getDataStorageInterface().saveSellData(uuid, sellData, true));
+        plugin.getScheduler().runTaskAsync(() -> plugin.getDataManager().getDataStorageInterface().saveSellData(uuid, sellData, true));
     }
 
     @Override
     public void onJoin(Player player) {
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> joinReadData(player, false), 20);
+        plugin.getScheduler().runTaskAsyncLater(() -> joinReadData(player, false), 1, TimeUnit.SECONDS);
     }
 
     public void joinReadData(Player player, boolean force) {
@@ -142,13 +143,9 @@ public class SellManager extends InventoryFunction {
             sellDataMap.put(player.getUniqueId(), sellData);
         } else if (!force) {
             if (checkTriedTimes(player.getUniqueId())) {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-                    joinReadData(player, false);
-                }, 50);
+                plugin.getScheduler().runTaskAsyncLater(() -> joinReadData(player, false), 2500, TimeUnit.MILLISECONDS);
             } else {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-                    joinReadData(player, true);
-                }, 50);
+                plugin.getScheduler().runTaskAsyncLater(() -> joinReadData(player, true), 2500, TimeUnit.MILLISECONDS);
             }
         }
     }
@@ -324,7 +321,7 @@ public class SellManager extends InventoryFunction {
         }
 
         if (update) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            plugin.getScheduler().runTaskAsync(() -> {
                 ItemStack icon = ItemStackUtils.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory))));
                 for (int slot : functionIconSlots) {
                     inventory.setItem(slot, icon);
@@ -343,7 +340,7 @@ public class SellManager extends InventoryFunction {
                 return;
             }
         }
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        plugin.getScheduler().runTaskAsync(() -> {
             ItemStack icon = ItemStackUtils.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory))));
             for (int slot : functionIconSlots) {
                 inventory.setItem(slot, icon);

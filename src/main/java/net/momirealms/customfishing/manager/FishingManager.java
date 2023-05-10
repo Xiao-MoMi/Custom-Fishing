@@ -77,6 +77,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -163,7 +164,8 @@ public class FishingManager extends Function {
 
         boolean noBait = true;
         boolean rodOnMainHand = false;
-        ItemStack baitItem = null;
+        ItemStack baitAnimationItem = null;
+        ItemStack baitRealItem = null;
 
         Effect initialEffect = new Effect();
         initialEffect.setWeightMD(new HashMap<>(8));
@@ -176,32 +178,21 @@ public class FishingManager extends Function {
         if (mainHandItem.getType() == Material.FISHING_ROD) {
             rodOnMainHand = true;
         }
-
         String rod_id = Optional.ofNullable(rodOnMainHand ? CustomFishingAPI.getRodID(mainHandItem) : CustomFishingAPI.getRodID(offHandItem)).orElse("vanilla");
-        final FishingCondition fishingCondition = new FishingCondition(player.getLocation(), player, rod_id);
-        Effect rod_effect = plugin.getEffectManager().getRodEffect(rod_id);
-        if (rod_effect != null) {
-            if (!initialEffect.addEffect(rod_effect, fishingCondition)) {
-                event.setCancelled(true);
-                return;
-            }
-            initialEffect.setSpecialRodID(rod_id);
-        }
-        this.addEnchantEffect(initialEffect, rodOnMainHand ? mainHandItem : offHandItem, fishingCondition);
-        int lureLevel = rodOnMainHand ? mainHandItem.getEnchantmentLevel(Enchantment.LURE) : offHandItem.getEnchantmentLevel(Enchantment.LURE);
+        final FishingCondition fishingCondition = new FishingCondition(player.getLocation(), player, rod_id, null);
 
         String bait_id = Optional.ofNullable(rodOnMainHand ? CustomFishingAPI.getBaitID(offHandItem) : CustomFishingAPI.getBaitID(mainHandItem)).orElse("");
         Effect baitEffect = plugin.getEffectManager().getBaitEffect(bait_id);
-        if (baitEffect != null && initialEffect.addEffect(baitEffect, fishingCondition)) {
-            baitItem = rodOnMainHand ? offHandItem.clone() : mainHandItem.clone();
-            if (rodOnMainHand) offHandItem.setAmount(offHandItem.getAmount() - 1);
-            else mainHandItem.setAmount(mainHandItem.getAmount() - 1);
+        if (baitEffect != null && initialEffect.canAddEffect(baitEffect, fishingCondition)) {
+            initialEffect.addEffect(baitEffect);
+            baitAnimationItem = rodOnMainHand ? offHandItem.clone() : mainHandItem.clone();
+            baitRealItem = rodOnMainHand ? offHandItem : mainHandItem;
             noBait = false;
         }
 
         for (ActivatedTotem activatedTotem : activeTotemMap.values()) {
             if (activatedTotem.getNearbyPlayerSet().contains(player)) {
-                initialEffect.addEffect(activatedTotem.getTotem().getBonus(), fishingCondition);
+                initialEffect.addEffect(activatedTotem.getTotem().getEffect());
                 break;
             }
         }
@@ -218,16 +209,18 @@ public class FishingManager extends Function {
                     String type = cfCompound.getString("type"); String id = cfCompound.getString("id");
                     if (noBait && type.equals("bait")) {
                         Effect effect = plugin.getEffectManager().getBaitEffect(id);
-                        if (effect != null && itemStack.getAmount() > 0 && initialEffect.addEffect(effect, fishingCondition)) {
+                        if (effect != null && itemStack.getAmount() > 0 && initialEffect.canAddEffect(effect, fishingCondition)) {
+                            initialEffect.addEffect(effect);
                             noBait = false;
-                            baitItem = itemStack.clone();
-                            itemStack.setAmount(itemStack.getAmount() - 1);
+                            bait_id = id;
+                            baitAnimationItem = itemStack.clone();
+                            baitRealItem = itemStack;
                         }
                     }
                     else if (type.equals("util")) {
                         Effect utilEffect = plugin.getEffectManager().getUtilEffect(id);
                         if (utilEffect != null && !uniqueUtils.contains(id)) {
-                            initialEffect.addEffect(utilEffect, fishingCondition);
+                            initialEffect.addEffect(utilEffect);
                             uniqueUtils.add(id);
                         }
                     }
@@ -235,6 +228,17 @@ public class FishingManager extends Function {
             }
         }
 
+        Effect rod_effect = plugin.getEffectManager().getRodEffect(rod_id);
+        if (rod_effect != null) {
+            if (initialEffect.canAddEffect(rod_effect, new FishingCondition(player.getLocation(), player, rod_id, bait_id))) {
+                initialEffect.addEffect(rod_effect);
+            } else {
+                event.setCancelled(true);
+                return;
+            }
+            initialEffect.setSpecialRodID(rod_id);
+        }
+        this.addEnchantEffect(initialEffect, rodOnMainHand ? mainHandItem : offHandItem, fishingCondition);
 
         RodCastEvent rodCastEvent = new RodCastEvent(player, initialEffect);
         Bukkit.getPluginManager().callEvent(rodCastEvent);
@@ -242,6 +246,9 @@ public class FishingManager extends Function {
             event.setCancelled(true);
             return;
         }
+
+        if (baitRealItem != null) baitRealItem.setAmount(baitRealItem.getAmount() - 1);
+        int lureLevel = rodOnMainHand ? mainHandItem.getEnchantmentLevel(Enchantment.LURE) : offHandItem.getEnchantmentLevel(Enchantment.LURE);
 
         fishHook.setMaxWaitTime((int) (fishHook.getMaxWaitTime() * initialEffect.getTimeModifier()));
         fishHook.setMinWaitTime((int) (fishHook.getMinWaitTime() * initialEffect.getTimeModifier()));
@@ -253,15 +260,14 @@ public class FishingManager extends Function {
         }
 
         int entityID = 0;
-        if (baitItem != null && ConfigManager.baitAnimation) {
-            baitItem.setAmount(1);
+        if (baitAnimationItem != null && ConfigManager.baitAnimation) {
+            baitAnimationItem.setAmount(1);
             entityID = new Random().nextInt(Integer.MAX_VALUE);
             CustomFishing.getProtocolManager().sendServerPacket(player, FakeItemUtils.getSpawnPacket(entityID, fishHook.getLocation()));
-            CustomFishing.getProtocolManager().sendServerPacket(player, FakeItemUtils.getMetaPacket(entityID, baitItem));
+            CustomFishing.getProtocolManager().sendServerPacket(player, FakeItemUtils.getMetaPacket(entityID, baitAnimationItem));
         }
 
-        BobberCheckTask bobberCheckTask = new BobberCheckTask(plugin, player, initialEffect, fishHook, this, lureLevel, entityID, rod_id);
-        bobberCheckTask.runTaskTimer(plugin, 1, 1);
+        BobberCheckTask bobberCheckTask = new BobberCheckTask(plugin, player, initialEffect, fishHook, this, lureLevel, entityID, rod_id, bait_id);
         this.hookCheckTaskMap.put(player.getUniqueId(), bobberCheckTask);
     }
 
@@ -511,8 +517,7 @@ public class FishingManager extends Function {
                 }
                 dropCustomFishingLoot(player, hookLoc, droppedItem, effect.getDoubleLootChance() > Math.random(), effect.getScoreMultiplier(), effect.getSizeMultiplier());
             }
-        }
-        else {
+        } else {
             fail(player, loot, vanilla != null);
         }
     }
@@ -528,14 +533,19 @@ public class FishingManager extends Function {
         if (Competition.currentCompetition != null) {
             float score = Competition.currentCompetition.getGoal() == CompetitionGoal.MAX_SIZE || Competition.currentCompetition.getGoal() == CompetitionGoal.TOTAL_SIZE ? getSize(drop) : (float) ((float) droppedItem.getScore() * scoreMultiplier);
             Competition.currentCompetition.refreshData(player, score, fishResultEvent.isDouble());
-            Competition.currentCompetition.tryAddBossBarToPlayer(player);
+            Competition.currentCompetition.tryJoinCompetition(player);
         }
 
         if (droppedItem.getSuccessActions() != null)
             for (Action action : droppedItem.getSuccessActions())
                 action.doOn(player, null);
 
-        dropItem(player, location, fishResultEvent.isDouble(), drop);
+        if (plugin.getVersionHelper().isFolia()) {
+            plugin.getScheduler().runTask(() -> dropItem(player, location, fishResultEvent.isDouble(), drop), location);
+        } else {
+            dropItem(player, location, fishResultEvent.isDouble(), drop);
+        }
+
         addStats(player.getUniqueId(), droppedItem, isDouble ? 2 : 1);
         sendSuccessTitle(player, droppedItem.getNick());
     }
@@ -595,7 +605,7 @@ public class FishingManager extends Function {
     private void doVanillaActions(Player player, Location location, ItemStack itemStack, boolean isDouble) {
         if (Competition.currentCompetition != null) {
             Competition.currentCompetition.refreshData(player, (float) plugin.getLootManager().getVanilla_loot().getScore(), isDouble);
-            Competition.currentCompetition.tryAddBossBarToPlayer(player);
+            Competition.currentCompetition.tryJoinCompetition(player);
         }
 
         Loot vanilla = plugin.getLootManager().getVanilla_loot();
@@ -606,7 +616,13 @@ public class FishingManager extends Function {
                 action.doOn(player, null);
 
         AdventureUtils.playerSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
-        dropItem(player, location, isDouble, itemStack);
+
+        if (plugin.getVersionHelper().isFolia()) {
+            plugin.getScheduler().runTask(() -> dropItem(player, location, isDouble, itemStack), location);
+        } else {
+            dropItem(player, location, isDouble, itemStack);
+        }
+
         sendSuccessTitle(player, itemStack);
     }
 
@@ -614,7 +630,7 @@ public class FishingManager extends Function {
         if (itemStack.getType() == Material.AIR) return;
         Entity item = location.getWorld().dropItem(location, itemStack);
         Vector vector = player.getLocation().subtract(location).toVector().multiply(0.105);
-        vector = vector.setY((vector.getY()+0.19) * 1.15);
+        vector = vector.setY((vector.getY() + 0.2) * 1.18);
         item.setVelocity(vector);
         if (isDouble) {
             Entity item2 = location.getWorld().dropItem(location, itemStack);
@@ -640,7 +656,7 @@ public class FishingManager extends Function {
         if (Competition.currentCompetition != null) {
             float score = Competition.currentCompetition.getGoal() == CompetitionGoal.MAX_SIZE || Competition.currentCompetition.getGoal() == CompetitionGoal.TOTAL_SIZE ? 0 : (float) loot.getScore();
             Competition.currentCompetition.refreshData(player, (float) (score * scoreMultiplier), false);
-            Competition.currentCompetition.tryAddBossBarToPlayer(player);
+            Competition.currentCompetition.tryJoinCompetition(player);
         }
 
         if (loot.getSuccessActions() != null)
@@ -670,7 +686,7 @@ public class FishingManager extends Function {
 
     private void sendSuccessTitle(Player player, String loot) {
         if (!ConfigManager.enableSuccessTitle) return;
-        Bukkit.getScheduler().runTaskLater(plugin, () -> AdventureUtils.playerTitle(
+        plugin.getScheduler().runTaskAsyncLater(() -> AdventureUtils.playerTitle(
                 player,
                 ConfigManager.successTitle[new Random().nextInt(ConfigManager.successTitle.length)]
                         .replace("{loot}", loot)
@@ -681,7 +697,7 @@ public class FishingManager extends Function {
                 ConfigManager.successFadeIn,
                 ConfigManager.successFadeStay,
                 ConfigManager.successFadeOut
-        ), 8);
+        ), 400, TimeUnit.MILLISECONDS);
     }
 
     private void sendSuccessTitle(Player player, ItemStack itemStack) {
@@ -690,24 +706,24 @@ public class FishingManager extends Function {
         Component titleComponent = getTitleComponent(itemStack, title);
         String subTitle = ConfigManager.successSubTitle[new Random().nextInt(ConfigManager.successSubTitle.length)];
         Component subtitleComponent = getTitleComponent(itemStack, subTitle);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> AdventureUtils.playerTitle(
+        plugin.getScheduler().runTaskAsyncLater(() -> AdventureUtils.playerTitle(
                 player,
                 titleComponent,
                 subtitleComponent,
                 ConfigManager.successFadeIn,
                 ConfigManager.successFadeStay,
                 ConfigManager.successFadeOut
-        ), 8);
+        ), 400, TimeUnit.MILLISECONDS);
     }
 
     private void loseDurability(Player player) {
         if (player.getGameMode() == GameMode.CREATIVE) return;
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        plugin.getScheduler().runTaskAsyncLater(() -> {
             ItemStack rod = getFishingRod(player);
             if (rod != null) {
                 plugin.getIntegrationManager().loseCustomDurability(rod, player);
             }
-        }, 1);
+        }, 50, TimeUnit.MILLISECONDS);
     }
 
     private ItemStack getFishingRod(Player player) {
@@ -735,14 +751,14 @@ public class FishingManager extends Function {
         }
 
         if (!ConfigManager.enableFailureTitle) return;
-        Bukkit.getScheduler().runTaskLater(plugin, () -> AdventureUtils.playerTitle(
+        plugin.getScheduler().runTaskAsyncLater(() -> AdventureUtils.playerTitle(
                 player,
                 ConfigManager.failureTitle[new Random().nextInt(ConfigManager.failureTitle.length)],
                 ConfigManager.failureSubTitle[new Random().nextInt(ConfigManager.failureSubTitle.length)],
                 ConfigManager.failureFadeIn,
                 ConfigManager.failureFadeStay,
                 ConfigManager.failureFadeOut
-        ), 8);
+        ), 400, TimeUnit.MILLISECONDS);
     }
 
     public void showBar(Player player) {
@@ -778,7 +794,7 @@ public class FishingManager extends Function {
         for (String key : plugin.getIntegrationManager().getEnchantmentInterface().getEnchants(itemStack)) {
             Effect enchantEffect = plugin.getEffectManager().getEnchantEffect(key);
             if (enchantEffect != null) {
-                initialEffect.addEffect(enchantEffect, fishingCondition);
+                initialEffect.addEffect(enchantEffect);
             }
         }
     }
@@ -828,7 +844,7 @@ public class FishingManager extends Function {
         List<TotemConfig> totemList = plugin.getTotemManager().getTotemsByCoreID(blockID);
         if (totemList == null || !totemList.contains(totem)) return;
 
-        FishingCondition fishingCondition = new FishingCondition(block.getLocation(), player, null);
+        FishingCondition fishingCondition = new FishingCondition(block.getLocation(), player, null, null);
         if (totem.getRequirements() != null)
             for (RequirementInterface requirement : totem.getRequirements()) {
                 if (!requirement.isConditionMet(fishingCondition)) {
@@ -864,7 +880,6 @@ public class FishingManager extends Function {
             }
 
         ActivatedTotem activatedTotem = new ActivatedTotem(coreLoc, totem, this, direction, player.getName());
-        activatedTotem.runTaskTimer(plugin, 10, 20);
         activeTotemMap.put(LocationUtils.getSimpleLocation(coreLoc), activatedTotem);
     }
 
@@ -873,7 +888,7 @@ public class FishingManager extends Function {
             return;
         }
 
-        FishingCondition fishingCondition = new FishingCondition(player.getLocation(), player, null);
+        FishingCondition fishingCondition = new FishingCondition(player.getLocation(), player, null, null);
         List<Loot> possibleLoots = getPossibleLootList(fishingCondition, true, plugin.getLootManager().getAllLoots());
 
         FishFinderEvent fishFinderEvent = new FishFinderEvent(player, possibleLoots);
@@ -915,7 +930,6 @@ public class FishingManager extends Function {
             fishingGame = new ModeThreeGame(plugin, this, System.currentTimeMillis() + game.getTime() * 1000L, player, miniGameStartEvent.getDifficulty(), modeThreeBar);
         }
         if (fishingGame != null) {
-            fishingGame.runTaskTimer(plugin, 0, 1);
             fishingPlayerMap.put(player.getUniqueId(), fishingGame);
         }
         if (loot.getHookActions() != null) {
@@ -991,7 +1005,11 @@ public class FishingManager extends Function {
     public void removeHook(UUID uuid) {
         FishHook fishHook = hooks.remove(uuid);
         if (fishHook != null) {
-            fishHook.remove();
+            if (plugin.getVersionHelper().isFolia()) {
+                plugin.getScheduler().runTask(fishHook::remove, fishHook.getLocation());
+            } else {
+                fishHook.remove();
+            }
         }
     }
 

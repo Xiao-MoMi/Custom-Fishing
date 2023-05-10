@@ -107,14 +107,7 @@ public class Effect {
         this.requirements = requirements;
     }
 
-    public boolean addEffect(Effect anotherEffect, FishingCondition fishingCondition) {
-        if (anotherEffect.getRequirements() != null) {
-            for (RequirementInterface requirement : anotherEffect.getRequirements()) {
-                if (!requirement.isConditionMet(fishingCondition)) {
-                    return false;
-                }
-            }
-        }
+    public void addEffect(Effect anotherEffect) {
         HashMap<String, Integer> weightAS = anotherEffect.getWeightAS();
         if (weightAS != null) {
             for (Map.Entry<String, Integer> en : weightAS.entrySet()) {
@@ -135,6 +128,16 @@ public class Effect {
         this.doubleLootChance += anotherEffect.getDoubleLootChance();
         this.difficulty += anotherEffect.getDifficulty();
         if (anotherEffect.canLavaFishing()) this.canLavaFishing = true;
+    }
+
+    public boolean canAddEffect(Effect anotherEffect, FishingCondition fishingCondition) {
+        if (anotherEffect.getRequirements() != null) {
+            for (RequirementInterface requirement : anotherEffect.getRequirements()) {
+                if (!requirement.isConditionMet(fishingCondition)) {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 

@@ -24,14 +24,15 @@ import net.momirealms.customfishing.util.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
-public class ActivatedTotem extends BukkitRunnable {
+public class ActivatedTotem implements Runnable {
 
     public static int id = 121616121;
     private int timer;
@@ -41,10 +42,11 @@ public class ActivatedTotem extends BukkitRunnable {
     private final Set<Player> nearbyPlayerSet;
     private final int[] entityID;
     private final boolean hasHolo;
-    private final BukkitRunnable particleTimerTask;
+    private final TotemParticle particleTimerTask;
     private final FishingManager fishingManager;
     private final int direction;
     private final String activator;
+    private final ScheduledFuture<?> totemTask;
 
     public ActivatedTotem(Location coreLoc, TotemConfig totem, FishingManager fishingManager, int direction, String activator) {
         this.fishingManager = fishingManager;
@@ -58,9 +60,9 @@ public class ActivatedTotem extends BukkitRunnable {
         this.hasHolo = totem.getHoloText() != null;
         this.nearbyPlayerSet = Collections.synchronizedSet(new HashSet<>());
         this.particleTimerTask = new TotemParticle(bottomLoc, totem.getRadius(), totem.getParticle());
-        this.particleTimerTask.runTaskTimerAsynchronously(CustomFishing.getInstance(), 0, 4);
         this.direction = direction;
         this.activator = activator;
+        this.totemTask = CustomFishing.getInstance().getScheduler().runTaskTimer(this, 1, 1, TimeUnit.SECONDS, coreLoc);
     }
 
     @Override
@@ -145,5 +147,9 @@ public class ActivatedTotem extends BukkitRunnable {
                 player.addPotionEffect(potionEffect);
             }
         }
+    }
+
+    public void cancel() {
+        this.totemTask.cancel(false);
     }
 }

@@ -97,6 +97,7 @@ public class ConfigUtils {
                     case "job-level" -> requirements.add(new JobLevelImpl(null, section.getInt(type)));
                     case "date" -> requirements.add(new DateImpl(null, new HashSet<>(section.getStringList(type))));
                     case "rod" -> requirements.add(new RodImpl(null, new HashSet<>(section.getStringList(type))));
+                    case "bait" -> requirements.add(new BaitImpl(null, new HashSet<>(section.getStringList(type))));
                     case "papi-condition" -> requirements.add(new CustomPapi(null, Objects.requireNonNull(section.getConfigurationSection(type)).getValues(false)));
                 }
             }
@@ -126,6 +127,7 @@ public class ConfigUtils {
                     case "job-level" -> requirements.add(new JobLevelImpl(msg, innerSec.getInt("value")));
                     case "date" -> requirements.add(new DateImpl(msg, new HashSet<>(innerSec.getStringList("value"))));
                     case "rod" -> requirements.add(new RodImpl(msg, new HashSet<>(innerSec.getStringList("value"))));
+                    case "bait" -> requirements.add(new BaitImpl(msg, new HashSet<>(innerSec.getStringList("value"))));
                     case "papi-condition" -> requirements.add(new CustomPapi(msg, Objects.requireNonNull(innerSec.getConfigurationSection("value")).getValues(false)));
                 }
             }

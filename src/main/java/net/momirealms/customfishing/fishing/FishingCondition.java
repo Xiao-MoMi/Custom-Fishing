@@ -30,13 +30,15 @@ public class FishingCondition{
 
     private final Location location;
     private final Player player;
-    private final String rod_id;
+    private final String rodID;
+    private final String baitID;
     private final HashMap<String, String> papiMap;
 
-    public FishingCondition(Location location, Player player, @Nullable String rod_id) {
+    public FishingCondition(Location location, Player player, @Nullable String rodID, @Nullable String baitID) {
         this.location = location;
         this.player = player;
-        this.rod_id = rod_id;
+        this.rodID = rodID;
+        this.baitID = baitID;
         this.papiMap = new HashMap<>();
         if (player != null) {
             PlaceholderManager placeholderManager = CustomFishing.getInstance().getIntegrationManager().getPlaceholderManager();
@@ -58,8 +60,12 @@ public class FishingCondition{
         return player;
     }
 
-    public String getRod_id() {
-        return rod_id;
+    public String getRodID() {
+        return rodID;
+    }
+
+    public String getBaitID() {
+        return baitID;
     }
 
     @Override

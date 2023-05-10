@@ -3,6 +3,7 @@ version: '${version}'
 main: net.momirealms.customfishing.CustomFishing
 api-version: 1.17
 authors: [ XiaoMoMi ]
+folia-supported: true
 depend:
   - ProtocolLib
 softdepend:

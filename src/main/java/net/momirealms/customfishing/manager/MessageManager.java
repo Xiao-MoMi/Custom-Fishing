@@ -44,7 +44,6 @@ public class MessageManager {
     public static String possibleLoots;
     public static String splitChar;
     public static String noLoot;
-    public static String competitionOn;
     public static String notEnoughPlayers;
     public static String noRank;
     public static String forceSuccess;
@@ -84,7 +83,6 @@ public class MessageManager {
         possibleLoots = getOrSet(config, "possible-loots", "Possible loots here: ");
         splitChar = getOrSet(config, "split-char", ", ");
         noLoot = getOrSet(config, "no-loot", "There''s no fish in this place.");
-        competitionOn = getOrSet(config, "competition-ongoing", "There is currently a fishing competition in progress! Start fishing to join the competition for a prize.");
         notEnoughPlayers = getOrSet(config, "players-not-enough", "The number of players is not enough for the fishing competition to be started as scheduled.");
         noRank = getOrSet(config, "no-rank", "No Rank");
         forceSuccess = getOrSet(config, "force-competition-success", "Forced to start a fishing competition.");

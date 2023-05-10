@@ -20,7 +20,6 @@ messages:
   hook-other-entity: 'The hook is hooked on another entity.'
   reach-sell-limit: 'You have earned too much from selling fish! Come tomorrow.'
   no-loot: 'There''s no fish in this place.'
-  competition-ongoing: 'There is currently a fishing competition in progress! Start fishing to join the competition for a prize.'
   players-not-enough: 'The number of players is not enough for the fishing competition to be started as scheduled.'
   force-competition-success: 'Forced to start a fishing competition.'
   force-competition-failure: 'The competition does not exist.'

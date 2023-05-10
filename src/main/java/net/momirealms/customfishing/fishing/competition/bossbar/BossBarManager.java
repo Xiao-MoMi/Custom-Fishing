@@ -20,22 +20,24 @@ package net.momirealms.customfishing.fishing.competition.bossbar;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.competition.Competition;
 import net.momirealms.customfishing.listener.JoinQuitListener;
-import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.object.Function;
-import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-import java.util.HashMap;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class BossBarManager extends Function {
 
-    public static HashMap<Player, BossBarSender> cache = new HashMap<>();
+    private static final ConcurrentHashMap<UUID, BossBarSender> senderMap = new ConcurrentHashMap<>();
     private final JoinQuitListener joinQuitListener;
+    private final BossBarConfig bossBarConfig;
 
-    public BossBarManager() {
+    public BossBarManager(BossBarConfig bossBarConfig) {
         this.joinQuitListener = new JoinQuitListener(this);
+        this.bossBarConfig = bossBarConfig;
     }
 
     @Override
@@ -46,47 +48,51 @@ public class BossBarManager extends Function {
     @Override
     public void unload() {
         if (this.joinQuitListener != null) HandlerList.unregisterAll(this.joinQuitListener);
-        for (BossBarSender bossBarSender : cache.values()) {
+        for (BossBarSender bossBarSender : senderMap.values()) {
             bossBarSender.hide();
         }
-        cache.clear();
+        senderMap.clear();
     }
 
     @Override
     public void onQuit(Player player) {
-        BossBarSender sender = cache.get(player);
+        BossBarSender sender = senderMap.get(player.getUniqueId());
         if (sender != null) {
-            if (sender.getStatus()) {
+            if (sender.isVisible()) {
                 sender.hide();
             }
-            cache.remove(player);
+            senderMap.remove(player.getUniqueId());
         }
     }
 
     @Override
     public void onJoin(Player player) {
-        Bukkit.getScheduler().runTaskLater(CustomFishing.getInstance(), () -> {
+        CustomFishing.getInstance().getScheduler().runTaskAsyncLater(() -> {
             if (Competition.currentCompetition != null){
-                if (Competition.currentCompetition.isJoined(player) && cache.get(player) == null) {
-                    BossBarSender sender = new BossBarSender(player, Competition.currentCompetition.getCompetitionConfig().getBossBarConfig());
-                    if (!sender.getStatus()) {
+                boolean hasJoined = Competition.currentCompetition.isJoined(player);
+                if ((hasJoined || bossBarConfig.isShowToAll()) && senderMap.get(player.getUniqueId()) == null) {
+                    BossBarSender sender = new BossBarSender(player, bossBarConfig);
+                    sender.setHasClaimedJoinReward(hasJoined);
+                    if (!sender.isVisible()) {
                         sender.show();
                     }
-                    cache.put(player, sender);
-                } else {
-                    AdventureUtils.playerMessage(player, MessageManager.competitionOn);
+                    senderMap.put(player.getUniqueId(), sender);
                 }
             }
-        }, 5);
+        }, 200, TimeUnit.MILLISECONDS);
     }
 
-    public void tryJoin(Player player) {
-        if (cache.get(player) == null) {
-            BossBarSender sender = new BossBarSender(player, Competition.currentCompetition.getCompetitionConfig().getBossBarConfig());
-            if (!sender.getStatus()) {
-                sender.show();
-            }
-            cache.put(player, sender);
+    public void tryJoin(Player player, boolean hasJoinReward) {
+        BossBarSender sender = senderMap.get(player.getUniqueId());
+        if (sender == null) {
+            sender = new BossBarSender(player, Competition.currentCompetition.getCompetitionConfig().getBossBarConfig());
+            senderMap.put(player.getUniqueId(), sender);
+        }
+        if (!sender.isVisible()) {
+            sender.show();
+        }
+        if (hasJoinReward && !sender.hasClaimedJoin()) {
+            sender.setHasClaimedJoinReward(true);
             for (String joinCmd : Competition.currentCompetition.getCompetitionConfig().getJoinCommand()){
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), joinCmd.replace("{player}", player.getName()));
             }

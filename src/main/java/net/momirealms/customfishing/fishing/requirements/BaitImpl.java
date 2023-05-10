@@ -6,20 +6,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 
-public class RodImpl extends Requirement implements RequirementInterface {
+public class BaitImpl extends Requirement implements RequirementInterface {
 
-    private final HashSet<String> rods;
+    private final HashSet<String> baits;
 
-    public RodImpl(@Nullable String[] msg, HashSet<String> rods) {
+    public BaitImpl(@Nullable String[] msg, HashSet<String> baits) {
         super(msg);
-        this.rods = rods;
+        this.baits = baits;
     }
 
     @Override
     public boolean isConditionMet(FishingCondition fishingCondition) {
         Player player = fishingCondition.getPlayer();
-        String rod = fishingCondition.getRodID();
-        if (rod == null || rods.contains(rod)) {
+        String bait = fishingCondition.getBaitID();
+        if (bait == null || baits.contains(bait)) {
             return true;
         }
         notMetMessage(player);

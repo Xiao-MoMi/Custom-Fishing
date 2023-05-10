@@ -19,10 +19,10 @@ package net.momirealms.customfishing.fishing.competition;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.object.Function;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.time.LocalTime;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class CompetitionSchedule extends Function {
 
@@ -37,7 +37,7 @@ public class CompetitionSchedule extends Function {
         cancelCompetition();
     }
 
-    private BukkitTask checkTimeTask;
+    private ScheduledFuture<?> checkTimeTask;
     private int doubleCheckTime;
 
     public static boolean startCompetition(String competitionName) {
@@ -72,21 +72,19 @@ public class CompetitionSchedule extends Function {
     }
 
     public void checkTime() {
-        this.checkTimeTask = new BukkitRunnable() {
-            public void run() {
-                if (isANewMinute()) {
-                    CompetitionConfig competitionConfig = CustomFishing.getInstance().getCompetitionManager().getCompetitionsT().get(getCurrentTime());
-                    if (competitionConfig != null && competitionConfig.canStart()) {
-                        startCompetition(competitionConfig);
-                    }
+        this.checkTimeTask = CustomFishing.getInstance().getScheduler().runTaskTimerAsync(() -> {
+            if (isANewMinute()) {
+                CompetitionConfig competitionConfig = CustomFishing.getInstance().getCompetitionManager().getCompetitionsT().get(getCurrentTime());
+                if (competitionConfig != null && competitionConfig.canStart()) {
+                    startCompetition(competitionConfig);
                 }
             }
-        }.runTaskTimer(CustomFishing.getInstance(), 20, 20);
+        }, 1, 1, TimeUnit.SECONDS);
     }
 
     public void stopCheck() {
-        if (this.checkTimeTask != null) {
-            checkTimeTask.cancel();
+        if (this.checkTimeTask != null && !checkTimeTask.isCancelled()) {
+            checkTimeTask.cancel(false);
         }
     }
 

@@ -58,8 +58,7 @@ public class DynamicText {
             PlaceholderManager placeholderManager = CustomFishing.getInstance().getIntegrationManager().getPlaceholderManager();
             if ("%s".equals(originalValue)) {
                 string = placeholderManager.parseSinglePlaceholder(owner, ownerPlaceholders[0]);
-            }
-            else {
+            } else {
                 Object[] values = new String[ownerPlaceholders.length];
                 for (int i = 0; i < ownerPlaceholders.length; i++) {
                     values[i] = placeholderManager.parseSinglePlaceholder(owner, ownerPlaceholders[i]);

@@ -115,7 +115,7 @@ public class CustomFishingAPI {
      * @return loots
      */
     public static List<Loot> getLootsAt(Location location, Player player) {
-        return CustomFishing.getInstance().getFishingManager().getPossibleLootList(new FishingCondition(location, player, null), false, CustomFishing.getInstance().getLootManager().getAllLoots());
+        return CustomFishing.getInstance().getFishingManager().getPossibleLootList(new FishingCondition(location, player, null, null), false, CustomFishing.getInstance().getLootManager().getAllLoots());
     }
 
     /**
@@ -124,7 +124,7 @@ public class CustomFishingAPI {
      * @return loots
      */
     public static List<Loot> getLootsAt(Location location) {
-        return CustomFishing.getInstance().getFishingManager().getPossibleLootList(new FishingCondition(location, null, null), false, CustomFishing.getInstance().getLootManager().getAllLoots());
+        return CustomFishing.getInstance().getFishingManager().getPossibleLootList(new FishingCondition(location, null, null, null), false, CustomFishing.getInstance().getLootManager().getAllLoots());
     }
 
     /**

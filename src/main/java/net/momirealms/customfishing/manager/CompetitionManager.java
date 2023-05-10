@@ -90,7 +90,8 @@ public class CompetitionManager extends Function {
                         BossBarOverlay.valueOf(competitionSection.getString("bossbar.overlay","SOLID").toUpperCase()),
                         BarColor.valueOf(competitionSection.getString("bossbar.color","WHITE").toUpperCase()),
                         competitionSection.getInt("bossbar.refresh-rate",10),
-                        competitionSection.getInt("bossbar.switch-interval", 200)
+                        competitionSection.getInt("bossbar.switch-interval", 200),
+                        !competitionSection.getBoolean("bossbar.only-show-to-participants", true)
                 );
 
                 HashMap<String, Action[]> rewardsMap = new HashMap<>();

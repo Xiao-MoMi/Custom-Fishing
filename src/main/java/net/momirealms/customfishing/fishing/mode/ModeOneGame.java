@@ -23,6 +23,8 @@ import net.momirealms.customfishing.manager.FishingManager;
 import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.TimeUnit;
+
 public class ModeOneGame extends FishingGame {
 
     private int progress;
@@ -33,18 +35,19 @@ public class ModeOneGame extends FishingGame {
         super(plugin, fishingManager, deadline, player, difficulty, modeOneBar);
         this.face = true;
         this.modeOneBar = modeOneBar;
+        this.gameTask = plugin.getScheduler().runTaskTimer(this, 50, 54 - difficulty * 4L, TimeUnit.MILLISECONDS);
+        this.progress = -1;
     }
 
     @Override
     public void run() {
         super.run();
-        if (face) progress += difficulty;
-        else progress -= difficulty;
+        if (face) progress++;
+        else progress--;
         if (progress > modeOneBar.getTotalWidth()) {
             face = !face;
             progress = 2 * modeOneBar.getTotalWidth() - progress;
-        }
-        else if (progress < 0) {
+        } else if (progress < 0) {
             face = !face;
             progress = -progress;
         }

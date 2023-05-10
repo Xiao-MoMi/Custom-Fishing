@@ -26,6 +26,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.TimeUnit;
+
 public class ModeTwoGame extends FishingGame {
 
     private boolean success;
@@ -50,6 +52,7 @@ public class ModeTwoGame extends FishingGame {
         this.time_requirement = modeTwoBar.getRandomTimeRequirement();
         this.hookLoc = hookLoc;
         this.distance = LocationUtils.getDistance(player.getLocation(), hookLoc);
+        this.gameTask = plugin.getScheduler().runTaskTimer(this, 50, 33, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -58,8 +61,7 @@ public class ModeTwoGame extends FishingGame {
         if (modeTwoBar.isSneakMode()) {
             if (player.isSneaking()) addV(true);
             else reduceV();
-        }
-        else {
+        } else {
             double newDistance = LocationUtils.getDistance(player.getLocation(), hookLoc);
             if (distance < newDistance) addV(true);
             else if (distance > newDistance) addV(false);
@@ -67,8 +69,7 @@ public class ModeTwoGame extends FishingGame {
         }
         if (timer < 30) {
             timer++;
-        }
-        else {
+        } else {
             timer = 0;
             if (Math.random() > ((double) 1 / (difficulty + 1))) {
                 burst();
@@ -76,17 +77,16 @@ public class ModeTwoGame extends FishingGame {
         }
         judgement_position += judgement_velocity;
         fish_position += fish_velocity;
+
         fraction();
         calibrate();
 
         if (fish_position >= judgement_position - 2 && fish_position + modeTwoBar.getFish_icon_width() <= judgement_position + modeTwoBar.getJudgement_area_width() + 2) {
-            hold_time++;
-        }
-        else {
-            hold_time -= modeTwoBar.getPunishment();
+            hold_time += 0.66;
+        } else {
+            hold_time -= modeTwoBar.getPunishment() * 0.66;
         }
         if (hold_time >= time_requirement) {
-            cancel();
             success = true;
             FishHook fishHook = fishingManager.getHook(player.getUniqueId());
             if (fishHook != null) {
@@ -94,6 +94,7 @@ public class ModeTwoGame extends FishingGame {
                 fishingManager.removeHook(player.getUniqueId());
             }
             fishingManager.removeFishingPlayer(player);
+            cancel();
             return;
         }
         showBar();
@@ -119,8 +120,7 @@ public class ModeTwoGame extends FishingGame {
     private void burst() {
         if (Math.random() < (judgement_position / modeTwoBar.getBar_effective_width())) {
             judgement_velocity = -1 - 0.8 * Math.random() * difficulty;
-        }
-        else {
+        } else {
             judgement_velocity = 1 + 0.8 * Math.random() * difficulty;
         }
     }
@@ -129,8 +129,7 @@ public class ModeTwoGame extends FishingGame {
         if (judgement_velocity > 0) {
             judgement_velocity -= modeTwoBar.getWater_resistance();
             if (judgement_velocity < 0) judgement_velocity = 0;
-        }
-        else {
+        } else {
             judgement_velocity += modeTwoBar.getWater_resistance();
             if (judgement_velocity > 0) judgement_velocity = 0;
         }

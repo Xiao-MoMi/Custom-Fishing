@@ -26,13 +26,15 @@ public class BossBarConfig {
     private final BossBarOverlay overlay;
     private final BarColor color;
     private final int rate;
+    private boolean showToAll;
 
-    public BossBarConfig(String[] text, BossBarOverlay overlay, BarColor color, int rate, int interval) {
+    public BossBarConfig(String[] text, BossBarOverlay overlay, BarColor color, int rate, int interval, boolean showToAll) {
         this.text = text;
         this.overlay = overlay;
         this.color = color;
         this.rate = rate;
         this.interval = interval;
+        this.showToAll = showToAll;
     }
 
     public String[] getText() {
@@ -53,5 +55,9 @@ public class BossBarConfig {
 
     public int getRate() {
         return rate;
+    }
+
+    public boolean isShowToAll() {
+        return showToAll;
     }
 }

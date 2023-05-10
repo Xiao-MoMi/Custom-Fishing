@@ -21,7 +21,6 @@ messages:
   hook-other-entity: 'Olta başka bir canlıya bağlı.'
   reach-sell-limit: 'Balık satmaktan çok fazla para kazandın! Yarın gel.'
   no-loot: 'Burada balık yok.'
-  competition-ongoing: 'Şu anda bir balık tutma yarışması sürüyor! Yarışmaya katılıp ödül kazanmak için balık tutmaya başla.'
   players-not-enough: 'Balık tutma yarışmasının planlandığı gibi başlaması için yeterli oyuncu yok.'
   force-competition-success: 'Zorla bir balık tutma yarışması başlatıldı.'
   force-competition-failure: 'Böyle bir yarışma bulunamadı.'

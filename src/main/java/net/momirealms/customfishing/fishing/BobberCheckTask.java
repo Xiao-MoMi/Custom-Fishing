@@ -26,23 +26,23 @@ import net.momirealms.customfishing.manager.FishingManager;
 import net.momirealms.customfishing.util.AdventureUtils;
 import net.momirealms.customfishing.util.ArmorStandUtils;
 import net.momirealms.customfishing.util.FakeItemUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
-public class BobberCheckTask extends BukkitRunnable {
+public class BobberCheckTask implements Runnable {
 
+    private final ScheduledFuture<?> bobberTask;
     private final FishHook fishHook;
     private final CustomFishing plugin;
     private int timer;
@@ -53,16 +53,17 @@ public class BobberCheckTask extends BukkitRunnable {
     private boolean reserve;
     private int jump_timer;
     private final int lureLevel;
-    private BukkitTask task_1;
-    private BukkitTask task_2;
-    private BukkitTask task_3;
+    private ScheduledFuture<?> getHookedTask;
+    private ScheduledFuture<?> resetTask;
+    private LavaEffect lavaEffect;
     private ArmorStand hookedEntity;
     private final int entityID;
     private boolean land;
     private boolean first;
     private final String rod;
+    private final String bait;
 
-    public BobberCheckTask(CustomFishing plugin, Player player, Effect effect, FishHook fishHook, FishingManager fishingManager, int lureLevel, int entityID, String rod) {
+    public BobberCheckTask(CustomFishing plugin, Player player, Effect effect, FishHook fishHook, FishingManager fishingManager, int lureLevel, int entityID, String rod, String bait) {
         this.fishHook = fishHook;
         this.plugin = plugin;
         this.fishingManager = fishingManager;
@@ -76,6 +77,8 @@ public class BobberCheckTask extends BukkitRunnable {
         this.land = false;
         this.first = true;
         this.rod = rod;
+        this.bait = bait;
+        this.bobberTask = plugin.getScheduler().runTaskTimer(this, 50, 50, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -125,16 +128,20 @@ public class BobberCheckTask extends BukkitRunnable {
                 }
                 reserve = false;
                 randomTime();
-                spawnArmorStand(fishHook.getLocation());
+                if (plugin.getVersionHelper().isFolia()) {
+                    plugin.getScheduler().runTask(() -> spawnArmorStand(fishHook.getLocation()), fishHook.getLocation());
+                } else {
+                    spawnArmorStand(fishHook.getLocation());
+                }
             }
             return;
         }
         if (fishHook.isInWater()) {
             stop();
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            plugin.getScheduler().runTaskAsync(() -> {
                 List<Loot> possibleLoots = new ArrayList<>();
                 if (!(ConfigManager.needRodForLoot && !effect.hasSpecialRod())) {
-                    possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player, rod), false, plugin.getLootManager().getWaterLoots().values());
+                    possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player, rod, bait), false, plugin.getLootManager().getWaterLoots().values());
                 }
                 fishingManager.getNextLoot(player, effect, possibleLoots);
                 if (ConfigManager.enableWaterAnimation) {
@@ -149,12 +156,18 @@ public class BobberCheckTask extends BukkitRunnable {
     }
 
     public void stop() {
-        cancel();
-        cancelTask();
+        bobberTask.cancel(false);
+        cancelSubTask();
         fishingManager.removePlayerFromLavaFishing(player);
         if (hookedEntity != null && !hookedEntity.isDead()) {
-            hookedEntity.remove();
-            hookedEntity = null;
+            if (plugin.getVersionHelper().isFolia()) {
+                plugin.getScheduler().runTask(() -> {
+                    hookedEntity.remove(); hookedEntity = null;
+                }, hookedEntity.getLocation());
+            } else {
+                hookedEntity.remove();
+                hookedEntity = null;
+            }
         }
         sendRemovePacket();
     }
@@ -164,45 +177,51 @@ public class BobberCheckTask extends BukkitRunnable {
         CustomFishing.getProtocolManager().sendServerPacket(player, FakeItemUtils.getDestroyPacket(entityID));
     }
 
-    public void cancelTask() {
-        if (task_1 != null) {
-            task_1.cancel();
-            task_1 = null;
+    public void cancelSubTask() {
+        if (getHookedTask != null && !lavaEffect.isCancelled()) {
+            getHookedTask.cancel(false);
+            getHookedTask = null;
         }
-        if (task_2 != null) {
-            task_2.cancel();
-            task_2 = null;
+        if (resetTask != null && !lavaEffect.isCancelled()) {
+            resetTask.cancel(false);
+            resetTask = null;
         }
-        if (task_3 != null) {
-            task_3.cancel();
-            task_3 = null;
+        if (lavaEffect != null && !lavaEffect.isCancelled()) {
+            lavaEffect.cancel();
+            lavaEffect = null;
         }
     }
 
     private void randomTime() {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        plugin.getScheduler().runTaskAsync(() -> {
             List<Loot> possibleLoots = new ArrayList<>();
             if (!(ConfigManager.needRodForLoot && !effect.hasSpecialRod())) {
-                possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player, rod), false, plugin.getLootManager().getLavaLoots().values());
+                possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player, rod, bait), false, plugin.getLootManager().getLavaLoots().values());
             }
             fishingManager.getNextLoot(player, effect, possibleLoots);
         });
-        cancelTask();
+        cancelSubTask();
         int random = new Random().nextInt(ConfigManager.lavaMaxTime) + ConfigManager.lavaMinTime;
         random -= lureLevel * 100;
         random *= effect.getTimeModifier();
         if (random < ConfigManager.lavaMinTime) random = ConfigManager.lavaMinTime;
-        task_1 = Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        getHookedTask = plugin.getScheduler().runTaskLater(() -> {
             hooked = true;
-            if (hookedEntity != null && !hookedEntity.isDead()) hookedEntity.remove();
+            if (hookedEntity != null && !hookedEntity.isDead()) {
+                if (plugin.getVersionHelper().isFolia()) {
+                    plugin.getScheduler().runTask(() -> hookedEntity.remove(), hookedEntity.getLocation());
+                } else {
+                    hookedEntity.remove();
+                }
+            }
             AdventureUtils.playerSound(player, Sound.Source.NEUTRAL, Key.key("minecraft:block.pointed_dripstone.drip_lava_into_cauldron"), 1, 1);
             if (ConfigManager.instantBar) fishingManager.showBar(player);
-        }, random);
-        task_2 = Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        }, random * 50L, TimeUnit.MILLISECONDS);
+        resetTask = plugin.getScheduler().runTaskAsyncLater(() -> {
             hooked = false;
             reserve = true;
-        }, random + 40);
-        task_3 = new LavaEffect(fishHook.getLocation()).runTaskTimerAsynchronously(plugin,random - 60,1);
+        }, (random + 40) * 50L, TimeUnit.MILLISECONDS);
+        lavaEffect = new LavaEffect(fishHook.getLocation(), random - 60);
     }
 
     private void spawnArmorStand(Location armorLoc) {

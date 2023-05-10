@@ -25,16 +25,17 @@ import net.momirealms.customfishing.data.storage.StorageType;
 import net.momirealms.customfishing.object.Function;
 import net.momirealms.customfishing.util.AdventureUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.scheduler.BukkitTask;
+
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class DataManager extends Function {
 
     private DataStorageInterface dataStorageInterface;
     private final CustomFishing plugin;
     private StorageType storageType;
-    private BukkitTask timerSave;
+    private ScheduledFuture<?> timerSave;
 
     public DataManager(CustomFishing plugin) {
         this.plugin = plugin;
@@ -65,7 +66,7 @@ public class DataManager extends Function {
     @Override
     public void load() {
         if (loadStorageMode()) this.dataStorageInterface.initialize();
-        this.timerSave = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+        this.timerSave = plugin.getScheduler().runTaskTimerAsync(() -> {
             //long time1 = System.currentTimeMillis();
             if (ConfigManager.enableFishingBag) {
                 if (!ConfigManager.hideSaveInfo) AdventureUtils.consoleMessage("[CustomFishing] Saving fishing bag data...");
@@ -77,12 +78,14 @@ public class DataManager extends Function {
             }
             //AdventureUtil.consoleMessage("[CustomFishing] Data saved for all online players. Took " + (System.currentTimeMillis() - time1) + " ms.");
             if (!ConfigManager.hideSaveInfo) AdventureUtils.consoleMessage("[CustomFishing] Data saved for all online players.");
-        }, 24000, 24000);
+        }, 20, 20, TimeUnit.MINUTES);
     }
 
     @Override
     public void unload() {
-        if (timerSave != null) timerSave.cancel();
+        if (timerSave != null && !timerSave.isCancelled()) {
+            timerSave.cancel(false);
+        }
         YamlConfiguration config = ConfigUtils.getConfig("database.yml");
         StorageType st = config.getString("data-storage-method","YAML").equalsIgnoreCase("YAML") ? StorageType.YAML : StorageType.SQL;
         if (this.dataStorageInterface != null && dataStorageInterface.getStorageType() != st) this.dataStorageInterface.disable();
@@ -93,8 +96,8 @@ public class DataManager extends Function {
         if (this.dataStorageInterface != null) {
             this.dataStorageInterface.disable();
         }
-        if (timerSave != null) {
-            timerSave.cancel();
+        if (timerSave != null && !timerSave.isCancelled()) {
+            timerSave.cancel(false);
         }
     }
 }

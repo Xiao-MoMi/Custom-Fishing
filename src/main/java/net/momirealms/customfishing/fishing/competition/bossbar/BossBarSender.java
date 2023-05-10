@@ -20,24 +20,21 @@ package net.momirealms.customfishing.fishing.competition.bossbar;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.competition.Competition;
 import net.momirealms.customfishing.object.DynamicText;
+import net.momirealms.customfishing.object.Reflection;
 import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.boss.BarColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.UUID;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class BossBarSender {
 
@@ -48,18 +45,19 @@ public class BossBarSender {
     private final int size;
     private final DynamicText[] texts;
     private DynamicText text;
-    private BukkitTask bukkitTask;
+    private ScheduledFuture<?> senderTask;
     private final UUID uuid;
     private boolean force;
     private final BossBarConfig config;
     private boolean isShown;
+    private boolean hasClaimedJoin;
 
     public void setText(int position) {
         this.text = texts[position];
         this.force = true;
     }
 
-    public BossBarSender(Player player, BossBarConfig config){
+    public BossBarSender(Player player, BossBarConfig config) {
         String[] str = config.getText();
         this.size = str.length;
         texts = new DynamicText[str.length];
@@ -76,48 +74,53 @@ public class BossBarSender {
     public void show() {
         this.isShown = true;
         CustomFishing.getProtocolManager().sendServerPacket(player, getCreatePacket());
-        this.bukkitTask = new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (size != 1) {
-                    timer_2++;
-                    if (timer_2 > config.getInterval()) {
-                        timer_2 = 0;
-                        counter++;
-                        if (counter == size) {
-                            counter = 0;
-                        }
-                        setText(counter);
+        senderTask = CustomFishing.getInstance().getScheduler().runTaskTimerAsync(() -> {
+            if (size != 1) {
+                timer_2++;
+                if (timer_2 > config.getInterval()) {
+                    timer_2 = 0;
+                    counter++;
+                    if (counter == size) {
+                        counter = 0;
                     }
-                }
-                if (timer_1 < config.getRate()){
-                    timer_1++;
-                }
-                else {
-                    timer_1 = 0;
-                    if (text.update() || force) {
-                        force = false;
-                        CustomFishing.getProtocolManager().sendServerPacket(player, getUpdatePacket());
-                        CustomFishing.getProtocolManager().sendServerPacket(player, getProgressPacket());
-                    }
+                    setText(counter);
                 }
             }
-        }.runTaskTimerAsynchronously(CustomFishing.getInstance(),0,1);
+            if (timer_1 < config.getRate()){
+                timer_1++;
+            } else {
+                timer_1 = 0;
+                if (text.update() || force) {
+                    force = false;
+                    CustomFishing.getProtocolManager().sendServerPacket(player, getUpdatePacket());
+                    CustomFishing.getProtocolManager().sendServerPacket(player, getProgressPacket());
+                }
+            }
+        }, 50, 50, TimeUnit.MILLISECONDS);
+    }
+
+    public boolean isVisible() {
+        return this.isShown;
+    }
+
+    public BossBarConfig getConfig() {
+        return config;
+    }
+
+    public void hide() {
+        sendRemovePacket();
+        if (senderTask != null && !senderTask.isCancelled()) senderTask.cancel(false);
+        this.isShown = false;
     }
 
     private PacketContainer getUpdatePacket() {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.BOSS);
         packet.getModifier().write(0, uuid);
         try {
-            Method sMethod = MinecraftReflection.getChatSerializerClass().getMethod("a", String.class);
-            sMethod.setAccessible(true);
-            Object chatComponent = sMethod.invoke(null, GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize(AdventureUtils.replaceLegacy(text.getLatestValue()))));
-            Class<?> packetBossClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutBoss$e");
-            Constructor<?> packetConstructor = packetBossClass.getDeclaredConstructor(MinecraftReflection.getIChatBaseComponentClass());
-            packetConstructor.setAccessible(true);
-            Object updatePacket = packetConstructor.newInstance(chatComponent);
+            Object chatComponent = Reflection.iChatComponentMethod.invoke(null, GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize(AdventureUtils.replaceLegacy(text.getLatestValue()))));
+            Object updatePacket = Reflection.updateConstructor.newInstance(chatComponent);
             packet.getModifier().write(1, updatePacket);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException e) {
+        } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }
         return packet;
@@ -127,12 +130,9 @@ public class BossBarSender {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.BOSS);
         packet.getModifier().write(0, uuid);
         try {
-            Class<?> packetBossClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutBoss$f");
-            Constructor<?> packetConstructor = packetBossClass.getDeclaredConstructor(float.class);
-            packetConstructor.setAccessible(true);
-            Object updatePacket = packetConstructor.newInstance(Competition.currentCompetition.getProgress());
+            Object updatePacket = Reflection.progressConstructor.newInstance(Competition.currentCompetition.getProgress());
             packet.getModifier().write(1, updatePacket);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | InstantiationException e) {
+        } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }
         return packet;
@@ -152,33 +152,18 @@ public class BossBarSender {
         return packet;
     }
 
-    public void hide() {
-        sendRemovePacket();
-        if (bukkitTask != null) bukkitTask.cancel();
-        this.isShown = false;
-    }
-
     private void sendRemovePacket() {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.BOSS);
         packet.getModifier().write(0, uuid);
-        try {
-            Class<?> bar = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutBoss");
-            Field remove = bar.getDeclaredField("f");
-            remove.setAccessible(true);
-            packet.getModifier().write(1, remove.get(null));
-            CustomFishing.getProtocolManager().sendServerPacket(player, packet);
-        } catch (ClassNotFoundException e) {
-            AdventureUtils.consoleMessage("<red>[CustomFishing] Failed to remove bossbar for " + player.getName());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        packet.getModifier().write(1, Reflection.removeBossBarPacket);
+        CustomFishing.getProtocolManager().sendServerPacket(player, packet);
     }
 
-    public boolean getStatus() {
-        return this.isShown;
+    public boolean hasClaimedJoin() {
+        return hasClaimedJoin;
     }
 
-    public BossBarConfig getConfig() {
-        return config;
+    public void setHasClaimedJoinReward(boolean hasClaimedJoin) {
+        this.hasClaimedJoin = hasClaimedJoin;
     }
 }

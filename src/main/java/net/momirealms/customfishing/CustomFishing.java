@@ -194,7 +194,7 @@ public final class CustomFishing extends JavaPlugin {
     public OffsetManager getOffsetManager() {
         return offsetManager;
     }
-    
+
     public Scheduler getScheduler() {
         return scheduler;
     }
@@ -226,6 +226,7 @@ public final class CustomFishing extends JavaPlugin {
         getBagDataManager().load();
         getStatisticsManager().unload();
         getStatisticsManager().load();
+        getScheduler().reload();
     }
 
     public static BukkitAudiences getAdventure() {

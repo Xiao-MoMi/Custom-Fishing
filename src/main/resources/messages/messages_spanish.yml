@@ -19,7 +19,6 @@ messages:
   reach-sell-limit: '¡Ganaste mucho dinero vendiendo pescado! Ven mañana.'
   split-char: ', '
   no-loot: '¡No hay peces en este lugar!'
-  competition-ongoing: '¡Actualmente hay un torneo de pesca en curso! Empieza a pescar para participar en el concurso y ganar un premio.'
   players-not-enough: 'El número de jugadores no es suficiente para que el torneo de pesca se celebre como estaba previsto.'
   no-rank: 'No está en la lista'
   force-competition-success: '¡Forzar con éxito un concurso de pesca!'

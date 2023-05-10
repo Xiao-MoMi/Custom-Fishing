@@ -521,8 +521,8 @@ bar_10:
     judgment-area-width: 33
     fish-icon-width: 8
     water-resistance: 0.15
-    pulling-strength: 0.45
-    loosening-strength-loss: 0.3
+    pulling-strength: 0.35
+    loosening-strength-loss: 0.25
   hold-time-requirements:
     - 2
     - 2
