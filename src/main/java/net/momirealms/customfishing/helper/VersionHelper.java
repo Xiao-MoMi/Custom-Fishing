@@ -43,8 +43,9 @@ public class VersionHelper {
         this.plugin = plugin;
         isVersionNewerThan1_19_R2();
         disableUseLessInfo();
-        isSpigot = plugin.getServer().getName().equals("CraftBukkit");
-        isFolia = plugin.getServer().getName().equals("DirtyFolia");
+        String server_name = plugin.getServer().getName();
+        isSpigot = server_name.equals("CraftBukkit");
+        isFolia = server_name.equals("DirtyFolia");
         pluginVersion = plugin.getDescription().getVersion();
     }
 

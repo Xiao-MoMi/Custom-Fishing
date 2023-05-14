@@ -46,6 +46,8 @@ import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.plugin.PluginManager;
@@ -159,8 +161,12 @@ public class IntegrationManager extends Function {
     }
 
     private void hookJobs() {
+        if (this.jobInterface instanceof JobsRebornImpl jobsReborn) {
+            HandlerList.unregisterAll(jobsReborn);
+        }
         if (pluginManager.isPluginEnabled("Jobs")) {
             this.jobInterface = new JobsRebornImpl();
+            Bukkit.getPluginManager().registerEvents((Listener) jobInterface, plugin);
             hookMessage("JobsReborn");
         } else if (pluginManager.isPluginEnabled("EcoJobs")) {
             this.jobInterface = new EcoJobsImpl();

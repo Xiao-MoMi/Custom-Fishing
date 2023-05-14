@@ -48,8 +48,9 @@ public class Reflection {
 
             iChatComponentMethod = MinecraftReflection.getChatSerializerClass().getMethod("a", String.class);
             iChatComponentMethod.setAccessible(true);
-        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | NoSuchMethodException ignored) {
+        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | NoSuchMethodException exception) {
             AdventureUtils.consoleMessage("<red>[CustomFishing] Error occurred when loading reflections");
+            exception.printStackTrace();
         }
     }
 }

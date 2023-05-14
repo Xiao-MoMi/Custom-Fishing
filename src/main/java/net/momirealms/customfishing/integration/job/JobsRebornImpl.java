@@ -18,15 +18,18 @@
 package net.momirealms.customfishing.integration.job;
 
 import com.gamingmesh.jobs.Jobs;
-import com.gamingmesh.jobs.container.Job;
-import com.gamingmesh.jobs.container.JobProgression;
-import com.gamingmesh.jobs.container.JobsPlayer;
+import com.gamingmesh.jobs.container.*;
+import com.gamingmesh.jobs.listeners.JobsPaymentListener;
+import net.momirealms.customfishing.api.event.FishResultEvent;
+import net.momirealms.customfishing.fishing.FishResult;
 import net.momirealms.customfishing.integration.JobInterface;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.util.List;
 
-public class JobsRebornImpl implements JobInterface {
+public class JobsRebornImpl implements JobInterface, Listener {
 
     @Override
     public void addXp(Player player, double amount) {
@@ -51,5 +54,39 @@ public class JobsRebornImpl implements JobInterface {
                     return progression.getLevel();
         }
         return 0;
+    }
+
+    @EventHandler
+    public void onFish(FishResultEvent event) {
+        if (event.isCancelled() || event.getResult() == FishResult.FAILURE) return;
+        Player player = event.getPlayer();
+        if (!Jobs.getGCManager().canPerformActionInWorld(player.getWorld())) return;
+        if (!JobsPaymentListener.payIfCreative(player))
+            return;
+
+        if (!Jobs.getPermissionHandler().hasWorldPermission(player, player.getLocation().getWorld().getName()))
+            return;
+
+        JobsPlayer jobsPlayer = Jobs.getPlayerManager().getJobsPlayer(player);
+        if (jobsPlayer == null) return;
+
+        Jobs.action(jobsPlayer, new CustomFishingInfo(event.getLootID(), ActionType.MMKILL));
+    }
+
+    public static class CustomFishingInfo extends BaseActionInfo {
+        private final String name;
+
+        public CustomFishingInfo(String name, ActionType type) {
+            super(type);
+            this.name = name;
+        }
+
+        public String getName() {
+            return this.name;
+        }
+
+        public String getNameWithSub() {
+            return this.name;
+        }
     }
 }

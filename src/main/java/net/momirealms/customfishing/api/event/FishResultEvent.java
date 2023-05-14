@@ -73,6 +73,10 @@ public class FishResultEvent extends PlayerEvent implements Cancellable {
         return result;
     }
 
+    /**
+     * Would be null if failed or caught a mob
+     * @return loot id
+     */
     @Nullable
     public ItemStack getLoot() {
         return loot;
@@ -83,7 +87,17 @@ public class FishResultEvent extends PlayerEvent implements Cancellable {
     }
 
     @Nullable
+    @Deprecated
     public String getLoot_id() {
+        return loot_id;
+    }
+
+    /**
+     * Would be null if failed
+     * @return loot id (Vanilla loots would be "vanilla")
+     */
+    @Nullable
+    public String getLootID() {
         return loot_id;
     }
 }

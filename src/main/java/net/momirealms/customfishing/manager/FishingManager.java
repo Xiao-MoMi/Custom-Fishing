@@ -739,7 +739,7 @@ public class FishingManager extends Function {
     }
 
     public void fail(Player player, Loot loot, boolean isVanilla) {
-        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.FAILURE, false, null, "null");
+        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.FAILURE, false, null, null);
         Bukkit.getServer().getPluginManager().callEvent(fishResultEvent);
         if (fishResultEvent.isCancelled()) {
             return;
