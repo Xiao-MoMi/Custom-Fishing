@@ -248,7 +248,6 @@ public class SellManager extends InventoryFunction {
         if (!(inventory.getHolder() instanceof SellGUI)) return;
         Inventory clickedInventory = event.getClickedInventory();
         if (clickedInventory == null) return;
-        boolean update = true;
         if (clickedInventory == player.getInventory()) {
             if (event.isShiftClick()) {
                 event.setCancelled(true);
@@ -309,25 +308,21 @@ public class SellManager extends InventoryFunction {
                     sellData.setMoney(sellFishEvent.getMoney() + sell);
                     doActions(player, sellFishEvent.getMoney(), upperLimit - sell - sellFishEvent.getMoney());
                     inventory.close();
-                }
-                else {
+                } else {
                     for (int slot : functionIconSlots) {
                         inventory.setItem(slot, ItemStackUtils.getFromItem(denyIcon));
                     }
-                    update = false;
                     if (denyKey != null) AdventureUtils.playerSound(player, soundSource, denyKey, 1, 1);
                 }
             }
         }
 
-        if (update) {
-            plugin.getScheduler().runTaskAsync(() -> {
-                ItemStack icon = ItemStackUtils.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory))));
-                for (int slot : functionIconSlots) {
-                    inventory.setItem(slot, icon);
-                }
-            });
-        }
+        plugin.getScheduler().runTaskAsyncLater(() -> {
+            ItemStack icon = ItemStackUtils.getFromItem(sellIcon.cloneWithPrice(getTotalPrice(getPlayerItems(inventory))));
+            for (int slot : functionIconSlots) {
+                inventory.setItem(slot, icon);
+            }
+        }, 25, TimeUnit.MILLISECONDS);
     }
 
     @Override

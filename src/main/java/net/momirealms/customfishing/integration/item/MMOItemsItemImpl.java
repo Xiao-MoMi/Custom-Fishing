@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.integration.item;
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.interaction.util.DurabilityItem;
@@ -41,6 +42,8 @@ public class MMOItemsItemImpl implements ItemInterface {
 
     @Override
     public boolean loseCustomDurability(ItemStack itemStack, Player player) {
+        NBTItem nbtItem = new NBTItem(itemStack);
+        if (!nbtItem.hasTag("MMOITEMS_MAX_DURABILITY")) return false;
         DurabilityItem durabilityItem = new DurabilityItem(player, itemStack);
         if (Math.random() < (1 / (double) (itemStack.getEnchantmentLevel(Enchantment.DURABILITY) + 1))) {
             durabilityItem.decreaseDurability(1);

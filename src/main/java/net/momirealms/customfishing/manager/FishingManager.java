@@ -27,6 +27,7 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.CustomFishingAPI;
 import net.momirealms.customfishing.api.event.*;
 import net.momirealms.customfishing.fishing.*;
+import net.momirealms.customfishing.fishing.Effect;
 import net.momirealms.customfishing.fishing.action.Action;
 import net.momirealms.customfishing.fishing.action.VanillaXPImpl;
 import net.momirealms.customfishing.fishing.bar.FishingBar;
@@ -54,10 +55,7 @@ import net.momirealms.customfishing.util.AdventureUtils;
 import net.momirealms.customfishing.util.FakeItemUtils;
 import net.momirealms.customfishing.util.ItemStackUtils;
 import net.momirealms.customfishing.util.LocationUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
@@ -546,7 +544,7 @@ public class FishingManager extends Function {
             dropItem(player, location, fishResultEvent.isDouble(), drop);
         }
 
-        addStats(player.getUniqueId(), droppedItem, isDouble ? 2 : 1);
+        addStats(player, droppedItem, isDouble ? 2 : 1);
         sendSuccessTitle(player, droppedItem.getNick());
     }
 
@@ -609,7 +607,7 @@ public class FishingManager extends Function {
         }
 
         Loot vanilla = plugin.getLootManager().getVanilla_loot();
-        addStats(player.getUniqueId(), vanilla, isDouble ? 2 : 1);
+        addStats(player, vanilla, isDouble ? 2 : 1);
 
         if (vanilla.getSuccessActions() != null)
             for (Action action : vanilla.getSuccessActions())
@@ -638,10 +636,11 @@ public class FishingManager extends Function {
         }
     }
 
-    private void addStats(UUID uuid, Loot loot, int amount) {
+    private void addStats(Player player, Loot loot, int amount) {
+        player.setStatistic(Statistic.FISH_CAUGHT, player.getStatistic(Statistic.FISH_CAUGHT) + 1);
         if (!ConfigManager.enableStatistics) return;
         if (loot.isDisableStats()) return;
-        plugin.getStatisticsManager().addFishAmount(uuid, loot, amount);
+        plugin.getStatisticsManager().addFishAmount(player.getUniqueId(), loot, amount);
     }
 
     private void summonMob(Player player, Loot loot, Location location, Mob mob, double scoreMultiplier) {
@@ -664,7 +663,7 @@ public class FishingManager extends Function {
                 action.doOn(player, null);
 
         mobInterface.summon(player.getLocation(), location, mob);
-        addStats(player.getUniqueId(), mob, 1);
+        addStats(player, mob, 1);
         sendSuccessTitle(player, loot.getNick());
     }
 
