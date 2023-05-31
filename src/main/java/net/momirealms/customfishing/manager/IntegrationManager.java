@@ -28,6 +28,7 @@ import net.momirealms.customfishing.integration.enchantment.VanillaImpl;
 import net.momirealms.customfishing.integration.item.*;
 import net.momirealms.customfishing.integration.job.EcoJobsImpl;
 import net.momirealms.customfishing.integration.job.JobsRebornImpl;
+import net.momirealms.customfishing.integration.mob.GearyMobImpl;
 import net.momirealms.customfishing.integration.mob.MythicMobsMobImpl;
 import net.momirealms.customfishing.integration.papi.PlaceholderManager;
 import net.momirealms.customfishing.integration.quest.BattlePassCFQuest;
@@ -119,6 +120,9 @@ public class IntegrationManager extends Function {
     private void hookMobs() {
         if (pluginManager.isPluginEnabled("MythicMobs") && pluginManager.getPlugin("MythicMobs").getDescription().getVersion().startsWith("5")) {
             this.mobInterface = new MythicMobsMobImpl();
+        }
+        if (pluginManager.isPluginEnabled("Geary")) {
+            this.mobInterface = new GearyMobImpl();
         }
     }
 

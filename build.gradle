@@ -40,7 +40,7 @@ dependencies {
     compileOnly('com.willfp:EcoEnchants:10.13.0')
     compileOnly('com.github.oraxen:oraxen:1.156.2')
     compileOnly('com.mineinabyss:geary-papermc:0.24-SNAPSHOT')
-    compileOnly('com.mineinabyss:blocky:0.6-SNAPSHOT')/* { setChanging(true)}*/
+    compileOnly('com.mineinabyss:blocky:0.6-SNAPSHOT')
     //compileOnly('com.willfp:EcoSkills:3.0.0-b2')
     compileOnly('com.willfp:eco:6.60.0')
     compileOnly('com.willfp:EcoJobs:3.13.0')
@@ -61,11 +61,6 @@ java {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
     }
 }
-
-/*configurations.all {
-    // Check for updates every build
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-}*/
 
 tasks.withType(JavaCompile).configureEach {
     options.release = targetJavaVersion
