@@ -10,6 +10,8 @@ softdepend:
   - ItemsAdder
   - MythicMobs
   - Oraxen
+  - Geary
+  - Blocky
   - PlaceholderAPI
   - EcoEnchants
   - mcMMO

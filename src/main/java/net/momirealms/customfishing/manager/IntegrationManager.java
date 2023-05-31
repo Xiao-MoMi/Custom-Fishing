@@ -194,6 +194,10 @@ public class IntegrationManager extends Function {
             itemInterfaceList.add(new OraxenItemImpl());
             hookMessage("Oraxen");
         }
+        if (pluginManager.isPluginEnabled("Geary")) {
+            itemInterfaceList.add(new GearyItemImpl());
+            hookMessage("Geary");
+        }
         if (pluginManager.isPluginEnabled("MMOItems")) {
             itemInterfaceList.add(new MMOItemsItemImpl());
             hookMessage("MMOItems");
