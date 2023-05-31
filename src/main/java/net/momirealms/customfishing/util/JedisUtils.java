@@ -38,13 +38,13 @@ public class JedisUtils {
     public static void initializeRedis(YamlConfiguration configuration){
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setTestWhileIdle(true);
-        jedisPoolConfig.setTimeBetweenEvictionRuns(Duration.ofMillis(30000));
+        jedisPoolConfig.setTimeBetweenEvictionRunsMillis(30000);
         jedisPoolConfig.setNumTestsPerEvictionRun(-1);
-        jedisPoolConfig.setMinEvictableIdleTime(Duration.ofMillis(configuration.getInt("Redis.MinEvictableIdleTimeMillis",1800000)));
+        jedisPoolConfig.setMinEvictableIdleTimeMillis(configuration.getInt("Redis.MinEvictableIdleTimeMillis",1800000));
         jedisPoolConfig.setMaxTotal(configuration.getInt("Redis.MaxTotal",8));
         jedisPoolConfig.setMaxIdle(configuration.getInt("Redis.MaxIdle",8));
         jedisPoolConfig.setMinIdle(configuration.getInt("Redis.MinIdle",1));
-        jedisPoolConfig.setMaxWait(Duration.ofMillis(configuration.getInt("redis.MaxWaitMillis")));
+        jedisPoolConfig.setMaxWaitMillis(configuration.getInt("redis.MaxWaitMillis"));
         if (configuration.getString("Redis.password") != null) {
             jedisPool = new JedisPool(jedisPoolConfig, configuration.getString("Redis.host","localhost"), configuration.getInt("Redis.port",6379), 2000, configuration.getString("Redis.password"));
         }
