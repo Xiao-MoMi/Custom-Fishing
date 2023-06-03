@@ -43,7 +43,6 @@ public class Scheduler extends Function {
     }
 
     public void reload() {
-        this.schedule.getQueue().clear();
         this.schedule.setCorePoolSize(ConfigManager.corePoolSize);
         this.schedule.setMaximumPoolSize(ConfigManager.maximumPoolSize);
         this.schedule.setKeepAliveTime(ConfigManager.keepAliveTime, TimeUnit.SECONDS);

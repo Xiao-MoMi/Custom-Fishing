@@ -42,26 +42,27 @@ import java.util.concurrent.TimeUnit;
 
 public class BobberCheckTask implements Runnable {
 
-    private final ScheduledFuture<?> bobberTask;
-    private final FishHook fishHook;
     private final CustomFishing plugin;
-    private int timer;
+
+    private final ScheduledFuture<?> bobberTask;
+    private ScheduledFuture<?> getHookedTask;
+    private ScheduledFuture<?> resetTask;
+    private final FishHook fishHook;
     private final Player player;
     private final Effect effect;
+    private final String rod;
+    private final String bait;
     private final FishingManager fishingManager;
     private boolean hooked;
     private boolean reserve;
-    private int jump_timer;
-    private final int lureLevel;
-    private ScheduledFuture<?> getHookedTask;
-    private ScheduledFuture<?> resetTask;
-    private LavaEffect lavaEffect;
-    private ArmorStand hookedEntity;
-    private final int entityID;
     private boolean land;
     private boolean first;
-    private final String rod;
-    private final String bait;
+    private int timer;
+    private int jump_timer;
+    private final int entityID;
+    private final int lureLevel;
+    private LavaEffect lavaEffect;
+    private ArmorStand hookedEntity;
 
     public BobberCheckTask(CustomFishing plugin, Player player, Effect effect, FishHook fishHook, FishingManager fishingManager, int lureLevel, int entityID, String rod, String bait) {
         this.fishHook = fishHook;

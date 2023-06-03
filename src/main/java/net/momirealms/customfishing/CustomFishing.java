@@ -202,6 +202,7 @@ public final class CustomFishing extends JavaPlugin {
     public void reload() {
         ConfigManager.load();
         MessageManager.load();
+        getScheduler().reload();
         getDataManager().unload();
         getDataManager().load();
         getEffectManager().unload();
@@ -226,7 +227,6 @@ public final class CustomFishing extends JavaPlugin {
         getBagDataManager().load();
         getStatisticsManager().unload();
         getStatisticsManager().load();
-        getScheduler().reload();
     }
 
     public static BukkitAudiences getAdventure() {
