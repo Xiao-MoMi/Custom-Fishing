@@ -152,7 +152,7 @@ public class EffectManager extends Function {
                 baitItems.put(key, item);
                 Effect effect = ConfigUtils.getEffect(baitSection.getConfigurationSection("effect"));
                 if (baitSection.contains("requirements")) {
-                    effect.setRequirements(ConfigUtils.getRequirements(baitSection.getConfigurationSection("requirements")));
+                    effect.setRequirements(ConfigUtils.getRequirementsWithMsg(baitSection.getConfigurationSection("requirements")));
                 }
                 baitEffects.put(key, effect);
             }

@@ -112,12 +112,10 @@ public class BarMechanicManager extends Function {
                 if (type == 1) {
                     ModeOneBar modeOneBar = new ModeOneBar(section);
                     bars.put(key, modeOneBar);
-                }
-                else if (type == 2) {
+                } else if (type == 2) {
                     ModeTwoBar modeTwoBar = new ModeTwoBar(section);
                     bars.put(key, modeTwoBar);
-                }
-                else if (type == 3) {
+                } else if (type == 3) {
                     ModeThreeBar modeThreeBar = new ModeThreeBar(section);
                     bars.put(key, modeThreeBar);
                 }

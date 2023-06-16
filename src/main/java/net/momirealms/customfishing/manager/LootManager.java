@@ -118,17 +118,15 @@ public class LootManager extends Function {
         for (File file : files) {
             if (!file.getName().endsWith(".yml")) continue;
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-            outer:
-                for (String key : config.getKeys(false)) {
-                    List<String> fishIDs = config.getStringList(key);
-                    for (String id : fishIDs) {
-                        if (!waterLoots.containsKey(id) && !lavaLoots.containsKey(id)) {
-                            AdventureUtils.consoleMessage("<red>[CustomFishing] Fish ID " + id + " doesn't exist in category " + key);
-                            continue outer;
-                        }
+            for (String key : config.getKeys(false)) {
+                List<String> fishIDs = config.getStringList(key);
+                for (String id : fishIDs) {
+                    if (!waterLoots.containsKey(id) && !lavaLoots.containsKey(id)) {
+                        AdventureUtils.consoleMessage("<red>[CustomFishing] Loot ID " + id + " doesn't exist in category " + key);
                     }
-                    category.put(key, fishIDs);
                 }
+                category.put(key, fishIDs);
+            }
         }
     }
 

@@ -1041,4 +1041,77 @@ public class FishingManager extends Function {
             for (Action action : droppedItem.getConsumeActions())
                 action.doOn(player, null);
     }
+
+    public Effect getInitialEffect(Player player) {
+        boolean noBait = true;
+        boolean rodOnMainHand = false;
+
+        Effect initialEffect = new Effect();
+        initialEffect.setWeightMD(new HashMap<>(8));
+        initialEffect.setWeightAS(new HashMap<>(8));
+
+        final PlayerInventory inventory = player.getInventory();
+        final ItemStack mainHandItem = inventory.getItemInMainHand();
+        final ItemStack offHandItem = inventory.getItemInOffHand();
+
+        if (mainHandItem.getType() == Material.FISHING_ROD) {
+            rodOnMainHand = true;
+        }
+        String rod_id = Optional.ofNullable(rodOnMainHand ? CustomFishingAPI.getRodID(mainHandItem) : CustomFishingAPI.getRodID(offHandItem)).orElse("vanilla");
+        final FishingCondition fishingCondition = new FishingCondition(player.getLocation(), player, rod_id, null);
+
+        String bait_id = Optional.ofNullable(rodOnMainHand ? CustomFishingAPI.getBaitID(offHandItem) : CustomFishingAPI.getBaitID(mainHandItem)).orElse("");
+        Effect baitEffect = plugin.getEffectManager().getBaitEffect(bait_id);
+        if (baitEffect != null && initialEffect.canAddEffect(baitEffect, fishingCondition)) {
+            initialEffect.addEffect(baitEffect);
+            noBait = false;
+        }
+
+        for (ActivatedTotem activatedTotem : activeTotemMap.values()) {
+            if (activatedTotem.getNearbyPlayerSet().contains(player)) {
+                initialEffect.addEffect(activatedTotem.getTotem().getEffect());
+                break;
+            }
+        }
+
+        if (ConfigManager.enableFishingBag) {
+            Inventory fishingBag = plugin.getBagDataManager().getPlayerBagData(player.getUniqueId());
+            HashSet<String> uniqueUtils = new HashSet<>(4);
+            if (fishingBag != null) {
+                for (int i = 0; i < fishingBag.getSize(); i++) {
+                    ItemStack itemStack = fishingBag.getItem(i);
+                    if (itemStack == null || itemStack.getType() == Material.AIR) continue;
+                    NBTCompound cfCompound = new NBTItem(itemStack).getCompound("CustomFishing");
+                    if (cfCompound == null) continue;
+                    String type = cfCompound.getString("type"); String id = cfCompound.getString("id");
+                    if (noBait && type.equals("bait")) {
+                        Effect effect = plugin.getEffectManager().getBaitEffect(id);
+                        if (effect != null && itemStack.getAmount() > 0 && initialEffect.canAddEffect(effect, fishingCondition)) {
+                            initialEffect.addEffect(effect);
+                            noBait = false;
+                            bait_id = id;
+                        }
+                    } else if (type.equals("util")) {
+                        Effect utilEffect = plugin.getEffectManager().getUtilEffect(id);
+                        if (utilEffect != null && !uniqueUtils.contains(id)) {
+                            initialEffect.addEffect(utilEffect);
+                            uniqueUtils.add(id);
+                        }
+                    }
+                }
+            }
+        }
+
+        Effect rod_effect = plugin.getEffectManager().getRodEffect(rod_id);
+        if (rod_effect != null) {
+            if (initialEffect.canAddEffect(rod_effect, new FishingCondition(player.getLocation(), player, rod_id, bait_id))) {
+                initialEffect.addEffect(rod_effect);
+            } else {
+                return null;
+            }
+            initialEffect.setSpecialRodID(rod_id);
+        }
+        this.addEnchantEffect(initialEffect, rodOnMainHand ? mainHandItem : offHandItem, fishingCondition);
+        return initialEffect;
+    }
 }
