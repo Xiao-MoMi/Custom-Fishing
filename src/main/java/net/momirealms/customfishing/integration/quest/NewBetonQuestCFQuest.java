@@ -48,7 +48,8 @@ public class NewBetonQuestCFQuest extends CountingObjective implements Listener 
         super(instruction, "loot_to_fish");
         loot_ids = new HashSet<>();
         Collections.addAll(loot_ids, instruction.getArray());
-        targetAmount = instruction.getInt();
+        targetAmount = instruction.getVarNum();
+        preCheckAmountNotLessThanOne(targetAmount);
 
         final String pack = instruction.getPackage().getQuestPath();
         final String loc = instruction.getOptional("playerLocation");
@@ -59,10 +60,6 @@ public class NewBetonQuestCFQuest extends CountingObjective implements Listener 
         } else {
             playerLocation = null;
             rangeVar = null;
-        }
-
-        if (targetAmount <= 0) {
-            throw new InstructionParseException("Fish amount cannot be less than 0");
         }
     }
 
