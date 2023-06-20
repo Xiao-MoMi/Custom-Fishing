@@ -1,0 +1,11 @@
+# Vanilla blocks should be in capital format
+# ItemsAdder:  namespace:id: 'a'
+# Oraxen:  id: 'a'
+
+AIR: 'air'
+
+ANVIL: 'a'
+CRYING_OBSIDIAN: 'c'
+PURPUR_STAIRS: 'p'
+PURPUR_PILLAR: 'pillar'
+OBSERVER: 'o'

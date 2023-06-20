@@ -70,8 +70,11 @@ public class Competition {
                 for (Player player : playerCollections)
                     AdventureUtils.playerMessage(player, placeholderManager.parse(player, startMsg));
 
-            for (String startCmd : competitionConfig.getStartCommand())
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), startCmd);
+            for (String startCmd : competitionConfig.getStartCommand()) {
+                CustomFishing.getInstance().getScheduler().runTask(() -> {
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), startCmd);
+                });
+            }
 
             if (competitionConfig.isBossBarEnabled()) {
                 BossBarConfig bossBarConfig = competitionConfig.getBossBarConfig();
@@ -144,8 +147,11 @@ public class Competition {
                 AdventureUtils.playerMessage(player, placeholderManager.parse(player, msg));
             }
         }
+
         for (String endCmd : competitionConfig.getEndCommand()) {
-            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), endCmd);
+            CustomFishing.getInstance().getScheduler().runTask(() -> {
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), endCmd);
+            });
         }
 
         currentCompetition = null;

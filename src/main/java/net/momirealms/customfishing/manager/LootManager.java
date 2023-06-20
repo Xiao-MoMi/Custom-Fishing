@@ -108,10 +108,10 @@ public class LootManager extends Function {
     }
 
     private void loadCategories() {
-        File category_file = new File(plugin.getDataFolder() + File.separator + "categories");
+        File category_file = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + "categories");
         if (!category_file.exists()) {
             if (!category_file.mkdir()) return;
-            plugin.saveResource("categories" + File.separator + "default.yml", false);
+            plugin.saveResource("contents" + File.separator + "categories" + File.separator + "default.yml", false);
         }
         File[] files = category_file.listFiles();
         if (files == null) return;
@@ -132,10 +132,10 @@ public class LootManager extends Function {
 
     private void loadMobs() {
         if (Bukkit.getPluginManager().getPlugin("MythicMobs") == null) return;
-        File mob_file = new File(plugin.getDataFolder() + File.separator + "mobs");
+        File mob_file = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + "mobs");
         if (!mob_file.exists()) {
             if (!mob_file.mkdir()) return;
-            plugin.saveResource("mobs" + File.separator + "default.yml", false);
+            plugin.saveResource("contents" + File.separator + "mobs" + File.separator + "default.yml", false);
         }
         File[] files = mob_file.listFiles();
         if (files == null) return;
@@ -174,11 +174,11 @@ public class LootManager extends Function {
     }
 
     private void loadItems() {
-        File loot_file = new File(plugin.getDataFolder() + File.separator + "loots");
+        File loot_file = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + "loots");
         if (!loot_file.exists()) {
             if (!loot_file.mkdir()) return;
-            plugin.saveResource("loots" + File.separator + "default.yml", false);
-            plugin.saveResource("loots" + File.separator + "example.yml", false);
+            plugin.saveResource("contents" + File.separator + "loots" + File.separator + "default.yml", false);
+            plugin.saveResource("contents" + File.separator + "loots" + File.separator + "example.yml", false);
         }
         File[] files = loot_file.listFiles();
         if (files == null) return;

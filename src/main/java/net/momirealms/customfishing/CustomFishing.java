@@ -24,16 +24,21 @@ import net.momirealms.customfishing.commands.FishingBagCommand;
 import net.momirealms.customfishing.commands.MainCommand;
 import net.momirealms.customfishing.commands.SellFishCommand;
 import net.momirealms.customfishing.helper.LibraryLoader;
+import net.momirealms.customfishing.helper.Log;
 import net.momirealms.customfishing.helper.VersionHelper;
 import net.momirealms.customfishing.manager.*;
 import net.momirealms.customfishing.object.Reflection;
 import net.momirealms.customfishing.scheduler.Scheduler;
 import net.momirealms.customfishing.util.AdventureUtils;
+import org.apache.commons.io.FileUtils;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import java.util.TimeZone;
 
 public final class CustomFishing extends JavaPlugin {
@@ -66,6 +71,7 @@ public final class CustomFishing extends JavaPlugin {
     public void onEnable() {
         adventure = BukkitAudiences.create(this);
         protocolManager = ProtocolLibrary.getProtocolManager();
+        this.updateLegacyFormatContents();
         this.versionHelper = new VersionHelper(this);
         this.fishingManager = new FishingManager(this);
         this.dataManager = new DataManager(this);
@@ -131,12 +137,13 @@ public final class CustomFishing extends JavaPlugin {
         TimeZone timeZone = TimeZone.getDefault();
         String libRepo = timeZone.getID().startsWith("Asia") ? "https://maven.aliyun.com/repository/public/" : "https://repo.maven.apache.org/maven2/";
         LibraryLoader.load("org.apache.commons","commons-pool2","2.11.1", libRepo);
-        LibraryLoader.load("redis.clients","jedis","4.3.2", libRepo);
+        LibraryLoader.load("redis.clients","jedis","4.4.3", "https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3", libRepo);
         LibraryLoader.load("com.zaxxer","HikariCP","5.0.1", libRepo);
         LibraryLoader.load("net.objecthunter","exp4j","0.4.8", libRepo);
         LibraryLoader.load("org.mariadb.jdbc","mariadb-java-client","3.1.4", libRepo);
         LibraryLoader.load("mysql","mysql-connector-java","8.0.30", libRepo);
+        LibraryLoader.load("commons-io","commons-io","2.11.0", libRepo);
     }
 
     private void registerQuests() {
@@ -239,5 +246,39 @@ public final class CustomFishing extends JavaPlugin {
 
     public static CustomFishing getInstance() {
         return plugin;
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private void updateLegacyFormatContents() {
+        File contentFolder = new File(plugin.getDataFolder(), "contents");
+        if (!contentFolder.exists()) {
+            contentFolder.mkdirs();
+        }
+        List<String> folders = List.of(
+                "baits", "bars", "categories", "competitions",
+                "enchants", "loots", "minigames", "mobs",
+                "rods", "totems", "totem_blocks", "utils"
+                );
+        for (String folderName : folders) {
+            File legacyFolder = new File(plugin.getDataFolder(), folderName);
+            if (legacyFolder.exists()) {
+                try {
+                    FileUtils.moveDirectory(legacyFolder, new File(plugin.getDataFolder(), "contents" + File.separator + folderName));
+                } catch (IOException e) {
+                    Log.severe("Failed to convert old files into new folders");
+                }
+            }
+        }
+        List<String> dataFolders = List.of("fishingbag", "sell", "statistics");
+        for (String folderName : dataFolders) {
+            File legacyFolder = new File(plugin.getDataFolder(), folderName + "_data");
+            if (legacyFolder.exists()) {
+                try {
+                    FileUtils.moveDirectory(legacyFolder, new File(plugin.getDataFolder(), "data" + File.separator + folderName));
+                } catch (IOException e) {
+                    Log.severe("Failed to convert old files into new folders");
+                }
+            }
+        }
     }
 }

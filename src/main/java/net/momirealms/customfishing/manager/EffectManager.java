@@ -74,13 +74,13 @@ public class EffectManager extends Function {
     }
 
     private void loadUtil() {
-        File util_file = new File(plugin.getDataFolder() + File.separator + "utils");
+        File util_file = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + "utils");
         if (!util_file.exists()) {
             if (!util_file.mkdir()) return;
-            plugin.saveResource("utils" + File.separator + "fish_finder.yml", false);
-            plugin.saveResource("utils" + File.separator + "totem_items.yml", false);
-            plugin.saveResource("utils" + File.separator + "splash_items.yml", false);
-            plugin.saveResource("utils" + File.separator + "fisherman_talismans.yml", false);
+            plugin.saveResource("contents" + File.separator + "utils" + File.separator + "fish_finder.yml", false);
+            plugin.saveResource("contents" + File.separator + "utils" + File.separator + "totem_items.yml", false);
+            plugin.saveResource("contents" + File.separator + "utils" + File.separator + "splash_items.yml", false);
+            plugin.saveResource("contents" + File.separator + "utils" + File.separator + "fisherman_talismans.yml", false);
         }
         File[] files = util_file.listFiles();
         if (files == null) return;
@@ -105,10 +105,10 @@ public class EffectManager extends Function {
     }
 
     private void loadEnchant() {
-        File enchant_file = new File(plugin.getDataFolder() + File.separator + "enchants");
+        File enchant_file = new File(plugin.getDataFolder(), "contents" + File.separator + "enchants");
         if (!enchant_file.exists()) {
             if (!enchant_file.mkdir()) return;
-            plugin.saveResource("enchants" + File.separator + "default.yml", false);
+            plugin.saveResource("contents" + File.separator + "enchants" + File.separator + "default.yml", false);
         }
         File[] files = enchant_file.listFiles();
         if (files == null) return;
@@ -133,10 +133,10 @@ public class EffectManager extends Function {
     }
 
     private void loadBait() {
-        File bait_file = new File(plugin.getDataFolder() + File.separator + "baits");
+        File bait_file = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + "baits");
         if (!bait_file.exists()) {
             if (!bait_file.mkdir()) return;
-            plugin.saveResource("baits" + File.separator + "default.yml", false);
+            plugin.saveResource("contents" + File.separator + "baits" + File.separator + "default.yml", false);
         }
         File[] files = bait_file.listFiles();
         if (files == null) return;
@@ -161,10 +161,10 @@ public class EffectManager extends Function {
     }
 
     private void loadRod() {
-        File rod_file = new File(plugin.getDataFolder() + File.separator + "rods");
+        File rod_file = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + "rods");
         if (!rod_file.exists()) {
             if (!rod_file.mkdir()) return;
-            plugin.saveResource("rods" + File.separator + "default.yml", false);
+            plugin.saveResource("contents" + File.separator + "rods" + File.separator + "default.yml", false);
         }
         File[] files = rod_file.listFiles();
         if (files == null) return;

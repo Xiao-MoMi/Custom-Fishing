@@ -1,0 +1,110 @@
+rainbow:
+  # limit time to fish (seconds)
+  time: 15
+  # Fishing bar
+  # The higher the frequency of a bar, the more likely the bar is
+  bars:
+    - rainbow_1
+    - rainbow_2
+    - rainbow_3
+    - rainbow_4
+    - rainbow_5
+    - rainbow_6
+    - rainbow_7
+  # Available difficulty: 1-10
+  # The higher the frequency of a difficulty, the more likely the difficulty is
+  difficulty:
+    - 1
+    - 2
+    - 2
+    - 3
+    - 3
+    - 3
+    - 4
+    - 4
+    - 5
+
+mode_1:
+  time: 15
+  bars:
+    - bar_1
+    - bar_2
+    - bar_3
+    - bar_4
+    - bar_5
+    - bar_6
+    - bar_7
+    - bar_8
+    - bar_9
+  difficulty:
+    - 1
+    - 2
+    - 2
+    - 2
+    - 3
+    - 3
+    - 3
+    - 4
+    - 4
+    - 4
+    - 4
+    - 5
+    - 5
+    - 6
+
+mode_2:
+  time: 30
+  bars:
+    - bar_10
+  difficulty:
+    - 1
+    - 1
+    - 1
+    - 2
+    - 2
+    - 2
+    - 3
+    - 3
+    - 3
+    - 4
+    - 4
+    - 4
+    - 5
+    - 5
+    - 6
+
+mode_3:
+  time: 30
+  bars:
+    - bar_11
+  difficulty:
+    - 1
+    - 1
+    - 2
+    - 2
+    - 2
+    - 3
+    - 3
+    - 3
+    - 4
+    - 4
+    - 4
+    - 5
+    - 5
+    - 6
+
+mixed_mini_games:
+  time: 30
+  bars:
+    - bar_1
+    - bar_2
+    - bar_3
+    - bar_10
+    - bar_11
+  difficulty:
+    - 1
+    - 2
+    - 3
+    - 3
+    - 4
+    - 4

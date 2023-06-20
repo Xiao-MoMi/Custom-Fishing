@@ -69,10 +69,10 @@ public class CompetitionManager extends Function {
     }
 
     private void loadCompetitions() {
-        File competition_file = new File(plugin.getDataFolder() + File.separator + "competitions");
+        File competition_file = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + "competitions");
         if (!competition_file.exists()) {
             if (!competition_file.mkdir()) return;
-            plugin.saveResource("competitions" + File.separator + "default.yml", false);
+            plugin.saveResource("contents" + File.separator + "competitions" + File.separator + "default.yml", false);
         }
         File[] files = competition_file.listFiles();
         if (files == null) return;

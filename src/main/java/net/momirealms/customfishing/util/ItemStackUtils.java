@@ -26,6 +26,7 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.loot.DroppedItem;
 import net.momirealms.customfishing.fishing.loot.Item;
 import net.momirealms.customfishing.fishing.loot.Loot;
+import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.object.LeveledEnchantment;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -38,6 +39,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -185,8 +188,7 @@ public class ItemStackUtils {
         if (amount != 0)
             for (int i = 0; i < amount; i++) {
                 player.getInventory().addItem(itemStack);
-        }
-        else {
+        }else {
             player.getInventory().addItem(itemStack);
         }
     }
@@ -209,7 +211,7 @@ public class ItemStackUtils {
 
     public static boolean saveToFile(ItemStack itemStack, String key){
         if (itemStack == null || itemStack.getType() == Material.AIR || CustomFishing.getInstance().getLootManager().hasLoot(key)) return false;
-        File file = new File(CustomFishing.getInstance().getDataFolder(), File.separator + "loots" + File.separator + "imported.yml");
+        File file = new File(CustomFishing.getInstance().getDataFolder(), File.separator + "contents/loots" + File.separator + "imported.yml");
         YamlConfiguration data = ConfigUtils.readData(file);
         data.set(key + ".material", itemStack.getType().toString());
         data.set(key + ".amount", itemStack.getAmount());
@@ -228,37 +230,44 @@ public class ItemStackUtils {
         return true;
     }
 
-    public static void addExtraMeta(ItemStack itemStack, DroppedItem droppedItem, double sizeMultiplier) {
+    public static void addExtraMeta(ItemStack itemStack, DroppedItem droppedItem, double sizeMultiplier, Player player) {
         NBTItem nbtItem = new NBTItem(itemStack);
-        boolean changed = replaceSizeLore(droppedItem.getSize(), nbtItem, sizeMultiplier);
+        replaceSizeLore(droppedItem.getSize(), nbtItem, sizeMultiplier);
+        replacePlaceholderInDisplay(nbtItem, player);
         if (droppedItem.getBasicPrice() != 0) {
             NBTCompound fishMetaCompound = nbtItem.addCompound("FishMeta");
             fishMetaCompound.setFloat("base", droppedItem.getBasicPrice());
-            changed = true;
         }
         if (droppedItem.getSizeBonus() != 0) {
             NBTCompound fishMetaCompound = nbtItem.addCompound("FishMeta");
             fishMetaCompound.setFloat("bonus", droppedItem.getSizeBonus());
-            changed = true;
         }
-        if (changed) {
-            itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
-        }
+        itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
     }
 
-    private static boolean replaceSizeLore(String[] sizes, NBTItem nbtItem, double sizeMultiplier) {
-        if (sizes == null) return false;
+    private static void replaceSizeLore(String[] sizes, NBTItem nbtItem, double sizeMultiplier) {
+        if (sizes == null) return;
         float min = Float.parseFloat(sizes[0]);
         float max = Float.parseFloat(sizes[1]);
-        if (max - min < 0) return false;
+        if (max - min < 0) return;
         float size = (float) ((min + Math.random() * (max - min)) * sizeMultiplier);
         String sizeText = String.format("%.1f", size);
         NBTCompound nbtCompound = nbtItem.getCompound("display");
-        if (nbtCompound == null || !nbtCompound.hasTag("Lore")) return false;
+        if (nbtCompound == null || !nbtCompound.hasTag("Lore")) return;
         List<String> lore = nbtCompound.getStringList("Lore");
         lore.replaceAll(s -> s.replace("{size}", sizeText));
         NBTCompound fishMetaCompound = nbtItem.addCompound("FishMeta");
         fishMetaCompound.setFloat("size", size);
-        return true;
+    }
+
+    private static void replacePlaceholderInDisplay(NBTItem nbtItem, Player player) {
+        NBTCompound nbtCompound = nbtItem.getCompound("display");
+        if (nbtCompound == null) return;
+        String name = nbtCompound.getString("Name");
+        if (!name.equals("")) {
+            nbtCompound.setString("Name", name.replace("{player}", player.getName()).replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern(ConfigManager.dateFormat))));
+        }
+        List<String> lore = nbtCompound.getStringList("Lore");
+        lore.replaceAll(s -> s.replace("{player}", player.getName()).replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern(ConfigManager.dateFormat))));
     }
 }

@@ -50,7 +50,6 @@ public class NewBetonQuestCFQuest extends CountingObjective implements Listener 
         Collections.addAll(loot_ids, instruction.getArray());
         targetAmount = instruction.getVarNum();
         preCheckAmountNotLessThanOne(targetAmount);
-
         final String pack = instruction.getPackage().getQuestPath();
         final String loc = instruction.getOptional("playerLocation");
         final String range = instruction.getOptional("range");
@@ -77,7 +76,7 @@ public class NewBetonQuestCFQuest extends CountingObjective implements Listener 
             if (isInvalidLocation(event, onlineProfile)) {
                 return;
             }
-            if (this.loot_ids.contains(event.getLoot_id()) && this.checkConditions(onlineProfile)) {
+            if (this.loot_ids.contains(event.getLootID()) && this.checkConditions(onlineProfile)) {
                 getCountingData(onlineProfile).progress(event.isDouble() ? 1 : 2);
                 completeIfDoneOrNotify(onlineProfile);
             }

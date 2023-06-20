@@ -59,8 +59,7 @@ public class LootCommand extends AbstractSubCommand {
                 int amount = ItemStackUtils.givePlayerLoot(Bukkit.getPlayer(args.get(0)), args.get(1), 0);
                 if (amount > 0)
                     super.giveItemMsg(sender, args.get(0), args.get(1), amount);
-            }
-            else if (args.size() == 3) {
+            } else if (args.size() == 3) {
                 if (Integer.parseInt(args.get(2)) < 1) {
                     AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.wrongAmount);
                     return true;

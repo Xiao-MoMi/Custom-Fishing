@@ -54,12 +54,24 @@ public class ConfigUtils {
      * Update config
      * @param fileName config
      */
-    public static void update(String fileName){
+    public static void update(String fileName, List<String> ignoredSections) {
         try {
-            YamlDocument.create(new File(CustomFishing.getInstance().getDataFolder(), fileName), Objects.requireNonNull(CustomFishing.getInstance().getResource(fileName)), GeneralSettings.DEFAULT, LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
+            YamlDocument.create(
+                    new File(CustomFishing.getInstance().getDataFolder(), fileName),
+                    Objects.requireNonNull(CustomFishing.getInstance().getResource(fileName)),
+                    GeneralSettings.DEFAULT,
+                    LoaderSettings.builder().setAutoUpdate(true).build(),
+                    DumperSettings.DEFAULT,
+                    UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).addIgnoredRoute("24", "mechanics.mechanic-requirements", '.')
+                            .build()
+            );
         } catch (IOException e){
             Log.warn(e.getMessage());
         }
+    }
+
+    private static void setProperties(ConfigurationSection oldSec, ConfigurationSection newSec) {
+
     }
 
     /**

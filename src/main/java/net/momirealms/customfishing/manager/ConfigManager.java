@@ -17,6 +17,8 @@
 
 package net.momirealms.customfishing.manager;
 
+import net.momirealms.customfishing.fishing.requirements.Requirement;
+import net.momirealms.customfishing.fishing.requirements.RequirementInterface;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.JedisUtils;
 import org.bukkit.Bukkit;
@@ -25,6 +27,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -85,9 +88,11 @@ public class ConfigManager {
     public static int corePoolSize;
     public static int maximumPoolSize;
     public static int keepAliveTime;
+    public static String dateFormat;
+    public static RequirementInterface[] mechanicRequirements;
 
     public static void load() {
-        ConfigUtils.update("config.yml");
+        ConfigUtils.update("config.yml", new ArrayList<>());
         YamlConfiguration config = ConfigUtils.getConfig("config.yml");
         lang = config.getString("lang","english");
         bStats = config.getBoolean("metrics", true);
@@ -108,6 +113,7 @@ public class ConfigManager {
         corePoolSize = config.getInt("thread-pool-settings.corePoolSize", 1);
         maximumPoolSize = config.getInt("thread-pool-settings.maximumPoolSize", 4);
         keepAliveTime = config.getInt("thread-pool-settings.keepAliveTime", 10);
+        dateFormat = config.getString("date-format", "yyyy-MM-dd");
     }
 
     private static void loadMechanics(ConfigurationSection config) {
@@ -136,6 +142,7 @@ public class ConfigManager {
         fishingBagTitle = config.getString("fishing-bag.bag-title", "Fishing Bag");
         enableStatistics = config.getBoolean("fishing-statistics.enable", true);
         baitAnimation = config.getBoolean("bait-animation", true);
+        mechanicRequirements = ConfigUtils.getRequirementsWithMsg(config.getConfigurationSection("mechanic-requirements"));
         bagWhiteListItems = new HashSet<>();
         for (String material : config.getStringList("fishing-bag.whitelist-items")) bagWhiteListItems.add(Material.valueOf(material.toUpperCase()));
         redisSettings(config);

@@ -19,12 +19,18 @@ package net.momirealms.customfishing.integration.papi;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.competition.Competition;
+import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.object.Function;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -114,10 +120,10 @@ public class PlaceholderManager extends Function {
     public String parseSingleInner(OfflinePlayer player, String placeholder) {
         switch (placeholder) {
             case "{player}" -> {
-                return player.getName();
+                return player == null ? placeholder : player.getName();
             }
-            case "{rank}" -> {
-                return Competition.currentCompetition.getPlayerRank(player);
+            case "{date}" -> {
+                return LocalDateTime.now().format(DateTimeFormatter.ofPattern(ConfigManager.dateFormat));
             }
             case "{time}" -> {
                 return String.valueOf(Competition.currentCompetition.getRemainingTime());
@@ -131,8 +137,11 @@ public class PlaceholderManager extends Function {
             case "{second}" -> {
                 return String.format("%02d", Competition.currentCompetition.getRemainingTime() % 60);
             }
+            case "{rank}" -> {
+                return player == null ? placeholder : Competition.currentCompetition.getPlayerRank(player);
+            }
             case "{score}" -> {
-                return String.format("%.1f", Competition.currentCompetition.getScore(player));
+                return player == null ? placeholder : String.format("%.1f", Competition.currentCompetition.getScore(player));
             }
             case "{1st_player}" -> {
                 return Optional.ofNullable(Competition.currentCompetition.getRanking().getPlayerAt(1)).orElse(MessageManager.noPlayer);

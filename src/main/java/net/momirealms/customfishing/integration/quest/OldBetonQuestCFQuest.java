@@ -98,7 +98,7 @@ public class OldBetonQuestCFQuest extends Objective implements Listener {
         if (event.getResult() != FishResult.FAILURE) {
             String playerID = PlayerConverter.getID(event.getPlayer());
             if (this.containsPlayer(playerID)) {
-                if (this.loot_ids.contains(event.getLoot_id())) {
+                if (this.loot_ids.contains(event.getLootID())) {
                     if (this.checkConditions(playerID)) {
                         if (!isValidPlayer(event.getPlayer())) {
                             return;

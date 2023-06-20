@@ -37,6 +37,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -110,126 +111,144 @@ public class TotemManager extends Function {
     }
 
     private void loadBlocks() {
-        YamlConfiguration config = ConfigUtils.getConfig("totem_blocks/default.yml");
-        config.getKeys(false).forEach(key -> blockIDs.put(key, config.getString(key)));
-        config.getKeys(false).forEach(key -> invertedIDs.put(config.getString(key), key));
+        File totem_folder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + "totem_blocks");
+        if (!totem_folder.exists()) {
+            if (!totem_folder.mkdir()) return;
+            plugin.saveResource("contents" + File.separator + "totem_blocks" + File.separator + "default.yml", false);
+        }
+        File[] files = totem_folder.listFiles();
+        if (files == null) return;
+        for (File file : files) {
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+            config.getKeys(false).forEach(key -> blockIDs.put(key, config.getString(key)));
+            config.getKeys(false).forEach(key -> invertedIDs.put(config.getString(key), key));
+        }
     }
 
     private void loadTotems() {
-        YamlConfiguration config = ConfigUtils.getConfig("totems/default.yml");
-        for (String key : config.getKeys(false)) {
-            List<String> cores = config.getStringList(key + ".core");
-            List<String> flat = config.getStringList(key + ".layer.1");
-            int length = flat.get(0).split("\\s+").length;
-            int width = flat.size();
-            int height = Objects.requireNonNull(config.getConfigurationSection(key + ".layer")).getKeys(false).size();
-            CorePos corePos = null;
-            OriginalModel originalModel = new OriginalModel(length, width, height);
-            FinalModel finalModel = new FinalModel(length, width, height);
-            for (int k = 0; k < height; k++) {
-                List<String> layer = config.getStringList(key + ".layer." + (k+1));
-                if (layer.size() != width) {
-                    AdventureUtils.consoleMessage("<red>[CustomFishing] Each layer should have the same size! Error exists in totem:" + key + " layer:" + (k + 1));
-                    return;
-                }
-                for (int j = 0; j < width; j++) {
-                    String[] args = layer.get(j).split("\\s+");
-                    if (args.length != length) {
-                        AdventureUtils.consoleMessage("<red>[CustomFishing] Each layer should have the same size! Error exists in totem:" + key + " layer:" + (k + 1) + " line:" + (k + 1));
+        File totem_folder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + "totems");
+        if (!totem_folder.exists()) {
+            if (!totem_folder.mkdir()) return;
+            plugin.saveResource("contents" + File.separator + "totems" + File.separator + "default.yml", false);
+        }
+        File[] files = totem_folder.listFiles();
+        if (files == null) return;
+        for (File file : files) {
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+            for (String key : config.getKeys(false)) {
+                List<String> cores = config.getStringList(key + ".core");
+                List<String> flat = config.getStringList(key + ".layer.1");
+                int length = flat.get(0).split("\\s+").length;
+                int width = flat.size();
+                int height = Objects.requireNonNull(config.getConfigurationSection(key + ".layer")).getKeys(false).size();
+                CorePos corePos = null;
+                OriginalModel originalModel = new OriginalModel(length, width, height);
+                FinalModel finalModel = new FinalModel(length, width, height);
+                for (int k = 0; k < height; k++) {
+                    List<String> layer = config.getStringList(key + ".layer." + (k+1));
+                    if (layer.size() != width) {
+                        AdventureUtils.consoleMessage("<red>[CustomFishing] Each layer should have the same size! Error exists in totem:" + key + " layer:" + (k + 1));
                         return;
                     }
-                    for (int i = 0; i < length; i++) {
-                        if (args[i].startsWith("(") && args[i].endsWith(")")) {
-                            String content = args[i].substring(1, args[i].length()-1);
-                            corePos = getCorePos(cores, corePos, originalModel, k, j, i, content);
-                            finalModel.setElement("*", i, j, k);
+                    for (int j = 0; j < width; j++) {
+                        String[] args = layer.get(j).split("\\s+");
+                        if (args.length != length) {
+                            AdventureUtils.consoleMessage("<red>[CustomFishing] Each layer should have the same size! Error exists in totem:" + key + " layer:" + (k + 1) + " line:" + (k + 1));
+                            return;
                         }
-                        else if (args[i].contains(">")) {
-                            String before = args[i].split(">")[0];
-                            String after = args[i].split(">")[1];
-                            finalModel.setElement(after, i, j, k);
-                            corePos = getCorePos(cores, corePos, originalModel, k, j, i, before);
-                        }
-                        else {
-                            String[] elements = args[i].split("\\|");
-                            originalModel.setElement(elements, i, j, k);
-                            for (String core : cores) {
-                                for (String element : elements) {
-                                    if (element.equals(core)) {
-                                        corePos = new CorePos(i, j, k);
+                        for (int i = 0; i < length; i++) {
+                            if (args[i].startsWith("(") && args[i].endsWith(")")) {
+                                String content = args[i].substring(1, args[i].length()-1);
+                                corePos = getCorePos(cores, corePos, originalModel, k, j, i, content);
+                                finalModel.setElement("*", i, j, k);
+                            }
+                            else if (args[i].contains(">")) {
+                                String before = args[i].split(">")[0];
+                                String after = args[i].split(">")[1];
+                                finalModel.setElement(after, i, j, k);
+                                corePos = getCorePos(cores, corePos, originalModel, k, j, i, before);
+                            }
+                            else {
+                                String[] elements = args[i].split("\\|");
+                                originalModel.setElement(elements, i, j, k);
+                                for (String core : cores) {
+                                    for (String element : elements) {
+                                        if (element.equals(core)) {
+                                            corePos = new CorePos(i, j, k);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-            }
-            if(corePos == null) {
-                AdventureUtils.consoleMessage("<red>[CustomTotems] No core block set for totem:" + key);
-                return;
-            }
-            else {
-                finalModel.setCorePos(corePos);
-                originalModel.setCorePos(corePos);
-            }
-
-            TotemConfig totem = new TotemConfig(
-                    originalModel,
-                    finalModel,
-                    config.getInt(key + ".radius", 16),
-                    config.getInt(key + ".duration", 300),
-                    Particle.valueOf(config.getString(key + ".particle", "SPELL_MOB").toUpperCase()),
-                    ConfigUtils.getEffect(config.getConfigurationSection(key + ".effect"))
-            );
-
-            List<Action> actionList = new ArrayList<>();
-            List<Action> nearActionList = new ArrayList<>();
-            if (config.contains(key + ".action")) {
-                for (String action : Objects.requireNonNull(config.getConfigurationSection(key + ".action")).getKeys(false)) {
-                    switch (action) {
-                        case "commands-activator" -> actionList.add(new CommandActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null));
-                        case "commands-nearby-players" -> nearActionList.add(new CommandActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null));
-                        case "messages-activator" -> actionList.add(new MessageActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null));
-                        case "messages-nearby-players" -> nearActionList.add(new MessageActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null));
-                    }
-                }
-            }
-
-            totem.setActivatorActions(actionList.toArray(new Action[0]));
-            totem.setNearbyActions(nearActionList.toArray(new Action[0]));
-            totem.setRequirements(ConfigUtils.getRequirementsWithMsg(config.getConfigurationSection(key + ".requirements")));
-
-            if (config.getBoolean(key + ".hologram.enable", false)) {
-                totem.setHoloText(config.getStringList(key + ".hologram.text").toArray(new String[0]));
-                totem.setHoloOffset(config.getDouble(key + ".hologram.y-offset"));
-            }
-
-            if (config.contains(key + ".potion-effects")) {
-                List<PotionEffect> potionEffectList = new ArrayList<>();
-                for (String potion : config.getConfigurationSection(key + ".potion-effects").getKeys(false)) {
-                    PotionEffectType potionType = PotionEffectType.getByName(potion.toUpperCase());
-                    if (potionType == null) continue;
-                    int time = 40;
-                    if (potionType.equals(PotionEffectType.NIGHT_VISION)) time = 400;
-                    PotionEffect potionEffect = new PotionEffect(
-                            potionType,
-                            time,
-                            config.getInt(key + ".potion-effects." + potion, 1) - 1);
-                    potionEffectList.add(potionEffect);
-                }
-                totem.setPotionEffects(potionEffectList.toArray(new PotionEffect[0]));
-            }
-
-            totems.put(key, totem);
-
-            for (String core : cores) {
-                if (this.cores.get(core) == null){
-                    List<TotemConfig> totems = new ArrayList<>();
-                    totems.add(totem);
-                    this.cores.put(core, totems);
+                if(corePos == null) {
+                    AdventureUtils.consoleMessage("<red>[CustomTotems] No core block set for totem:" + key);
+                    return;
                 }
                 else {
-                    this.cores.get(core).add(totem);
+                    finalModel.setCorePos(corePos);
+                    originalModel.setCorePos(corePos);
+                }
+
+                TotemConfig totem = new TotemConfig(
+                        originalModel,
+                        finalModel,
+                        config.getInt(key + ".radius", 16),
+                        config.getInt(key + ".duration", 300),
+                        Particle.valueOf(config.getString(key + ".particle", "SPELL_MOB").toUpperCase()),
+                        ConfigUtils.getEffect(config.getConfigurationSection(key + ".effect"))
+                );
+
+                List<Action> actionList = new ArrayList<>();
+                List<Action> nearActionList = new ArrayList<>();
+                if (config.contains(key + ".action")) {
+                    for (String action : Objects.requireNonNull(config.getConfigurationSection(key + ".action")).getKeys(false)) {
+                        switch (action) {
+                            case "commands-activator" -> actionList.add(new CommandActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null));
+                            case "commands-nearby-players" -> nearActionList.add(new CommandActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null));
+                            case "messages-activator" -> actionList.add(new MessageActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null));
+                            case "messages-nearby-players" -> nearActionList.add(new MessageActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null));
+                        }
+                    }
+                }
+
+                totem.setActivatorActions(actionList.toArray(new Action[0]));
+                totem.setNearbyActions(nearActionList.toArray(new Action[0]));
+                totem.setRequirements(ConfigUtils.getRequirementsWithMsg(config.getConfigurationSection(key + ".requirements")));
+
+                if (config.getBoolean(key + ".hologram.enable", false)) {
+                    totem.setHoloText(config.getStringList(key + ".hologram.text").toArray(new String[0]));
+                    totem.setHoloOffset(config.getDouble(key + ".hologram.y-offset"));
+                }
+
+                if (config.contains(key + ".potion-effects")) {
+                    List<PotionEffect> potionEffectList = new ArrayList<>();
+                    for (String potion : config.getConfigurationSection(key + ".potion-effects").getKeys(false)) {
+                        PotionEffectType potionType = PotionEffectType.getByName(potion.toUpperCase());
+                        if (potionType == null) continue;
+                        int time = 40;
+                        if (potionType.equals(PotionEffectType.NIGHT_VISION)) time = 400;
+                        PotionEffect potionEffect = new PotionEffect(
+                                potionType,
+                                time,
+                                config.getInt(key + ".potion-effects." + potion, 1) - 1);
+                        potionEffectList.add(potionEffect);
+                    }
+                    totem.setPotionEffects(potionEffectList.toArray(new PotionEffect[0]));
+                }
+
+                totems.put(key, totem);
+
+                for (String core : cores) {
+                    if (this.cores.get(core) == null){
+                        List<TotemConfig> totems = new ArrayList<>();
+                        totems.add(totem);
+                        this.cores.put(core, totems);
+                    }
+                    else {
+                        this.cores.get(core).add(totem);
+                    }
                 }
             }
         }

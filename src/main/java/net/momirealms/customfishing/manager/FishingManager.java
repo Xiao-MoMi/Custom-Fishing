@@ -561,7 +561,7 @@ public class FishingManager extends Function {
                 ItemStackUtils.addRandomDamage(drop);
             if (ConfigManager.preventPickUp && player != null)
                 ItemStackUtils.addOwner(drop, player.getName());
-            ItemStackUtils.addExtraMeta(drop, droppedItem, sizeMultiplier);
+            ItemStackUtils.addExtraMeta(drop, droppedItem, sizeMultiplier, player);
         }
         return drop;
     }

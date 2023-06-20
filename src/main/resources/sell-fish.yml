@@ -48,6 +48,7 @@ actions:
     enable: false
     value:
       - 'cmi broadcast {player} earned {money}'
+
 # 功能性的图标
 functional-icons:
   slots:

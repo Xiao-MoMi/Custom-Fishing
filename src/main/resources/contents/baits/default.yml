@@ -1,0 +1,45 @@
+simple_bait:
+  material: paper
+  display:
+    name: '<gray>Common fishing lures'
+    lore:
+      - '<white>Reduce the time spent fishing'
+      - '<white>But make it more difficult to catch fish'
+  custom-model-data: 50001
+  effect:
+    time: 0.85
+    difficulty: 1
+
+wild_bait:
+  material: paper
+  display:
+    name: 'Wild Bait'
+    lore:
+      - '<white>Decreases fishing time by 30%.'
+  custom-model-data: 50002
+  effect:
+    time: 0.7
+
+magnet_bait:
+  material: paper
+  display:
+    name: '<gray>Magnet Bait'
+    lore:
+      - '<white>Increases the probability of better loots by 15%.'
+  custom-model-data: 50003
+  effect:
+    weight-multiply:
+      silver: 1.15
+      gold: 1.15
+  # https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing/requirements
+  requirements:
+    requirement_1:
+      type: permission
+      value: magnet_bait.use
+    requirement_2:
+      type: rod
+      value:
+        - nature_fishing_cane
+        - silver_fishing_rod
+        - golden_fishing_rod
+        - star_fishing_rod

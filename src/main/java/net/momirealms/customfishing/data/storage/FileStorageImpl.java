@@ -55,7 +55,7 @@ public class FileStorageImpl implements DataStorageInterface {
 
     @Override
     public Inventory loadBagData(UUID uuid, boolean force) {
-        YamlConfiguration config = ConfigUtils.readData(new File(plugin.getDataFolder(), "fishingbag_data" + File.separator + uuid + ".yml"));
+        YamlConfiguration config = ConfigUtils.readData(new File(plugin.getDataFolder(), "data" + File.separator + "fishingbag" + File.separator + uuid + ".yml"));
         String contents = config.getString("contents");
         int size = config.getInt("size", 9);
         ItemStack[] itemStacks = InventoryUtils.getInventoryItems(contents);
@@ -72,7 +72,7 @@ public class FileStorageImpl implements DataStorageInterface {
         data.set("contents", contents);
         data.set("size", inventory.getSize());
         try {
-            data.save(new File(plugin.getDataFolder(), "fishingbag_data" + File.separator + uuid + ".yml"));
+            data.save(new File(plugin.getDataFolder(), "data" + File.separator + "fishingbag" + File.separator + uuid + ".yml"));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -89,7 +89,7 @@ public class FileStorageImpl implements DataStorageInterface {
 
     @Override
     public PlayerSellData loadSellData(UUID uuid, boolean force) {
-        YamlConfiguration data = ConfigUtils.readData(new File(plugin.getDataFolder(), "sell_data" + File.separator + uuid + ".yml"));
+        YamlConfiguration data = ConfigUtils.readData(new File(plugin.getDataFolder(), "data" + File.separator + "sell" + File.separator + uuid + ".yml"));
         int date = data.getInt("date");
         double money = data.getDouble("earnings");
         return new PlayerSellData(money, date);
@@ -101,7 +101,7 @@ public class FileStorageImpl implements DataStorageInterface {
         data.set("date", playerSellData.getDate());
         data.set("earnings", playerSellData.getMoney());
         try {
-            data.save(new File(plugin.getDataFolder(), "sell_data" + File.separator + uuid + ".yml"));
+            data.save(new File(plugin.getDataFolder(), "data" + File.separator + "sell" + File.separator + uuid + ".yml"));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -127,7 +127,7 @@ public class FileStorageImpl implements DataStorageInterface {
             data.set(entry.getKey(), entry.getValue());
         }
         try {
-            data.save(new File(plugin.getDataFolder(), "statistics_data" + File.separator + uuid + ".yml"));
+            data.save(new File(plugin.getDataFolder(), "data" + File.separator + "statistics" + File.separator + uuid + ".yml"));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -143,7 +143,7 @@ public class FileStorageImpl implements DataStorageInterface {
 
     @Override
     public PlayerStatisticsData loadStatistics(UUID uuid, boolean force) {
-        YamlConfiguration data = ConfigUtils.readData(new File(plugin.getDataFolder(), "statistics_data" + File.separator + uuid + ".yml"));
+        YamlConfiguration data = ConfigUtils.readData(new File(plugin.getDataFolder(), "data" + File.separator + "statistics" + File.separator + uuid + ".yml"));
         return new PlayerStatisticsData(data);
     }
 }

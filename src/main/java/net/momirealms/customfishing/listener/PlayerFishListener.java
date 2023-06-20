@@ -17,8 +17,11 @@
 
 package net.momirealms.customfishing.listener;
 
+import net.momirealms.customfishing.fishing.FishingCondition;
+import net.momirealms.customfishing.fishing.requirements.RequirementInterface;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.FishingManager;
+import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -65,6 +68,14 @@ public record PlayerFishListener(FishingManager manager) implements Listener {
     public void selectState(PlayerFishEvent event) {
         if (event.isCancelled()) return;
         if (!ConfigManager.getWorldsList().contains(event.getHook().getLocation().getWorld().getName())) return;
+        FishingCondition fishingCondition = new FishingCondition(event.getPlayer().getLocation(), event.getPlayer(), null, null);
+        if (ConfigManager.mechanicRequirements != null) {
+            for (RequirementInterface requirement : ConfigManager.mechanicRequirements) {
+                if (!requirement.isConditionMet(fishingCondition)) {
+                    return;
+                }
+            }
+        }
         switch (event.getState()) {
             case FISHING -> manager.onFishing(event);
             case REEL_IN -> manager.onReelIn(event);

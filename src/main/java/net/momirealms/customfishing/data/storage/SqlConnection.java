@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class SqlConnection {
 
@@ -44,7 +45,7 @@ public class SqlConnection {
     }
 
     public void createNewHikariConfiguration() {
-        ConfigUtils.update("database.yml");
+        ConfigUtils.update("database.yml", new ArrayList<>());
         YamlConfiguration config = ConfigUtils.getConfig("database.yml");
         String storageMode = config.getString("data-storage-method", "MySQL");
         HikariConfig hikariConfig = new HikariConfig();

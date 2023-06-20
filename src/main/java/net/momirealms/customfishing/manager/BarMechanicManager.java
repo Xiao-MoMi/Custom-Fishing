@@ -56,10 +56,10 @@ public class BarMechanicManager extends Function {
     }
 
     private void loadGames() {
-        File game_file = new File(plugin.getDataFolder() + File.separator + "minigames");
+        File game_file = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + "minigames");
         if (!game_file.exists()) {
             if (!game_file.mkdir()) return;
-            plugin.saveResource("minigames" + File.separator + "default.yml", false);
+            plugin.saveResource("contents" + File.separator + "minigames" + File.separator + "default.yml", false);
         }
         File[] files = game_file.listFiles();
         if (files == null) return;
@@ -95,10 +95,10 @@ public class BarMechanicManager extends Function {
     }
 
     private void loadBars() {
-        File bar_file = new File(plugin.getDataFolder() + File.separator + "bars");
+        File bar_file = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + "bars");
         if (!bar_file.exists()) {
             if (!bar_file.mkdir()) return;
-            plugin.saveResource("bars" + File.separator + "default.yml", false);
+            plugin.saveResource("contents" + File.separator + "bars" + File.separator + "default.yml", false);
         }
         File[] files = bar_file.listFiles();
         if (files == null) return;
