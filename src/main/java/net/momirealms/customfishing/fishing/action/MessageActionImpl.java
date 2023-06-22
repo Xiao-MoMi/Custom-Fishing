@@ -21,15 +21,20 @@ import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-public record MessageActionImpl(String[] messages, String nick) implements Action {
+public class MessageActionImpl extends AbstractAction implements Action {
 
-    public MessageActionImpl(String[] messages, String nick) {
+    private final String[] messages;
+    private final String nick;
+
+    public MessageActionImpl(String[] messages, String nick, double chance) {
+        super(chance);
         this.messages = messages;
         this.nick = nick == null ? "" : nick;
     }
 
     @Override
     public void doOn(Player player, @Nullable Player anotherPlayer) {
+        if (!canExecute()) return;
         for (String message : messages) {
             AdventureUtils.playerMessage(player,
                     message.replace("{player}", player.getName())

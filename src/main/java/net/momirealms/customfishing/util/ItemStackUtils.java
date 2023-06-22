@@ -232,8 +232,6 @@ public class ItemStackUtils {
 
     public static void addExtraMeta(ItemStack itemStack, DroppedItem droppedItem, double sizeMultiplier, Player player) {
         NBTItem nbtItem = new NBTItem(itemStack);
-        replaceSizeLore(droppedItem.getSize(), nbtItem, sizeMultiplier);
-        replacePlaceholderInDisplay(nbtItem, player);
         if (droppedItem.getBasicPrice() != 0) {
             NBTCompound fishMetaCompound = nbtItem.addCompound("FishMeta");
             fishMetaCompound.setFloat("base", droppedItem.getBasicPrice());
@@ -242,10 +240,12 @@ public class ItemStackUtils {
             NBTCompound fishMetaCompound = nbtItem.addCompound("FishMeta");
             fishMetaCompound.setFloat("bonus", droppedItem.getSizeBonus());
         }
+        replaceAndSetSizeProperties(droppedItem.getSize(), nbtItem, sizeMultiplier);
+        replacePlaceholderInDisplay(nbtItem, player);
         itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
     }
 
-    private static void replaceSizeLore(String[] sizes, NBTItem nbtItem, double sizeMultiplier) {
+    private static void replaceAndSetSizeProperties(String[] sizes, NBTItem nbtItem, double sizeMultiplier) {
         if (sizes == null) return;
         float min = Float.parseFloat(sizes[0]);
         float max = Float.parseFloat(sizes[1]);
@@ -265,9 +265,15 @@ public class ItemStackUtils {
         if (nbtCompound == null) return;
         String name = nbtCompound.getString("Name");
         if (!name.equals("")) {
-            nbtCompound.setString("Name", name.replace("{player}", player.getName()).replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern(ConfigManager.dateFormat))));
+            nbtCompound.setString("Name", name
+                    .replace("{player}", player.getName())
+                    .replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern(ConfigManager.dateFormat)))
+                    .replace("{worth}", String.format("%.2f", CustomFishing.getInstance().getSellManager().getCFFishPrice(nbtItem))));
         }
         List<String> lore = nbtCompound.getStringList("Lore");
-        lore.replaceAll(s -> s.replace("{player}", player.getName()).replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern(ConfigManager.dateFormat))));
+        lore.replaceAll(s -> s
+                .replace("{player}", player.getName())
+                .replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern(ConfigManager.dateFormat)))
+                .replace("{worth}", String.format("%.2f", CustomFishing.getInstance().getSellManager().getCFFishPrice(nbtItem))));
     }
 }

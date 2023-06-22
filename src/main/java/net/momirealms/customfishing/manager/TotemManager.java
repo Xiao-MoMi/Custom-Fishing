@@ -38,10 +38,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class TotemManager extends Function {
 
@@ -196,7 +193,7 @@ public class TotemManager extends Function {
                         finalModel,
                         config.getInt(key + ".radius", 16),
                         config.getInt(key + ".duration", 300),
-                        Particle.valueOf(config.getString(key + ".particle", "SPELL_MOB").toUpperCase()),
+                        Particle.valueOf(config.getString(key + ".particle", "SPELL_MOB").toUpperCase(Locale.ENGLISH)),
                         ConfigUtils.getEffect(config.getConfigurationSection(key + ".effect"))
                 );
 
@@ -205,10 +202,10 @@ public class TotemManager extends Function {
                 if (config.contains(key + ".action")) {
                     for (String action : Objects.requireNonNull(config.getConfigurationSection(key + ".action")).getKeys(false)) {
                         switch (action) {
-                            case "commands-activator" -> actionList.add(new CommandActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null));
-                            case "commands-nearby-players" -> nearActionList.add(new CommandActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null));
-                            case "messages-activator" -> actionList.add(new MessageActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null));
-                            case "messages-nearby-players" -> nearActionList.add(new MessageActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null));
+                            case "commands-activator" -> actionList.add(new CommandActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null, 1));
+                            case "commands-nearby-players" -> nearActionList.add(new CommandActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null, 1));
+                            case "messages-activator" -> actionList.add(new MessageActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null, 1));
+                            case "messages-nearby-players" -> nearActionList.add(new MessageActionImpl(config.getStringList(key + ".action." + action).toArray(new String[0]), null, 1));
                         }
                     }
                 }
@@ -225,7 +222,7 @@ public class TotemManager extends Function {
                 if (config.contains(key + ".potion-effects")) {
                     List<PotionEffect> potionEffectList = new ArrayList<>();
                     for (String potion : config.getConfigurationSection(key + ".potion-effects").getKeys(false)) {
-                        PotionEffectType potionType = PotionEffectType.getByName(potion.toUpperCase());
+                        PotionEffectType potionType = PotionEffectType.getByName(potion.toUpperCase(Locale.ENGLISH));
                         if (potionType == null) continue;
                         int time = 40;
                         if (potionType.equals(PotionEffectType.NIGHT_VISION)) time = 400;

@@ -21,15 +21,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-public record CommandActionImpl(String[] commands, String nick) implements Action {
+public class CommandActionImpl extends AbstractAction implements Action {
 
-    public CommandActionImpl(String[] commands, @Nullable String nick) {
+    private final String[] commands;
+    private final String nick;
+
+    public CommandActionImpl(String[] commands, @Nullable String nick, double chance) {
+        super(chance);
         this.commands = commands;
         this.nick = nick == null ? "" : nick;
     }
 
     @Override
     public void doOn(Player player, @Nullable Player anotherPlayer) {
+        if (!canExecute()) return;
         for (String command : commands) {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),
                     command.replace("{player}", player.getName())

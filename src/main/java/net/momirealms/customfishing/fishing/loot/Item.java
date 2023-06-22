@@ -23,10 +23,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemFlag;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Item {
 
@@ -53,7 +50,7 @@ public class Item {
 
     public Item(ConfigurationSection section, String key) {
         this.key = key;
-        this.material = Material.valueOf(section.getString("material", "cod").toUpperCase());
+        this.material = Material.valueOf(section.getString("material", "cod").toUpperCase(Locale.ENGLISH));
         this.amount = section.getInt("amount", 1);
         this.setUnbreakable(section.getBoolean("unbreakable", false));
         if (section.contains("display.lore")) this.setLore(section.getStringList("display.lore"));

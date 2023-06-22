@@ -21,7 +21,6 @@ import net.momirealms.customfishing.fishing.FishingCondition;
 import net.momirealms.customfishing.fishing.requirements.RequirementInterface;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.FishingManager;
-import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

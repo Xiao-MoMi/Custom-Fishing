@@ -41,11 +41,6 @@ golden_fishing_rod:
       gold: 20
 
 star_fishing_rod:
-  display:
-    name: 'Star Fishing Rod'
-    lore:
-      - '<gray>Grants you the ability to fish in the lava'
-  custom-model-data: 50004
   effect:
     weight-add:
       silver: 20

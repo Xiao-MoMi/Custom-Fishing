@@ -21,10 +21,18 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.integration.SkillInterface;
 import org.bukkit.entity.Player;
 
-public record SkillXPImpl(double amount) implements Action {
+public class SkillXPImpl extends AbstractAction implements Action {
+
+    private final double amount;
+
+    public SkillXPImpl(double amount, double chance) {
+        super(chance);
+        this.amount = amount;
+    }
 
     @Override
     public void doOn(Player player, Player another) {
+        if (!canExecute()) return;
         SkillInterface skillInterface = CustomFishing.getInstance().getIntegrationManager().getSkillInterface();
         if (skillInterface == null) return;
         skillInterface.addXp(player, amount);

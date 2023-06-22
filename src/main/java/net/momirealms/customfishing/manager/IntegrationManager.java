@@ -279,6 +279,18 @@ public class IntegrationManager extends Function {
         return new ItemStack(Material.AIR);
     }
 
+    @Nullable
+    public String getItemID(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR) return null;
+        for (ItemInterface itemInterface : getItemInterfaces()) {
+            String id = itemInterface.getID(itemStack);
+            if (id != null) {
+                return id;
+            }
+        }
+        return null;
+    }
+
     public void loseCustomDurability(ItemStack itemStack, Player player) {
         Damageable damageable = (Damageable) itemStack.getItemMeta();
         if (damageable.isUnbreakable()) return;

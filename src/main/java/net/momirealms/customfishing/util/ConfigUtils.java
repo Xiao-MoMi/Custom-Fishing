@@ -23,6 +23,8 @@ import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.Effect;
 import net.momirealms.customfishing.fishing.action.*;
@@ -62,7 +64,7 @@ public class ConfigUtils {
                     GeneralSettings.DEFAULT,
                     LoaderSettings.builder().setAutoUpdate(true).build(),
                     DumperSettings.DEFAULT,
-                    UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).addIgnoredRoute("24", "mechanics.mechanic-requirements", '.')
+                    UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).addIgnoredRoute("25", "mechanics.mechanic-requirements", '.')
                             .build()
             );
         } catch (IOException e){
@@ -151,32 +153,74 @@ public class ConfigUtils {
     public static Action[] getActions(ConfigurationSection section, String nick) {
         if (section != null) {
             List<Action> actions = new ArrayList<>();
-            for (String action : section.getKeys(false)) {
-                switch (action) {
-                    case "message" -> actions.add(new MessageActionImpl(section.getStringList(action).toArray(new String[0]), nick));
-                    case "command" -> actions.add(new CommandActionImpl(section.getStringList(action).toArray(new String[0]), nick));
-                    case "exp" -> actions.add(new VanillaXPImpl(section.getInt(action), false));
-                    case "mending" -> actions.add(new VanillaXPImpl(section.getInt(action), true));
-                    case "skill-xp" -> actions.add(new SkillXPImpl(section.getDouble(action)));
-                    case "job-xp" -> actions.add(new JobXPImpl(section.getDouble(action)));
-                    case "sound" -> actions.add(new SoundActionImpl(
-                            section.getString(action + ".source"),
-                            section.getString(action + ".key"),
-                            (float) section.getDouble(action + ".volume"),
-                            (float) section.getDouble(action + ".pitch")
-                    ));
-                    case "potion-effect" -> {
-                        List<PotionEffect> potionEffectList = new ArrayList<>();
-                        for (String key : section.getConfigurationSection(action).getKeys(false)) {
-                            PotionEffectType type = PotionEffectType.getByName(section.getString(action + "." + key + ".type", "BLINDNESS").toUpperCase());
-                            if (type == null) AdventureUtils.consoleMessage("<red>[CustomFishing] Potion effect " + section.getString(action + "." + key + ".type", "BLINDNESS") + " doesn't exists");
-                            potionEffectList.add(new PotionEffect(
-                                    type == null ? PotionEffectType.LUCK : type,
-                                    section.getInt(action + "." + key + ".duration"),
-                                    section.getInt(action + "." + key + ".amplifier")
+            for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
+                if (entry.getValue() instanceof ConfigurationSection innerSec) {
+                    String type = innerSec.getString("type");
+                    if (type == null) continue;
+                    double chance = innerSec.getDouble("chance", 1);
+                    switch (type) {
+                        case "message" -> {
+                            actions.add(new MessageActionImpl(
+                                    innerSec.getStringList("value").toArray(new String[0]),
+                                    nick,
+                                    chance
                             ));
                         }
-                        actions.add(new PotionEffectImpl(potionEffectList.toArray(new PotionEffect[0])));
+                        case "command" -> {
+                            actions.add(new CommandActionImpl(
+                                    innerSec.getStringList("value").toArray(new String[0]),
+                                    nick,
+                                    chance
+                            ));
+                        }
+                        case "exp","mending" -> {
+                            actions.add(new VanillaXPImpl(
+                                    innerSec.getInt("value"),
+                                    type.equals("mending"),
+                                    chance
+                            ));
+                        }
+                        case "skill-xp" -> {
+                            actions.add(new SkillXPImpl(
+                                    innerSec.getDouble("value"),
+                                    chance
+                            ));
+                        }
+                        case "job-xp" -> {
+                            actions.add(new JobXPImpl(
+                                    innerSec.getDouble("value"),
+                                    chance
+                            ));
+                        }
+                        case "sound" -> {
+                            actions.add(new SoundActionImpl(
+                                    Sound.Source.valueOf(innerSec.getString("value.source", "PLAYER").toUpperCase(Locale.ENGLISH)),
+                                    Key.key(innerSec.getString("value.key")),
+                                    (float) innerSec.getDouble("value.volume"),
+                                    (float) innerSec.getDouble("value.pitch"),
+                                    chance
+                            ));
+                        }
+                        case "potion-effect" -> {
+                            PotionEffectType potionEffectType = PotionEffectType.getByName(innerSec.getString("value.type", "BLINDNESS").toUpperCase(Locale.ENGLISH));
+                            if (potionEffectType == null) continue;
+                            actions.add(
+                                    new PotionEffectImpl(
+                                            new PotionEffect(
+                                                    potionEffectType,
+                                                    innerSec.getInt("value.amplifier"),
+                                                    innerSec.getInt("value.duration")
+                                            ),
+                                            chance
+                                    )
+                            );
+                        }
+                        case "chain" -> {
+                            actions.add(new ChainImpl(
+                                    getActions(innerSec.getConfigurationSection("value"), nick),
+                                    chance
+                            ));
+                        }
                     }
                 }
             }

@@ -10,7 +10,7 @@ rainbow_fish:
   disable-stats: true
   # Nick is what to show in fish finder and titles
   # 昵称将在标题和找鱼器信息中显示
-  nick: 'Example Fish'
+  nick: Example Fish
   # Should it be displayed in fish finder?
   # 是否能被找鱼器定位
   show-in-fishfinder: false
@@ -38,10 +38,10 @@ rainbow_fish:
   # https://docs.adventure.kyori.net/minimessage/format.html
   material: COD
   display:
-    name: '<rainbow>Rainbow Fish</rainbow>'
+    name: <rainbow>Rainbow Fish</rainbow>
     lore:
-      - '<gray>This is a <font:uniform>rainbow fish!'
-      - '<gray>It is {size}cm long!'
+      - <gray>This is a <font:uniform>rainbow fish!
+      - <gray>It is {size}cm long!
   custom-model-data: 1
   # 数量
   amount: 1
@@ -65,53 +65,88 @@ rainbow_fish:
   # (Int) (Byte) (String) (Float) (String) (Double) (Short) (Long) (UUID) (Boolean) (IntArray) (ByteArray)
   nbt:
     itemsadder:
-      namespace: '(String) momirealms'
-      id: '(String) rainbow_fish'
+      namespace: (String) momirealms
+      id: (String) rainbow_fish
 
   # Available events: consume/success/failure/hook/success-times
   # Available actions: message/command/exp/mending/skill-xp/sound/potion-effect
   action:
     consume:
-      potion-effect:
-        effect_1:
+      potion_effect_1:
+        type: potion-effect
+        value:
           type: blindness
           amplifier: 1
           duration: 200
     success:
-      message:
-        - 'You got a {loot} lol！'
-      command:
-        - 'say Success command example!'
-      # Exp directly go to player's level
-      exp: 10
-      # Exp that would apply to mending
-      mending: 5
-      # Fishing Skill xp (requires skill plugin hook)
-      skill-xp: 100
-      # Fisherman Job xp (requires job plugin hook)
-      job-xp: 10
-      sound:
-        source: player
-        key: 'minecraft:block.amethyst_block.break'
-        volume: 1
-        pitch: 1
+      action_message:
+        type: message
+        value:
+          - You got a {loot} lol！
+        chance: 1.0
+      action_command:
+        type: command
+        value:
+          - say Success command example!
+        chance: 1.0
+      action_exp:
+        type: exp
+        value: 10
+        chance: 1.0
+      action_mending:
+        type: mending
+        value: 5
+        chance: 1.0
+      action_skill-xp:
+        type: skill-xp
+        value: 100.0
+        chance: 1.0
+      action_job-xp:
+        type: job-xp
+        value: 10.0
+        chance: 1.0
+      action_sound:
+        type: sound
+        value:
+          source: PLAYER
+          key: minecraft:block.amethyst_block.break
+          volume: 1.0
+          pitch: 1.0
     failure:
-      message:
-        - 'The fish escaped！'
-      command:
-        - 'say Failure command example!'
+      action_message:
+        type: message
+        value:
+          - The fish escaped！
+        chance: 1.0
+      action_command:
+        type: command
+        value:
+          - say Failure command example!
+        chance: 1.0
     hook:
-      message:
-        - 'The fish is hooked！'
-      command:
-        - 'say Hook command example'
+      action_message:
+        type: message
+        value:
+          - The fish is hooked！
+        chance: 1.0
+      action_command:
+        type: command
+        value:
+          - say Hook command example
+        chance: 1.0
     success-times:
-      1:
-        message:
-          - 'This is the first time you caught a rainbow fish!'
-      100:
-        message:
-          - 'You have caught rainbow fish for 100 times!'
+      '1':
+        action_message:
+          type: message
+          value:
+            - This is the first time you caught a rainbow fish!
+          chance: 1.0
+      '100':
+        action_message:
+          type: message
+          value:
+            - You have caught rainbow fish for 100 times!
+          chance: 1.0
 
   # Enchantments on the item
   enchantments:
@@ -161,57 +196,57 @@ rainbow_fish:
   # https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing/requirements
   requirements:
 
-    #Biome
+    # Biome
     biome:
       - minecraft:plains
       - minecraft:taiga
 
-    #Y coordinate
+    # Y coordinate
     ypos:
       - 50~100
       - 150~200
 
-    #World weather
+    # World weather
     weather:
       - rain
       - clear
       - thunder
 
-    #Player permission
-    permission: 'customfishing.rainbowfish'
+    # Player permission
+    permission: customfishing.rainbowfish
 
-    #Specified world
+    # Specified world
     world:
       - world
 
-    #Game Time Range
+    # Game Time Range
     time:
       - 0~12000
 
-    #Requires skill plugin
+    # Requires skill plugin
     skill-level: 10
 
-    #Requires job plugin
+    # Requires job plugin
     job-level: 10
 
-    #Requires Season Plugin
+    # Requires Season Plugin
     season:
       - Spring
       - Autumn
 
-    #Requires PlaceholderAPI
-    #Create complex condition as you want
+    # Requires PlaceholderAPI
+    # Create complex condition as you want
     # "||" means one of the conditions is true, it would be true
     # "&&" means all the conditions must be true to be true
     # available types "==" "!=" ">" "<" ">=" "<="
     papi-condition:
       '||':
         condition_1:
-          type: '=='
+          type: ==
           papi: '%player_world%'
           value: world
         condition_2:
-          type: '=='
+          type: ==
           papi: '%player_world%'
           value: Island
         '&&':
@@ -221,6 +256,6 @@ rainbow_fish:
             papi: '%player_health%'
             value: '%player_y%'
           condition_2:
-            type: '<'
+            type: <
             papi: '%player_health%'
             value: 15

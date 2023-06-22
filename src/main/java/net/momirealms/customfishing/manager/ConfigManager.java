@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.manager;
 
-import net.momirealms.customfishing.fishing.requirements.Requirement;
 import net.momirealms.customfishing.fishing.requirements.RequirementInterface;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.JedisUtils;
@@ -27,11 +26,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class ConfigManager {
 
@@ -48,7 +43,6 @@ public class ConfigManager {
     public static boolean rodLoseDurability;
     public static boolean enableCompetition;
     public static boolean disableJobsXp;
-    public static boolean convertMMOItems;
     public static boolean preventPickUp;
     public static boolean enableFishingBag;
     public static boolean allRodsFishInLava;
@@ -104,10 +98,9 @@ public class ConfigManager {
     }
 
     private static void loadOtherSettings(ConfigurationSection config) {
-        priority = config.getString("event-priority", "NORMAL").toUpperCase();
+        priority = config.getString("event-priority", "NORMAL").toUpperCase(Locale.ENGLISH);
         disableJobsXp = config.getBoolean("disable-JobsReborn-fishing-exp", false);
         preventPickUp = config.getBoolean("prevent-other-players-pick-up-loot", false);
-        convertMMOItems = config.getBoolean("convert-MMOItems-rods", false);
         logEarning = config.getBoolean("log-earnings", true);
         hideSaveInfo = config.getBoolean("hide-data-saving-info", false);
         corePoolSize = config.getInt("thread-pool-settings.corePoolSize", 1);
@@ -144,7 +137,7 @@ public class ConfigManager {
         baitAnimation = config.getBoolean("bait-animation", true);
         mechanicRequirements = ConfigUtils.getRequirementsWithMsg(config.getConfigurationSection("mechanic-requirements"));
         bagWhiteListItems = new HashSet<>();
-        for (String material : config.getStringList("fishing-bag.whitelist-items")) bagWhiteListItems.add(Material.valueOf(material.toUpperCase()));
+        for (String material : config.getStringList("fishing-bag.whitelist-items")) bagWhiteListItems.add(Material.valueOf(material.toUpperCase(Locale.ENGLISH)));
         redisSettings(config);
     }
 

@@ -27,4 +27,7 @@ public interface ItemInterface {
     ItemStack build(String id);
 
     boolean loseCustomDurability(ItemStack itemStack, Player player);
+
+    @Nullable
+    String getID(ItemStack itemStack);
 }

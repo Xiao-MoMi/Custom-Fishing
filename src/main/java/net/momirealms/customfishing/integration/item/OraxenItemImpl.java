@@ -49,4 +49,9 @@ public class OraxenItemImpl implements ItemInterface {
         }
         return true;
     }
+
+    @Override
+    public @Nullable String getID(ItemStack itemStack) {
+        return OraxenItems.getIdByItem(itemStack);
+    }
 }

@@ -60,29 +60,29 @@ public class SellManager extends InventoryFunction {
     private final InventoryListener inventoryListener;
     private final JoinQuitListener joinQuitListener;
     private final CustomFishing plugin;
-    public static String formula;
-    public static String title;
-    public static int guiSize;
-    public static String msgNotification;
-    public static String actionbarNotification;
-    public static String titleNotification;
-    public static String subtitleNotification;
-    public static int titleIn;
-    public static int titleStay;
-    public static int titleOut;
-    public static String[] commands;
-    public static Item sellIcon;
-    public static Item denyIcon;
-    public static Key closeKey;
-    public static Key openKey;
-    public static Key successKey;
-    public static Key denyKey;
-    public static Sound.Source soundSource;
-    public static HashMap<Integer, ItemStack> guiItems;
-    public static HashSet<Integer> functionIconSlots;
-    public static HashMap<Material, Float> vanillaPrices = new HashMap<>();
-    public static boolean sellLimitation;
-    public static int upperLimit;
+    private String formula;
+    private String title;
+    private int guiSize;
+    private String msgNotification;
+    private String actionbarNotification;
+    private String titleNotification;
+    private String subtitleNotification;
+    private int titleIn;
+    private int titleStay;
+    private int titleOut;
+    private String[] commands;
+    private Item sellIcon;
+    private Item denyIcon;
+    private Key closeKey;
+    private Key openKey;
+    private Key successKey;
+    private Key denyKey;
+    private Sound.Source soundSource;
+    private HashMap<Integer, ItemStack> guiItems;
+    private HashSet<Integer> functionIconSlots;
+    private HashMap<String, Float> customItemPrices = new HashMap<>();
+    private boolean sellLimitation;
+    private int upperLimit;
     private final ConcurrentHashMap<UUID, PlayerSellData> sellDataMap;
 
     public SellManager(CustomFishing plugin) {
@@ -98,7 +98,7 @@ public class SellManager extends InventoryFunction {
     public void load() {
         functionIconSlots = new HashSet<>();
         guiItems = new HashMap<>();
-        vanillaPrices = new HashMap<>();
+        customItemPrices = new HashMap<>();
         loadConfig();
         CustomFishing.getProtocolManager().addPacketListener(windowPacketListener);
         Bukkit.getPluginManager().registerEvents(inventoryListener, plugin);
@@ -160,10 +160,13 @@ public class SellManager extends InventoryFunction {
         setSounds(config);
         setActions(config);
         setIcons(config);
-        ConfigurationSection configurationSection = config.getConfigurationSection("vanilla-item-price");
+        ConfigurationSection configurationSection = config.getConfigurationSection("item-price");
+        if (configurationSection == null) {
+            configurationSection = config.getConfigurationSection("vanilla-item-price");
+        }
         if (configurationSection != null) {
             for (String vanilla : configurationSection.getKeys(false)) {
-                vanillaPrices.put(Material.valueOf(vanilla.toUpperCase()), (float) configurationSection.getDouble(vanilla));
+                customItemPrices.put(vanilla.toUpperCase(Locale.ENGLISH), (float) configurationSection.getDouble(vanilla));
             }
         }
     }
@@ -174,7 +177,7 @@ public class SellManager extends InventoryFunction {
         closeKey = config.contains("sounds.close") ? Key.key(config.getString("sounds.close")) : null;
         successKey = config.contains("sounds.success") ? Key.key(config.getString("sounds.success")) : null;
         denyKey = config.contains("sounds.deny") ? Key.key(config.getString("sounds.deny")) : null;
-        soundSource = Sound.Source.valueOf(config.getString("sounds.type","player").toUpperCase());
+        soundSource = Sound.Source.valueOf(config.getString("sounds.type","player").toUpperCase(Locale.ENGLISH));
     }
 
     private void setActions(ConfigurationSection config) {
@@ -399,6 +402,23 @@ public class SellManager extends InventoryFunction {
         return totalPrice;
     }
 
+    public float getCFFishPrice(NBTItem cfFish) {
+        NBTCompound fishMeta = cfFish.getCompound("FishMeta");
+        if (fishMeta != null) {
+            float base = fishMeta.getFloat("base");
+            float bonus = fishMeta.getFloat("bonus");
+            float size = fishMeta.getFloat("size");
+            Expression expression = new ExpressionBuilder(formula)
+                    .variables("base", "bonus","size")
+                    .build()
+                    .setVariable("base", base)
+                    .setVariable("bonus", bonus)
+                    .setVariable("size", size);
+            return  (float) expression.evaluate();
+        }
+        return 0;
+    }
+
     public float getSingleItemPrice(ItemStack itemStack) {
         NBTItem nbtItem = new NBTItem(itemStack);
         NBTCompound fishMeta = nbtItem.getCompound("FishMeta");
@@ -418,7 +438,9 @@ public class SellManager extends InventoryFunction {
         Double money = Optional.ofNullable(nbtItem.getDouble("Price")).orElse(0d);
         price += money;
         if (price == 0) {
-            price = Optional.ofNullable(vanillaPrices.get(itemStack.getType())).orElse(0f);
+            String type = itemStack.getType().name();
+            if (nbtItem.hasTag("CustomModelData")) type = type + ":" + nbtItem.getInteger("CustomModelData");
+            price = Optional.ofNullable(customItemPrices.get(type)).orElse(0f);
         }
         return price;
     }
@@ -459,7 +481,7 @@ public class SellManager extends InventoryFunction {
 
         public SellGUI(Player player) {
             this.player = player;
-            this.inventory = InventoryUtils.createInventory(this, guiSize, plugin.getIntegrationManager().getPlaceholderManager().parse(player, SellManager.title));
+            this.inventory = InventoryUtils.createInventory(this, guiSize, plugin.getIntegrationManager().getPlaceholderManager().parse(player, title));
         }
 
         public void open() {

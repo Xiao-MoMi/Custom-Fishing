@@ -33,5 +33,6 @@ public class MainCommand extends AbstractMainCommand {
         regSubCommand(HelpCommand.INSTANCE);
         regSubCommand(AboutCommand.INSTANCE);
         regSubCommand(DebugCommand.INSTANCE);
+        regSubCommand(ConvertCommand.INSTANCE);
     }
 }

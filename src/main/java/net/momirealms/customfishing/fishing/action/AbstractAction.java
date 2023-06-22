@@ -15,18 +15,21 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.listener;
+package net.momirealms.customfishing.fishing.action;
 
-import net.momirealms.customfishing.manager.FishingManager;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerFishEvent;
+public abstract class AbstractAction {
 
-public record MMOItemsListener(FishingManager manager) implements Listener {
+    protected double chance;
 
-    @EventHandler
-    public void onFish(PlayerFishEvent event) {
-        if (event.getState() != PlayerFishEvent.State.FISHING) return;
-        manager.onMMOItemsRodCast(event);
+    public AbstractAction(double chance) {
+        this.chance = chance;
+    }
+
+    public double getChance() {
+        return chance;
+    }
+
+    public boolean canExecute() {
+        return Math.random() < chance;
     }
 }

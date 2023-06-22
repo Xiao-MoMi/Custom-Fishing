@@ -21,12 +21,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.Nullable;
 
-public record PotionEffectImpl(PotionEffect[] potionEffects) implements Action {
+public class PotionEffectImpl extends AbstractAction implements Action {
+
+    private final PotionEffect potionEffect;
+
+    public PotionEffectImpl(PotionEffect potionEffect, double chance) {
+        super(chance);
+        this.potionEffect = potionEffect;
+    }
 
     @Override
     public void doOn(Player player, @Nullable Player anotherPlayer) {
-        for (PotionEffect potionEffect : potionEffects) {
-            player.addPotionEffect(potionEffect);
-        }
+        if (!canExecute()) return;
+        player.addPotionEffect(potionEffect);
     }
 }

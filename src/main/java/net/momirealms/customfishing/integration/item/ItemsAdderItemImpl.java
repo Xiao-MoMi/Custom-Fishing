@@ -47,4 +47,11 @@ public class ItemsAdderItemImpl implements ItemInterface {
         }
         return false;
     }
+
+    @Override
+    public @Nullable String getID(ItemStack itemStack) {
+        CustomStack customStack = CustomStack.byItemStack(itemStack);
+        if (customStack == null) return null;
+        return customStack.getNamespacedID();
+    }
 }

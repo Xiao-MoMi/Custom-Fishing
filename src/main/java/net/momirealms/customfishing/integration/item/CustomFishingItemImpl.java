@@ -17,6 +17,8 @@
 
 package net.momirealms.customfishing.integration.item;
 
+import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.integration.ItemInterface;
 import org.bukkit.enchantments.Enchantment;
@@ -48,5 +50,13 @@ public class CustomFishingItemImpl implements ItemInterface {
             itemStack.setItemMeta(damageable);
         }
         return true;
+    }
+
+    @Override
+    public @Nullable String getID(ItemStack itemStack) {
+        NBTItem nbtItem = new NBTItem(itemStack);
+        NBTCompound nbtCompound = nbtItem.getCompound("CustomFishing");
+        if (nbtCompound == null) return null;
+        return nbtCompound.getString("id");
     }
 }

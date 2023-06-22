@@ -17,28 +17,23 @@
 
 package net.momirealms.customfishing.fishing.action;
 
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
-import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
-public class SoundActionImpl extends AbstractAction implements Action {
+public class ChainImpl extends AbstractAction implements Action {
 
-    private final Sound.Source source;
-    private final Key key;
-    private final float volume;
-    private final float pitch;
+    private final Action[] actions;
 
-    public SoundActionImpl(Sound.Source source, Key sound, float volume, float pitch, double chance) {
+    public ChainImpl(Action[] actions, double chance) {
         super(chance);
-        this.pitch = pitch;
-        this.source = source;
-        this.key = sound;
-        this.volume = volume;
+        this.actions = actions;
     }
 
     @Override
-    public void doOn(Player player, Player another) {
-        AdventureUtils.playerSound(player, source, key, volume, pitch);
+    public void doOn(Player player, @Nullable Player anotherPlayer) {
+        if (!canExecute()) return;
+        for (Action action : actions) {
+            action.doOn(player, anotherPlayer);
+        }
     }
 }

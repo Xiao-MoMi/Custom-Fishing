@@ -28,6 +28,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
+
 public class MMOItemsItemImpl implements ItemInterface {
 
     @Nullable
@@ -36,7 +38,7 @@ public class MMOItemsItemImpl implements ItemInterface {
         if (!material.startsWith("MMOItems:")) return null;
         material = material.substring(9);
         String[] split = material.split(":");
-        MMOItem mmoItem = MMOItems.plugin.getMMOItem(Type.get(split[0]), split[1].toUpperCase());
+        MMOItem mmoItem = MMOItems.plugin.getMMOItem(Type.get(split[0]), split[1].toUpperCase(Locale.ENGLISH));
         return mmoItem == null ? null : mmoItem.newBuilder().build();
     }
 
@@ -52,5 +54,12 @@ public class MMOItemsItemImpl implements ItemInterface {
             itemStack.setItemMeta(newVersion.getItemMeta());
         }
         return true;
+    }
+
+    @Override
+    public @Nullable String getID(ItemStack itemStack) {
+        NBTItem nbtItem = new NBTItem(itemStack);
+        if (nbtItem.getCompound("CustomFishing") != null || !nbtItem.hasTag("MMOITEMS_ITEM_ID")) return null;
+        return nbtItem.getString("MMOITEMS_ITEM_ID");
     }
 }

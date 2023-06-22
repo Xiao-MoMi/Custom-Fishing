@@ -30,18 +30,18 @@ public class DebugCommand extends AbstractSubCommand {
         Player player = (Player) sender;
         switch (args.get(0)) {
             case "biome" -> {
-                sender.sendMessage(BiomeAPI.getBiome(player.getLocation()));
+                AdventureUtils.playerMessage(player, BiomeAPI.getBiome(player.getLocation()));
             }
             case "time" -> {
-                sender.sendMessage(String.valueOf(player.getWorld().getTime()));
+                AdventureUtils.playerMessage(player, String.valueOf(player.getWorld().getTime()));
             }
             case "world" -> {
-                sender.sendMessage(player.getWorld().getName());
+                AdventureUtils.playerMessage(player, player.getWorld().getName());
             }
             case "season" -> {
                 SeasonInterface seasonInterface = CustomFishing.getInstance().getIntegrationManager().getSeasonInterface();
                 if (seasonInterface == null) return true;
-                sender.sendMessage(seasonInterface.getSeason(player.getLocation().getWorld()));
+                AdventureUtils.playerMessage(player, seasonInterface.getSeason(player.getLocation().getWorld()));
             }
             case "loot-chance" -> {
                 Effect initial = CustomFishing.getInstance().getFishingManager().getInitialEffect(player);
@@ -51,7 +51,6 @@ public class DebugCommand extends AbstractSubCommand {
                 }
             }
         }
-
         return true;
     }
 

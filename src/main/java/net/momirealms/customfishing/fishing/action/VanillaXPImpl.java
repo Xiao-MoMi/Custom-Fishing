@@ -24,7 +24,16 @@ import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 
-public record VanillaXPImpl(int amount, boolean mending) implements Action {
+public class VanillaXPImpl extends AbstractAction implements Action {
+
+    private final int amount;
+    private final boolean mending;
+
+    public VanillaXPImpl(int amount, boolean mending, double chance) {
+        super(chance);
+        this.amount = amount;
+        this.mending = mending;
+    }
 
     @Override
     public void doOn(Player player, Player another) {

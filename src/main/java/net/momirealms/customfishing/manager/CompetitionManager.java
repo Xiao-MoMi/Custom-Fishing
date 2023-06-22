@@ -87,8 +87,8 @@ public class CompetitionManager extends Function {
                 boolean enableBsb = competitionSection.getBoolean("bossbar.enable", false);
                 BossBarConfig bossBarConfig = new BossBarConfig(
                         competitionSection.getStringList("bossbar.text").toArray(new String[0]),
-                        BossBarOverlay.valueOf(competitionSection.getString("bossbar.overlay","SOLID").toUpperCase()),
-                        BarColor.valueOf(competitionSection.getString("bossbar.color","WHITE").toUpperCase()),
+                        BossBarOverlay.valueOf(competitionSection.getString("bossbar.overlay","SOLID").toUpperCase(Locale.ENGLISH)),
+                        BarColor.valueOf(competitionSection.getString("bossbar.color","WHITE").toUpperCase(Locale.ENGLISH)),
                         competitionSection.getInt("bossbar.refresh-rate",10),
                         competitionSection.getInt("bossbar.switch-interval", 200),
                         !competitionSection.getBoolean("bossbar.only-show-to-participants", true)
@@ -98,9 +98,9 @@ public class CompetitionManager extends Function {
                 Objects.requireNonNull(competitionSection.getConfigurationSection("prize")).getKeys(false).forEach(rank -> {
                     List<Action> rewards = new ArrayList<>();
                     if (competitionSection.contains("prize." + rank + ".messages"))
-                        rewards.add(new MessageActionImpl(competitionSection.getStringList("prize." + rank + ".messages").toArray(new String[0]), null));
+                        rewards.add(new MessageActionImpl(competitionSection.getStringList("prize." + rank + ".messages").toArray(new String[0]), null, 1));
                     if (competitionSection.contains("prize." + rank + ".commands"))
-                        rewards.add(new CommandActionImpl(competitionSection.getStringList("prize." + rank + ".commands").toArray(new String[0]), null));
+                        rewards.add(new CommandActionImpl(competitionSection.getStringList("prize." + rank + ".commands").toArray(new String[0]), null, 1));
                     rewardsMap.put(rank, rewards.toArray(new Action[0]));
                 });
 

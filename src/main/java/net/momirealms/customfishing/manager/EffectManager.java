@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class EffectManager extends Function {
@@ -41,6 +42,7 @@ public class EffectManager extends Function {
     private final HashMap<String, Effect> rodEffects;
     private final HashMap<String, Item> utilItems;
     private final HashMap<String, Effect> utilEffects;
+    private final HashMap<String, Effect> effectMap;
     private final HashMap<String, Effect> enchantEffects;
 
     public EffectManager(CustomFishing plugin) {
@@ -52,6 +54,7 @@ public class EffectManager extends Function {
         this.utilItems = new HashMap<>();
         this.enchantEffects = new HashMap<>();
         this.utilEffects = new HashMap<>();
+        this.effectMap = new HashMap<>();
     }
 
     @Override
@@ -60,6 +63,9 @@ public class EffectManager extends Function {
         loadBait();
         loadEnchant();
         loadUtil();
+        toEffectMap("bait", baitEffects);
+        toEffectMap("rod", rodEffects);
+        toEffectMap("util", utilEffects);
     }
 
     @Override
@@ -71,6 +77,13 @@ public class EffectManager extends Function {
         this.utilItems.clear();
         this.enchantEffects.clear();
         this.utilEffects.clear();
+        this.effectMap.clear();
+    }
+
+    private void toEffectMap(String type, Map<String, Effect> map) {
+        for (Map.Entry<String, Effect> entry : map.entrySet()) {
+            effectMap.put(type + "_" + entry.getKey(), entry.getValue());
+        }
     }
 
     private void loadUtil() {
@@ -96,7 +109,7 @@ public class EffectManager extends Function {
                 utilItems.put(key, item);
                 Effect effect = ConfigUtils.getEffect(utilSection.getConfigurationSection("effect"));
                 if (utilSection.contains("requirements")) {
-                    effect.setRequirements(ConfigUtils.getRequirements(utilSection.getConfigurationSection("requirements")));
+                    effect.setRequirements(ConfigUtils.getRequirementsWithMsg(utilSection.getConfigurationSection("requirements")));
                 }
                 utilEffects.put(key, effect);
             }
@@ -122,7 +135,7 @@ public class EffectManager extends Function {
                 for (String level : levelSection.getKeys(false)) {
                     Effect effect = ConfigUtils.getEffect(levelSection.getConfigurationSection(level + ".effect"));
                     if (levelSection.contains(level + ".requirements")) {
-                        effect.setRequirements(ConfigUtils.getRequirements(levelSection.getConfigurationSection(level + ".requirements")));
+                        effect.setRequirements(ConfigUtils.getRequirementsWithMsg(levelSection.getConfigurationSection(level + ".requirements")));
                     }
                     enchantEffects.put((key.startsWith("eco") ? "minecraft" + key.substring(3) : key) + ":" + level, effect);
                 }
@@ -257,5 +270,9 @@ public class EffectManager extends Function {
     @Nullable
     public Effect getUtilEffect(String key) {
         return utilEffects.get(key);
+    }
+
+    public Effect getEffect(String type, String id) {
+        return effectMap.get(type + "_" + id);
     }
 }

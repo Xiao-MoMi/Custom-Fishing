@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.integration.item;
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import net.momirealms.customfishing.integration.ItemInterface;
 import org.bukkit.entity.Player;
@@ -45,5 +46,11 @@ public class MythicMobsItemImpl implements ItemInterface {
     @Override
     public boolean loseCustomDurability(ItemStack itemStack, Player player) {
         return false;
+    }
+
+    @Override
+    public @Nullable String getID(ItemStack itemStack) {
+        NBTItem nbtItem = new NBTItem(itemStack);
+        return nbtItem.hasTag("MYTHIC_TYPE") ? nbtItem.getString("MYTHIC_TYPE") : null;
     }
 }

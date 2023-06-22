@@ -206,7 +206,12 @@ public final class CustomFishing extends JavaPlugin {
         return scheduler;
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void reload() {
+        File contentFolder = new File(plugin.getDataFolder(), "contents");
+        if (!contentFolder.exists()) {
+            contentFolder.mkdirs();
+        }
         ConfigManager.load();
         MessageManager.load();
         getScheduler().reload();
@@ -248,12 +253,7 @@ public final class CustomFishing extends JavaPlugin {
         return plugin;
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void updateLegacyFormatContents() {
-        File contentFolder = new File(plugin.getDataFolder(), "contents");
-        if (!contentFolder.exists()) {
-            contentFolder.mkdirs();
-        }
         List<String> folders = List.of(
                 "baits", "bars", "categories", "competitions",
                 "enchants", "loots", "minigames", "mobs",
