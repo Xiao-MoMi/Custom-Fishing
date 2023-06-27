@@ -42,11 +42,11 @@ import java.util.*;
 public class LootManager extends Function {
 
     private final CustomFishing plugin;
-    private final HashMap<String, Loot> waterLoots;
-    private final HashMap<String, Loot> lavaLoots;
+    private final HashMap<String, LootImpl> waterLoots;
+    private final HashMap<String, LootImpl> lavaLoots;
     private final HashMap<String, Item> lootItems;
     private final HashMap<String, List<String>> category;
-    private Loot vanilla_loot;
+    private LootImpl vanilla_loot;
 
     public LootManager(CustomFishing plugin) {
         this.plugin = plugin;
@@ -64,7 +64,7 @@ public class LootManager extends Function {
 
     @Override
     public void load() {
-        this.vanilla_loot = new Loot(
+        this.vanilla_loot = new LootImpl(
                 "vanilla",
                 "vanilla",
                 null,
@@ -91,8 +91,8 @@ public class LootManager extends Function {
     }
 
     @Nullable
-    public Loot getLoot(String key) {
-        Loot loot = this.waterLoots.get(key);
+    public LootImpl getLoot(String key) {
+        LootImpl loot = this.waterLoots.get(key);
         if (loot == null) {
             loot = this.lavaLoots.get(key);
         }
@@ -251,7 +251,7 @@ public class LootManager extends Function {
         }
     }
 
-    private void setActions(ConfigurationSection section, Loot loot) {
+    private void setActions(ConfigurationSection section, LootImpl loot) {
         loot.setSuccessActions(ConfigUtils.getActions(section.getConfigurationSection("action.success"), loot.getNick()));
         loot.setFailureActions(ConfigUtils.getActions(section.getConfigurationSection("action.failure"), loot.getNick()));
         loot.setHookActions(ConfigUtils.getActions(section.getConfigurationSection("action.hook"), loot.getNick()));
@@ -259,7 +259,7 @@ public class LootManager extends Function {
         setSuccessAmountAction(section.getConfigurationSection("action.success-times"), loot);
     }
 
-    private void setSuccessAmountAction(ConfigurationSection section, Loot loot) {
+    private void setSuccessAmountAction(ConfigurationSection section, LootImpl loot) {
         if (section != null) {
             HashMap<Integer, Action[]> actionMap = new HashMap<>();
             for (String amount : section.getKeys(false)) {
@@ -286,28 +286,28 @@ public class LootManager extends Function {
         return gameConfigs;
     }
 
-    public HashMap<String, Loot> getWaterLoots() {
+    public HashMap<String, LootImpl> getWaterLoots() {
         return waterLoots;
     }
 
-    public HashMap<String, Loot> getLavaLoots() {
+    public HashMap<String, LootImpl> getLavaLoots() {
         return lavaLoots;
     }
 
-    public ArrayList<Loot> getAllLoots() {
-        ArrayList<Loot> loots = new ArrayList<>(waterLoots.values());
+    public ArrayList<LootImpl> getAllLoots() {
+        ArrayList<LootImpl> loots = new ArrayList<>(waterLoots.values());
         loots.addAll(getLavaLoots().values());
         return loots;
     }
 
     public ArrayList<String> getAllKeys() {
         ArrayList<String> loots = new ArrayList<>();
-        for (Map.Entry<String, Loot> en : waterLoots.entrySet()) {
+        for (Map.Entry<String, LootImpl> en : waterLoots.entrySet()) {
             if (en.getValue() instanceof DroppedItem) {
                 loots.add(en.getKey());
             }
         }
-        for (Map.Entry<String, Loot> en : lavaLoots.entrySet()) {
+        for (Map.Entry<String, LootImpl> en : lavaLoots.entrySet()) {
             if (en.getValue() instanceof DroppedItem) {
                 loots.add(en.getKey());
             }
@@ -321,7 +321,7 @@ public class LootManager extends Function {
     }
 
     @NotNull
-    public Loot getVanilla_loot() {
+    public LootImpl getVanilla_loot() {
         return vanilla_loot;
     }
 }

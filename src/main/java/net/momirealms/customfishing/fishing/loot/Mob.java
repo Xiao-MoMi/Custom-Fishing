@@ -20,7 +20,7 @@ package net.momirealms.customfishing.fishing.loot;
 import net.momirealms.customfishing.fishing.MiniGameConfig;
 import org.jetbrains.annotations.NotNull;
 
-public class Mob extends Loot{
+public class Mob extends LootImpl {
 
     private final String mobID;
     private final int mobLevel;

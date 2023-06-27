@@ -37,7 +37,7 @@ import net.momirealms.customfishing.fishing.bar.ModeTwoBar;
 import net.momirealms.customfishing.fishing.competition.Competition;
 import net.momirealms.customfishing.fishing.competition.CompetitionGoal;
 import net.momirealms.customfishing.fishing.loot.DroppedItem;
-import net.momirealms.customfishing.fishing.loot.Loot;
+import net.momirealms.customfishing.fishing.loot.LootImpl;
 import net.momirealms.customfishing.fishing.loot.Mob;
 import net.momirealms.customfishing.fishing.mode.FishingGame;
 import net.momirealms.customfishing.fishing.mode.ModeOneGame;
@@ -91,7 +91,7 @@ public class FishingManager extends Function {
     private final BreakBlockListener breakBlockListener;
     private final HashMap<UUID, Long> coolDown;
     private final HashMap<UUID, FishHook> hooks;
-    private final HashMap<UUID, Loot> nextLoot;
+    private final HashMap<UUID, LootImpl> nextLoot;
     private final HashMap<UUID, Effect> nextEffect;
     private final HashMap<UUID, VanillaLoot> vanillaLoot;
     private final ConcurrentHashMap<UUID, FishingGame> fishingPlayerMap;
@@ -247,7 +247,7 @@ public class FishingManager extends Function {
 
         this.nextEffect.put(player.getUniqueId(), initialEffect);
         if (ConfigManager.needRodToFish && !initialEffect.hasSpecialRod()) {
-            this.nextLoot.put(player.getUniqueId(), Loot.EMPTY);
+            this.nextLoot.put(player.getUniqueId(), LootImpl.EMPTY);
             return;
         }
 
@@ -268,8 +268,8 @@ public class FishingManager extends Function {
         showBar(event.getPlayer());
     }
 
-    public void getNextLoot(Player player, Effect initialEffect, List<Loot> possibleLoots) {
-        List<Loot> availableLoots = new ArrayList<>();
+    public void getNextLoot(Player player, Effect initialEffect, List<LootImpl> possibleLoots) {
+        List<LootImpl> availableLoots = new ArrayList<>();
         if (possibleLoots.size() == 0){
             nextLoot.put(player.getUniqueId(), null);
             return;
@@ -280,7 +280,7 @@ public class FishingManager extends Function {
 
         double[] weights = new double[possibleLoots.size()];
         int index = 0;
-        for (Loot loot : possibleLoots){
+        for (LootImpl loot : possibleLoots){
             double weight = loot.getWeight();
             String group = loot.getGroup();
             if (group != null){
@@ -330,8 +330,8 @@ public class FishingManager extends Function {
         // if the player is noy playing the game
         if (fishingGame == null) {
             // get his next loot
-            Loot loot = nextLoot.get(uuid);
-            if (loot == Loot.EMPTY) return;
+            LootImpl loot = nextLoot.get(uuid);
+            if (loot == LootImpl.EMPTY) return;
 
             if (ConfigManager.enableVanillaLoot) {
                 // Not a vanilla loot
@@ -407,8 +407,8 @@ public class FishingManager extends Function {
         //not in fishing game
         BobberCheckTask bobberCheckTask = hookCheckTaskMap.get(uuid);
         if (bobberCheckTask != null && bobberCheckTask.isHooked()) {
-            Loot loot = nextLoot.get(uuid);
-            if (loot == Loot.EMPTY || loot == null) return;
+            LootImpl loot = nextLoot.get(uuid);
+            if (loot == LootImpl.EMPTY || loot == null) return;
             if (loot.isDisableBar()) {
                 noBarLavaReelIn(event);
                 return;
@@ -445,7 +445,7 @@ public class FishingManager extends Function {
         event.setExpToDrop(0);
         final Player player = event.getPlayer();
         final UUID uuid = player.getUniqueId();
-        Loot loot = nextLoot.remove(uuid);
+        LootImpl loot = nextLoot.remove(uuid);
         VanillaLoot vanilla = vanillaLoot.remove(uuid);
         Effect effect = nextEffect.remove(uuid);
         if (vanilla != null) {
@@ -467,7 +467,7 @@ public class FishingManager extends Function {
         final UUID uuid = player.getUniqueId();
         BobberCheckTask bobberCheckTask = hookCheckTaskMap.remove(uuid);
         if (bobberCheckTask != null && bobberCheckTask.isHooked()) {
-            Loot loot = nextLoot.remove(uuid);
+            LootImpl loot = nextLoot.remove(uuid);
             VanillaLoot vanilla = vanillaLoot.remove(uuid);
             Effect effect = nextEffect.remove(uuid);
             if (vanilla != null) {
@@ -488,7 +488,7 @@ public class FishingManager extends Function {
     public void proceedReelIn(Location hookLoc, Player player, FishingGame fishingGame) {
         fishingGame.cancel();
         final UUID uuid = player.getUniqueId();
-        Loot loot = nextLoot.remove(uuid);
+        LootImpl loot = nextLoot.remove(uuid);
         VanillaLoot vanilla = vanillaLoot.remove(uuid);
         Effect effect = nextEffect.remove(uuid);
         player.removePotionEffect(PotionEffectType.SLOW);
@@ -516,7 +516,7 @@ public class FishingManager extends Function {
 
     private void dropCustomFishingLoot(Player player, Location location, DroppedItem droppedItem, boolean isDouble, double scoreMultiplier, double sizeMultiplier) {
         ItemStack drop = getCustomFishingLootItemStack(droppedItem, player, sizeMultiplier);
-        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CATCH_SPECIAL_ITEM, isDouble, drop, droppedItem.getKey());
+        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CATCH_SPECIAL_ITEM, isDouble, drop, droppedItem.getKey(), droppedItem);
         Bukkit.getPluginManager().callEvent(fishResultEvent);
         if (fishResultEvent.isCancelled()) {
             return;
@@ -547,7 +547,7 @@ public class FishingManager extends Function {
     }
 
     public ItemStack getCustomFishingLootItemStack(DroppedItem droppedItem, @Nullable Player player, double sizeMultiplier) {
-        ItemStack drop = plugin.getIntegrationManager().build(droppedItem.getMaterial());
+        ItemStack drop = plugin.getIntegrationManager().build(droppedItem.getMaterial(), player);
         if (drop.getType() != Material.AIR) {
             if (droppedItem.getRandomEnchants() != null)
                 ItemStackUtils.addRandomEnchants(drop, droppedItem.getRandomEnchants());
@@ -564,7 +564,7 @@ public class FishingManager extends Function {
         ItemStack itemStack = McMMOTreasure.getTreasure(player);
         if (itemStack == null) return false;
 
-        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CATCH_VANILLA_ITEM, isDouble, itemStack, "vanilla");
+        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CATCH_VANILLA_ITEM, isDouble, itemStack, "mcMMO", null);
         Bukkit.getPluginManager().callEvent(fishResultEvent);
         if (fishResultEvent.isCancelled()) {
             return true;
@@ -584,7 +584,7 @@ public class FishingManager extends Function {
             }
         }
 
-        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CATCH_VANILLA_ITEM, isDouble, itemStack, "vanilla");
+        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CATCH_VANILLA_ITEM, isDouble, itemStack, "vanilla", null);
         Bukkit.getPluginManager().callEvent(fishResultEvent);
         if (fishResultEvent.isCancelled()) {
             return;
@@ -600,7 +600,7 @@ public class FishingManager extends Function {
             Competition.currentCompetition.tryJoinCompetition(player);
         }
 
-        Loot vanilla = plugin.getLootManager().getVanilla_loot();
+        LootImpl vanilla = plugin.getLootManager().getVanilla_loot();
         addStats(player, vanilla, isDouble ? 2 : 1);
 
         if (vanilla.getSuccessActions() != null)
@@ -630,18 +630,18 @@ public class FishingManager extends Function {
         }
     }
 
-    private void addStats(Player player, Loot loot, int amount) {
+    private void addStats(Player player, LootImpl loot, int amount) {
         player.setStatistic(Statistic.FISH_CAUGHT, player.getStatistic(Statistic.FISH_CAUGHT) + 1);
         if (!ConfigManager.enableStatistics) return;
         if (loot.isDisableStats()) return;
         plugin.getStatisticsManager().addFishAmount(player.getUniqueId(), loot, amount);
     }
 
-    private void summonMob(Player player, Loot loot, Location location, Mob mob, double scoreMultiplier) {
+    private void summonMob(Player player, LootImpl loot, Location location, Mob mob, double scoreMultiplier) {
         MobInterface mobInterface = plugin.getIntegrationManager().getMobInterface();
         if (mobInterface == null) return;
 
-        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CATCH_MOB, false, null, loot.getKey());
+        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CATCH_MOB, false, null, loot.getKey(), loot);
         if (fishResultEvent.isCancelled()) {
             return;
         }
@@ -731,8 +731,8 @@ public class FishingManager extends Function {
         return null;
     }
 
-    public void fail(Player player, Loot loot, boolean isVanilla) {
-        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.FAILURE, false, null, null);
+    public void fail(Player player, LootImpl loot, boolean isVanilla) {
+        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.FAILURE, false, null, null, null);
         Bukkit.getServer().getPluginManager().callEvent(fishResultEvent);
         if (fishResultEvent.isCancelled()) {
             return;
@@ -757,9 +757,9 @@ public class FishingManager extends Function {
     public void showBar(Player player) {
         final UUID uuid = player.getUniqueId();
         if (fishingPlayerMap.get(uuid) != null) return;
-        Loot loot = nextLoot.get(uuid);
+        LootImpl loot = nextLoot.get(uuid);
         if (loot != null) {
-            if (loot == Loot.EMPTY) return;
+            if (loot == LootImpl.EMPTY) return;
             showFishingBar(player, loot);
         }
     }
@@ -778,10 +778,10 @@ public class FishingManager extends Function {
         }
     }
 
-    public List<Loot> getPossibleLootList(FishingCondition fishingCondition, boolean finder, Collection<Loot> values) {
-        Stream<Loot> stream = values.stream();
+    public List<LootImpl> getPossibleLootList(FishingCondition fishingCondition, boolean finder, Collection<LootImpl> values) {
+        Stream<LootImpl> stream = values.stream();
         if (finder) {
-            stream = stream.filter(Loot::isShowInFinder);
+            stream = stream.filter(LootImpl::isShowInFinder);
         }
         return stream.filter(loot -> {
             RequirementInterface[] requirements = loot.getRequirements();
@@ -868,7 +868,7 @@ public class FishingManager extends Function {
         }
 
         FishingCondition fishingCondition = new FishingCondition(player.getLocation(), player, null, null);
-        List<Loot> possibleLoots = getPossibleLootList(fishingCondition, true, plugin.getLootManager().getAllLoots());
+        List<LootImpl> possibleLoots = getPossibleLootList(fishingCondition, true, plugin.getLootManager().getAllLoots());
 
         FishFinderEvent fishFinderEvent = new FishFinderEvent(player, possibleLoots);
         Bukkit.getPluginManager().callEvent(fishFinderEvent);
@@ -885,7 +885,7 @@ public class FishingManager extends Function {
         AdventureUtils.playerMessage(player, MessageManager.prefix + MessageManager.possibleLoots + stringJoiner);
     }
 
-    private void showFishingBar(Player player, @NotNull Loot loot) {
+    private void showFishingBar(Player player, @NotNull LootImpl loot) {
         MiniGameConfig game = loot.getFishingGames() != null
                 ? loot.getFishingGames()[new Random().nextInt(loot.getFishingGames().length)]
                 : plugin.getBarMechanicManager().getRandomGame();
@@ -1013,7 +1013,7 @@ public class FishingManager extends Function {
         if (nbtCompound == null) return;
         if (!nbtCompound.getString("type").equals("loot")) return;
         String lootKey = nbtCompound.getString("id");
-        Loot loot = plugin.getLootManager().getLoot(lootKey);
+        LootImpl loot = plugin.getLootManager().getLoot(lootKey);
         if (loot == null) return;
         if (!(loot instanceof DroppedItem droppedItem)) return;
         final Player player = event.getPlayer();

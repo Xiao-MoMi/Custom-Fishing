@@ -19,7 +19,7 @@ package net.momirealms.customfishing.manager;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.data.PlayerStatisticsData;
-import net.momirealms.customfishing.fishing.loot.Loot;
+import net.momirealms.customfishing.fishing.loot.LootImpl;
 import net.momirealms.customfishing.listener.JoinQuitListener;
 import net.momirealms.customfishing.object.DataFunction;
 import org.bukkit.Bukkit;
@@ -94,7 +94,7 @@ public class StatisticsManager extends DataFunction {
         }
     }
 
-    public void addFishAmount(UUID uuid, Loot loot, int amount) {
+    public void addFishAmount(UUID uuid, LootImpl loot, int amount) {
         PlayerStatisticsData statisticsData = statisticsDataMap.get(uuid);
         if (statisticsData != null) {
             statisticsData.addFishAmount(loot, uuid, amount);

@@ -19,7 +19,7 @@ package net.momirealms.customfishing.data;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.action.Action;
-import net.momirealms.customfishing.fishing.loot.Loot;
+import net.momirealms.customfishing.fishing.loot.LootImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -68,7 +68,7 @@ public class PlayerStatisticsData {
         return joiner.toString();
     }
 
-    public void addFishAmount(Loot loot, UUID uuid, int amount) {
+    public void addFishAmount(LootImpl loot, UUID uuid, int amount) {
         Integer previous = amountMap.get(loot.getKey());
         if (previous == null) previous = 0;
         int after = previous + amount;
@@ -79,7 +79,7 @@ public class PlayerStatisticsData {
         doSuccessTimesAction(previous, after, player, loot);
     }
 
-    private void doSuccessTimesAction(Integer previous, int after, Player player, Loot vanilla) {
+    private void doSuccessTimesAction(Integer previous, int after, Player player, LootImpl vanilla) {
         HashMap<Integer, Action[]> actionMap = vanilla.getSuccessTimesActions();
         if (actionMap != null) {
             for (Map.Entry<Integer, Action[]> entry : actionMap.entrySet()) {

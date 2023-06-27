@@ -31,7 +31,7 @@ public class OraxenItemImpl implements ItemInterface {
 
     @Override
     @Nullable
-    public ItemStack build(String material) {
+    public ItemStack build(String material, Player player) {
         if (!material.startsWith("Oraxen:")) return null;
         material = material.substring(7);
         ItemBuilder itemBuilder = OraxenItems.getItemById(material);

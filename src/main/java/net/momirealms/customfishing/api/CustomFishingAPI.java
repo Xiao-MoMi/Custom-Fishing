@@ -24,7 +24,7 @@ import net.momirealms.customfishing.fishing.FishingCondition;
 import net.momirealms.customfishing.fishing.competition.Competition;
 import net.momirealms.customfishing.fishing.loot.DroppedItem;
 import net.momirealms.customfishing.fishing.loot.Item;
-import net.momirealms.customfishing.fishing.loot.Loot;
+import net.momirealms.customfishing.fishing.loot.LootImpl;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.util.ItemStackUtils;
 import org.bukkit.Location;
@@ -114,7 +114,7 @@ public class CustomFishingAPI {
      * @param player player
      * @return loots
      */
-    public static List<Loot> getLootsAt(Location location, Player player) {
+    public static List<LootImpl> getLootsAt(Location location, Player player) {
         return CustomFishing.getInstance().getFishingManager().getPossibleLootList(new FishingCondition(location, player, null, null), false, CustomFishing.getInstance().getLootManager().getAllLoots());
     }
 
@@ -123,7 +123,7 @@ public class CustomFishingAPI {
      * @param location location
      * @return loots
      */
-    public static List<Loot> getLootsAt(Location location) {
+    public static List<LootImpl> getLootsAt(Location location) {
         return CustomFishing.getInstance().getFishingManager().getPossibleLootList(new FishingCondition(location, null, null, null), false, CustomFishing.getInstance().getLootManager().getAllLoots());
     }
 
@@ -132,7 +132,7 @@ public class CustomFishingAPI {
      * @param id id
      * @return loot
      */
-    public static Loot getLootByID(String id) {
+    public static LootImpl getLootByID(String id) {
         return CustomFishing.getInstance().getLootManager().getLoot(id);
     }
 
@@ -144,7 +144,7 @@ public class CustomFishingAPI {
      */
     @NotNull
     public static ItemStack getLootItemByID(String id) {
-        return CustomFishing.getInstance().getIntegrationManager().build(id);
+        return CustomFishing.getInstance().getIntegrationManager().build(id, null);
     }
 
     /**
@@ -156,7 +156,7 @@ public class CustomFishingAPI {
      */
     @NotNull
     public static ItemStack getLootItemByID(String id, @Nullable Player player) {
-        Loot loot = CustomFishing.getInstance().getLootManager().getLoot(id);
+        LootImpl loot = CustomFishing.getInstance().getLootManager().getLoot(id);
         if (!(loot instanceof DroppedItem droppedItem)) return new ItemStack(Material.AIR);
         return CustomFishing.getInstance().getFishingManager().getCustomFishingLootItemStack(droppedItem, player);
     }

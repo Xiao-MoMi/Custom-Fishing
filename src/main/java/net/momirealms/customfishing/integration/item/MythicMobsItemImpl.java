@@ -34,7 +34,7 @@ public class MythicMobsItemImpl implements ItemInterface {
 
     @Override
     @Nullable
-    public ItemStack build(String material) {
+    public ItemStack build(String material, Player player) {
         if (!material.startsWith("MythicMobs:")) return null;
         material = material.substring(11);
         if (mythicBukkit == null || mythicBukkit.isClosed()) {

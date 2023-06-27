@@ -10,23 +10,13 @@ simple_bait:
     time: 0.85
     difficulty: 1
 
-wild_bait:
-  material: paper
-  display:
-    name: 'Wild Bait'
-    lore:
-      - '<white>Decreases fishing time by 30%.'
-  custom-model-data: 50002
-  effect:
-    time: 0.7
-
 magnet_bait:
   material: paper
   display:
     name: '<gray>Magnet Bait'
     lore:
       - '<white>Increases the probability of better loots by 15%.'
-  custom-model-data: 50003
+  custom-model-data: 50002
   effect:
     weight-multiply:
       silver: 1.15
@@ -43,3 +33,13 @@ magnet_bait:
         - silver_fishing_rod
         - golden_fishing_rod
         - star_fishing_rod
+
+wild_bait:
+  material: paper
+  display:
+    name: 'Wild Bait'
+    lore:
+      - '<white>Decreases fishing time by 30%.'
+  custom-model-data: 50003
+  effect:
+    time: 0.7

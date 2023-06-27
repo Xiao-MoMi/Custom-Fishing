@@ -20,7 +20,7 @@ package net.momirealms.customfishing.fishing;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.CustomFishing;
-import net.momirealms.customfishing.fishing.loot.Loot;
+import net.momirealms.customfishing.fishing.loot.LootImpl;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.FishingManager;
 import net.momirealms.customfishing.util.AdventureUtils;
@@ -140,7 +140,7 @@ public class BobberCheckTask implements Runnable {
         if (fishHook.isInWater()) {
             stop();
             plugin.getScheduler().runTaskAsync(() -> {
-                List<Loot> possibleLoots = new ArrayList<>();
+                List<LootImpl> possibleLoots = new ArrayList<>();
                 if (!(ConfigManager.needRodForLoot && !effect.hasSpecialRod())) {
                     possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player, rod, bait), false, plugin.getLootManager().getWaterLoots().values());
                 }
@@ -195,7 +195,7 @@ public class BobberCheckTask implements Runnable {
 
     private void randomTime() {
         plugin.getScheduler().runTaskAsync(() -> {
-            List<Loot> possibleLoots = new ArrayList<>();
+            List<LootImpl> possibleLoots = new ArrayList<>();
             if (!(ConfigManager.needRodForLoot && !effect.hasSpecialRod())) {
                 possibleLoots = fishingManager.getPossibleLootList(new FishingCondition(fishHook.getLocation(), player, rod, bait), false, plugin.getLootManager().getLavaLoots().values());
             }

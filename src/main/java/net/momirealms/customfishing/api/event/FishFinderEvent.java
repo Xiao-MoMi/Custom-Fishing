@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.api.event;
 
-import net.momirealms.customfishing.fishing.loot.Loot;
+import net.momirealms.customfishing.fishing.loot.LootImpl;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -31,9 +31,9 @@ public class FishFinderEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlerList = new HandlerList();
 
     private boolean cancelled;
-    private final List<Loot> loots;
+    private final List<LootImpl> loots;
 
-    public FishFinderEvent(@NotNull Player who, List<Loot> loots) {
+    public FishFinderEvent(@NotNull Player who, List<LootImpl> loots) {
         super(who);
         this.cancelled = false;
         this.loots = loots;
@@ -59,7 +59,7 @@ public class FishFinderEvent extends PlayerEvent implements Cancellable {
         return getHandlerList();
     }
 
-    public List<Loot> getLoots() {
+    public List<LootImpl> getLoots() {
         return loots;
     }
 }

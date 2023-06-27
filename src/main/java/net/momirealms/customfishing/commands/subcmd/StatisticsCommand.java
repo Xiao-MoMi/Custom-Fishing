@@ -19,7 +19,7 @@ package net.momirealms.customfishing.commands.subcmd;
 
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.commands.AbstractSubCommand;
-import net.momirealms.customfishing.fishing.loot.Loot;
+import net.momirealms.customfishing.fishing.loot.LootImpl;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.util.AdventureUtils;
@@ -59,7 +59,7 @@ public class StatisticsCommand extends AbstractSubCommand {
                 AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.negativeStatistics);
                 return true;
             }
-            Loot loot = CustomFishing.getInstance().getLootManager().getLoot(args.get(1));
+            LootImpl loot = CustomFishing.getInstance().getLootManager().getLoot(args.get(1));
             if (loot == null || loot.isDisableStats()) {
                 AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.statisticsNotExists);
                 return true;
@@ -79,7 +79,7 @@ public class StatisticsCommand extends AbstractSubCommand {
             if (args.size() == 2) {
                 return CustomFishing.getInstance().getLootManager().getAllLoots().stream()
                         .filter(loot -> loot.getKey().startsWith(args.get(1)) && !loot.isDisableStats())
-                        .map(Loot::getKey)
+                        .map(LootImpl::getKey)
                         .collect(Collectors.toList());
             }
             if (args.size() == 3) {

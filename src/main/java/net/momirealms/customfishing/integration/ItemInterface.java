@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 public interface ItemInterface {
 
     @Nullable
-    ItemStack build(String id);
+    ItemStack build(String id, Player player);
 
     boolean loseCustomDurability(ItemStack itemStack, Player player);
 

@@ -5,7 +5,7 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.CustomFishingAPI;
 import net.momirealms.customfishing.commands.AbstractSubCommand;
 import net.momirealms.customfishing.fishing.Effect;
-import net.momirealms.customfishing.fishing.loot.Loot;
+import net.momirealms.customfishing.fishing.loot.LootImpl;
 import net.momirealms.customfishing.integration.SeasonInterface;
 import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.command.CommandSender;
@@ -62,13 +62,13 @@ public class DebugCommand extends AbstractSubCommand {
         return null;
     }
 
-    public ArrayList<String> getLootProbability(Effect initialEffect, List<Loot> possibleLoots) {
-        List<Loot> availableLoots = new ArrayList<>();
+    public ArrayList<String> getLootProbability(Effect initialEffect, List<LootImpl> possibleLoots) {
+        List<LootImpl> availableLoots = new ArrayList<>();
         HashMap<String, Integer> as = initialEffect.getWeightAS();
         HashMap<String, Double> md = initialEffect.getWeightMD();
         double[] weights = new double[possibleLoots.size()];
         int index = 0;
-        for (Loot loot : possibleLoots){
+        for (LootImpl loot : possibleLoots){
             double weight = loot.getWeight();
             String group = loot.getGroup();
             if (group != null){

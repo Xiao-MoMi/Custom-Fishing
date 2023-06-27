@@ -21,7 +21,7 @@ import net.momirealms.customfishing.fishing.MiniGameConfig;
 import net.momirealms.customfishing.object.LeveledEnchantment;
 import org.jetbrains.annotations.Nullable;
 
-public class DroppedItem extends Loot {
+public class DroppedItem extends LootImpl {
 
     private final boolean randomDurability;
     private LeveledEnchantment[] randomEnchants;

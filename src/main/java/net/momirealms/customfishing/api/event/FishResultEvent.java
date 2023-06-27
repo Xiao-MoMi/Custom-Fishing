@@ -18,6 +18,8 @@
 package net.momirealms.customfishing.api.event;
 
 import net.momirealms.customfishing.fishing.FishResult;
+import net.momirealms.customfishing.fishing.loot.Loot;
+import net.momirealms.customfishing.fishing.loot.LootImpl;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -31,17 +33,19 @@ public class FishResultEvent extends PlayerEvent implements Cancellable {
     private boolean cancelled;
     private boolean isDouble;
     private final FishResult result;
-    private final ItemStack loot;
+    private final ItemStack itemStack;
     private final String loot_id;
+    private final Loot loot;
     private static final HandlerList handlerList = new HandlerList();
 
-    public FishResultEvent(@NotNull Player who, FishResult result, boolean isDouble, @Nullable ItemStack loot, @Nullable String loot_id) {
+    public FishResultEvent(@NotNull Player who, FishResult result, boolean isDouble, @Nullable ItemStack itemStack, @Nullable String loot_id, @Nullable Loot loot) {
         super(who);
         this.cancelled = false;
         this.result = result;
         this.isDouble = isDouble;
-        this.loot = loot;
+        this.itemStack = itemStack;
         this.loot_id = loot_id;
+        this.loot = loot;
     }
 
     @Override
@@ -78,8 +82,8 @@ public class FishResultEvent extends PlayerEvent implements Cancellable {
      * @return loot id
      */
     @Nullable
-    public ItemStack getLoot() {
-        return loot;
+    public ItemStack getItemStack() {
+        return itemStack;
     }
 
     public void setDouble(boolean willDouble) {
@@ -99,5 +103,9 @@ public class FishResultEvent extends PlayerEvent implements Cancellable {
     @Nullable
     public String getLootID() {
         return loot_id;
+    }
+
+    public Loot getLoot() {
+        return loot;
     }
 }

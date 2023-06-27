@@ -25,7 +25,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.loot.DroppedItem;
 import net.momirealms.customfishing.fishing.loot.Item;
-import net.momirealms.customfishing.fishing.loot.Loot;
+import net.momirealms.customfishing.fishing.loot.LootImpl;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.object.LeveledEnchantment;
 import org.bukkit.Material;
@@ -172,7 +172,7 @@ public class ItemStackUtils {
     }
 
     public static int givePlayerLoot(Player player, String key, int amount){
-        Loot loot = CustomFishing.getInstance().getLootManager().getLoot(key);
+        LootImpl loot = CustomFishing.getInstance().getLootManager().getLoot(key);
         if (!(loot instanceof DroppedItem droppedItem)) return 0;
         ItemStack itemStack = CustomFishing.getInstance().getFishingManager().getCustomFishingLootItemStack(droppedItem, player);
         if (itemStack.getType() == Material.AIR) return 0;

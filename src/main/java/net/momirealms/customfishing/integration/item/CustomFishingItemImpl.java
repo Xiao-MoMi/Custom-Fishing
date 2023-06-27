@@ -37,7 +37,7 @@ public class CustomFishingItemImpl implements ItemInterface {
 
     @Override
     @Nullable
-    public ItemStack build(String material) {
+    public ItemStack build(String material, Player player) {
         if (material.contains(":")) return null;
         return plugin.getLootManager().build(material);
     }

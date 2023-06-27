@@ -21,21 +21,31 @@ import com.electro2560.dev.cluescrolls.api.*;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.event.FishResultEvent;
 import net.momirealms.customfishing.fishing.FishResult;
+import net.momirealms.customfishing.fishing.loot.Loot;
+import net.momirealms.customfishing.fishing.loot.LootImpl;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class ClueScrollCFQuest implements Listener {
 
-    private final CustomClue commonClue;
+    private final CustomClue idClue;
+    private final CustomClue groupClue;
 
     public ClueScrollCFQuest() {
-        commonClue = ClueScrollsAPI.getInstance().registerCustomClue(CustomFishing.getInstance(), "fish", new ClueConfigData("fish_id", DataType.STRING));
+        idClue = ClueScrollsAPI.getInstance().registerCustomClue(CustomFishing.getInstance(), "fish", new ClueConfigData("fish_id", DataType.STRING));
+        groupClue = ClueScrollsAPI.getInstance().registerCustomClue(CustomFishing.getInstance(), "group", new ClueConfigData("fish_group", DataType.STRING));
     }
 
     @EventHandler
     public void onFish(FishResultEvent event) {
         if (event.isCancelled()) return;
         if (event.getResult() == FishResult.FAILURE) return;
-        commonClue.handle(event.getPlayer(), event.isDouble() ? 2 : 1, new ClueDataPair("fish_id", event.getLoot_id()));
+        if (event.getLootID() != null) {
+            idClue.handle(event.getPlayer(), event.isDouble() ? 2 : 1, new ClueDataPair("fish_id", event.getLootID()));
+        }
+        Loot loot = event.getLoot();
+        if (loot != null && loot.getGroup() != null) {
+            groupClue.handle(event.getPlayer(), event.isDouble() ? 2 : 1, new ClueDataPair("fish_group", loot.getGroup()));
+        }
     }
 }

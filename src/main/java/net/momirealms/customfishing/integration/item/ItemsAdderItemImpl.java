@@ -28,7 +28,7 @@ public class ItemsAdderItemImpl implements ItemInterface {
 
     @Override
     @Nullable
-    public ItemStack build(String material) {
+    public ItemStack build(String material, Player player) {
         if (!material.startsWith("ItemsAdder:")) return null;
         material = material.substring(11);
         CustomStack customStack = CustomStack.getInstance(material);

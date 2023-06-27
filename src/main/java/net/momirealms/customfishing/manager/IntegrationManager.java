@@ -202,6 +202,10 @@ public class IntegrationManager extends Function {
             itemInterfaceList.add(new MythicMobsItemImpl());
             hookMessage("MythicMobs");
         }
+        if (pluginManager.isPluginEnabled("NeigeItems")) {
+            itemInterfaceList.add(new NeigeItemsImpl());
+            hookMessage("NeigeItems");
+        }
         itemInterfaceList.add(new CustomFishingItemImpl(plugin));
         this.itemInterfaces = itemInterfaceList.toArray(new ItemInterface[0]);
 
@@ -271,7 +275,18 @@ public class IntegrationManager extends Function {
     @NotNull
     public ItemStack build(String key) {
         for (ItemInterface itemInterface : getItemInterfaces()) {
-            ItemStack itemStack = itemInterface.build(key);
+            ItemStack itemStack = itemInterface.build(key, null);
+            if (itemStack != null) {
+                return itemStack;
+            }
+        }
+        return new ItemStack(Material.AIR);
+    }
+
+    @NotNull
+    public ItemStack build(String key, Player player) {
+        for (ItemInterface itemInterface : getItemInterfaces()) {
+            ItemStack itemStack = itemInterface.build(key, player);
             if (itemStack != null) {
                 return itemStack;
             }
@@ -282,8 +297,8 @@ public class IntegrationManager extends Function {
     @Nullable
     public String getItemID(ItemStack itemStack) {
         if (itemStack == null || itemStack.getType() == Material.AIR) return null;
-        for (ItemInterface itemInterface : getItemInterfaces()) {
-            String id = itemInterface.getID(itemStack);
+        for (int i = 0, size = itemInterfaces.length; i < size; i++) {
+            String id = itemInterfaces[size - i - 1].getID(itemStack);
             if (id != null) {
                 return id;
             }

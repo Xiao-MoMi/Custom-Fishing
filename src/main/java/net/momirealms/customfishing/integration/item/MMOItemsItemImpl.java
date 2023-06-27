@@ -34,7 +34,7 @@ public class MMOItemsItemImpl implements ItemInterface {
 
     @Nullable
     @Override
-    public ItemStack build(String material) {
+    public ItemStack build(String material, Player player) {
         if (!material.startsWith("MMOItems:")) return null;
         material = material.substring(9);
         String[] split = material.split(":");
