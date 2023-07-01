@@ -47,8 +47,7 @@ public class JedisUtils {
         jedisPoolConfig.setMaxWait(Duration.ofMillis(configuration.getInt("redis.MaxWaitMillis")));
         if (configuration.getString("Redis.password") != null) {
             jedisPool = new JedisPool(jedisPoolConfig, configuration.getString("Redis.host","localhost"), configuration.getInt("Redis.port",6379), 2000, configuration.getString("Redis.password"));
-        }
-        else {
+        } else {
             jedisPool = new JedisPool(jedisPoolConfig, configuration.getString("Redis.host","localhost"), configuration.getInt("Redis.port",6379));
         }
 

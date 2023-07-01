@@ -208,8 +208,8 @@ public class ConfigUtils {
                                     new PotionEffectImpl(
                                             new PotionEffect(
                                                     potionEffectType,
-                                                    innerSec.getInt("value.amplifier"),
-                                                    innerSec.getInt("value.duration")
+                                                    innerSec.getInt("value.duration"),
+                                                    innerSec.getInt("value.amplifier")
                                             ),
                                             chance
                                     )

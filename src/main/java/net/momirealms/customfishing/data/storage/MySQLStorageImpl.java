@@ -50,9 +50,9 @@ public class MySQLStorageImpl implements DataStorageInterface {
     @Override
     public void initialize() {
         sqlConnection.createNewHikariConfiguration();
-        createTableIfNotExist(sqlConnection.getTablePrefix() + "_" + "fishingbag", SqlConstants.SQL_CREATE_BAG_TABLE);
-        createTableIfNotExist(sqlConnection.getTablePrefix() + "_" + "selldata", SqlConstants.SQL_CREATE_SELL_TABLE);
-        createTableIfNotExist(sqlConnection.getTablePrefix() + "_" + "statistics", SqlConstants.SQL_CREATE_STATS_TABLE);
+        createTableIfNotExist(sqlConnection.getTablePrefix() + "_fishingbag", SqlConstants.SQL_CREATE_BAG_TABLE);
+        createTableIfNotExist(sqlConnection.getTablePrefix() + "_selldata", SqlConstants.SQL_CREATE_SELL_TABLE);
+        createTableIfNotExist(sqlConnection.getTablePrefix() + "_statistics", SqlConstants.SQL_CREATE_STATS_TABLE);
     }
 
     @Override
