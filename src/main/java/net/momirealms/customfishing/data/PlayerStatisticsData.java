@@ -85,7 +85,7 @@ public class PlayerStatisticsData {
             for (Map.Entry<Integer, Action[]> entry : actionMap.entrySet()) {
                 if (entry.getKey() > previous && entry.getKey() <= after) {
                     for (Action action : entry.getValue()) {
-                        action.doOn(player, null);
+                        action.doOn(player);
                     }
                 }
             }

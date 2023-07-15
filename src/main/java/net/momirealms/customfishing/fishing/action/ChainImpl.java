@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.fishing.action;
 
+import net.momirealms.customfishing.fishing.FishMeta;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,10 +31,10 @@ public class ChainImpl extends AbstractAction implements Action {
     }
 
     @Override
-    public void doOn(Player player, @Nullable Player anotherPlayer) {
+    public void doOn(Player player, @Nullable Player anotherPlayer, @Nullable FishMeta fishMeta) {
         if (!canExecute()) return;
         for (Action action : actions) {
-            action.doOn(player, anotherPlayer);
+            action.doOn(player, anotherPlayer, fishMeta);
         }
     }
 }

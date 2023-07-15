@@ -17,11 +17,19 @@
 
 package net.momirealms.customfishing.fishing.action;
 
+import net.momirealms.customfishing.fishing.FishMeta;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public interface Action {
 
-    void doOn(Player player, @Nullable Player anotherPlayer);
+    void doOn(Player player, @Nullable Player anotherPlayer, @Nullable FishMeta fishMeta);
 
+    default void doOn(Player player) {
+        doOn(player, null, null);
+    }
+
+    default void doOn(Player player, Player anotherPlayer) {
+        doOn(player, anotherPlayer, null);
+    }
 }

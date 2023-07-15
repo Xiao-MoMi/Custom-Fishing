@@ -50,6 +50,7 @@ import net.momirealms.customfishing.integration.MobInterface;
 import net.momirealms.customfishing.integration.item.McMMOTreasure;
 import net.momirealms.customfishing.listener.*;
 import net.momirealms.customfishing.object.Function;
+import net.momirealms.customfishing.object.Pair;
 import net.momirealms.customfishing.object.SimpleLocation;
 import net.momirealms.customfishing.util.AdventureUtils;
 import net.momirealms.customfishing.util.FakeItemUtils;
@@ -515,27 +516,29 @@ public class FishingManager extends Function {
     }
 
     private void dropCustomFishingLoot(Player player, Location location, DroppedItem droppedItem, boolean isDouble, double scoreMultiplier, double sizeMultiplier) {
-        ItemStack drop = getCustomFishingLootItemStack(droppedItem, player, sizeMultiplier);
-        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CATCH_SPECIAL_ITEM, isDouble, drop, droppedItem.getKey(), droppedItem);
+        Pair<ItemStack, FishMeta> dropPair = getCustomFishingLootItemStack(droppedItem, player, sizeMultiplier);
+        FishResultEvent fishResultEvent = new FishResultEvent(player, FishResult.CATCH_SPECIAL_ITEM, isDouble, dropPair.left(), droppedItem.getKey(), droppedItem);
         Bukkit.getPluginManager().callEvent(fishResultEvent);
         if (fishResultEvent.isCancelled()) {
             return;
         }
 
         if (Competition.currentCompetition != null) {
-            float score = Competition.currentCompetition.getGoal() == CompetitionGoal.MAX_SIZE || Competition.currentCompetition.getGoal() == CompetitionGoal.TOTAL_SIZE ? getSize(drop) : (float) ((float) droppedItem.getScore() * scoreMultiplier);
+            float score = Competition.currentCompetition.getGoal() == CompetitionGoal.MAX_SIZE
+                       || Competition.currentCompetition.getGoal() == CompetitionGoal.TOTAL_SIZE
+                       ? dropPair.right().size() : (float) ((float) droppedItem.getScore() * scoreMultiplier);
             Competition.currentCompetition.refreshData(player, score, fishResultEvent.isDouble());
             Competition.currentCompetition.tryJoinCompetition(player);
         }
 
         if (droppedItem.getSuccessActions() != null)
             for (Action action : droppedItem.getSuccessActions())
-                action.doOn(player, null);
+                action.doOn(player, null, dropPair.right());
 
         if (plugin.getVersionHelper().isFolia()) {
-            plugin.getScheduler().runTask(() -> dropItem(player, location, fishResultEvent.isDouble(), drop), location);
+            plugin.getScheduler().runTask(() -> dropItem(player, location, fishResultEvent.isDouble(), dropPair.left()), location);
         } else {
-            dropItem(player, location, fishResultEvent.isDouble(), drop);
+            dropItem(player, location, fishResultEvent.isDouble(), dropPair.left());
         }
 
         addStats(player, droppedItem, isDouble ? 2 : 1);
@@ -543,11 +546,12 @@ public class FishingManager extends Function {
     }
 
     public ItemStack getCustomFishingLootItemStack(DroppedItem droppedItem, Player player) {
-        return getCustomFishingLootItemStack(droppedItem, player, 1);
+        return getCustomFishingLootItemStack(droppedItem, player, 1).left();
     }
 
-    public ItemStack getCustomFishingLootItemStack(DroppedItem droppedItem, @Nullable Player player, double sizeMultiplier) {
+    public Pair<ItemStack, FishMeta> getCustomFishingLootItemStack(DroppedItem droppedItem, @Nullable Player player, double sizeMultiplier) {
         ItemStack drop = plugin.getIntegrationManager().build(droppedItem.getMaterial(), player);
+        FishMeta fishMeta = null;
         if (drop.getType() != Material.AIR) {
             if (droppedItem.getRandomEnchants() != null)
                 ItemStackUtils.addRandomEnchants(drop, droppedItem.getRandomEnchants());
@@ -555,9 +559,9 @@ public class FishingManager extends Function {
                 ItemStackUtils.addRandomDamage(drop);
             if (ConfigManager.preventPickUp && player != null)
                 ItemStackUtils.addOwner(drop, player.getName());
-            ItemStackUtils.addExtraMeta(drop, droppedItem, sizeMultiplier, player);
+            fishMeta = ItemStackUtils.addExtraMeta(drop, droppedItem, sizeMultiplier, player);
         }
-        return drop;
+        return Pair.of(drop, fishMeta);
     }
 
     private boolean dropMcMMOLoot(Player player, Location location, boolean isDouble) {
@@ -571,7 +575,7 @@ public class FishingManager extends Function {
         }
 
         doVanillaActions(player, location, itemStack, fishResultEvent.isDouble());
-        new VanillaXPImpl(new Random().nextInt(24), true, 1).doOn(player, null);
+        new VanillaXPImpl(new Random().nextInt(24), true, 1).doOn(player);
         return true;
     }
 
@@ -591,7 +595,7 @@ public class FishingManager extends Function {
         }
 
         doVanillaActions(player, location, itemStack, fishResultEvent.isDouble());
-        new VanillaXPImpl(vanillaLoot.getXp(), true, 1).doOn(player, null);
+        new VanillaXPImpl(vanillaLoot.getXp(), true, 1).doOn(player);
     }
 
     private void doVanillaActions(Player player, Location location, ItemStack itemStack, boolean isDouble) {
@@ -605,7 +609,7 @@ public class FishingManager extends Function {
 
         if (vanilla.getSuccessActions() != null)
             for (Action action : vanilla.getSuccessActions())
-                action.doOn(player, null);
+                action.doOn(player);
 
         AdventureUtils.playerSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
 
@@ -654,7 +658,7 @@ public class FishingManager extends Function {
 
         if (loot.getSuccessActions() != null)
             for (Action action : loot.getSuccessActions())
-                action.doOn(player, null);
+                action.doOn(player);
 
         mobInterface.summon(player.getLocation(), location, mob);
         addStats(player, mob, 1);
@@ -740,7 +744,7 @@ public class FishingManager extends Function {
 
         if (!isVanilla && loot != null && loot.getFailureActions() != null) {
             for (Action action : loot.getFailureActions())
-                action.doOn(player, null);
+                action.doOn(player);
         }
 
         if (!ConfigManager.enableFailureTitle) return;
@@ -766,7 +770,13 @@ public class FishingManager extends Function {
 
     public boolean isCoolDown(Player player, long delay) {
         long time = System.currentTimeMillis();
-        return coolDown.computeIfAbsent(player.getUniqueId(), k -> time - delay) + delay > time;
+        long last = coolDown.getOrDefault(player.getUniqueId(), time - delay);
+        if (last + delay > time) {
+            return true;
+        } else {
+            coolDown.put(player.getUniqueId(), time);
+            return false;
+        }
     }
 
     private void addEnchantEffect(Effect initialEffect, ItemStack itemStack, FishingCondition fishingCondition) {
@@ -849,7 +859,7 @@ public class FishingManager extends Function {
         if (player.getGameMode() != GameMode.CREATIVE) itemStack.setAmount(itemStack.getAmount() - 1);
         if (totem.getActivatorActions() != null)
             for (Action action : totem.getActivatorActions()) {
-                action.doOn(player, null);
+                action.doOn(player);
             }
         if (totem.getNearbyActions() != null)
             for (Action action : totem.getNearbyActions()) {
@@ -913,7 +923,7 @@ public class FishingManager extends Function {
         }
         if (loot.getHookActions() != null) {
             for (Action action : loot.getHookActions()) {
-                action.doOn(player, null);
+                action.doOn(player);
             }
         }
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, game.getTime() * 20,3));
@@ -1019,7 +1029,7 @@ public class FishingManager extends Function {
         final Player player = event.getPlayer();
         if (droppedItem.getConsumeActions() != null)
             for (Action action : droppedItem.getConsumeActions())
-                action.doOn(player, null);
+                action.doOn(player);
     }
 
     public Effect getInitialEffect(Player player) {

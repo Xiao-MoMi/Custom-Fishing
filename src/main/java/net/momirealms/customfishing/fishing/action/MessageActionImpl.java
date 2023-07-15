@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.fishing.action;
 
+import net.momirealms.customfishing.fishing.FishMeta;
 import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +34,7 @@ public class MessageActionImpl extends AbstractAction implements Action {
     }
 
     @Override
-    public void doOn(Player player, @Nullable Player anotherPlayer) {
+    public void doOn(Player player, @Nullable Player anotherPlayer, @Nullable FishMeta fishMeta) {
         if (!canExecute()) return;
         for (String message : messages) {
             AdventureUtils.playerMessage(player,
@@ -44,6 +45,7 @@ public class MessageActionImpl extends AbstractAction implements Action {
                             .replace("{z}", String.valueOf(player.getLocation().getBlockZ()))
                             .replace("{loot}", nick)
                             .replace("{activator}", anotherPlayer == null ? "" : anotherPlayer.getName())
+                            .replace("{size}", fishMeta == null ? "" : String.format("%.2f", fishMeta.size()))
             );
         }
     }

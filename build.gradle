@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'net.momirealms'
-version = '1.3.2.1-hotfix'
+version = '1.3.2.2'
 
 repositories {
     maven {name = "aliyun-repo"; url = "https://maven.aliyun.com/repository/public/"}
@@ -16,8 +16,11 @@ repositories {
     maven {name = "sk89q-repo"; url = "https://maven.enginehub.org/repo/"}
     maven {name = "jitpack-repo"; url = "https://jitpack.io"}
     maven {name = "Lumine-repo"; url = "https://mvn.lumine.io/repository/maven-public"}
-    maven {name = 'glaremasters-repo'; url = 'https://repo.glaremasters.me/repository/towny/'}
+    maven {name = 'rapture-repo'; url = 'https://repo.rapture.pw/repository/maven-releases/'}
     maven {name = 'mmo-repo'; url = 'https://nexus.phoenixdevt.fr/repository/maven-public/'}
+    maven {name = 'i-repo'; url = 'https://r.irepo.space/maven/'}
+    maven {name = 'auxilor-repo'; url = 'https://repo.auxilor.io/repository/maven-public/'}
+    maven {name = 'betonquest-repo'; url = 'https://betonquest.org/nexus/repository/betonquest/'}
     mavenCentral()
 }
 
@@ -30,6 +33,7 @@ dependencies {
     compileOnly('com.github.Archy-X:AureliumSkills:Beta1.3.6')
     compileOnly('redis.clients:jedis:4.4.3')
     compileOnly('me.clip:placeholderapi:2.11.3')
+    compileOnly("com.github.oraxen:oraxen:1.158.0")
     compileOnly('io.lumine:Mythic-Dist:5.2.1')
     compileOnly('dev.dejvokep:boosted-yaml:1.3')
     compileOnly('com.github.LoneDev6:api-itemsadder:3.4.1-r4')
@@ -37,11 +41,18 @@ dependencies {
     compileOnly('org.mariadb.jdbc:mariadb-java-client:3.1.4')
     compileOnly('com.google.code.gson:gson:2.10.1')
     compileOnly('com.willfp:EcoEnchants:10.13.0')
+    compileOnly("pers.neige.neigeitems:NeigeItems:1.14.23")
     compileOnly('net.Indyuce:MMOItems-API:6.9.2-SNAPSHOT')
-    //repo is private access
-    //compileOnly('com.willfp:EcoSkills:3.0.0-b2')
-    compileOnly('com.willfp:eco:6.60.0')
-    compileOnly('com.willfp:EcoJobs:3.13.0')
+    compileOnly('io.lumine:MythicLib-dist:1.6-SNAPSHOT')
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
+    compileOnly('net.Indyuce:MMOCore-API:1.12-SNAPSHOT')
+    compileOnly('com.github.Zrips:Jobs:4.17.2')
+    compileOnly("com.willfp:eco:6.65.1")
+    compileOnly("com.willfp:EcoJobs:3.13.0")
+    compileOnly("com.willfp:EcoSkills:3.8.1")
+    compileOnly("pl.betoncraft:betonquest:1.12.10")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
+    compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
     implementation('net.kyori:adventure-api:4.14.0')
     implementation('net.kyori:adventure-platform-bukkit:4.3.0')
     implementation('net.kyori:adventure-text-minimessage:4.14.0')

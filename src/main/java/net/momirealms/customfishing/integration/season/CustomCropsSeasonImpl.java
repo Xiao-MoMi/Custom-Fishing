@@ -17,13 +17,22 @@
 
 package net.momirealms.customfishing.integration.season;
 
-import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.CustomCropsAPI;
 import net.momirealms.customfishing.integration.SeasonInterface;
 import org.bukkit.World;
 
+import java.util.Objects;
+
 public class CustomCropsSeasonImpl implements SeasonInterface {
+
+    private final CustomCropsAPI customCropsAPI;
+
+    public CustomCropsSeasonImpl() {
+        customCropsAPI = CustomCropsAPI.getInstance();
+    }
+
     @Override
     public String getSeason(World world) {
-        return CustomCrops.getInstance().getSeasonManager().getSeason(world.getName()).name();
+        return Objects.requireNonNull(customCropsAPI.getSeason(world.getName())).getSeason();
     }
 }

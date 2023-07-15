@@ -20,9 +20,11 @@ package net.momirealms.customfishing.fishing.action;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.fishing.FishMeta;
 import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class VanillaXPImpl extends AbstractAction implements Action {
 
@@ -36,7 +38,7 @@ public class VanillaXPImpl extends AbstractAction implements Action {
     }
 
     @Override
-    public void doOn(Player player, Player another) {
+    public void doOn(Player player, Player another, @Nullable FishMeta fishMeta) {
         if (CustomFishing.getInstance().getVersionHelper().isSpigot()) {
             if (mending) {
                 player.getLocation().getWorld().spawn(player.getLocation(), ExperienceOrb.class, e -> e.setExperience(amount));

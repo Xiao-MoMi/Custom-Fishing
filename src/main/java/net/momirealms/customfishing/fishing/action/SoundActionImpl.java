@@ -19,8 +19,10 @@ package net.momirealms.customfishing.fishing.action;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
+import net.momirealms.customfishing.fishing.FishMeta;
 import net.momirealms.customfishing.util.AdventureUtils;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class SoundActionImpl extends AbstractAction implements Action {
 
@@ -38,7 +40,7 @@ public class SoundActionImpl extends AbstractAction implements Action {
     }
 
     @Override
-    public void doOn(Player player, Player another) {
+    public void doOn(Player player, Player another, @Nullable FishMeta fishMeta) {
         AdventureUtils.playerSound(player, source, key, volume, pitch);
     }
 }

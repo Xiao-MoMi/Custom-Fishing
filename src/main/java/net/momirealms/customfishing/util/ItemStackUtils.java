@@ -23,6 +23,7 @@ import de.tr7zw.changeme.nbtapi.NBTListCompound;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishing;
+import net.momirealms.customfishing.fishing.FishMeta;
 import net.momirealms.customfishing.fishing.loot.DroppedItem;
 import net.momirealms.customfishing.fishing.loot.Item;
 import net.momirealms.customfishing.fishing.loot.LootImpl;
@@ -230,7 +231,7 @@ public class ItemStackUtils {
         return true;
     }
 
-    public static void addExtraMeta(ItemStack itemStack, DroppedItem droppedItem, double sizeMultiplier, Player player) {
+    public static FishMeta addExtraMeta(ItemStack itemStack, DroppedItem droppedItem, double sizeMultiplier, Player player) {
         NBTItem nbtItem = new NBTItem(itemStack);
         if (droppedItem.getBasicPrice() != 0) {
             NBTCompound fishMetaCompound = nbtItem.addCompound("FishMeta");
@@ -240,24 +241,26 @@ public class ItemStackUtils {
             NBTCompound fishMetaCompound = nbtItem.addCompound("FishMeta");
             fishMetaCompound.setFloat("bonus", droppedItem.getSizeBonus());
         }
-        replaceAndSetSizeProperties(droppedItem.getSize(), nbtItem, sizeMultiplier);
+        float size = replaceAndSetSizeProperties(droppedItem.getSize(), nbtItem, sizeMultiplier);
         replacePlaceholderInDisplay(nbtItem, player);
         itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
+        return new FishMeta(size, droppedItem.getBasicPrice(), droppedItem.getSizeBonus());
     }
 
-    private static void replaceAndSetSizeProperties(String[] sizes, NBTItem nbtItem, double sizeMultiplier) {
-        if (sizes == null) return;
+    private static float replaceAndSetSizeProperties(String[] sizes, NBTItem nbtItem, double sizeMultiplier) {
+        if (sizes == null) return -1;
         float min = Float.parseFloat(sizes[0]);
         float max = Float.parseFloat(sizes[1]);
-        if (max - min < 0) return;
+        if (max - min < 0) return -1;
         float size = (float) ((min + Math.random() * (max - min)) * sizeMultiplier);
         String sizeText = String.format("%.1f", size);
         NBTCompound nbtCompound = nbtItem.getCompound("display");
-        if (nbtCompound == null || !nbtCompound.hasTag("Lore")) return;
+        if (nbtCompound == null || !nbtCompound.hasTag("Lore")) return size;
         List<String> lore = nbtCompound.getStringList("Lore");
         lore.replaceAll(s -> s.replace("{size}", sizeText));
         NBTCompound fishMetaCompound = nbtItem.addCompound("FishMeta");
         fishMetaCompound.setFloat("size", size);
+        return size;
     }
 
     private static void replacePlaceholderInDisplay(NBTItem nbtItem, Player player) {

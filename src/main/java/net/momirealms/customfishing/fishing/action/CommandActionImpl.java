@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.fishing.action;
 
+import net.momirealms.customfishing.fishing.FishMeta;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +34,7 @@ public class CommandActionImpl extends AbstractAction implements Action {
     }
 
     @Override
-    public void doOn(Player player, @Nullable Player anotherPlayer) {
+    public void doOn(Player player, @Nullable Player anotherPlayer, @Nullable FishMeta fishMeta) {
         if (!canExecute()) return;
         for (String command : commands) {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),
@@ -44,6 +45,7 @@ public class CommandActionImpl extends AbstractAction implements Action {
                             .replace("{loot}", nick)
                             .replace("{world}", player.getWorld().getName())
                             .replace("{activator}", anotherPlayer == null ? "" : anotherPlayer.getName())
+                            .replace("{size}", fishMeta == null ? "" : String.format("%.2f", fishMeta.size()))
             );
         }
     }
