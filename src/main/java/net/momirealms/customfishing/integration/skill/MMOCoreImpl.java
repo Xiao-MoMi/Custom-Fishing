@@ -21,7 +21,6 @@ import net.Indyuce.mmocore.MMOCore;
 import net.Indyuce.mmocore.api.player.PlayerData;
 import net.Indyuce.mmocore.experience.EXPSource;
 import net.Indyuce.mmocore.experience.Profession;
-import net.Indyuce.mmocore.manager.data.PlayerDataManager;
 import net.momirealms.customfishing.integration.SkillInterface;
 import org.bukkit.entity.Player;
 

@@ -1,6 +1,5 @@
 package net.momirealms.customfishing.integration;
 
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;

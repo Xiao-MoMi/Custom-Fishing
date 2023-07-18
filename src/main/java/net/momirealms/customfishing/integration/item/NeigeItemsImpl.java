@@ -1,7 +1,6 @@
 package net.momirealms.customfishing.integration.item;
 
 import net.momirealms.customfishing.integration.ItemInterface;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;

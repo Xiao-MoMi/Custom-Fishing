@@ -22,7 +22,6 @@ import io.github.battlepass.quests.quests.external.executor.ExternalQuestExecuto
 import io.github.battlepass.registry.quest.QuestRegistry;
 import net.momirealms.customfishing.api.event.FishResultEvent;
 import net.momirealms.customfishing.fishing.FishResult;
-import net.momirealms.customfishing.helper.Log;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

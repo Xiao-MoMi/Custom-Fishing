@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.api.event;
 
 import net.momirealms.customfishing.fishing.Effect;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;

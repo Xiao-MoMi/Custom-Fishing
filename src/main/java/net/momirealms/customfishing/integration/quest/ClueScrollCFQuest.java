@@ -22,7 +22,6 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.event.FishResultEvent;
 import net.momirealms.customfishing.fishing.FishResult;
 import net.momirealms.customfishing.fishing.loot.Loot;
-import net.momirealms.customfishing.fishing.loot.LootImpl;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 

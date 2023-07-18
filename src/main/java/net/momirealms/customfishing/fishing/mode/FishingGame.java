@@ -29,6 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffectType;
 
+import java.time.LocalTime;
 import java.util.concurrent.ScheduledFuture;
 
 public abstract class FishingGame implements Runnable {
@@ -42,8 +43,18 @@ public abstract class FishingGame implements Runnable {
     protected String title;
     protected FishHook fishHook;
     protected ScheduledFuture<?> gameTask;
+    protected boolean success;
+    private int doubleCheckTime;
 
-    public FishingGame(CustomFishing plugin, FishingManager fishingManager, long deadline, Player player, int difficulty, FishingBar fishingBar) {
+    public FishingGame(
+            CustomFishing plugin,
+            FishingManager fishingManager,
+            long deadline,
+            Player player,
+            int difficulty,
+            FishingBar fishingBar
+    ) {
+        this.plugin = plugin;
         this.offsetManager = plugin.getOffsetManager();
         this.fishingManager = fishingManager;
         this.player = player;
@@ -51,6 +62,7 @@ public abstract class FishingGame implements Runnable {
         this.difficulty = difficulty;
         this.title = fishingBar.getRandomTitle();
         this.fishHook = fishingManager.getHook(player.getUniqueId());
+        this.success = false;
     }
 
     @Override
@@ -79,6 +91,7 @@ public abstract class FishingGame implements Runnable {
     }
 
     protected void switchItemCheck() {
+        if (!isANewSecond()) return;
         PlayerInventory playerInventory = player.getInventory();
         if (playerInventory.getItemInMainHand().getType() != Material.FISHING_ROD && playerInventory.getItemInOffHand().getType() != Material.FISHING_ROD) {
             cancel();
@@ -98,6 +111,39 @@ public abstract class FishingGame implements Runnable {
     public void cancel() {
         if (!this.gameTask.isCancelled()) {
             this.gameTask.cancel(false);
+        }
+    }
+
+    public void success() {
+        success = true;
+        proceedTheResult();
+        cancel();
+    }
+
+    public void fail() {
+        success = false;
+        proceedTheResult();
+        cancel();
+    }
+
+    public void proceedTheResult() {
+        plugin.getScheduler().runTask(() -> {
+            FishHook fishHook = fishingManager.getHook(player.getUniqueId());
+            if (fishHook != null) {
+                fishingManager.proceedReelIn(fishHook.getLocation(), player, this);
+                fishingManager.removeHook(player.getUniqueId());
+                fishingManager.removeFishingPlayer(player);
+            }
+        }, fishHook.getLocation());
+    }
+
+    private boolean isANewSecond() {
+        int minute = LocalTime.now().getSecond();
+        if (doubleCheckTime != minute) {
+            doubleCheckTime = minute;
+            return true;
+        } else {
+            return false;
         }
     }
 }

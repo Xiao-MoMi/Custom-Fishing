@@ -364,8 +364,7 @@ public class FishingManager extends Function {
                     }
                     //else vanilla fishing mechanic
                 }
-            }
-            else {
+            } else {
                 // No custom loot
                 if (loot == null) {
                     event.setCancelled(true);
@@ -381,8 +380,7 @@ public class FishingManager extends Function {
                     showFishingBar(player, loot);
                 }
             }
-        }
-        else {
+        } else {
             event.setCancelled(true);
             removeHook(uuid);
             proceedReelIn(event.getHook().getLocation(), player, fishingGame);
@@ -992,7 +990,7 @@ public class FishingManager extends Function {
     }
 
     public void removeHook(UUID uuid) {
-        FishHook fishHook = hooks.remove(uuid);
+        FishHook fishHook = removeHookCache(uuid);
         if (fishHook != null) {
             if (plugin.getVersionHelper().isFolia()) {
                 plugin.getScheduler().runTask(fishHook::remove, fishHook.getLocation());
@@ -1000,6 +998,10 @@ public class FishingManager extends Function {
                 fishHook.remove();
             }
         }
+    }
+
+    public FishHook removeHookCache(UUID uuid) {
+        return hooks.remove(uuid);
     }
 
     @Nullable

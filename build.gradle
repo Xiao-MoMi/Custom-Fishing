@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'net.momirealms'
-version = '1.3.2.2'
+version = '1.3.2.3'
 
 repositories {
     maven {name = "aliyun-repo"; url = "https://maven.aliyun.com/repository/public/"}
@@ -35,7 +35,7 @@ dependencies {
     compileOnly('me.clip:placeholderapi:2.11.3')
     compileOnly("com.github.oraxen:oraxen:1.158.0")
     compileOnly('io.lumine:Mythic-Dist:5.2.1')
-    compileOnly('dev.dejvokep:boosted-yaml:1.3')
+    compileOnly('dev.dejvokep:boosted-yaml:1.3.1')
     compileOnly('com.github.LoneDev6:api-itemsadder:3.4.1-r4')
     compileOnly('net.objecthunter:exp4j:0.4.8')
     compileOnly('org.mariadb.jdbc:mariadb-java-client:3.1.4')

@@ -187,11 +187,12 @@ other-settings:
   # 线程池设置
   thread-pool-settings:
     # The size of the core Thread pool, that is, the size of the Thread pool when there is no task to execute
+    # Increase the size of corePoolSize when you are running a large server with many players fishing at the same time
     # 核心线程池大小，即在没有任务需要执行的时候线程池的大小
-    corePoolSize: 1
+    corePoolSize: 4
     # The maximum number of threads allowed to be created in the Thread pool. The current number of threads in the Thread pool will not exceed this value
     # 线程池中允许创建的最大线程数，线程池中的当前线程数目不会超过该值
-    maximumPoolSize: 4
+    maximumPoolSize: 8
     # If a thread is idle for more than this attribute value, it will exit due to timeout
     # 如果一个线程处在空闲状态的时间超过了该属性值，就会因为超时而退出（秒）
     keepAliveTime: 10

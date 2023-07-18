@@ -28,7 +28,6 @@ public class ModeOneBar extends FishingBar {
     private final double[] successRate;
     private final int totalWidth;
     private final int pointerWidth;
-
     private final String pointerImage;
     private final int pointerOffset;
 

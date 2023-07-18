@@ -21,80 +21,80 @@ import org.bukkit.configuration.ConfigurationSection;
 
 public class ModeThreeBar extends FishingBar {
 
-    private final String fish_image;
-    private final int fish_icon_width;
+    private final String fishImage;
+    private final int fishIconWidth;
     private final String[] strain;
-    private final String[] struggling_fish_image;
-    private final int bar_effective_width;
-    private final int fish_offset;
-    private final int fish_start_position;
-    private final int success_position;
-    private final double ultimate_strain;
-    private final double normal_increase;
-    private final double struggling_increase;
-    private final double strain_loss;
+    private final String[] strugglingFishImage;
+    private final int barEffectiveWidth;
+    private final int fishOffset;
+    private final int fishStartPosition;
+    private final int successPosition;
+    private final double ultimateStrain;
+    private final double normalIncrease;
+    private final double strugglingIncrease;
+    private final double strainLoss;
 
     public ModeThreeBar(ConfigurationSection section) {
         super(section);
-        this.fish_icon_width = section.getInt("arguments.fish-icon-width");
-        this.fish_image = section.getString("subtitle.fish");
+        this.fishIconWidth = section.getInt("arguments.fish-icon-width");
+        this.fishImage = section.getString("subtitle.fish");
         this.strain = section.getStringList("strain").toArray(new String[0]);
-        this.struggling_fish_image = section.getStringList("subtitle.struggling-fish").toArray(new String[0]);
-        this.bar_effective_width = section.getInt("arguments.bar-effective-area-width");
-        this.fish_offset = section.getInt("arguments.fish-offset");
-        this.fish_start_position = section.getInt("arguments.fish-start-position");
-        this.success_position = section.getInt("arguments.success-position");
-        this.ultimate_strain = section.getDouble("arguments.ultimate-strain", 50);
-        this.normal_increase = section.getDouble("arguments.normal-pull-strain-increase", 1);
-        this.struggling_increase = section.getDouble("arguments.struggling-strain-increase", 2);
-        this.strain_loss = section.getDouble("arguments.loosening-strain-loss", 2);
+        this.strugglingFishImage = section.getStringList("subtitle.struggling-fish").toArray(new String[0]);
+        this.barEffectiveWidth = section.getInt("arguments.bar-effective-area-width");
+        this.fishOffset = section.getInt("arguments.fish-offset");
+        this.fishStartPosition = section.getInt("arguments.fish-start-position");
+        this.successPosition = section.getInt("arguments.success-position");
+        this.ultimateStrain = section.getDouble("arguments.ultimate-strain", 50);
+        this.normalIncrease = section.getDouble("arguments.normal-pull-strain-increase", 1);
+        this.strugglingIncrease = section.getDouble("arguments.struggling-strain-increase", 2);
+        this.strainLoss = section.getDouble("arguments.loosening-strain-loss", 2);
     }
 
-    public String getFish_image() {
-        return fish_image;
+    public String getFishImage() {
+        return fishImage;
     }
 
-    public int getFish_icon_width() {
-        return fish_icon_width;
+    public int getFishIconWidth() {
+        return fishIconWidth;
     }
 
     public String[] getStrain() {
         return strain;
     }
 
-    public int getBar_effective_width() {
-        return bar_effective_width;
+    public int getBarEffectiveWidth() {
+        return barEffectiveWidth;
     }
 
-    public int getFish_offset() {
-        return fish_offset;
+    public int getFishOffset() {
+        return fishOffset;
     }
 
-    public int getFish_start_position() {
-        return fish_start_position;
+    public int getFishStartPosition() {
+        return fishStartPosition;
     }
 
-    public int getSuccess_position() {
-        return success_position;
+    public int getSuccessPosition() {
+        return successPosition;
     }
 
-    public String[] getStruggling_fish_image() {
-        return struggling_fish_image;
+    public String[] getStrugglingFishImage() {
+        return strugglingFishImage;
     }
 
-    public double getUltimate_strain() {
-        return ultimate_strain;
+    public double getUltimateStrain() {
+        return ultimateStrain;
     }
 
-    public double getNormal_increase() {
-        return normal_increase;
+    public double getNormalIncrease() {
+        return normalIncrease;
     }
 
-    public double getStruggling_increase() {
-        return struggling_increase;
+    public double getStrugglingIncrease() {
+        return strugglingIncrease;
     }
 
-    public double getStrain_loss() {
-        return strain_loss;
+    public double getStrainLoss() {
+        return strainLoss;
     }
 }

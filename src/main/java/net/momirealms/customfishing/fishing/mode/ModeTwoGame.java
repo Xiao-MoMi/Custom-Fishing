@@ -25,12 +25,12 @@ import net.momirealms.customfishing.util.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerFishEvent;
 
 import java.util.concurrent.TimeUnit;
 
 public class ModeTwoGame extends FishingGame {
 
-    private boolean success;
     private double hold_time;
     private final ModeTwoBar modeTwoBar;
     private double judgement_position;
@@ -39,35 +39,34 @@ public class ModeTwoGame extends FishingGame {
     private double fish_velocity;
     private int timer;
     private final int time_requirement;
-    private final Location hookLoc;
-    private double distance;
+    private boolean played;
 
-    public ModeTwoGame(CustomFishing plugin, FishingManager fishingManager, long deadline, Player player, int difficulty, ModeTwoBar modeTwoBar, Location hookLoc) {
+    public ModeTwoGame(
+            CustomFishing plugin,
+            FishingManager fishingManager,
+            long deadline,
+            Player player,
+            int difficulty,
+            ModeTwoBar modeTwoBar,
+            Location hookLoc
+    ) {
         super(plugin, fishingManager, deadline, player, difficulty, modeTwoBar);
         this.success = false;
-        this.judgement_position = (double) (modeTwoBar.getBar_effective_width() - modeTwoBar.getJudgement_area_width()) / 2;
+        this.judgement_position = (double) (modeTwoBar.getBarEffectiveWidth() - modeTwoBar.getJudgementAreaWidth()) / 2;
         this.fish_position = 0;
         this.timer = 0;
         this.modeTwoBar = modeTwoBar;
         this.time_requirement = modeTwoBar.getRandomTimeRequirement();
-        this.hookLoc = hookLoc;
-        this.distance = LocationUtils.getDistance(player.getLocation(), hookLoc);
-        this.gameTask = plugin.getScheduler().runTaskTimer(this, 50, 33, TimeUnit.MILLISECONDS);
+        this.played = false;
+        this.gameTask = plugin.getScheduler().runTaskTimerAsync(this, 50, 40, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void run() {
         super.run();
-        if (modeTwoBar.isSneakMode()) {
-            if (player.isSneaking()) addV(true);
-            else reduceV();
-        } else {
-            double newDistance = LocationUtils.getDistance(player.getLocation(), hookLoc);
-            if (distance < newDistance) addV(true);
-            else if (distance > newDistance) addV(false);
-            distance = newDistance;
-        }
-        if (timer < 30) {
+        if (player.isSneaking()) addV();
+        else reduceV();
+        if (timer < 40 - difficulty) {
             timer++;
         } else {
             timer = 0;
@@ -77,24 +76,15 @@ public class ModeTwoGame extends FishingGame {
         }
         judgement_position += judgement_velocity;
         fish_position += fish_velocity;
-
         fraction();
         calibrate();
-
-        if (fish_position >= judgement_position - 2 && fish_position + modeTwoBar.getFish_icon_width() <= judgement_position + modeTwoBar.getJudgement_area_width() + 2) {
+        if (fish_position >= judgement_position - 2 && fish_position + modeTwoBar.getFishIconWidth() <= judgement_position + modeTwoBar.getJudgementAreaWidth() + 2) {
             hold_time += 0.66;
         } else {
             hold_time -= modeTwoBar.getPunishment() * 0.66;
         }
         if (hold_time >= time_requirement) {
-            success = true;
-            FishHook fishHook = fishingManager.getHook(player.getUniqueId());
-            if (fishHook != null) {
-                fishingManager.proceedReelIn(fishHook.getLocation(), player, this);
-                fishingManager.removeHook(player.getUniqueId());
-            }
-            fishingManager.removeFishingPlayer(player);
-            cancel();
+            success();
             return;
         }
         showBar();
@@ -103,22 +93,28 @@ public class ModeTwoGame extends FishingGame {
     @Override
     public void showBar() {
         String bar = "<font:" + modeTwoBar.getFont() + ">" + modeTwoBar.getBarImage()
-                + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars((int) (modeTwoBar.getJudgement_area_offset() + judgement_position)) + "</font>"
-                + modeTwoBar.getJudgement_area_image()
-                + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars((int) (modeTwoBar.getBar_effective_width() - judgement_position - modeTwoBar.getJudgement_area_width())) + "</font>"
-                + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars((int) (-modeTwoBar.getBar_effective_width() - 1 + fish_position)) + "</font>"
-                + modeTwoBar.getFish_image()
-                + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars((int) (modeTwoBar.getBar_effective_width() - fish_position - modeTwoBar.getFish_icon_width() + 1)) + "</font>"
+                + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars((int) (modeTwoBar.getJudgementAreaOffset() + judgement_position)) + "</font>"
+                + modeTwoBar.getJudgementAreaImage()
+                + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars((int) (modeTwoBar.getBarEffectiveWidth() - judgement_position - modeTwoBar.getJudgementAreaWidth())) + "</font>"
+                + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars((int) (-modeTwoBar.getBarEffectiveWidth() - 1 + fish_position)) + "</font>"
+                + modeTwoBar.getFishImage()
+                + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars((int) (modeTwoBar.getBarEffectiveWidth() - fish_position - modeTwoBar.getFishIconWidth() + 1)) + "</font>"
                 + "</font>";
         hold_time = Math.max(0, Math.min(hold_time, time_requirement));
-        AdventureUtils.playerTitle(player,
+        AdventureUtils.playerTitle(
+                player,
+                modeTwoBar.getTip() != null && !played ? modeTwoBar.getTip() :
                 title.replace("{progress}", modeTwoBar.getProgress()[(int) ((hold_time / time_requirement) * modeTwoBar.getProgress().length)])
-                , bar,0,500,0
+                ,
+                bar,
+                0,
+                500,
+                0
         );
     }
 
     private void burst() {
-        if (Math.random() < (judgement_position / modeTwoBar.getBar_effective_width())) {
+        if (Math.random() < (judgement_position / modeTwoBar.getBarEffectiveWidth())) {
             judgement_velocity = -1 - 0.8 * Math.random() * difficulty;
         } else {
             judgement_velocity = 1 + 0.8 * Math.random() * difficulty;
@@ -127,21 +123,21 @@ public class ModeTwoGame extends FishingGame {
 
     private void fraction() {
         if (judgement_velocity > 0) {
-            judgement_velocity -= modeTwoBar.getWater_resistance();
+            judgement_velocity -= modeTwoBar.getWaterResistance();
             if (judgement_velocity < 0) judgement_velocity = 0;
         } else {
-            judgement_velocity += modeTwoBar.getWater_resistance();
+            judgement_velocity += modeTwoBar.getWaterResistance();
             if (judgement_velocity > 0) judgement_velocity = 0;
         }
     }
 
     private void reduceV() {
-        fish_velocity -= modeTwoBar.getLoosening_loss();
+        fish_velocity -= modeTwoBar.getLooseningLoss();
     }
 
-    private void addV(boolean add) {
-        if (add) fish_velocity += modeTwoBar.getPulling_strength();
-        else fish_velocity -= modeTwoBar.getPulling_strength();
+    private void addV() {
+        played = true;
+        fish_velocity += modeTwoBar.getPullingStrength();
     }
 
     private void calibrate() {
@@ -149,16 +145,16 @@ public class ModeTwoGame extends FishingGame {
             fish_position = 0;
             fish_velocity = 0;
         }
-        if (fish_position + modeTwoBar.getFish_icon_width() > modeTwoBar.getBar_effective_width()) {
-            fish_position = modeTwoBar.getBar_effective_width() - modeTwoBar.getFish_icon_width();
+        if (fish_position + modeTwoBar.getFishIconWidth() > modeTwoBar.getBarEffectiveWidth()) {
+            fish_position = modeTwoBar.getBarEffectiveWidth() - modeTwoBar.getFishIconWidth();
             fish_velocity = 0;
         }
         if (judgement_position < 0) {
             judgement_position = 0;
             judgement_velocity = 0;
         }
-        if (judgement_position + modeTwoBar.getJudgement_area_width() > modeTwoBar.getBar_effective_width()) {
-            judgement_position = modeTwoBar.getBar_effective_width() - modeTwoBar.getJudgement_area_width();
+        if (judgement_position + modeTwoBar.getJudgementAreaWidth() > modeTwoBar.getBarEffectiveWidth()) {
+            judgement_position = modeTwoBar.getBarEffectiveWidth() - modeTwoBar.getJudgementAreaWidth();
             judgement_velocity = 0;
         }
     }

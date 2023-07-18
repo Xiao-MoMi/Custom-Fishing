@@ -36,15 +36,15 @@ public class Scheduler extends Function {
         } else {
             this.schedulerPlatform = new BukkitSchedulerImpl(plugin);
         }
-        this.schedule = new ScheduledThreadPoolExecutor(1);
-        this.schedule.setMaximumPoolSize(1);
+        this.schedule = new ScheduledThreadPoolExecutor(4);
+        this.schedule.setMaximumPoolSize(4);
         this.schedule.setKeepAliveTime(10, TimeUnit.SECONDS);
         this.schedule.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
     }
 
     public void reload() {
-        this.schedule.setCorePoolSize(ConfigManager.corePoolSize);
-        this.schedule.setMaximumPoolSize(ConfigManager.maximumPoolSize);
+        this.schedule.setCorePoolSize(Math.max(ConfigManager.corePoolSize, 4));
+        this.schedule.setMaximumPoolSize(Math.max(Math.max(ConfigManager.maximumPoolSize, 4), ConfigManager.corePoolSize));
         this.schedule.setKeepAliveTime(ConfigManager.keepAliveTime, TimeUnit.SECONDS);
     }
 

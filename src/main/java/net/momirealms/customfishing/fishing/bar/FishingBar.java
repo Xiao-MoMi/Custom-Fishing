@@ -26,8 +26,10 @@ public abstract class FishingBar {
     protected String[] titles;
     protected String font;
     protected String barImage;
+    protected String tip;
 
     public FishingBar(ConfigurationSection section) {
+        this.tip = section.getString("tip");
         this.titles = section.getStringList("title").size() == 0 ? new String[]{section.getString("title")} : section.getStringList("title").toArray(new String[0]);
         this.font = section.getString("subtitle.font", "customfishing:bar");
         this.barImage = section.getString("subtitle.bar","뀃");
@@ -43,5 +45,9 @@ public abstract class FishingBar {
 
     public String getFont() {
         return font;
+    }
+
+    public String getTip() {
+        return tip;
     }
 }

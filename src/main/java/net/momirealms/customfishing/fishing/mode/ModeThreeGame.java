@@ -30,19 +30,27 @@ public class ModeThreeGame extends FishingGame {
 
     private final ModeThreeBar modeThreeBar;
     private int fish_position;
-    private boolean success;
     private int timer;
     private final int timer_max;
     private double strain;
     private int struggling_time;
+    private boolean played;
 
-    public ModeThreeGame(CustomFishing plugin, FishingManager fishingManager, long deadline, Player player, int difficulty, ModeThreeBar modeThreeBar) {
+    public ModeThreeGame(
+            CustomFishing plugin,
+            FishingManager fishingManager,
+            long deadline,
+            Player player,
+            int difficulty,
+            ModeThreeBar modeThreeBar
+    ) {
         super(plugin, fishingManager, deadline, player, difficulty, modeThreeBar);
-        this.fish_position = modeThreeBar.getFish_start_position();
+        this.fish_position = modeThreeBar.getFishStartPosition();
         this.success = false;
         this.modeThreeBar = modeThreeBar;
-        this.timer_max = modeThreeBar.getStruggling_fish_image().length;
-        this.gameTask = plugin.getScheduler().runTaskTimer(this, 50, 40, TimeUnit.MILLISECONDS);
+        this.timer_max = modeThreeBar.getStrugglingFishImage().length;
+        this.gameTask = plugin.getScheduler().runTaskTimerAsync(this, 50, 40, TimeUnit.MILLISECONDS);
+        this.played = false;
     }
 
     @Override
@@ -53,65 +61,57 @@ public class ModeThreeGame extends FishingGame {
             timer = 0;
         }
         if (struggling_time <= 0) {
-            if (Math.random() < ((double) difficulty / 200)) {
-                struggling_time = (int) (20 + Math.random() * difficulty * 3);
+            if (Math.random() < ((double) difficulty / 300)) {
+                struggling_time = (int) (15 + Math.random() * difficulty * 3);
             }
-        }
-        else {
+        } else {
             struggling_time--;
         }
         if (player.isSneaking()) pull();
         else loosen();
-        if (fish_position < modeThreeBar.getSuccess_position() - modeThreeBar.getFish_icon_width() - 1) {
-            success = true;
-            FishHook fishHook = fishingManager.getHook(player.getUniqueId());
-            if (fishHook != null) {
-                fishingManager.proceedReelIn(fishHook.getLocation(), player, this);
-                fishingManager.removeHook(player.getUniqueId());
-            }
-            fishingManager.removeFishingPlayer(player);
-            cancel();
+        if (fish_position < modeThreeBar.getSuccessPosition() - modeThreeBar.getFishIconWidth() - 1) {
+            success();
             return;
         }
-        if (fish_position + modeThreeBar.getFish_icon_width() > modeThreeBar.getBar_effective_width() || strain >= modeThreeBar.getUltimate_strain()) {
-            FishHook fishHook = fishingManager.getHook(player.getUniqueId());
-            if (fishHook != null) {
-                fishingManager.proceedReelIn(fishHook.getLocation(), player, this);
-                fishingManager.removeHook(player.getUniqueId());
-            }
-            fishingManager.removeFishingPlayer(player);
-            cancel();
+        if (fish_position + modeThreeBar.getFishIconWidth() > modeThreeBar.getBarEffectiveWidth() || strain >= modeThreeBar.getUltimateStrain()) {
+            fail();
             return;
         }
         showBar();
     }
 
     public void pull() {
+        played = true;
         if (struggling_time > 0) {
-            strain += (modeThreeBar.getStruggling_increase() + ((double) difficulty / 5));
+            strain += (modeThreeBar.getStrugglingIncrease() + ((double) difficulty / 5));
             fish_position -= 1;
         } else {
-            strain += modeThreeBar.getNormal_increase();
+            strain += modeThreeBar.getNormalIncrease();
             fish_position -= 2;
         }
     }
 
     public void loosen() {
         fish_position++;
-        strain -= modeThreeBar.getStrain_loss();
+        strain -= modeThreeBar.getStrainLoss();
     }
 
     @Override
     public void showBar() {
         String bar = "<font:" + modeThreeBar.getFont() + ">" + modeThreeBar.getBarImage()
-                + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars(modeThreeBar.getFish_offset() + fish_position) + "</font>"
-                + (struggling_time > 0 ? modeThreeBar.getStruggling_fish_image()[timer] : modeThreeBar.getFish_image())
-                + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars(modeThreeBar.getBar_effective_width() - fish_position - modeThreeBar.getFish_icon_width()) + "</font>"
+                + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars(modeThreeBar.getFishOffset() + fish_position) + "</font>"
+                + (struggling_time > 0 ? modeThreeBar.getStrugglingFishImage()[timer] : modeThreeBar.getFishImage())
+                + "<font:" + offsetManager.getFont() + ">" + offsetManager.getOffsetChars(modeThreeBar.getBarEffectiveWidth() - fish_position - modeThreeBar.getFishIconWidth()) + "</font>"
                 + "</font>";
-        strain = Math.max(0, Math.min(strain, modeThreeBar.getUltimate_strain()));
-        AdventureUtils.playerTitle(player,
-                title.replace("{strain}", modeThreeBar.getStrain()[(int) ((strain / modeThreeBar.getUltimate_strain()) * modeThreeBar.getStrain().length)])
-                , bar,0,500,0
+        strain = Math.max(0, Math.min(strain, modeThreeBar.getUltimateStrain()));
+        AdventureUtils.playerTitle(
+                player,
+                modeThreeBar.getTip() != null && !played ? modeThreeBar.getTip() :
+                title.replace("{strain}", modeThreeBar.getStrain()[(int) ((strain / modeThreeBar.getUltimateStrain()) * modeThreeBar.getStrain().length)]),
+                bar,
+                0,
+                500,
+                0
         );
     }
 

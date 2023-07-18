@@ -507,14 +507,14 @@ bar_9:
 bar_10:
   game-type: 2
   title: '{progress}'
+  # Tip would show on the title to guide the player how to play
+  tip: '<gray>Press <red><key:key.sneak> <gray>to start'
   subtitle:
     font: 'customfishing:default'
     bar: '뀌'
     judgment-area: '뀍'
     fish: '뀎'
   arguments:
-    # sneak / move
-    pull-method: sneak
     punishment: 0.2
     bar-effective-area-width: 155
     judgment-area-offset: -160
@@ -540,13 +540,14 @@ bar_10:
     - '<font:customfishing:icons>뀈</font>'
     - '<font:customfishing:icons>뀉</font>'
 
-
 ###############
 # Game Type 3 #
 ###############
 bar_11:
   game-type: 3
   title: '{strain}'
+  # Tip would show on the title to guide the player how to play
+  tip: '<gray>Press <red><key:key.sneak> <gray>to start'
   subtitle:
     font: 'customfishing:default'
     bar: '뀓'
@@ -576,4 +577,3 @@ bar_11:
     - '<font:customfishing:icons>뀗</font>'
     - '<font:customfishing:icons>뀘</font>'
     - '<font:customfishing:icons>뀙</font>'
-

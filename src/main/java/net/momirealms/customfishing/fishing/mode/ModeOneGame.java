@@ -31,11 +31,18 @@ public class ModeOneGame extends FishingGame {
     private boolean face;
     private final ModeOneBar modeOneBar;
 
-    public ModeOneGame(CustomFishing plugin, FishingManager fishingManager, long deadline, Player player, int difficulty, ModeOneBar modeOneBar) {
+    public ModeOneGame(
+            CustomFishing plugin,
+            FishingManager fishingManager,
+            long deadline,
+            Player player,
+            int difficulty,
+            ModeOneBar modeOneBar
+    ) {
         super(plugin, fishingManager, deadline, player, difficulty, modeOneBar);
         this.face = true;
         this.modeOneBar = modeOneBar;
-        this.gameTask = plugin.getScheduler().runTaskTimer(this, 50, 54 - difficulty * 4L, TimeUnit.MILLISECONDS);
+        this.gameTask = plugin.getScheduler().runTaskTimerAsync(this, 50, Math.max(55 - difficulty * 5L, 5), TimeUnit.MILLISECONDS);
         this.progress = -1;
     }
 
