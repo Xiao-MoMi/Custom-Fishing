@@ -5,6 +5,7 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.api.CustomFishingAPI;
 import net.momirealms.customfishing.commands.AbstractSubCommand;
 import net.momirealms.customfishing.fishing.Effect;
+import net.momirealms.customfishing.fishing.FishingCondition;
 import net.momirealms.customfishing.fishing.loot.LootImpl;
 import net.momirealms.customfishing.integration.SeasonInterface;
 import net.momirealms.customfishing.util.AdventureUtils;
@@ -45,7 +46,7 @@ public class DebugCommand extends AbstractSubCommand {
             }
             case "loot-chance" -> {
                 Effect initial = CustomFishing.getInstance().getFishingManager().getInitialEffect(player);
-                List<String> lootProbability = getLootProbability(initial, CustomFishingAPI.getLootsAt(player.getLocation(), player));
+                List<String> lootProbability = getLootProbability(initial, CustomFishing.getInstance().getFishingManager().getPossibleLootList(new FishingCondition(player.getLocation(), player, "fish_finder", "fish_finder"), false, CustomFishing.getInstance().getLootManager().getAllLoots()));
                 for (String msg : lootProbability) {
                     AdventureUtils.playerMessage(player, msg);
                 }

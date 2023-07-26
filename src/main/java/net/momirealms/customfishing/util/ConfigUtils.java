@@ -112,6 +112,7 @@ public class ConfigUtils {
                     case "date" -> requirements.add(new DateImpl(null, new HashSet<>(section.getStringList(type))));
                     case "rod" -> requirements.add(new RodImpl(null, new HashSet<>(section.getStringList(type))));
                     case "bait" -> requirements.add(new BaitImpl(null, new HashSet<>(section.getStringList(type))));
+                    case "competition" -> requirements.add(new CompetitionImpl(null, section.getBoolean(type)));
                     case "papi-condition" -> requirements.add(new CustomPapi(null, Objects.requireNonNull(section.getConfigurationSection(type)).getValues(false)));
                 }
             }
@@ -142,6 +143,7 @@ public class ConfigUtils {
                     case "date" -> requirements.add(new DateImpl(msg, new HashSet<>(innerSec.getStringList("value"))));
                     case "rod" -> requirements.add(new RodImpl(msg, new HashSet<>(innerSec.getStringList("value"))));
                     case "bait" -> requirements.add(new BaitImpl(msg, new HashSet<>(innerSec.getStringList("value"))));
+                    case "competition" -> requirements.add(new CompetitionImpl(msg, innerSec.getBoolean("value")));
                     case "papi-condition" -> requirements.add(new CustomPapi(msg, Objects.requireNonNull(innerSec.getConfigurationSection("value")).getValues(false)));
                 }
             }

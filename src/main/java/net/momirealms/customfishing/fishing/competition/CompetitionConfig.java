@@ -26,6 +26,7 @@ import java.util.List;
 
 public class CompetitionConfig {
 
+    private String key;
     private final int duration;
     private final int minPlayers;
     private final List<String> startMessage;
@@ -40,7 +41,21 @@ public class CompetitionConfig {
     private final boolean enableBossBar;
     private final HashMap<String, Action[]> rewards;
 
-    public CompetitionConfig(int duration, int minPlayers, List<String> startMessage, List<String> endMessage, List<String> startCommand, List<String> endCommand, List<String> joinCommand, CompetitionGoal goal, BossBarConfig bossBarConfig, boolean enableBossBar, HashMap<String, Action[]> rewards) {
+    public CompetitionConfig(
+            String key,
+            int duration,
+            int minPlayers,
+            List<String> startMessage,
+            List<String> endMessage,
+            List<String> startCommand,
+            List<String> endCommand,
+            List<String> joinCommand,
+            CompetitionGoal goal,
+            BossBarConfig bossBarConfig,
+            boolean enableBossBar,
+            HashMap<String, Action[]> rewards
+    ) {
+        this.key = key;
         this.duration = duration;
         this.minPlayers = minPlayers;
         this.startMessage = startMessage;
@@ -104,6 +119,10 @@ public class CompetitionConfig {
 
     public void setWeekday(List<Integer> weekday) {
         this.weekday = weekday;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     public boolean canStart() {

@@ -45,8 +45,11 @@ public class CompetitionCommand extends AbstractSubCommand {
                     AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.lackArgs);
                     return true;
                 }
-                if (CompetitionSchedule.startCompetition(args.get(1))) AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.forceSuccess);
-                else AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.forceFailure);
+                if (CompetitionSchedule.startCompetition(args.get(1))) {
+                    AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.forceSuccess);
+                } else {
+                    AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.forceFailure);
+                }
             }
             case "end" -> {
                 CompetitionSchedule.endCompetition();

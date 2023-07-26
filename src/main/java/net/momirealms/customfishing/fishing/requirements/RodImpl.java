@@ -19,7 +19,7 @@ public class RodImpl extends Requirement implements RequirementInterface {
     public boolean isConditionMet(FishingCondition fishingCondition) {
         Player player = fishingCondition.getPlayer();
         String rod = fishingCondition.getRodID();
-        if (rod == null || rods.contains(rod)) {
+        if (rod != null && (rods.contains(rod) || rod.equals("fish_finder"))) {
             return true;
         }
         notMetMessage(player);

@@ -28,6 +28,7 @@ import net.momirealms.customfishing.integration.papi.PlaceholderManager;
 import net.momirealms.customfishing.manager.ConfigManager;
 import net.momirealms.customfishing.manager.MessageManager;
 import net.momirealms.customfishing.util.AdventureUtils;
+import net.momirealms.customfishing.util.JedisUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -59,9 +60,11 @@ public class Competition {
             this.goal = competitionConfig.getGoal() == CompetitionGoal.RANDOM ? getRandomGoal() : competitionConfig.getGoal();
             this.remainingTime = this.competitionConfig.getDuration();
             this.startTime = Instant.now().getEpochSecond();
-
-            if (ConfigManager.useRedis) this.ranking = new RedisRankingImpl();
-            else this.ranking = new LocalRankingImpl();
+            if (ConfigManager.useRedis) {
+                this.ranking = new RedisRankingImpl();
+            } else {
+                this.ranking = new LocalRankingImpl();
+            }
             this.ranking.clear();
 
             startTimer();

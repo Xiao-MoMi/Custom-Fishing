@@ -21,7 +21,6 @@ import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.fishing.bar.ModeThreeBar;
 import net.momirealms.customfishing.manager.FishingManager;
 import net.momirealms.customfishing.util.AdventureUtils;
-import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.TimeUnit;

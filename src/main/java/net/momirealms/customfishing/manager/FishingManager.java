@@ -60,6 +60,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerFishEvent;
@@ -831,7 +832,7 @@ public class FishingManager extends Function {
         List<TotemConfig> totemList = plugin.getTotemManager().getTotemsByCoreID(blockID);
         if (totemList == null || !totemList.contains(totem)) return;
 
-        FishingCondition fishingCondition = new FishingCondition(block.getLocation(), player, null, null);
+        FishingCondition fishingCondition = new FishingCondition(block.getLocation(), player);
         if (totem.getRequirements() != null)
             for (RequirementInterface requirement : totem.getRequirements()) {
                 if (!requirement.isConditionMet(fishingCondition)) {
@@ -875,7 +876,7 @@ public class FishingManager extends Function {
             return;
         }
 
-        FishingCondition fishingCondition = new FishingCondition(player.getLocation(), player, null, null);
+        FishingCondition fishingCondition = new FishingCondition(player.getLocation(), player, "fish_finder", "fish_finder");
         List<LootImpl> possibleLoots = getPossibleLootList(fishingCondition, true, plugin.getLootManager().getAllLoots());
 
         FishFinderEvent fishFinderEvent = new FishFinderEvent(player, possibleLoots);
@@ -992,11 +993,7 @@ public class FishingManager extends Function {
     public void removeHook(UUID uuid) {
         FishHook fishHook = removeHookCache(uuid);
         if (fishHook != null) {
-            if (plugin.getVersionHelper().isFolia()) {
-                plugin.getScheduler().runTask(fishHook::remove, fishHook.getLocation());
-            } else {
-                fishHook.remove();
-            }
+            plugin.getScheduler().runTask(fishHook::remove, fishHook.getLocation());
         }
     }
 

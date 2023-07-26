@@ -182,12 +182,10 @@ public class ConfigManager {
     private static void redisSettings(ConfigurationSection config) {
         if (enableCompetition && config.getBoolean("fishing-competition.redis", false)) {
             if (!JedisUtils.isPoolEnabled()) {
-                YamlConfiguration configuration = ConfigUtils.getConfig("database.yml");
-                JedisUtils.initializeRedis(configuration);
+                JedisUtils.initializeRedis(ConfigUtils.getConfig("database.yml"));
             }
             useRedis = true;
-        }
-        else if (useRedis && JedisUtils.isPoolEnabled()) {
+        } else if (useRedis && JedisUtils.isPoolEnabled()) {
             JedisUtils.closePool();
             useRedis = false;
         }

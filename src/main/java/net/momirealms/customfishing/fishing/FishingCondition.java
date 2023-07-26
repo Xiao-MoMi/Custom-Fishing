@@ -48,6 +48,20 @@ public class FishingCondition{
         }
     }
 
+    public FishingCondition(Location location, Player player) {
+        this.location = location;
+        this.player = player;
+        this.rodID = null;
+        this.baitID = null;
+        this.papiMap = new HashMap<>();
+        if (player != null) {
+            PlaceholderManager placeholderManager = CustomFishing.getInstance().getIntegrationManager().getPlaceholderManager();
+            for (String papi : CustomPapi.allPapi) {
+                this.papiMap.put(papi, placeholderManager.parse(player, papi));
+            }
+        }
+    }
+
     public HashMap<String, String> getPapiMap() {
         return papiMap;
     }

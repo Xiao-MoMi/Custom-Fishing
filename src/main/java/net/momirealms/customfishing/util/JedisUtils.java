@@ -82,7 +82,6 @@ public class JedisUtils {
             jedisPool = null;
         }
     }
-
     public static boolean isPoolEnabled() {
         return jedisPool != null && !jedisPool.isClosed();
     }

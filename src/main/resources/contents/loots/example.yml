@@ -229,6 +229,9 @@ rainbow_fish:
     # Requires job plugin
     job-level: 10
 
+    # Only occurs when there's a competition
+    competition: true
+
     # Requires Season Plugin
     season:
       - Spring

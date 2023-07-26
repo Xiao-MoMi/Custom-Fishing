@@ -200,8 +200,7 @@ public class AdventureUtils {
                 } else {
                     stringBuilder.append(chars[i]);
                 }
-            }
-            else {
+            } else {
                 stringBuilder.append(chars[i]);
             }
         }

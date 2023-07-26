@@ -17,19 +17,27 @@
 
 package net.momirealms.customfishing.fishing.competition;
 
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import net.momirealms.customfishing.CustomFishing;
 import net.momirealms.customfishing.object.Function;
+import net.momirealms.customfishing.util.AdventureUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.*;
 import java.time.LocalTime;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class CompetitionSchedule extends Function {
 
-    @Override
-    public void load() {
-        checkTime();
-    }
+    private static CompetitionSchedule instance;
+    private ScheduledFuture<?> checkTimeTask;
+    private int doubleCheckTime;
 
     @Override
     public void unload() {
@@ -37,8 +45,10 @@ public class CompetitionSchedule extends Function {
         cancelCompetition();
     }
 
-    private ScheduledFuture<?> checkTimeTask;
-    private int doubleCheckTime;
+    public void load() {
+        instance = this;
+        checkTime();
+    }
 
     public static boolean startCompetition(String competitionName) {
         CompetitionConfig competitionConfig = CustomFishing.getInstance().getCompetitionManager().getCompetitionsC().get(competitionName);
@@ -62,6 +72,7 @@ public class CompetitionSchedule extends Function {
             Competition.currentCompetition.end();
         }
     }
+
 
     public void startCompetition(CompetitionConfig competitionConfig) {
         if (Competition.currentCompetition != null) {
@@ -100,5 +111,9 @@ public class CompetitionSchedule extends Function {
         } else {
             return false;
         }
+    }
+
+    public static CompetitionSchedule getInstance() {
+        return instance;
     }
 }

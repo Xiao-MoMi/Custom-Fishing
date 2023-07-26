@@ -19,7 +19,7 @@ public class BaitImpl extends Requirement implements RequirementInterface {
     public boolean isConditionMet(FishingCondition fishingCondition) {
         Player player = fishingCondition.getPlayer();
         String bait = fishingCondition.getBaitID();
-        if (bait == null || baits.contains(bait)) {
+        if (bait != null && (baits.contains(bait) || bait.equals("fish_finder"))) {
             return true;
         }
         notMetMessage(player);
