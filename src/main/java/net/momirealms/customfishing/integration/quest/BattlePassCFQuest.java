@@ -40,12 +40,24 @@ public class BattlePassCFQuest extends ExternalQuestContainer {
     public void onFishCaught(FishResultEvent event) {
         if (event.getResult() == FishResult.FAILURE) return;
         Player player = event.getPlayer();
+        // Determine if the item is VANILLA_ITEM or MOB
+//        if (event.getLoot() == null) {
+//            FishResult result = event.getResult();
+//            // I didn't know how to refine this judgment, so I just roughly +1
+//            if (result == FishResult.CATCH_VANILLA_ITEM || result == FishResult.CATCH_MOB) {
+//                this.executionBuilder("fish").player(player).root(event.getItemStack())
+//                        .progress(1).buildAndExecute();
+//            } else {
+//                return;
+//            }
+//        }
         // event.getLootID() Fish's ID
         // .progress(1) Player can get 1 point
         this.executionBuilder("fish").player(player).root(event.getLootID())
                 .progress(1).buildAndExecute();
 
         if (event.getLoot().getGroup() == null) return;
+
         this.executionBuilder("fish_group").player(player).root(event.getLoot().getGroup())
                 .progress(1).buildAndExecute();
     }
