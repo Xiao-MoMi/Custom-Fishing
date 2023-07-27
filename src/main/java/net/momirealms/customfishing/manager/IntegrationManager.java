@@ -227,7 +227,8 @@ public class IntegrationManager extends Function {
             hookMessage("BetonQuest");
         }
         if (pluginManager.isPluginEnabled("BattlePass")) {
-            BattlePassCFQuest.register();
+            BattlePassCFQuest battlePassCFQuest = new BattlePassCFQuest();
+            Bukkit.getPluginManager().registerEvents(battlePassCFQuest, plugin);
             hookMessage("BattlePass");
         }
     }

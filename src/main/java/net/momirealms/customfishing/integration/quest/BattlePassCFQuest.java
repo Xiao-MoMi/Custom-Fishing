@@ -18,29 +18,37 @@
 package net.momirealms.customfishing.integration.quest;
 
 import io.github.battlepass.BattlePlugin;
+import io.github.battlepass.api.events.server.PluginReloadEvent;
 import io.github.battlepass.quests.service.base.ExternalQuestContainer;
 import io.github.battlepass.registry.quest.QuestRegistry;
 import net.momirealms.customfishing.api.event.FishResultEvent;
 import net.momirealms.customfishing.fishing.FishResult;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
-public class BattlePassCFQuest extends ExternalQuestContainer {
-
-    public BattlePassCFQuest(BattlePlugin battlePlugin) {
-        super(battlePlugin, "customfishing");
-    }
+public class BattlePassCFQuest implements Listener {
 
     public static void register() {
         QuestRegistry questRegistry = BattlePlugin.getApi().getQuestRegistry();
-        questRegistry.hook("customfishing", BattlePassCFQuest::new);
+        questRegistry.hook("customfishing", FishQuest::new);
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onFishCaught(FishResultEvent event) {
-        if (event.getResult() == FishResult.FAILURE) return;
-        Player player = event.getPlayer();
-        // Determine if the item is VANILLA_ITEM or MOB
+    public void onBattlePassReload(PluginReloadEvent event) {
+        register();
+    }
+
+    private static class FishQuest extends ExternalQuestContainer {
+        public FishQuest(BattlePlugin battlePlugin) {
+            super(battlePlugin, "customfishing");
+        }
+
+        @EventHandler(ignoreCancelled = true)
+        public void onFishCaught(FishResultEvent event) {
+            if (event.getResult() == FishResult.FAILURE) return;
+            Player player = event.getPlayer();
+            // Determine if the item is VANILLA_ITEM or MOB
 //        if (event.getLoot() == null) {
 //            FishResult result = event.getResult();
 //            // I didn't know how to refine this judgment, so I just roughly +1
@@ -51,14 +59,15 @@ public class BattlePassCFQuest extends ExternalQuestContainer {
 //                return;
 //            }
 //        }
-        // event.getLootID() Fish's ID
-        // .progress(1) Player can get 1 point
-        this.executionBuilder("fish").player(player).root(event.getLootID())
-                .progress(1).buildAndExecute();
+            // event.getLootID() Fish's ID
+            // .progress(1) Player can get 1 point
+            this.executionBuilder("fish").player(player).root(event.getLootID())
+                    .progress(1).buildAndExecute();
 
-        if (event.getLoot().getGroup() == null) return;
+            if (event.getLoot().getGroup() == null) return;
 
-        this.executionBuilder("fish_group").player(player).root(event.getLoot().getGroup())
-                .progress(1).buildAndExecute();
+            this.executionBuilder("fish_group").player(player).root(event.getLoot().getGroup())
+                    .progress(1).buildAndExecute();
+        }
     }
 }
