@@ -18,30 +18,47 @@
 package net.momirealms.customfishing.integration.quest;
 
 import io.github.battlepass.BattlePlugin;
-import io.github.battlepass.quests.quests.external.executor.ExternalQuestExecutor;
+import io.github.battlepass.quests.service.base.ExternalQuestContainer;
 import io.github.battlepass.registry.quest.QuestRegistry;
 import net.momirealms.customfishing.api.event.FishResultEvent;
 import net.momirealms.customfishing.fishing.FishResult;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
-public class BattlePassCFQuest extends ExternalQuestExecutor implements Listener {
+public class BattlePassCFQuest extends ExternalQuestContainer {
+
+    public BattlePassCFQuest(BattlePlugin battlePlugin) {
+        super(battlePlugin, "customfishing");
+    }
 
     public static void register() {
         QuestRegistry questRegistry = BattlePlugin.getApi().getQuestRegistry();
         questRegistry.hook("customfishing", BattlePassCFQuest::new);
     }
 
-    public BattlePassCFQuest(BattlePlugin battlePlugin) {
-        super(battlePlugin, "customfishing");
-    }
-
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onFishCaught(FishResultEvent event) {
-        if (event.isCancelled()) return;
         if (event.getResult() == FishResult.FAILURE) return;
         Player player = event.getPlayer();
-        this.execute("fish", player, (var1x) -> var1x.root(event.getLootID()));
+        // Determine if the item is VANILLA_ITEM or MOB
+//        if (event.getLoot() == null) {
+//            FishResult result = event.getResult();
+//            // I didn't know how to refine this judgment, so I just roughly +1
+//            if (result == FishResult.CATCH_VANILLA_ITEM || result == FishResult.CATCH_MOB) {
+//                this.executionBuilder("fish").player(player).root(event.getItemStack())
+//                        .progress(1).buildAndExecute();
+//            } else {
+//                return;
+//            }
+//        }
+        // event.getLootID() Fish's ID
+        // .progress(1) Player can get 1 point
+        this.executionBuilder("fish").player(player).root(event.getLootID())
+                .progress(1).buildAndExecute();
+
+        if (event.getLoot().getGroup() == null) return;
+
+        this.executionBuilder("fish_group").player(player).root(event.getLoot().getGroup())
+                .progress(1).buildAndExecute();
     }
 }
