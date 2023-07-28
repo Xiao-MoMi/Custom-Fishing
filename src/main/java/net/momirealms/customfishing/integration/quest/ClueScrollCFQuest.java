@@ -37,14 +37,11 @@ public class ClueScrollCFQuest implements Listener {
 
     @EventHandler
     public void onFish(FishResultEvent event) {
-        if (event.isCancelled()) return;
-        if (event.getResult() == FishResult.FAILURE) return;
-        if (event.getLootID() != null) {
+        if (event.isCancelled() || event.getResult() == FishResult.FAILURE)
+            return;
+        if (event.getLootID() != null)
             idClue.handle(event.getPlayer(), event.isDouble() ? 2 : 1, new ClueDataPair("fish_id", event.getLootID()));
-        }
-        Loot loot = event.getLoot();
-        if (loot != null && loot.getGroup() != null) {
-            groupClue.handle(event.getPlayer(), event.isDouble() ? 2 : 1, new ClueDataPair("fish_group", loot.getGroup()));
-        }
+        if (event.getLoot() != null && event.getLoot().getGroup() != null)
+            groupClue.handle(event.getPlayer(), event.isDouble() ? 2 : 1, new ClueDataPair("fish_group", event.getLoot().getGroup()));
     }
 }
