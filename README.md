@@ -1,4 +1,4 @@
-# Note: This project is under recoding. The new API would be available soon.
+# Note: This project is under recoding. New API would be available soon.
 # Custom-Fishing
 A fishing plugin that provides mini games.
 
