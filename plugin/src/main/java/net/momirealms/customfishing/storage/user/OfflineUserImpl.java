@@ -1,0 +1,87 @@
+package net.momirealms.customfishing.storage.user;
+
+import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.api.data.EarningData;
+import net.momirealms.customfishing.api.data.InventoryData;
+import net.momirealms.customfishing.api.data.PlayerData;
+import net.momirealms.customfishing.api.data.StatisticData;
+import net.momirealms.customfishing.api.data.user.OfflineUser;
+import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
+import net.momirealms.customfishing.api.mechanic.statistic.Statistics;
+import net.momirealms.customfishing.api.util.InventoryUtils;
+import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
+import net.momirealms.customfishing.setting.Config;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+public class OfflineUserImpl implements OfflineUser {
+
+    private final UUID uuid;
+    private final String name;
+    private final FishingBagHolder holder;
+    private final EarningData earningData;
+    private final Statistics statistics;
+    public static OfflineUserImpl NEVER_PLAYED_USER = new OfflineUserImpl(UUID.randomUUID(), "", PlayerData.empty());
+
+    public OfflineUserImpl(UUID uuid, String name, PlayerData playerData) {
+        this.name = name;
+        this.uuid = uuid;
+        this.holder = new FishingBagHolder(uuid);
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+        this.holder.setInventory(InventoryUtils.createInventory(this.holder, playerData.getBagData().size,
+                AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                        PlaceholderManagerImpl.getInstance().parse(
+                                offlinePlayer, Config.bagTitle, Map.of("{player}", Optional.ofNullable(offlinePlayer.getName()).orElse(String.valueOf(uuid)))
+                        )
+                )));
+        this.holder.setItems(InventoryUtils.getInventoryItems(playerData.getBagData().serialized));
+        this.earningData = playerData.getEarningData();
+        this.statistics = new Statistics(playerData.getStatistics());
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public UUID getUUID() {
+        return uuid;
+    }
+
+    @Override
+    public FishingBagHolder getHolder() {
+        return holder;
+    }
+
+    @Override
+    public EarningData getEarningData() {
+        return earningData;
+    }
+
+    @Override
+    public Statistics getStatistics() {
+        return statistics;
+    }
+
+    @Override
+    public boolean isOnline() {
+        Player player = Bukkit.getPlayer(uuid);
+        return player != null && player.isOnline();
+    }
+
+    @Override
+    public PlayerData getPlayerData() {
+        return new PlayerData.Builder()
+                .setBagData(new InventoryData(InventoryUtils.stacksToBase64(holder.getInventory().getStorageContents()), holder.getInventory().getSize()))
+                .setEarningData(earningData)
+                .setStats(new StatisticData(statistics.getStatisticMap()))
+                .setName(name)
+                .build();
+    }
+}

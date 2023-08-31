@@ -1,0 +1,123 @@
+example:
+  # TOTAL_SCORE
+  # CATCH_AMOUNT
+  # MAX_SIZE
+  # TOTAL_SIZE
+  # RANDOM
+  goal: CATCH_AMOUNT
+
+  # Optional
+  # 1-7
+  start-weekday:
+    - 1
+    - 7
+
+  # Optional
+  start-time:
+    - '9:30'
+    - '14:30'
+    - '20:00'
+
+  # Seconds
+  duration: 300
+
+  # Min players to start the competition
+  min-players: 2
+  skip-actions:
+    broadcast:
+      type: broadcast
+      value:
+        - 'The number of players is not enough for the fishing competition to be started as scheduled.'
+
+  bossbar:
+    enable: true
+    color: WHITE
+    overlay: PROGRESS
+    text:
+      - '<gray>[<#87CEFA>🎣<gray>] <gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{time}s <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Your Rank: <#E6E6FA>{rank} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>No.1 Player: <#E6E6FA>{1_player}'
+      - '<gray>[<#87CEFA>🎣<gray>] <gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{minute}m{second}s <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Your Score: <#E6E6FA>{score} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>No.1 Score: <#E6E6FA>{1_score}'
+      - '<gray>[<#87CEFA>🎣<gray>] <gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{minute}m{second}s <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Winning condition: <#E6E6FA>{goal}'
+    refresh-rate: 20
+    switch-interval: 200
+    only-show-to-participants: true
+
+  actionbar:
+    enable: false
+    text:
+      - '<gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{time}s <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Your Rank: <#E6E6FA>{rank} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>No.1 Player: <#E6E6FA>{1_player}'
+      - '<gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{minute}m{second}s <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Your Score: <#E6E6FA>{score} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>No.1 Score: <#E6E6FA>{1_score}'
+      - '<gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{minute}m{second}s <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Winning condition: <#E6E6FA>{goal}'
+    refresh-rate: 5
+    switch-interval: 200
+    only-show-to-participants: true
+
+  start-actions:
+    broadcast:
+      type: broadcast
+      value:
+        - '<#D4F2E7>◤─────────────────────────◥'
+        - ''
+        - '             <gray>[<#87CEFA>🎣<gray>]  <gradient:#F0F8FF:#87CEFA:#F0F8FF>Fishing Competition'
+        - ''
+        - '      <#E1FFFF>Objectives:'
+        - '         <#B0C4DE>Catch as many fish as possible'
+        - '           <#B0C4DE>Start fishing to participate!'
+        - ''
+        - '<#D4F2E7>◣─────────────────────────◢'
+  end-actions:
+    broadcast:
+      type: broadcast
+      value:
+        - '<#D4F2E7>◤─────────────────────────◥'
+        - ''
+        - '             <gray>[<#87CEFA>🎣<gray>]  <gradient:#F0F8FF:#87CEFA:#F0F8FF>Fishing Competition'
+        - ''
+        - '      <#E1FFFF>Results:'
+        - '              <gradient:#FFF8DC:#FFD700:#FFF8DC>No.①: {1_player} - {1_score}'
+        - '              <gradient:#F5FFFA:#F5F5F5:#F5FFFA>No.②: {2_player} - {2_score}'
+        - '              <gradient:#D2B48C:#CD853F:#D2B48C>No.③: {3_player} - {3_score}'
+        - ''
+        - '<#D4F2E7>◣─────────────────────────◢'
+  participate-actions:
+    message:
+      type: message
+      value:
+        - 'You have joined the competition. Good luck!'
+
+  rewards:
+    1:
+      command_action:
+        type: command
+        value:
+          - 'money give {player} 200'
+      messages_action:
+        type: message
+        value:
+          - '<#FF4500>[1st] Congratulations! You got the first prize!'
+    2:
+      command_action:
+        type: command
+        value:
+          - 'money give {player} 100'
+      messages_action:
+        type: message
+        value:
+          - '<#FF4500>[2nd] Just miss the opportunity, try next time!'
+    3:
+      command_action:
+        type: command
+        value:
+          - 'money give {player} 100'
+      messages_action:
+        type: message
+        value:
+          - '<#FF4500>[3rd] Just miss the opportunity, try next time!'
+    participation:
+      command_action:
+        type: command
+        value:
+          - 'money give {player} 10'
+      messages_action:
+        type: message
+        value:
+          - '<#FF4500>Thanks for participation!'

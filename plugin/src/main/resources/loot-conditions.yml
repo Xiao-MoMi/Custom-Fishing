@@ -1,0 +1,83 @@
+# global 条件组
+global-group:
+  list: []
+  conditions: {}
+  sub-groups:
+    loots_in_water:
+      conditions:
+        in-lava: false
+      list:
+        - rubbish:+15
+      sub-groups:
+        ocean_fish:
+          conditions:
+            biome:
+              - minecraft:ocean
+              - minecraft:deep_ocean
+              - minecraft:cold_ocean
+              - minecraft:deep_cold_ocean
+              - minecraft:frozen_ocean
+              - minecraft:deep_frozen_ocean
+              - minecraft:lukewarm_ocean
+              - minecraft:deep_lukewarm_ocean
+              - minecraft:warm_ocean
+          list:
+            - rubbish:-10
+            - tuna_fish:+15
+            - tuna_fish_silver_star:+3
+            - tuna_fish_golden_star:+1
+            - pike_fish:+15
+            - pike_fish_silver_star:+3
+            - pike_fish_golden_star:+1
+            - sardine_fish:+15
+            - sardine_fish_silver_star:+3
+            - sardine_fish_golden_star:+1
+          sub-groups:
+            warm_ocean_fish:
+              conditions:
+                biome:
+                  - minecraft:lukewarm_ocean
+                  - minecraft:deep_lukewarm_ocean
+                  - minecraft:warm_ocean
+              list:
+                - blue_jellyfish:+15
+                - blue_jellyfish_silver_star:+3
+                - blue_jellyfish_golden_star:+1
+                - pink_jellyfish:+15
+                - pink_jellyfish_silver_star:+3
+                - pink_jellyfish_golden_star:+1
+        river_fish:
+          conditions:
+            '!biome':
+            - minecraft:ocean
+            - minecraft:river
+            - minecraft:frozen_river
+            - minecraft:frozen_ocean
+            - minecraft:lukewarm_ocean
+            - minecraft:warm_ocean
+          list:
+            - rubbish:+5
+            - gold_fish:+15
+            - gold_fish_silver_star:+3
+            - gold_fish_golden_star:+1
+            - perch_fish:+15
+            - perch_fish_silver_star:+3
+            - perch_fish_golden_star:+1
+            - mullet_fish:+15
+            - mullet_fish_silver_star:+3
+            - mullet_fish_golden_star:+1
+            - carp_fish:+25
+            - carp_fish_silver_star:+5
+            - carp_fish_golden_star:+2
+          sub-groups:
+            swamp_fish:
+              list: []
+              conditions:
+                biome:
+                  - minecraft:swamp
+                  - minecraft:mangrove_swamp
+    loots_in_lava:
+      conditions:
+        in-lava: true
+      list:
+        - obsidian:+10

@@ -1,0 +1,26 @@
+#MiniMessage Format
+#https://docs.adventure.kyori.net/minimessage/format.html
+config-version: '26'
+
+messages:
+  prefix: '<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient>'
+  reload: '<white>Reloaded. Took <green>{time}ms.'
+  item-not-exist: 'That item does not exist.'
+  escape: 'It has been too long since the fish is hooked. Oh my god, it escaped.'
+  give-item: 'Successfully given player {player} {amount}x {item}.'
+  get-item: 'Successfully got {amount}x {item}.'
+  possible-loots: 'Possible loots here: '
+  split-char: ', '
+  competition-not-exist: 'Competition {id} does not exist.'
+  no-competition-ongoing: 'There''s no competition ongoing.'
+  stop-competition: 'Successfully stopped the current competition.'
+  end-competition: 'Successfully ended the current competition.'
+  no-score: 'No Score'
+  no-player: 'No Player'
+  no-rank: 'No Rank'
+  goal-catch-amount: 'Amount of fish caught'
+  goal-max-size: 'Max size of the fish caught'
+  goal-total-size: 'Total size of the fish caught'
+  goal-total-score: 'Total score of the fish caught'
+  unsafe-modification: 'You can''t edit a player''s fishing bag when the player is playing on another server that connected to the database'
+  never-played: 'Player {player} has never played the server. You can''t edit a non existent player''s fishing bag.'

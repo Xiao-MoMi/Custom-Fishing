@@ -1,0 +1,81 @@
+package net.momirealms.customfishing.api.data;
+
+import com.google.gson.annotations.SerializedName;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+public class PlayerData {
+
+    @SerializedName("name")
+    protected String name;
+    @SerializedName("stats")
+    protected StatisticData statisticsData;
+    @SerializedName("bag")
+    protected InventoryData bagData;
+    @SerializedName("trade")
+    protected EarningData earningData;
+
+    public static PlayerData NEVER_PLAYED = empty();
+
+    public static PlayerData empty() {
+        return new Builder()
+                .setBagData(InventoryData.empty())
+                .setEarningData(EarningData.empty())
+                .setStats(StatisticData.empty())
+                .build();
+    }
+
+    public static class Builder {
+
+        private final PlayerData playerData;
+
+        public Builder() {
+            this.playerData = new PlayerData();
+        }
+
+        @NotNull
+        public Builder setName(@Nullable String name) {
+            this.playerData.name = name;
+            return this;
+        }
+
+        @NotNull
+        public Builder setStats(@Nullable StatisticData statisticsData) {
+            this.playerData.statisticsData = statisticsData;
+            return this;
+        }
+
+        @NotNull
+        public Builder setBagData(@Nullable InventoryData inventoryData) {
+            this.playerData.bagData = inventoryData;
+            return this;
+        }
+
+        @NotNull
+        public Builder setEarningData(@Nullable EarningData earningData) {
+            this.playerData.earningData = earningData;
+            return this;
+        }
+
+        @NotNull
+        public PlayerData build() {
+            return this.playerData;
+        }
+    }
+
+    public StatisticData getStatistics() {
+        return statisticsData;
+    }
+
+    public InventoryData getBagData() {
+        return bagData;
+    }
+
+    public EarningData getEarningData() {
+        return earningData;
+    }
+
+    public String getName() {
+        return name;
+    }
+}

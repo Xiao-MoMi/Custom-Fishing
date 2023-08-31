@@ -1,0 +1,42 @@
+wooden_crate:
+  show-in-fishfinder: false
+  nick: Apple Crate
+  block: barrel
+  vector:
+    horizontal: 1.07
+    vertical: 1.5
+  properties:
+    directional: true
+    storage:
+      apple_1:
+        item: APPLE
+        amount: 1~2
+        chance: 0.8
+      apple_2:
+        item: APPLE
+        amount: 1~2
+        chance: 0.8
+      apple_3:
+        item: APPLE
+        amount: 1~2
+        chance: 0.8
+      apple_4:
+        item: APPLE
+        amount: 1~2
+        chance: 0.8
+      apple_5:
+        item: APPLE
+        amount: 1~2
+        chance: 0.8
+      apple_6:
+        item: APPLE
+        amount: 1~2
+        chance: 0.8
+      apple_7:
+        item: APPLE
+        amount: 1~2
+        chance: 0.8
+      apple_8:
+        item: APPLE
+        amount: 1~2
+        chance: 0.8

@@ -1,0 +1,17 @@
+drowned:
+  show-in-fishfinder: false
+  mob: Drowned
+  nick: drowned
+  vector:
+    horizontal: 1.1
+    vertical: 1.2
+
+skeletalknight:
+  show-in-fishfinder: false
+  mob: MythicMobs:SkeletalKnight
+  nick: Skeletal Knight
+  vector:
+    horizontal: 1.1
+    vertical: 1.2
+  properties:
+    level: 0

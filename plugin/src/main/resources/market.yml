@@ -1,0 +1,54 @@
+# Container title
+title: '<gradient:#A52A2A:#800000:#A52A2A>Fish Market</gradient>'
+
+# Market menu layout
+layout:
+  - 'AAAAAAAAA'
+  - 'AIIIIIIIA'
+  - 'AIIIIIIIA'
+  - 'AIIIIIIIA'
+  - 'AAAABAAAA'
+
+# Price formula (For customfishing loots)
+price-formula: '{base} + {bonus} * {size}'
+
+# Item price (For vanilla items & other plugin items)
+item-price:
+  # Vanilla Items
+  COD: 10
+  PUFFERFISH: 10
+  SALMON: 10
+  TROPICAL_FISH: 10
+  # PAPER (CustomModelData: 999)
+  PAPER:999: 5
+
+# Functional icons
+functional-icons:
+  sell-icon:
+    symbol: 'B'
+    material: IRON_BLOCK
+    display:
+      name: '<#00CED1><bold>● <bold:false>Sell the fish'
+      lore:
+        - '<font:uniform><gradient:#E6E6FA:#48D1CC:#E6E6FA>You will gain {money}$</gradient></font>'
+    action:
+      message:
+        type: message
+        text: 'You earned {money}$ from selling the fish! You can still gain {remains}$ from selling fish today'
+        chance: 1.0
+  deny-icon:
+    symbol: 'B'
+    material: REDSTONE_BLOCK
+    display:
+      name: '<red><bold>● <bold:false>Denied'
+      lore:
+        - '<font:uniform><gradient:#E6E6FA:red:#E6E6FA>Nothing to sell!</gradient></font>'
+  item-slot:
+    symbol: 'I'
+
+decorative-icons:
+  glass-pane:
+    symbol: 'A'
+    material: BLACK_STAINED_GLASS_PANE
+    display:
+      name: ' '

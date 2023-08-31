@@ -1,0 +1,160 @@
+# Developer: @Xiao-MoMi
+# Wiki: https://mo-mi.gitbook.io/xiaomomi-plugins/
+config-version: '26'
+
+# BStats
+metrics: true
+
+# Check updates
+update-checker: true
+
+# Available locales: chinese/english/spanish/turkish
+lang: english
+
+# Mechanic settings
+mechanics:
+
+  # The requirements for the plugin to work
+  mechanic-requirements:
+    world_requirement:
+      type: '!world'
+      value:
+        - blacklist_world
+
+  # Global loot properties
+  global-loot-properties:
+    show-in-fishfinder: true
+    disable-stat: false
+    disable-game: false
+    instant-game: false
+    prevent-grabbing: false
+    action:
+      success:
+        title_action:
+          type: random-title
+          value:
+            titles:
+              - '<green>GG!</green>'
+              - '<green>Good Job!</green>'
+            subtitles:
+              - 'You caught a {loot}'
+              - 'Whoa! Nice catch!'
+              - 'Oh {loot} here we go!'
+              - 'Let''s see what it is!'
+            fade-in: 20
+            stay: 30
+            fade-out: 10
+          chance: 1.0
+      failure:
+        title_action:
+          type: random-title
+          value:
+            titles:
+              - '<red>Be concentrated!</red>'
+              - '<red>What a pity!</red>'
+              - '<red>Try next time!</red>'
+              - '<red>Bad luck</red>'
+            subtitles:
+              - 'The fish escaped...'
+            fade-in: 20
+            stay: 30
+            fade-out: 10
+          chance: 1.0
+
+  # Fishing bag is where players can store their baits, utils and rods (Fish optional)
+  fishing-bag:
+    # Enable
+    enable: true
+    # Fishing bag container title
+    bag-title: '<blue>{player}''s Fishing Bag</blue>'
+    # Can fishing bag store fishing loots?
+    can-store-loot: false
+    # Other whitelist-items
+    whitelist-items:
+      - fishing_rod
+
+  # Lava fishing settings
+  lava-fishing:
+    # ticks
+    min-wait-time: 100
+    max-wait-time: 600
+
+  # Animation settings
+  animation:
+    splash:
+      enable: true
+      water: water_effect
+      lava: lava_effect
+      duration: 25
+    bait:
+      enable: true
+
+  # Competition settings
+  competition:
+    # Use redis for cross server data synchronization
+    redis-ranking: false
+    # Increase this value would increase cpu load
+    # But would allow you to use more placeholders like {4_player} {5_score}
+    placeholder-limit: 3
+
+  # Enable vanilla fishing mechanic if there's no loot available
+  vanilla-mechanic-if-no-loot:
+    enable: false
+    # actions to trigger if vanilla mechanic not allowed
+    actions:
+      message_action:
+        type: message
+        value:
+          - 'There''s no loot here. Try to find another place for fishing.'
+
+# Other settings
+other-settings:
+
+  # Thread pool settings
+  thread-pool-settings:
+    # The size of the core Thread pool, that is, the size of the Thread pool when there is no task to execute
+    # Increase the size of corePoolSize when you are running a large server with many players fishing at the same time
+    corePoolSize: 4
+    # The maximum number of threads allowed to be created in the Thread pool. The current number of threads in the Thread pool will not exceed this value
+    maximumPoolSize: 8
+    # If a thread is idle for more than this attribute value, it will exit due to timeout
+    keepAliveTime: 10
+
+  # Event priority: MONITOR HIGHEST HIGH NORMAL LOW LOWEST
+  event-priority: NORMAL
+
+  # Save the data from cache to file periodically to minimize the data loss if server crashes
+  data-saving-interval: 600
+
+  # Requires PlaceholderAPI to work
+  placeholder-register:
+    '{date}': '%server_date%'
+
+  # CustomFishing supports using items from other plugins
+  # If items share the same id, they would inherit the effects
+  item-detection-order:
+    # - Oraxen
+    # - ItemsAdder
+    - CustomFishing
+    - vanilla
+
+  # Offset characters' unicodes
+  # Never edit this unless you know what you are doing
+  offset-characters:
+    font: customfishing:offset_chars
+    '1': 
+    '2': 
+    '4': 
+    '8': 
+    '16': 
+    '32': 
+    '64': 
+    '128': 
+    '-1': 
+    '-2': 
+    '-4': 
+    '-8': 
+    '-16': 
+    '-32': 
+    '-64': 
+    '-128': 

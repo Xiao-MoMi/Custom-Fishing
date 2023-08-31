@@ -1,0 +1,28 @@
+mixed_accurate_click_group:
+  groups:
+    - accurate_click_group:6
+    - rainbow_group:1
+accurate_click_group:
+  difficulty: 10~60
+  time: 10~15
+  games:
+    - accurate_click_bar_1:3
+    - accurate_click_bar_2:3
+    - accurate_click_bar_3:3
+    - accurate_click_bar_4:3
+    - accurate_click_bar_5:3
+    - accurate_click_bar_6:3
+    - accurate_click_bar_7:3
+    - accurate_click_bar_8:3
+    - accurate_click_bar_9:3
+rainbow_group:
+  difficulty: 10~60
+  time: 10~15
+  games:
+    - rainbow_1:1
+    - rainbow_2:1
+    - rainbow_3:1
+    - rainbow_4:1
+    - rainbow_5:1
+    - rainbow_6:1
+    - rainbow_7:1

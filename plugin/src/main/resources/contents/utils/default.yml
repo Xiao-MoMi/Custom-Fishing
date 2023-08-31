@@ -1,0 +1,26 @@
+fishfinder:
+  material: PAPER
+  display:
+    name: '<gray>Fish Finder'
+    lore:
+      - '<white>Right click to see what fish can be caught in this place!'
+  custom-model-data: 50000
+water_effect:
+  material: PAPER
+  custom-model-data: 49998
+lava_effect:
+  material: PAPER
+  custom-model-data: 49999
+fisherman_talismans:
+  material: player_head
+  display:
+    name: '<blue>Fisherman Talismans'
+    lore:
+      - ''
+      - '<gray>Fishing would be easier when keeping'
+      - '<gray>the talismans in the fishing bag'
+      - ''
+      - '<gold>The effect cannot be stacked'
+  head64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWQzZmVjNGI3M2E1ZThlMWY1Y2FiOTBjZDBhMzgzMDJmMzdiMDBjNzEzY2EwNmM4NDkzMDBmOGZkMTFlNWVjMiJ9fX0=
+  effect:
+    difficulty: -1
