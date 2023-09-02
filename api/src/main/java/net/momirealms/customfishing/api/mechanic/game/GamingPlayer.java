@@ -1,5 +1,6 @@
 package net.momirealms.customfishing.api.mechanic.game;
 
+import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import org.bukkit.entity.Player;
 
@@ -20,4 +21,6 @@ public interface GamingPlayer {
     Player getPlayer();
 
     Effect getEffectReward();
+
+    boolean onChat(String message);
 }

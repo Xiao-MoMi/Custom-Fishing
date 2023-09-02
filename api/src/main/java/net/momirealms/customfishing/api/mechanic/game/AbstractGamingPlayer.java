@@ -55,6 +55,11 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     }
 
     @Override
+    public boolean onChat(String message) {
+        return false;
+    }
+
+    @Override
     public boolean onSwapHand() {
         return false;
     }

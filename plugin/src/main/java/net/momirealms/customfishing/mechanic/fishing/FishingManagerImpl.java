@@ -2,6 +2,7 @@ package net.momirealms.customfishing.mechanic.fishing;
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import io.papermc.paper.event.player.AsyncChatEvent;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.event.LavaFishingEvent;
@@ -33,16 +34,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
-import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
-import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -174,6 +173,16 @@ public class FishingManagerImpl implements Listener, FishingManager {
         }
     }
 
+    @EventHandler
+    public void onChat(AsyncPlayerChatEvent event) {
+        if (event.isCancelled()) return;
+        GamingPlayer gamingPlayer = gamingPlayerMap.get(event.getPlayer().getUniqueId());
+        if (gamingPlayer != null) {
+            if (gamingPlayer.onChat(event.getMessage()))
+                event.setCancelled(true);
+        }
+    }
+
     @Override
     public boolean removeHook(UUID uuid) {
         FishHook hook = hookCacheMap.remove(uuid);
@@ -183,6 +192,11 @@ public class FishingManagerImpl implements Listener, FishingManager {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public Optional<FishHook> getHook(UUID uuid) {
+        return Optional.ofNullable(hookCacheMap.get(uuid));
     }
 
     public void selectState(PlayerFishEvent event) {

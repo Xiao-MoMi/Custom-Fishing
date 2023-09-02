@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 public class ActionManagerImpl implements ActionManager {
 
@@ -43,6 +44,8 @@ public class ActionManagerImpl implements ActionManager {
         this.registerPluginExpAction();
         this.registerTitleAction();
         this.registerActionBarAction();
+        this.registerCloseInvAction();
+        this.registerDelayedAction();
     }
 
     @Override
@@ -153,6 +156,13 @@ public class ActionManagerImpl implements ActionManager {
         });
     }
 
+    private void registerCloseInvAction() {
+        registerAction("close-inv", (args, chance) -> condition -> {
+            if (Math.random() > chance) return;
+            condition.getPlayer().closeInventory();
+        });
+    }
+
     private void registerActionBarAction() {
         registerAction("actionbar", (args, chance) -> {
             String text = (String) args;
@@ -213,6 +223,34 @@ public class ActionManagerImpl implements ActionManager {
                 for (Action action : actions) {
                     action.trigger(condition);
                 }
+            };
+        });
+    }
+
+    private void registerDelayedAction() {
+        registerAction("delay", (args, chance) -> {
+            List<Action> actions = new ArrayList<>();
+            int delay;
+            if (args instanceof ConfigurationSection section) {
+                delay = section.getInt("delay", 1);
+                ConfigurationSection actionSection = section.getConfigurationSection("action");
+                if (actionSection != null) {
+                    for (Map.Entry<String, Object> entry : actionSection.getValues(false).entrySet()) {
+                        if (entry.getValue() instanceof ConfigurationSection innerSection) {
+                            actions.add(getAction(innerSection));
+                        }
+                    }
+                }
+            } else {
+                delay = 1;
+            }
+            return condition -> {
+                if (Math.random() > chance) return;
+                plugin.getScheduler().runTaskSyncLater(() -> {
+                    for (Action action : actions) {
+                        action.trigger(condition);
+                    }
+                }, condition.getLocation(), delay * 50L, TimeUnit.MILLISECONDS);
             };
         });
     }

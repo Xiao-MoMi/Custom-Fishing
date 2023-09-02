@@ -341,11 +341,9 @@ public class GameManagerImpl implements GameManager {
                             + FontUtils.surroundWithFont(fishImage, font)
                             + OffsetUtils.getOffsetChars((int) (barEffectiveWidth - fish_position - fishIconWidth + 1))
                             ;
-
                     AdventureManagerImpl.getInstance().sendTitle(
                             player,
-                            tip != null && !played ? tip :
-                                    title.replace("{progress}", progress[(int) ((hold_time / time_requirement) * progress.length)])
+                            tip != null && !played ? tip : title.replace("{progress}", progress[(int) ((hold_time / time_requirement) * progress.length)])
                             ,
                             bar,
                             0,

@@ -9,10 +9,10 @@ layout:
   - 'AIIIIIIIA'
   - 'AAAABAAAA'
 
-# Price formula (For customfishing loots)
+# Price formula (For CustomFishing loots)
 price-formula: '{base} + {bonus} * {size}'
 
-# Item price (For vanilla items & other plugin items)
+# Item price (For vanilla items & other plugin items that have CustomModelData)
 item-price:
   # Vanilla Items
   COD: 10
@@ -22,30 +22,39 @@ item-price:
   # PAPER (CustomModelData: 999)
   PAPER:999: 5
 
-# Functional icons
+# Slots to put items in
+item-slot:
+  symbol: 'I'
+
+# Functional icon
 functional-icons:
+  symbol: 'B'
   sell-icon:
-    symbol: 'B'
     material: IRON_BLOCK
     display:
-      name: '<#00CED1><bold>● <bold:false>Sell the fish'
+      name: '<#00CED1><b>● <!b>Ship the fish'
       lore:
-        - '<font:uniform><gradient:#E6E6FA:#48D1CC:#E6E6FA>You will gain {money}$</gradient></font>'
+        - '<font:uniform><gradient:#E6E6FA:#48D1CC:#E6E6FA>You will get <green>{money}$</green> by selling the fish</gradient></font>'
     action:
-      message:
+      sound_action:
+        type: sound
+      message_action:
         type: message
-        text: 'You earned {money}$ from selling the fish! You can still gain {remains}$ from selling fish today'
-        chance: 1.0
+        value: 'You earned {money}$ by selling the fish! You can still get {remains}$ from market today'
+      command_action:
+        type: command
+        value: 'money give {player} {money}'
   deny-icon:
-    symbol: 'B'
     material: REDSTONE_BLOCK
     display:
-      name: '<red><bold>● <bold:false>Denied'
+      name: '<red><b>● <!b>Denied trade'
       lore:
         - '<font:uniform><gradient:#E6E6FA:red:#E6E6FA>Nothing to sell!</gradient></font>'
-  item-slot:
-    symbol: 'I'
+    action:
+      sound_action:
+        type: sound
 
+# Decorative icons
 decorative-icons:
   glass-pane:
     symbol: 'A'

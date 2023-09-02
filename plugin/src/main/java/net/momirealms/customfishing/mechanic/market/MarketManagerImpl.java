@@ -1,29 +1,33 @@
 package net.momirealms.customfishing.mechanic.market;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
+import net.momirealms.customfishing.api.data.user.OnlineUser;
 import net.momirealms.customfishing.api.manager.MarketManager;
+import net.momirealms.customfishing.api.mechanic.item.BuildableItem;
 import net.momirealms.customfishing.api.mechanic.item.ItemBuilder;
-import net.momirealms.customfishing.api.mechanic.market.MarketGUI;
-import net.momirealms.customfishing.libraries.inventorygui.InventoryGui;
-import net.momirealms.customfishing.libraries.inventorygui.StaticGuiElement;
-import net.momirealms.customfishing.mechanic.item.ItemManagerImpl;
+import net.momirealms.customfishing.api.mechanic.market.MarketGUIHolder;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
-public class MarketManagerImpl implements MarketManager {
+public class MarketManagerImpl implements MarketManager, Listener {
 
     private final CustomFishingPlugin plugin;
     private final HashMap<String, Double> priceMap;
@@ -32,14 +36,36 @@ public class MarketManagerImpl implements MarketManager {
     private String formula;
     private final HashMap<Character, ItemBuilder> decorativeIcons;
     private char itemSlot;
+    private char functionSlot;
+    private BuildableItem functionIconAllowBuilder;
+    private BuildableItem functionIconDenyBuilder;
+    private double earningLimit;
+    private ConcurrentHashMap<UUID, MarketGUI> marketGUIMap;
 
     public MarketManagerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.priceMap = new HashMap<>();
         this.decorativeIcons = new HashMap<>();
+        this.marketGUIMap = new ConcurrentHashMap<>();
     }
 
     public void load() {
+        this.loadConfig();
+        Bukkit.getPluginManager().registerEvents(this, plugin);
+    }
+
+
+    public void unload() {
+        HandlerList.unregisterAll(this);
+        this.priceMap.clear();
+        this.decorativeIcons.clear();
+    }
+
+    public void disable() {
+        unload();
+    }
+
+    private void loadConfig() {
         YamlConfiguration config = plugin.getConfig("market.yml");
         this.layout = config.getStringList("layout").toArray(new String[0]);
         this.title = config.getString("title", "market.title");
@@ -62,38 +88,74 @@ public class MarketManagerImpl implements MarketManager {
         }
     }
 
-    public void unload() {
-        this.priceMap.clear();
-        this.decorativeIcons.clear();
-    }
-
-    public void disable() {
-        unload();
-    }
-
     public void openMarketGUI(Player player) {
-        player.closeInventory();
+        MarketGUI gui = new MarketGUI(this, player);
 
-        InventoryGui gui = new InventoryGui(
-                plugin,
-                new MarketGUI(),
-                AdventureManagerImpl.getInstance().getComponentFromMiniMessage(title),
-                layout
-        );
+    }
 
-        gui.setCloseAction(close -> {
-            var elements = gui.getElement(itemSlot);
+    @EventHandler
+    public void onClickInv(InventoryClickEvent event) {
+        if (event.isCancelled())
+            return;
+        Inventory clickedInv = event.getClickedInventory();
+        if (clickedInv == null)
+            return;
+        HumanEntity human = event.getWhoClicked();
+        if (!(clickedInv.getHolder() instanceof MarketGUIHolder holder))
+            return;
 
-
-            return false;
-        });
-
-        for (Map.Entry<Character, ItemBuilder> entry : decorativeIcons.entrySet()) {
-            gui.addElement(new StaticGuiElement(
-                entry.getKey(),
-                ((ItemManagerImpl.CFBuilder) entry.getValue()).build()
-            ));
+        MarketGUI gui = marketGUIMap.get(human.getUniqueId());
+        if (gui == null) {
+            event.setCancelled(true);
+            human.closeInventory();
+            return;
         }
+
+        int slot = event.getSlot();
+        MarketGUIElement element = gui.getElement(slot);
+        if (element == null) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (element.getSymbol() == itemSlot) {
+            plugin.getScheduler().runTaskSyncLater(gui::refresh, human.getLocation(), 50, TimeUnit.MILLISECONDS);
+            return;
+        }
+
+        if (element.getSymbol() == functionSlot) {
+            event.setCancelled(true);
+            double worth = gui.getTotalWorth();
+            if (worth > 0) {
+                double remainingToEarn = getRemainingMoneyToEarn(human.getUniqueId());
+                if (remainingToEarn < worth) {
+
+                } else {
+                    gui.clearWorthyItems();
+                    this.setRemainMoneyToEarn(human.getUniqueId(), remainingToEarn + worth);
+                }
+            }
+            plugin.getScheduler().runTaskSyncLater(gui::refresh, human.getLocation(), 50, TimeUnit.MILLISECONDS);
+            return;
+        }
+
+        event.setCancelled(true);
+    }
+
+    public double getRemainingMoneyToEarn(UUID uuid) {
+        OnlineUser user = plugin.getStorageManager().getOnlineUser(uuid);
+        if (user == null) {
+            return -1;
+        }
+        return earningLimit - user.getEarningData().earnings;
+    }
+
+    public void setRemainMoneyToEarn(UUID uuid, double remaining) {
+        OnlineUser user = plugin.getStorageManager().getOnlineUser(uuid);
+        if (user == null) {
+            return;
+        }
+        user.getEarningData().earnings = remaining;
     }
 
     @Override
@@ -132,5 +194,29 @@ public class MarketManagerImpl implements MarketManager {
                 .setVariable("bonus", bonus)
                 .setVariable("size", size);
         return expression.evaluate();
+    }
+
+    public char getItemSlot() {
+        return itemSlot;
+    }
+
+    public char getFunctionSlot() {
+        return functionSlot;
+    }
+
+    public String[] getLayout() {
+        return layout;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public BuildableItem getFunctionIconAllowBuilder() {
+        return functionIconAllowBuilder;
+    }
+
+    public BuildableItem getFunctionIconDenyBuilder() {
+        return functionIconDenyBuilder;
     }
 }
