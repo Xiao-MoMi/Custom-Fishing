@@ -10,24 +10,24 @@ import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.block.VanillaBlockImpl;
 import net.momirealms.customfishing.util.ConfigUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.block.Barrel;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Chest;
+import org.bukkit.*;
+import org.bukkit.block.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Rotatable;
+import org.bukkit.block.data.type.Campfire;
+import org.bukkit.block.data.type.Farmland;
+import org.bukkit.block.data.type.NoteBlock;
+import org.bukkit.block.data.type.TurtleEgg;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
@@ -53,7 +53,32 @@ public class BlockManagerImpl implements BlockManager, Listener {
         this.stateBuilderMap = new HashMap<>();
         this.registerBlockLibrary(new VanillaBlockImpl());
         this.registerInbuiltProperties();
-        this.registerStorage();
+    }
+
+    @EventHandler
+    public void onBlockLands(EntityChangeBlockEvent event) {
+        if (event.isCancelled()) return;
+        String temp = event.getEntity().getPersistentDataContainer().get(
+                Objects.requireNonNull(NamespacedKey.fromString("block", CustomFishingPlugin.get())),
+                PersistentDataType.STRING
+        );
+        if (temp == null) return;
+        String[] split = temp.split(";");
+        BlockConfig blockConfig = blockConfigMap.get(split[0]);
+        if (blockConfig == null) return;
+        Player player = Bukkit.getPlayer(split[1]);
+        if (player == null) {
+            event.getEntity().remove();
+            event.getBlock().setType(Material.AIR);
+            return;
+        }
+        Location location = event.getBlock().getLocation();
+        plugin.getScheduler().runTaskSyncLater(() -> {
+            BlockState state = location.getBlock().getState();
+            for (BlockStateModifier modifier : blockConfig.getStateModifierList()) {
+                modifier.apply(player, state);
+            }
+        }, location, 50, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -95,6 +120,12 @@ public class BlockManagerImpl implements BlockManager, Listener {
     private void registerInbuiltProperties() {
         this.registerDirectional();
         this.registerStorage();
+        this.registerRotatable();
+        this.registerTurtleEggs();
+        this.registerMoisture();
+        this.registerNoteBlock();
+        this.registerCampfire();
+        this.registerAge();
     }
 
     public void unload() {
@@ -192,24 +223,102 @@ public class BlockManagerImpl implements BlockManager, Listener {
         } else {
             blockData = blockLibraryMap.get("vanilla").getBlockData(player, blockID, config.getDataModifier());
         }
-        FallingBlock fallingBlock = hookLocation.getWorld().spawnFallingBlock(hookLocation, blockData);
-        fallingBlock.getPersistentDataContainer().set(
-                Objects.requireNonNull(NamespacedKey.fromString("block", CustomFishingPlugin.get())),
-                PersistentDataType.STRING,
-                loot.getID() + ";" + player.getName()
-        );
-        fallingBlock.setDropItem(false);
-        Vector vector = playerLocation.subtract(hookLocation).toVector().multiply((config.getHorizontalVector()) - 1);
-        vector = vector.setY((vector.getY() + 0.2) * config.getVerticalVector());
-        fallingBlock.setVelocity(vector);
+        plugin.getScheduler().runTaskSync(() -> {
+            FallingBlock fallingBlock = hookLocation.getWorld().spawnFallingBlock(hookLocation, blockData);
+            fallingBlock.getPersistentDataContainer().set(
+                    Objects.requireNonNull(NamespacedKey.fromString("block", CustomFishingPlugin.get())),
+                    PersistentDataType.STRING,
+                    loot.getID() + ";" + player.getName()
+            );
+            Vector vector = playerLocation.subtract(hookLocation).toVector().multiply((config.getHorizontalVector()) - 1);
+            vector = vector.setY((vector.getY() + 0.2) * config.getVerticalVector());
+            fallingBlock.setVelocity(vector);
+        }, hookLocation);
     }
 
     private void registerDirectional() {
-        this.registerBlockDataModifierBuilder("directional", (args) -> {
+        this.registerBlockDataModifierBuilder("directional-4", (args) -> (player, blockData) -> {
+            boolean arg = (boolean) args;
+            if (arg && blockData instanceof Directional directional) {
+                directional.setFacing(BlockFace.values()[ThreadLocalRandom.current().nextInt(0, 4)]);
+            }
+        });
+        this.registerBlockDataModifierBuilder("directional-6", (args) -> (player, blockData) -> {
+            boolean arg = (boolean) args;
+            if (arg && blockData instanceof Directional directional) {
+                directional.setFacing(BlockFace.values()[ThreadLocalRandom.current().nextInt(0, 6)]);
+            }
+        });
+    }
+
+    private void registerMoisture() {
+        this.registerBlockDataModifierBuilder("moisture", (args) -> {
+            int arg = (int) args;
+            return (player, blockData) -> {
+                if (blockData instanceof Farmland farmland) {
+                    farmland.setMoisture(arg);
+                }
+            };
+        });
+    }
+
+    private void registerCampfire() {
+        this.registerBlockDataModifierBuilder("campfire", (args) -> {
             boolean arg = (boolean) args;
             return (player, blockData) -> {
-                if (arg && blockData instanceof Directional directional) {
-                    directional.setFacing(BlockFace.values()[ThreadLocalRandom.current().nextInt(0,6)]);
+                if (blockData instanceof Campfire campfire) {
+                    campfire.setSignalFire(arg);
+                }
+            };
+        });
+    }
+
+    private void registerRotatable() {
+        this.registerBlockDataModifierBuilder("rotatable", (args) -> {
+            boolean arg = (boolean) args;
+            return (player, blockData) -> {
+                if (arg && blockData instanceof Rotatable rotatable) {
+                    rotatable.setRotation(BlockFace.values()[ThreadLocalRandom.current().nextInt(BlockFace.values().length)]);
+                }
+            };
+        });
+    }
+
+    private void registerNoteBlock() {
+        this.registerBlockDataModifierBuilder("noteblock", (args) -> {
+            if (args instanceof ConfigurationSection section) {
+                var instrument = Instrument.valueOf(section.getString("instrument"));
+                var note = new Note(section.getInt("note"));
+                return (player, blockData) -> {
+                    if (blockData instanceof NoteBlock noteBlock) {
+                        noteBlock.setNote(note);
+                        noteBlock.setInstrument(instrument);
+                    }
+                };
+            } else {
+                LogUtils.warn("Invalid property format found at block noteblock.");
+                return null;
+            }
+        });
+    }
+
+    private void registerAge() {
+        this.registerBlockDataModifierBuilder("age", (args) -> {
+            int arg = (int) args;
+            return (player, blockData) -> {
+                if (blockData instanceof Ageable ageable) {
+                    ageable.setAge(arg);
+                }
+            };
+        });
+    }
+
+    private void registerTurtleEggs() {
+        this.registerBlockDataModifierBuilder("turtle-eggs", (args) -> {
+            int arg = (int) args;
+            return (player, blockData) -> {
+                if (blockData instanceof TurtleEgg egg) {
+                    egg.setEggs(arg);
                 }
             };
         });
@@ -228,29 +337,17 @@ public class BlockManagerImpl implements BlockManager, Listener {
                     }
                 }
                 return (player, blockState) -> {
-                    LinkedList<Integer> unused = new LinkedList<>();
-                    for (int i = 0; i < 27; i++) {
-                        unused.add(i);
-                    }
-                    Collections.shuffle(unused);
                     if (blockState instanceof Chest chest) {
-                        for (Tuple<Double, String, Pair<Integer, Integer>> tuple : tempChanceList) {
-                            ItemStack itemStack = plugin.getItemManager().buildAnyItemByID(player, tuple.getMid());
-                            itemStack.setAmount(ThreadLocalRandom.current().nextInt(tuple.getRight().left(), tuple.getRight().right() + 1));
-                            if (tuple.getLeft() > Math.random()) {
-                                chest.getBlockInventory().setItem(unused.pop(), itemStack);
-                            }
-                        }
+                        setInventoryItems(tempChanceList, player, chest.getInventory());
                         return;
                     }
                     if (blockState instanceof Barrel barrel) {
-                        for (Tuple<Double, String, Pair<Integer, Integer>> tuple : tempChanceList) {
-                            ItemStack itemStack = plugin.getItemManager().buildAnyItemByID(player, tuple.getMid());
-                            itemStack.setAmount(ThreadLocalRandom.current().nextInt(tuple.getRight().left(), tuple.getRight().right() + 1));
-                            if (tuple.getLeft() > Math.random()) {
-                                barrel.getInventory().setItem(unused.pop(), itemStack);
-                            }
-                        }
+                        setInventoryItems(tempChanceList, player, barrel.getInventory());
+                        return;
+                    }
+                    if (blockState instanceof ShulkerBox shulkerBox) {
+                        setInventoryItems(tempChanceList, player, shulkerBox.getInventory());
+                        return;
                     }
                 };
             } else {
@@ -260,29 +357,22 @@ public class BlockManagerImpl implements BlockManager, Listener {
         });
     }
 
-    @EventHandler
-    public void onBlockLands(EntityChangeBlockEvent event) {
-        if (event.isCancelled()) return;
-        String temp = event.getEntity().getPersistentDataContainer().get(
-                Objects.requireNonNull(NamespacedKey.fromString("block", CustomFishingPlugin.get())),
-                PersistentDataType.STRING
-        );
-        if (temp == null) return;
-        String[] split = temp.split(";");
-        BlockConfig blockConfig = blockConfigMap.get(split[0]);
-        if (blockConfig == null) return;
-        Player player = Bukkit.getPlayer(split[1]);
-        if (player == null) {
-            event.getEntity().remove();
-            event.getBlock().setType(Material.AIR);
-            return;
+    private void setInventoryItems(
+            ArrayList<Tuple<Double, String, Pair<Integer, Integer>>> tempChanceList,
+            Player player,
+            Inventory inventory
+    ) {
+        LinkedList<Integer> unused = new LinkedList<>();
+        for (int i = 0; i < 27; i++) {
+            unused.add(i);
         }
-        Location location = event.getBlock().getLocation();
-        plugin.getScheduler().runTaskSyncLater(() -> {
-            BlockState state = location.getBlock().getState();
-            for (BlockStateModifier modifier : blockConfig.getStateModifierList()) {
-                modifier.apply(player, state);
+        Collections.shuffle(unused);
+        for (Tuple<Double, String, Pair<Integer, Integer>> tuple : tempChanceList) {
+            ItemStack itemStack = plugin.getItemManager().buildAnyItemByID(player, tuple.getMid());
+            itemStack.setAmount(ThreadLocalRandom.current().nextInt(tuple.getRight().left(), tuple.getRight().right() + 1));
+            if (tuple.getLeft() > Math.random()) {
+                inventory.setItem(unused.pop(), itemStack);
             }
-        }, location, 50, TimeUnit.MILLISECONDS);
+        }
     }
 }

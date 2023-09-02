@@ -125,18 +125,20 @@ public class MobManagerImpl implements MobManager {
             return;
         }
         String mobID = config.getMobID();
-        Entity entity;
-        if (mobID.contains(":")) {
-            String[] split = mobID.split(":", 2);
-            String identification = split[0];
-            String id = split[1];
-            MobLibrary library = mobLibraryMap.get(identification);
-            entity = library.spawn(hookLocation, id, config.getPropertyMap());
-        } else {
-            entity = mobLibraryMap.get("vanilla").spawn(hookLocation, mobID, config.getPropertyMap());
-        }
-        Vector vector = playerLocation.subtract(hookLocation).toVector().multiply((config.getHorizontalVector()) - 1);
-        vector = vector.setY((vector.getY() + 0.2) * config.getVerticalVector());
-        entity.setVelocity(vector);
+        plugin.getScheduler().runTaskSync(() -> {
+            Entity entity;
+            if (mobID.contains(":")) {
+                String[] split = mobID.split(":", 2);
+                String identification = split[0];
+                String id = split[1];
+                MobLibrary library = mobLibraryMap.get(identification);
+                entity = library.spawn(hookLocation, id, config.getPropertyMap());
+            } else {
+                entity = mobLibraryMap.get("vanilla").spawn(hookLocation, mobID, config.getPropertyMap());
+            }
+            Vector vector = playerLocation.subtract(hookLocation).toVector().multiply((config.getHorizontalVector()) - 1);
+            vector = vector.setY((vector.getY() + 0.2) * config.getVerticalVector());
+            entity.setVelocity(vector);
+        }, hookLocation);
     }
 }

@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.version;
 
-import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
 import net.momirealms.customfishing.api.manager.VersionManager;
 import net.momirealms.customfishing.api.util.LogUtils;
@@ -32,6 +31,7 @@ import java.util.concurrent.CompletableFuture;
 public class VersionManagerImpl implements VersionManager {
 
     private final boolean isNewerThan1_19_R2;
+    private final boolean isNewerThan1_20;
     private final String serverVersion;
     private final CustomFishingPluginImpl plugin;
     private final boolean isSpigot;
@@ -44,13 +44,20 @@ public class VersionManagerImpl implements VersionManager {
         serverVersion = plugin.getServer().getClass().getPackage().getName().split("\\.")[3];
         String[] split = serverVersion.split("_");
         int main_ver = Integer.parseInt(split[1]);
-        if (main_ver >= 20) isNewerThan1_19_R2 = true;
-        else if (main_ver == 19) isNewerThan1_19_R2 = Integer.parseInt(split[2].substring(1)) >= 2;
-        else isNewerThan1_19_R2 = false;
+        if (main_ver >= 20) {
+            isNewerThan1_19_R2 = true;
+            isNewerThan1_20 = true;
+        } else if (main_ver == 19) {
+            isNewerThan1_19_R2 = Integer.parseInt(split[2].substring(1)) >= 2;
+            isNewerThan1_20 = false;
+        } else {
+            isNewerThan1_19_R2 = false;
+            isNewerThan1_20 = false;
+        }
         String server_name = plugin.getServer().getName();
         this.isSpigot = server_name.equals("CraftBukkit");
         try {
-            Class.forName(String.valueOf(AsyncScheduler.class));
+            Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
             this.isFolia = true;
         } catch (ClassNotFoundException ignored) {}
         this.pluginVersion = plugin.getDescription().getVersion();
@@ -59,6 +66,11 @@ public class VersionManagerImpl implements VersionManager {
     @Override
     public boolean isVersionNewerThan1_19_R2() {
         return isNewerThan1_19_R2;
+    }
+
+    @Override
+    public boolean isVersionNewerThan1_20() {
+        return isNewerThan1_20;
     }
 
     @Override

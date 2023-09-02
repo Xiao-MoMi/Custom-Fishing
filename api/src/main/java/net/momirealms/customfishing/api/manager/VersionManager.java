@@ -8,6 +8,8 @@ public interface VersionManager {
 
     CompletableFuture<Boolean> checkUpdate();
 
+    boolean isVersionNewerThan1_20();
+
     boolean isSpigot();
 
     public boolean isFolia();

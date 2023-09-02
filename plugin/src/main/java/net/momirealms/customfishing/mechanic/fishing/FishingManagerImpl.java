@@ -406,19 +406,16 @@ public class FishingManagerImpl implements Listener, FishingManager {
     public void processGameResult(GamingPlayer gamingPlayer) {
         final Player player = gamingPlayer.getPlayer();
         final UUID uuid = player.getUniqueId();
-
         FishHook fishHook = hookCacheMap.remove(uuid);
         if (fishHook == null) {
             LogUtils.warn("Unexpected situation: Can't get player's fish hook when processing game results.");
             return;
         }
-
         TempFishingState tempFishingState = tempFishingStateMap.remove(uuid);
         if (tempFishingState == null) {
             LogUtils.warn("Unexpected situation: Can't get player's fishing state when processing game results.");
             return;
         }
-
         Effect bonus = gamingPlayer.getEffectReward();
         if (bonus != null)
             tempFishingState.getEffect().merge(bonus);
@@ -428,10 +425,9 @@ public class FishingManagerImpl implements Listener, FishingManager {
         else
             fail(tempFishingState);
 
-        // remove hook because some games don't depend on right clicks
-        fishHook.remove();
         gamingPlayer.cancel();
         gamingPlayerMap.remove(uuid);
+        plugin.getScheduler().runTaskSync(fishHook::remove, fishHook.getLocation());
     }
 
     public void fail(TempFishingState state) {

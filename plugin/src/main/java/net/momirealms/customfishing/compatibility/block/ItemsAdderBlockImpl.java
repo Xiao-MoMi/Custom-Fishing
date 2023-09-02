@@ -6,7 +6,6 @@ import net.momirealms.customfishing.api.mechanic.block.BlockLibrary;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class ItemsAdderBlockImpl implements BlockLibrary {

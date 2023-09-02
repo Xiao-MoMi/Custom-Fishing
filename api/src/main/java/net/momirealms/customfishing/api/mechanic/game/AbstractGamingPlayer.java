@@ -83,9 +83,7 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     protected void timeOutCheck() {
         if (System.currentTimeMillis() > deadline) {
             cancel();
-            if (manager.removeHook(player.getUniqueId())) {
-                manager.processGameResult(this);
-            }
+            manager.processGameResult(this);
         }
     }
 

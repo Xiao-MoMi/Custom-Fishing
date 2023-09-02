@@ -65,7 +65,6 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         this.effectManager = new EffectManagerImpl(this);
         this.fishingManager = new FishingManagerImpl(this);
         this.gameManager = new GameManagerImpl(this);
-        this.integrationManager = new IntegrationManagerImpl(this);
         this.itemManager = new ItemManagerImpl(this);
         this.lootManager = new LootManagerImpl(this);
         this.marketManager = new MarketManagerImpl(this);
@@ -75,6 +74,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         this.scheduler = new SchedulerImpl(this);
         this.storageManager = new StorageManagerImpl(this);
         this.competitionManager = new CompetitionManagerImpl(this);
+        this.integrationManager = new IntegrationManagerImpl(this);
         this.reload();
         if (Config.updateChecker)
             this.versionManager.checkUpdate().thenAccept(result -> {

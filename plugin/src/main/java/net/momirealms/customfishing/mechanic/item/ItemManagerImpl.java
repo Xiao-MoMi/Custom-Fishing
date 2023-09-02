@@ -266,10 +266,12 @@ public class ItemManagerImpl implements ItemManager {
 
     @Override
     public void dropItem(Location hookLocation, Location playerLocation, ItemStack itemStack) {
-        Entity itemEntity = hookLocation.getWorld().dropItem(hookLocation, itemStack);
-        Vector vector = playerLocation.subtract(hookLocation).toVector().multiply(0.105);
-        vector = vector.setY((vector.getY() + 0.2) * 1.18);
-        itemEntity.setVelocity(vector);
+        plugin.getScheduler().runTaskSync(() -> {
+            Entity itemEntity = hookLocation.getWorld().dropItem(hookLocation, itemStack);
+            Vector vector = playerLocation.subtract(hookLocation).toVector().multiply(0.105);
+            vector = vector.setY((vector.getY() + 0.2) * 1.18);
+            itemEntity.setVelocity(vector);
+        }, hookLocation);
     }
 
     @NotNull
