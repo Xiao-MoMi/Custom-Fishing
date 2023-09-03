@@ -313,6 +313,7 @@ public class ActionManagerImpl implements ActionManager {
                     condition.getPlayer().addPotionEffect(potionEffect);
                 };
             }
+            LogUtils.warn("Illegal value format found at action: potion-effect");
             return null;
         });
     }
@@ -332,6 +333,7 @@ public class ActionManagerImpl implements ActionManager {
                     AdventureManagerImpl.getInstance().sendSound(condition.getPlayer(), sound);
                 };
             }
+            LogUtils.warn("Illegal value format found at action: sound");
             return null;
         });
     }

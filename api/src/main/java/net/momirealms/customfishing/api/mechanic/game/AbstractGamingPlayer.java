@@ -5,6 +5,7 @@ import net.momirealms.customfishing.api.manager.FishingManager;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import org.bukkit.Material;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffectType;
@@ -13,23 +14,26 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
 
-    protected boolean succeeded;
+    private final FishingManager manager;
+    private final long deadline;
+
+    protected boolean success;
     protected CancellableTask task;
     protected Player player;
     protected GameSettings settings;
-    protected FishingManager manager;
-    private final long deadline;
+    protected FishHook fishHook;
 
-    public AbstractGamingPlayer(Player player, GameSettings settings, FishingManager manager) {
+    public AbstractGamingPlayer(Player player, FishHook hook, GameSettings settings) {
         this.player = player;
+        this.fishHook = hook;
         this.settings = settings;
-        this.manager = manager;
+        this.manager = CustomFishingPlugin.get().getFishingManager();
         this.deadline = System.currentTimeMillis() + settings.getTime() * 1000L;
         this.arrangeTask();
     }
 
     public void arrangeTask() {
-        this.task = CustomFishingPlugin.get().getScheduler().runTaskAsyncTimer(this, 50, 50, TimeUnit.MILLISECONDS);
+        this.task = CustomFishingPlugin.get().getScheduler().runTaskSyncTimer(this, fishHook.getLocation(), 1, 1);
     }
 
     @Override
@@ -39,13 +43,13 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     }
 
     @Override
-    public boolean isSucceeded() {
-        return succeeded;
+    public boolean isSuccessful() {
+        return success;
     }
 
     @Override
     public boolean onRightClick() {
-        manager.processGameResult(this);
+        endGame();
         return true;
     }
 
@@ -85,10 +89,18 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
         switchItemCheck();
     }
 
+    protected void endGame() {
+        this.manager.processGameResult(this);
+    }
+
+    protected void setGameResult(boolean success) {
+        this.success = success;
+    }
+
     protected void timeOutCheck() {
         if (System.currentTimeMillis() > deadline) {
             cancel();
-            manager.processGameResult(this);
+            endGame();
         }
     }
 
@@ -97,8 +109,7 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
         if (playerInventory.getItemInMainHand().getType() != Material.FISHING_ROD
                 && playerInventory.getItemInOffHand().getType() != Material.FISHING_ROD) {
             cancel();
-            manager.processGameResult(this);
-            player.removePotionEffect(PotionEffectType.SLOW);
+            endGame();
         }
     }
 }

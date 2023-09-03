@@ -2,7 +2,6 @@ package net.momirealms.customfishing.mechanic.fishing;
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import io.papermc.paper.event.player.AsyncChatEvent;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.event.LavaFishingEvent;
@@ -434,7 +433,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         if (bonus != null)
             tempFishingState.getEffect().merge(bonus);
 
-        if (gamingPlayer.isSucceeded())
+        if (gamingPlayer.isSuccessful())
             success(tempFishingState, fishHook);
         else
             fail(tempFishingState);
@@ -472,10 +471,6 @@ public class FishingManagerImpl implements Listener, FishingManager {
         var fishingPreparation = state.getPreparation();
         var player = fishingPreparation.getPlayer();
 
-        int amount = (int) effect.getMultipleLootChance();
-        amount += Math.random() < (effect.getMultipleLootChance() - amount) ? 2 : 1;
-
-        fishingPreparation.insertArg("{amount}", String.valueOf(amount));
         fishingPreparation.insertArg("{score}", String.format("%.2f", loot.getScore() * effect.getScoreMultiplier()));
         fishingPreparation.insertArg("{size-multiplier}", String.format("%.2f", effect.getSizeMultiplier()));
         fishingPreparation.insertArg("{x}", String.valueOf(hook.getLocation().getBlockX()));
@@ -483,35 +478,39 @@ public class FishingManagerImpl implements Listener, FishingManager {
         fishingPreparation.insertArg("{z}", String.valueOf(hook.getLocation().getBlockZ()));
         fishingPreparation.insertArg("{loot}", loot.getID());
         fishingPreparation.insertArg("{nick}", loot.getNick());
-        fishingPreparation.insertArg("{score}", String.format("%.2f", loot.getScore()));
 
-        switch (loot.getType()) {
-            case LOOT -> {
-                // build the items for multiple times instead of using setAmount() to make sure that each item is unique
-                if (loot.getID().equals("vanilla")) {
-                    ItemStack itemStack = vanillaLootMap.remove(player.getUniqueId());
-                    if (itemStack != null) {
-                        fishingPreparation.insertArg("{loot}", "<lang:item.minecraft." + itemStack.getType().toString().toLowerCase() + ">");
+        plugin.getScheduler().runTaskSync(() -> {
+            switch (loot.getType()) {
+                case LOOT -> {
+                    int amount = (int) effect.getMultipleLootChance();
+                    amount += Math.random() < (effect.getMultipleLootChance() - amount) ? 2 : 1;
+                    fishingPreparation.insertArg("{amount}", String.valueOf(amount));
+                    // build the items for multiple times instead of using setAmount() to make sure that each item is unique
+                    if (loot.getID().equals("vanilla")) {
+                        ItemStack itemStack = vanillaLootMap.remove(player.getUniqueId());
+                        if (itemStack != null) {
+                            fishingPreparation.insertArg("{loot}", "<lang:item.minecraft." + itemStack.getType().toString().toLowerCase() + ">");
+                            for (int i = 0; i < amount; i++) {
+                                plugin.getItemManager().dropItem(hook.getLocation(), player.getLocation(), itemStack.clone());
+                                doSuccessActions(loot, fishingPreparation, player);
+                            }
+                        }
+                    } else {
                         for (int i = 0; i < amount; i++) {
-                            plugin.getItemManager().dropItem(hook.getLocation(), player.getLocation(), itemStack.clone());
-                            doActions(loot, fishingPreparation, player);
+                            plugin.getItemManager().dropItem(player, hook.getLocation(), player.getLocation(), loot, fishingPreparation.getArgs());
+                            doSuccessActions(loot, fishingPreparation, player);
                         }
                     }
-                } else {
-                    for (int i = 0; i < amount; i++) {
-                        plugin.getItemManager().dropItem(player, hook.getLocation(), player.getLocation(), loot, fishingPreparation.getArgs());
-                        doActions(loot, fishingPreparation, player);
-                    }
+                    return;
                 }
-                return;
+                case MOB -> plugin.getMobManager().summonMob(hook.getLocation(), player.getLocation(), loot);
+                case BLOCK -> plugin.getBlockManager().summonBlock(player, hook.getLocation(), player.getLocation(), loot);
             }
-            case MOB -> plugin.getMobManager().summonMob(hook.getLocation(), player.getLocation(), loot);
-            case BLOCK -> plugin.getBlockManager().summonBlock(player, hook.getLocation(), player.getLocation(), loot);
-        }
-        doActions(loot, fishingPreparation, player);
+            doSuccessActions(loot, fishingPreparation, player);
+        }, hook.getLocation());
     }
 
-    private void doActions(Loot loot, FishingPreparation fishingPreparation, Player player) {
+    private void doSuccessActions(Loot loot, FishingPreparation fishingPreparation, Player player) {
         Action[] globalActions = LootManagerImpl.globalLootProperties.getActions(ActionTrigger.SUCCESS);
         if (globalActions != null)
             for (Action action : globalActions)
@@ -565,7 +564,12 @@ public class FishingManagerImpl implements Listener, FishingManager {
 
     @Override
     public void startFishingGame(Player player, GameSettings settings, Game game) {
-        this.gamingPlayerMap.put(player.getUniqueId(), game.start(player, settings, this));
+        Optional<FishHook> hook = getHook(player.getUniqueId());
+        if (hook.isPresent()) {
+            this.gamingPlayerMap.put(player.getUniqueId(), game.start(player, hook.get(), settings));
+        } else {
+            LogUtils.warn("It seems that player " + player.getName() + " is not fishing. Fishing game failed to start.");
+        }
     }
 
     @Override

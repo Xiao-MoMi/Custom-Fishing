@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public interface ItemBuilder {
+public interface ItemBuilder extends BuildableItem {
 
     ItemBuilder customModelData(int value);
 

@@ -1,12 +1,17 @@
 package net.momirealms.customfishing.mechanic.market;
 
+import com.willfp.eco.core.map.MutableListMap;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
+import net.momirealms.customfishing.api.data.EarningData;
+import net.momirealms.customfishing.api.data.InventoryData;
 import net.momirealms.customfishing.api.data.user.OnlineUser;
 import net.momirealms.customfishing.api.manager.MarketManager;
+import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.item.BuildableItem;
-import net.momirealms.customfishing.api.mechanic.item.ItemBuilder;
 import net.momirealms.customfishing.api.mechanic.market.MarketGUIHolder;
+import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
@@ -14,12 +19,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.*;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -34,13 +39,18 @@ public class MarketManagerImpl implements MarketManager, Listener {
     private String[] layout;
     private String title;
     private String formula;
-    private final HashMap<Character, ItemBuilder> decorativeIcons;
+    private final HashMap<Character, BuildableItem> decorativeIcons;
     private char itemSlot;
     private char functionSlot;
     private BuildableItem functionIconAllowBuilder;
     private BuildableItem functionIconDenyBuilder;
+    private BuildableItem functionIconLimitBuilder;
+    private Action[] denyActions;
+    private Action[] allowActions;
+    private Action[] limitActions;
     private double earningLimit;
-    private ConcurrentHashMap<UUID, MarketGUI> marketGUIMap;
+    private boolean allowItemWithNoPrice;
+    private final ConcurrentHashMap<UUID, MarketGUI> marketGUIMap;
 
     public MarketManagerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;
@@ -53,7 +63,6 @@ public class MarketManagerImpl implements MarketManager, Listener {
         this.loadConfig();
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
-
 
     public void unload() {
         HandlerList.unregisterAll(this);
@@ -70,6 +79,17 @@ public class MarketManagerImpl implements MarketManager, Listener {
         this.layout = config.getStringList("layout").toArray(new String[0]);
         this.title = config.getString("title", "market.title");
         this.formula = config.getString("price-formula", "{base} + {bonus} * {size}");
+        this.itemSlot = config.getString("item-slot.symbol", "I").charAt(0);
+        this.functionSlot = config.getString("functional-icons.symbol", "B").charAt(0);
+        this.functionIconAllowBuilder = plugin.getItemManager().getItemBuilder(config.getConfigurationSection("functional-icons.allow-icon"), "gui", "allow");
+        this.functionIconDenyBuilder = plugin.getItemManager().getItemBuilder(config.getConfigurationSection("functional-icons.deny-icon"), "gui", "deny");
+        this.functionIconLimitBuilder = plugin.getItemManager().getItemBuilder(config.getConfigurationSection("functional-icons.limit-icon"), "gui", "limit");
+        this.allowActions = plugin.getActionManager().getActions(config.getConfigurationSection("functional-icons.allow-icon.action"));
+        this.denyActions = plugin.getActionManager().getActions(config.getConfigurationSection("functional-icons.deny-icon.action"));
+        this.limitActions = plugin.getActionManager().getActions(config.getConfigurationSection("functional-icons.limit-icon.action"));
+        this.earningLimit = config.getBoolean("limitation.enable", true) ? config.getDouble("limitation.earnings", 100) : -1;
+        this.allowItemWithNoPrice = config.getBoolean("item-slot.allow-items-with-no-price", true);
+
         ConfigurationSection priceSection = config.getConfigurationSection("item-price");
         if (priceSection != null) {
             for (Map.Entry<String, Object> entry : priceSection.getValues(false).entrySet()) {
@@ -88,9 +108,70 @@ public class MarketManagerImpl implements MarketManager, Listener {
         }
     }
 
+    @Override
     public void openMarketGUI(Player player) {
-        MarketGUI gui = new MarketGUI(this, player);
+        OnlineUser user = plugin.getStorageManager().getOnlineUser(player.getUniqueId());
+        if (user == null) {
+            LogUtils.warn("Player " + player.getName() + "'s market data is not loaded yet.");
+            return;
+        }
 
+        MarketGUI gui = new MarketGUI(this, player, user.getEarningData());
+        gui.addElement(new MarketGUIElement(getItemSlot(), new ItemStack(Material.AIR)));
+        gui.addElement(new MarketDynamicGUIElement(getFunctionSlot(), new ItemStack(Material.AIR)));
+        for (Map.Entry<Character, BuildableItem> entry : decorativeIcons.entrySet()) {
+            gui.addElement(new MarketGUIElement(entry.getKey(), entry.getValue().build(player)));
+        }
+        gui.build().refresh().show(player);
+        marketGUIMap.put(player.getUniqueId(), gui);
+    }
+
+    @EventHandler
+    public void onCloseInv(InventoryCloseEvent event) {
+        if (!(event.getPlayer() instanceof Player player))
+            return;
+        if (!(event.getInventory().getHolder() instanceof MarketGUIHolder))
+            return;
+        MarketGUI gui = marketGUIMap.remove(player.getUniqueId());
+        if (gui != null)
+            gui.returnItems();
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        MarketGUI gui = marketGUIMap.remove(event.getPlayer().getUniqueId());
+        if (gui != null)
+            gui.returnItems();
+    }
+
+    @EventHandler
+    public void onDragInv(InventoryDragEvent event) {
+        if (event.isCancelled())
+            return;
+        Inventory inventory = event.getInventory();
+        if (!(inventory.getHolder() instanceof MarketGUIHolder holder))
+            return;
+        Player player = (Player) event.getWhoClicked();
+        MarketGUI gui = marketGUIMap.get(player.getUniqueId());
+        if (gui == null) {
+            event.setCancelled(true);
+            player.closeInventory();
+            return;
+        }
+
+        MarketGUIElement element = gui.getElement(itemSlot);
+        if (element == null) {
+            event.setCancelled(true);
+            return;
+        }
+
+        List<Integer> slots = element.getSlots();
+        for (int dragSlot : event.getRawSlots()) {
+            if (!slots.contains(dragSlot)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
     }
 
     @EventHandler
@@ -100,62 +181,91 @@ public class MarketManagerImpl implements MarketManager, Listener {
         Inventory clickedInv = event.getClickedInventory();
         if (clickedInv == null)
             return;
-        HumanEntity human = event.getWhoClicked();
-        if (!(clickedInv.getHolder() instanceof MarketGUIHolder holder))
+        Player player = (Player) event.getWhoClicked();
+        if (!(event.getInventory().getHolder() instanceof MarketGUIHolder holder))
             return;
 
-        MarketGUI gui = marketGUIMap.get(human.getUniqueId());
+        MarketGUI gui = marketGUIMap.get(player.getUniqueId());
         if (gui == null) {
             event.setCancelled(true);
-            human.closeInventory();
+            player.closeInventory();
             return;
         }
 
-        int slot = event.getSlot();
-        MarketGUIElement element = gui.getElement(slot);
-        if (element == null) {
-            event.setCancelled(true);
-            return;
-        }
+        if (clickedInv != player.getInventory()) {
+            EarningData data = gui.getEarningData();
+            if (data.date != getDate()) {
+                data.date = getDate();
+                data.earnings = 0;
+            }
 
-        if (element.getSymbol() == itemSlot) {
-            plugin.getScheduler().runTaskSyncLater(gui::refresh, human.getLocation(), 50, TimeUnit.MILLISECONDS);
-            return;
-        }
+            int slot = event.getSlot();
+            MarketGUIElement element = gui.getElement(slot);
+            if (element == null) {
+                event.setCancelled(true);
+                return;
+            }
 
-        if (element.getSymbol() == functionSlot) {
-            event.setCancelled(true);
-            double worth = gui.getTotalWorth();
-            if (worth > 0) {
-                double remainingToEarn = getRemainingMoneyToEarn(human.getUniqueId());
-                if (remainingToEarn < worth) {
+            if (element.getSymbol() != itemSlot) {
+                event.setCancelled(true);
+            }
 
+            if (element.getSymbol() == functionSlot) {
+                double worth = gui.getTotalWorth();
+                Condition condition = new Condition(player, new HashMap<>(Map.of(
+                        "{money}", String.format("%.2f", worth)
+                        ,"{rest}", String.format("%.2f", (earningLimit - data.earnings))
+                )));
+                if (worth > 0) {
+                    if (earningLimit != -1 && (earningLimit - data.earnings) < worth) {
+                        // can't earn more money
+                        if (limitActions != null) {
+                            for (Action action : limitActions) {
+                                action.trigger(condition);
+                            }
+                        }
+                    } else {
+                        // clear items
+                        gui.clearWorthyItems();
+                        data.earnings += worth;
+                        condition.insertArg("{rest}", String.format("%.2f", (earningLimit - data.earnings)));
+                        if (allowActions != null) {
+                            for (Action action : allowActions) {
+                                action.trigger(condition);
+                            }
+                        }
+                    }
                 } else {
-                    gui.clearWorthyItems();
-                    this.setRemainMoneyToEarn(human.getUniqueId(), remainingToEarn + worth);
+                    // nothing to sell
+                    if (denyActions != null) {
+                        for (Action action : denyActions) {
+                            action.trigger(condition);
+                        }
+                    }
                 }
             }
-            plugin.getScheduler().runTaskSyncLater(gui::refresh, human.getLocation(), 50, TimeUnit.MILLISECONDS);
-            return;
+        } else {
+            ItemStack current = event.getCurrentItem();
+            if (!allowItemWithNoPrice) {
+                double price = getItemPrice(current);
+                if (price <= 0) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+
+            if ((event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT)
+            && (current != null && current.getType() != Material.AIR)) {
+                event.setCancelled(true);
+                int slot = gui.getEmptyItemSlot();
+                if (slot != -1) {
+                    gui.getInventory().setItem(slot, current.clone());
+                    current.setAmount(0);
+                }
+            }
         }
 
-        event.setCancelled(true);
-    }
-
-    public double getRemainingMoneyToEarn(UUID uuid) {
-        OnlineUser user = plugin.getStorageManager().getOnlineUser(uuid);
-        if (user == null) {
-            return -1;
-        }
-        return earningLimit - user.getEarningData().earnings;
-    }
-
-    public void setRemainMoneyToEarn(UUID uuid, double remaining) {
-        OnlineUser user = plugin.getStorageManager().getOnlineUser(uuid);
-        if (user == null) {
-            return;
-        }
-        user.getEarningData().earnings = remaining;
+        plugin.getScheduler().runTaskSyncLater(gui::refresh, player.getLocation(), 50, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -171,13 +281,13 @@ public class MarketManagerImpl implements MarketManager, Listener {
         NBTItem nbtItem = new NBTItem(itemStack);
         Double price = nbtItem.getDouble("Price");
         if (price != null && price != 0) {
-            return price;
+            return price * itemStack.getAmount();
         }
         String itemID = itemStack.getType().name();
         if (nbtItem.hasTag("CustomModelData")) {
             itemID = itemID + ":" + nbtItem.getInteger("CustomModelData");
         }
-        return priceMap.getOrDefault(itemID, 0d);
+        return priceMap.getOrDefault(itemID, 0d) * itemStack.getAmount();
     }
 
     @Override
@@ -210,6 +320,14 @@ public class MarketManagerImpl implements MarketManager, Listener {
 
     public String getTitle() {
         return title;
+    }
+
+    public double getEarningLimit() {
+        return earningLimit;
+    }
+
+    public BuildableItem getFunctionIconLimitBuilder() {
+        return functionIconLimitBuilder;
     }
 
     public BuildableItem getFunctionIconAllowBuilder() {

@@ -8,20 +8,6 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public interface OnlineUser {
+public interface OnlineUser extends OfflineUser {
     Player getPlayer();
-
-    String getName();
-
-    UUID getUUID();
-
-    FishingBagHolder getHolder();
-
-    EarningData getEarningData();
-
-    Statistics getStatistics();
-
-    boolean isOnline();
-
-    PlayerData getPlayerData();
 }

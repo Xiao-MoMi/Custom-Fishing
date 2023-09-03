@@ -1,6 +1,10 @@
 # Container title
 title: '<gradient:#A52A2A:#800000:#A52A2A>Fish Market</gradient>'
 
+limitation:
+  enable: true
+  earnings: 10000
+
 # Market menu layout
 layout:
   - 'AAAAAAAAA'
@@ -25,22 +29,29 @@ item-price:
 # Slots to put items in
 item-slot:
   symbol: 'I'
+  allow-items-with-no-price: true
 
 # Functional icon
 functional-icons:
   symbol: 'B'
-  sell-icon:
+  allow-icon:
     material: IRON_BLOCK
     display:
       name: '<#00CED1><b>● <!b>Ship the fish'
       lore:
         - '<font:uniform><gradient:#E6E6FA:#48D1CC:#E6E6FA>You will get <green>{money}$</green> by selling the fish</gradient></font>'
+        - '<dark_gray>You can earn {rest}'
     action:
       sound_action:
         type: sound
+        value:
+          key: 'minecraft:block.amethyst_block.place'
+          source: 'player'
+          volume: 1
+          pitch: 1
       message_action:
         type: message
-        value: 'You earned {money}$ by selling the fish! You can still get {remains}$ from market today'
+        value: 'You earned {money}$ by selling the fish! You can still get {rest}$ from market today'
       command_action:
         type: command
         value: 'money give {player} {money}'
@@ -53,6 +64,25 @@ functional-icons:
     action:
       sound_action:
         type: sound
+        value:
+          key: 'minecraft:entity.villager.no'
+          source: 'player'
+          volume: 1
+          pitch: 1
+  limit-icon:
+    material: REDSTONE_BLOCK
+    display:
+      name: '<red><b>● <!b>Denied trade'
+      lore:
+        - '<font:uniform><gradient:#E6E6FA:red:#E6E6FA>The worth of items exceeds the money that can be earned for the rest of today!</gradient></font>'
+    action:
+      sound_action:
+        type: sound
+        value:
+          key: 'minecraft:block.anvil.land'
+          source: 'player'
+          volume: 1
+          pitch: 1
 
 # Decorative icons
 decorative-icons:

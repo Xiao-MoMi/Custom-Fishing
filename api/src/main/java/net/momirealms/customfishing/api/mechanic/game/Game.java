@@ -1,9 +1,9 @@
 package net.momirealms.customfishing.api.mechanic.game;
 
-import net.momirealms.customfishing.api.manager.FishingManager;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 
 public interface Game {
     
-    GamingPlayer start(Player player, GameSettings settings, FishingManager manager);
+    GamingPlayer start(Player player, FishHook hook, GameSettings settings);
 }

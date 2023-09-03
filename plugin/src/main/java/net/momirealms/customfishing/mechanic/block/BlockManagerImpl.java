@@ -223,17 +223,15 @@ public class BlockManagerImpl implements BlockManager, Listener {
         } else {
             blockData = blockLibraryMap.get("vanilla").getBlockData(player, blockID, config.getDataModifier());
         }
-        plugin.getScheduler().runTaskSync(() -> {
-            FallingBlock fallingBlock = hookLocation.getWorld().spawnFallingBlock(hookLocation, blockData);
-            fallingBlock.getPersistentDataContainer().set(
-                    Objects.requireNonNull(NamespacedKey.fromString("block", CustomFishingPlugin.get())),
-                    PersistentDataType.STRING,
-                    loot.getID() + ";" + player.getName()
-            );
-            Vector vector = playerLocation.subtract(hookLocation).toVector().multiply((config.getHorizontalVector()) - 1);
-            vector = vector.setY((vector.getY() + 0.2) * config.getVerticalVector());
-            fallingBlock.setVelocity(vector);
-        }, hookLocation);
+        FallingBlock fallingBlock = hookLocation.getWorld().spawnFallingBlock(hookLocation, blockData);
+        fallingBlock.getPersistentDataContainer().set(
+                Objects.requireNonNull(NamespacedKey.fromString("block", CustomFishingPlugin.get())),
+                PersistentDataType.STRING,
+                loot.getID() + ";" + player.getName()
+        );
+        Vector vector = playerLocation.subtract(hookLocation).toVector().multiply((config.getHorizontalVector()) - 1);
+        vector = vector.setY((vector.getY() + 0.2) * config.getVerticalVector());
+        fallingBlock.setVelocity(vector);
     }
 
     private void registerDirectional() {

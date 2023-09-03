@@ -34,17 +34,23 @@ public class CommandManagerImpl implements CommandManager {
                 )
                 .register();
 
-        if (CustomFishingPlugin.get().getBagManager().isBagEnabled()) {
+        new CommandAPICommand("sellfish")
+                .withPermission("customfishing.sellfish")
+                .executesPlayer((player, args) -> {
+                    plugin.getMarketManager().openMarketGUI(player);
+                })
+                .register();
+
+        if (plugin.getBagManager().isBagEnabled()) {
             FishingBagCommand.INSTANCE.getBagCommand().register();
         }
     }
 
     private CommandAPICommand getReloadCommand() {
         return new CommandAPICommand("reload")
-                .withPermission("customfishing.command.reload")
                 .executes((sender, args) -> {
                     long time = System.currentTimeMillis();
-                    CustomFishingPlugin.get().reload();
+                    plugin.reload();
                     AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, Locale.MSG_Reload.replace("{time}", String.valueOf(System.currentTimeMillis()-time)));
                 });
     }

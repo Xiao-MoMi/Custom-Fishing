@@ -266,12 +266,10 @@ public class ItemManagerImpl implements ItemManager {
 
     @Override
     public void dropItem(Location hookLocation, Location playerLocation, ItemStack itemStack) {
-        plugin.getScheduler().runTaskSync(() -> {
-            Entity itemEntity = hookLocation.getWorld().dropItem(hookLocation, itemStack);
-            Vector vector = playerLocation.subtract(hookLocation).toVector().multiply(0.105);
-            vector = vector.setY((vector.getY() + 0.2) * 1.18);
-            itemEntity.setVelocity(vector);
-        }, hookLocation);
+        Entity itemEntity = hookLocation.getWorld().dropItem(hookLocation, itemStack);
+        Vector vector = playerLocation.subtract(hookLocation).toVector().multiply(0.105);
+        vector = vector.setY((vector.getY() + 0.2) * 1.18);
+        itemEntity.setVelocity(vector);
     }
 
     @NotNull
@@ -291,7 +289,7 @@ public class ItemManagerImpl implements ItemManager {
         return Pair.of(Float.parseFloat(split[0]), Float.parseFloat(split[1]));
     }
 
-    public static class CFBuilder implements ItemBuilder, BuildableItem {
+    public static class CFBuilder implements ItemBuilder {
 
         private final String library;
         private final String id;
@@ -438,6 +436,7 @@ public class ItemManagerImpl implements ItemManager {
 
         @Override
         public ItemBuilder price(float base, float bonus) {
+            if (base == 0 && bonus == 0) return this;
             editors.put("price", (player, nbtItem, placeholders) -> {
                 if (base != 0) {
                     placeholders.put("{base}", String.format("%.2f", base));
@@ -463,7 +462,7 @@ public class ItemManagerImpl implements ItemManager {
             editors.put("size", (player, nbtItem, placeholders) -> {
                 NBTCompound cfCompound = nbtItem.getOrCreateCompound("CustomFishing");
                 float random = size.left() + ThreadLocalRandom.current().nextFloat(size.right() - size.left());
-                float bonus = Float.parseFloat(placeholders.getOrDefault("size-multiplier", "1.0"));
+                float bonus = Float.parseFloat(placeholders.getOrDefault("{size-multiplier}", "1.0"));
                 random *= bonus;
                 cfCompound.setFloat("size", random);
                 placeholders.put("{size}", String.format("%.2f", random));

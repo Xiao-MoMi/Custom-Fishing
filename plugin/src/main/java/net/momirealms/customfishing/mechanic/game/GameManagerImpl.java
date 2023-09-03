@@ -165,7 +165,7 @@ public class GameManagerImpl implements GameManager {
             var barImage = section.getString("subtitle.bar");
             var pointerImage = section.getString("subtitle.pointer");
 
-            return (player, settings, manager) -> new AbstractGamingPlayer(player, settings, manager) {
+            return (player, fishHook, settings) -> new AbstractGamingPlayer(player, fishHook, settings) {
 
                 private int progress;
                 private boolean face;
@@ -205,7 +205,7 @@ public class GameManagerImpl implements GameManager {
                 }
 
                 @Override
-                public boolean isSucceeded() {
+                public boolean isSuccessful() {
                     int last = progress / widthPerSection;
                     return (Math.random() < successRate[last]);
                 }
@@ -234,7 +234,7 @@ public class GameManagerImpl implements GameManager {
             var barImage = section.getString("subtitle.bar");
             var tip = section.getString("tip");
 
-            return (player, settings, manager) -> new AbstractGamingPlayer(player, settings, manager) {
+            return (player, fishHook, settings) -> new AbstractGamingPlayer(player, fishHook, settings) {
                 private double hold_time;
                 private double judgement_position;
                 private double fish_position;
@@ -278,8 +278,8 @@ public class GameManagerImpl implements GameManager {
                         hold_time -= punishment * 33;
                     }
                     if (hold_time >= time_requirement) {
-                        succeeded = true;
-                        manager.processGameResult(this);
+                        setGameResult(true);
+                        endGame();
                         return;
                     }
                     hold_time = Math.max(0, Math.min(hold_time, time_requirement));
@@ -376,7 +376,7 @@ public class GameManagerImpl implements GameManager {
             var barImage = section.getString("subtitle.bar");
             var tip = section.getString("tip");
 
-            return (player, settings, manager) -> new AbstractGamingPlayer(player, settings, manager) {
+            return (player, fishHook, settings) -> new AbstractGamingPlayer(player, fishHook, settings) {
 
                 private int fish_position = fishStartPosition;
                 private double strain;
@@ -401,13 +401,13 @@ public class GameManagerImpl implements GameManager {
                     if (player.isSneaking()) pull();
                     else loosen();
                     if (fish_position < successPosition - fishIconWidth - 1) {
-                        super.succeeded = true;
-                        manager.processGameResult(this);
+                        setGameResult(true);
+                        endGame();
                         return;
                     }
                     if (fish_position + fishIconWidth > barEffectiveWidth || strain >= ultimateTension) {
-                        super.succeeded = false;
-                        manager.processGameResult(this);
+                        setGameResult(false);
+                        endGame();
                         return;
                     }
                     showUI();
