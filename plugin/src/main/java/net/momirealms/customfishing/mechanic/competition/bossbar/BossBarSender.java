@@ -124,7 +124,7 @@ public class BossBarSender {
             Object chatComponent = ReflectionUtils.iChatComponentMethod.invoke(null,
             GsonComponentSerializer.gson().serialize(
             AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-            AdventureManagerImpl.getInstance().legacyToMiniMessage(text.getLatestValue())
+            text.getLatestValue()
             )));
             Object updatePacket = ReflectionUtils.updateConstructor.newInstance(chatComponent);
             packet.getModifier().write(1, updatePacket);

@@ -13,7 +13,6 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 package net.momirealms.customfishing.setting;
@@ -92,6 +91,8 @@ public class Config {
     //
     public static int dataSaveInterval;
 
+    public static boolean legacyColorSupport;
+
     public static void load() {
         try {
             YamlDocument.create(
@@ -151,6 +152,7 @@ public class Config {
         placeholderLimit = config.getInt("mechanics.competition.placeholder-limit", 3);
 
         dataSaveInterval = config.getInt("other-settings.data-saving-interval", 600);
+        legacyColorSupport = config.getBoolean("other-settings.legacy-color-code-support", false);
 
         OffsetUtils.loadConfig(config.getConfigurationSection("other-settings.offset-characters"));
     }

@@ -84,7 +84,7 @@ public class ActionBarSender {
                 text.update(privatePlaceholders);
                 AdventureManagerImpl.getInstance().sendActionbar(
                         player,
-                        AdventureManagerImpl.getInstance().legacyToMiniMessage(text.getLatestValue())
+                        text.getLatestValue()
                 );
             }
         }, 50, 50, TimeUnit.MILLISECONDS);

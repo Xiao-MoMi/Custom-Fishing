@@ -13,7 +13,6 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 package net.momirealms.customfishing.adventure;
@@ -30,6 +29,7 @@ import net.kyori.adventure.title.Title;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.manager.AdventureManager;
 import net.momirealms.customfishing.api.util.ReflectionUtils;
+import net.momirealms.customfishing.setting.Config;
 import net.momirealms.customfishing.setting.Locale;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -60,7 +60,11 @@ public class AdventureManagerImpl implements AdventureManager {
 
     @Override
     public Component getComponentFromMiniMessage(String text) {
-        return MiniMessage.miniMessage().deserialize(text);
+        if (Config.legacyColorSupport) {
+            return MiniMessage.miniMessage().deserialize(legacyToMiniMessage(text));
+        } else {
+            return MiniMessage.miniMessage().deserialize(text);
+        }
     }
 
     @Override

@@ -13,7 +13,6 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 package net.momirealms.customfishing.mechanic.item;
@@ -346,12 +345,11 @@ public class ItemManagerImpl implements ItemManager {
         @Override
         public ItemBuilder name(String name) {
             if (name == null) return this;
-            String replacedName = AdventureManagerImpl.getInstance().legacyToMiniMessage(name);
             editors.put("name", (player, nbtItem, placeholders) -> {
                 NBTCompound displayCompound = nbtItem.getOrCreateCompound("display");
                 displayCompound.setString("Name", AdventureManagerImpl.getInstance().componentToJson(
                         AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                "<!i>" + PlaceholderManagerImpl.getInstance().parse(player, replacedName, placeholders)
+                                "<!i>" + PlaceholderManagerImpl.getInstance().parse(player, name, placeholders)
                         )
                 ));
             });
@@ -387,12 +385,11 @@ public class ItemManagerImpl implements ItemManager {
         @Override
         public ItemBuilder lore(List<String> lore) {
             if (lore.size() == 0) return this;
-            List<String> replacedList = lore.stream().map(s -> AdventureManagerImpl.getInstance().legacyToMiniMessage(s)).toList();
             editors.put("lore", (player, nbtItem, placeholders) -> {
                 NBTCompound displayCompound = nbtItem.getOrCreateCompound("display");
                 NBTList<String> list = displayCompound.getStringList("Lore");
                 list.clear();
-                list.addAll(replacedList.stream().map(s -> AdventureManagerImpl.getInstance().componentToJson(
+                list.addAll(lore.stream().map(s -> AdventureManagerImpl.getInstance().componentToJson(
                         AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
                                 "<!i>" + PlaceholderManagerImpl.getInstance().parse(player, s, placeholders)
                         )
