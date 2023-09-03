@@ -8,9 +8,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.potion.PotionEffectType;
-
-import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
 

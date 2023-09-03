@@ -1,10 +1,8 @@
 package net.momirealms.customfishing.mechanic.market;
 
-import com.willfp.eco.core.map.MutableListMap;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.EarningData;
-import net.momirealms.customfishing.api.data.InventoryData;
 import net.momirealms.customfishing.api.data.user.OnlineUser;
 import net.momirealms.customfishing.api.manager.MarketManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
@@ -23,7 +21,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -149,7 +150,7 @@ public class MarketManagerImpl implements MarketManager, Listener {
         if (event.isCancelled())
             return;
         Inventory inventory = event.getInventory();
-        if (!(inventory.getHolder() instanceof MarketGUIHolder holder))
+        if (!(inventory.getHolder() instanceof MarketGUIHolder))
             return;
         Player player = (Player) event.getWhoClicked();
         MarketGUI gui = marketGUIMap.get(player.getUniqueId());
@@ -182,7 +183,7 @@ public class MarketManagerImpl implements MarketManager, Listener {
         if (clickedInv == null)
             return;
         Player player = (Player) event.getWhoClicked();
-        if (!(event.getInventory().getHolder() instanceof MarketGUIHolder holder))
+        if (!(event.getInventory().getHolder() instanceof MarketGUIHolder))
             return;
 
         MarketGUI gui = marketGUIMap.get(player.getUniqueId());

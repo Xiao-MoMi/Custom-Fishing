@@ -5,6 +5,7 @@ import net.momirealms.customfishing.api.data.EarningData;
 import net.momirealms.customfishing.api.mechanic.market.MarketGUIHolder;
 import net.momirealms.customfishing.api.util.InventoryUtils;
 import net.momirealms.customfishing.api.util.LogUtils;
+import net.momirealms.customfishing.mechanic.item.ItemManagerImpl;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -41,12 +42,13 @@ public class MarketGUI {
     private void init() {
         int line = 0;
         for (String content : manager.getLayout()) {
-            if (content.length() != 9) {
-                LogUtils.warn("Please make sure that GUI layout has 9 elements in each row");
-                return;
-            }
             for (int index = 0; index < 9; index++) {
-                char symbol = content.charAt(index);
+                char symbol;
+                if (index < content.length()) {
+                    symbol = content.charAt(index);
+                } else {
+                    symbol = ' ';
+                }
                 MarketGUIElement element = itemsCharMap.get(symbol);
                 if (element != null) {
                     element.addSlot(index + line * 9);
@@ -178,7 +180,7 @@ public class MarketGUI {
         for (int slot : itemElement.getSlots()) {
             ItemStack itemStack = inventory.getItem(slot);
             if (itemStack != null && itemStack.getType() != Material.AIR) {
-                owner.getInventory().addItem(itemStack);
+                ItemManagerImpl.giveCertainAmountOfItem(owner, itemStack, itemStack.getAmount());
                 inventory.setItem(slot, new ItemStack(Material.AIR));
             }
         }
