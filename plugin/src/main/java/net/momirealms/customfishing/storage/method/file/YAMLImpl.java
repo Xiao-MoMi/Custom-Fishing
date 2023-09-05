@@ -72,7 +72,7 @@ public class YAMLImpl extends AbstractStorage {
     }
 
     @Override
-    public CompletableFuture<Boolean> setPlayData(UUID uuid, PlayerData playerData, boolean ignore) {
+    public CompletableFuture<Boolean> setPlayerData(UUID uuid, PlayerData playerData, boolean ignore) {
         YamlConfiguration data = new YamlConfiguration();
         data.set("name", playerData.getName());
         data.set("bag", playerData.getBagData().serialized);

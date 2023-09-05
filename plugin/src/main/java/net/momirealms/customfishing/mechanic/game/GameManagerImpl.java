@@ -22,13 +22,17 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.manager.GameManager;
 import net.momirealms.customfishing.api.mechanic.game.*;
 import net.momirealms.customfishing.api.util.FontUtils;
+import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.api.util.OffsetUtils;
+import net.momirealms.customfishing.util.ClassUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +43,7 @@ public class GameManagerImpl implements GameManager {
     private final HashMap<String, GameCreator> gameCreatorMap;
     private final HashMap<String, Game> gameMap;
     private final HashMap<String, GameConfig> gameConfigMap;
+    private final String EXPANSION_FOLDER = "expansions/minigames";
 
     public GameManagerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;
@@ -55,6 +60,7 @@ public class GameManagerImpl implements GameManager {
     }
 
     public void load() {
+        this.loadExpansions();
         this.loadGamesFromPluginFolder();
         this.loadGameConfigs();
     }
@@ -147,7 +153,7 @@ public class GameManagerImpl implements GameManager {
             for (File subFile : files) {
                 if (subFile.isDirectory()) {
                     fileDeque.push(subFile);
-                } else if (subFile.isFile()) {
+                } else if (subFile.isFile() && subFile.getName().endsWith(".yml")) {
                     loadSingleFile(subFile);
                 }
             }
@@ -463,5 +469,36 @@ public class GameManagerImpl implements GameManager {
                 }
             };
         }));
+    }
+
+    private void loadExpansions() {
+        File expansionFolder = new File(plugin.getDataFolder(), EXPANSION_FOLDER);
+        if (!expansionFolder.exists())
+            expansionFolder.mkdirs();
+
+        List<Class<? extends GameExpansion>> classes = new ArrayList<>();
+        File[] expansionJars = expansionFolder.listFiles();
+        if (expansionJars == null) return;
+        for (File expansionJar : expansionJars) {
+            if (expansionJar.getName().endsWith(".jar")) {
+                try {
+                    Class<? extends GameExpansion> expansionClass = ClassUtils.findClass(expansionJar, GameExpansion.class);
+                    classes.add(expansionClass);
+                } catch (IOException | ClassNotFoundException e) {
+                    LogUtils.warn("Failed to load expansion: " + expansionJar.getName(), e);
+                }
+            }
+        }
+
+        try {
+            for (Class<? extends GameExpansion> expansionClass : classes) {
+                GameExpansion expansion = expansionClass.getDeclaredConstructor().newInstance();
+                unregisterGameType(expansion.getGameType());
+                registerGameType(expansion.getGameType(), expansion.getGameCreator());
+                LogUtils.info("Loaded expansion: " + expansion.getGameType() + " made by " + expansion.getAuthor() + "[" + expansion.getVersion() + "]");
+            }
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+            LogUtils.warn("Error occurred when creating expansion instance.", e);
+        }
     }
 }

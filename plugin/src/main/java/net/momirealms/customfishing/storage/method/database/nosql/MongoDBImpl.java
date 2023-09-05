@@ -27,6 +27,7 @@ import com.mongodb.client.result.InsertOneResult;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.PlayerData;
 import net.momirealms.customfishing.api.data.StorageType;
+import net.momirealms.customfishing.api.data.user.OnlineUser;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.storage.method.AbstractStorage;
 import org.bson.Document;
@@ -37,6 +38,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
@@ -131,7 +133,7 @@ public class MongoDBImpl extends AbstractStorage {
     }
 
     @Override
-    public CompletableFuture<Boolean> setPlayData(UUID uuid, PlayerData playerData, boolean unlock) {
+    public CompletableFuture<Boolean> setPlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         var future = new CompletableFuture<Boolean>();
         plugin.getScheduler().runTaskAsync(() -> {
         MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
@@ -147,5 +149,19 @@ public class MongoDBImpl extends AbstractStorage {
         }
         });
         return future;
+    }
+
+    @Override
+    public void setPlayersData(Collection<OnlineUser> users, boolean unlock) {
+        MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
+        try {
+            collection.insertMany(users.stream().map(it -> new Document()
+                    .append("_id", new ObjectId())
+                    .append("uuid", it.getUUID())
+                    .append("lock", unlock ? 0 : getCurrentSeconds())
+                    .append("data", new Binary(plugin.getStorageManager().toBytes(it.getPlayerData())))).toList());
+        } catch (MongoException e) {
+            LogUtils.warn("Failed to update data for online players", e);
+        }
     }
 }

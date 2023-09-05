@@ -94,7 +94,7 @@ public class MobManagerImpl implements MobManager {
                 for (File subFile : files) {
                     if (subFile.isDirectory()) {
                         fileDeque.push(subFile);
-                    } else if (subFile.isFile()) {
+                    } else if (subFile.isFile() && subFile.getName().endsWith(".yml")) {
                         this.loadSingleFile(subFile);
                     }
                 }

@@ -20,6 +20,8 @@ package net.momirealms.customfishing.storage.method.database.sql;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.PlayerData;
 import net.momirealms.customfishing.api.data.StorageType;
+import net.momirealms.customfishing.api.data.user.OfflineUser;
+import net.momirealms.customfishing.api.data.user.OnlineUser;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.setting.Config;
 import org.bukkit.Bukkit;
@@ -29,6 +31,7 @@ import org.sqlite.SQLiteConfig;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -73,6 +76,7 @@ public class SQLiteImpl extends AbstractSQLDatabase {
         return connection;
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @Override
     public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean force) {
         var future = new CompletableFuture<Optional<PlayerData>>();
@@ -110,7 +114,7 @@ public class SQLiteImpl extends AbstractSQLDatabase {
     }
 
     @Override
-    public CompletableFuture<Boolean> setPlayData(UUID uuid, PlayerData playerData, boolean unlock) {
+    public CompletableFuture<Boolean> setPlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         var future = new CompletableFuture<Boolean>();
         plugin.getScheduler().runTaskAsync(() -> {
         try (
@@ -128,6 +132,29 @@ public class SQLiteImpl extends AbstractSQLDatabase {
         }
         });
         return future;
+    }
+
+    @Override
+    public void setPlayersData(Collection<OnlineUser> users, boolean unlock) {
+        String sql = String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data"));
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                for (OfflineUser user : users) {
+                    statement.setInt(1, unlock ? 0 : getCurrentSeconds());
+                    statement.setBytes(2, plugin.getStorageManager().toBytes(user.getPlayerData()));
+                    statement.setString(3, user.getUUID().toString());
+                    statement.addBatch();
+                }
+                statement.executeBatch();
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                LogUtils.warn("Failed to update bag data for online players", e);
+            }
+        } catch (SQLException e) {
+            LogUtils.warn("Failed to get connection when saving online players' data", e);
+        }
     }
 
     @Override

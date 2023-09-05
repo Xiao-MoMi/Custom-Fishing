@@ -25,9 +25,11 @@ import net.momirealms.customfishing.api.data.DataStorageInterface;
 import net.momirealms.customfishing.api.data.PlayerData;
 import net.momirealms.customfishing.api.data.StorageType;
 import net.momirealms.customfishing.api.data.user.OfflineUser;
+import net.momirealms.customfishing.api.data.user.OnlineUser;
 import net.momirealms.customfishing.api.manager.StorageManager;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.api.util.LogUtils;
+import net.momirealms.customfishing.setting.Config;
 import net.momirealms.customfishing.storage.method.database.nosql.MongoDBImpl;
 import net.momirealms.customfishing.storage.method.database.nosql.RedisManager;
 import net.momirealms.customfishing.storage.method.database.sql.H2Impl;
@@ -62,11 +64,12 @@ public class StorageManagerImpl implements StorageManager, Listener {
     private final CustomFishingPlugin plugin;
     private DataStorageInterface dataSource;
     private StorageType previousType;
-    private final ConcurrentHashMap<UUID, OnlineUserImpl> onlineUserMap;
+    private final ConcurrentHashMap<UUID, OnlineUser> onlineUserMap;
     private final HashSet<UUID> locked;
     private boolean hasRedis;
     private RedisManager redisManager;
     private String uniqueID;
+    private CancellableTask timerSaveTask;
 
     public StorageManagerImpl(CustomFishingPluginImpl plugin) {
         this.plugin = plugin;
@@ -77,7 +80,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
 
     public void reload() {
         YamlConfiguration config = plugin.getConfig("database.yml");
-        uniqueID = config.getString("unique-server-id", "default");
+        this.uniqueID = config.getString("unique-server-id", "default");
         StorageType storageType = StorageType.valueOf(config.getString("data-storage-method", "H2"));
         if (storageType != previousType) {
             if (this.dataSource != null) this.dataSource.disable();
@@ -91,26 +94,42 @@ public class StorageManagerImpl implements StorageManager, Listener {
                 case MariaDB -> this.dataSource = new MariaDBImpl(plugin);
                 case MongoDB -> this.dataSource = new MongoDBImpl(plugin);
             }
-            if (dataSource != null) this.dataSource.initialize();
+            if (this.dataSource != null) this.dataSource.initialize();
             else LogUtils.severe("No storage type is set.");
         }
-        if (!hasRedis && config.getBoolean("Redis.enable", false)) {
-            hasRedis = true;
+        if (!this.hasRedis && config.getBoolean("Redis.enable", false)) {
+            this.hasRedis = true;
             this.redisManager = new RedisManager(plugin);
             this.redisManager.initialize();
         }
-        if (hasRedis && !config.getBoolean("Redis.enable", false) && redisManager != null) {
-            redisManager.disable();
-            redisManager = null;
+        if (this.hasRedis && !config.getBoolean("Redis.enable", false) && this.redisManager != null) {
+            this.redisManager.disable();
+            this.redisManager = null;
         }
+        if (this.timerSaveTask != null && !this.timerSaveTask.isCancelled()) {
+            this.timerSaveTask.cancel();
+        }
+        if (Config.dataSaveInterval != -1)
+            this.timerSaveTask = this.plugin.getScheduler().runTaskAsyncTimer(
+                    () -> {
+                        long time1 = System.currentTimeMillis();
+                        this.dataSource.setPlayersData(this.onlineUserMap.values(), false);
+                        LogUtils.info("Data Saved for online players. Took " + (System.currentTimeMillis() - time1) + "ms.");
+                    },
+                    Config.dataSaveInterval,
+                    Config.dataSaveInterval,
+                    TimeUnit.SECONDS
+            );
     }
 
     public void disable() {
         HandlerList.unregisterAll(this);
+        this.dataSource.setPlayersData(onlineUserMap.values(), true);
+        this.onlineUserMap.clear();
         if (this.dataSource != null)
-            dataSource.disable();
+            this.dataSource.disable();
         if (this.redisManager != null)
-            redisManager.disable();
+            this.redisManager.disable();
     }
 
     @Override
@@ -119,7 +138,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
     }
 
     @Override
-    public OnlineUserImpl getOnlineUser(UUID uuid) {
+    public OnlineUser getOnlineUser(UUID uuid) {
         return onlineUserMap.get(uuid);
     }
 
@@ -170,19 +189,19 @@ public class StorageManagerImpl implements StorageManager, Listener {
         if (locked.contains(uuid))
             return;
 
-        OnlineUserImpl onlineUser = onlineUserMap.remove(uuid);
+        OnlineUser onlineUser = onlineUserMap.remove(uuid);
         if (onlineUser == null) return;
         PlayerData data = onlineUser.getPlayerData();
 
         if (hasRedis) {
             redisManager.setChangeServer(uuid).thenRun(
-                    () -> redisManager.setPlayData(uuid, data, true).thenRun(
-                            () -> dataSource.setPlayData(uuid, data, true).thenAccept(
+                    () -> redisManager.setPlayerData(uuid, data, true).thenRun(
+                            () -> dataSource.setPlayerData(uuid, data, true).thenAccept(
                                     result -> {
                                       if (result) locked.remove(uuid);
             })));
         } else {
-            dataSource.setPlayData(uuid, data, true).thenAccept(
+            dataSource.setPlayerData(uuid, data, true).thenAccept(
                     result -> {
                         if (result) locked.remove(uuid);
                     });

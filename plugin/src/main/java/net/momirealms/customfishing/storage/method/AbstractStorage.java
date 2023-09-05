@@ -19,8 +19,10 @@ package net.momirealms.customfishing.storage.method;
 
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.DataStorageInterface;
+import net.momirealms.customfishing.api.data.user.OnlineUser;
 
 import java.time.Instant;
+import java.util.Collection;
 
 public abstract class AbstractStorage implements DataStorageInterface {
 
@@ -42,5 +44,12 @@ public abstract class AbstractStorage implements DataStorageInterface {
 
     public int getCurrentSeconds() {
         return (int) Instant.now().getEpochSecond();
+    }
+
+    @Override
+    public void setPlayersData(Collection<OnlineUser> users, boolean unlock) {
+        for (OnlineUser user : users) {
+            this.setPlayerData(user.getUUID(), user.getPlayerData(), unlock);
+        }
     }
 }

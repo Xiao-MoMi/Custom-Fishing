@@ -256,7 +256,7 @@ public class RedisManager extends AbstractStorage {
     }
 
     @Override
-    public CompletableFuture<Boolean> setPlayData(UUID uuid, PlayerData playerData, boolean ignore) {
+    public CompletableFuture<Boolean> setPlayerData(UUID uuid, PlayerData playerData, boolean ignore) {
         var future = new  CompletableFuture<Boolean>();
         plugin.getScheduler().runTaskAsync(() -> {
         try (Jedis jedis = jedisPool.getResource()) {

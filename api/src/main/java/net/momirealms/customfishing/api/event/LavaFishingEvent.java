@@ -68,6 +68,7 @@ public class LavaFishingEvent extends PlayerEvent implements Cancellable {
 
     public enum State {
         REEL_IN,
-        CAUGHT_FISH, BITE
+        CAUGHT_FISH,
+        BITE
     }
 }

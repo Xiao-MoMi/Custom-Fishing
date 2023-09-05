@@ -61,7 +61,7 @@ public class JsonImpl extends AbstractStorage {
     }
 
     @Override
-    public CompletableFuture<Boolean> setPlayData(UUID uuid, PlayerData playerData, boolean ignore) {
+    public CompletableFuture<Boolean> setPlayerData(UUID uuid, PlayerData playerData, boolean ignore) {
         this.saveToJsonFile(playerData, getPlayerDataFile(uuid));
         return CompletableFuture.completedFuture(true);
     }

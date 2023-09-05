@@ -77,7 +77,7 @@ public class EffectManagerImpl implements EffectManager {
                 for (File subFile : files) {
                     if (subFile.isDirectory()) {
                         fileDeque.push(subFile);
-                    } else if (subFile.isFile()) {
+                    } else if (subFile.isFile() && subFile.getName().endsWith(".yml")) {
                         this.loadSingleFile(subFile, StringUtils.chop(type));
                     }
                 }

@@ -126,6 +126,7 @@ other-settings:
   event-priority: NORMAL
 
   # Save the data from cache to file periodically to minimize the data loss if server crashes
+  # set to -1 to disable
   data-saving-interval: 600
 
   # Requires PlaceholderAPI to work

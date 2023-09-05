@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.api.util;
 
 import net.momirealms.customfishing.api.CustomFishingPlugin;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;

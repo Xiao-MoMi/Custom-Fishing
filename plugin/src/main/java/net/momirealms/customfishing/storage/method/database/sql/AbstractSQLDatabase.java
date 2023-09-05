@@ -19,6 +19,7 @@ package net.momirealms.customfishing.storage.method.database.sql;
 
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.PlayerData;
+import net.momirealms.customfishing.api.data.user.OnlineUser;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.setting.Config;
 import net.momirealms.customfishing.storage.method.AbstractStorage;
@@ -29,10 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class AbstractSQLDatabase extends AbstractStorage {
@@ -79,6 +77,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         return tablePrefix;
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @Override
     public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean force) {
         var future = new CompletableFuture<Optional<PlayerData>>();
@@ -118,7 +117,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
     }
 
     @Override
-    public CompletableFuture<Boolean> setPlayData(UUID uuid, PlayerData playerData, boolean unlock) {
+    public CompletableFuture<Boolean> setPlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         var future = new CompletableFuture<Boolean>();
         plugin.getScheduler().runTaskAsync(() -> {
         try (
@@ -136,6 +135,29 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         }
         });
         return future;
+    }
+
+    @Override
+    public void setPlayersData(Collection<OnlineUser> users, boolean unlock) {
+        String sql = String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data"));
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                for (OnlineUser user : users) {
+                    statement.setInt(1, unlock ? 0 : getCurrentSeconds());
+                    statement.setBlob(2, new ByteArrayInputStream(plugin.getStorageManager().toBytes(user.getPlayerData())));
+                    statement.setString(3, user.getUUID().toString());
+                    statement.addBatch();
+                }
+                statement.executeBatch();
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                LogUtils.warn("Failed to update data for online players", e);
+            }
+        } catch (SQLException e) {
+            LogUtils.warn("Failed to get connection when saving online players' data", e);
+        }
     }
 
     public void insertPlayerData(UUID uuid, PlayerData playerData) {

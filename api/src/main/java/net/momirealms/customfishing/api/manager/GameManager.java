@@ -19,7 +19,7 @@ package net.momirealms.customfishing.api.manager;
 
 import net.momirealms.customfishing.api.mechanic.game.Game;
 import net.momirealms.customfishing.api.mechanic.game.GameConfig;
-import org.bukkit.configuration.ConfigurationSection;
+import net.momirealms.customfishing.api.mechanic.game.GameCreator;
 import org.jetbrains.annotations.Nullable;
 
 public interface GameManager {
@@ -39,8 +39,5 @@ public interface GameManager {
 
     GameConfig getRandomGameConfig();
 
-    public interface GameCreator {
 
-        Game setArgs(ConfigurationSection section);
-    }
 }
