@@ -75,7 +75,8 @@ dependencies {
 
 tasks {
     shadowJar {
-        relocate ("de.tr7zw", "net.momirealms.customfishing.libraries")
+        relocate ("de.tr7zw.changeme", "net.momirealms.customfishing.libraries")
+        relocate ("de.tr7zw.annotations", "net.momirealms.customfishing.libraries.annotations")
         relocate ("net.kyori", "net.momirealms.customfishing.libraries")
         relocate ("net.wesjd", "net.momirealms.customfishing.libraries")
         relocate ("org.bstats", "net.momirealms.customfishing.libraries.bstats")

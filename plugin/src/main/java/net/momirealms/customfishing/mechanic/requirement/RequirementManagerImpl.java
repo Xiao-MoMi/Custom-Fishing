@@ -28,19 +28,16 @@ import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementBuilder;
 import net.momirealms.customfishing.api.util.LogUtils;
-import net.momirealms.customfishing.mechanic.requirement.inbuilt.LogicRequirement;
+import net.momirealms.customfishing.compatibility.papi.ParseUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class RequirementManagerImpl implements RequirementManager {
 
@@ -96,8 +93,9 @@ public class RequirementManagerImpl implements RequirementManager {
     private void registerInbuiltRequirements() {
         this.registerTimeRequirement();
         this.registerYRequirement();
-        this.registerLogicRequirement();
-        this.registerCompare();
+        this.registerContainRequirement();
+        this.registerStartWithRequirement();
+        this.registerEqualsRequirement();
         this.registerBiomeRequirement();
         this.registerDateRequirement();
         this.registerPluginLevelRequirement();
@@ -108,6 +106,9 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerInLavaRequirement();
         this.registerRodRequirement();
         this.registerBaitRequirement();
+        this.registerCompareRequirement();
+        this.registerAndRequirement();
+        this.registerOrRequirement();
     }
 
     public ConditionalLoots getConditionalLoots(ConfigurationSection section) {
@@ -178,8 +179,8 @@ public class RequirementManagerImpl implements RequirementManager {
         List<Action> actionList = null;
         if (advanced) {
             actionList = new ArrayList<>();
-            if (section.contains("actions")) {
-                for (Map.Entry<String, Object> entry : Objects.requireNonNull(section.getConfigurationSection("actions")).getValues(false).entrySet()) {
+            if (section.contains("not-met-actions")) {
+                for (Map.Entry<String, Object> entry : Objects.requireNonNull(section.getConfigurationSection("not-met-actions")).getValues(false).entrySet()) {
                     if (entry.getValue() instanceof MemorySection inner) {
                         actionList.add(plugin.getActionManager().getAction(inner));
                     }
@@ -190,11 +191,12 @@ public class RequirementManagerImpl implements RequirementManager {
         }
         String type = section.getString("type");
         if (type == null) {
-            throw new NullPointerException(section.getCurrentPath() + ".type" + " doesn't exist");
+            LogUtils.warn("No requirement type found at " + section.getCurrentPath());
+            return EmptyRequirement.instance;
         }
         var builder = getRequirementBuilder(type);
         if (builder == null) {
-            throw new NullPointerException("Requirement type: " + type + " doesn't exist");
+            return EmptyRequirement.instance;
         }
         return builder.build(section.get("value"), actionList, advanced);
     }
@@ -212,12 +214,6 @@ public class RequirementManagerImpl implements RequirementManager {
     @Override
     public RequirementBuilder getRequirementBuilder(String type) {
         return requirementBuilderMap.get(type);
-    }
-
-    private void registerLogicRequirement() {
-        registerRequirement("logic", (args, actions, advanced) ->
-                new LogicRequirement(this, args, actions, advanced)
-        );
     }
 
     private void registerTimeRequirement() {
@@ -245,6 +241,51 @@ public class RequirementManagerImpl implements RequirementManager {
                 if (advanced) triggerActions(actions, condition);
                 return false;
             };
+        });
+    }
+
+    private void registerOrRequirement() {
+        registerRequirement("||", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                Requirement[] requirements = getRequirements(section, advanced);
+                return condition -> {
+                    if (requirements == null) return true;
+                    for (Requirement requirement : requirements) {
+                        if (requirement.isConditionMet(condition)) {
+                            return true;
+                        }
+                    }
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at || requirement.");
+                return null;
+            }
+        });
+    }
+
+    private void registerAndRequirement() {
+        registerRequirement("&&", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                Requirement[] requirements = getRequirements(section, advanced);
+                return condition -> {
+                    if (requirements == null) return true;
+                    outer: {
+                        for (Requirement requirement : requirements) {
+                            if (!requirement.isConditionMet(condition)) {
+                                break outer;
+                            }
+                        }
+                        return true;
+                    }
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at && requirement.");
+                return null;
+            }
         });
     }
 
@@ -375,6 +416,243 @@ public class RequirementManagerImpl implements RequirementManager {
         });
     }
 
+    private void registerCompareRequirement() {
+        registerRequirement(">=", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("value1", "");
+                String v2 = section.getString("value2", "");
+                return condition -> {
+                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
+                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
+                    if (Double.parseDouble(p1) >= Double.parseDouble(p2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at >= requirement.");
+                return null;
+            }
+        });
+        registerRequirement(">", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("value1", "");
+                String v2 = section.getString("value2", "");
+                return condition -> {
+                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
+                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
+                    if (Double.parseDouble(p1) > Double.parseDouble(p2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at > requirement.");
+                return null;
+            }
+        });
+        registerRequirement("<", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("value1", "");
+                String v2 = section.getString("value2", "");
+                return condition -> {
+                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
+                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
+                    if (Double.parseDouble(p1) < Double.parseDouble(p2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at < requirement.");
+                return null;
+            }
+        });
+        registerRequirement("<=", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("value1", "");
+                String v2 = section.getString("value2", "");
+                return condition -> {
+                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
+                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
+                    if (Double.parseDouble(p1) <= Double.parseDouble(p2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at <= requirement.");
+                return null;
+            }
+        });
+        registerRequirement("==", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("value1", "");
+                String v2 = section.getString("value2", "");
+                return condition -> {
+                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
+                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
+                    if (Double.parseDouble(p1) == Double.parseDouble(p2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at !startsWith requirement.");
+                return null;
+            }
+        });
+        registerRequirement("!=", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("value1", "");
+                String v2 = section.getString("value2", "");
+                return condition -> {
+                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
+                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
+                    if (Double.parseDouble(p1) != Double.parseDouble(p2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at !startsWith requirement.");
+                return null;
+            }
+        });
+    }
+
+
+    private void registerStartWithRequirement() {
+        registerRequirement("startsWith", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("value1", "");
+                String v2 = section.getString("value2", "");
+                return condition -> {
+                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
+                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
+                    if (p1.startsWith(p2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at startsWith requirement.");
+                return null;
+            }
+        });
+        registerRequirement("!startsWith", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("value1", "");
+                String v2 = section.getString("value2", "");
+                return condition -> {
+                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
+                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
+                    if (!p1.startsWith(p2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at !startsWith requirement.");
+                return null;
+            }
+        });
+        registerRequirement("endsWith", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("value1", "");
+                String v2 = section.getString("value2", "");
+                return condition -> {
+                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
+                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
+                    if (p1.endsWith(p2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at endsWith requirement.");
+                return null;
+            }
+        });
+        registerRequirement("!endsWith", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("value1", "");
+                String v2 = section.getString("value2", "");
+                return condition -> {
+                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
+                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
+                    if (!p1.endsWith(p2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at !endsWith requirement.");
+                return null;
+            }
+        });
+    }
+
+    private void registerContainRequirement() {
+        registerRequirement("contains", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("value1", "");
+                String v2 = section.getString("value2", "");
+                return condition -> {
+                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
+                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
+                    if (p1.contains(p2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at contains requirement.");
+                return null;
+            }
+        });
+        registerRequirement("!contains", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("value1", "");
+                String v2 = section.getString("value2", "");
+                return condition -> {
+                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
+                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
+                    if (!p1.contains(p2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at !contains requirement.");
+                return null;
+            }
+        });
+    }
+
+    private void registerEqualsRequirement() {
+        registerRequirement("equals", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("value1", "");
+                String v2 = section.getString("value2", "");
+                return condition -> {
+                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
+                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
+                    if (p1.equals(p2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at equals requirement.");
+                return null;
+            }
+        });
+        registerRequirement("!equals", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("value1", "");
+                String v2 = section.getString("value2", "");
+                return condition -> {
+                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
+                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
+                    if (!p1.equals(p2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at !equals requirement.");
+                return null;
+            }
+        });
+    }
+
     private void registerRodRequirement() {
         registerRequirement("rod", (args, actions, advanced) -> {
             List<String> rods = ConfigUtils.stringListArgs(args);
@@ -434,17 +712,10 @@ public class RequirementManagerImpl implements RequirementManager {
                     if (advanced) triggerActions(actions, condition);
                     return false;
                 };
+            } else {
+                LogUtils.warn("Wrong value format found at plugin-level requirement.");
+                return null;
             }
-            return null;
-        });
-    }
-
-    private void registerCompare() {
-        registerRequirement("compare", (args, actions, advanced) -> condition -> {
-            if (evaluateExpression((String) args, condition.getPlayer()))
-                return true;
-            if (advanced) triggerActions(actions, condition);
-            return false;
         });
     }
 
@@ -452,41 +723,5 @@ public class RequirementManagerImpl implements RequirementManager {
         if (actions != null)
             for (Action action : actions)
                 action.trigger(condition);
-    }
-
-    private double doubleArg(String s, Player player) {
-        double arg = 0;
-        try {
-            arg = Double.parseDouble(s);
-        } catch (NumberFormatException e1) {
-            try {
-                arg = Double.parseDouble(plugin.getPlaceholderManager().setPlaceholders(player, s));
-            } catch (NumberFormatException e2) {
-                LogUtils.severe(String.format("Invalid placeholder %s", s), e2);
-            }
-        }
-        return arg;
-    }
-
-    public boolean evaluateExpression(String input, Player player) {
-        input = input.replace("\\s", "");
-        Pattern pattern = Pattern.compile("(-?\\d+\\.?\\d*)(==|!=|<=?|>=?)(-?\\d+\\.?\\d*)");
-        Matcher matcher = pattern.matcher(input);
-        if (matcher.matches()) {
-            double num1 = doubleArg(matcher.group(1), player);
-            String operator = matcher.group(2);
-            double num2 = doubleArg(matcher.group(3), player);
-            return switch (operator) {
-                case ">" -> num1 > num2;
-                case "<" -> num1 < num2;
-                case ">=" -> num1 >= num2;
-                case "<=" -> num1 <= num2;
-                case "==" -> num1 == num2;
-                case "!=" -> num1 != num2;
-                default -> throw new IllegalArgumentException("Unsupported operator: " + operator);
-            };
-        } else {
-            throw new IllegalArgumentException("Invalid input format: " + input);
-        }
     }
 }

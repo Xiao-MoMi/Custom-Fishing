@@ -148,6 +148,8 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         ((CompetitionManagerImpl) this.competitionManager).unload();
         ((CompetitionManagerImpl) this.competitionManager).load();
         ((StorageManagerImpl) this.storageManager).reload();
+        ((PlaceholderManagerImpl) this.placeholderManager).unload();
+        ((PlaceholderManagerImpl) this.placeholderManager).load();
         this.commandManager.loadCommands();
     }
 

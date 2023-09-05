@@ -131,7 +131,7 @@ other-settings:
 
   # Requires PlaceholderAPI to work
   placeholder-register:
-    '{date}': '%server_date%'
+    '{date}': '%server_time_yyyy-MM-dd-HH:mm:ss%'
 
   # CustomFishing supports using items from other plugins
   # If items share the same id, they would inherit the effects

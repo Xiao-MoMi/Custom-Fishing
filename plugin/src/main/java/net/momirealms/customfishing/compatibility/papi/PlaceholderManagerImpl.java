@@ -21,6 +21,8 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.manager.PlaceholderManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,6 +41,7 @@ public class PlaceholderManagerImpl implements PlaceholderManager {
     private final boolean hasPapi;
     private final Pattern pattern;
     private final HashMap<String, String> customPlaceholderMap;
+    private PlaceholderAPIHook placeholderAPIHook;
 
     public PlaceholderManagerImpl(CustomFishingPlugin plugin) {
         instance = this;
@@ -46,10 +49,32 @@ public class PlaceholderManagerImpl implements PlaceholderManager {
         this.hasPapi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
         this.pattern = Pattern.compile("\\{[^{}]+}");
         this.customPlaceholderMap = new HashMap<>();
+        if (this.hasPapi) {
+            placeholderAPIHook = new PlaceholderAPIHook(plugin);
+        }
+    }
+
+    public void load() {
+        if (placeholderAPIHook != null) placeholderAPIHook.load();
+        loadCustomPlaceholders();
+    }
+
+    public void unload() {
+        if (placeholderAPIHook != null) placeholderAPIHook.unload();
     }
 
     public void disable() {
         this.customPlaceholderMap.clear();
+    }
+
+    public void loadCustomPlaceholders() {
+        YamlConfiguration config = plugin.getConfig("config.yml");
+        ConfigurationSection section = config.getConfigurationSection("other-settings.placeholder-register");
+        if (section != null) {
+            for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
+                this.customPlaceholderMap.put(entry.getKey(), (String) entry.getValue());
+            }
+        }
     }
 
     @Override
@@ -72,11 +97,14 @@ public class PlaceholderManagerImpl implements PlaceholderManager {
 
     @Override
     public String getSingleValue(@Nullable Player player, String placeholder, Map<String, String> placeholders) {
-        String result;
-        result = placeholders.get(placeholder);
-        if (result != null) return result;
+        String result = null;
+        if (placeholders != null)
+             result = placeholders.get(placeholder);
+        if (result != null)
+            return result;
         String custom = customPlaceholderMap.get(placeholder);
-        if (custom == null) return placeholder;
+        if (custom == null)
+            return placeholder;
         return setPlaceholders(player, custom);
     }
 

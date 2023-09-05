@@ -18,11 +18,26 @@
 package net.momirealms.customfishing.compatibility.papi;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import net.momirealms.customfishing.api.CustomFishingPlugin;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PlaceholderAPIHook extends PlaceholderExpansion {
+
+    private CustomFishingPlugin plugin;
+
+    public PlaceholderAPIHook(CustomFishingPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    public void load() {
+        super.register();
+    }
+
+    public void unload() {
+        super.unregister();
+    }
 
     @Override
     public @NotNull String getIdentifier() {
@@ -46,6 +61,9 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
     @Override
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
+
+
+
         return super.onRequest(player, params);
     }
 }
