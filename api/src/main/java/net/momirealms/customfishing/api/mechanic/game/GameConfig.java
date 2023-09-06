@@ -24,5 +24,5 @@ import org.jetbrains.annotations.Nullable;
 public interface GameConfig {
 
     @Nullable
-    Pair<Game, GameSettings> getRandomGame(Effect effect);
+    Pair<GameInstance, GameSettings> getRandomGame(Effect effect);
 }

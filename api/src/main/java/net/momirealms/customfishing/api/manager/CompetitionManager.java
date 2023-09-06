@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.manager;
 
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionConfig;
+import net.momirealms.customfishing.api.mechanic.competition.CompetitionGoal;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +27,8 @@ import java.util.concurrent.CompletableFuture;
 
 public interface CompetitionManager {
     Set<String> getAllCompetitions();
+
+    String getCompetitionLocale(CompetitionGoal goal);
 
     void startCompetition(String competition, boolean force, boolean allServers);
 

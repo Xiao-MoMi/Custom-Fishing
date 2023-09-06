@@ -26,6 +26,7 @@ public class ClassUtils {
         URL jar = file.toURI().toURL();
         URLClassLoader loader = new URLClassLoader(new URL[]{jar}, clazz.getClassLoader());
         List<String> matches = new ArrayList<>();
+        List<Class<? extends T>> classes = new ArrayList<>();
 
         try (JarInputStream stream = new JarInputStream(jar.openStream())) {
             JarEntry entry;
@@ -41,14 +42,16 @@ public class ClassUtils {
                 try {
                     Class<?> loaded = loader.loadClass(match);
                     if (clazz.isAssignableFrom(loaded)) {
-                        loader.close();
-                        return loaded.asSubclass(clazz);
+                        classes.add(loaded.asSubclass(clazz));
                     }
                 } catch (NoClassDefFoundError ignored) {
                 }
             }
         }
-        loader.close();
-        return null;
+        if (classes.isEmpty()) {
+            loader.close();
+            return null;
+        }
+        return classes.get(0);
     }
 }

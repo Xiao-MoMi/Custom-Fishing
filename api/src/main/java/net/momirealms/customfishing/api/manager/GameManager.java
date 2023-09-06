@@ -17,25 +17,25 @@
 
 package net.momirealms.customfishing.api.manager;
 
-import net.momirealms.customfishing.api.mechanic.game.Game;
 import net.momirealms.customfishing.api.mechanic.game.GameConfig;
-import net.momirealms.customfishing.api.mechanic.game.GameCreator;
+import net.momirealms.customfishing.api.mechanic.game.GameFactory;
+import net.momirealms.customfishing.api.mechanic.game.GameInstance;
 import org.jetbrains.annotations.Nullable;
 
 public interface GameManager {
 
 
-    boolean registerGameType(String type, GameCreator gameCreator);
+    boolean registerGameType(String type, GameFactory gameFactory);
 
     boolean unregisterGameType(String type);
 
-    @Nullable GameCreator getGameCreator(String type);
+    @Nullable GameFactory getGameCreator(String type);
 
-    @Nullable Game getGame(String key);
+    @Nullable GameInstance getGame(String key);
 
     @Nullable GameConfig getGameConfig(String key);
 
-    Game getRandomGame();
+    GameInstance getRandomGame();
 
     GameConfig getRandomGameConfig();
 

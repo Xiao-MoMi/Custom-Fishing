@@ -2,8 +2,8 @@ package net.momirealms.customfishing.api.mechanic.game;
 
 import org.bukkit.configuration.ConfigurationSection;
 
-public interface GameCreator {
+public interface GameFactory {
 
-    Game setArgs(ConfigurationSection section);
+    GameInstance setArgs(ConfigurationSection section);
 
 }

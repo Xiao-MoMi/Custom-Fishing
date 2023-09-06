@@ -23,9 +23,11 @@ import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.manager.ActionManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
-import net.momirealms.customfishing.api.mechanic.action.ActionBuilder;
+import net.momirealms.customfishing.api.mechanic.action.ActionExpansion;
+import net.momirealms.customfishing.api.mechanic.action.ActionFactory;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
+import net.momirealms.customfishing.util.ClassUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -35,6 +37,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +47,8 @@ import java.util.concurrent.TimeUnit;
 public class ActionManagerImpl implements ActionManager {
 
     private final CustomFishingPlugin plugin;
-    private final HashMap<String, ActionBuilder> actionBuilderMap;
+    private final HashMap<String, ActionFactory> actionBuilderMap;
+    private final String EXPANSION_FOLDER = "expansions/actions";
 
     public ActionManagerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;
@@ -65,10 +71,22 @@ public class ActionManagerImpl implements ActionManager {
         this.registerDelayedAction();
     }
 
+    public void load() {
+        this.loadExpansions();
+    }
+
+    public void unload() {
+
+    }
+
+    public void disable() {
+        this.actionBuilderMap.clear();
+    }
+
     @Override
-    public boolean registerAction(String type, ActionBuilder actionBuilder) {
+    public boolean registerAction(String type, ActionFactory actionFactory) {
         if (this.actionBuilderMap.containsKey(type)) return false;
-        this.actionBuilderMap.put(type, actionBuilder);
+        this.actionBuilderMap.put(type, actionFactory);
         return true;
     }
 
@@ -96,7 +114,7 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public ActionBuilder getActionBuilder(String type) {
+    public ActionFactory getActionBuilder(String type) {
         return actionBuilderMap.get(type);
     }
 
@@ -370,5 +388,35 @@ public class ActionManagerImpl implements ActionManager {
             }
             return null;
         });
+    }
+
+    private void loadExpansions() {
+        File expansionFolder = new File(plugin.getDataFolder(), EXPANSION_FOLDER);
+        if (!expansionFolder.exists())
+            expansionFolder.mkdirs();
+
+        List<Class<? extends ActionExpansion>> classes = new ArrayList<>();
+        File[] expansionJars = expansionFolder.listFiles();
+        if (expansionJars == null) return;
+        for (File expansionJar : expansionJars) {
+            if (expansionJar.getName().endsWith(".jar")) {
+                try {
+                    Class<? extends ActionExpansion> expansionClass = ClassUtils.findClass(expansionJar, ActionExpansion.class);
+                    classes.add(expansionClass);
+                } catch (IOException | ClassNotFoundException e) {
+                    LogUtils.warn("Failed to load expansion: " + expansionJar.getName(), e);
+                }
+            }
+        }
+        try {
+            for (Class<? extends ActionExpansion> expansionClass : classes) {
+                ActionExpansion expansion = expansionClass.getDeclaredConstructor().newInstance();
+                unregisterAction(expansion.getActionType());
+                registerAction(expansion.getActionType(), expansion.getActionFactory());
+                LogUtils.info("Loaded action expansion: " + expansion.getActionType() + "[" + expansion.getVersion() + "]" + " by " + expansion.getAuthor() );
+            }
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+            LogUtils.warn("Error occurred when creating expansion instance.", e);
+        }
     }
 }

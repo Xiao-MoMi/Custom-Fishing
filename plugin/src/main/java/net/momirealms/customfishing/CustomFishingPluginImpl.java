@@ -41,6 +41,7 @@ import net.momirealms.customfishing.mechanic.loot.LootManagerImpl;
 import net.momirealms.customfishing.mechanic.market.MarketManagerImpl;
 import net.momirealms.customfishing.mechanic.mob.MobManagerImpl;
 import net.momirealms.customfishing.mechanic.requirement.RequirementManagerImpl;
+import net.momirealms.customfishing.mechanic.statistic.StatisticsManagerImpl;
 import net.momirealms.customfishing.scheduler.SchedulerImpl;
 import net.momirealms.customfishing.setting.Config;
 import net.momirealms.customfishing.setting.Locale;
@@ -92,6 +93,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         this.storageManager = new StorageManagerImpl(this);
         this.competitionManager = new CompetitionManagerImpl(this);
         this.integrationManager = new IntegrationManagerImpl(this);
+        this.statisticsManager = new StatisticsManagerImpl(this);
         this.reload();
         if (Config.updateChecker)
             this.versionManager.checkUpdate().thenAccept(result -> {
@@ -118,6 +120,8 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         ((StorageManagerImpl) this.storageManager).disable();
         ((CompetitionManagerImpl) this.competitionManager).disable();
         ((PlaceholderManagerImpl) this.placeholderManager).disable();
+        ((StatisticsManagerImpl) this.statisticsManager).disable();
+        ((ActionManagerImpl) this.actionManager).disable();
     }
 
     @Override
@@ -127,6 +131,10 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         ((SchedulerImpl) this.scheduler).reload();
         ((RequirementManagerImpl) this.requirementManager).unload();
         ((RequirementManagerImpl) this.requirementManager).load();
+        ((ActionManagerImpl) this.actionManager).unload();
+        ((ActionManagerImpl) this.actionManager).load();
+        ((GameManagerImpl) this.gameManager).unload();
+        ((GameManagerImpl) this.gameManager).load();
         ((ItemManagerImpl) this.itemManager).unload();
         ((ItemManagerImpl) this.itemManager).load();
         ((LootManagerImpl) this.lootManager).unload();
@@ -141,13 +149,13 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         ((BagManagerImpl) this.bagManager).load();
         ((BlockManagerImpl) this.blockManager).unload();
         ((BlockManagerImpl) this.blockManager).load();
-        ((GameManagerImpl) this.gameManager).unload();
-        ((GameManagerImpl) this.gameManager).load();
         ((MobManagerImpl) this.mobManager).unload();
         ((MobManagerImpl) this.mobManager).load();
         ((CompetitionManagerImpl) this.competitionManager).unload();
         ((CompetitionManagerImpl) this.competitionManager).load();
         ((StorageManagerImpl) this.storageManager).reload();
+        ((StatisticsManagerImpl) this.statisticsManager).unload();
+        ((StatisticsManagerImpl) this.statisticsManager).load();
         ((PlaceholderManagerImpl) this.placeholderManager).unload();
         ((PlaceholderManagerImpl) this.placeholderManager).load();
         this.commandManager.loadCommands();

@@ -93,8 +93,7 @@ mechanics:
   competition:
     # Use redis for cross server data synchronization
     redis-ranking: false
-    # Increase this value would increase cpu load
-    # But would allow you to use more placeholders like {4_player} {5_score}
+    # Increase this value would allow you to use more placeholders like {4_player} {5_score} in sacrifice of some performance
     placeholder-limit: 3
 
   # Enable vanilla fishing mechanic if there's no loot available

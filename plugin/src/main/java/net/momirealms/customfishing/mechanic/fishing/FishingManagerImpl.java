@@ -28,10 +28,11 @@ import net.momirealms.customfishing.api.manager.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.TempFishingState;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
+import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
-import net.momirealms.customfishing.api.mechanic.game.Game;
 import net.momirealms.customfishing.api.mechanic.game.GameConfig;
+import net.momirealms.customfishing.api.mechanic.game.GameInstance;
 import net.momirealms.customfishing.api.mechanic.game.GameSettings;
 import net.momirealms.customfishing.api.mechanic.game.GamingPlayer;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
@@ -488,20 +489,16 @@ public class FishingManagerImpl implements Listener, FishingManager {
         var fishingPreparation = state.getPreparation();
         var player = fishingPreparation.getPlayer();
 
-        fishingPreparation.insertArg("{score}", String.format("%.2f", loot.getScore() * effect.getScoreMultiplier()));
         fishingPreparation.insertArg("{size-multiplier}", String.format("%.2f", effect.getSizeMultiplier()));
         fishingPreparation.insertArg("{x}", String.valueOf(hook.getLocation().getBlockX()));
         fishingPreparation.insertArg("{y}", String.valueOf(hook.getLocation().getBlockY()));
         fishingPreparation.insertArg("{z}", String.valueOf(hook.getLocation().getBlockZ()));
-        fishingPreparation.insertArg("{loot}", loot.getID());
-        fishingPreparation.insertArg("{nick}", loot.getNick());
 
         plugin.getScheduler().runTaskSync(() -> {
             switch (loot.getType()) {
                 case LOOT -> {
                     int amount = (int) effect.getMultipleLootChance();
                     amount += Math.random() < (effect.getMultipleLootChance() - amount) ? 2 : 1;
-                    fishingPreparation.insertArg("{amount}", String.valueOf(amount));
                     // build the items for multiple times instead of using setAmount() to make sure that each item is unique
                     if (loot.getID().equals("vanilla")) {
                         ItemStack itemStack = vanillaLootMap.remove(player.getUniqueId());
@@ -509,13 +506,13 @@ public class FishingManagerImpl implements Listener, FishingManager {
                             fishingPreparation.insertArg("{loot}", "<lang:item.minecraft." + itemStack.getType().toString().toLowerCase() + ">");
                             for (int i = 0; i < amount; i++) {
                                 plugin.getItemManager().dropItem(hook.getLocation(), player.getLocation(), itemStack.clone());
-                                doSuccessActions(loot, fishingPreparation, player);
+                                doSuccessActions(loot, effect, fishingPreparation, player);
                             }
                         }
                     } else {
                         for (int i = 0; i < amount; i++) {
                             plugin.getItemManager().dropItem(player, hook.getLocation(), player.getLocation(), loot, fishingPreparation.getArgs());
-                            doSuccessActions(loot, fishingPreparation, player);
+                            doSuccessActions(loot, effect, fishingPreparation, player);
                         }
                     }
                     return;
@@ -523,11 +520,41 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 case MOB -> plugin.getMobManager().summonMob(hook.getLocation(), player.getLocation(), loot);
                 case BLOCK -> plugin.getBlockManager().summonBlock(player, hook.getLocation(), player.getLocation(), loot);
             }
-            doSuccessActions(loot, fishingPreparation, player);
+            doSuccessActions(loot, effect, fishingPreparation, player);
         }, hook.getLocation());
     }
 
-    private void doSuccessActions(Loot loot, FishingPreparation fishingPreparation, Player player) {
+    private void doSuccessActions(Loot loot, Effect effect, FishingPreparation fishingPreparation, Player player) {
+        FishingCompetition competition = plugin.getCompetitionManager().getOnGoingCompetition();
+        if (competition != null) {
+            switch (competition.getGoal()) {
+                case CATCH_AMOUNT -> {
+                    fishingPreparation.insertArg("{score}", "1");
+                    competition.refreshData(player, 1);
+                }
+                case MAX_SIZE, TOTAL_SIZE -> {
+                    String size = fishingPreparation.getArg("{size}");
+                    if (size != null) {
+                        fishingPreparation.insertArg("{score}", size);
+                        competition.refreshData(player, Double.parseDouble(size));
+                    } else {
+                        fishingPreparation.insertArg("{score}", "0");
+                    }
+                }
+                case TOTAL_SCORE -> {
+                    double score = loot.getScore();
+                    if (score != 0) {
+                        fishingPreparation.insertArg("{score}", String.format("%.2f", score * effect.getScoreMultiplier()));
+                        competition.refreshData(player, score * effect.getScoreMultiplier());
+                    } else {
+                        fishingPreparation.insertArg("{score}", "0");
+                    }
+                }
+            }
+        } else {
+            fishingPreparation.insertArg("{score}","-1");
+        }
+
         Action[] globalActions = LootManagerImpl.globalLootProperties.getActions(ActionTrigger.SUCCESS);
         if (globalActions != null)
             for (Action action : globalActions)
@@ -580,10 +607,10 @@ public class FishingManagerImpl implements Listener, FishingManager {
     }
 
     @Override
-    public void startFishingGame(Player player, GameSettings settings, Game game) {
+    public void startFishingGame(Player player, GameSettings settings, GameInstance gameInstance) {
         Optional<FishHook> hook = getHook(player.getUniqueId());
         if (hook.isPresent()) {
-            this.gamingPlayerMap.put(player.getUniqueId(), game.start(player, hook.get(), settings));
+            this.gamingPlayerMap.put(player.getUniqueId(), gameInstance.start(player, hook.get(), settings));
         } else {
             LogUtils.warn("It seems that player " + player.getName() + " is not fishing. Fishing game failed to start.");
         }

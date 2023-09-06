@@ -75,7 +75,7 @@ public class Statistics {
         }
     }
 
-    public int getFishAmount(String key) {
+    public int getLootAmount(String key) {
         Integer amount = statisticMap.get(key);
         return amount == null ? 0 : amount;
     }

@@ -37,11 +37,12 @@ import java.util.stream.Collectors;
 public class PlaceholderManagerImpl implements PlaceholderManager {
 
     private static PlaceholderManagerImpl instance;
-    private CustomFishingPlugin plugin;
+    private final CustomFishingPlugin plugin;
     private final boolean hasPapi;
     private final Pattern pattern;
     private final HashMap<String, String> customPlaceholderMap;
-    private PlaceholderAPIHook placeholderAPIHook;
+    private CompetitionPapi competitionPapi;
+    private StatisticsPapi statisticsPapi;
 
     public PlaceholderManagerImpl(CustomFishingPlugin plugin) {
         instance = this;
@@ -50,17 +51,20 @@ public class PlaceholderManagerImpl implements PlaceholderManager {
         this.pattern = Pattern.compile("\\{[^{}]+}");
         this.customPlaceholderMap = new HashMap<>();
         if (this.hasPapi) {
-            placeholderAPIHook = new PlaceholderAPIHook(plugin);
+            competitionPapi = new CompetitionPapi(plugin);
+            statisticsPapi = new StatisticsPapi(plugin);
         }
     }
 
     public void load() {
-        if (placeholderAPIHook != null) placeholderAPIHook.load();
+        if (competitionPapi != null) competitionPapi.load();
+        if (statisticsPapi != null) statisticsPapi.load();
         loadCustomPlaceholders();
     }
 
     public void unload() {
-        if (placeholderAPIHook != null) placeholderAPIHook.unload();
+        if (competitionPapi != null) competitionPapi.unload();
+        if (statisticsPapi != null) statisticsPapi.unload();
     }
 
     public void disable() {

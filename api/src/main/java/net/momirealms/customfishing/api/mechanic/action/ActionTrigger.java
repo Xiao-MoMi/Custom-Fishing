@@ -22,5 +22,6 @@ public enum ActionTrigger {
     SUCCESS,
     FAILURE,
     HOOK,
-    CONSUME
+    CONSUME,
+    CAST
 }

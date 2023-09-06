@@ -62,10 +62,10 @@ public class GameGroup implements GameConfig {
 
     @Override
     @Nullable
-    public Pair<Game, GameSettings> getRandomGame(Effect effect) {
+    public Pair<GameInstance, GameSettings> getRandomGame(Effect effect) {
         String key = WeightUtils.getRandom(gamePairs);
-        Game game = CustomFishingPlugin.get().getGameManager().getGame(key);
-        if (game == null) {
+        GameInstance gameInstance = CustomFishingPlugin.get().getGameManager().getGame(key);
+        if (gameInstance == null) {
             CustomFishingPlugin.get().getLogger().warning(String.format("Game %s doesn't exist!", key));
             return null;
         }
@@ -73,6 +73,6 @@ public class GameGroup implements GameConfig {
                 ThreadLocalRandom.current().nextInt(minTime, maxTime + 1),
                 (int) (ThreadLocalRandom.current().nextInt(minDifficulty, maxDifficulty + 1) + effect.getDifficultyModifier())
         );
-        return Pair.of(game, settings);
+        return Pair.of(gameInstance, settings);
     }
 }

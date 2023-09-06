@@ -34,7 +34,7 @@ public class GameGroups implements GameConfig {
     }
 
     @Override
-    public @Nullable Pair<Game, GameSettings> getRandomGame(Effect effect) {
+    public @Nullable Pair<GameInstance, GameSettings> getRandomGame(Effect effect) {
         String group = WeightUtils.getRandom(gamesWithWeight);
         GameConfig gameConfig = CustomFishingPlugin.get().getGameManager().getGameConfig(group);
         if (gameConfig == null) {

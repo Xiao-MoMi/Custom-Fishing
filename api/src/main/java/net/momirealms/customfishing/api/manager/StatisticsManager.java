@@ -15,12 +15,16 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.api.mechanic.game;
+package net.momirealms.customfishing.api.manager;
 
-import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Player;
+import net.momirealms.customfishing.api.mechanic.statistic.Statistics;
+import org.jetbrains.annotations.Nullable;
 
-public interface Game {
-    
-    GamingPlayer start(Player player, FishHook hook, GameSettings settings);
+import java.util.List;
+import java.util.UUID;
+
+public interface StatisticsManager {
+    Statistics getStatistics(UUID uuid);
+
+    @Nullable List<String> getCategory(String key);
 }

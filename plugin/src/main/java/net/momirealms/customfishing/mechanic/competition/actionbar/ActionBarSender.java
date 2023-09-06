@@ -64,7 +64,7 @@ public class ActionBarSender {
         this.privatePlaceholders.put("{score}", String.format("%.2f", competition.getRanking().getPlayerScore(player.getName())));
         int rank = competition.getRanking().getPlayerRank(player.getName());
         this.privatePlaceholders.put("{rank}", rank != -1 ? String.valueOf(rank) : Locale.MSG_No_Rank);
-        this.privatePlaceholders.putAll(competition.getPublicPlaceholders());
+        this.privatePlaceholders.putAll(competition.getCachedPlaceholders());
     }
 
     public void show() {

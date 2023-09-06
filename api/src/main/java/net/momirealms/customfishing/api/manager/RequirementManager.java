@@ -19,7 +19,7 @@ package net.momirealms.customfishing.api.manager;
 
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
-import net.momirealms.customfishing.api.mechanic.requirement.RequirementBuilder;
+import net.momirealms.customfishing.api.mechanic.requirement.RequirementFactory;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +27,7 @@ import java.util.HashMap;
 
 public interface RequirementManager {
 
-    boolean registerRequirement(String type, RequirementBuilder requirementBuilder);
+    boolean registerRequirement(String type, RequirementFactory requirementFactory);
 
     boolean unregisterRequirement(String type);
 
@@ -39,7 +39,7 @@ public interface RequirementManager {
 
     Requirement getRequirement(String key, Object value);
 
-    RequirementBuilder getRequirementBuilder(String type);
+    RequirementFactory getRequirementBuilder(String type);
 
     static boolean isRequirementsMet(Requirement[] requirements, Condition condition) {
         if (requirements == null) return true;

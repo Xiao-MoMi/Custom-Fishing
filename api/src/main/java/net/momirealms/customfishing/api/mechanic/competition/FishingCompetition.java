@@ -20,6 +20,8 @@ package net.momirealms.customfishing.api.mechanic.competition;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public interface FishingCompetition {
     void start();
 
@@ -29,7 +31,7 @@ public interface FishingCompetition {
 
     boolean isOnGoing();
 
-    void refreshData(Player player, double score, boolean doubleScore);
+    void refreshData(Player player, double score);
 
     boolean hasPlayerJoined(OfflinePlayer player);
 
@@ -44,4 +46,8 @@ public interface FishingCompetition {
     CompetitionGoal getGoal();
 
     Ranking getRanking();
+
+    ConcurrentHashMap<String, String> getCachedPlaceholders();
+
+    String getCachedPlaceholder(String papi);
 }

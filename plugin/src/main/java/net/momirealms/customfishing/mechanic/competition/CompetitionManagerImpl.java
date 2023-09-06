@@ -202,6 +202,25 @@ public class CompetitionManagerImpl implements CompetitionManager {
     }
 
     @Override
+    public String getCompetitionLocale(CompetitionGoal goal) {
+        switch (goal) {
+            case MAX_SIZE -> {
+                return net.momirealms.customfishing.setting.Locale.MSG_Max_Size;
+            }
+            case CATCH_AMOUNT -> {
+                return net.momirealms.customfishing.setting.Locale.MSG_Catch_Amount;
+            }
+            case TOTAL_SCORE -> {
+                return net.momirealms.customfishing.setting.Locale.MSG_Total_Score;
+            }
+            case TOTAL_SIZE -> {
+                return net.momirealms.customfishing.setting.Locale.MSG_Total_Size;
+            }
+        }
+        return "";
+    }
+
+    @Override
     public void startCompetition(String competition, boolean force, boolean allServer) {
         CompetitionConfig config = commandConfigMap.get(competition);
         if (config == null) {

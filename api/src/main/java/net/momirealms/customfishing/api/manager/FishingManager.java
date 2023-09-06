@@ -19,7 +19,7 @@ package net.momirealms.customfishing.api.manager;
 
 import net.momirealms.customfishing.api.mechanic.TempFishingState;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
-import net.momirealms.customfishing.api.mechanic.game.Game;
+import net.momirealms.customfishing.api.mechanic.game.GameInstance;
 import net.momirealms.customfishing.api.mechanic.game.GameSettings;
 import net.momirealms.customfishing.api.mechanic.game.GamingPlayer;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
@@ -44,5 +44,5 @@ public interface FishingManager {
 
     void startFishingGame(Player player, Loot loot, Effect effect);
 
-    void startFishingGame(Player player, GameSettings settings, Game game);
+    void startFishingGame(Player player, GameSettings settings, GameInstance gameInstance);
 }

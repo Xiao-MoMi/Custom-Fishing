@@ -25,10 +25,13 @@ import net.momirealms.customfishing.api.integration.SeasonInterface;
 import net.momirealms.customfishing.api.manager.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
+import net.momirealms.customfishing.api.mechanic.game.GameExpansion;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
-import net.momirealms.customfishing.api.mechanic.requirement.RequirementBuilder;
+import net.momirealms.customfishing.api.mechanic.requirement.RequirementExpansion;
+import net.momirealms.customfishing.api.mechanic.requirement.RequirementFactory;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.papi.ParseUtils;
+import net.momirealms.customfishing.util.ClassUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -37,14 +40,18 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class RequirementManagerImpl implements RequirementManager {
 
     public static Requirement[] mechanicRequirements;
     private final CustomFishingPluginImpl plugin;
-    private final HashMap<String, RequirementBuilder> requirementBuilderMap;
+    private final HashMap<String, RequirementFactory> requirementBuilderMap;
     private final LinkedHashMap<String, ConditionalLoots> conditionalLootsMap;
+    private final String EXPANSION_FOLDER = "expansions/requirements";
 
     public RequirementManagerImpl(CustomFishingPluginImpl plugin) {
         this.plugin = plugin;
@@ -54,6 +61,7 @@ public class RequirementManagerImpl implements RequirementManager {
     }
 
     public void load() {
+        this.loadExpansions();
         this.loadRequirementGroupFileConfig();
     }
 
@@ -79,9 +87,9 @@ public class RequirementManagerImpl implements RequirementManager {
     }
 
     @Override
-    public boolean registerRequirement(String type, RequirementBuilder requirementBuilder) {
+    public boolean registerRequirement(String type, RequirementFactory requirementFactory) {
         if (this.requirementBuilderMap.containsKey(type)) return false;
-        this.requirementBuilderMap.put(type, requirementBuilder);
+        this.requirementBuilderMap.put(type, requirementFactory);
         return true;
     }
 
@@ -212,7 +220,7 @@ public class RequirementManagerImpl implements RequirementManager {
     }
 
     @Override
-    public RequirementBuilder getRequirementBuilder(String type) {
+    public RequirementFactory getRequirementBuilder(String type) {
         return requirementBuilderMap.get(type);
     }
 
@@ -723,5 +731,35 @@ public class RequirementManagerImpl implements RequirementManager {
         if (actions != null)
             for (Action action : actions)
                 action.trigger(condition);
+    }
+
+    private void loadExpansions() {
+        File expansionFolder = new File(plugin.getDataFolder(), EXPANSION_FOLDER);
+        if (!expansionFolder.exists())
+            expansionFolder.mkdirs();
+
+        List<Class<? extends RequirementExpansion>> classes = new ArrayList<>();
+        File[] expansionJars = expansionFolder.listFiles();
+        if (expansionJars == null) return;
+        for (File expansionJar : expansionJars) {
+            if (expansionJar.getName().endsWith(".jar")) {
+                try {
+                    Class<? extends RequirementExpansion> expansionClass = ClassUtils.findClass(expansionJar, RequirementExpansion.class);
+                    classes.add(expansionClass);
+                } catch (IOException | ClassNotFoundException e) {
+                    LogUtils.warn("Failed to load expansion: " + expansionJar.getName(), e);
+                }
+            }
+        }
+        try {
+            for (Class<? extends RequirementExpansion> expansionClass : classes) {
+                RequirementExpansion expansion = expansionClass.getDeclaredConstructor().newInstance();
+                unregisterRequirement(expansion.getRequirementType());
+                registerRequirement(expansion.getRequirementType(), expansion.getRequirementFactory());
+                LogUtils.info("Loaded requirement expansion: " + expansion.getRequirementType() + "[" + expansion.getVersion() + "]" + " by " + expansion.getAuthor());
+            }
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+            LogUtils.warn("Error occurred when creating expansion instance.", e);
+        }
     }
 }

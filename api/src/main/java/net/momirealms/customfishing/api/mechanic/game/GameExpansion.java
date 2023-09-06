@@ -8,5 +8,5 @@ public abstract class GameExpansion {
 
     public abstract String getGameType();
 
-    public abstract GameCreator getGameCreator();
+    public abstract GameFactory getGameFactory();
 }

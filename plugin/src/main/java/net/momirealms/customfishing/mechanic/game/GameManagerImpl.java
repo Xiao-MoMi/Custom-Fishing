@@ -40,8 +40,8 @@ import java.util.concurrent.TimeUnit;
 public class GameManagerImpl implements GameManager {
 
     private final CustomFishingPlugin plugin;
-    private final HashMap<String, GameCreator> gameCreatorMap;
-    private final HashMap<String, Game> gameMap;
+    private final HashMap<String, GameFactory> gameCreatorMap;
+    private final HashMap<String, GameInstance> gameMap;
     private final HashMap<String, GameConfig> gameConfigMap;
     private final String EXPANSION_FOLDER = "expansions/minigames";
 
@@ -76,11 +76,11 @@ public class GameManagerImpl implements GameManager {
     }
 
     @Override
-    public boolean registerGameType(String type, GameCreator gameCreator) {
+    public boolean registerGameType(String type, GameFactory gameFactory) {
         if (gameCreatorMap.containsKey(type))
             return false;
         else
-            gameCreatorMap.put(type, gameCreator);
+            gameCreatorMap.put(type, gameFactory);
         return true;
     }
 
@@ -91,13 +91,13 @@ public class GameManagerImpl implements GameManager {
 
     @Override
     @Nullable
-    public GameCreator getGameCreator(String type) {
+    public GameFactory getGameCreator(String type) {
         return gameCreatorMap.get(type);
     }
 
     @Override
     @Nullable
-    public Game getGame(String key) {
+    public GameInstance getGame(String key) {
         return gameMap.get(key);
     }
 
@@ -108,9 +108,9 @@ public class GameManagerImpl implements GameManager {
     }
 
     @Override
-    public Game getRandomGame() {
-        Collection<Game> collection = gameMap.values();
-        return (Game) collection.toArray()[ThreadLocalRandom.current().nextInt(collection.size())];
+    public GameInstance getRandomGame() {
+        Collection<GameInstance> collection = gameMap.values();
+        return (GameInstance) collection.toArray()[ThreadLocalRandom.current().nextInt(collection.size())];
     }
 
     @Override
@@ -164,7 +164,7 @@ public class GameManagerImpl implements GameManager {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
         for (Map.Entry<String, Object> entry : config.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection section) {
-                GameCreator creator = this.getGameCreator(section.getString("game-type"));
+                GameFactory creator = this.getGameCreator(section.getString("game-type"));
                 if (creator != null) {
                     gameMap.put(entry.getKey(), creator.setArgs(section));
                 }
@@ -489,13 +489,12 @@ public class GameManagerImpl implements GameManager {
                 }
             }
         }
-
         try {
             for (Class<? extends GameExpansion> expansionClass : classes) {
                 GameExpansion expansion = expansionClass.getDeclaredConstructor().newInstance();
                 unregisterGameType(expansion.getGameType());
-                registerGameType(expansion.getGameType(), expansion.getGameCreator());
-                LogUtils.info("Loaded expansion: " + expansion.getGameType() + " made by " + expansion.getAuthor() + "[" + expansion.getVersion() + "]");
+                registerGameType(expansion.getGameType(), expansion.getGameFactory());
+                LogUtils.info("Loaded minigame expansion: " + expansion.getGameType() + "[" + expansion.getVersion() + "]" + " by " + expansion.getAuthor() );
             }
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             LogUtils.warn("Error occurred when creating expansion instance.", e);

@@ -15,9 +15,12 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.api.mechanic.action;
+package net.momirealms.customfishing.api.mechanic.game;
 
-public interface ActionBuilder {
+import org.bukkit.entity.FishHook;
+import org.bukkit.entity.Player;
 
-    Action build(Object args, double chance);
+public interface GameInstance {
+    
+    GamingPlayer start(Player player, FishHook hook, GameSettings settings);
 }

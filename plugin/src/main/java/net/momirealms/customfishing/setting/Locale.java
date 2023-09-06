@@ -51,6 +51,10 @@ public class Locale {
     public static String MSG_Give_Item;
     public static String MSG_Never_Played;
     public static String MSG_Unsafe_Modification;
+    public static String FORMAT_Day;
+    public static String FORMAT_Hour;
+    public static String FORMAT_Minute;
+    public static String FORMAT_Second;
 
     public static void load() {
         try {

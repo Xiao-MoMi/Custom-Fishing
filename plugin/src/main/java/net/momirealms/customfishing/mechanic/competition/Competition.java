@@ -62,7 +62,7 @@ public class Competition implements FishingCompetition {
         if (Config.redisRanking) this.ranking = new RedisRankingImpl();
                             else this.ranking = new LocalRankingImpl();
         this.publicPlaceholders = new ConcurrentHashMap<>();
-        this.publicPlaceholders.put("{goal}", getCompetitionLocale(goal));
+        this.publicPlaceholders.put("{goal}", CustomFishingPlugin.get().getCompetitionManager().getCompetitionLocale(goal));
     }
 
     @Override
@@ -112,10 +112,10 @@ public class Competition implements FishingCompetition {
                 publicPlaceholders.put("{" + finalI + "_score}", Locale.MSG_No_Score);
             });
         }
-        publicPlaceholders.put("{hour}", String.valueOf(remainingTime / 3600));
-        publicPlaceholders.put("{minute}", String.valueOf((remainingTime % 3600) / 60));
-        publicPlaceholders.put("{second}", String.valueOf(remainingTime % 60));
-        publicPlaceholders.put("{time}", String.valueOf(remainingTime));
+        publicPlaceholders.put("{hour}", remainingTime < 3600 ? "" : (remainingTime / 3600) + Locale.FORMAT_Hour);
+        publicPlaceholders.put("{minute}", remainingTime < 60 ? "" : (remainingTime % 3600) / 60 + Locale.FORMAT_Minute);
+        publicPlaceholders.put("{second}", remainingTime == 0 ? "" : remainingTime % 60 + Locale.FORMAT_Second);
+        publicPlaceholders.put("{seconds}", remainingTime + Locale.FORMAT_Second);
     }
 
     @Override
@@ -195,7 +195,7 @@ public class Competition implements FishingCompetition {
     }
 
     @Override
-    public void refreshData(Player player, double score, boolean doubleScore) {
+    public void refreshData(Player player, double score) {
         // if player join for the first time, trigger join actions
         if (!hasPlayerJoined(player)) {
             Action[] actions = config.getJoinActions();
@@ -213,8 +213,8 @@ public class Competition implements FishingCompetition {
 
         // refresh data
         switch (this.goal) {
-            case CATCH_AMOUNT -> ranking.refreshData(player.getName(), doubleScore ? 2 : 1);
-            case TOTAL_SIZE, TOTAL_SCORE -> ranking.refreshData(player.getName(), doubleScore ? 2 * score : score);
+            case CATCH_AMOUNT -> ranking.refreshData(player.getName(), 1);
+            case TOTAL_SIZE, TOTAL_SCORE -> ranking.refreshData(player.getName(), score);
             case MAX_SIZE -> {
                 if (score > ranking.getPlayerScore(player.getName())) {
                     ranking.setData(player.getName(), score);
@@ -258,25 +258,13 @@ public class Competition implements FishingCompetition {
         return ranking;
     }
 
-    public ConcurrentHashMap<String, String> getPublicPlaceholders() {
+    @Override
+    public ConcurrentHashMap<String, String> getCachedPlaceholders() {
         return publicPlaceholders;
     }
 
-    private String getCompetitionLocale(CompetitionGoal goal) {
-        switch (goal) {
-            case MAX_SIZE -> {
-                return Locale.MSG_Max_Size;
-            }
-            case CATCH_AMOUNT -> {
-                return Locale.MSG_Catch_Amount;
-            }
-            case TOTAL_SCORE -> {
-                return Locale.MSG_Total_Score;
-            }
-            case TOTAL_SIZE -> {
-                return Locale.MSG_Total_Size;
-            }
-        }
-        return "";
+    @Override
+    public String getCachedPlaceholder(String papi) {
+        return publicPlaceholders.get(papi);
     }
 }

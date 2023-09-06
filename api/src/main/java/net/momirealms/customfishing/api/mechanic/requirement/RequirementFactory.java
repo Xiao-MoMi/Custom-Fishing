@@ -15,7 +15,17 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.compatibility.papi;
+package net.momirealms.customfishing.api.mechanic.requirement;
 
-public class MiniPlaceholdersHook {
+import net.momirealms.customfishing.api.mechanic.action.Action;
+
+import java.util.List;
+
+public interface RequirementFactory {
+
+    Requirement build(Object args, List<Action> notMetActions, boolean checkAction);
+
+    default Requirement build(Object args) {
+        return build(args, null, false);
+    }
 }

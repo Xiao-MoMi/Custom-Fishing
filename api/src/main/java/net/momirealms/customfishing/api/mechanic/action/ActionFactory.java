@@ -15,17 +15,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.api.mechanic.requirement;
+package net.momirealms.customfishing.api.mechanic.action;
 
-import net.momirealms.customfishing.api.mechanic.action.Action;
+public interface ActionFactory {
 
-import java.util.List;
-
-public interface RequirementBuilder {
-
-    Requirement build(Object args, List<Action> notMetActions, boolean checkAction);
-
-    default Requirement build(Object args) {
-        return build(args, null, false);
-    }
+    Action build(Object args, double chance);
 }
