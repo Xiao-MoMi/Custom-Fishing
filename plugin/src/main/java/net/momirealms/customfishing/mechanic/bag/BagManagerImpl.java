@@ -22,7 +22,6 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.user.OfflineUser;
 import net.momirealms.customfishing.api.manager.BagManager;
 import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
-import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.setting.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -61,6 +60,7 @@ public class BagManagerImpl implements BagManager, Listener {
 
     public void disable() {
         unload();
+        plugin.getStorageManager().getDataSource().savePlayersData(tempEditMap.values(), true);
     }
 
     @Override

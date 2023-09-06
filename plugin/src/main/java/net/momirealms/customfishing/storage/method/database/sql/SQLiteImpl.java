@@ -134,7 +134,7 @@ public class SQLiteImpl extends AbstractSQLDatabase {
     }
 
     @Override
-    public void saveOnlinePlayersData(Collection<OnlineUser> users, boolean unlock) {
+    public void savePlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
         String sql = String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data"));
         try (Connection connection = getConnection()) {
             connection.setAutoCommit(false);

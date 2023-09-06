@@ -27,6 +27,7 @@ import com.mongodb.client.result.InsertOneResult;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.PlayerData;
 import net.momirealms.customfishing.api.data.StorageType;
+import net.momirealms.customfishing.api.data.user.OfflineUser;
 import net.momirealms.customfishing.api.data.user.OnlineUser;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.storage.method.AbstractStorage;
@@ -152,7 +153,7 @@ public class MongoDBImpl extends AbstractStorage {
     }
 
     @Override
-    public void saveOnlinePlayersData(Collection<OnlineUser> users, boolean unlock) {
+    public void savePlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
         MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
         try {
             collection.insertMany(users.stream().map(it -> new Document()

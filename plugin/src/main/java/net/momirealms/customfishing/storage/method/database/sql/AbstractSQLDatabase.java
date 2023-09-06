@@ -19,6 +19,7 @@ package net.momirealms.customfishing.storage.method.database.sql;
 
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.PlayerData;
+import net.momirealms.customfishing.api.data.user.OfflineUser;
 import net.momirealms.customfishing.api.data.user.OnlineUser;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.setting.Config;
@@ -137,12 +138,12 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
     }
 
     @Override
-    public void saveOnlinePlayersData(Collection<OnlineUser> users, boolean unlock) {
+    public void savePlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
         String sql = String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data"));
         try (Connection connection = getConnection()) {
             connection.setAutoCommit(false);
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                for (OnlineUser user : users) {
+                for (OfflineUser user : users) {
                     statement.setInt(1, unlock ? 0 : getCurrentSeconds());
                     statement.setBlob(2, new ByteArrayInputStream(plugin.getStorageManager().toBytes(user.getPlayerData())));
                     statement.setString(3, user.getUUID().toString());

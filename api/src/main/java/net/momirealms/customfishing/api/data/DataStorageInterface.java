@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.api.data;
 
+import net.momirealms.customfishing.api.data.user.OfflineUser;
 import net.momirealms.customfishing.api.data.user.OnlineUser;
 
 import java.util.Collection;
@@ -35,5 +36,5 @@ public interface DataStorageInterface {
 
     CompletableFuture<Boolean> savePlayerData(UUID uuid, PlayerData playerData, boolean unlock);
 
-    void saveOnlinePlayersData(Collection<OnlineUser> users, boolean unlock);
+    void savePlayersData(Collection<? extends OfflineUser> users, boolean unlock);
 }

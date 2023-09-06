@@ -113,7 +113,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
             this.timerSaveTask = this.plugin.getScheduler().runTaskAsyncTimer(
                     () -> {
                         long time1 = System.currentTimeMillis();
-                        this.dataSource.saveOnlinePlayersData(this.onlineUserMap.values(), false);
+                        this.dataSource.savePlayersData(this.onlineUserMap.values(), false);
                         LogUtils.info("Data Saved for online players. Took " + (System.currentTimeMillis() - time1) + "ms.");
                     },
                     Config.dataSaveInterval,
@@ -124,7 +124,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
 
     public void disable() {
         HandlerList.unregisterAll(this);
-        this.dataSource.saveOnlinePlayersData(onlineUserMap.values(), true);
+        this.dataSource.savePlayersData(onlineUserMap.values(), true);
         this.onlineUserMap.clear();
         if (this.dataSource != null)
             this.dataSource.disable();
