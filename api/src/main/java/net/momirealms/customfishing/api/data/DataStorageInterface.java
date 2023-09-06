@@ -33,7 +33,7 @@ public interface DataStorageInterface {
 
     CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean force);
 
-    CompletableFuture<Boolean> setPlayerData(UUID uuid, PlayerData playerData, boolean unlock);
+    CompletableFuture<Boolean> savePlayerData(UUID uuid, PlayerData playerData, boolean unlock);
 
-    void setPlayersData(Collection<OnlineUser> users, boolean unlock);
+    void saveOnlinePlayersData(Collection<OnlineUser> users, boolean unlock);
 }

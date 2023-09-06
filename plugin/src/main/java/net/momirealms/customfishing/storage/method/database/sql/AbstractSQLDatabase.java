@@ -91,22 +91,21 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
             if (rs.next()) {
                 int lock = rs.getInt(2);
                 if (!force && (lock != 0 && getCurrentSeconds() - Config.dataSaveInterval <= lock)) {
-                    statement.close();
-                    rs.close();
-                    connection.close();
-                    future.complete(Optional.empty());
+                    statement.close(); rs.close(); connection.close();
+                    future.complete(Optional.of(PlayerData.LOCKED));
                     return;
                 }
                 final Blob blob = rs.getBlob("data");
                 final byte[] dataByteArray = blob.getBytes(1, (int) blob.length());
                 blob.free();
+                lockPlayerData(uuid);
                 future.complete(Optional.of(plugin.getStorageManager().fromBytes(dataByteArray)));
             } else if (Bukkit.getPlayer(uuid) != null) {
                 var data = PlayerData.empty();
                 insertPlayerData(uuid, data);
                 future.complete(Optional.of(data));
             } else {
-                future.complete(Optional.of(PlayerData.NEVER_PLAYED));
+                future.complete(Optional.empty());
             }
         } catch (SQLException e) {
             LogUtils.warn("Failed to get " + uuid + "'s data.", e);
@@ -117,7 +116,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
     }
 
     @Override
-    public CompletableFuture<Boolean> setPlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
+    public CompletableFuture<Boolean> savePlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         var future = new CompletableFuture<Boolean>();
         plugin.getScheduler().runTaskAsync(() -> {
         try (
@@ -138,7 +137,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
     }
 
     @Override
-    public void setPlayersData(Collection<OnlineUser> users, boolean unlock) {
+    public void saveOnlinePlayersData(Collection<OnlineUser> users, boolean unlock) {
         String sql = String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data"));
         try (Connection connection = getConnection()) {
             connection.setAutoCommit(false);
@@ -174,9 +173,23 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         }
     }
 
+    public void lockPlayerData(UUID uuid) {
+        try (
+            Connection connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_LOCK_BY_UUID, getTableName("data")))
+        ) {
+            statement.setInt(1, getCurrentSeconds());
+            statement.setString(2, uuid.toString());
+            statement.execute();
+        } catch (SQLException e) {
+            LogUtils.warn("Failed to lock " + uuid + "'s data.", e);
+        }
+    }
+
     public static class SqlConstants {
         public static final String SQL_SELECT_BY_UUID = "SELECT * FROM `%s` WHERE `uuid` = ?";
         public static final String SQL_UPDATE_BY_UUID = "UPDATE `%s` SET `lock` = ?, `data` = ? WHERE `uuid` = ?";
+        public static final String SQL_LOCK_BY_UUID = "UPDATE `%s` SET `lock` = ? WHERE `uuid` = ?";
         public static final String SQL_INSERT_DATA_BY_UUID = "INSERT INTO `%s`(`uuid`, `lock`, `data`) VALUES(?, ?, ?)";
     }
 }

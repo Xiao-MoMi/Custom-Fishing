@@ -268,7 +268,7 @@ public class ActionManagerImpl implements ActionManager {
             int delay;
             if (args instanceof ConfigurationSection section) {
                 delay = section.getInt("delay", 1);
-                ConfigurationSection actionSection = section.getConfigurationSection("action");
+                ConfigurationSection actionSection = section.getConfigurationSection("actions");
                 if (actionSection != null) {
                     for (Map.Entry<String, Object> entry : actionSection.getValues(false).entrySet()) {
                         if (entry.getValue() instanceof ConfigurationSection innerSection) {

@@ -47,9 +47,9 @@ public abstract class AbstractStorage implements DataStorageInterface {
     }
 
     @Override
-    public void setPlayersData(Collection<OnlineUser> users, boolean unlock) {
+    public void saveOnlinePlayersData(Collection<OnlineUser> users, boolean unlock) {
         for (OnlineUser user : users) {
-            this.setPlayerData(user.getUUID(), user.getPlayerData(), unlock);
+            this.savePlayerData(user.getUUID(), user.getPlayerData(), unlock);
         }
     }
 }

@@ -53,6 +53,8 @@ public interface StorageManager {
      */
     CompletableFuture<Optional<OfflineUser>> getOfflineUser(UUID uuid, boolean force);
 
+    CompletableFuture<Boolean> saveUserData(OfflineUser offlineUser, boolean unlock);
+
     /**
      * Get all the players in servers that connected to the same redis server
      * @return amount

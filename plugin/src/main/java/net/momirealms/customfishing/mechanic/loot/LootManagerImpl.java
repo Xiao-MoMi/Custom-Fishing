@@ -134,8 +134,8 @@ public class LootManagerImpl implements LootManager {
                 .showInFinder(section.getBoolean("show-in-fishfinder", showInFinder))
                 .gameConfig(section.getString("game-group", gameGroup))
                 .nick(section.getString("nick", section.getString("display.name", key)))
-                .addActions(getActionMap(section.getConfigurationSection("action")))
-                .addTimesActions(getTimesActionMap(section.getConfigurationSection("action.success-times")))
+                .addActions(getActionMap(section.getConfigurationSection("events")))
+                .addTimesActions(getTimesActionMap(section.getConfigurationSection("events.success-times")))
                 .build();
     }
 

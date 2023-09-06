@@ -17,6 +17,8 @@
 
 package net.momirealms.customfishing.api.manager;
 
+import net.momirealms.customfishing.api.data.user.OfflineUser;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import java.util.UUID;
@@ -25,4 +27,6 @@ public interface BagManager {
     boolean isBagEnabled();
 
     Inventory getOnlineBagInventory(UUID uuid);
+
+    void editOfflinePlayerBag(Player admin, OfflineUser userData);
 }

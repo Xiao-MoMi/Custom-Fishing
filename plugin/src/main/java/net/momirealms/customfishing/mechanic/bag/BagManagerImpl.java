@@ -19,23 +19,31 @@ package net.momirealms.customfishing.mechanic.bag;
 
 import net.momirealms.customfishing.CustomFishingPluginImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
+import net.momirealms.customfishing.api.data.user.OfflineUser;
 import net.momirealms.customfishing.api.manager.BagManager;
 import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.setting.Config;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 
+import java.util.HashMap;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class BagManagerImpl implements BagManager {
+public class BagManagerImpl implements BagManager, Listener {
 
     private final CustomFishingPlugin plugin;
-    private final ConcurrentHashMap<UUID, FishingBagHolder> bagMap;
+    private final HashMap<UUID, OfflineUser> tempEditMap;
 
     public BagManagerImpl(CustomFishingPluginImpl plugin) {
         this.plugin = plugin;
-        this.bagMap = new ConcurrentHashMap<>();
+        this.tempEditMap = new HashMap<>();
     }
 
     @Override
@@ -44,11 +52,11 @@ public class BagManagerImpl implements BagManager {
     }
 
     public void load() {
-
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     public void unload() {
-
+        HandlerList.unregisterAll(this);
     }
 
     public void disable() {
@@ -59,9 +67,33 @@ public class BagManagerImpl implements BagManager {
     public Inventory getOnlineBagInventory(UUID uuid) {
         var onlinePlayer = plugin.getStorageManager().getOnlineUser(uuid);
         if (onlinePlayer == null) {
-            LogUtils.warn("Player " + uuid + "'s bag data is not loaded.");
             return null;
         }
         return onlinePlayer.getHolder().getInventory();
+    }
+
+    @Override
+    public void editOfflinePlayerBag(Player admin, OfflineUser userData) {
+        this.tempEditMap.put(admin.getUniqueId(), userData);
+        admin.openInventory(userData.getHolder().getInventory());
+    }
+
+    @EventHandler
+    public void onInvClose(InventoryCloseEvent event) {
+        if (!(event.getInventory().getHolder() instanceof FishingBagHolder))
+            return;
+        final Player viewer = (Player) event.getPlayer();
+        OfflineUser offlineUser = tempEditMap.remove(viewer.getUniqueId());
+        if (offlineUser == null)
+            return;
+        plugin.getStorageManager().saveUserData(offlineUser, true);
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        OfflineUser offlineUser = tempEditMap.remove(event.getPlayer().getUniqueId());
+        if (offlineUser == null)
+            return;
+        plugin.getStorageManager().saveUserData(offlineUser, true);
     }
 }

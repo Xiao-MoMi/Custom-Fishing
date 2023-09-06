@@ -43,7 +43,7 @@ public class OfflineUserImpl implements OfflineUser {
     private final FishingBagHolder holder;
     private final EarningData earningData;
     private final Statistics statistics;
-    public static OfflineUserImpl NEVER_PLAYED_USER = new OfflineUserImpl(UUID.randomUUID(), "", PlayerData.empty());
+    public static OfflineUserImpl LOCKED_USER = new OfflineUserImpl(UUID.randomUUID(), "", PlayerData.empty());
 
     public OfflineUserImpl(UUID uuid, String name, PlayerData playerData) {
         this.name = name;

@@ -113,7 +113,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
             this.timerSaveTask = this.plugin.getScheduler().runTaskAsyncTimer(
                     () -> {
                         long time1 = System.currentTimeMillis();
-                        this.dataSource.setPlayersData(this.onlineUserMap.values(), false);
+                        this.dataSource.saveOnlinePlayersData(this.onlineUserMap.values(), false);
                         LogUtils.info("Data Saved for online players. Took " + (System.currentTimeMillis() - time1) + "ms.");
                     },
                     Config.dataSaveInterval,
@@ -124,7 +124,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
 
     public void disable() {
         HandlerList.unregisterAll(this);
-        this.dataSource.setPlayersData(onlineUserMap.values(), true);
+        this.dataSource.saveOnlinePlayersData(onlineUserMap.values(), true);
         this.onlineUserMap.clear();
         if (this.dataSource != null)
             this.dataSource.disable();
@@ -151,13 +151,18 @@ public class StorageManagerImpl implements StorageManager, Listener {
                 return CompletableFuture.completedFuture(Optional.empty());
             }
             PlayerData data = optionalUser.get();
-            if (data == PlayerData.NEVER_PLAYED) {
-                return CompletableFuture.completedFuture(Optional.of(OfflineUserImpl.NEVER_PLAYED_USER));
+            if (data == PlayerData.LOCKED) {
+                return CompletableFuture.completedFuture(Optional.of(OfflineUserImpl.LOCKED_USER));
             } else {
-                OfflineUserImpl offlineUser = new OfflineUserImpl(uuid, data.getName(), data);
+                OfflineUser offlineUser = new OfflineUserImpl(uuid, data.getName(), data);
                 return CompletableFuture.completedFuture(Optional.of(offlineUser));
             }
         });
+    }
+
+    @Override
+    public CompletableFuture<Boolean> saveUserData(OfflineUser offlineUser, boolean unlock) {
+        return dataSource.savePlayerData(offlineUser.getUUID(), offlineUser.getPlayerData(), unlock);
     }
 
     @Override
@@ -195,13 +200,13 @@ public class StorageManagerImpl implements StorageManager, Listener {
 
         if (hasRedis) {
             redisManager.setChangeServer(uuid).thenRun(
-                    () -> redisManager.setPlayerData(uuid, data, true).thenRun(
-                            () -> dataSource.setPlayerData(uuid, data, true).thenAccept(
+                    () -> redisManager.savePlayerData(uuid, data, true).thenRun(
+                            () -> dataSource.savePlayerData(uuid, data, true).thenAccept(
                                     result -> {
                                       if (result) locked.remove(uuid);
             })));
         } else {
-            dataSource.setPlayerData(uuid, data, true).thenAccept(
+            dataSource.savePlayerData(uuid, data, true).thenAccept(
                     result -> {
                         if (result) locked.remove(uuid);
                     });
@@ -210,8 +215,8 @@ public class StorageManagerImpl implements StorageManager, Listener {
 
     public void redisReadingData(UUID uuid) {
         // delay 0.5s for another server to insert the key
-        plugin.getScheduler().runTaskAsyncLater(() -> redisManager.getChangeServer(uuid).thenAccept(result -> {
-           if (!result) {
+        plugin.getScheduler().runTaskAsyncLater(() -> redisManager.getChangeServer(uuid).thenAccept(changeServer -> {
+           if (!changeServer) {
                waitForDataLockRelease(uuid, 3);
            } else {
                new RedisGetDataTask(uuid);
@@ -260,11 +265,14 @@ public class StorageManagerImpl implements StorageManager, Listener {
         if (player == null || !player.isOnline() || times > 3)
             return;
         this.dataSource.getPlayerData(uuid, false).thenAccept(optionalData -> {
-           if (optionalData.isEmpty()) {
-               waitForDataLockRelease(uuid, times + 1);
-           } else {
-               putDataInCache(player, optionalData.get());
-           }
+            // should not be empty
+            if (optionalData.isEmpty())
+                return;
+            if (optionalData.get() == PlayerData.LOCKED) {
+                waitForDataLockRelease(uuid, times + 1);
+            } else {
+                putDataInCache(player, optionalData.get());
+            }
         });
         }, 1, TimeUnit.SECONDS);
     }

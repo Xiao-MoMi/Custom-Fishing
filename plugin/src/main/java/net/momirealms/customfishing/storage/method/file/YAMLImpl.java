@@ -56,9 +56,9 @@ public class YAMLImpl extends AbstractStorage {
         File dataFile = getPlayerDataFile(uuid);
         if (!dataFile.exists()) {
             if (Bukkit.getPlayer(uuid) != null) {
-                return CompletableFuture.completedFuture(Optional.of(PlayerData.empty()));
+                return CompletableFuture.completedFuture(Optional.of(PlayerData.LOCKED));
             } else {
-                return CompletableFuture.completedFuture(Optional.of(PlayerData.NEVER_PLAYED));
+                return CompletableFuture.completedFuture(Optional.of(PlayerData.empty()));
             }
         }
         YamlConfiguration data = ConfigUtils.readData(dataFile);
@@ -72,7 +72,7 @@ public class YAMLImpl extends AbstractStorage {
     }
 
     @Override
-    public CompletableFuture<Boolean> setPlayerData(UUID uuid, PlayerData playerData, boolean ignore) {
+    public CompletableFuture<Boolean> savePlayerData(UUID uuid, PlayerData playerData, boolean ignore) {
         YamlConfiguration data = new YamlConfiguration();
         data.set("name", playerData.getName());
         data.set("bag", playerData.getBagData().serialized);

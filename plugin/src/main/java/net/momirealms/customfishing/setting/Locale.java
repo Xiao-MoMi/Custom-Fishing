@@ -55,6 +55,7 @@ public class Locale {
     public static String FORMAT_Hour;
     public static String FORMAT_Minute;
     public static String FORMAT_Second;
+    public static String MSG_Data_Not_Loaded;
 
     public static void load() {
         try {
@@ -99,6 +100,7 @@ public class Locale {
             MSG_Give_Item = msgSection.getString("give-item");
             MSG_Never_Played = msgSection.getString("never-played");
             MSG_Unsafe_Modification = msgSection.getString("unsafe-modification");
+            MSG_Data_Not_Loaded = msgSection.getString("data-not-loaded");
         }
     }
 }

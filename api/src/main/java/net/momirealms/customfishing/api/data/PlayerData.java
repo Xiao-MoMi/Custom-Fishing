@@ -32,7 +32,7 @@ public class PlayerData {
     @SerializedName("trade")
     protected EarningData earningData;
 
-    public static PlayerData NEVER_PLAYED = empty();
+    public static PlayerData LOCKED = empty();
 
     public static PlayerData empty() {
         return new Builder()

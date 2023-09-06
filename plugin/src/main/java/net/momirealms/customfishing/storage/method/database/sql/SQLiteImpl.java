@@ -90,20 +90,19 @@ public class SQLiteImpl extends AbstractSQLDatabase {
             if (rs.next()) {
                 int lock = rs.getInt(2);
                 if (!force && (lock != 0 && getCurrentSeconds() - Config.dataSaveInterval <= lock)) {
-                    statement.close();
-                    rs.close();
-                    connection.close();
-                    future.complete(Optional.empty());
+                    statement.close(); rs.close(); connection.close();
+                    future.complete(Optional.of(PlayerData.LOCKED));
                     return;
                 }
                 final byte[] dataByteArray = rs.getBytes("data");
+                lockPlayerData(uuid);
                 future.complete(Optional.of(plugin.getStorageManager().fromBytes(dataByteArray)));
             } else if (Bukkit.getPlayer(uuid) != null) {
                 var data = PlayerData.empty();
                 insertPlayerData(uuid, data);
                 future.complete(Optional.of(data));
             } else {
-                future.complete(Optional.of(PlayerData.NEVER_PLAYED));
+                future.complete(Optional.empty());
             }
         } catch (SQLException e) {
             LogUtils.warn("Failed to get " + uuid + "'s data.", e);
@@ -114,7 +113,7 @@ public class SQLiteImpl extends AbstractSQLDatabase {
     }
 
     @Override
-    public CompletableFuture<Boolean> setPlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
+    public CompletableFuture<Boolean> savePlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         var future = new CompletableFuture<Boolean>();
         plugin.getScheduler().runTaskAsync(() -> {
         try (
@@ -135,7 +134,7 @@ public class SQLiteImpl extends AbstractSQLDatabase {
     }
 
     @Override
-    public void setPlayersData(Collection<OnlineUser> users, boolean unlock) {
+    public void saveOnlinePlayersData(Collection<OnlineUser> users, boolean unlock) {
         String sql = String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data"));
         try (Connection connection = getConnection()) {
             connection.setAutoCommit(false);

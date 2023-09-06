@@ -28,7 +28,7 @@ mechanics:
     disable-game: false
     instant-game: false
     prevent-grabbing: false
-    action:
+    events:
       success:
         title_action:
           type: random-title

@@ -112,17 +112,17 @@ public class MongoDBImpl extends AbstractStorage {
     public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean force) {
         var future = new CompletableFuture<Optional<PlayerData>>();
         plugin.getScheduler().runTaskAsync(() -> {
-        MongoCollection<Document> collection = database.getCollection("movies");
+        MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
         Document doc = collection.find(Filters.eq("uuid", uuid)).first();
         if (doc == null) {
             if (Bukkit.getPlayer(uuid) != null) {
                 future.complete(Optional.of(PlayerData.empty()));
             } else {
-                future.complete(Optional.of(PlayerData.NEVER_PLAYED));
+                future.complete(Optional.empty());
             }
         } else {
             if (!force && doc.getInteger("lock") != 0) {
-                future.complete(Optional.empty());
+                future.complete(Optional.of(PlayerData.LOCKED));
                 return;
             }
             Binary binary = (Binary) doc.get("data");
@@ -133,7 +133,7 @@ public class MongoDBImpl extends AbstractStorage {
     }
 
     @Override
-    public CompletableFuture<Boolean> setPlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
+    public CompletableFuture<Boolean> savePlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         var future = new CompletableFuture<Boolean>();
         plugin.getScheduler().runTaskAsync(() -> {
         MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
@@ -152,7 +152,7 @@ public class MongoDBImpl extends AbstractStorage {
     }
 
     @Override
-    public void setPlayersData(Collection<OnlineUser> users, boolean unlock) {
+    public void saveOnlinePlayersData(Collection<OnlineUser> users, boolean unlock) {
         MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
         try {
             collection.insertMany(users.stream().map(it -> new Document()

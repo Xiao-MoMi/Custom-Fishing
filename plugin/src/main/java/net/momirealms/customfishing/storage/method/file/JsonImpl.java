@@ -55,13 +55,13 @@ public class JsonImpl extends AbstractStorage {
         } else if (Bukkit.getPlayer(uuid) != null) {
             playerData = PlayerData.empty();
         } else {
-            playerData = PlayerData.NEVER_PLAYED;
+            playerData = null;
         }
-        return CompletableFuture.completedFuture(Optional.of(playerData));
+        return CompletableFuture.completedFuture(Optional.ofNullable(playerData));
     }
 
     @Override
-    public CompletableFuture<Boolean> setPlayerData(UUID uuid, PlayerData playerData, boolean ignore) {
+    public CompletableFuture<Boolean> savePlayerData(UUID uuid, PlayerData playerData, boolean ignore) {
         this.saveToJsonFile(playerData, getPlayerDataFile(uuid));
         return CompletableFuture.completedFuture(true);
     }
