@@ -19,7 +19,6 @@ package net.momirealms.customfishing.api.mechanic.effect;
 
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.mechanic.loot.Modifier;
-import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 
 import java.util.List;
 

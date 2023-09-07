@@ -19,10 +19,13 @@ package net.momirealms.customfishing.mechanic.effect;
 
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Key;
+import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.manager.EffectManager;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
+import net.momirealms.customfishing.api.mechanic.loot.Modifier;
+import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
@@ -111,7 +114,8 @@ public class EffectManagerImpl implements EffectManager {
     public Effect getEffectFromSection(ConfigurationSection section) {
         if (section == null) return getInitialEffect();
         return new FishingEffect.Builder()
-                .lootWeightModifier(ConfigUtils.getModifiers(section.getStringList("weight")))
+                .lootWeightModifier(ConfigUtils.getModifiers(section.getStringList("weight-single")))
+                .lootWeightModifier(getGroupModifiers(section.getStringList("weight-group")))
                 .timeModifier(section.getDouble("hook-time", 1))
                 .difficultyModifier(section.getDouble("difficulty", 0))
                 .multipleLootChance(section.getDouble("multiple-loot", 0))
@@ -139,5 +143,22 @@ public class EffectManagerImpl implements EffectManager {
 
     public void disable() {
         this.effectMap.clear();
+    }
+
+    private List<Pair<String, Modifier>> getGroupModifiers(List<String> modList) {
+        List<Pair<String, Modifier>> result = new ArrayList<>();
+        for (String group : modList) {
+            String[] split = group.split(":",2);
+            String key = split[0];
+            List<String> members = plugin.getLootManager().getLootGroup(key);
+            if (members == null) {
+                LogUtils.warn("Group " + key + " doesn't include any loot. The effect would not take effect.");
+                return result;
+            }
+            for (String loot : members) {
+                result.add(Pair.of(loot, ConfigUtils.getModifier(split[1])));
+            }
+        }
+        return result;
     }
 }

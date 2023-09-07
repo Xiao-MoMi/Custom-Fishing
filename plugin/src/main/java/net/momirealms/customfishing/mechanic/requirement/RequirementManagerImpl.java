@@ -25,7 +25,6 @@ import net.momirealms.customfishing.api.integration.SeasonInterface;
 import net.momirealms.customfishing.api.manager.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
-import net.momirealms.customfishing.api.mechanic.game.GameExpansion;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementExpansion;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementFactory;

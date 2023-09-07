@@ -20,7 +20,6 @@ package net.momirealms.customfishing.storage.method;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.DataStorageInterface;
 import net.momirealms.customfishing.api.data.user.OfflineUser;
-import net.momirealms.customfishing.api.data.user.OnlineUser;
 
 import java.time.Instant;
 import java.util.Collection;

@@ -482,7 +482,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 return;
             }
 
-            Action[] globalActions = LootManagerImpl.globalLootProperties.getActions(ActionTrigger.FAILURE);
+            Action[] globalActions = LootManagerImpl.GlobalSetting.globalLootProperties.getActions(ActionTrigger.FAILURE);
             if (globalActions != null)
                 for (Action action : globalActions)
                     action.trigger(fishingPreparation);
@@ -579,7 +579,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
             fishingPreparation.insertArg("{score}","-1");
         }
 
-        Action[] globalActions = LootManagerImpl.globalLootProperties.getActions(ActionTrigger.SUCCESS);
+        Action[] globalActions = LootManagerImpl.GlobalSetting.globalLootProperties.getActions(ActionTrigger.SUCCESS);
         if (globalActions != null)
             for (Action action : globalActions)
                 action.trigger(fishingPreparation);

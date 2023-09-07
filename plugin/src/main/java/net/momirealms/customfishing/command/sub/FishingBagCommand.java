@@ -18,9 +18,7 @@
 package net.momirealms.customfishing.command.sub;
 
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
 import dev.jorel.commandapi.arguments.PlayerArgument;
-import dev.jorel.commandapi.arguments.StringArgument;
 import dev.jorel.commandapi.arguments.UUIDArgument;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
@@ -28,11 +26,9 @@ import net.momirealms.customfishing.api.data.user.OfflineUser;
 import net.momirealms.customfishing.setting.Locale;
 import net.momirealms.customfishing.storage.user.OfflineUserImpl;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public class FishingBagCommand {

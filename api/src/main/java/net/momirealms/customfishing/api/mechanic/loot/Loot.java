@@ -71,11 +71,15 @@ public interface Loot {
      */
     boolean disableStats();
 
+    String getLootGroup();
+
     /**
      * Get the game config
      * @return game config
      */
     GameConfig getGameConfig();
+
+    String getGameConfigKey();
 
     /**
      * get actions triggered by certain events

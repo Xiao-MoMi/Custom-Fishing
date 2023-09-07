@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.api.data;
 
 import net.momirealms.customfishing.api.data.user.OfflineUser;
-import net.momirealms.customfishing.api.data.user.OnlineUser;
 
 import java.util.Collection;
 import java.util.Optional;

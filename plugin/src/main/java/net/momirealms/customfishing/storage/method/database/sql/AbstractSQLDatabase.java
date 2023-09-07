@@ -20,7 +20,6 @@ package net.momirealms.customfishing.storage.method.database.sql;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.PlayerData;
 import net.momirealms.customfishing.api.data.user.OfflineUser;
-import net.momirealms.customfishing.api.data.user.OnlineUser;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.setting.Config;
 import net.momirealms.customfishing.storage.method.AbstractStorage;

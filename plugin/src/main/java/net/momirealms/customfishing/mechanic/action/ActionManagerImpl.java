@@ -21,10 +21,12 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
+import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.manager.ActionManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionExpansion;
 import net.momirealms.customfishing.api.mechanic.action.ActionFactory;
+import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.util.ClassUtils;
@@ -69,6 +71,8 @@ public class ActionManagerImpl implements ActionManager {
         this.registerActionBarAction();
         this.registerCloseInvAction();
         this.registerDelayedAction();
+        this.registerConditionalAction();
+        this.registerPriorityAction();
     }
 
     public void load() {
@@ -369,6 +373,64 @@ public class ActionManagerImpl implements ActionManager {
                 };
             }
             LogUtils.warn("Illegal value format found at action: sound");
+            return null;
+        });
+    }
+
+    private void registerConditionalAction() {
+        registerAction("conditional", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                Action[] actions = getActions(section.getConfigurationSection("actions"));
+                Requirement[] requirements = plugin.getRequirementManager().getRequirements(section.getConfigurationSection("conditions"), false);
+                return condition -> {
+                    if (Math.random() > chance) return;
+                    if (requirements != null)
+                        for (Requirement requirement : requirements) {
+                            if (!requirement.isConditionMet(condition)) {
+                                return;
+                            }
+                        }
+                    if (actions != null)
+                        for (Action action : actions) {
+                            action.trigger(condition);
+                        }
+                };
+            }
+            LogUtils.warn("Illegal value format found at action: conditional");
+            return null;
+        });
+    }
+
+    private void registerPriorityAction() {
+        registerAction("priority", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                List<Pair<Requirement[], Action[]>> conditionActionPairList = new ArrayList<>();
+                for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
+                    if (entry.getValue() instanceof ConfigurationSection inner) {
+                        Action[] actions = getActions(inner.getConfigurationSection("actions"));
+                        Requirement[] requirements = plugin.getRequirementManager().getRequirements(inner.getConfigurationSection("conditions"), false);
+                        conditionActionPairList.add(Pair.of(requirements, actions));
+                    }
+                }
+                return condition -> {
+                    if (Math.random() > chance) return;
+                    outer:
+                        for (Pair<Requirement[], Action[]> pair : conditionActionPairList) {
+                            if (pair.left() != null)
+                                for (Requirement requirement : pair.left()) {
+                                    if (!requirement.isConditionMet(condition)) {
+                                        continue outer;
+                                    }
+                                }
+                            if (pair.right() != null)
+                                for (Action action : pair.right()) {
+                                    action.trigger(condition);
+                                }
+                            return;
+                        }
+                };
+            }
+            LogUtils.warn("Illegal value format found at action: conditional");
             return null;
         });
     }

@@ -20,6 +20,12 @@ package net.momirealms.customfishing.api.manager;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public interface LootManager {
+    Loot getGlobalLootProperties();
+
+    @Nullable List<String> getLootGroup(String key);
+
     @Nullable Loot getLoot(String key);
 }
