@@ -26,10 +26,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -43,6 +41,7 @@ public class PlaceholderManagerImpl implements PlaceholderManager {
     private final HashMap<String, String> customPlaceholderMap;
     private CompetitionPapi competitionPapi;
     private StatisticsPapi statisticsPapi;
+    private final ConcurrentHashMap<UUID, CachedPlaceholder> cachedPlaceholders;
 
     public PlaceholderManagerImpl(CustomFishingPlugin plugin) {
         instance = this;
@@ -50,6 +49,7 @@ public class PlaceholderManagerImpl implements PlaceholderManager {
         this.hasPapi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
         this.pattern = Pattern.compile("\\{[^{}]+}");
         this.customPlaceholderMap = new HashMap<>();
+        this.cachedPlaceholders = new ConcurrentHashMap<>();
         if (this.hasPapi) {
             competitionPapi = new CompetitionPapi(plugin);
             statisticsPapi = new StatisticsPapi(plugin);
@@ -116,7 +116,10 @@ public class PlaceholderManagerImpl implements PlaceholderManager {
     public String parse(@Nullable OfflinePlayer player, String text, Map<String, String> placeholders) {
         var list = detectPlaceholders(text);
         for (String papi : list) {
-            String replacer = placeholders.get(papi);
+            String replacer = null;
+            if (placeholders != null) {
+                replacer = placeholders.get(papi);
+            }
             if (replacer == null) {
                 String custom = customPlaceholderMap.get(papi);
                 if (custom != null) {
@@ -131,6 +134,19 @@ public class PlaceholderManagerImpl implements PlaceholderManager {
     }
 
     @Override
+    public String parseCacheable(Player player, String text) {
+        var list = detectPlaceholders(text);
+        CachedPlaceholder cachedPlaceholder = cachedPlaceholders.computeIfAbsent(player.getUniqueId(), k -> new CachedPlaceholder());
+        for (String papi : list) {
+            String custom = customPlaceholderMap.get(papi);
+            if (custom != null) {
+                text = text.replace(papi, cachedPlaceholder.get(player, custom));
+            }
+        }
+        return text;
+    }
+
+    @Override
     public List<String> parse(@Nullable OfflinePlayer player, List<String> list, Map<String, String> replacements) {
         return list.stream()
                 .map(s -> parse(player, s, replacements))
@@ -139,5 +155,37 @@ public class PlaceholderManagerImpl implements PlaceholderManager {
 
     public static PlaceholderManagerImpl getInstance() {
         return instance;
+    }
+
+    public boolean hasPapi() {
+        return hasPapi;
+    }
+
+    public static class CachedPlaceholder {
+
+        private long lastUpdated;
+        private final HashMap<String, String> cached;
+
+        public CachedPlaceholder() {
+            this.lastUpdated = 0;
+            this.cached = new HashMap<>();
+        }
+
+        public synchronized String get(Player player, String custom) {
+            long current = System.currentTimeMillis();
+            if (current - lastUpdated > 3000) {
+                lastUpdated = current;
+                String parsed = ParseUtils.setPlaceholders(player, custom);
+                cached.put(custom, parsed);
+                return parsed;
+            } else {
+                String cachedStr = cached.get(custom);
+                if (cachedStr != null)
+                    return cachedStr;
+                String parsed = ParseUtils.setPlaceholders(player, custom);
+                cached.put(custom, parsed);
+                return parsed;
+            }
+        }
     }
 }

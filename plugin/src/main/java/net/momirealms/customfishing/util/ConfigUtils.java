@@ -20,6 +20,9 @@ package net.momirealms.customfishing.util;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.mechanic.loot.Modifier;
 import net.momirealms.customfishing.api.util.LogUtils;
+import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -37,6 +40,8 @@ public class ConfigUtils {
             list.add(member);
         } else if (object instanceof List<?> members) {
             list.addAll((Collection<? extends String>) members);
+        } else if (object instanceof String[] strings) {
+            list.addAll(List.of(strings));
         }
         return list;
     }
@@ -101,23 +106,37 @@ public class ConfigUtils {
         switch (text.charAt(0)) {
             case '/' -> {
                 double arg = Double.parseDouble(text.substring(1));
-                return weight -> weight / arg;
+                return (player, weight) -> weight / arg;
             }
             case '*' -> {
                 double arg = Double.parseDouble(text.substring(1));
-                return weight -> weight * arg;
+                return (player, weight) -> weight * arg;
             }
             case '-' -> {
                 double arg = Double.parseDouble(text.substring(1));
-                return weight -> weight - arg;
+                return (player, weight) -> weight - arg;
             }
             case '%' -> {
                 double arg = Double.parseDouble(text.substring(1));
-                return weight -> weight % arg;
+                return (player, weight) -> weight % arg;
             }
             case '+' -> {
                 double arg = Double.parseDouble(text.substring(1));
-                return weight -> weight + arg;
+                return (player, weight) -> weight + arg;
+            }
+            case '=' -> {
+                String formula = text.substring(1);
+                boolean hasPapi = PlaceholderManagerImpl.getInstance().hasPapi();
+                return (player, weight) -> {
+                    String temp = formula;
+                    if (hasPapi)
+                        temp = PlaceholderManagerImpl.getInstance().parseCacheable(player, formula);
+                    Expression expression = new ExpressionBuilder(temp)
+                            .variables("0")
+                            .build()
+                            .setVariable("0", weight);
+                    return expression.evaluate();
+                };
             }
             default -> throw new IllegalArgumentException("Invalid weight: " + text);
         }

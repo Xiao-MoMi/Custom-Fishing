@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing.compatibility;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
@@ -7,10 +24,12 @@ import net.momirealms.customfishing.api.integration.LevelInterface;
 import net.momirealms.customfishing.api.integration.SeasonInterface;
 import net.momirealms.customfishing.api.manager.IntegrationManager;
 import net.momirealms.customfishing.api.util.LogUtils;
+import net.momirealms.customfishing.compatibility.block.ItemsAdderBlockImpl;
 import net.momirealms.customfishing.compatibility.enchant.AdvancedEnchantmentsImpl;
 import net.momirealms.customfishing.compatibility.enchant.VanillaEnchantmentsImpl;
 import net.momirealms.customfishing.compatibility.item.*;
 import net.momirealms.customfishing.compatibility.level.*;
+import net.momirealms.customfishing.compatibility.mob.MythicMobsLibraryImpl;
 import net.momirealms.customfishing.compatibility.season.CustomCropsSeasonImpl;
 import net.momirealms.customfishing.compatibility.season.RealisticSeasonsImpl;
 import org.bukkit.inventory.ItemStack;
@@ -42,6 +61,7 @@ public class IntegrationManagerImpl implements IntegrationManager {
     public void init() {
         if (plugin.isHookedPluginEnabled("ItemsAdder")) {
             plugin.getItemManager().registerItemLibrary(new ItemsAdderItemImpl());
+            plugin.getBlockManager().registerBlockLibrary(new ItemsAdderBlockImpl());
             hookMessage("ItemsAdder");
         }
         if (plugin.isHookedPluginEnabled("MMOItems")) {
@@ -58,6 +78,7 @@ public class IntegrationManagerImpl implements IntegrationManager {
         }
         if (plugin.isHookedPluginEnabled("MythicMobs")) {
             plugin.getItemManager().registerItemLibrary(new MythicMobsItemImpl());
+            plugin.getMobManager().registerMobLibrary(new MythicMobsLibraryImpl());
             hookMessage("MythicMobs");
         }
         if (plugin.isHookedPluginEnabled("EcoJobs")) {

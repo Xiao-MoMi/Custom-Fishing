@@ -21,7 +21,7 @@ public class CFLoot implements Loot {
     private boolean disableStats;
     private boolean instanceGame;
     private double score;
-    private String lootGroup;
+    private String[] lootGroup;
 
     public CFLoot(String id, LootType type) {
         this.id = id;
@@ -77,8 +77,8 @@ public class CFLoot implements Loot {
             return this;
         }
 
-        public Builder lootGroup(String group) {
-            this.loot.lootGroup = group;
+        public Builder lootGroup(String[] groups) {
+            this.loot.lootGroup = groups;
             return this;
         }
 
@@ -148,7 +148,7 @@ public class CFLoot implements Loot {
     }
 
     @Override
-    public String getLootGroup() {
+    public String[] getLootGroup() {
         return lootGroup;
     }
 

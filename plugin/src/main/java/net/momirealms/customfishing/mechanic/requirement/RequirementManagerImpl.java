@@ -36,6 +36,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -146,11 +147,12 @@ public class RequirementManagerImpl implements RequirementManager {
         HashMap<String, Double> lootWeightMap = new HashMap<>();
         Queue<HashMap<String, ConditionalLoots>> lootQueue = new LinkedList<>();
         lootQueue.add(conditionalLootsMap);
+        Player player = condition.getPlayer();
         while (!lootQueue.isEmpty()) {
             HashMap<String, ConditionalLoots> currentLootMap = lootQueue.poll();
             for (ConditionalLoots loots : currentLootMap.values()) {
                 if (loots.isConditionsMet(condition)) {
-                    loots.combine(lootWeightMap);
+                    loots.combine(player, lootWeightMap);
                     if (loots.getSubLoots() != null) {
                         lootQueue.add(loots.getSubLoots());
                     }

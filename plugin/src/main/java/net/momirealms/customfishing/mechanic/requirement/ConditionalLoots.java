@@ -21,6 +21,7 @@ import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.loot.Modifier;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,10 +42,10 @@ public class ConditionalLoots {
         this.subLoots = subLoots;
     }
 
-    synchronized public void combine(HashMap<String, Double> weightMap) {
+    synchronized public void combine(Player player, HashMap<String, Double> weightMap) {
         for (Pair<String, Modifier> modifierPair : this.modifierList) {
             double previous = weightMap.getOrDefault(modifierPair.left(), 0d);
-            weightMap.put(modifierPair.left(), modifierPair.right().modify(previous));
+            weightMap.put(modifierPair.left(), modifierPair.right().modify(player, previous));
         }
     }
 

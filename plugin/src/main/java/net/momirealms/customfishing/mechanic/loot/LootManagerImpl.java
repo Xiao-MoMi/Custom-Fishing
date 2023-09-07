@@ -25,6 +25,7 @@ import net.momirealms.customfishing.api.mechanic.loot.CFLoot;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
 import net.momirealms.customfishing.api.util.LogUtils;
+import net.momirealms.customfishing.util.ConfigUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -46,7 +47,7 @@ public class LootManagerImpl implements LootManager {
         public static boolean instantGame;
         public static boolean showInFinder;
         public static String gameGroup;
-        public static String lootGroup;
+        public static String[] lootGroup;
     }
 
     public LootManagerImpl(CustomFishingPlugin plugin) {
@@ -140,10 +141,12 @@ public class LootManagerImpl implements LootManager {
                 } else {
                     lootMap.put(entry.getKey(), loot);
                 }
-                String group = loot.getLootGroup();
+                String[] group = loot.getLootGroup();
                 if (group != null) {
-                    List<String> groupMembers = lootGroupMap.computeIfAbsent(group, k -> new ArrayList<>());
-                    groupMembers.add(loot.getID());
+                    for (String g : group) {
+                        List<String> groupMembers = lootGroupMap.computeIfAbsent(g, k -> new ArrayList<>());
+                        groupMembers.add(loot.getID());
+                    }
                 }
             }
         }
@@ -156,12 +159,13 @@ public class LootManagerImpl implements LootManager {
                 .instantGame(section.getBoolean("instant-game", GlobalSetting.instantGame))
                 .showInFinder(section.getBoolean("show-in-fishfinder", GlobalSetting.showInFinder))
                 .gameConfig(section.getString("game-group", GlobalSetting.gameGroup))
-                .lootGroup(section.getString("loot-group", GlobalSetting.lootGroup))
+                .lootGroup(ConfigUtils.stringListArgs(Optional.ofNullable(section.get("loot-group")).orElse(GlobalSetting.lootGroup)).toArray(new String[0]))
                 .nick(section.getString("nick", section.getString("display.name", key)))
                 .addActions(getActionMap(section.getConfigurationSection("events")))
                 .addTimesActions(getTimesActionMap(section.getConfigurationSection("events.success-times")))
                 .build();
     }
+
 
     private HashMap<ActionTrigger, Action[]> getActionMap(ConfigurationSection section) {
         HashMap<ActionTrigger, Action[]> actionMap = new HashMap<>();

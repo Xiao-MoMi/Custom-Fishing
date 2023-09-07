@@ -36,5 +36,7 @@ public interface PlaceholderManager {
 
     String parse(@Nullable OfflinePlayer player, String text, Map<String, String> placeholders);
 
+    String parseCacheable(Player player, String text);
+
     List<String> parse(@Nullable OfflinePlayer player, List<String> list, Map<String, String> replacements);
 }

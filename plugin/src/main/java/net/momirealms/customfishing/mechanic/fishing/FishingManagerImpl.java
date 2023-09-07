@@ -603,9 +603,10 @@ public class FishingManagerImpl implements Listener, FishingManager {
             return null;
         }
 
+        Player player = fishingPreparation.getPlayer();
         for (Pair<String, Modifier> pair : initialEffect.getLootWeightModifier()) {
             double previous = lootWithWeight.getOrDefault(pair.left(), 0d);
-            lootWithWeight.put(pair.left(), pair.right().modify(previous));
+            lootWithWeight.put(pair.left(), pair.right().modify(player, previous));
         }
 
         String key = WeightUtils.getRandom(lootWithWeight);

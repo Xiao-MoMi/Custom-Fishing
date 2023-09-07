@@ -71,7 +71,7 @@ public interface Loot {
      */
     boolean disableStats();
 
-    String getLootGroup();
+    String[] getLootGroup();
 
     /**
      * Get the game config
