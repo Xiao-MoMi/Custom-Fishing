@@ -209,7 +209,7 @@ public class ItemManagerImpl implements ItemManager {
     @Override
     public CFBuilder getItemBuilder(ConfigurationSection section, String type, String id) {
         if (section == null) return null;
-        String material = section.getString("material", "PAPER");
+        String material = section.getString("material", type.equals("rod") ? "FISHING_ROD" : "PAPER");
         CFBuilder itemCFBuilder;
         if (material.contains(":")) {
             String[] split = material.split(":", 2);

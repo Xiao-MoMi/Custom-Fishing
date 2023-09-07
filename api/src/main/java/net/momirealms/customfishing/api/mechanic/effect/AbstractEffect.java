@@ -34,18 +34,7 @@ public class AbstractEffect implements Effect {
     protected double timeModifier = 1;
     protected double difficultyModifier = 0;
     protected double gameTimeModifier = 0;
-    protected Requirement[] requirements;
     protected List<Pair<String, Modifier>> lootWeightModifier = new ArrayList<>();
-
-    @Override
-    public boolean persist() {
-        return false;
-    }
-
-    @Override
-    public Requirement[] getRequirements() {
-        return requirements;
-    }
 
     @Override
     public boolean canLavaFishing() {
@@ -98,16 +87,5 @@ public class AbstractEffect implements Effect {
     @Override
     public List<Pair<String, Modifier>> getLootWeightModifier() {
         return lootWeightModifier;
-    }
-
-    @Override
-    public boolean canMerge(Condition condition) {
-        if (this.requirements == null) return true;
-        for (Requirement requirement : requirements) {
-            if (!requirement.isConditionMet(condition)) {
-                return false;
-            }
-        }
-        return true;
     }
 }

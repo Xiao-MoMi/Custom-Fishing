@@ -18,23 +18,25 @@
 package net.momirealms.customfishing.command.sub;
 
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.ArgumentSuggestions;
-import dev.jorel.commandapi.arguments.EntitySelectorArgument;
-import dev.jorel.commandapi.arguments.IntegerArgument;
-import dev.jorel.commandapi.arguments.TextArgument;
+import dev.jorel.commandapi.arguments.*;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Key;
+import net.momirealms.customfishing.api.mechanic.condition.Condition;
+import net.momirealms.customfishing.api.mechanic.item.BuildableItem;
 import net.momirealms.customfishing.mechanic.item.ItemManagerImpl;
 import net.momirealms.customfishing.setting.Locale;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
+import java.util.HashMap;
 
 public class ItemCommand {
 
     public static ItemCommand INSTANCE = new ItemCommand();
+
+    private final HashMap<String, String[]> completionMap = new HashMap<>();
 
     public CommandAPICommand getItemCommand() {
         return new CommandAPICommand("items")
@@ -48,28 +50,31 @@ public class ItemCommand {
     }
 
     private CommandAPICommand getSubCommand(String namespace) {
-        Collection<String> items = CustomFishingPlugin.get()
+        completionMap.put(namespace, CustomFishingPlugin.get()
                 .getItemManager()
                 .getAllItemsKey()
                 .stream()
                 .filter(it -> it.namespace().equals(namespace))
                 .map(Key::value)
-                .toList();
+                .toList().toArray(new String[0]));
         return new CommandAPICommand(namespace)
                 .withSubcommands(
-                        getCommand(namespace, items),
-                        giveCommand(namespace, items)
+                        getCommand(namespace),
+                        giveCommand(namespace)
                 );
     }
 
-    private CommandAPICommand getCommand(String namespace, Collection<String> items) {
+    private CommandAPICommand getCommand(String namespace) {
         return new CommandAPICommand("get")
-                .withArguments(new TextArgument("id").replaceSuggestions(ArgumentSuggestions.strings(items)))
+                .withArguments(new StringArgument("id")
+                        .replaceSuggestions(ArgumentSuggestions.strings(
+                                info -> completionMap.get(namespace)
+                        )))
                 .withOptionalArguments(new IntegerArgument("amount", 1))
                 .executesPlayer((player, args) -> {
                     String id = (String) args.get("id");
                     int amount = (int) args.getOrDefault("amount", 1);
-                    ItemStack item = CustomFishingPlugin.get().getItemManager().build(player, namespace, id);
+                    ItemStack item = CustomFishingPlugin.get().getItemManager().build(player, namespace, id, new Condition(player).getArgs());
                     if (item != null) {
                         int actual = ItemManagerImpl.giveCertainAmountOfItem(player, item, amount);
                         AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, Locale.MSG_Get_Item.replace("{item}", id).replace("{amount}", String.valueOf(actual)));
@@ -79,18 +84,22 @@ public class ItemCommand {
                 });
     }
 
-    private CommandAPICommand giveCommand(String namespace, Collection<String> items) {
+    private CommandAPICommand giveCommand(String namespace) {
         return new CommandAPICommand("give")
                 .withArguments(new EntitySelectorArgument.ManyPlayers("player"))
-                .withArguments(new TextArgument("id").replaceSuggestions(ArgumentSuggestions.strings(items)))
+                .withArguments(new StringArgument("id")
+                        .replaceSuggestions(ArgumentSuggestions.strings(
+                                info -> completionMap.get(namespace)
+                        )))
                 .withOptionalArguments(new IntegerArgument("amount", 1))
                 .executes((sender, args) -> {
                     Collection<Player> players = (Collection<Player>) args.get("player");
                     String id = (String) args.get("id");
                     int amount = (int) args.getOrDefault("amount", 1);
-                    ItemStack item = CustomFishingPlugin.get().getItemManager().build(players.stream().findAny().get(), namespace, id);
-                    if (item != null) {
+                    BuildableItem buildableItem = CustomFishingPlugin.get().getItemManager().getBuildableItem(namespace, id);
+                    if (buildableItem != null) {
                         for (Player player : players) {
+                            ItemStack item = CustomFishingPlugin.get().getItemManager().build(player, namespace, id, new Condition(player).getArgs());
                             int actual = ItemManagerImpl.giveCertainAmountOfItem(player, item, amount);
                             AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, Locale.MSG_Give_Item.replace("{item}", id).replace("{amount}", String.valueOf(actual)).replace("{player}", player.getName()));
                         }

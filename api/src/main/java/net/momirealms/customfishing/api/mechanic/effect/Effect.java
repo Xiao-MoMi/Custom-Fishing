@@ -26,10 +26,6 @@ import java.util.List;
 
 public interface Effect {
 
-    boolean persist();
-
-    Requirement[] getRequirements();
-
     boolean canLavaFishing();
 
     double getMultipleLootChance();
@@ -47,6 +43,4 @@ public interface Effect {
     Effect merge(Effect another);
 
     List<Pair<String, Modifier>> getLootWeightModifier();
-
-    boolean canMerge(Condition condition);
 }

@@ -73,11 +73,6 @@ public class FishingEffect extends AbstractEffect {
             return this;
         }
 
-        public Builder requirements(Requirement[] requirements) {
-            effect.requirements = requirements;
-            return this;
-        }
-
         public FishingEffect build() {
             return effect;
         }

@@ -16,7 +16,7 @@ nature_fishing_cane:
       - '<gray>The wild power makes it easier to be hooked'
       - '<gray>But also increase the difficulty'
   custom-model-data: 50001
-  effect:
+  effects:
     hook-time: 0.9
     difficulty: 1
     game-time: 3
@@ -28,10 +28,6 @@ silver_fishing_rod:
     lore:
       - '<gray>Increase the chance of getting silver quality fish'
   custom-model-data: 50002
-  effect:
-    weight-add:
-      silver: 20
-      gold: -10
 
 golden_fishing_rod:
   material: fishing_rod
@@ -40,17 +36,10 @@ golden_fishing_rod:
     lore:
       - '<gray>Increase the chance of getting golden quality fish'
   custom-model-data: 50003
-  effect:
-    weight-add:
-      silver: -20
-      gold: 20
 
 star_fishing_rod:
   material: fishing_rod
-  effect:
-    weight-add:
-      silver: 20
-      gold: 10
+  effects:
     lava-fishing: true
   # https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing/requirements
   requirements:

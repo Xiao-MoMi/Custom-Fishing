@@ -21,6 +21,7 @@ import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
 import net.momirealms.customfishing.api.common.Pair;
+import net.momirealms.customfishing.api.event.FishingResultEvent;
 import net.momirealms.customfishing.api.event.LavaFishingEvent;
 import net.momirealms.customfishing.api.event.RodCastEvent;
 import net.momirealms.customfishing.api.manager.FishingManager;
@@ -31,6 +32,7 @@ import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
+import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.game.GameConfig;
 import net.momirealms.customfishing.api.mechanic.game.GameInstance;
 import net.momirealms.customfishing.api.mechanic.game.GameSettings;
@@ -243,19 +245,13 @@ public class FishingManagerImpl implements Listener, FishingManager {
         }
         // Merge rod/bait/util effects
         Effect initialEffect = plugin.getEffectManager().getInitialEffect();
-        initialEffect
-                .merge(fishingPreparation.getRodEffect())
-                .merge(fishingPreparation.getBaitEffect());
-
-        for (Effect utilEffect : fishingPreparation.getUtilEffects()) {
-            initialEffect.merge(utilEffect);
-        }
+        fishingPreparation.mergeEffect(initialEffect);
 
         // Apply enchants
         for (String enchant : plugin.getIntegrationManager().getEnchantments(fishingPreparation.getRodItemStack())) {
-            Effect enchantEffect = plugin.getEffectManager().getEffect("enchant", enchant);
-            if (enchantEffect != null && enchantEffect.canMerge(fishingPreparation)) {
-                initialEffect.merge(enchantEffect);
+            EffectCarrier enchantEffect = plugin.getEffectManager().getEffect("enchant", enchant);
+            if (enchantEffect != null && enchantEffect.isConditionMet(fishingPreparation)) {
+                initialEffect.merge(enchantEffect.getEffect());
             }
         }
         //TODO Apply totem effects
@@ -454,14 +450,14 @@ public class FishingManagerImpl implements Listener, FishingManager {
         if (gamingPlayer.isSuccessful())
             success(tempFishingState, fishHook);
         else
-            fail(tempFishingState);
+            fail(tempFishingState, fishHook);
 
         gamingPlayer.cancel();
         gamingPlayerMap.remove(uuid);
         plugin.getScheduler().runTaskSync(fishHook::remove, fishHook.getLocation());
     }
 
-    public void fail(TempFishingState state) {
+    public void fail(TempFishingState state, FishHook hook) {
         var loot = state.getLoot();
         var fishingPreparation = state.getPreparation();
 
@@ -473,15 +469,29 @@ public class FishingManagerImpl implements Listener, FishingManager {
             }
         }
 
-        Action[] globalActions = LootManagerImpl.globalLootProperties.getActions(ActionTrigger.FAILURE);
-        if (globalActions != null)
-            for (Action action : globalActions)
-                action.trigger(fishingPreparation);
+        plugin.getScheduler().runTaskSync(() -> {
+            // call event
+            FishingResultEvent fishingResultEvent = new FishingResultEvent(
+                    fishingPreparation.getPlayer(),
+                    FishingResultEvent.Result.FAILURE,
+                    loot,
+                    fishingPreparation.getArgs()
+            );
+            Bukkit.getPluginManager().callEvent(fishingResultEvent);
+            if (fishingResultEvent.isCancelled()) {
+                return;
+            }
 
-        Action[] actions = loot.getActions(ActionTrigger.FAILURE);
-        if (actions != null)
-            for (Action action : actions)
-                action.trigger(fishingPreparation);
+            Action[] globalActions = LootManagerImpl.globalLootProperties.getActions(ActionTrigger.FAILURE);
+            if (globalActions != null)
+                for (Action action : globalActions)
+                    action.trigger(fishingPreparation);
+
+            Action[] actions = loot.getActions(ActionTrigger.FAILURE);
+            if (actions != null)
+                for (Action action : actions)
+                    action.trigger(fishingPreparation);
+        }, hook.getLocation());
     }
 
     public void success(TempFishingState state, FishHook hook) {
@@ -496,6 +506,19 @@ public class FishingManagerImpl implements Listener, FishingManager {
         fishingPreparation.insertArg("{z}", String.valueOf(hook.getLocation().getBlockZ()));
 
         plugin.getScheduler().runTaskSync(() -> {
+
+            // call event
+            FishingResultEvent fishingResultEvent = new FishingResultEvent(
+                    player,
+                    FishingResultEvent.Result.SUCCESS,
+                    loot,
+                    fishingPreparation.getArgs()
+            );
+            Bukkit.getPluginManager().callEvent(fishingResultEvent);
+            if (fishingResultEvent.isCancelled()) {
+                return;
+            }
+
             switch (loot.getType()) {
                 case LOOT -> {
                     int amount = (int) effect.getMultipleLootChance();

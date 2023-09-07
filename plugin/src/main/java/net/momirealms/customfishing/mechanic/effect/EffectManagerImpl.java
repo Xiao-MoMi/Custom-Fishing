@@ -21,6 +21,7 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Key;
 import net.momirealms.customfishing.api.manager.EffectManager;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
+import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +36,7 @@ public class EffectManagerImpl implements EffectManager {
 
     private final CustomFishingPlugin plugin;
 
-    private final HashMap<Key, Effect> effectMap;
+    private final HashMap<Key, EffectCarrier> effectMap;
 
     public EffectManagerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;
@@ -43,20 +44,20 @@ public class EffectManagerImpl implements EffectManager {
     }
 
     @Override
-    public boolean registerEffect(Key key, Effect effect) {
+    public boolean registerEffectItem(Key key, EffectCarrier effect) {
         if (effectMap.containsKey(key)) return false;
         this.effectMap.put(key, effect);
         return true;
     }
 
     @Override
-    public boolean unregisterEffect(Key key) {
+    public boolean unregisterEffectItem(Key key) {
         return this.effectMap.remove(key) != null;
     }
 
     @Nullable
     @Override
-    public Effect getEffect(String namespace, String id) {
+    public EffectCarrier getEffect(String namespace, String id) {
         return effectMap.get(Key.of(namespace, id));
     }
 
@@ -90,31 +91,42 @@ public class EffectManagerImpl implements EffectManager {
         for (Map.Entry<String, Object> entry : yaml.getValues(false).entrySet()) {
             String value = entry.getKey();
             if (entry.getValue() instanceof ConfigurationSection section) {
-                effectMap.put(Key.of(namespace, value), getFishingEffectFromSection(section));
+                Key key = Key.of(namespace, value);
+                EffectCarrier item = getEffectItemFromSection(key, section);
+                if (item != null)
+                    effectMap.put(key, item);
             }
         }
     }
 
-    private Effect getFishingEffectFromSection(ConfigurationSection section) {
+    private EffectCarrier getEffectItemFromSection(Key key, ConfigurationSection section) {
+        if (section == null) return null;
+        return new EffectCarrier.Builder()
+                .key(key)
+                .requirements(plugin.getRequirementManager().getRequirements(section.getConfigurationSection("requirements"), true))
+                .effect(getEffectFromSection(section.getConfigurationSection("effects")))
+                .build();
+    }
+
+    public Effect getEffectFromSection(ConfigurationSection section) {
         if (section == null) return getInitialEffect();
         return new FishingEffect.Builder()
                 .lootWeightModifier(ConfigUtils.getModifiers(section.getStringList("weight")))
                 .timeModifier(section.getDouble("hook-time", 1))
                 .difficultyModifier(section.getDouble("difficulty", 0))
-                .multipleLootChance(section.getDouble("multiple-loot"))
+                .multipleLootChance(section.getDouble("multiple-loot", 0))
                 .lavaFishing(section.getBoolean("lava-fishing", false))
                 .scoreMultiplier(section.getDouble("score-bonus", 1))
                 .sizeMultiplier(section.getDouble("size-bonus", 1))
                 .gameTimeModifier(section.getDouble("game-time", 0))
-                .requirements(plugin.getRequirementManager().getRequirements(section.getConfigurationSection("requirements"), true))
                 .build();
     }
 
     public void unload() {
-        HashMap<Key, Effect> temp = new HashMap<>(effectMap);
+        HashMap<Key, EffectCarrier> temp = new HashMap<>(effectMap);
         effectMap.clear();
-        for (Map.Entry<Key, Effect> entry : temp.entrySet()) {
-            if (entry.getValue().persist()) {
+        for (Map.Entry<Key, EffectCarrier> entry : temp.entrySet()) {
+            if (entry.getValue().isPersist()) {
                 effectMap.put(entry.getKey(), entry.getValue());
             }
         }
