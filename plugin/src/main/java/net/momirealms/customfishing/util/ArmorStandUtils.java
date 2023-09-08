@@ -21,7 +21,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.*;
 import com.google.common.collect.Lists;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
@@ -73,14 +73,14 @@ public class ArmorStandUtils {
         metaPacket.getDataValueCollectionModifier().write(0, wrappedDataValueList);
     }
 
-    public static PacketContainer getMetaPacket(int id, String text) {
+    public static PacketContainer getMetaPacket(int id, Component component) {
         PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         metaPacket.getIntegers().write(0, id);
         if (CustomFishingPlugin.get().getVersionManager().isVersionNewerThan1_19_R2()) {
-            WrappedDataWatcher wrappedDataWatcher = createDataWatcher(text);
+            WrappedDataWatcher wrappedDataWatcher = createDataWatcher(component);
             setValueList(metaPacket, wrappedDataWatcher);
         } else {
-            metaPacket.getWatchableCollectionModifier().write(0, createDataWatcher(text).getWatchableObjects());
+            metaPacket.getWatchableCollectionModifier().write(0, createDataWatcher(component).getWatchableObjects());
         }
         return metaPacket;
     }
@@ -95,11 +95,11 @@ public class ArmorStandUtils {
         return wrappedDataWatcher;
     }
 
-    public static WrappedDataWatcher createDataWatcher(String text) {
+    public static WrappedDataWatcher createDataWatcher(Component component) {
         WrappedDataWatcher wrappedDataWatcher = new WrappedDataWatcher();
         WrappedDataWatcher.Serializer serializer1 = WrappedDataWatcher.Registry.get(Boolean.class);
         WrappedDataWatcher.Serializer serializer2 = WrappedDataWatcher.Registry.get(Byte.class);
-        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(2, WrappedDataWatcher.Registry.getChatComponentSerializer(true)), Optional.of(WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize(text))).getHandle()));
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(2, WrappedDataWatcher.Registry.getChatComponentSerializer(true)), Optional.of(WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(component)).getHandle()));
         wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(3, serializer1), true);
         wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, serializer2), (byte) 0x01);
         byte flag = 0x20;
@@ -116,11 +116,18 @@ public class ArmorStandUtils {
         return equipPacket;
     }
 
-    public static void sendAnimationToPlayer(Player player, Location location, ItemStack itemStack, int time) {
+    public static void sendFakeItem(Player player, Location location, ItemStack itemStack, int time) {
         int id = new Random().nextInt(Integer.MAX_VALUE);
         CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getSpawnPacket(id, location.clone().subtract(0,1,0)));
         CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getMetaPacket(id));
         CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getEquipPacket(id, itemStack));
+        CustomFishingPlugin.get().getScheduler().runTaskAsyncLater(() -> CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getDestroyPacket(id)), time * 50L, TimeUnit.MILLISECONDS);
+    }
+
+    public static void sendHologram(Player player, Location location, Component component, int time) {
+        int id = new Random().nextInt(Integer.MAX_VALUE);
+        CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getSpawnPacket(id, location.clone().subtract(0,1,0)));
+        CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getMetaPacket(id, component));
         CustomFishingPlugin.get().getScheduler().runTaskAsyncLater(() -> CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getDestroyPacket(id)), time * 50L, TimeUnit.MILLISECONDS);
     }
 }

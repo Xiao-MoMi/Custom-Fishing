@@ -24,6 +24,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -32,7 +36,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class PlaceholderManagerImpl implements PlaceholderManager {
+public class PlaceholderManagerImpl implements PlaceholderManager, Listener {
 
     private static PlaceholderManagerImpl instance;
     private final CustomFishingPlugin plugin;
@@ -59,16 +63,23 @@ public class PlaceholderManagerImpl implements PlaceholderManager {
     public void load() {
         if (competitionPapi != null) competitionPapi.load();
         if (statisticsPapi != null) statisticsPapi.load();
+        Bukkit.getPluginManager().registerEvents(this, plugin);
         loadCustomPlaceholders();
     }
 
     public void unload() {
         if (competitionPapi != null) competitionPapi.unload();
         if (statisticsPapi != null) statisticsPapi.unload();
+        HandlerList.unregisterAll(this);
     }
 
     public void disable() {
         this.customPlaceholderMap.clear();
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        cachedPlaceholders.remove(event.getPlayer().getUniqueId());
     }
 
     public void loadCustomPlaceholders() {

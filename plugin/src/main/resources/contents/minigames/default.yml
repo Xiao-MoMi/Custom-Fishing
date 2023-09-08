@@ -5,7 +5,7 @@
 ######################################
 rainbow_1:
   game-type: accurate_click
-  title: '<#B22222>RED!'
+  title: '<#fd4036>RED!'
   subtitle:
     font: 'customfishing:default'
     bar: '뀋'
@@ -24,7 +24,7 @@ rainbow_1:
     7: 0
 rainbow_2:
   game-type: accurate_click
-  title: '<#FFA500>ORANGE!'
+  title: '<#ffa449>ORANGE!'
   subtitle:
     font: 'customfishing:default'
     bar: '뀋'
@@ -43,7 +43,7 @@ rainbow_2:
     7: 0
 rainbow_3:
   game-type: accurate_click
-  title: '<#FFFF00>YELLOW!'
+  title: '<#ffca4c>YELLOW!'
   subtitle:
     font: 'customfishing:default'
     bar: '뀋'
@@ -62,7 +62,7 @@ rainbow_3:
     7: 0
 rainbow_4:
   game-type: accurate_click
-  title: '<GREEN>GREEN!'
+  title: '<#34f250>GREEN!'
   subtitle:
     font: 'customfishing:default'
     bar: '뀋'
@@ -81,7 +81,7 @@ rainbow_4:
     7: 0
 rainbow_5:
   game-type: accurate_click
-  title: '<#00FFFF>AQUA!'
+  title: '<#34f2d5>AQUA!'
   subtitle:
     font: 'customfishing:default'
     bar: '뀋'
@@ -100,7 +100,7 @@ rainbow_5:
     7: 0
 rainbow_6:
   game-type: accurate_click
-  title: '<#1E90FF>BLUE!'
+  title: '<#34f2d5>BLUE!'
   subtitle:
     font: 'customfishing:default'
     bar: '뀋'
@@ -119,7 +119,7 @@ rainbow_6:
     7: 0
 rainbow_7:
   game-type: accurate_click
-  title: '<#9400D3>PURPLE!'
+  title: '<#c96cff>PURPLE!'
   subtitle:
     font: 'customfishing:default'
     bar: '뀋'
@@ -584,9 +584,3 @@ tension_game:
     - '<font:customfishing:icons>뀗</font>'
     - '<font:customfishing:icons>뀘</font>'
     - '<font:customfishing:icons>뀙</font>'
-
-######################################
-#                Burst               #
-# When the fish is hooked, you need  #
-# to click quickly in limited time   #
-######################################

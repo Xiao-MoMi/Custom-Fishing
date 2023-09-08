@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.api.event;
 
+import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -29,12 +30,14 @@ public class RodCastEvent extends PlayerEvent implements Cancellable {
     private final Effect effect;
     private boolean isCancelled;
     private final PlayerFishEvent event;
+    private final FishingPreparation preparation;
     private static final HandlerList handlerList = new HandlerList();
 
-    public RodCastEvent(PlayerFishEvent event, Effect effect) {
+    public RodCastEvent(PlayerFishEvent event, FishingPreparation fishingPreparation, Effect effect) {
         super(event.getPlayer());
         this.effect = effect;
         this.event = event;
+        this.preparation = fishingPreparation;
     }
 
     @Override
@@ -49,6 +52,10 @@ public class RodCastEvent extends PlayerEvent implements Cancellable {
 
     public static HandlerList getHandlerList() {
         return handlerList;
+    }
+
+    public FishingPreparation getPreparation() {
+        return preparation;
     }
 
     @NotNull

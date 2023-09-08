@@ -68,13 +68,6 @@ public class Config {
     public static String bagTitle;
     public static List<Material> bagWhiteListItems;
 
-    // Animation
-    public static boolean enableBaitAnimation;
-    public static boolean enableSplashAnimation;
-    public static int splashAnimationTime;
-    public static String lavaSplashItem;
-    public static String waterSplashItem;
-
     // Lava fishing
     public static int lavaMinTime;
     public static int lavaMaxTime;
@@ -88,9 +81,10 @@ public class Config {
     public static boolean redisRanking;
     public static int placeholderLimit;
 
-    //
+    // Data save interval
     public static int dataSaveInterval;
 
+    // Legacy color code support
     public static boolean legacyColorSupport;
 
     public static void load() {
@@ -108,7 +102,7 @@ public class Config {
                             .builder()
                             .setVersioning(new BasicVersioning("config-version"))
                             .addIgnoredRoute(configVersion, "mechanics.mechanic-requirements", '.')
-                            .addIgnoredRoute(configVersion, "mechanics.global-loot-properties", '.')
+                            .addIgnoredRoute(configVersion, "mechanics.global-events", '.')
                             .build()
             );
             loadSettings(CustomFishingPlugin.getInstance().getConfig("config.yml"));
@@ -138,12 +132,6 @@ public class Config {
 
         lavaMinTime = config.getInt("mechanics.lava-fishing.min-wait-time", 100);
         lavaMaxTime = config.getInt("mechanics.lava-fishing.max-wait-time", 600);
-
-        enableSplashAnimation = config.getBoolean("mechanics.animation.splash.enable", true);
-        enableBaitAnimation = config.getBoolean("mechanics.animation.bait.enable", true);
-        waterSplashItem = config.getString("mechanics.animation.splash.water");
-        lavaSplashItem = config.getString("mechanics.animation.splash.lava");
-        splashAnimationTime = config.getInt("mechanics.animation.splash.duration");
 
         vanillaMechanicIfNoLoot = config.getBoolean("mechanics.vanilla-mechanic-if-no-loot.enable", false);
         noLootActions = CustomFishingPlugin.get().getActionManager().getActions(config.getConfigurationSection("mechanics.vanilla-mechanic-if-no-loot.actions"));

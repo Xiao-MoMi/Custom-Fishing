@@ -82,9 +82,10 @@ public class Competition implements FishingCompetition {
             this.actionBarManager.load();
         }
 
+
         Action[] actions = config.getStartActions();
         if (actions != null) {
-            Condition condition = new Condition();
+            Condition condition = new Condition(null, null, new HashMap<>());
             for (Action action : actions) {
                 action.trigger(condition);
             }
@@ -171,7 +172,7 @@ public class Competition implements FishingCompetition {
         // do end actions
         Action[] actions = config.getEndActions();
         if (actions != null) {
-            Condition condition = new Condition(new HashMap<>(publicPlaceholders));
+            Condition condition = new Condition(null, null, new HashMap<>(publicPlaceholders));
             for (Action action : actions) {
                 action.trigger(condition);
             }

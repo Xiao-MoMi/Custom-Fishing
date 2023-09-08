@@ -19,7 +19,10 @@ package net.momirealms.customfishing.api.manager;
 
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionFactory;
+import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import org.bukkit.configuration.ConfigurationSection;
+
+import java.util.HashMap;
 
 public interface ActionManager {
 
@@ -28,6 +31,8 @@ public interface ActionManager {
     boolean unregisterAction(String type);
 
     Action getAction(ConfigurationSection section);
+
+    HashMap<ActionTrigger, Action[]> getActionMap(ConfigurationSection section);
 
     Action[] getActions(ConfigurationSection section);
 

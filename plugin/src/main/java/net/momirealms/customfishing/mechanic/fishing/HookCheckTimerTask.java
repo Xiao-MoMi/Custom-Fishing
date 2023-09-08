@@ -21,14 +21,15 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
+import net.momirealms.customfishing.api.event.FishHookLandEvent;
 import net.momirealms.customfishing.api.event.LavaFishingEvent;
 import net.momirealms.customfishing.api.mechanic.TempFishingState;
+import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.setting.Config;
-import net.momirealms.customfishing.util.ArmorStandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -59,6 +60,7 @@ public class HookCheckTimerTask implements Runnable {
     private boolean reserve;
     private int jumpTimer;
     private Entity hookedEntity;
+    private Loot loot;
 
     public HookCheckTimerTask(
             FishingManagerImpl manager,
@@ -94,14 +96,11 @@ public class HookCheckTimerTask implements Runnable {
                 return;
             }
             if (firstTime) {
-                this.fishingPreparation.insertArg("in-lava", "true");
-                if (Config.enableSplashAnimation)
-                    ArmorStandUtils.sendAnimationToPlayer(
-                            fishingPreparation.getPlayer(),
-                            fishHook.getLocation(),
-                            CustomFishingPlugin.get().getItemManager().build(null, "util", Config.lavaSplashItem),
-                            Config.splashAnimationTime
-                    );
+                this.fishingPreparation.setLocation(fishHook.getLocation());
+                this.fishingPreparation.insertArg("{lava}", "true");
+                this.fishingPreparation.triggerActions(ActionTrigger.LAND);
+                FishHookLandEvent event = new FishHookLandEvent(fishingPreparation.getPlayer(), FishHookLandEvent.Target.LAVA);
+                Bukkit.getPluginManager().callEvent(event);
                 firstTime = false;
                 this.setTempState();
             }
@@ -127,16 +126,13 @@ public class HookCheckTimerTask implements Runnable {
             return;
         }
         if (fishHook.isInWater()) {
+            this.fishingPreparation.setLocation(fishHook.getLocation());
+            this.fishingPreparation.insertArg("{lava}", "false");
+            this.fishingPreparation.triggerActions(ActionTrigger.LAND);
+            FishHookLandEvent event = new FishHookLandEvent(fishingPreparation.getPlayer(), FishHookLandEvent.Target.WATER);
+            Bukkit.getPluginManager().callEvent(event);
             // if the hook is in water
             // then cancel the task
-            this.fishingPreparation.insertArg("in-lava", "false");
-            if (Config.enableSplashAnimation)
-                ArmorStandUtils.sendAnimationToPlayer(
-                        fishingPreparation.getPlayer(),
-                        fishHook.getLocation(),
-                        CustomFishingPlugin.get().getItemManager().build(null, "util", Config.waterSplashItem),
-                        Config.splashAnimationTime
-                );
             this.destroy();
             this.setTempState();
             return;
@@ -161,6 +157,7 @@ public class HookCheckTimerTask implements Runnable {
         Loot nextLoot = manager.getNextLoot(initialEffect, fishingPreparation);
         if (nextLoot == null)
             return;
+        this.loot = nextLoot;
         fishingPreparation.insertArg("{nick}", nextLoot.getNick());
         fishingPreparation.insertArg("{loot}", nextLoot.getID());
         CustomFishingPlugin.get().getScheduler().runTaskAsync(() -> manager.setTempFishingState(fishingPreparation.getPlayer(), new TempFishingState(
@@ -197,6 +194,9 @@ public class HookCheckTimerTask implements Runnable {
             this.startLavaFishingMechanic();
             return;
         }
+
+        this.loot.triggerActions(ActionTrigger.BITE, fishingPreparation);
+        this.fishingPreparation.triggerActions(ActionTrigger.BITE);
 
         this.fishHooked = true;
         this.removeTempEntity();

@@ -104,6 +104,7 @@ public class GameManagerImpl implements GameManager {
     @Override
     @Nullable
     public GameConfig getGameConfig(String key) {
+        if (key == null) return null;
         return gameConfigMap.get(key);
     }
 

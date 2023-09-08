@@ -22,38 +22,27 @@ import net.momirealms.customfishing.api.data.StatisticData;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
-import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Statistics {
 
     @SerializedName("statistic_map")
-    private final HashMap<String, Integer> statisticMap;
+    private final ConcurrentHashMap<String, Integer> statisticMap;
     private int total;
 
-    public Statistics() {
-        this.statisticMap = new HashMap<>();
-        this.total = 0;
-    }
-
-    public Statistics(ConfigurationSection section) {
-        this.statisticMap = new HashMap<>();
-        this.total = 0;
-        for (String key : section.getKeys(false)) {
-            int amount = section.getInt(key);
-            total += amount;
-            statisticMap.put(key, amount);
-        }
-    }
-
     public Statistics(StatisticData statisticData) {
-        this.statisticMap = new HashMap<>(statisticData.statisticMap);
+        this.statisticMap = new ConcurrentHashMap<>(statisticData.statisticMap);
         this.total = statisticMap.values().stream().mapToInt(Integer::intValue).sum();
     }
 
-    public void addLootAmount(Loot loot, FishingPreparation fishingPreparation, int amount) {
+    public synchronized void addLootAmount(Loot loot, FishingPreparation fishingPreparation, int amount) {
+        if (amount == 1) {
+            addSingleLootAmount(loot, fishingPreparation);
+            return;
+        }
         Integer previous = statisticMap.get(loot.getID());
         if (previous == null) previous = 0;
         int after = previous + amount;
@@ -75,6 +64,19 @@ public class Statistics {
         }
     }
 
+    private void addSingleLootAmount(Loot loot, FishingPreparation fishingPreparation) {
+        Integer previous = statisticMap.get(loot.getID());
+        if (previous == null) previous = 0;
+        int after = previous + 1;
+        statisticMap.put(loot.getID(), after);
+        total += 1;
+        Action[] actions = loot.getSuccessTimesActionMap().get(after);
+        if (actions != null)
+            for (Action action : actions) {
+                action.trigger(fishingPreparation);
+            }
+    }
+
     public int getLootAmount(String key) {
         Integer amount = statisticMap.get(key);
         return amount == null ? 0 : amount;
@@ -88,7 +90,7 @@ public class Statistics {
         statisticMap.clear();
     }
 
-    public HashMap<String, Integer> getStatisticMap() {
+    public Map<String, Integer> getStatisticMap() {
         return statisticMap;
     }
 

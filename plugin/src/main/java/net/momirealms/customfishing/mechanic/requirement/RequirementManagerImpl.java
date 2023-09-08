@@ -117,6 +117,8 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerCompareRequirement();
         this.registerAndRequirement();
         this.registerOrRequirement();
+        this.registerLevelRequirement();
+        this.registerRandomRequirement();
     }
 
     public ConditionalLoots getConditionalLoots(ConfigurationSection section) {
@@ -302,8 +304,33 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("in-lava", (args, actions, advanced) -> {
             boolean inLava = (boolean) args;
             return condition -> {
-                String current = condition.getArgs().get("in-lava");
+                String current = condition.getArgs().get("{lava}");
                 if (current.equals(String.valueOf(inLava)))
+                    return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+    }
+
+    private void registerLevelRequirement() {
+        registerRequirement("level", (args, actions, advanced) -> {
+            int level = (int) args;
+            return condition -> {
+                int current = condition.getPlayer().getLevel();
+                if (current >= level)
+                    return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+    }
+
+    private void registerRandomRequirement() {
+        registerRequirement("random", (args, actions, advanced) -> {
+            double random = ConfigUtils.getDoubleValue(args);
+            return condition -> {
+                if (Math.random() < random)
                     return true;
                 if (advanced) triggerActions(actions, condition);
                 return false;

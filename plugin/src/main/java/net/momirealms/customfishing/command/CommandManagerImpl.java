@@ -26,6 +26,7 @@ import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.manager.CommandManager;
 import net.momirealms.customfishing.command.sub.CompetitionCommand;
+import net.momirealms.customfishing.command.sub.DebugCommand;
 import net.momirealms.customfishing.command.sub.FishingBagCommand;
 import net.momirealms.customfishing.command.sub.ItemCommand;
 import net.momirealms.customfishing.setting.Locale;
@@ -47,7 +48,8 @@ public class CommandManagerImpl implements CommandManager {
                 .withSubcommands(
                         getReloadCommand(),
                         CompetitionCommand.INSTANCE.getCompetitionCommand(),
-                        ItemCommand.INSTANCE.getItemCommand()
+                        ItemCommand.INSTANCE.getItemCommand(),
+                        DebugCommand.INSTANCE.getDebugCommand()
                 )
                 .register();
 

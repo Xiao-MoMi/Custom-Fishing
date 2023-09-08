@@ -19,7 +19,10 @@ package net.momirealms.customfishing.api.util;
 
 import net.momirealms.customfishing.api.common.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class WeightUtils {
 
@@ -37,7 +40,7 @@ public class WeightUtils {
         return getRandom(weights, available, index);
     }
 
-    public static <T> T getRandom(HashMap<T, Double> map) {
+    public static <T> T getRandom(Map<T, Double> map) {
         List<T> available = new ArrayList<>();
         double[] weights = new double[map.size()];
         int index = 0;

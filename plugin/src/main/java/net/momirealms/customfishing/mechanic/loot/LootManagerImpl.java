@@ -20,7 +20,6 @@ package net.momirealms.customfishing.mechanic.loot;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.manager.LootManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
-import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.loot.CFLoot;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
@@ -40,16 +39,6 @@ public class LootManagerImpl implements LootManager {
     private final HashMap<String, Loot> lootMap;
     private final HashMap<String, List<String>> lootGroupMap;
 
-    public static class GlobalSetting {
-        public static CFLoot globalLootProperties;
-        public static boolean disableStats;
-        public static boolean disableGames;
-        public static boolean instantGame;
-        public static boolean showInFinder;
-        public static String gameGroup;
-        public static String[] lootGroup;
-    }
-
     public LootManagerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.lootMap = new HashMap<>();
@@ -57,7 +46,6 @@ public class LootManagerImpl implements LootManager {
     }
 
     public void load() {
-        this.loadGlobalLootProperties();
         this.loadLootsFromPluginFolder();
     }
 
@@ -95,11 +83,6 @@ public class LootManagerImpl implements LootManager {
         }
     }
 
-    @Override
-    public Loot getGlobalLootProperties() {
-        return GlobalSetting.globalLootProperties;
-    }
-
     @Nullable
     @Override
     public List<String> getLootGroup(String key) {
@@ -110,21 +93,6 @@ public class LootManagerImpl implements LootManager {
     @Override
     public Loot getLoot(String key) {
         return lootMap.get(key);
-    }
-
-    private void loadGlobalLootProperties() {
-        YamlConfiguration config = plugin.getConfig("config.yml");
-        GlobalSetting.globalLootProperties = getSingleSectionItem(
-                Objects.requireNonNull(config.getConfigurationSection("mechanics.global-loot-properties")),
-                "GLOBAL",
-                "global"
-        );
-        GlobalSetting.disableStats = GlobalSetting.globalLootProperties.disableStats();
-        GlobalSetting.disableGames = GlobalSetting.globalLootProperties.disableGame();
-        GlobalSetting.instantGame = GlobalSetting.globalLootProperties.instanceGame();
-        GlobalSetting.showInFinder = GlobalSetting.globalLootProperties.showInFinder();
-        GlobalSetting.lootGroup = GlobalSetting.globalLootProperties.getLootGroup();
-        GlobalSetting.gameGroup = GlobalSetting.globalLootProperties.getGameConfigKey();
     }
 
     private void loadSingleFile(File file, String namespace) {
@@ -154,31 +122,16 @@ public class LootManagerImpl implements LootManager {
 
     private CFLoot getSingleSectionItem(ConfigurationSection section, String namespace, String key) {
         return new CFLoot.Builder(key, LootType.valueOf(namespace.toUpperCase(Locale.ENGLISH)))
-                .disableStats(section.getBoolean("disable-stat", GlobalSetting.disableStats))
-                .disableGames(section.getBoolean("disable-game", GlobalSetting.disableGames))
-                .instantGame(section.getBoolean("instant-game", GlobalSetting.instantGame))
-                .showInFinder(section.getBoolean("show-in-fishfinder", GlobalSetting.showInFinder))
-                .gameConfig(section.getString("game-group", GlobalSetting.gameGroup))
-                .lootGroup(ConfigUtils.stringListArgs(Optional.ofNullable(section.get("loot-group")).orElse(GlobalSetting.lootGroup)).toArray(new String[0]))
+                .disableStats(section.getBoolean("disable-stat", false))
+                .disableGames(section.getBoolean("disable-game", false))
+                .instantGame(section.getBoolean("instant-game", false))
+                .showInFinder(section.getBoolean("show-in-fishfinder", true))
+                .gameConfig(section.getString("game-group"))
+                .lootGroup(ConfigUtils.stringListArgs(section.get("loot-group")).toArray(new String[0]))
                 .nick(section.getString("nick", section.getString("display.name", key)))
-                .addActions(getActionMap(section.getConfigurationSection("events")))
+                .addActions(plugin.getActionManager().getActionMap(section.getConfigurationSection("events")))
                 .addTimesActions(getTimesActionMap(section.getConfigurationSection("events.success-times")))
                 .build();
-    }
-
-
-    private HashMap<ActionTrigger, Action[]> getActionMap(ConfigurationSection section) {
-        HashMap<ActionTrigger, Action[]> actionMap = new HashMap<>();
-        if (section == null) return actionMap;
-        for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
-            if (entry.getValue() instanceof ConfigurationSection innerSection) {
-                actionMap.put(
-                        ActionTrigger.valueOf(entry.getKey().toUpperCase(Locale.ENGLISH)),
-                        plugin.getActionManager().getActions(innerSection)
-                );
-            }
-        }
-        return actionMap;
     }
 
     private HashMap<Integer, Action[]> getTimesActionMap(ConfigurationSection section) {

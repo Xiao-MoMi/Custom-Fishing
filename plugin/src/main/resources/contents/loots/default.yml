@@ -11,7 +11,7 @@ rubbish:
   disable-game: true
   instant-game: false
   prevent-grabbing: false
-  action:
+  events:
     success:
       mending:
         type: mending
@@ -27,7 +27,7 @@ tuna_fish:
       - <gray>Tuna is a kind of healthy food.
       - '<white>size: {size}cm'
   custom-model-data: 50001
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -47,7 +47,7 @@ tuna_fish_silver_star:
       - <gray>Tuna is a kind of healthy food.
       - '<white>size: {size}cm'
   custom-model-data: 50002
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -67,7 +67,7 @@ tuna_fish_golden_star:
       - <gray>Tuna is a kind of healthy food.
       - '<white>size: {size}cm'
   custom-model-data: 50003
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -90,7 +90,7 @@ pike_fish:
       - <gray>water and inland freshwater lakes
       - '<white>size: {size}cm'
   custom-model-data: 50004
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -113,7 +113,7 @@ pike_fish_silver_star:
       - <gray>water and inland freshwater lakes
       - '<white>size: {size}cm'
   custom-model-data: 50005
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -136,7 +136,7 @@ pike_fish_golden_star:
       - <gray>water and inland freshwater lakes
       - '<white>size: {size}cm'
   custom-model-data: 50006
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -158,7 +158,7 @@ gold_fish:
   price:
     base: 70
   custom-model-data: 50007
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -177,7 +177,7 @@ gold_fish_silver_star:
   price:
     base: 80
   custom-model-data: 50008
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -196,7 +196,7 @@ gold_fish_golden_star:
   price:
     base: 100
   custom-model-data: 50009
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -212,7 +212,7 @@ perch_fish:
       - <gray>foraging at dusk and early morning
       - '<white>size: {size}cm'
   custom-model-data: 50010
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -233,7 +233,7 @@ perch_fish_silver_star:
       - <gray>foraging at dusk and early morning
       - '<white>size: {size}cm'
   custom-model-data: 50011
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -254,7 +254,7 @@ perch_fish_golden_star:
       - <gray>foraging at dusk and early morning
       - '<white>size: {size}cm'
   custom-model-data: 50012
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -275,7 +275,7 @@ mullet_fish:
       - <gray>to treat spleen and stomach weakness
       - '<white>size: {size}cm'
   custom-model-data: 50013
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -296,7 +296,7 @@ mullet_fish_silver_star:
       - <gray>to treat spleen and stomach weakness
       - '<white>size: {size}cm'
   custom-model-data: 50014
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -317,7 +317,7 @@ mullet_fish_golden_star:
       - <gray>to treat spleen and stomach weakness
       - '<white>size: {size}cm'
   custom-model-data: 50015
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -338,7 +338,7 @@ sardine_fish:
       - <gray>Therefore, sardine are also called "smart food"
       - '<white>size: {size}cm'
   custom-model-data: 50016
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -358,7 +358,7 @@ sardine_fish_silver_star:
       - <gray>Therefore, sardine are also called "smart food"
       - '<white>size: {size}cm'
   custom-model-data: 50017
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -378,7 +378,7 @@ sardine_fish_golden_star:
       - <gray>Therefore, sardine are also called "smart food"
       - '<white>size: {size}cm'
   custom-model-data: 50018
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -398,7 +398,7 @@ carp_fish:
       - <gray>One of the most common edible fish
       - '<white>size: {size}cm'
   custom-model-data: 50019
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -417,7 +417,7 @@ carp_fish_silver_star:
       - <gray>One of the most common edible fish
       - '<white>size: {size}cm'
   custom-model-data: 50020
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -436,7 +436,7 @@ carp_fish_golden_star:
       - <gray>One of the most common edible fish
       - '<white>size: {size}cm'
   custom-model-data: 50021
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -456,7 +456,7 @@ cat_fish:
       - <gray>sharp jaw teeth, short intestine and stomach
       - '<white>size: {size}cm'
   custom-model-data: 50022
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -476,7 +476,7 @@ cat_fish_silver_star:
       - <gray>sharp jaw teeth, short intestine and stomach
       - '<white>size: {size}cm'
   custom-model-data: 50023
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -496,7 +496,7 @@ cat_fish_golden_star:
       - <gray>sharp jaw teeth, short intestine and stomach
       - '<white>size: {size}cm'
   custom-model-data: 50024
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -517,7 +517,7 @@ octopus:
       - <gray>People often use pots to catch octopus
       - '<white>size: {size}cm'
   custom-model-data: 50025
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -537,7 +537,7 @@ octopus_silver_star:
       - <gray>People often use pots to catch octopus
       - '<white>size: {size}cm'
   custom-model-data: 50026
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -557,7 +557,7 @@ octopus_golden_star:
       - <gray>People often use pots to catch octopus
       - '<white>size: {size}cm'
   custom-model-data: 50027
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -577,7 +577,7 @@ sunfish:
       - <gray>It only has one huge head
       - '<white>size: {size}cm'
   custom-model-data: 50028
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -596,7 +596,7 @@ sunfish_silver_star:
       - <gray>It only has one huge head
       - '<white>size: {size}cm'
   custom-model-data: 50029
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -615,7 +615,7 @@ sunfish_golden_star:
       - <gray>It only has one huge head
       - '<white>size: {size}cm'
   custom-model-data: 50030
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -635,7 +635,7 @@ red_snapper_fish:
       - <gray>with a male as the "head of the family"
       - '<white>size: {size}cm'
   custom-model-data: 50031
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -656,7 +656,7 @@ red_snapper_fish_silver_star:
       - <gray>with a male as the "head of the family"
       - '<white>size: {size}cm'
   custom-model-data: 50032
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -677,7 +677,7 @@ red_snapper_fish_golden_star:
       - <gray>with a male as the "head of the family"
       - '<white>size: {size}cm'
   custom-model-data: 50033
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -697,7 +697,7 @@ salmon_void_fish:
     lore:
       - <gray>A fish from the hell
   custom-model-data: 50034
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -714,7 +714,7 @@ salmon_void_fish_silver_star:
     lore:
       - <gray>A fish from the hell
   custom-model-data: 50035
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -732,7 +732,7 @@ salmon_void_fish_golden_star:
       - <gray>A fish from the hell
   group: gold
   custom-model-data: 50036
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -751,7 +751,7 @@ woodskip_fish:
       - <gray>live in pools deep in the forest
       - '<white>size: {size}cm'
   custom-model-data: 50037
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -771,7 +771,7 @@ woodskip_fish_silver_star:
       - <gray>live in pools deep in the forest
       - '<white>size: {size}cm'
   custom-model-data: 50038
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -791,7 +791,7 @@ woodskip_fish_golden_star:
       - <gray>live in pools deep in the forest
       - '<white>size: {size}cm'
   custom-model-data: 50039
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -812,7 +812,7 @@ sturgeon_fish:
       - <gray>population. Females can live up to 150 years
       - '<white>size: {size}cm'
   custom-model-data: 50040
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -832,7 +832,7 @@ sturgeon_fish_silver_star:
       - <gray>population. Females can live up to 150 years
       - '<white>size: {size}cm'
   custom-model-data: 50041
-  action:
+  events:
     success:
       action_mending:
         type: mending
@@ -852,7 +852,7 @@ sturgeon_fish_golden_star:
       - <gray>population. Females can live up to 150 years
       - '<white>size: {size}cm'
   custom-model-data: 50042
-  action:
+  events:
     success:
       action_mending:
         type: mending

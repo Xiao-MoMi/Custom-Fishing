@@ -18,6 +18,9 @@
 package net.momirealms.customfishing.api.mechanic.condition;
 
 import net.momirealms.customfishing.api.CustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.GlobalSettings;
+import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import org.bukkit.Material;
@@ -34,14 +37,12 @@ import java.util.List;
 
 public class FishingPreparation extends Condition {
 
-    private final boolean rodOnMainHand;
-    private final @NotNull ItemStack rodItemStack;
-    private final @NotNull String rodItemID;
+    private @Nullable EffectCarrier baitEffect;
     private final @Nullable EffectCarrier rodEffect;
     private @Nullable ItemStack baitItemStack;
-    private @Nullable String baitItemID;
-    private @Nullable EffectCarrier baitEffect;
+    private final @NotNull ItemStack rodItemStack;
     private final List<EffectCarrier> utilEffects;
+    private final Effect enchantEffect;
     private boolean canFish = true;
 
     public FishingPreparation(Player player, CustomFishingPlugin plugin) {
@@ -52,18 +53,18 @@ public class FishingPreparation extends Condition {
         ItemStack offHandItem = playerInventory.getItemInOffHand();
 
         this.utilEffects = new ArrayList<>();
-        this.rodOnMainHand = mainHandItem.getType() == Material.FISHING_ROD;
-        this.rodItemStack = this.rodOnMainHand ? mainHandItem : offHandItem;
-        this.rodItemID = plugin.getItemManager().getAnyItemID(this.rodItemStack);
-        this.rodEffect = plugin.getEffectManager().getEffect("rod", this.rodItemID);
-        super.insertArg("{rod}", this.rodItemID);
+        this.enchantEffect = plugin.getEffectManager().getInitialEffect();
+        boolean rodOnMainHand = mainHandItem.getType() == Material.FISHING_ROD;
+        this.rodItemStack = rodOnMainHand ? mainHandItem : offHandItem;
+        String rodItemID = plugin.getItemManager().getAnyItemID(this.rodItemStack);
+        this.rodEffect = plugin.getEffectManager().getEffect("rod", rodItemID);
+        super.insertArg("{rod}", rodItemID);
 
-        String baitItemID = plugin.getItemManager().getAnyItemID(this.rodOnMainHand ? offHandItem : mainHandItem);
+        String baitItemID = plugin.getItemManager().getAnyItemID(rodOnMainHand ? offHandItem : mainHandItem);
         EffectCarrier baitEffect = plugin.getEffectManager().getEffect("bait", baitItemID);
 
         if (baitEffect != null) {
-            this.baitItemID = baitItemID;
-            this.baitItemStack = this.rodOnMainHand ? offHandItem : mainHandItem;
+            this.baitItemStack = rodOnMainHand ? offHandItem : mainHandItem;
             this.baitEffect = baitEffect;
         }
 
@@ -75,10 +76,9 @@ public class FishingPreparation extends Condition {
                     ItemStack itemInBag = fishingBag.getItem(i);
                     String bagItemID = plugin.getItemManager().getItemID(itemInBag);
                     if (bagItemID == null) continue;
-                    if (this.baitItemID == null) {
+                    if (this.baitEffect == null) {
                         EffectCarrier effect = plugin.getEffectManager().getEffect("bait", bagItemID);
                         if (effect != null) {
-                            this.baitItemID = bagItemID;
                             this.baitItemStack = itemInBag;
                             this.baitEffect = effect;
                             continue;
@@ -98,7 +98,7 @@ public class FishingPreparation extends Condition {
                 this.canFish = false;
                 return;
             }
-            super.insertArg("{bait}", this.baitItemID);
+            super.insertArg("{bait}", this.baitEffect.getKey().value());
         }
 
         if (this.rodEffect != null) {
@@ -107,20 +107,18 @@ public class FishingPreparation extends Condition {
                 return;
             }
         }
-    }
 
-    public boolean isRodOnMainHand() {
-        return rodOnMainHand;
+        for (String enchant : plugin.getIntegrationManager().getEnchantments(rodItemStack)) {
+            EffectCarrier enchantEffect = plugin.getEffectManager().getEffect("enchant", enchant);
+            if (enchantEffect != null && enchantEffect.isConditionMet(this)) {
+                this.enchantEffect.merge(enchantEffect.getEffect());
+            }
+        }
     }
 
     @NotNull
     public ItemStack getRodItemStack() {
         return rodItemStack;
-    }
-
-    @NotNull
-    public String getRodItemID() {
-        return rodItemID;
     }
 
     @Nullable
@@ -129,28 +127,48 @@ public class FishingPreparation extends Condition {
     }
 
     @Nullable
-    public String getBaitItemID() {
-        return baitItemID;
+    public EffectCarrier getBaitEffect() {
+        return baitEffect;
+    }
+
+    @Nullable
+    public EffectCarrier getRodEffect() {
+        return rodEffect;
     }
 
     public boolean canFish() {
         return this.canFish;
     }
 
-    @NotNull
-    @Override
-    public Player getPlayer() {
-        return super.player;
-    }
-
-    public Effect mergeEffect(Effect effect) {
+    public void mergeEffect(Effect effect) {
         if (this.rodEffect != null)
             effect.merge(this.rodEffect.getEffect());
+        if (this.enchantEffect != null)
+            effect.merge(this.enchantEffect);
         if (this.baitEffect != null)
             effect.merge(this.baitEffect.getEffect());
         for (EffectCarrier util : utilEffects) {
             effect.merge(util.getEffect());
         }
-        return effect;
+    }
+
+    public void triggerActions(ActionTrigger actionTrigger) {
+        GlobalSettings.triggerRodActions(actionTrigger, this);
+        if (rodEffect != null) {
+            Action[] actions = rodEffect.getActions(actionTrigger);
+            if (actions != null)
+                for (Action action : actions) {
+                    action.trigger(this);
+                }
+        }
+
+        if (baitEffect != null) {
+            GlobalSettings.triggerBaitActions(actionTrigger, this);
+            Action[] actions = baitEffect.getActions(actionTrigger);
+            if (actions != null)
+                for (Action action : actions) {
+                    action.trigger(this);
+                }
+        }
     }
 }

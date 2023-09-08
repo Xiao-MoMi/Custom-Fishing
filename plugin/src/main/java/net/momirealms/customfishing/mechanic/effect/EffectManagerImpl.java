@@ -108,6 +108,7 @@ public class EffectManagerImpl implements EffectManager {
                 .key(key)
                 .requirements(plugin.getRequirementManager().getRequirements(section.getConfigurationSection("requirements"), true))
                 .effect(getEffectFromSection(section.getConfigurationSection("effects")))
+                .actionMap(plugin.getActionManager().getActionMap(section.getConfigurationSection("events")))
                 .build();
     }
 

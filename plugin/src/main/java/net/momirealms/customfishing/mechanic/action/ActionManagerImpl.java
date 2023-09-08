@@ -23,16 +23,21 @@ import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.manager.ActionManager;
+import net.momirealms.customfishing.api.mechanic.GlobalSettings;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionExpansion;
 import net.momirealms.customfishing.api.mechanic.action.ActionFactory;
+import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
+import net.momirealms.customfishing.util.ArmorStandUtils;
 import net.momirealms.customfishing.util.ClassUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -73,18 +78,28 @@ public class ActionManagerImpl implements ActionManager {
         this.registerDelayedAction();
         this.registerConditionalAction();
         this.registerPriorityAction();
+        this.registerLevelAction();
+        this.registerHologramAction();
+        this.registerFakeItemAction();
     }
 
     public void load() {
         this.loadExpansions();
+        this.loadGlobalEventActions();
     }
 
     public void unload() {
-
+        GlobalSettings.unload();
     }
 
     public void disable() {
+        unload();
         this.actionBuilderMap.clear();
+    }
+
+    private void loadGlobalEventActions() {
+        YamlConfiguration config = plugin.getConfig("config.yml");
+        GlobalSettings.load(config.getConfigurationSection("mechanics.global-events"));
     }
 
     @Override
@@ -102,6 +117,21 @@ public class ActionManagerImpl implements ActionManager {
     @Override
     public Action getAction(ConfigurationSection section) {
         return getActionBuilder(section.getString("type")).build(section.get("value"), section.getDouble("chance", 1d));
+    }
+
+    @Override
+    public HashMap<ActionTrigger, Action[]> getActionMap(ConfigurationSection section) {
+        HashMap<ActionTrigger, Action[]> actionMap = new HashMap<>();
+        if (section == null) return actionMap;
+        for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
+            if (entry.getValue() instanceof ConfigurationSection innerSection) {
+                actionMap.put(
+                        ActionTrigger.valueOf(entry.getKey().toUpperCase(Locale.ENGLISH)),
+                        getActions(innerSection)
+                );
+            }
+        }
+        return actionMap;
     }
 
     @Nullable
@@ -247,6 +277,62 @@ public class ActionManagerImpl implements ActionManager {
         });
     }
 
+    private void registerHologramAction() {
+        registerAction("hologram", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                String text = section.getString("text", "");
+                int duration = section.getInt("duration", 20);
+                boolean position = section.getString("position", "hook").equals("hook");
+                double x = section.getDouble("x");
+                double y = section.getDouble("y");
+                double z = section.getDouble("z");
+                return condition -> {
+                    if (Math.random() > chance) return;
+                    Player player = condition.getPlayer();
+                    Location location = position ? condition.getLocation() : player.getLocation();
+                    ArmorStandUtils.sendHologram(
+                            condition.getPlayer(),
+                            location.clone().add(x, y, z),
+                            AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                                    PlaceholderManagerImpl.getInstance().parse(player, text, condition.getArgs())
+                            ),
+                            duration
+                    );
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: hologram");
+                return null;
+            }
+        });
+    }
+
+    private void registerFakeItemAction() {
+        registerAction("fake-item", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                String[] itemSplit = section.getString("item", "").split(":", 2);
+                int duration = section.getInt("duration", 20);
+                boolean position = section.getString("position", "hook").equals("hook");
+                double x = section.getDouble("x");
+                double y = section.getDouble("y");
+                double z = section.getDouble("z");
+                return condition -> {
+                    if (Math.random() > chance) return;
+                    Player player = condition.getPlayer();
+                    Location location = position ? condition.getLocation() : player.getLocation();
+                    ArmorStandUtils.sendFakeItem(
+                            condition.getPlayer(),
+                            location.clone().add(x, y, z),
+                            plugin.getItemManager().build(player, itemSplit[0], itemSplit[1], condition.getArgs()),
+                            duration
+                    );
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: hologram");
+                return null;
+            }
+        });
+    }
+
     private void registerChainAction() {
         registerAction("chain", (args, chance) -> {
             List<Action> actions = new ArrayList<>();
@@ -357,6 +443,17 @@ public class ActionManagerImpl implements ActionManager {
         });
     }
 
+    private void registerLevelAction() {
+        registerAction("level", (args, chance) -> {
+            int level = (int) args;
+            return condition -> {
+                if (Math.random() > chance) return;
+                Player player = condition.getPlayer();
+                player.setLevel(Math.max(0, player.getLevel() + level));
+            };
+        });
+    }
+
     @SuppressWarnings("all")
     private void registerSoundAction() {
         registerAction("sound", (args, chance) -> {
@@ -452,6 +549,7 @@ public class ActionManagerImpl implements ActionManager {
         });
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void loadExpansions() {
         File expansionFolder = new File(plugin.getDataFolder(), EXPANSION_FOLDER);
         if (!expansionFolder.exists())

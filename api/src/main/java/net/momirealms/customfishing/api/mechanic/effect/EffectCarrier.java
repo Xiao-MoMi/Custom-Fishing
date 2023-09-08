@@ -5,6 +5,7 @@ import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -68,6 +69,11 @@ public class EffectCarrier {
 
     public Map<ActionTrigger, Action[]> getActionMap() {
         return actionMap;
+    }
+
+    @Nullable
+    public Action[] getActions(ActionTrigger trigger) {
+        return actionMap.get(trigger);
     }
 
     public boolean isPersist() {

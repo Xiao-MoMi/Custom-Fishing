@@ -21,14 +21,10 @@ mechanics:
       value:
         - blacklist_world
 
-  # Global loot properties
-  global-loot-properties:
-    show-in-fishfinder: true
-    disable-stat: false
-    disable-game: false
-    instant-game: false
-    prevent-grabbing: false
-    events:
+  # global event settings
+  global-events:
+    bait: {}
+    loot:
       success:
         title_action:
           type: random-title
@@ -60,7 +56,37 @@ mechanics:
             stay: 30
             fade-out: 10
           chance: 1.0
-
+    rod:
+      land:
+        priority_action:
+          type: priority
+          value:
+            priority_1:
+              conditions:
+                in-lava: true
+              actions:
+                fake_item_action:
+                  type: fake-item
+                  value:
+                    duration: 35
+                    position: hook
+                    item: util:lava_effect
+                    y: 0
+                    x: 0
+                    z: 0
+            priority_2:
+              conditions:
+                in-lava: false
+              actions:
+                fake_item_action:
+                  type: fake-item
+                  value:
+                    duration: 35
+                    position: hook
+                    item: util:water_effect
+                    y: 0
+                    x: 0
+                    z: 0
   # Fishing bag is where players can store their baits, utils and rods (Fish optional)
   fishing-bag:
     # Enable
@@ -78,16 +104,6 @@ mechanics:
     # ticks
     min-wait-time: 100
     max-wait-time: 600
-
-  # Animation settings
-  animation:
-    splash:
-      enable: true
-      water: water_effect
-      lava: lava_effect
-      duration: 25
-    bait:
-      enable: true
 
   # Competition settings
   competition:

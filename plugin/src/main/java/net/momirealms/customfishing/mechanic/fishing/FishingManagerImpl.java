@@ -26,13 +26,13 @@ import net.momirealms.customfishing.api.event.LavaFishingEvent;
 import net.momirealms.customfishing.api.event.RodCastEvent;
 import net.momirealms.customfishing.api.manager.FishingManager;
 import net.momirealms.customfishing.api.manager.RequirementManager;
+import net.momirealms.customfishing.api.mechanic.GlobalSettings;
 import net.momirealms.customfishing.api.mechanic.TempFishingState;
-import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
+import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
-import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.game.GameConfig;
 import net.momirealms.customfishing.api.mechanic.game.GameInstance;
 import net.momirealms.customfishing.api.mechanic.game.GameSettings;
@@ -41,7 +41,6 @@ import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.loot.Modifier;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.api.util.WeightUtils;
-import net.momirealms.customfishing.mechanic.loot.LootManagerImpl;
 import net.momirealms.customfishing.mechanic.requirement.RequirementManagerImpl;
 import net.momirealms.customfishing.setting.Config;
 import org.bukkit.Bukkit;
@@ -56,12 +55,10 @@ import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FishingManagerImpl implements Listener, FishingManager {
@@ -202,6 +199,19 @@ public class FishingManagerImpl implements Listener, FishingManager {
         }
     }
 
+    @EventHandler
+    public void onConsumeItem(PlayerItemConsumeEvent event) {
+        if (event.isCancelled()) return;
+        ItemStack itemStack = event.getItem();
+        String id = plugin.getItemManager().getAnyItemID(itemStack);
+        Loot loot = plugin.getLootManager().getLoot(id);
+        if (loot != null) {
+            Condition condition = new Condition(event.getPlayer());
+            GlobalSettings.triggerLootActions(ActionTrigger.CONSUME, condition);
+            loot.triggerActions(ActionTrigger.CONSUME, condition);
+        }
+    }
+
     @Override
     public boolean removeHook(UUID uuid) {
         FishHook hook = hookCacheMap.remove(uuid);
@@ -248,16 +258,11 @@ public class FishingManagerImpl implements Listener, FishingManager {
         fishingPreparation.mergeEffect(initialEffect);
 
         // Apply enchants
-        for (String enchant : plugin.getIntegrationManager().getEnchantments(fishingPreparation.getRodItemStack())) {
-            EffectCarrier enchantEffect = plugin.getEffectManager().getEffect("enchant", enchant);
-            if (enchantEffect != null && enchantEffect.isConditionMet(fishingPreparation)) {
-                initialEffect.merge(enchantEffect.getEffect());
-            }
-        }
+
         //TODO Apply totem effects
 
         // Call custom event
-        RodCastEvent rodCastEvent = new RodCastEvent(event, initialEffect);
+        RodCastEvent rodCastEvent = new RodCastEvent(event, fishingPreparation, initialEffect);
         Bukkit.getPluginManager().callEvent(rodCastEvent);
         if (rodCastEvent.isCancelled()) {
             return;
@@ -271,15 +276,15 @@ public class FishingManagerImpl implements Listener, FishingManager {
         // Reduce amount & Send animation
         var baitItem = fishingPreparation.getBaitItemStack();
         if (baitItem != null) {
-            if (Config.enableBaitAnimation) {
-                ItemStack cloned = baitItem.clone();
-                cloned.setAmount(1);
-                new BaitAnimationTask(plugin, player, fishHook, cloned);
-            }
+            ItemStack cloned = baitItem.clone();
+            cloned.setAmount(1);
+            new BaitAnimationTask(plugin, player, fishHook, cloned);
             baitItem.setAmount(baitItem.getAmount() - 1);
         }
         // Arrange hook check task
         this.hookCheckMap.put(player.getUniqueId(), new HookCheckTimerTask(this, fishHook, fishingPreparation, initialEffect));
+        // trigger actions
+        fishingPreparation.triggerActions(ActionTrigger.CAST);
     }
 
     private void onCaughtEntity(PlayerFishEvent event) {
@@ -343,6 +348,8 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 // put vanilla loot in map
                 this.vanillaLootMap.put(uuid, item.getItemStack());
             }
+            loot.triggerActions(ActionTrigger.HOOK, temp.getPreparation());
+            temp.getPreparation().triggerActions(ActionTrigger.HOOK);
             if (!loot.disableGame()) {
                 // start the game if the loot has a game
                 event.setCancelled(true);
@@ -379,12 +386,12 @@ public class FishingManagerImpl implements Listener, FishingManager {
         if (temp != null) {
             var loot = temp.getLoot();
 
-            Action[] actions = loot.getActions(ActionTrigger.HOOK);
-            if (actions != null)
-                for (Action action : actions)
-                    action.trigger(temp.getPreparation());
+            loot.triggerActions(ActionTrigger.BITE, temp.getPreparation());
+            temp.getPreparation().triggerActions(ActionTrigger.BITE);
 
             if (loot.instanceGame() && !loot.disableGame()) {
+                loot.triggerActions(ActionTrigger.HOOK, temp.getPreparation());
+                temp.getPreparation().triggerActions(ActionTrigger.HOOK);
                 startFishingGame(player, loot, temp.getEffect());
             }
         }
@@ -414,9 +421,12 @@ public class FishingManagerImpl implements Listener, FishingManager {
 
             var temp = this.tempFishingStateMap.get(uuid);
             if (temp != null ) {
-                if (!temp.getLoot().disableGame()) {
+                Loot loot = temp.getLoot();
+                loot.triggerActions(ActionTrigger.HOOK, temp.getPreparation());
+                temp.getPreparation().triggerActions(ActionTrigger.HOOK);
+                if (!loot.disableGame()) {
                     event.setCancelled(true);
-                    startFishingGame(player, temp.getLoot(), temp.getEffect());
+                    startFishingGame(player, loot, temp.getEffect());
                 } else {
                     success(temp, event.getHook());
                 }
@@ -454,7 +464,15 @@ public class FishingManagerImpl implements Listener, FishingManager {
 
         gamingPlayer.cancel();
         gamingPlayerMap.remove(uuid);
-        plugin.getScheduler().runTaskSync(fishHook::remove, fishHook.getLocation());
+        plugin.getScheduler().runTaskSync(() -> {
+            fishHook.remove();
+            ItemStack rod = tempFishingState.getPreparation().getRodItemStack();
+            PlayerItemDamageEvent damageEvent = new PlayerItemDamageEvent(player, rod, 1);
+            Bukkit.getPluginManager().callEvent(damageEvent);
+            if (damageEvent.isCancelled()) {
+                return;
+            }
+        }, fishHook.getLocation());
     }
 
     public void fail(TempFishingState state, FishHook hook) {
@@ -482,15 +500,10 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 return;
             }
 
-            Action[] globalActions = LootManagerImpl.GlobalSetting.globalLootProperties.getActions(ActionTrigger.FAILURE);
-            if (globalActions != null)
-                for (Action action : globalActions)
-                    action.trigger(fishingPreparation);
+            GlobalSettings.triggerLootActions(ActionTrigger.FAILURE, fishingPreparation);
+            loot.triggerActions(ActionTrigger.FAILURE, fishingPreparation);
+            fishingPreparation.triggerActions(ActionTrigger.FAILURE);
 
-            Action[] actions = loot.getActions(ActionTrigger.FAILURE);
-            if (actions != null)
-                for (Action action : actions)
-                    action.trigger(fishingPreparation);
         }, hook.getLocation());
     }
 
@@ -579,28 +592,35 @@ public class FishingManagerImpl implements Listener, FishingManager {
             fishingPreparation.insertArg("{score}","-1");
         }
 
-        Action[] globalActions = LootManagerImpl.GlobalSetting.globalLootProperties.getActions(ActionTrigger.SUCCESS);
-        if (globalActions != null)
-            for (Action action : globalActions)
-                action.trigger(fishingPreparation);
-
-        Action[] actions = loot.getActions(ActionTrigger.SUCCESS);
-        if (actions != null)
-            for (Action action : actions)
-                action.trigger(fishingPreparation);
+        // events and actions
+        GlobalSettings.triggerLootActions(ActionTrigger.SUCCESS, fishingPreparation);
+        loot.triggerActions(ActionTrigger.SUCCESS, fishingPreparation);
+        fishingPreparation.triggerActions(ActionTrigger.SUCCESS);
 
         player.setStatistic(
                 Statistic.FISH_CAUGHT,
                 player.getStatistic(Statistic.FISH_CAUGHT) + 1
         );
+
+        if (!loot.disableStats())
+            Optional.ofNullable(
+                    plugin.getStatisticsManager()
+                          .getStatistics(player.getUniqueId())
+            ).ifPresent(it -> it.addLootAmount(loot, fishingPreparation, 1));
     }
 
-    @Nullable
-    public Loot getNextLoot(Effect initialEffect, FishingPreparation fishingPreparation) {
-        HashMap<String, Double> lootWithWeight = plugin.getRequirementManager().getLootWithWeight(fishingPreparation);
+    @Override
+    public Collection<String> getPossibleLootKeys (FishingPreparation fishingPreparation) {
+        return plugin.getRequirementManager().getLootWithWeight(fishingPreparation).keySet();
+    }
+
+    @NotNull
+    @Override
+    public Map<String, Double> getPossibleLootKeysWithWeight(Effect initialEffect, FishingPreparation fishingPreparation) {
+        Map<String, Double> lootWithWeight = plugin.getRequirementManager().getLootWithWeight(fishingPreparation);
         if (lootWithWeight.size() == 0) {
             LogUtils.warn(String.format("No Loot found at %s for Player %s!", fishingPreparation.getPlayer().getLocation(), fishingPreparation.getPlayer().getName()));
-            return null;
+            return new HashMap<>();
         }
 
         Player player = fishingPreparation.getPlayer();
@@ -608,8 +628,13 @@ public class FishingManagerImpl implements Listener, FishingManager {
             double previous = lootWithWeight.getOrDefault(pair.left(), 0d);
             lootWithWeight.put(pair.left(), pair.right().modify(player, previous));
         }
+        return lootWithWeight;
+    }
 
-        String key = WeightUtils.getRandom(lootWithWeight);
+    @Override
+    @Nullable
+    public Loot getNextLoot(Effect initialEffect, FishingPreparation fishingPreparation) {
+        String key = WeightUtils.getRandom(getPossibleLootKeysWithWeight(initialEffect, fishingPreparation));
         Loot loot = plugin.getLootManager().getLoot(key);
         if (loot == null) {
             LogUtils.warn(String.format("Loot %s doesn't exist!", key));

@@ -1,3 +1,9 @@
+# Vanilla fishing rod properties
+FISHING_ROD:
+  tag: false
+  material: fishing_rod
+
+# Custom rods
 wooden_rod:
   material: fishing_rod
   display:

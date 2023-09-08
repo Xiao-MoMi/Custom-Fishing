@@ -19,6 +19,7 @@ package net.momirealms.customfishing.api.mechanic.loot;
 
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
+import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.game.GameConfig;
 import org.jetbrains.annotations.NotNull;
 
@@ -86,6 +87,8 @@ public interface Loot {
      * @return actions
      */
     Action[] getActions(ActionTrigger actionTrigger);
+
+    void triggerActions(ActionTrigger actionTrigger, Condition condition);
 
     /**
      * get actions when succeeding in fishing for certain times

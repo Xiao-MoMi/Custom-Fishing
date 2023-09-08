@@ -3,6 +3,7 @@ package net.momirealms.customfishing.api.mechanic.loot;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
+import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.game.GameConfig;
 import org.jetbrains.annotations.NotNull;
 
@@ -165,6 +166,16 @@ public class CFLoot implements Loot {
     @Override
     public Action[] getActions(ActionTrigger actionTrigger) {
         return actionMap.get(actionTrigger);
+    }
+
+    @Override
+    public void triggerActions(ActionTrigger actionTrigger, Condition condition) {
+        Action[] actions = getActions(actionTrigger);
+        if (actions != null) {
+            for (Action action : actions) {
+                action.trigger(condition);
+            }
+        }
     }
 
     @Override

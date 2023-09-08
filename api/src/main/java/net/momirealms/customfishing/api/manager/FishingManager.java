@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.manager;
 
 import net.momirealms.customfishing.api.mechanic.TempFishingState;
+import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.game.GameInstance;
 import net.momirealms.customfishing.api.mechanic.game.GameSettings;
@@ -25,7 +26,10 @@ import net.momirealms.customfishing.api.mechanic.game.GamingPlayer;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,6 +45,12 @@ public interface FishingManager {
     void removeTempFishingState(Player player);
 
     void processGameResult(GamingPlayer gamingPlayer);
+
+    Collection<String> getPossibleLootKeys(FishingPreparation fishingPreparation);
+
+    @NotNull Map<String, Double> getPossibleLootKeysWithWeight(Effect initialEffect, FishingPreparation fishingPreparation);
+
+    Loot getNextLoot(Effect initialEffect, FishingPreparation fishingPreparation);
 
     void startFishingGame(Player player, Loot loot, Effect effect);
 
