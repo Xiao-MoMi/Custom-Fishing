@@ -32,7 +32,10 @@ import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.papi.ParseUtils;
 import net.momirealms.customfishing.util.ClassUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -111,7 +114,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerWorldRequirement();
         this.registerWeatherRequirement();
         this.registerSeasonRequirement();
-        this.registerInLavaRequirement();
+        this.registerLavaFishingRequirement();
         this.registerRodRequirement();
         this.registerBaitRequirement();
         this.registerCompareRequirement();
@@ -119,6 +122,8 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerOrRequirement();
         this.registerLevelRequirement();
         this.registerRandomRequirement();
+        this.registerIceFishingRequirement();
+        this.registerOpenWaterRequirement();
     }
 
     public ConditionalLoots getConditionalLoots(ConfigurationSection section) {
@@ -301,12 +306,52 @@ public class RequirementManagerImpl implements RequirementManager {
         });
     }
 
-    private void registerInLavaRequirement() {
+    private void registerLavaFishingRequirement() {
         registerRequirement("lava-fishing", (args, actions, advanced) -> {
             boolean inLava = (boolean) args;
             return condition -> {
                 String current = condition.getArgs().get("{lava}");
                 if (current.equals(String.valueOf(inLava)))
+                    return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+    }
+
+    private void registerOpenWaterRequirement() {
+        registerRequirement("open-water", (args, actions, advanced) -> {
+            boolean inLava = (boolean) args;
+            return condition -> {
+                String current = condition.getArgs().get("{open-water}");
+                if (current.equals(String.valueOf(inLava)))
+                    return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+    }
+
+    private void registerIceFishingRequirement() {
+        registerRequirement("ice-fishing", (args, actions, advanced) -> {
+            boolean iceFishing = (boolean) args;
+            return condition -> {
+                Location location = condition.getLocation();
+                int water = 0;
+                int ice = 0;
+                for (int i = -2; i <= 2; i++) {
+                    for (int j = -1; j <= 2; j++) {
+                        for (int k = -2; k <= 2; k++) {
+                            Block block = location.clone().add(i, j, k).getBlock();
+                            Material material = block.getType();
+                            switch (material) {
+                                case ICE -> ice++;
+                                case WATER -> water++;
+                            }
+                        }
+                    }
+                }
+                if ((ice >= 16 && water >= 25) == iceFishing)
                     return true;
                 if (advanced) triggerActions(actions, condition);
                 return false;

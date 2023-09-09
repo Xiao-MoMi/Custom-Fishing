@@ -20,6 +20,7 @@ package net.momirealms.customfishing.api.mechanic.statistic;
 import com.google.gson.annotations.SerializedName;
 import net.momirealms.customfishing.api.data.StatisticData;
 import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 
@@ -38,9 +39,9 @@ public class Statistics {
         this.total = statisticMap.values().stream().mapToInt(Integer::intValue).sum();
     }
 
-    public synchronized void addLootAmount(Loot loot, FishingPreparation fishingPreparation, int amount) {
+    public synchronized void addLootAmount(Loot loot, Condition condition, int amount) {
         if (amount == 1) {
-            addSingleLootAmount(loot, fishingPreparation);
+            addSingleLootAmount(loot, condition);
             return;
         }
         Integer previous = statisticMap.get(loot.getID());
@@ -48,23 +49,23 @@ public class Statistics {
         int after = previous + amount;
         statisticMap.put(loot.getID(), after);
         total += amount;
-        doSuccessTimesAction(previous, after, fishingPreparation, loot);
+        doSuccessTimesAction(previous, after, condition, loot);
     }
 
-    private void doSuccessTimesAction(Integer previous, int after, FishingPreparation fishingPreparation, Loot loot) {
+    private void doSuccessTimesAction(Integer previous, int after, Condition condition, Loot loot) {
         HashMap<Integer, Action[]> actionMap = loot.getSuccessTimesActionMap();
         if (actionMap != null) {
             for (Map.Entry<Integer, Action[]> entry : actionMap.entrySet()) {
                 if (entry.getKey() > previous && entry.getKey() <= after) {
                     for (Action action : entry.getValue()) {
-                        action.trigger(fishingPreparation);
+                        action.trigger(condition);
                     }
                 }
             }
         }
     }
 
-    private void addSingleLootAmount(Loot loot, FishingPreparation fishingPreparation) {
+    private void addSingleLootAmount(Loot loot, Condition condition) {
         Integer previous = statisticMap.get(loot.getID());
         if (previous == null) previous = 0;
         int after = previous + 1;
@@ -73,7 +74,7 @@ public class Statistics {
         Action[] actions = loot.getSuccessTimesActionMap().get(after);
         if (actions != null)
             for (Action action : actions) {
-                action.trigger(fishingPreparation);
+                action.trigger(condition);
             }
     }
 
@@ -82,12 +83,9 @@ public class Statistics {
         return amount == null ? 0 : amount;
     }
 
-    public boolean hasFished(String key) {
-        return statisticMap.containsKey(key);
-    }
-
     public void reset() {
         statisticMap.clear();
+        total = 0;
     }
 
     public Map<String, Integer> getStatisticMap() {
@@ -95,6 +93,10 @@ public class Statistics {
     }
 
     public void setData(String key, int value) {
+        if (value <= 0) {
+            statisticMap.remove(key);
+            return;
+        }
         statisticMap.put(key, value);
     }
 

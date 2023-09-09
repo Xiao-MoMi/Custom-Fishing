@@ -128,6 +128,7 @@ public class HookCheckTimerTask implements Runnable {
         if (fishHook.isInWater()) {
             this.fishingPreparation.setLocation(fishHook.getLocation());
             this.fishingPreparation.insertArg("{lava}", "false");
+            this.fishingPreparation.insertArg("{open-water}", String.valueOf(fishHook.isInOpenWater()));
             this.fishingPreparation.triggerActions(ActionTrigger.LAND);
             FishHookLandEvent event = new FishHookLandEvent(fishingPreparation.getPlayer(), FishHookLandEvent.Target.WATER);
             Bukkit.getPluginManager().callEvent(event);

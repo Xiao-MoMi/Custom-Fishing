@@ -76,6 +76,7 @@ public class ItemCommand {
                 .withOptionalArguments(new IntegerArgument("amount", 1))
                 .executesPlayer((player, args) -> {
                     String id = (String) args.get("id");
+                    assert id != null;
                     int amount = (int) args.getOrDefault("amount", 1);
                     ItemStack item = CustomFishingPlugin.get().getItemManager().build(player, namespace, id, new Condition(player).getArgs());
                     if (item != null) {
@@ -87,6 +88,7 @@ public class ItemCommand {
                 });
     }
 
+    @SuppressWarnings("unchecked")
     private CommandAPICommand giveCommand(String namespace) {
         return new CommandAPICommand("give")
                 .withArguments(new EntitySelectorArgument.ManyPlayers("player"))
@@ -101,6 +103,7 @@ public class ItemCommand {
                     int amount = (int) args.getOrDefault("amount", 1);
                     BuildableItem buildableItem = CustomFishingPlugin.get().getItemManager().getBuildableItem(namespace, id);
                     if (buildableItem != null) {
+                        assert players != null;
                         for (Player player : players) {
                             ItemStack item = CustomFishingPlugin.get().getItemManager().build(player, namespace, id, new Condition(player).getArgs());
                             int actual = ItemManagerImpl.giveCertainAmountOfItem(player, item, amount);

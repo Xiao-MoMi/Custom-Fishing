@@ -72,27 +72,35 @@ public class StatisticsPapi extends PlaceholderExpansion {
             return String.valueOf(statistics.getTotalCatchAmount());
         }
 
-        String[] split = params.split("_");
+        String[] split = params.split("_", 2);
         switch (split[0]) {
             case "hascaught" -> {
+                if (split.length == 1) return "Invalid format";
                 return String.valueOf(statistics.getLootAmount(split[1]) != 0);
             }
+            case "amount" -> {
+                if (split.length == 1) return "Invalid format";
+                return String.valueOf(statistics.getLootAmount(split[1]));
+            }
             case "category" -> {
-                List<String> category = plugin.getStatisticsManager().getCategory(split[2]);
-                if (category == null) return "0";
-                if (split[1].equals("total")) {
+                if (split.length == 1) return "Invalid format";
+                String[] categorySplit = split[1].split("_", 2);
+                if (categorySplit.length == 1) return "Invalid format";
+                List<String> category = plugin.getStatisticsManager().getCategory(categorySplit[1]);
+                if (category == null) return "Category Not Exists";
+                if (categorySplit[0].equals("total")) {
                     int total = 0;
                     for (String loot : category) {
                         total += statistics.getLootAmount(loot);
                     }
                     return String.valueOf(total);
-                } else if (split[1].equals("progress")) {
+                } else if (categorySplit[0].equals("progress")) {
                     int size = category.size();
                     int unlocked = 0;
                     for (String loot : category) {
                         if (statistics.getLootAmount(loot) != 0) unlocked++;
                     }
-                    double percent = (double) unlocked / size;
+                    double percent = ((double) unlocked * 100) / size;
                     String progress = String.format("%.1f", percent);
                     return progress.equals("100.0") ? "100" : progress;
                 }

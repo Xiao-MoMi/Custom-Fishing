@@ -27,27 +27,30 @@ import java.util.Map;
 
 public class Condition {
 
-    protected @NotNull Location location;
-    protected final @NotNull Player player;
+    protected Location location;
+    protected final Player player;
     protected final @NotNull Map<String, String> args;
 
-    public Condition(Player player) {
+    public Condition(@NotNull Player player) {
         this(player.getLocation(), player, new HashMap<>());
     }
 
-    public Condition(Player player, Map<String, String> args) {
+    public Condition(@NotNull Player player, @NotNull Map<String, String> args) {
         this(player.getLocation(), player, args);
     }
 
-    public Condition(@NotNull Location location, @NotNull Player player, @NotNull Map<String, String> args) {
+    public Condition(Location location, Player player, @NotNull Map<String, String> args) {
         this.location = location;
         this.player = player;
         this.args = args;
-        this.args.put("{player}", player.getName());
-        this.args.put("{x}", String.valueOf(location.getX()));
-        this.args.put("{y}", String.valueOf(location.getY()));
-        this.args.put("{z}", String.valueOf(location.getZ()));
-        this.args.put("{world}", location.getWorld().getName());
+        if (player != null)
+            this.args.put("{player}", player.getName());
+        if (location != null) {
+            this.args.put("{x}", String.valueOf(location.getX()));
+            this.args.put("{y}", String.valueOf(location.getY()));
+            this.args.put("{z}", String.valueOf(location.getZ()));
+            this.args.put("{world}", location.getWorld().getName());
+        }
     }
 
     public void setLocation(@NotNull Location location) {
@@ -58,12 +61,10 @@ public class Condition {
         this.args.put("{world}", location.getWorld().getName());
     }
 
-    @NotNull
     public Location getLocation() {
         return location;
     }
 
-    @NotNull
     public Player getPlayer() {
         return player;
     }

@@ -6,6 +6,7 @@
 
 apple_crate:
   show-in-fishfinder: false
+  disable-stat: true
   nick: Apple Crate
   block: barrel
   vector:
@@ -48,6 +49,7 @@ apple_crate:
         chance: 0.8
 carrot_crate:
   show-in-fishfinder: false
+  disable-stat: true
   nick: Carrot Crate
   block: barrel
   vector:

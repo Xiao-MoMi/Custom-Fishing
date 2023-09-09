@@ -55,3 +55,52 @@ golden_star_fish:
   - salmon_void_fish_golden_star
   - woodskip_fish_golden_star
   - sturgeon_fish_golden_star
+
+river_fish:
+  - gold_fish
+  - gold_fish_silver_star
+  - gold_fish_golden_star
+  - perch_fish
+  - perch_fish_silver_star
+  - perch_fish_golden_star
+  - mullet_fish
+  - mullet_fish_silver_star
+  - mullet_fish_golden_star
+  - carp_fish
+  - carp_fish_silver_star
+  - carp_fish_golden_star
+  - cat_fish
+  - cat_fish_silver_star
+  - cat_fish_silver_star
+  - woodskip_fish
+  - woodskip_fish_silver_star
+  - woodskip_fish_golden_star
+  - sturgeon_fish
+  - sturgeon_fish_silver_star
+  - sturgeon_fish_golden_star
+
+ocean_fish:
+  - tuna_fish
+  - tuna_fish_silver_star
+  - tuna_fish_golden_star
+  - pike_fish
+  - pike_fish_silver_star
+  - pike_fish_golden_star
+  - sardine_fish
+  - sardine_fish_silver_star
+  - sardine_fish_golden_star
+  - octopus
+  - octopus_silver_star
+  - octopus_golden_star
+  - sunfish
+  - sunfish_silver_star
+  - sunfish_golden_star
+  - red_snapper_fish
+  - red_snapper_fish_silver_star
+  - red_snapper_fish_golden_star
+  - blue_jellyfish
+  - blue_jellyfish_silver_star
+  - blue_jellyfish_golden_star
+  - pink_jellyfish
+  - pink_jellyfish_silver_star
+  - pink_jellyfish_golden_star

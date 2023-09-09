@@ -116,7 +116,7 @@ public class Competition implements FishingCompetition {
         publicPlaceholders.put("{hour}", remainingTime < 3600 ? "" : (remainingTime / 3600) + Locale.FORMAT_Hour);
         publicPlaceholders.put("{minute}", remainingTime < 60 ? "" : (remainingTime % 3600) / 60 + Locale.FORMAT_Minute);
         publicPlaceholders.put("{second}", remainingTime == 0 ? "" : remainingTime % 60 + Locale.FORMAT_Second);
-        publicPlaceholders.put("{seconds}", remainingTime + Locale.FORMAT_Second);
+        publicPlaceholders.put("{seconds}", String.valueOf(remainingTime));
     }
 
     @Override

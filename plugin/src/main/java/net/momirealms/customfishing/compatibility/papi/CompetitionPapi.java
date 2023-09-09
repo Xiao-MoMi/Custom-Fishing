@@ -25,6 +25,8 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 public class CompetitionPapi extends PlaceholderExpansion {
 
     private final CustomFishingPlugin plugin;
@@ -69,9 +71,6 @@ public class CompetitionPapi extends PlaceholderExpansion {
             }
             case "nextseconds" -> {
                 return String.valueOf(plugin.getCompetitionManager().getNextCompetitionSeconds());
-            }
-            case "nextminutes" -> {
-                return String.valueOf(plugin.getCompetitionManager().getNextCompetitionSeconds() / 60);
             }
             case "nextsecond" -> {
                 return plugin.getCompetitionManager().getNextCompetitionSeconds() % 60 + Locale.FORMAT_Second;
@@ -128,7 +127,7 @@ public class CompetitionPapi extends PlaceholderExpansion {
             case "score" -> {
                 FishingCompetition competition = plugin.getCompetitionManager().getOnGoingCompetition();
                 if (competition == null) return "";
-                if (split[1].equals("")) {
+                if (split.length == 1) {
                     return String.format("%.2f", competition.getRanking().getPlayerScore(player.getName()));
                 } else {
                     return String.format("%.2f", competition.getRanking().getScoreAt(Integer.parseInt(split[1])));
@@ -137,8 +136,8 @@ public class CompetitionPapi extends PlaceholderExpansion {
             case "player" -> {
                 FishingCompetition competition = plugin.getCompetitionManager().getOnGoingCompetition();
                 if (competition == null) return "";
-                if (split[1].equals("")) return "Invalid format";
-                return competition.getRanking().getPlayerAt(Integer.parseInt(split[1]));
+                if (split.length == 1) return "Invalid format";
+                return Optional.ofNullable(competition.getRanking().getPlayerAt(Integer.parseInt(split[1]))).orElse("");
             }
         }
         return "null";

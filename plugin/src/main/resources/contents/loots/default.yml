@@ -7,6 +7,7 @@
 # Vanilla loots settings
 vanilla:
   show-in-fishfinder: false
+  disable-stat: true
 # Some rubbish
 stick:
   tag: false
@@ -118,6 +119,8 @@ sharpness_book:
   tag: false
   material: enchanted_book
   group: enchantments
+  show-in-fishfinder: false
+  disable-stat: true
   random-stored-enchantments:
     lv5:
       enchant: minecraft:sharpness
@@ -143,6 +146,8 @@ efficiency_book:
   tag: false
   material: enchanted_book
   group: enchantments
+  show-in-fishfinder: false
+  disable-stat: true
   random-stored-enchantments:
     lv5:
       enchant: minecraft:efficiency
@@ -168,6 +173,8 @@ unbreaking_book:
   tag: false
   material: enchanted_book
   group: enchantments
+  show-in-fishfinder: false
+  disable-stat: true
   random-stored-enchantments:
     lv3:
       enchant: minecraft:unbreaking
@@ -185,6 +192,8 @@ protection_book:
   tag: false
   material: enchanted_book
   group: enchantments
+  show-in-fishfinder: false
+  disable-stat: true
   random-stored-enchantments:
     lv4:
       enchant: minecraft:protection

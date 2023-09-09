@@ -6,6 +6,7 @@
 
 skeleton:
   show-in-fishfinder: false
+  disable-stat: true
   mob: skeleton
   nick: <white>Skeleton</white>
   vector:
@@ -14,6 +15,7 @@ skeleton:
 
 wither_skeleton:
   show-in-fishfinder: false
+  disable-stat: true
   mob: wither_skeleton
   nick: <black>Wither Skeleton</black>
   vector:
@@ -22,6 +24,7 @@ wither_skeleton:
 
 magma_cube:
   show-in-fishfinder: false
+  disable-stat: true
   mob: magma_cube
   nick: <red>Magma Cube</black>
   vector:
@@ -30,6 +33,7 @@ magma_cube:
 
 skeletalknight:
   show-in-fishfinder: false
+  disable-stat: true
   mob: MythicMobs:SkeletalKnight
   nick: Skeletal Knight
   vector:

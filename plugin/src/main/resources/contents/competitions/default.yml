@@ -40,7 +40,7 @@ weekend_competition:
     color: WHITE
     overlay: PROGRESS
     text:
-      - '<gray>[<#87CEFA>🎣<gray>] <gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{seconds} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Your Rank: <#E6E6FA>{rank} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>No.1 Player: <#E6E6FA>{1_player}'
+      - '<gray>[<#87CEFA>🎣<gray>] <gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{seconds}s <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Your Rank: <#E6E6FA>{rank} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>No.1 Player: <#E6E6FA>{1_player}'
       - '<gray>[<#87CEFA>🎣<gray>] <gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{minute}{second} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Your Score: <#E6E6FA>{score} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>No.1 Score: <#E6E6FA>{1_score}'
       - '<gray>[<#87CEFA>🎣<gray>] <gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{minute}{second} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Winning condition: <#E6E6FA>{goal}'
     refresh-rate: 20
@@ -50,7 +50,7 @@ weekend_competition:
   actionbar:
     enable: false
     text:
-      - '<gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{seconds} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Your Rank: <#E6E6FA>{rank} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>No.1 Player: <#E6E6FA>{1_player}'
+      - '<gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{seconds}s <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Your Rank: <#E6E6FA>{rank} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>No.1 Player: <#E6E6FA>{1_player}'
       - '<gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{minute}{second} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Your Score: <#E6E6FA>{score} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>No.1 Score: <#E6E6FA>{1_score}'
       - '<gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{minute}{second} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Winning condition: <#E6E6FA>{goal}'
     refresh-rate: 5

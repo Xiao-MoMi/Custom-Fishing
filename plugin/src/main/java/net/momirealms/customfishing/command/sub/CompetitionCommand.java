@@ -55,6 +55,7 @@ public class CompetitionCommand {
         if (Config.redisRanking) command.withOptionalArguments(new StringArgument("-allservers"));
         command.executes((sender, args) -> {
             String id = (String) args.get(0);
+            assert id != null;
             if (!allCompetitions.contains(id)) {
                 AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, Locale.MSG_Competition_Not_Exist.replace("{id}", id));
                 return;

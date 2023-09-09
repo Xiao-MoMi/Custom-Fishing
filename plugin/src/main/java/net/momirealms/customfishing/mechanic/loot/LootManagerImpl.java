@@ -95,6 +95,16 @@ public class LootManagerImpl implements LootManager {
         return lootMap.get(key);
     }
 
+    @Override
+    public Collection<String> getAllLootKeys() {
+        return lootMap.keySet();
+    }
+
+    @Override
+    public Collection<Loot> getAllLoots() {
+        return lootMap.values();
+    }
+
     private void loadSingleFile(File file, String namespace) {
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
         for (Map.Entry<String, Object> entry : yaml.getValues(false).entrySet()) {

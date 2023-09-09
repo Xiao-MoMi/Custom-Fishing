@@ -71,7 +71,7 @@ public class GameGroup implements GameConfig {
         }
         GameSettings settings = new GameSettings(
                 ThreadLocalRandom.current().nextInt(minTime, maxTime + 1),
-                (int) (ThreadLocalRandom.current().nextInt(minDifficulty, maxDifficulty + 1) + effect.getDifficultyModifier())
+                (int) Math.min(100, Math.max(1, ThreadLocalRandom.current().nextInt(minDifficulty, maxDifficulty + 1) + effect.getDifficultyModifier()))
         );
         return Pair.of(gameInstance, settings);
     }
