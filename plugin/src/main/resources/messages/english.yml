@@ -26,6 +26,7 @@ messages:
   never-played: 'That player has never played the server. You can''t edit a non existent player''s fishing bag.'
   data-not-loaded: '<red>Your data has not been loaded yet. Try rejoining the server. If the problem still occurs, contact the server administrator.'
   open-market-gui: 'Successfully opened the market gui for {player}'
+  open-fishingbag-gui: 'Successfully opened the fishing bag for {player}'
   format-day: 'd'
   format-hour: 'h'
   format-minute: 'm'

@@ -30,4 +30,6 @@ public interface MarketManager {
     String getFormula();
 
     double getPrice(float base, float bonus, float size);
+
+    boolean isEnable();
 }

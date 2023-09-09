@@ -24,7 +24,7 @@ import org.bukkit.inventory.Inventory;
 import java.util.UUID;
 
 public interface BagManager {
-    boolean isBagEnabled();
+    boolean isEnabled();
 
     Inventory getOnlineBagInventory(UUID uuid);
 

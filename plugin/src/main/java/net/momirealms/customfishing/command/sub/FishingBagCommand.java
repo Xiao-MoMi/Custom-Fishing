@@ -20,6 +20,7 @@ package net.momirealms.customfishing.command.sub;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.PlayerArgument;
 import dev.jorel.commandapi.arguments.UUIDArgument;
+import net.momirealms.customfishing.CustomFishingPluginImpl;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.user.OfflineUser;
@@ -40,11 +41,13 @@ public class FishingBagCommand {
                     .withPermission("fishingbag.user")
                     .withSubcommands(getEditOnlineCommand(), getEditOfflineCommand())
                     .executesPlayer(((player, args) -> {
-                        var inv = CustomFishingPlugin.get().getBagManager().getOnlineBagInventory(player.getUniqueId());
-                        if (inv != null) {
-                            player.openInventory(inv);
-                        } else {
-                            AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, Locale.MSG_Data_Not_Loaded);
+                        if (CustomFishingPlugin.get().getBagManager().isEnabled()) {
+                            var inv = CustomFishingPlugin.get().getBagManager().getOnlineBagInventory(player.getUniqueId());
+                            if (inv != null) {
+                                player.openInventory(inv);
+                            } else {
+                                AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, Locale.MSG_Data_Not_Loaded);
+                            }
                         }
                     }));
     }

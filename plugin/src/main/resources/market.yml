@@ -1,6 +1,8 @@
 # Container title
 title: '<gradient:#A52A2A:#800000:#A52A2A>Fish Market</gradient>'
 
+enable: true
+
 limitation:
   enable: true
   earnings: 10000

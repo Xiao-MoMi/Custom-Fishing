@@ -158,7 +158,8 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         ((StatisticsManagerImpl) this.statisticsManager).load();
         ((PlaceholderManagerImpl) this.placeholderManager).unload();
         ((PlaceholderManagerImpl) this.placeholderManager).load();
-        this.commandManager.loadCommands();
+        this.commandManager.unload();
+        this.commandManager.load();
     }
 
     private void loadDependencies() {

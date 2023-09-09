@@ -69,6 +69,7 @@ public class MarketManagerImpl implements MarketManager, Listener {
     private double earningLimit;
     private boolean allowItemWithNoPrice;
     private final ConcurrentHashMap<UUID, MarketGUI> marketGUIMap;
+    private boolean enable;
 
     public MarketManagerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;
@@ -94,6 +95,8 @@ public class MarketManagerImpl implements MarketManager, Listener {
 
     private void loadConfig() {
         YamlConfiguration config = plugin.getConfig("market.yml");
+        this.enable = config.getBoolean("enable", true);
+        if (!this.enable) return;
         this.layout = config.getStringList("layout").toArray(new String[0]);
         this.title = config.getString("title", "market.title");
         this.formula = config.getString("price-formula", "{base} + {bonus} * {size}");
@@ -354,5 +357,10 @@ public class MarketManagerImpl implements MarketManager, Listener {
 
     public BuildableItem getFunctionIconDenyBuilder() {
         return functionIconDenyBuilder;
+    }
+
+    @Override
+    public boolean isEnable() {
+        return enable;
     }
 }

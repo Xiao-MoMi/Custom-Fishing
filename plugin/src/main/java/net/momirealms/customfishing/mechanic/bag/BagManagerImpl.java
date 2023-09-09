@@ -22,15 +22,19 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.user.OfflineUser;
 import net.momirealms.customfishing.api.manager.BagManager;
 import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
+import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.setting.Config;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -46,7 +50,7 @@ public class BagManagerImpl implements BagManager, Listener {
     }
 
     @Override
-    public boolean isBagEnabled() {
+    public boolean isEnabled() {
         return Config.enableFishingBag;
     }
 
@@ -87,6 +91,32 @@ public class BagManagerImpl implements BagManager, Listener {
         if (offlineUser == null)
             return;
         plugin.getStorageManager().saveUserData(offlineUser, true);
+    }
+
+    @EventHandler
+    public void onInvClick(InventoryClickEvent event) {
+        if (event.isCancelled())
+            return;
+        if (!(event.getInventory().getHolder() instanceof FishingBagHolder))
+            return;
+        Inventory clicked = event.getClickedInventory();
+        if (clicked != event.getWhoClicked().getInventory())
+            return;
+        ItemStack clickedItem = event.getCurrentItem();
+        if (clickedItem == null || clickedItem.getType() == Material.AIR)
+            return;
+        if (Config.bagWhiteListItems.contains(clickedItem.getType()))
+            return;
+        String id = plugin.getItemManager().getAnyItemID(clickedItem);
+        if (plugin.getEffectManager().getEffect("rod", id) != null)
+            return;
+        if (plugin.getEffectManager().getEffect("bait", id) != null)
+            return;
+        if (plugin.getEffectManager().getEffect("util", id) != null)
+            return;
+        if (Config.bagStoreLoots && plugin.getLootManager().getLoot(id) != null)
+            return;
+        event.setCancelled(true);
     }
 
     @EventHandler

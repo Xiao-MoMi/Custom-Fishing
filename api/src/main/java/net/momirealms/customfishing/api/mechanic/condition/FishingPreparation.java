@@ -69,7 +69,7 @@ public class FishingPreparation extends Condition {
             this.baitEffect = baitEffect;
         }
 
-        if (plugin.getBagManager().isBagEnabled()) {
+        if (plugin.getBagManager().isEnabled()) {
             Inventory fishingBag = plugin.getBagManager().getOnlineBagInventory(player.getUniqueId());
             HashSet<String> uniqueUtils = new HashSet<>(4);
             if (fishingBag != null) {
