@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.util;
 
 import net.momirealms.customfishing.api.common.Pair;
-import net.momirealms.customfishing.api.mechanic.loot.Modifier;
+import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.objecthunter.exp4j.Expression;
@@ -70,8 +70,8 @@ public class ConfigUtils {
         return 0;
     }
 
-    public static List<Pair<String, Modifier>> getModifiers(List<String> modList) {
-        List<Pair<String, Modifier>> result = new ArrayList<>(modList.size());
+    public static List<Pair<String, WeightModifier>> getModifiers(List<String> modList) {
+        List<Pair<String, WeightModifier>> result = new ArrayList<>(modList.size());
         for (String member : modList) {
             String[] split = member.split(":",2);
             String key = split[0];
@@ -99,7 +99,7 @@ public class ConfigUtils {
         return YamlConfiguration.loadConfiguration(file);
     }
 
-    public static Modifier getModifier(String text) {
+    public static WeightModifier getModifier(String text) {
         if (text.length() == 0) {
             throw new IllegalArgumentException("Weight format is invalid.");
         }

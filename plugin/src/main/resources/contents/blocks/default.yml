@@ -1,4 +1,10 @@
-wooden_crate:
+# Note: These are the default configurations of the plugin
+# and do not necessarily mean that players can have a good
+# gaming experience. We hope that you will create
+# customized configurations based on your own ideas,
+# allowing players to experience the uniqueness of your server.
+
+apple_crate:
   show-in-fishfinder: false
   nick: Apple Crate
   block: barrel
@@ -38,5 +44,47 @@ wooden_crate:
         chance: 0.8
       apple_8:
         item: APPLE
+        amount: 1~2
+        chance: 0.8
+carrot_crate:
+  show-in-fishfinder: false
+  nick: Carrot Crate
+  block: barrel
+  vector:
+    horizontal: 1.07
+    vertical: 1.5
+  properties:
+    directional: true
+    storage:
+      carrot_1:
+        item: Carrot
+        amount: 1~2
+        chance: 0.8
+      carrot_2:
+        item: Carrot
+        amount: 1~2
+        chance: 0.8
+      carrot_3:
+        item: Carrot
+        amount: 1~2
+        chance: 0.8
+      carrot_4:
+        item: Carrot
+        amount: 1~2
+        chance: 0.8
+      carrot_5:
+        item: Carrot
+        amount: 1~2
+        chance: 0.8
+      carrot_6:
+        item: Carrot
+        amount: 1~2
+        chance: 0.8
+      carrot_7:
+        item: Carrot
+        amount: 1~2
+        chance: 0.8
+      carrot_8:
+        item: Carrot
         amount: 1~2
         chance: 0.8

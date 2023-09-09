@@ -13,7 +13,7 @@ public class EffectCarrier {
 
     private Key key;
     private Requirement[] requirements;
-    private Effect effect;
+    private EffectModifier[] effect;
     private Map<ActionTrigger, Action[]> actionMap;
     private boolean persist;
 
@@ -40,7 +40,7 @@ public class EffectCarrier {
             return this;
         }
 
-        public Builder effect(Effect effect) {
+        public Builder effect(EffectModifier[] effect) {
             item.effect = effect;
             return this;
         }
@@ -63,7 +63,7 @@ public class EffectCarrier {
         return requirements;
     }
 
-    public Effect getEffect() {
+    public EffectModifier[] getEffectModifiers() {
         return effect;
     }
 
@@ -80,6 +80,7 @@ public class EffectCarrier {
         return persist;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isConditionMet(Condition condition) {
         if (requirements == null) return true;
         for (Requirement requirement : requirements) {

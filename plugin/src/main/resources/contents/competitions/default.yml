@@ -1,4 +1,10 @@
-example:
+# Note: These are the default configurations of the plugin
+# and do not necessarily mean that players can have a good
+# gaming experience. We hope that you will create
+# customized configurations based on your own ideas,
+# allowing players to experience the uniqueness of your server.
+
+weekend_competition:
   # TOTAL_SCORE
   # CATCH_AMOUNT
   # MAX_SIZE
@@ -9,7 +15,7 @@ example:
   # Optional
   # 1-7
   start-weekday:
-    - 1
+    - 6
     - 7
 
   # Optional

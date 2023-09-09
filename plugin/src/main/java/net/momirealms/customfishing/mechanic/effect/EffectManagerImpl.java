@@ -23,8 +23,10 @@ import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.manager.EffectManager;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
+import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
-import net.momirealms.customfishing.api.mechanic.loot.Modifier;
+import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
+import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +46,10 @@ public class EffectManagerImpl implements EffectManager {
     public EffectManagerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.effectMap = new HashMap<>();
+    }
+
+    public void disable() {
+        this.effectMap.clear();
     }
 
     @Override
@@ -107,7 +113,7 @@ public class EffectManagerImpl implements EffectManager {
         return new EffectCarrier.Builder()
                 .key(key)
                 .requirements(plugin.getRequirementManager().getRequirements(section.getConfigurationSection("requirements"), true))
-                .effect(getEffectFromSection(section.getConfigurationSection("effects")))
+                .effect(getEffectModifiers(section.getConfigurationSection("effects")))
                 .actionMap(plugin.getActionManager().getActionMap(section.getConfigurationSection("events")))
                 .build();
     }
@@ -115,8 +121,10 @@ public class EffectManagerImpl implements EffectManager {
     public Effect getEffectFromSection(ConfigurationSection section) {
         if (section == null) return getInitialEffect();
         return new FishingEffect.Builder()
-                .lootWeightModifier(ConfigUtils.getModifiers(section.getStringList("weight-single")))
-                .lootWeightModifier(getGroupModifiers(section.getStringList("weight-group")))
+                .addWeightModifier(ConfigUtils.getModifiers(section.getStringList("weight-single")))
+                .addWeightModifier(getGroupModifiers(section.getStringList("weight-group")))
+                .addWeightModifierIgnored(ConfigUtils.getModifiers(section.getStringList("weight-single-ignore-condition")))
+                .addWeightModifierIgnored(getGroupModifiers(section.getStringList("weight-group-ignore-condition")))
                 .timeModifier(section.getDouble("hook-time", 1))
                 .difficultyModifier(section.getDouble("difficulty", 0))
                 .multipleLootChance(section.getDouble("multiple-loot", 0))
@@ -138,16 +146,12 @@ public class EffectManagerImpl implements EffectManager {
     }
 
     @Override
-    public Effect getInitialEffect() {
+    public FishingEffect getInitialEffect() {
         return new FishingEffect.Builder().build();
     }
 
-    public void disable() {
-        this.effectMap.clear();
-    }
-
-    private List<Pair<String, Modifier>> getGroupModifiers(List<String> modList) {
-        List<Pair<String, Modifier>> result = new ArrayList<>();
+    private List<Pair<String, WeightModifier>> getGroupModifiers(List<String> modList) {
+        List<Pair<String, WeightModifier>> result = new ArrayList<>();
         for (String group : modList) {
             String[] split = group.split(":",2);
             String key = split[0];
@@ -161,5 +165,105 @@ public class EffectManagerImpl implements EffectManager {
             }
         }
         return result;
+    }
+
+    public EffectModifier[] getEffectModifiers(ConfigurationSection section) {
+        if (section == null) return new EffectModifier[0];
+        ArrayList<EffectModifier> modifiers = new ArrayList<>();
+        for (Map.Entry<String, Object> entry: section.getValues(false).entrySet()) {
+            if (entry.getValue() instanceof ConfigurationSection inner) {
+                EffectModifier effectModifier = getEffectModifier(inner);
+                if (effectModifier != null)
+                    modifiers.add(effectModifier);
+            }
+        }
+        return modifiers.toArray(new EffectModifier[0]);
+    }
+
+    public EffectModifier getEffectModifier(ConfigurationSection section) {
+        String type = section.getString("type");
+        if (type == null) return null;
+
+        switch (type) {
+            case "weight-mod" -> {
+                var modList = ConfigUtils.getModifiers(section.getStringList("value"));
+                return ((effect, condition) -> {
+                    effect.addWeightModifier(modList);
+                });
+            }
+            case "weight-mod-ignore-conditions" -> {
+                var modList = ConfigUtils.getModifiers(section.getStringList("value"));
+                return ((effect, condition) -> {
+                    effect.addWeightModifierIgnored(modList);
+                });
+            }
+            case "group-mod" -> {
+                var modList = getGroupModifiers(section.getStringList("value"));
+                return ((effect, condition) -> {
+                    effect.addWeightModifier(modList);
+                });
+            }
+            case "group-mod-ignore-conditions" -> {
+                var modList = getGroupModifiers(section.getStringList("value"));
+                return ((effect, condition) -> {
+                    effect.addWeightModifierIgnored(modList);
+                });
+            }
+            case "hook-time" -> {
+                double time = section.getDouble("value");
+                return ((effect, condition) -> {
+                    effect.setHookTimeModifier(effect.getHookTimeModifier() + time - 1);
+                });
+            }
+            case "difficulty" -> {
+                double difficulty = section.getDouble("value");
+                return ((effect, condition) -> {
+                    effect.setDifficultyModifier(effect.getDifficultyModifier() + difficulty);
+                });
+            }
+            case "multiple-loot" -> {
+                double multiple = section.getDouble("value");
+                return ((effect, condition) -> {
+                    effect.setMultipleLootChance(effect.getMultipleLootChance() + multiple);
+                });
+            }
+            case "score-bonus" -> {
+                double multiple = section.getDouble("value");
+                return ((effect, condition) -> {
+                    effect.setScoreMultiplier(effect.getScoreMultiplier() + multiple - 1);
+                });
+            }
+            case "size-bonus" -> {
+                double multiple = section.getDouble("value");
+                return ((effect, condition) -> {
+                    effect.setSizeMultiplier(effect.getSizeMultiplier() + multiple - 1);
+                });
+            }
+            case "game-time" -> {
+                double time = section.getDouble("value");
+                return ((effect, condition) -> {
+                    effect.setGameTimeModifier(effect.getGameTimeModifier() + time);
+                });
+            }
+            case "lava-fishing" -> {
+                return ((effect, condition) -> effect.setLavaFishing(true));
+            }
+            case "conditional" -> {
+                Requirement[] requirements = plugin.getRequirementManager().getRequirements(section.getConfigurationSection("conditions"), false);
+                EffectModifier[] modifiers = getEffectModifiers(section.getConfigurationSection("effects"));
+                return ((effect, condition) -> {
+                    for (Requirement requirement : requirements)
+                        if (!requirement.isConditionMet(condition))
+                            return;
+                    for (EffectModifier modifier : modifiers) {
+                        modifier.modify(effect, condition);
+                    }
+                });
+            }
+            default -> {
+                LogUtils.warn("Effect " + type + " doesn't exist.");
+                return null;
+            }
+        }
     }
 }

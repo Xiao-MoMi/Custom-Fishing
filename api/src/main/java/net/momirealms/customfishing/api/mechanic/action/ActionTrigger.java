@@ -24,5 +24,6 @@ public enum ActionTrigger {
     HOOK,
     CONSUME,
     CAST,
-    BITE, LAND
+    BITE,
+    LAND
 }

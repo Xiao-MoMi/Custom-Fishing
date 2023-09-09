@@ -22,6 +22,7 @@ import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Key;
 import net.momirealms.customfishing.api.common.Pair;
+import net.momirealms.customfishing.api.common.Tuple;
 import net.momirealms.customfishing.api.manager.ItemManager;
 import net.momirealms.customfishing.api.mechanic.item.BuildableItem;
 import net.momirealms.customfishing.api.mechanic.item.ItemBuilder;
@@ -228,10 +229,12 @@ public class ItemManagerImpl implements ItemManager {
                 .itemFlag(section.getStringList("item-flags").stream().map(flag -> ItemFlag.valueOf(flag.toUpperCase())).toList())
                 .enchantment(getEnchantmentPair(section.getConfigurationSection("enchantments")), false)
                 .enchantment(getEnchantmentPair(section.getConfigurationSection("stored-enchantments")), true)
+                .randomEnchantments(getEnchantmentTuple(section.getConfigurationSection("random-enchantments")), false)
+                .randomEnchantments(getEnchantmentTuple(section.getConfigurationSection("random-stored-enchantments")), true)
                 .tag(section.getBoolean("tag", true), type, id)
                 .randomDamage(section.getBoolean("random-durability", false))
                 .unbreakable(section.getBoolean("unbreakable", false))
-                .preventGrabbing(section.getBoolean("prevent-grabbing", false))
+                .preventGrabbing(section.getBoolean("prevent-grabbing", true))
                 .head(section.getString("head64"))
                 .name(section.getString("display.name"))
                 .lore(section.getStringList("display.lore"));
@@ -295,7 +298,26 @@ public class ItemManagerImpl implements ItemManager {
         List<Pair<String, Short>> list = new ArrayList<>();
         if (section == null) return list;
         for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
-            list.add(Pair.of(entry.getKey(), (short) entry.getValue()));
+            if (entry.getValue() instanceof Integer integer) {
+                list.add(Pair.of(entry.getKey(), Short.valueOf(String.valueOf(integer))));
+            }
+        }
+        return list;
+    }
+
+    @NotNull
+    private List<Tuple<Double, String, Short>> getEnchantmentTuple(ConfigurationSection section) {
+        List<Tuple<Double, String, Short>> list = new ArrayList<>();
+        if (section == null) return list;
+        for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
+            if (entry.getValue() instanceof ConfigurationSection inner) {
+                Tuple<Double, String, Short> tuple = Tuple.of(
+                        inner.getDouble("chance"),
+                        inner.getString("enchant"),
+                        Short.valueOf(String.valueOf(inner.getInt("level")))
+                );
+                list.add(tuple);
+            }
         }
         return list;
     }
@@ -440,6 +462,24 @@ public class ItemManagerImpl implements ItemManager {
         }
 
         @Override
+        public ItemBuilder randomEnchantments(List<Tuple<Double, String, Short>> enchantments, boolean store) {
+            if (enchantments.size() == 0) return this;
+            editors.put("random-enchantment", (player, nbtItem, placeholders) -> {
+                NBTCompoundList list = nbtItem.getCompoundList(store ? "StoredEnchantments" : "Enchantments");
+                HashSet<String> ids = new HashSet<>();
+                for (Tuple<Double, String, Short> pair : enchantments) {
+                    if (Math.random() < pair.getLeft() && !ids.contains(pair.getMid())) {
+                        NBTCompound nbtCompound = list.addCompound();
+                        nbtCompound.setString("id", pair.getMid());
+                        nbtCompound.setShort("lvl", pair.getRight());
+                        ids.add(pair.getMid());
+                    }
+                }
+            });
+            return this;
+        }
+
+        @Override
         public ItemBuilder maxDurability(int max) {
             if (max == 0) return this;
             editors.put("durability", (player, nbtItem, placeholders) -> {
@@ -528,6 +568,8 @@ public class ItemManagerImpl implements ItemManager {
                         int dur = ThreadLocalRandom.current().nextInt(i);
                         cfCompound.setInteger("cur_dur", dur);
                         nbtItem.setInteger("Damage", (int) (nbtItem.getItem().getType().getMaxDurability() * ((double) dur / i)));
+                    } else {
+                        nbtItem.setInteger("Damage", ThreadLocalRandom.current().nextInt(nbtItem.getItem().getType().getMaxDurability()));
                     }
                 } else {
                     nbtItem.setInteger("Damage", ThreadLocalRandom.current().nextInt(nbtItem.getItem().getType().getMaxDurability()));

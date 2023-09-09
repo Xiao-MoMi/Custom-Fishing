@@ -33,12 +33,13 @@ import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
+import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
 import net.momirealms.customfishing.api.mechanic.game.GameConfig;
 import net.momirealms.customfishing.api.mechanic.game.GameInstance;
 import net.momirealms.customfishing.api.mechanic.game.GameSettings;
 import net.momirealms.customfishing.api.mechanic.game.GamingPlayer;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
-import net.momirealms.customfishing.api.mechanic.loot.Modifier;
+import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.api.util.WeightUtils;
 import net.momirealms.customfishing.mechanic.requirement.RequirementManagerImpl;
@@ -254,7 +255,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
             return;
         }
         // Merge rod/bait/util effects
-        Effect initialEffect = plugin.getEffectManager().getInitialEffect();
+        FishingEffect initialEffect = plugin.getEffectManager().getInitialEffect();
         fishingPreparation.mergeEffect(initialEffect);
 
         // Apply enchants
@@ -271,8 +272,8 @@ public class FishingManagerImpl implements Listener, FishingManager {
         // Store fishhook entity and apply the effects
         final FishHook fishHook = event.getHook();
         this.hookCacheMap.put(player.getUniqueId(), fishHook);
-        fishHook.setMaxWaitTime((int) (fishHook.getMaxWaitTime() * initialEffect.getTimeModifier()));
-        fishHook.setMinWaitTime((int) (fishHook.getMinWaitTime() * initialEffect.getTimeModifier()));
+        fishHook.setMaxWaitTime((int) (fishHook.getMaxWaitTime() * initialEffect.getHookTimeModifier()));
+        fishHook.setMinWaitTime((int) (fishHook.getMinWaitTime() * initialEffect.getHookTimeModifier()));
         // Reduce amount & Send animation
         var baitItem = fishingPreparation.getBaitItemStack();
         if (baitItem != null) {
@@ -512,11 +513,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         var effect = state.getEffect();
         var fishingPreparation = state.getPreparation();
         var player = fishingPreparation.getPlayer();
-
         fishingPreparation.insertArg("{size-multiplier}", String.format("%.2f", effect.getSizeMultiplier()));
-        fishingPreparation.insertArg("{x}", String.valueOf(hook.getLocation().getBlockX()));
-        fishingPreparation.insertArg("{y}", String.valueOf(hook.getLocation().getBlockY()));
-        fishingPreparation.insertArg("{z}", String.valueOf(hook.getLocation().getBlockZ()));
 
         plugin.getScheduler().runTaskSync(() -> {
 
@@ -618,13 +615,14 @@ public class FishingManagerImpl implements Listener, FishingManager {
     @Override
     public Map<String, Double> getPossibleLootKeysWithWeight(Effect initialEffect, FishingPreparation fishingPreparation) {
         Map<String, Double> lootWithWeight = plugin.getRequirementManager().getLootWithWeight(fishingPreparation);
-        if (lootWithWeight.size() == 0) {
-            LogUtils.warn(String.format("No Loot found at %s for Player %s!", fishingPreparation.getPlayer().getLocation(), fishingPreparation.getPlayer().getName()));
-            return new HashMap<>();
-        }
 
         Player player = fishingPreparation.getPlayer();
-        for (Pair<String, Modifier> pair : initialEffect.getLootWeightModifier()) {
+        for (Pair<String, WeightModifier> pair : initialEffect.getWeightModifier()) {
+            Double previous = lootWithWeight.get(pair.left());
+            if (previous != null)
+                lootWithWeight.put(pair.left(), pair.right().modify(player, previous));
+        }
+        for (Pair<String, WeightModifier> pair : initialEffect.getWeightModifierIgnored()) {
             double previous = lootWithWeight.getOrDefault(pair.left(), 0d);
             lootWithWeight.put(pair.left(), pair.right().modify(player, previous));
         }

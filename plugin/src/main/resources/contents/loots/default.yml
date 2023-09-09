@@ -1,3 +1,105 @@
+# Note: These are the default configurations of the plugin
+# and do not necessarily mean that players can have a good
+# gaming experience. We hope that you will create
+# customized configurations based on your own ideas,
+# allowing players to experience the uniqueness of your server.
+
+# Vanilla loots settings
+vanilla:
+  show-in-fishfinder: false
+# Some rubbish
+stick:
+  tag: false
+  nick: '<#EEE685>Useless sticks</#EEE685>'
+  material: stick
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+shoes:
+  tag: false
+  nick: '<#8B814C>Something smells bad</#8B814C>'
+  material: leather_boots
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+  random-durability: true
+seagrass:
+  tag: false
+  nick: '<green>Sea Grass</green>'
+  material: seagrass
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+kelp:
+  tag: false
+  nick: '<green>Kelp</green>'
+  material: kelp
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+nether_brick:
+  tag: false
+  nick: '<gray>Something hard</gray>'
+  material: nether_brick
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+flint:
+  tag: false
+  nick: '<gray>Something hard</gray>'
+  material: flint
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+stone:
+  tag: false
+  nick: '<gray>Something hard</gray>'
+  material: stone
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+netherrack:
+  tag: false
+  nick: '<gray>Something hard</gray>'
+  material: netherrack
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+gold_ingot:
+  tag: false
+  nick: '<yellow>Shining ingots</yellow>'
+  material: gold_ingot
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+gold_nugget:
+  tag: false
+  nick: '<yellow>Shining nuggets</yellow>'
+  material: gold_nugget
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+cobblestone:
+  tag: false
+  nick: '<gray>Something hard</gray>'
+  material: cobblestone
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+obsidian:
+  tag: false
+  nick: '<gray>Something hard</gray>'
+  material: obsidian
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+diamond:
+  tag: false
+  nick: '<#00FFFF>Diamond</#00FFFF>'
+  material: diamond
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
 rubbish:
   material: paper
   nick: <gray>Rubbish</gray>
@@ -11,13 +113,96 @@ rubbish:
   disable-game: true
   instant-game: false
   prevent-grabbing: false
-  events:
-    success:
-      mending:
-        type: mending
-        value: 3
-        chance: 1.0
-####################################
+# Enchantments
+sharpness_book:
+  tag: false
+  material: enchanted_book
+  group: enchantments
+  random-stored-enchantments:
+    lv5:
+      enchant: minecraft:sharpness
+      level: 5
+      chance: 0.1
+    lv4:
+      enchant: minecraft:sharpness
+      level: 4
+      chance: 0.2
+    lv3:
+      enchant: minecraft:sharpness
+      level: 3
+      chance: 0.4
+    lv2:
+      enchant: minecraft:sharpness
+      level: 2
+      chance: 0.7
+    lv1:
+      enchant: minecraft:sharpness
+      level: 1
+      chance: 1
+efficiency_book:
+  tag: false
+  material: enchanted_book
+  group: enchantments
+  random-stored-enchantments:
+    lv5:
+      enchant: minecraft:efficiency
+      level: 5
+      chance: 0.1
+    lv4:
+      enchant: minecraft:efficiency
+      level: 4
+      chance: 0.2
+    lv3:
+      enchant: minecraft:efficiency
+      level: 3
+      chance: 0.4
+    lv2:
+      enchant: minecraft:efficiency
+      level: 2
+      chance: 0.7
+    lv1:
+      enchant: minecraft:efficiency
+      level: 1
+      chance: 1
+unbreaking_book:
+  tag: false
+  material: enchanted_book
+  group: enchantments
+  random-stored-enchantments:
+    lv3:
+      enchant: minecraft:unbreaking
+      level: 3
+      chance: 0.2
+    lv2:
+      enchant: minecraft:unbreaking
+      level: 2
+      chance: 0.5
+    lv1:
+      enchant: minecraft:unbreaking
+      level: 1
+      chance: 1
+protection_book:
+  tag: false
+  material: enchanted_book
+  group: enchantments
+  random-stored-enchantments:
+    lv4:
+      enchant: minecraft:protection
+      level: 4
+      chance: 0.1
+    lv3:
+      enchant: minecraft:protection
+      level: 3
+      chance: 0.2
+    lv2:
+      enchant: minecraft:protection
+      level: 2
+      chance: 0.5
+    lv1:
+      enchant: minecraft:protection
+      level: 1
+      chance: 1
+# Fish
 tuna_fish:
   material: cod
   nick: <gradient:#F0FFFF:#4682B4:#F0FFFF>Tuna Fish</gradient>
@@ -47,6 +232,7 @@ tuna_fish_silver_star:
       - <gray>Tuna is a kind of healthy food.
       - '<white>size: {size}cm'
   custom-model-data: 50002
+  group: sliver_star
   events:
     success:
       action_mending:
@@ -67,6 +253,7 @@ tuna_fish_golden_star:
       - <gray>Tuna is a kind of healthy food.
       - '<white>size: {size}cm'
   custom-model-data: 50003
+  group: golden_star
   events:
     success:
       action_mending:
@@ -77,7 +264,6 @@ tuna_fish_golden_star:
   price:
     base: 80
     bonus: 0.7
-####################################
 pike_fish:
   material: cod
   nick: <gradient:#F0F8FF:#5F9EA0:#F0F8FF>Pike Fish</gradient>
@@ -113,6 +299,7 @@ pike_fish_silver_star:
       - <gray>water and inland freshwater lakes
       - '<white>size: {size}cm'
   custom-model-data: 50005
+  group: sliver_star
   events:
     success:
       action_mending:
@@ -136,6 +323,7 @@ pike_fish_golden_star:
       - <gray>water and inland freshwater lakes
       - '<white>size: {size}cm'
   custom-model-data: 50006
+  group: golden_star
   events:
     success:
       action_mending:
@@ -146,7 +334,6 @@ pike_fish_golden_star:
   price:
     base: 50
     bonus: 1.5
-####################################
 gold_fish:
   material: cod
   display:
@@ -155,8 +342,11 @@ gold_fish:
       - <gray>Goldfish is one of most famous ornamental
       - <gray>fishes in the world. It originated in China
       - <gray>and has a history of more than 1700 years
+      - '<white>size: {size}cm'
   price:
     base: 70
+    bonus: 2.6
+  size: 2~3
   custom-model-data: 50007
   events:
     success:
@@ -174,9 +364,13 @@ gold_fish_silver_star:
       - <gray>Goldfish is one of most famous ornamental
       - <gray>fishes in the world. It originated in China
       - <gray>and has a history of more than 1700 years
+      - '<white>size: {size}cm'
   price:
     base: 80
+    bonus: 3
+  size: 3~4
   custom-model-data: 50008
+  group: sliver_star
   events:
     success:
       action_mending:
@@ -193,16 +387,19 @@ gold_fish_golden_star:
       - <gray>Goldfish is one of most famous ornamental
       - <gray>fishes in the world. It originated in China
       - <gray>and has a history of more than 1700 years
+      - '<white>size: {size}cm'
   price:
     base: 100
+    bonus: 3.4
+  size: 4~7
   custom-model-data: 50009
+  group: golden_star
   events:
     success:
       action_mending:
         type: mending
         value: 9
         chance: 1.0
-####################################
 perch_fish:
   material: cod
   display:
@@ -233,6 +430,7 @@ perch_fish_silver_star:
       - <gray>foraging at dusk and early morning
       - '<white>size: {size}cm'
   custom-model-data: 50011
+  group: silver_star
   events:
     success:
       action_mending:
@@ -254,6 +452,7 @@ perch_fish_golden_star:
       - <gray>foraging at dusk and early morning
       - '<white>size: {size}cm'
   custom-model-data: 50012
+  group: golden_star
   events:
     success:
       action_mending:
@@ -264,7 +463,6 @@ perch_fish_golden_star:
   price:
     base: 10
     bonus: 3
-####################################
 mullet_fish:
   material: cod
   nick: <gradient:#D4F2E7:#E1FFFF:#D4F2E7>Mullet Fish</gradient>
@@ -296,6 +494,7 @@ mullet_fish_silver_star:
       - <gray>to treat spleen and stomach weakness
       - '<white>size: {size}cm'
   custom-model-data: 50014
+  group: silver_star
   events:
     success:
       action_mending:
@@ -317,6 +516,7 @@ mullet_fish_golden_star:
       - <gray>to treat spleen and stomach weakness
       - '<white>size: {size}cm'
   custom-model-data: 50015
+  group: golden_star
   events:
     success:
       action_mending:
@@ -327,7 +527,6 @@ mullet_fish_golden_star:
   price:
     base: 50
     bonus: 1.5
-####################################
 sardine_fish:
   material: cod
   nick: <gradient:#E1FFFF:#5F9EA0>Sardine Fish</gradient>
@@ -358,6 +557,7 @@ sardine_fish_silver_star:
       - <gray>Therefore, sardine are also called "smart food"
       - '<white>size: {size}cm'
   custom-model-data: 50017
+  group: silver_star
   events:
     success:
       action_mending:
@@ -378,6 +578,7 @@ sardine_fish_golden_star:
       - <gray>Therefore, sardine are also called "smart food"
       - '<white>size: {size}cm'
   custom-model-data: 50018
+  group: golden_star
   events:
     success:
       action_mending:
@@ -388,7 +589,6 @@ sardine_fish_golden_star:
   price:
     base: 15
     bonus: 3.4
-####################################
 carp_fish:
   material: cod
   nick: <gradient:#808000:#556B2F>Carp Fish</gradient>
@@ -417,6 +617,7 @@ carp_fish_silver_star:
       - <gray>One of the most common edible fish
       - '<white>size: {size}cm'
   custom-model-data: 50020
+  group: silver_star
   events:
     success:
       action_mending:
@@ -436,6 +637,7 @@ carp_fish_golden_star:
       - <gray>One of the most common edible fish
       - '<white>size: {size}cm'
   custom-model-data: 50021
+  group: golden_star
   events:
     success:
       action_mending:
@@ -446,7 +648,6 @@ carp_fish_golden_star:
   price:
     base: 12
     bonus: 2.2
-####################################
 cat_fish:
   material: cod
   display:
@@ -476,6 +677,7 @@ cat_fish_silver_star:
       - <gray>sharp jaw teeth, short intestine and stomach
       - '<white>size: {size}cm'
   custom-model-data: 50023
+  group: silver_star
   events:
     success:
       action_mending:
@@ -496,6 +698,7 @@ cat_fish_golden_star:
       - <gray>sharp jaw teeth, short intestine and stomach
       - '<white>size: {size}cm'
   custom-model-data: 50024
+  group: golden_star
   events:
     success:
       action_mending:
@@ -506,7 +709,6 @@ cat_fish_golden_star:
   price:
     base: 16
     bonus: 2.2
-####################################
 octopus:
   material: cod
   nick: <gradient:#D2691E:#FF6347>Octopus</gradient>
@@ -537,6 +739,7 @@ octopus_silver_star:
       - <gray>People often use pots to catch octopus
       - '<white>size: {size}cm'
   custom-model-data: 50026
+  group: silver_star
   events:
     success:
       action_mending:
@@ -557,6 +760,7 @@ octopus_golden_star:
       - <gray>People often use pots to catch octopus
       - '<white>size: {size}cm'
   custom-model-data: 50027
+  group: golden_star
   events:
     success:
       action_mending:
@@ -567,7 +771,6 @@ octopus_golden_star:
   price:
     base: 10
     bonus: 1.5
-####################################
 sunfish:
   material: cod
   nick: <#F5DEB3>Sunfish</#F5DEB3>
@@ -596,6 +799,7 @@ sunfish_silver_star:
       - <gray>It only has one huge head
       - '<white>size: {size}cm'
   custom-model-data: 50029
+  group: silver_star
   events:
     success:
       action_mending:
@@ -615,6 +819,7 @@ sunfish_golden_star:
       - <gray>It only has one huge head
       - '<white>size: {size}cm'
   custom-model-data: 50030
+  group: golden_star
   events:
     success:
       action_mending:
@@ -625,7 +830,6 @@ sunfish_golden_star:
   price:
     base: 26
     bonus: 1.5
-####################################
 red_snapper_fish:
   material: cod
   display:
@@ -656,6 +860,7 @@ red_snapper_fish_silver_star:
       - <gray>with a male as the "head of the family"
       - '<white>size: {size}cm'
   custom-model-data: 50032
+  group: silver_star
   events:
     success:
       action_mending:
@@ -677,6 +882,7 @@ red_snapper_fish_golden_star:
       - <gray>with a male as the "head of the family"
       - '<white>size: {size}cm'
   custom-model-data: 50033
+  group: golden_star
   events:
     success:
       action_mending:
@@ -687,7 +893,6 @@ red_snapper_fish_golden_star:
   price:
     base: 10
     bonus: 2.3
-####################################
 salmon_void_fish:
   material: cod
   in-lava: true
@@ -696,6 +901,8 @@ salmon_void_fish:
     name: <gradient:#800000:#800080>Void Salmon</gradient>
     lore:
       - <gray>A fish from the hell
+      - <gray>It's looking at you...
+      - '<white>size: {size}cm'
   custom-model-data: 50034
   events:
     success:
@@ -703,8 +910,10 @@ salmon_void_fish:
         type: mending
         value: 20
         chance: 1.0
+  size: 8~10
   price:
     base: 20
+    bonus: 2.4
 salmon_void_fish_silver_star:
   show-in-fishfinder: false
   in-lava: true
@@ -713,15 +922,20 @@ salmon_void_fish_silver_star:
     name: <gradient:#800000:#800080>Void Salmon</gradient><#F5F5F5>(Silver Star)</#F5F5F5>
     lore:
       - <gray>A fish from the hell
+      - <gray>It's looking at you...
+      - '<white>size: {size}cm'
   custom-model-data: 50035
+  group: silver_star
   events:
     success:
       action_mending:
         type: mending
         value: 24
         chance: 1.0
+  size: 10~14
   price:
     base: 50
+    bonus: 2.6
 salmon_void_fish_golden_star:
   show-in-fishfinder: false
   in-lava: true
@@ -730,17 +944,20 @@ salmon_void_fish_golden_star:
     name: <gradient:#800000:#800080>Void Salmon</gradient> <#FFD700>(Golden Star)</#FFD700>
     lore:
       - <gray>A fish from the hell
-  group: gold
+      - <gray>It's looking at you...
+      - '<white>size: {size}cm'
   custom-model-data: 50036
+  group: golden_star
   events:
     success:
       action_mending:
         type: mending
         value: 28
         chance: 1.0
+  size: 12~18
   price:
     base: 100
-####################################
+    bonus: 3
 woodskip_fish:
   material: cod
   nick: <#CD5C5C>Woodskip Fish</#CD5C5C>
@@ -771,6 +988,7 @@ woodskip_fish_silver_star:
       - <gray>live in pools deep in the forest
       - '<white>size: {size}cm'
   custom-model-data: 50038
+  group: silver_star
   events:
     success:
       action_mending:
@@ -791,6 +1009,7 @@ woodskip_fish_golden_star:
       - <gray>live in pools deep in the forest
       - '<white>size: {size}cm'
   custom-model-data: 50039
+  group: golden_star
   events:
     success:
       action_mending:
@@ -801,7 +1020,6 @@ woodskip_fish_golden_star:
   price:
     base: 25
     bonus: 2.8
-####################################
 sturgeon_fish:
   material: cod
   nick: <#48D1CC>Sturgeon Fish</#48D1CC>
@@ -832,6 +1050,7 @@ sturgeon_fish_silver_star:
       - <gray>population. Females can live up to 150 years
       - '<white>size: {size}cm'
   custom-model-data: 50041
+  group: silver_star
   events:
     success:
       action_mending:
@@ -852,6 +1071,7 @@ sturgeon_fish_golden_star:
       - <gray>population. Females can live up to 150 years
       - '<white>size: {size}cm'
   custom-model-data: 50042
+  group: golden_star
   events:
     success:
       action_mending:

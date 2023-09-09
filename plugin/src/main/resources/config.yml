@@ -63,7 +63,7 @@ mechanics:
           value:
             priority_1:
               conditions:
-                in-lava: true
+                lava-fishing: true
               actions:
                 fake_item_action:
                   type: fake-item
@@ -76,7 +76,7 @@ mechanics:
                     z: 0
             priority_2:
               conditions:
-                in-lava: false
+                lava-fishing: false
               actions:
                 fake_item_action:
                   type: fake-item

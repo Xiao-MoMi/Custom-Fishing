@@ -18,8 +18,8 @@
 package net.momirealms.customfishing.api.manager;
 
 import net.momirealms.customfishing.api.common.Key;
-import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
+import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
 import org.jetbrains.annotations.Nullable;
 
 public interface EffectManager {
@@ -30,5 +30,5 @@ public interface EffectManager {
 
     @Nullable EffectCarrier getEffect(String namespace, String id);
 
-    Effect getInitialEffect();
+    FishingEffect getInitialEffect();
 }

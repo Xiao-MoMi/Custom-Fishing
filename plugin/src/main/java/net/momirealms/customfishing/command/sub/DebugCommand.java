@@ -11,7 +11,7 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.integration.SeasonInterface;
 import net.momirealms.customfishing.api.manager.AdventureManager;
 import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
-import net.momirealms.customfishing.api.mechanic.effect.Effect;
+import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +57,7 @@ public class DebugCommand {
                                 StringTooltip.ofString("false", "loots in water")
                         })))
                 .executesPlayer((player, arg) -> {
-                    Effect initialEffect = CustomFishingPlugin.get().getEffectManager().getInitialEffect();
+                    FishingEffect initialEffect = CustomFishingPlugin.get().getEffectManager().getInitialEffect();
                     FishingPreparation fishingPreparation = new FishingPreparation(player, CustomFishingPlugin.get());
                     boolean inLava = (boolean) arg.getOrDefault("lava fishing", false);
                     fishingPreparation.insertArg("{lava}", String.valueOf(inLava));
@@ -79,7 +79,7 @@ public class DebugCommand {
                     AdventureManager adventureManager = AdventureManagerImpl.getInstance();
                     adventureManager.sendMessage(player, "<red>---------- results ---------");
                     for (LootWithWeight loot : lootArray) {
-                        adventureManager.sendMessage(player, "<hover:show_text:'<blue>GET'><click:run_command:/cfishing items loot get "+ loot.key() + ">" +loot.key() + "</click></hover>: <gold>" + String.format("%.2f", loot.weight()*100/sum) + "% <gray>(" + String.format("%.2f", loot.weight()) + ")");
+                        adventureManager.sendMessage(player, loot.key() + ": <gold>" + String.format("%.2f", loot.weight()*100/sum) + "% <gray>(" + String.format("%.2f", loot.weight()) + ")");
                     }
                     adventureManager.sendMessage(player, "<red>----------- end -----------");
                 });

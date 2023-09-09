@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.api.mechanic.effect;
 
 import net.momirealms.customfishing.api.common.Pair;
-import net.momirealms.customfishing.api.mechanic.loot.Modifier;
+import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
 
 import java.util.List;
 
@@ -32,13 +32,15 @@ public interface Effect {
 
     double getScoreMultiplier();
 
-    double getTimeModifier();
+    double getHookTimeModifier();
 
     double getGameTimeModifier();
 
     double getDifficultyModifier();
 
-    Effect merge(Effect another);
+    List<Pair<String, WeightModifier>> getWeightModifier();
 
-    List<Pair<String, Modifier>> getLootWeightModifier();
+    List<Pair<String, WeightModifier>> getWeightModifierIgnored();
+
+    void merge(Effect bonus);
 }

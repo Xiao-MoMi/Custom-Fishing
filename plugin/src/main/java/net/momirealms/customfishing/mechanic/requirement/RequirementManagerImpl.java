@@ -187,6 +187,7 @@ public class RequirementManagerImpl implements RequirementManager {
     @NotNull
     @Override
     public Requirement getRequirement(ConfigurationSection section, boolean advanced) {
+        if (section == null) return EmptyRequirement.instance;
         List<Action> actionList = null;
         if (advanced) {
             actionList = new ArrayList<>();
@@ -301,7 +302,7 @@ public class RequirementManagerImpl implements RequirementManager {
     }
 
     private void registerInLavaRequirement() {
-        registerRequirement("in-lava", (args, actions, advanced) -> {
+        registerRequirement("lava-fishing", (args, actions, advanced) -> {
             boolean inLava = (boolean) args;
             return condition -> {
                 String current = condition.getArgs().get("{lava}");
@@ -693,7 +694,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("rod", (args, actions, advanced) -> {
             List<String> rods = ConfigUtils.stringListArgs(args);
             return condition -> {
-                String id = condition.getArg("rod");
+                String id = condition.getArg("{rod}");
                 if (rods.contains(id)) return true;
                 if (advanced) triggerActions(actions, condition);
                 return false;
@@ -702,7 +703,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("!rod", (args, actions, advanced) -> {
             List<String> rods = ConfigUtils.stringListArgs(args);
             return condition -> {
-                String id = condition.getArg("rod");
+                String id = condition.getArg("{rod}");
                 if (!rods.contains(id)) return true;
                 if (advanced) triggerActions(actions, condition);
                 return false;
@@ -714,7 +715,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("bait", (args, actions, advanced) -> {
             List<String> baits = ConfigUtils.stringListArgs(args);
             return condition -> {
-                String id = condition.getArg("bait");
+                String id = condition.getArg("{bait}");
                 if (baits.contains(id)) return true;
                 if (advanced) triggerActions(actions, condition);
                 return false;
@@ -723,7 +724,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("!bait", (args, actions, advanced) -> {
             List<String> baits = ConfigUtils.stringListArgs(args);
             return condition -> {
-                String id = condition.getArg("bait");
+                String id = condition.getArg("{bait}");
                 if (!baits.contains(id)) return true;
                 if (advanced) triggerActions(actions, condition);
                 return false;
@@ -761,6 +762,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 action.trigger(condition);
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void loadExpansions() {
         File expansionFolder = new File(plugin.getDataFolder(), EXPANSION_FOLDER);
         if (!expansionFolder.exists())

@@ -1,10 +1,32 @@
-drowned:
+# Note: These are the default configurations of the plugin
+# and do not necessarily mean that players can have a good
+# gaming experience. We hope that you will create
+# customized configurations based on your own ideas,
+# allowing players to experience the uniqueness of your server.
+
+skeleton:
   show-in-fishfinder: false
-  mob: Drowned
-  nick: drowned
+  mob: skeleton
+  nick: <white>Skeleton</white>
+  vector:
+    horizontal: 1
+    vertical: 1.3
+
+wither_skeleton:
+  show-in-fishfinder: false
+  mob: wither_skeleton
+  nick: <black>Wither Skeleton</black>
   vector:
     horizontal: 1.1
     vertical: 1.2
+
+magma_cube:
+  show-in-fishfinder: false
+  mob: magma_cube
+  nick: <red>Magma Cube</black>
+  vector:
+    horizontal: 1.1
+    vertical: 1.3
 
 skeletalknight:
   show-in-fishfinder: false

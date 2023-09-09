@@ -1,7 +1,13 @@
-# %fishingstats_amount_<id>% get the number of a certain fish caught
-# %fishingstats_hascaught_<id>% return if a player has caught this fish
-# %fishingstats_category_total_<id>% get the total number of a certain category's fish caught
-# %fishingstats_category_progress_<id>% get the player's exploration of this category of fish
+# Note: These are the default configurations of the plugin
+# and do not necessarily mean that players can have a good
+# gaming experience. We hope that you will create
+# customized configurations based on your own ideas,
+# allowing players to experience the uniqueness of your server.
+
+# The concepts of categories and groups are different.
+# Categories are only used to classify fish based on certain rules,
+# which only affect the return value of placeholder and do not affect any gameplay
+
 normal_fish:
   - tuna_fish
   - pike_fish

@@ -21,8 +21,9 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.GlobalSettings;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
-import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
+import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
+import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -42,7 +43,7 @@ public class FishingPreparation extends Condition {
     private @Nullable ItemStack baitItemStack;
     private final @NotNull ItemStack rodItemStack;
     private final List<EffectCarrier> utilEffects;
-    private final Effect enchantEffect;
+    private final List<EffectCarrier> enchantEffects;
     private boolean canFish = true;
 
     public FishingPreparation(Player player, CustomFishingPlugin plugin) {
@@ -53,7 +54,7 @@ public class FishingPreparation extends Condition {
         ItemStack offHandItem = playerInventory.getItemInOffHand();
 
         this.utilEffects = new ArrayList<>();
-        this.enchantEffect = plugin.getEffectManager().getInitialEffect();
+        this.enchantEffects = new ArrayList<>();
         boolean rodOnMainHand = mainHandItem.getType() == Material.FISHING_ROD;
         this.rodItemStack = rodOnMainHand ? mainHandItem : offHandItem;
         String rodItemID = plugin.getItemManager().getAnyItemID(this.rodItemStack);
@@ -85,7 +86,11 @@ public class FishingPreparation extends Condition {
                         }
                     }
                     EffectCarrier utilEffect = plugin.getEffectManager().getEffect("util", bagItemID);
-                    if (utilEffect != null && !uniqueUtils.contains(bagItemID) && utilEffect.isConditionMet(this)) {
+                    if (utilEffect != null && !uniqueUtils.contains(bagItemID)) {
+                        if (!utilEffect.isConditionMet(this)) {
+                            this.canFish = false;
+                            return;
+                        }
                         utilEffects.add(utilEffect);
                         uniqueUtils.add(bagItemID);
                     }
@@ -108,10 +113,16 @@ public class FishingPreparation extends Condition {
             }
         }
 
+
         for (String enchant : plugin.getIntegrationManager().getEnchantments(rodItemStack)) {
+            System.out.println(enchant);
             EffectCarrier enchantEffect = plugin.getEffectManager().getEffect("enchant", enchant);
-            if (enchantEffect != null && enchantEffect.isConditionMet(this)) {
-                this.enchantEffect.merge(enchantEffect.getEffect());
+            if (enchantEffect != null) {
+                if (!enchantEffect.isConditionMet(this)) {
+                    this.canFish = false;
+                    return;
+                }
+                this.enchantEffects.add(enchantEffect);
             }
         }
     }
@@ -140,15 +151,26 @@ public class FishingPreparation extends Condition {
         return this.canFish;
     }
 
-    public void mergeEffect(Effect effect) {
-        if (this.rodEffect != null)
-            effect.merge(this.rodEffect.getEffect());
-        if (this.enchantEffect != null)
-            effect.merge(this.enchantEffect);
-        if (this.baitEffect != null)
-            effect.merge(this.baitEffect.getEffect());
+    public void mergeEffect(FishingEffect effect) {
+        if (this.rodEffect != null) {
+            for (EffectModifier modifier : rodEffect.getEffectModifiers()) {
+                modifier.modify(effect, this);
+            }
+        }
+        if (this.baitEffect != null) {
+            for (EffectModifier modifier : baitEffect.getEffectModifiers()) {
+                modifier.modify(effect, this);
+            }
+        }
         for (EffectCarrier util : utilEffects) {
-            effect.merge(util.getEffect());
+            for (EffectModifier modifier : util.getEffectModifiers()) {
+                modifier.modify(effect, this);
+            }
+        }
+        for (EffectCarrier enchant : enchantEffects) {
+            for (EffectModifier modifier : enchant.getEffectModifiers()) {
+                modifier.modify(effect, this);
+            }
         }
     }
 

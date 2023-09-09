@@ -1,3 +1,9 @@
+# Note: These are the default configurations of the plugin
+# and do not necessarily mean that players can have a good
+# gaming experience. We hope that you will create
+# customized configurations based on your own ideas,
+# allowing players to experience the uniqueness of your server.
+
 fishfinder:
   material: PAPER
   display:
@@ -5,12 +11,14 @@ fishfinder:
     lore:
       - '<white>Right click to see what fish can be caught in this place!'
   custom-model-data: 50000
+
 water_effect:
   material: PAPER
   custom-model-data: 49998
 lava_effect:
   material: PAPER
   custom-model-data: 49999
+
 fisherman_talismans:
   material: player_head
   display:

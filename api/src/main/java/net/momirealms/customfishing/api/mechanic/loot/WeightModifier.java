@@ -19,6 +19,6 @@ package net.momirealms.customfishing.api.mechanic.loot;
 
 import org.bukkit.entity.Player;
 
-public interface Modifier {
+public interface WeightModifier {
     double modify(Player player, double weight);
 }

@@ -1,45 +1,95 @@
-simple_bait:
-  material: paper
-  display:
-    name: '<gray>Common fishing lures'
-    lore:
-      - '<white>Reduce the time spent fishing'
-      - '<white>But make it more difficult to catch fish'
-  custom-model-data: 50001
-  effect:
-    time: 0.85
-    difficulty: 1
+# Note: These are the default configurations of the plugin 
+# and do not necessarily mean that players can have a good
+# gaming experience. We hope that you will create 
+# customized configurations based on your own ideas, 
+# allowing players to experience the uniqueness of your server.
 
-magnet_bait:
-  material: paper
-  display:
-    name: '<gray>Magnet Bait'
-    lore:
-      - '<white>Increases the probability of better loots by 15%.'
-  custom-model-data: 50002
-  effect:
-    weight-multiply:
-      silver: 1.15
-      gold: 1.15
-  # https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing/requirements
+# use Vanilla items as bait
+BOOK:
+  tag: false
+  material: book
   requirements:
     requirement_1:
-      type: permission
-      value: magnet_bait.use
-    requirement_2:
       type: rod
       value:
-        - nature_fishing_cane
-        - silver_fishing_rod
-        - golden_fishing_rod
-        - star_fishing_rod
+        - magical_rod
+      not-met-actions:
+        action_message:
+          type: message
+          value:
+            - 'This bait can only be used on <#7B68EE>Magical Fishing Rod'
+
+common_bait:
+  material: paper
+  display:
+    name: '<b><#00BFFF>Common lures'
+    lore:
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray>Made from natural ingredients, it attracts'
+      - '<gray>fish in a calm and steady manner. It''s the'
+      - '<gray>go-to choice for those who prefer a '
+      - '<gray>straightforward and reliable fishing experience.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Reduce fishing difficulty'
+      - ''
+  custom-model-data: 50001
+  effects:
+    difficulty:
+      type: difficulty
+      value: -10
+
+magnetic_bait:
+  material: paper
+  display:
+    name: '<b><red>Magn<blue>etic <gray>lures'
+    lore:
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray>Its radiant shimmer and unique energy pulse'
+      - '<gray>prove irresistible to curious fish, drawing'
+      - '<gray>them in with unprecedented speed. This is '
+      - '<gray>not just a bait, it''s a spectacle that fish'
+      - '<gray>can''t help but investigate.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Reduce hook time'
+      - '<gray> - More time for fishing'
+      - ''
+  custom-model-data: 50002
+  effects:
+    hooktime:
+      type: hook-time
+      value: 0.9
+    gametime:
+      type: game-time
+      value: 2
 
 wild_bait:
   material: paper
   display:
-    name: 'Wild Bait'
+    name: '<b><#2E8B57>Wild lures'
     lore:
-      - '<white>Decreases fishing time by 30%.'
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray>Crafted for the fearless angler, the Wild '
+      - '<gray>Attraction Bait is an infusion of potent '
+      - '<gray>natural ingredients, exuding an irresistible'
+      - '<gray>aroma for large aquatic beasts.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Increase fishing difficulty'
+      - '<gray> - Increase the size of fish caught'
+      - ''
   custom-model-data: 50003
-  effect:
-    time: 0.7
+  effects:
+    difficulty:
+      type: difficulty
+      value: 20
+    size:
+      type: size-bonus
+      value: 1.5
+    gametime:
+      type: game-time
+      value: -2

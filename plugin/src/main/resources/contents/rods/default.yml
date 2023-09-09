@@ -1,58 +1,141 @@
+# Note: These are the default configurations of the plugin
+# and do not necessarily mean that players can have a good
+# gaming experience. We hope that you will create
+# customized configurations based on your own ideas,
+# allowing players to experience the uniqueness of your server.
+
 # Vanilla fishing rod properties
 FISHING_ROD:
   tag: false
   material: fishing_rod
+  effects:
+    time_effect:
+      type: hook-time
+      value: 1.5
 
 # Custom rods
-wooden_rod:
+beginner_rod:
   material: fishing_rod
   display:
-    name: 'Ordinary wooden fishing rod'
+    name: "<b><#EEE9E9>Beginner's Fishing Rod"
     lore:
-      - '<gray>Its just an ordinary fishing rod'
-      - '<gray>But it''s quite friendly to a starter!'
-  effect:
-    difficulty: -1
-
-nature_fishing_cane:
-  material: fishing_rod
-  display:
-    name: 'Nature Fishing Cane'
-    lore:
-      - '<gray>The wild power makes it easier to be hooked'
-      - '<gray>But also increase the difficulty'
-  custom-model-data: 50001
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray> - Specially designed for those new to the art '
+      - '<gray> - of fishing, the Beginner''s Fishing Rod is a'
+      - '<gray> - novice angler''s best friend.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Increase the hook time'
+      - '<gray> - Reduces the challenge of fishing'
   effects:
-    hook-time: 0.9
-    difficulty: 1
-    game-time: 3
+    time_effect:
+      type: hook-time
+      value: 2
+    difficulty:
+      type: difficulty
+      value: -10
 
-silver_fishing_rod:
+master_rod:
   material: fishing_rod
   display:
-    name: 'Silver Fishing Rod'
+    name: "<b><#FFFF00>Master's Fishing Rod"
     lore:
-      - '<gray>Increase the chance of getting silver quality fish'
-  custom-model-data: 50002
-
-golden_fishing_rod:
-  material: fishing_rod
-  display:
-    name: 'Golden Fishing Rod'
-    lore:
-      - '<gray>Increase the chance of getting golden quality fish'
-  custom-model-data: 50003
-
-star_fishing_rod:
-  material: fishing_rod
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray> - Wielded only by the most skilled of anglers,'
+      - '<gray> - the Master''s Fishing Rod represents the pinnacle'
+      - '<gray> - of fishing craftsmanship. Meticulously crafted '
+      - '<gray> - for precision, it significantly reduces the '
+      - '<gray> - time it takes for a fish to bite.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Reduce the hook time'
+      - '<gray> - Increase the challenge of fishing'
+      - '<gray> - Higher chance of getting quality fish'
   effects:
-    lava-fishing: true
-  # https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing/requirements
+    time_effect:
+      type: hook-time
+      value: 0.8
+    difficulty:
+      type: difficulty
+      value: +20
+    group:
+      type: group-mod
+      value:
+        - silver_star:+7
+        - golden_star:+3
+
+skeleton_rod:
+  material: fishing_rod
+  display:
+    name: "<b><#CD2626>Skeleton Fishing Rod"
+    lore:
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray> - Forged from the bones of age-old skeletons and'
+      - '<gray> - imbued with dark enchantments, the Skeleton Fishing'
+      - '<gray> - Rod is not for the faint-hearted. It allows the '
+      - '<gray> - brave or the mad to fish within the scorching '
+      - '<gray> - confines of lava, defying the usual limitations of'
+      - '<gray> - regular rods.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Fishing in lava'
+      - '<gray> - Sometimes skeleton would grab the hook'
+  effects:
+    lava:
+      type: lava-fishing
+
+magical_rod:
+  material: fishing_rod
+  display:
+    name: '<b><#7B68EE>Magical Fishing Rod'
+    lore:
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray> - A product of arcane innovation, this unique'
+      - '<gray> - fishing rod uses enchanted books as bait.'
+      - '<gray> - Its intricate reel mechanism and magical '
+      - '<gray> - allure demand the exp level of its user,'
+      - '<gray> - consuming experience levels upon each cast.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Increase the chance of getting an'
+      - '<gray>   enchantment book from fishing.'
+      - ''
+      - '<#CD5C5C>Requirements:'
+      - '<gray> - 1x book bait'
+      - '<gray> - 10 exp levels'
+  custom-model-data: 10000
   requirements:
     requirement_1:
-      type: permission
-      value: star_fishing_rod.use
+      type: level
+      value: 10
+      not-met-actions:
+        action_message:
+          type: message
+          value:
+            - 'You don''t have enough levels to control the rod.'
     requirement_2:
-      type: world
+      type: bait
       value:
-        - world_nether
+        - BOOK
+      not-met-actions:
+        action_message:
+          type: message
+          value:
+            - 'You have to hold a book as bait.'
+  events:
+    cast:
+      action_level:
+        type: level
+        value: -10
+  effects:
+    weight_effect:
+      type: group-mod-ignore-conditions
+      value:
+        - enchantments:+10
+    time_effect:
+      type: hook-time
+      value: 3
