@@ -137,6 +137,7 @@ public class LootManagerImpl implements LootManager {
                 .instantGame(section.getBoolean("instant-game", false))
                 .showInFinder(section.getBoolean("show-in-fishfinder", true))
                 .gameConfig(section.getString("game"))
+                .score(section.getDouble("score"))
                 .lootGroup(ConfigUtils.stringListArgs(section.get("group")).toArray(new String[0]))
                 .nick(section.getString("nick", section.getString("display.name", key)))
                 .addActions(plugin.getActionManager().getActionMap(section.getConfigurationSection("events")))

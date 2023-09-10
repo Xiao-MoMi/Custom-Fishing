@@ -25,8 +25,8 @@ import net.momirealms.customfishing.api.mechanic.competition.*;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.api.util.LogUtils;
-import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.setting.CFConfig;
+import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.storage.method.database.nosql.RedisManager;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
@@ -64,6 +64,7 @@ public class CompetitionManagerImpl implements CompetitionManager {
                 1,
                 TimeUnit.SECONDS
         );
+        LogUtils.info("Loaded " + commandConfigMap.size() + " competitions.");
     }
 
     public void unload() {

@@ -133,6 +133,7 @@ public class BlockManagerImpl implements BlockManager, Listener {
     public void load() {
         this.loadConfig();
         Bukkit.getPluginManager().registerEvents(this, plugin);
+        LogUtils.info("Loaded " + blockConfigMap.size() + " blocks.");
     }
 
     private void registerInbuiltProperties() {

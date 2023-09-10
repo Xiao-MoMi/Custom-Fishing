@@ -8,20 +8,22 @@ metrics: true
 # Check updates
 update-checker: true
 
-# Available locales: chinese/english/spanish/turkish
+# Available locales: english
 lang: english
 
 # Mechanic settings
 mechanics:
 
-  # The requirements for the plugin to work
+  # Specifies the conditions required for the plugin mechanics to work.
+  # Here, the type is !world, which implies the plugin won't work in
+  # the world named 'blacklist_world'.
   mechanic-requirements:
     world_requirement:
       type: '!world'
       value:
         - blacklist_world
 
-  # global event settings
+  # Configures how events related to bait, loot, and rods behave
   global-events:
     bait: {}
     loot:

@@ -7,7 +7,7 @@
 fishfinder:
   material: PAPER
   display:
-    name: '<gray>Fish Finder'
+    name: '<#1E90FF>Fish Finder'
     lore:
       - ''
       - '<#7FFFD4>Desciption:'
@@ -29,7 +29,7 @@ fishfinder:
               type: cooldown
               value:
                 key: fishfinder
-                time: 3000 #ms
+                time: 3000
               not-met-actions:
                 action_1:
                   type: message

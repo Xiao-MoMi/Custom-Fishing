@@ -5,6 +5,7 @@ import dev.jorel.commandapi.IStringTooltip;
 import dev.jorel.commandapi.StringTooltip;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.BooleanArgument;
+import dev.jorel.commandapi.arguments.StringArgument;
 import net.momirealms.biomeapi.BiomeAPI;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
@@ -13,9 +14,7 @@ import net.momirealms.customfishing.api.manager.AdventureManager;
 import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DebugCommand {
 
@@ -26,7 +25,9 @@ public class DebugCommand {
                 .withSubcommands(
                         getLootChanceCommand(),
                         getBiomeCommand(),
-                        getSeasonCommand()
+                        getSeasonCommand(),
+                        getGroupCommand(),
+                        getCategoryCommand()
                 );
     }
 
@@ -46,6 +47,36 @@ public class DebugCommand {
                         return;
                     }
                     AdventureManagerImpl.getInstance().sendMessage(player, seasonInterface.getSeason(player.getLocation().getWorld()));
+                });
+    }
+
+    public CommandAPICommand getGroupCommand() {
+        return new CommandAPICommand("group")
+                .withArguments(new StringArgument("group"))
+                .executes((sender, arg) -> {
+                    String group = (String) arg.get("group");
+                    StringJoiner stringJoiner = new StringJoiner("<white>, </white>");
+                    List<String> groups = CustomFishingPlugin.get().getLootManager().getLootGroup(group);
+                    if (groups != null)
+                        for (String key : groups) {
+                            stringJoiner.add(key);
+                        }
+                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "<white>Group<gold>{" + group + "}<yellow>[" + stringJoiner + "]");
+                });
+    }
+
+    public CommandAPICommand getCategoryCommand() {
+        return new CommandAPICommand("category")
+                .withArguments(new StringArgument("category"))
+                .executes((sender, arg) -> {
+                    String c = (String) arg.get("category");
+                    StringJoiner stringJoiner = new StringJoiner("<white>, </white>");
+                    List<String> cs = CustomFishingPlugin.get().getStatisticsManager().getCategory(c);
+                    if (cs != null)
+                        for (String key : cs) {
+                            stringJoiner.add(key);
+                        }
+                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "<white>Category<gold>{" + c + "}<yellow>[" + stringJoiner + "]");
                 });
     }
 

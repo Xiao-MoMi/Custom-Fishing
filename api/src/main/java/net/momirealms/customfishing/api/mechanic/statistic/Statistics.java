@@ -21,7 +21,6 @@ import com.google.gson.annotations.SerializedName;
 import net.momirealms.customfishing.api.data.StatisticData;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
-import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 
 import java.util.HashMap;

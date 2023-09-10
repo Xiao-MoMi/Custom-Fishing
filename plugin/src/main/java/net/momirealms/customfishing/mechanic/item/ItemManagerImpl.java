@@ -35,12 +35,12 @@ import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.util.NBTUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -71,7 +71,7 @@ public class ItemManagerImpl implements ItemManager {
 
     public void load() {
         this.loadItemsFromPluginFolder();
-        AdventureManagerImpl.getInstance().sendMessageWithPrefix(Bukkit.getConsoleSender(), "<white>Loaded <green>" + buildableItemMap.size() + " <white>items.");
+        LogUtils.info("Loaded " + buildableItemMap.size() + " items.");
     }
 
     public void unload() {

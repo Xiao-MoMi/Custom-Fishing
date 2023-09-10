@@ -48,6 +48,7 @@ public class MobManagerImpl implements MobManager {
 
     public void load() {
         this.loadConfig();
+        LogUtils.info("Loaded " + mobConfigMap.size() + " mobs.");
     }
 
     public void unload() {

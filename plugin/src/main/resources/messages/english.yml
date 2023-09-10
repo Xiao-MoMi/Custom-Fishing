@@ -1,32 +1,31 @@
-#MiniMessage Format
-#https://docs.adventure.kyori.net/minimessage/format.html
+# Don't change this
 config-version: '26'
 
 messages:
   prefix: '<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient>'
   reload: '<white>Reloaded. Took <green>{time}ms.'
-  item-not-exist: 'That item does not exist.'
-  escape: 'The fish managed to get rid of the hook and escaped.'
+  item-not-exist: 'Item not found.'
+  escape: 'The fish slipped off the hook and escaped.'
   give-item: 'Successfully given player {player} {amount}x {item}.'
   get-item: 'Successfully got {amount}x {item}.'
   possible-loots: 'Possible loots here: '
   split-char: ', '
   competition-not-exist: 'Competition {id} does not exist.'
-  no-competition-ongoing: 'There''s no competition ongoing.'
-  stop-competition: 'Successfully stopped the current competition.'
-  end-competition: 'Successfully ended the current competition.'
+  no-competition-ongoing: "There's no competition ongoing."
+  stop-competition: 'Stopped the current competition.'
+  end-competition: 'Ended the current competition.'
   no-score: 'No Score'
   no-player: 'No Player'
   no-rank: 'No Rank'
-  goal-catch-amount: 'Amount of fish caught'
-  goal-max-size: 'Max size of the fish caught'
-  goal-total-size: 'Total size of the fish caught'
-  goal-total-score: 'Total score of the fish caught'
-  unsafe-modification: 'You can''t edit a player''s fishing bag when the player is playing on another server that connected to the database'
-  never-played: 'That player has never played the server. You can''t edit a non existent player''s fishing bag.'
-  data-not-loaded: '<red>Your data has not been loaded yet. Try rejoining the server. If the problem still occurs, contact the server administrator.'
-  open-market-gui: 'Successfully opened the market gui for {player}'
-  open-fishing-bag: 'Successfully opened the fishing bag for {player}'
+  goal-catch-amount: 'Fish count caught'
+  goal-max-size: 'Largest fish caught'
+  goal-total-size: 'Total length of fish caught'
+  goal-total-score: 'Cumulative score of fish caught'
+  unsafe-modification: "Cannot modify a player's fishing bag if they're active on another linked server."
+  never-played: "The player hasn't joined the server before. Can't modify a nonexistent player's fishing bag."
+  data-not-loaded: "<red>Data hasn't loaded. Please re-enter the server. If issues persist, reach out to the server admin."
+  open-market-gui: "Successfully opened the market gui for {player}"
+  open-fishing-bag: "Successfully opened the fishing bag for {player}"
   format-day: 'd'
   format-hour: 'h'
   format-minute: 'm'

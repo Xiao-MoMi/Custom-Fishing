@@ -21,6 +21,7 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.user.OnlineUser;
 import net.momirealms.customfishing.api.manager.StatisticsManager;
 import net.momirealms.customfishing.api.mechanic.statistic.Statistics;
+import net.momirealms.customfishing.api.util.LogUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,6 +40,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
 
     public void load() {
         this.loadCategoriesFromPluginFolder();
+        LogUtils.info("Loaded " + categoryMap.size() + " categories.");
     }
 
     public void unload() {
