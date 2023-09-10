@@ -25,7 +25,8 @@ import net.momirealms.customfishing.api.mechanic.competition.*;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.api.util.LogUtils;
-import net.momirealms.customfishing.setting.Config;
+import net.momirealms.customfishing.setting.CFLocale;
+import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.storage.method.database.nosql.RedisManager;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
@@ -205,16 +206,16 @@ public class CompetitionManagerImpl implements CompetitionManager {
     public String getCompetitionLocale(CompetitionGoal goal) {
         switch (goal) {
             case MAX_SIZE -> {
-                return net.momirealms.customfishing.setting.Locale.MSG_Max_Size;
+                return CFLocale.MSG_Max_Size;
             }
             case CATCH_AMOUNT -> {
-                return net.momirealms.customfishing.setting.Locale.MSG_Catch_Amount;
+                return CFLocale.MSG_Catch_Amount;
             }
             case TOTAL_SCORE -> {
-                return net.momirealms.customfishing.setting.Locale.MSG_Total_Score;
+                return CFLocale.MSG_Total_Score;
             }
             case TOTAL_SIZE -> {
-                return net.momirealms.customfishing.setting.Locale.MSG_Total_Size;
+                return CFLocale.MSG_Total_Size;
             }
         }
         return "";
@@ -280,7 +281,7 @@ public class CompetitionManagerImpl implements CompetitionManager {
 
     @Override
     public CompletableFuture<Integer> getPlayerCount() {
-        if (!Config.redisRanking) {
+        if (!CFConfig.redisRanking) {
             return CompletableFuture.completedFuture(Bukkit.getOnlinePlayers().size());
         } else {
             return plugin.getStorageManager().getRedisPlayerCount();

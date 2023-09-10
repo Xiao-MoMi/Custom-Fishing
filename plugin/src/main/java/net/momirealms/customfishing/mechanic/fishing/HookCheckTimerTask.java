@@ -29,7 +29,7 @@ import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
-import net.momirealms.customfishing.setting.Config;
+import net.momirealms.customfishing.setting.CFConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -175,10 +175,10 @@ public class HookCheckTimerTask implements Runnable {
 
     private void startLavaFishingMechanic() {
         // get random time
-        int random = ThreadLocalRandom.current().nextInt(Config.lavaMinTime, Config.lavaMaxTime);
+        int random = ThreadLocalRandom.current().nextInt(CFConfig.lavaMinTime, CFConfig.lavaMaxTime);
         random -= lureLevel * 100;
         random *= initialEffect.getHookTimeModifier();
-        random = Math.max(Config.lavaMinTime, random);
+        random = Math.max(CFConfig.lavaMinTime, random);
 
         // lava effect task (Three seconds in advance)
         this.lavaFishingTask = new LavaEffectTask(

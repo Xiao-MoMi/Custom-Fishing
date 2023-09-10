@@ -82,4 +82,8 @@ public class Condition {
     public void insertArg(String key, String value) {
         args.put(key, value);
     }
+
+    public String delArg(String key) {
+        return args.remove(key);
+    }
 }

@@ -249,7 +249,7 @@ public class EffectManagerImpl implements EffectManager {
                 return ((effect, condition) -> effect.setLavaFishing(true));
             }
             case "conditional" -> {
-                Requirement[] requirements = plugin.getRequirementManager().getRequirements(section.getConfigurationSection("conditions"), false);
+                Requirement[] requirements = plugin.getRequirementManager().getRequirements(section.getConfigurationSection("conditions"), true);
                 EffectModifier[] modifiers = getEffectModifiers(section.getConfigurationSection("effects"));
                 return ((effect, condition) -> {
                     for (Requirement requirement : requirements)

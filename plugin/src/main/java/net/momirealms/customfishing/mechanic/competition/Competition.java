@@ -30,8 +30,8 @@ import net.momirealms.customfishing.mechanic.competition.actionbar.ActionBarMana
 import net.momirealms.customfishing.mechanic.competition.bossbar.BossBarManager;
 import net.momirealms.customfishing.mechanic.competition.ranking.LocalRankingImpl;
 import net.momirealms.customfishing.mechanic.competition.ranking.RedisRankingImpl;
-import net.momirealms.customfishing.setting.Config;
-import net.momirealms.customfishing.setting.Locale;
+import net.momirealms.customfishing.setting.CFConfig;
+import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -59,7 +59,7 @@ public class Competition implements FishingCompetition {
     public Competition(CompetitionConfig config) {
         this.config = config;
         this.goal = config.getGoal() == CompetitionGoal.RANDOM ? CompetitionGoal.getRandom() : config.getGoal();
-        if (Config.redisRanking) this.ranking = new RedisRankingImpl();
+        if (CFConfig.redisRanking) this.ranking = new RedisRankingImpl();
                             else this.ranking = new LocalRankingImpl();
         this.publicPlaceholders = new ConcurrentHashMap<>();
         this.publicPlaceholders.put("{goal}", CustomFishingPlugin.get().getCompetitionManager().getCompetitionLocale(goal));
@@ -103,19 +103,19 @@ public class Competition implements FishingCompetition {
     }
 
     private void updatePublicPlaceholders() {
-        for (int i = 1; i < Config.placeholderLimit + 1; i++) {
+        for (int i = 1; i < CFConfig.placeholderLimit + 1; i++) {
             int finalI = i;
             Optional.ofNullable(ranking.getPlayerAt(i)).ifPresentOrElse(player -> {
                 publicPlaceholders.put("{" + finalI + "_player}", player);
                 publicPlaceholders.put("{" + finalI + "_score}", String.format("%.2f", ranking.getScoreAt(finalI)));
             }, () -> {
-                publicPlaceholders.put("{" + finalI + "_player}", Locale.MSG_No_Player);
-                publicPlaceholders.put("{" + finalI + "_score}", Locale.MSG_No_Score);
+                publicPlaceholders.put("{" + finalI + "_player}", CFLocale.MSG_No_Player);
+                publicPlaceholders.put("{" + finalI + "_score}", CFLocale.MSG_No_Score);
             });
         }
-        publicPlaceholders.put("{hour}", remainingTime < 3600 ? "" : (remainingTime / 3600) + Locale.FORMAT_Hour);
-        publicPlaceholders.put("{minute}", remainingTime < 60 ? "" : (remainingTime % 3600) / 60 + Locale.FORMAT_Minute);
-        publicPlaceholders.put("{second}", remainingTime == 0 ? "" : remainingTime % 60 + Locale.FORMAT_Second);
+        publicPlaceholders.put("{hour}", remainingTime < 3600 ? "" : (remainingTime / 3600) + CFLocale.FORMAT_Hour);
+        publicPlaceholders.put("{minute}", remainingTime < 60 ? "" : (remainingTime % 3600) / 60 + CFLocale.FORMAT_Minute);
+        publicPlaceholders.put("{second}", remainingTime == 0 ? "" : remainingTime % 60 + CFLocale.FORMAT_Second);
         publicPlaceholders.put("{seconds}", String.valueOf(remainingTime));
     }
 

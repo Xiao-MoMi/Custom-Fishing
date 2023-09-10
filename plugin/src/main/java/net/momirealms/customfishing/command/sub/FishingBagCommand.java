@@ -20,11 +20,10 @@ package net.momirealms.customfishing.command.sub;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.PlayerArgument;
 import dev.jorel.commandapi.arguments.UUIDArgument;
-import net.momirealms.customfishing.CustomFishingPluginImpl;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.user.OfflineUser;
-import net.momirealms.customfishing.setting.Locale;
+import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.storage.user.OfflineUserImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -46,7 +45,7 @@ public class FishingBagCommand {
                             if (inv != null) {
                                 player.openInventory(inv);
                             } else {
-                                AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, Locale.MSG_Data_Not_Loaded);
+                                AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, CFLocale.MSG_Data_Not_Loaded);
                             }
                         }
                     }));
@@ -82,12 +81,12 @@ public class FishingBagCommand {
                     }
                     CustomFishingPlugin.get().getStorageManager().getOfflineUser(uuid, false).thenAccept(optional -> {
                         if (optional.isEmpty()) {
-                            AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, Locale.MSG_Never_Played);
+                            AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, CFLocale.MSG_Never_Played);
                             return;
                         }
                         OfflineUser offlineUser = optional.get();
                         if (offlineUser == OfflineUserImpl.LOCKED_USER) {
-                            AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, Locale.MSG_Unsafe_Modification);
+                            AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, CFLocale.MSG_Unsafe_Modification);
                             return;
                         }
                         CustomFishingPlugin.get().getScheduler().runTaskSync(() -> {

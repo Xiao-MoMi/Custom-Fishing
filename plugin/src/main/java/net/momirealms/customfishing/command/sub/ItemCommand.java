@@ -28,7 +28,7 @@ import net.momirealms.customfishing.api.common.Key;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.item.BuildableItem;
 import net.momirealms.customfishing.mechanic.item.ItemManagerImpl;
-import net.momirealms.customfishing.setting.Locale;
+import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -81,9 +81,9 @@ public class ItemCommand {
                     ItemStack item = CustomFishingPlugin.get().getItemManager().build(player, namespace, id, new Condition(player).getArgs());
                     if (item != null) {
                         int actual = ItemManagerImpl.giveCertainAmountOfItem(player, item, amount);
-                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, Locale.MSG_Get_Item.replace("{item}", id).replace("{amount}", String.valueOf(actual)));
+                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, CFLocale.MSG_Get_Item.replace("{item}", id).replace("{amount}", String.valueOf(actual)));
                     } else {
-                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, Locale.MSG_Item_Not_Exists);
+                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, CFLocale.MSG_Item_Not_Exists);
                     }
                 });
     }
@@ -107,10 +107,10 @@ public class ItemCommand {
                         for (Player player : players) {
                             ItemStack item = CustomFishingPlugin.get().getItemManager().build(player, namespace, id, new Condition(player).getArgs());
                             int actual = ItemManagerImpl.giveCertainAmountOfItem(player, item, amount);
-                            AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, Locale.MSG_Give_Item.replace("{item}", id).replace("{amount}", String.valueOf(actual)).replace("{player}", player.getName()));
+                            AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Give_Item.replace("{item}", id).replace("{amount}", String.valueOf(actual)).replace("{player}", player.getName()));
                         }
                     } else {
-                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, Locale.MSG_Item_Not_Exists);
+                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Item_Not_Exists);
                     }
                 });
     }

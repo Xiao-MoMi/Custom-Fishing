@@ -124,6 +124,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerRandomRequirement();
         this.registerIceFishingRequirement();
         this.registerOpenWaterRequirement();
+        this.registerCoolDownRequirement();
     }
 
     public ConditionalLoots getConditionalLoots(ConfigurationSection section) {
@@ -310,7 +311,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("lava-fishing", (args, actions, advanced) -> {
             boolean inLava = (boolean) args;
             return condition -> {
-                String current = condition.getArgs().get("{lava}");
+                String current = condition.getArgs().getOrDefault("{lava}","false");
                 if (current.equals(String.valueOf(inLava)))
                     return true;
                 if (advanced) triggerActions(actions, condition);
@@ -443,6 +444,24 @@ public class RequirementManagerImpl implements RequirementManager {
                 if (advanced) triggerActions(actions, condition);
                 return false;
             };
+        });
+    }
+
+    private void registerCoolDownRequirement() {
+        registerRequirement("cooldown", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String key = section.getString("key");
+                int time = section.getInt("time");
+                return condition -> {
+                    if (!plugin.getCoolDownManager().isCoolDown(condition.getPlayer().getUniqueId(), key, time)) {
+                        return true;
+                    }
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                return null;
+            }
         });
     }
 

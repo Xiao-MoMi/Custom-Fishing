@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.manager;
 
 import net.momirealms.customfishing.api.mechanic.TempFishingState;
+import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.game.GameInstance;
@@ -46,11 +47,11 @@ public interface FishingManager {
 
     void processGameResult(GamingPlayer gamingPlayer);
 
-    Collection<String> getPossibleLootKeys(FishingPreparation fishingPreparation);
+    Collection<String> getPossibleLootKeys(Condition condition);
 
-    @NotNull Map<String, Double> getPossibleLootKeysWithWeight(Effect initialEffect, FishingPreparation fishingPreparation);
+    @NotNull Map<String, Double> getPossibleLootKeysWithWeight(Effect initialEffect, Condition condition);
 
-    Loot getNextLoot(Effect initialEffect, FishingPreparation fishingPreparation);
+    Loot getNextLoot(Effect initialEffect, Condition condition);
 
     void startFishingGame(Player player, Loot loot, Effect effect);
 

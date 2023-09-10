@@ -29,7 +29,7 @@ import net.momirealms.customfishing.api.data.user.OnlineUser;
 import net.momirealms.customfishing.api.manager.StorageManager;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.api.util.LogUtils;
-import net.momirealms.customfishing.setting.Config;
+import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.storage.method.database.nosql.MongoDBImpl;
 import net.momirealms.customfishing.storage.method.database.nosql.RedisManager;
 import net.momirealms.customfishing.storage.method.database.sql.H2Impl;
@@ -109,15 +109,15 @@ public class StorageManagerImpl implements StorageManager, Listener {
         if (this.timerSaveTask != null && !this.timerSaveTask.isCancelled()) {
             this.timerSaveTask.cancel();
         }
-        if (Config.dataSaveInterval != -1)
+        if (CFConfig.dataSaveInterval != -1)
             this.timerSaveTask = this.plugin.getScheduler().runTaskAsyncTimer(
                     () -> {
                         long time1 = System.currentTimeMillis();
                         this.dataSource.savePlayersData(this.onlineUserMap.values(), false);
                         LogUtils.info("Data Saved for online players. Took " + (System.currentTimeMillis() - time1) + "ms.");
                     },
-                    Config.dataSaveInterval,
-                    Config.dataSaveInterval,
+                    CFConfig.dataSaveInterval,
+                    CFConfig.dataSaveInterval,
                     TimeUnit.SECONDS
             );
     }

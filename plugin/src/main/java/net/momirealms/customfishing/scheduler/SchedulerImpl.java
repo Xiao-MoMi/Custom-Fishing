@@ -20,7 +20,7 @@ package net.momirealms.customfishing.scheduler;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.api.scheduler.Scheduler;
-import net.momirealms.customfishing.setting.Config;
+import net.momirealms.customfishing.setting.CFConfig;
 import org.bukkit.Location;
 
 import java.util.concurrent.ScheduledFuture;
@@ -45,9 +45,9 @@ public class SchedulerImpl implements Scheduler {
     }
 
     public void reload() {
-        this.schedule.setCorePoolSize(Config.corePoolSize);
-        this.schedule.setKeepAliveTime(Config.keepAliveTime, TimeUnit.SECONDS);
-        this.schedule.setMaximumPoolSize(Config.maximumPoolSize);
+        this.schedule.setCorePoolSize(CFConfig.corePoolSize);
+        this.schedule.setKeepAliveTime(CFConfig.keepAliveTime, TimeUnit.SECONDS);
+        this.schedule.setMaximumPoolSize(CFConfig.maximumPoolSize);
     }
 
     public void shutdown() {

@@ -20,7 +20,7 @@ package net.momirealms.customfishing.compatibility.papi;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
-import net.momirealms.customfishing.setting.Locale;
+import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -73,22 +73,22 @@ public class CompetitionPapi extends PlaceholderExpansion {
                 return String.valueOf(plugin.getCompetitionManager().getNextCompetitionSeconds());
             }
             case "nextsecond" -> {
-                return plugin.getCompetitionManager().getNextCompetitionSeconds() % 60 + Locale.FORMAT_Second;
+                return plugin.getCompetitionManager().getNextCompetitionSeconds() % 60 + CFLocale.FORMAT_Second;
             }
             case "nextminute" -> {
                 int sec = plugin.getCompetitionManager().getNextCompetitionSeconds();
                 int min = (sec % 3600) / 60;
-                return sec < 60 ? "" : min + Locale.FORMAT_Minute;
+                return sec < 60 ? "" : min + CFLocale.FORMAT_Minute;
             }
             case "nexthour" -> {
                 int sec = plugin.getCompetitionManager().getNextCompetitionSeconds();
                 int h = (sec % (3600 * 24)) / 3600;
-                return sec < 3600 ? "" : h + Locale.FORMAT_Hour;
+                return sec < 3600 ? "" : h + CFLocale.FORMAT_Hour;
             }
             case "nextday" -> {
                 int sec = plugin.getCompetitionManager().getNextCompetitionSeconds();
                 int day = sec / (3600 * 24);
-                return day == 0 ? "" : day + Locale.FORMAT_Day;
+                return day == 0 ? "" : day + CFLocale.FORMAT_Day;
             }
             case "rank" -> {
                 FishingCompetition competition = plugin.getCompetitionManager().getOnGoingCompetition();

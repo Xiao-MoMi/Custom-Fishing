@@ -23,14 +23,17 @@ import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.manager.ActionManager;
+import net.momirealms.customfishing.api.manager.LootManager;
 import net.momirealms.customfishing.api.mechanic.GlobalSettings;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionExpansion;
 import net.momirealms.customfishing.api.mechanic.action.ActionFactory;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
+import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
+import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.util.ArmorStandUtils;
 import net.momirealms.customfishing.util.ClassUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
@@ -81,6 +84,7 @@ public class ActionManagerImpl implements ActionManager {
         this.registerLevelAction();
         this.registerHologramAction();
         this.registerFakeItemAction();
+        this.registerFishFindAction();
     }
 
     public void load() {
@@ -478,7 +482,7 @@ public class ActionManagerImpl implements ActionManager {
         registerAction("conditional", (args, chance) -> {
             if (args instanceof ConfigurationSection section) {
                 Action[] actions = getActions(section.getConfigurationSection("actions"));
-                Requirement[] requirements = plugin.getRequirementManager().getRequirements(section.getConfigurationSection("conditions"), false);
+                Requirement[] requirements = plugin.getRequirementManager().getRequirements(section.getConfigurationSection("conditions"), true);
                 return condition -> {
                     if (Math.random() > chance) return;
                     if (requirements != null)
@@ -546,6 +550,24 @@ public class ActionManagerImpl implements ActionManager {
                 };
             }
             return null;
+        });
+    }
+
+    private void registerFishFindAction() {
+        registerAction("fish-finder", (args, chance) -> {
+            boolean arg = (boolean) args;
+            return condition -> {
+                if (Math.random() > chance) return;
+                condition.insertArg("{lava}", String.valueOf(arg));
+                LootManager lootManager = plugin.getLootManager();
+                List<String> loots = plugin.getFishingManager().getPossibleLootKeys(condition).stream().map(lootManager::getLoot).filter(Objects::nonNull).filter(Loot::showInFinder).map(Loot::getNick).toList();
+                StringJoiner stringJoiner = new StringJoiner(CFLocale.MSG_Split_Char);
+                for (String loot : loots) {
+                    stringJoiner.add(loot);
+                }
+                condition.delArg("{lava}");
+                AdventureManagerImpl.getInstance().sendMessageWithPrefix(condition.getPlayer(), CFLocale.MSG_Possible_Loots + stringJoiner);
+            };
         });
     }
 

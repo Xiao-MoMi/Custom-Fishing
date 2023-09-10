@@ -28,11 +28,13 @@ import net.momirealms.customfishing.api.manager.FishingManager;
 import net.momirealms.customfishing.api.manager.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.GlobalSettings;
 import net.momirealms.customfishing.api.mechanic.TempFishingState;
+import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
+import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
 import net.momirealms.customfishing.api.mechanic.game.GameConfig;
 import net.momirealms.customfishing.api.mechanic.game.GameInstance;
@@ -43,15 +45,13 @@ import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.api.util.WeightUtils;
 import net.momirealms.customfishing.mechanic.requirement.RequirementManagerImpl;
-import net.momirealms.customfishing.setting.Config;
+import net.momirealms.customfishing.setting.CFConfig;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Statistic;
 import org.bukkit.entity.*;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
+import org.bukkit.event.*;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
@@ -107,37 +107,37 @@ public class FishingManagerImpl implements Listener, FishingManager {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onFishMONITOR(PlayerFishEvent event) {
-        if (Config.eventPriority != EventPriority.MONITOR) return;
+        if (CFConfig.eventPriority != EventPriority.MONITOR) return;
         this.selectState(event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onFishHIGHEST(PlayerFishEvent event) {
-        if (Config.eventPriority != EventPriority.HIGHEST) return;
+        if (CFConfig.eventPriority != EventPriority.HIGHEST) return;
         this.selectState(event);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onFishHIGH(PlayerFishEvent event) {
-        if (Config.eventPriority != EventPriority.HIGH) return;
+        if (CFConfig.eventPriority != EventPriority.HIGH) return;
         this.selectState(event);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onFishNORMAL(PlayerFishEvent event) {
-        if (Config.eventPriority != EventPriority.NORMAL) return;
+        if (CFConfig.eventPriority != EventPriority.NORMAL) return;
         this.selectState(event);
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onFishLOW(PlayerFishEvent event) {
-        if (Config.eventPriority != EventPriority.LOW) return;
+        if (CFConfig.eventPriority != EventPriority.LOW) return;
         this.selectState(event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onFishLOWEST(PlayerFishEvent event) {
-        if (Config.eventPriority != EventPriority.LOWEST) return;
+        if (CFConfig.eventPriority != EventPriority.LOWEST) return;
         this.selectState(event);
     }
 
@@ -211,6 +211,27 @@ public class FishingManagerImpl implements Listener, FishingManager {
             GlobalSettings.triggerLootActions(ActionTrigger.CONSUME, condition);
             loot.triggerActions(ActionTrigger.CONSUME, condition);
         }
+    }
+
+    @EventHandler
+    public void onInteractWithUtils(PlayerInteractEvent event) {
+        if (event.useItemInHand() == Event.Result.DENY)
+            return;
+        ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
+        if (itemStack.getType() == Material.AIR)
+            return;
+        String id = plugin.getItemManager().getAnyItemID(itemStack);
+        EffectCarrier carrier = plugin.getEffectManager().getEffect("util", id);
+        if (carrier == null)
+            return;
+        Condition condition = new Condition(event.getPlayer());
+        if (!RequirementManager.isRequirementsMet(carrier.getRequirements(), condition))
+            return;
+        Action[] actions = carrier.getActions(ActionTrigger.INTERACT);
+        if (actions != null)
+            for (Action action : actions) {
+                action.trigger(condition);
+            }
     }
 
     @Override
@@ -365,7 +386,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
             return;
         }
 
-        if (!Config.vanillaMechanicIfNoLoot) {
+        if (!CFConfig.vanillaMechanicIfNoLoot) {
             event.setCancelled(true);
             event.getHook().remove();
         }
@@ -607,16 +628,16 @@ public class FishingManagerImpl implements Listener, FishingManager {
     }
 
     @Override
-    public Collection<String> getPossibleLootKeys (FishingPreparation fishingPreparation) {
-        return plugin.getRequirementManager().getLootWithWeight(fishingPreparation).keySet();
+    public Collection<String> getPossibleLootKeys (Condition condition) {
+        return plugin.getRequirementManager().getLootWithWeight(condition).keySet();
     }
 
     @NotNull
     @Override
-    public Map<String, Double> getPossibleLootKeysWithWeight(Effect initialEffect, FishingPreparation fishingPreparation) {
-        Map<String, Double> lootWithWeight = plugin.getRequirementManager().getLootWithWeight(fishingPreparation);
+    public Map<String, Double> getPossibleLootKeysWithWeight(Effect initialEffect, Condition condition) {
+        Map<String, Double> lootWithWeight = plugin.getRequirementManager().getLootWithWeight(condition);
 
-        Player player = fishingPreparation.getPlayer();
+        Player player = condition.getPlayer();
         for (Pair<String, WeightModifier> pair : initialEffect.getWeightModifier()) {
             Double previous = lootWithWeight.get(pair.left());
             if (previous != null)
@@ -631,8 +652,8 @@ public class FishingManagerImpl implements Listener, FishingManager {
 
     @Override
     @Nullable
-    public Loot getNextLoot(Effect initialEffect, FishingPreparation fishingPreparation) {
-        String key = WeightUtils.getRandom(getPossibleLootKeysWithWeight(initialEffect, fishingPreparation));
+    public Loot getNextLoot(Effect initialEffect, Condition condition) {
+        String key = WeightUtils.getRandom(getPossibleLootKeysWithWeight(initialEffect, condition));
         Loot loot = plugin.getLootManager().getLoot(key);
         if (loot == null) {
             LogUtils.warn(String.format("Loot %s doesn't exist!", key));

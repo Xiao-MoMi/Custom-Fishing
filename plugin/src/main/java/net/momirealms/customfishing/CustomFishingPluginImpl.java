@@ -43,9 +43,10 @@ import net.momirealms.customfishing.mechanic.mob.MobManagerImpl;
 import net.momirealms.customfishing.mechanic.requirement.RequirementManagerImpl;
 import net.momirealms.customfishing.mechanic.statistic.StatisticsManagerImpl;
 import net.momirealms.customfishing.scheduler.SchedulerImpl;
-import net.momirealms.customfishing.setting.Config;
-import net.momirealms.customfishing.setting.Locale;
+import net.momirealms.customfishing.setting.CFConfig;
+import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.storage.StorageManagerImpl;
+import net.momirealms.customfishing.mechanic.misc.CoolDownManager;
 import net.momirealms.customfishing.version.VersionManagerImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -58,6 +59,7 @@ import java.util.TimeZone;
 public class CustomFishingPluginImpl extends CustomFishingPlugin {
 
     private static ProtocolManager protocolManager;
+    private CoolDownManager coolDownManager;
 
     public CustomFishingPluginImpl() {
         super();
@@ -94,8 +96,9 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         this.competitionManager = new CompetitionManagerImpl(this);
         this.integrationManager = new IntegrationManagerImpl(this);
         this.statisticsManager = new StatisticsManagerImpl(this);
+        this.coolDownManager = new CoolDownManager(this);
         this.reload();
-        if (Config.updateChecker)
+        if (CFConfig.updateChecker)
             this.versionManager.checkUpdate().thenAccept(result -> {
                 if (!result) this.getAdventure().sendConsoleMessage("[CustomFishing] You are using the latest version.");
                 else this.getAdventure().sendConsoleMessage("[CustomFishing] Update is available: <u>https://polymart.org/resource/customfishing.2723<!u>");
@@ -122,12 +125,14 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         ((PlaceholderManagerImpl) this.placeholderManager).disable();
         ((StatisticsManagerImpl) this.statisticsManager).disable();
         ((ActionManagerImpl) this.actionManager).disable();
+        this.coolDownManager.disable();
+        this.commandManager.unload();
     }
 
     @Override
     public void reload() {
-        Config.load();
-        Locale.load();
+        CFConfig.load();
+        CFLocale.load();
         ((SchedulerImpl) this.scheduler).reload();
         ((RequirementManagerImpl) this.requirementManager).unload();
         ((RequirementManagerImpl) this.requirementManager).load();
@@ -160,6 +165,8 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         ((PlaceholderManagerImpl) this.placeholderManager).load();
         this.commandManager.unload();
         this.commandManager.load();
+        this.coolDownManager.unload();
+        this.coolDownManager.load();
     }
 
     private void loadDependencies() {
@@ -233,7 +240,11 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
     }
 
     public void debug(String message) {
-        if (!Config.debug) return;
+        if (!CFConfig.debug) return;
         LogUtils.info(message);
+    }
+
+    public CoolDownManager getCoolDownManager() {
+        return coolDownManager;
     }
 }

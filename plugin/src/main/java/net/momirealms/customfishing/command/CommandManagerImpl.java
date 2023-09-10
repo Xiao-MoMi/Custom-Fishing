@@ -25,7 +25,7 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.manager.CommandManager;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.command.sub.*;
-import net.momirealms.customfishing.setting.Locale;
+import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
@@ -80,7 +80,7 @@ public class CommandManagerImpl implements CommandManager {
                 .executes((sender, args) -> {
                     long time = System.currentTimeMillis();
                     plugin.reload();
-                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, Locale.MSG_Reload.replace("{time}", String.valueOf(System.currentTimeMillis()-time)));
+                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Reload.replace("{time}", String.valueOf(System.currentTimeMillis()-time)));
                 });
     }
 
@@ -96,7 +96,7 @@ public class CommandManagerImpl implements CommandManager {
                         assert players != null;
                         for (Player player : players) {
                             plugin.getMarketManager().openMarketGUI(player);
-                            AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, Locale.MSG_Market_GUI_Open.replace("{player}", player.getName()));
+                            AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Market_GUI_Open.replace("{player}", player.getName()));
                         }
                     }));
         }
@@ -111,7 +111,7 @@ public class CommandManagerImpl implements CommandManager {
                             Inventory inventory = plugin.getBagManager().getOnlineBagInventory(player.getUniqueId());
                             if (inventory != null) {
                                 player.openInventory(inventory);
-                                AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, Locale.MSG_Market_GUI_Open.replace("{player}", player.getName()));
+                                AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Fishing_Bag_Open.replace("{player}", player.getName()));
                             } else {
                                 LogUtils.warn("Player " + player.getName() + "'s bag data has not been loaded.");
                             }

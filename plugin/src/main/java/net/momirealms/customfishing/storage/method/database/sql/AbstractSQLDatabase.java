@@ -21,7 +21,7 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.PlayerData;
 import net.momirealms.customfishing.api.data.user.OfflineUser;
 import net.momirealms.customfishing.api.util.LogUtils;
-import net.momirealms.customfishing.setting.Config;
+import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.storage.method.AbstractStorage;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -90,7 +90,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 int lock = rs.getInt(2);
-                if (!force && (lock != 0 && getCurrentSeconds() - Config.dataSaveInterval <= lock)) {
+                if (!force && (lock != 0 && getCurrentSeconds() - CFConfig.dataSaveInterval <= lock)) {
                     statement.close(); rs.close(); connection.close();
                     future.complete(Optional.of(PlayerData.LOCKED));
                     return;

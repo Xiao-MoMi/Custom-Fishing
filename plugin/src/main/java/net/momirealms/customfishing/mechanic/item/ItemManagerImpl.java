@@ -32,7 +32,7 @@ import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.item.CustomFishingItemImpl;
 import net.momirealms.customfishing.compatibility.item.VanillaItemImpl;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
-import net.momirealms.customfishing.setting.Config;
+import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.util.NBTUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -173,7 +173,7 @@ public class ItemManagerImpl implements ItemManager {
 
     @Override
     public String getAnyItemID(ItemStack itemStack) {
-        for (String plugin : Config.itemDetectOrder) {
+        for (String plugin : CFConfig.itemDetectOrder) {
             ItemLibrary itemLibrary = itemLibraryMap.get(plugin);
             if (itemLibrary != null) {
                 String id = itemLibrary.getItemID(itemStack);

@@ -23,8 +23,8 @@ import dev.jorel.commandapi.arguments.StringArgument;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
-import net.momirealms.customfishing.setting.Config;
-import net.momirealms.customfishing.setting.Locale;
+import net.momirealms.customfishing.setting.CFConfig;
+import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.storage.method.database.nosql.RedisManager;
 
 import java.util.Set;
@@ -52,12 +52,12 @@ public class CompetitionCommand {
                             ArgumentSuggestions.strings(allCompetitions)
                         )
                 );
-        if (Config.redisRanking) command.withOptionalArguments(new StringArgument("-allservers"));
+        if (CFConfig.redisRanking) command.withOptionalArguments(new StringArgument("-allservers"));
         command.executes((sender, args) -> {
             String id = (String) args.get(0);
             assert id != null;
             if (!allCompetitions.contains(id)) {
-                AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, Locale.MSG_Competition_Not_Exist.replace("{id}", id));
+                AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Competition_Not_Exist.replace("{id}", id));
                 return;
             }
             boolean allServer = args.getOrDefault(1, "").equals("-allservers");
@@ -68,7 +68,7 @@ public class CompetitionCommand {
 
     private CommandAPICommand getCompetitionEndCommand() {
         var command = new CommandAPICommand("end");
-        if (Config.redisRanking) command.withOptionalArguments(new StringArgument("-allservers"));
+        if (CFConfig.redisRanking) command.withOptionalArguments(new StringArgument("-allservers"));
         command.executes((sender, args) -> {
             boolean allServer = args.getOrDefault(1, "").equals("-allservers");
             if (allServer) {
@@ -77,9 +77,9 @@ public class CompetitionCommand {
                 FishingCompetition competition = CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition();
                 if (competition != null) {
                     competition.end();
-                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, Locale.MSG_End_Competition);
+                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_End_Competition);
                 } else {
-                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, Locale.MSG_No_Competition_Ongoing);
+                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_No_Competition_Ongoing);
                 }
             }
         });
@@ -88,7 +88,7 @@ public class CompetitionCommand {
 
     private CommandAPICommand getCompetitionStopCommand() {
         var command = new CommandAPICommand("stop");
-        if (Config.redisRanking) command.withOptionalArguments(new StringArgument("-allservers"));
+        if (CFConfig.redisRanking) command.withOptionalArguments(new StringArgument("-allservers"));
         command.executes((sender, args) -> {
             boolean allServer = args.getOrDefault(1, "").equals("-allservers");
             if (allServer) {
@@ -97,9 +97,9 @@ public class CompetitionCommand {
                 FishingCompetition competition = CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition();
                 if (competition != null) {
                     competition.stop();
-                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, Locale.MSG_Stop_Competition);
+                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Stop_Competition);
                 } else {
-                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, Locale.MSG_No_Competition_Ongoing);
+                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_No_Competition_Ongoing);
                 }
             }
         });

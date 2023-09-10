@@ -30,7 +30,7 @@ import net.momirealms.customfishing.api.mechanic.competition.BossBarConfig;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.api.util.ReflectionUtils;
 import net.momirealms.customfishing.mechanic.competition.Competition;
-import net.momirealms.customfishing.setting.Locale;
+import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.util.DynamicText;
 import org.bukkit.boss.BarColor;
 import org.bukkit.entity.Player;
@@ -76,7 +76,7 @@ public class BossBarSender {
     private void updatePrivatePlaceholders() {
         this.privatePlaceholders.put("{score}", String.format("%.2f", competition.getRanking().getPlayerScore(player.getName())));
         int rank = competition.getRanking().getPlayerRank(player.getName());
-        this.privatePlaceholders.put("{rank}", rank != -1 ? String.valueOf(rank) : Locale.MSG_No_Rank);
+        this.privatePlaceholders.put("{rank}", rank != -1 ? String.valueOf(rank) : CFLocale.MSG_No_Rank);
         this.privatePlaceholders.putAll(competition.getCachedPlaceholders());
     }
 

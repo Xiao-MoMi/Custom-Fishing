@@ -29,8 +29,8 @@ import net.kyori.adventure.title.Title;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.manager.AdventureManager;
 import net.momirealms.customfishing.api.util.ReflectionUtils;
-import net.momirealms.customfishing.setting.Config;
-import net.momirealms.customfishing.setting.Locale;
+import net.momirealms.customfishing.setting.CFConfig;
+import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -60,7 +60,7 @@ public class AdventureManagerImpl implements AdventureManager {
 
     @Override
     public Component getComponentFromMiniMessage(String text) {
-        if (Config.legacyColorSupport) {
+        if (CFConfig.legacyColorSupport) {
             return MiniMessage.miniMessage().deserialize(legacyToMiniMessage(text));
         } else {
             return MiniMessage.miniMessage().deserialize(text);
@@ -77,8 +77,8 @@ public class AdventureManagerImpl implements AdventureManager {
     @Override
     public void sendMessageWithPrefix(CommandSender sender, String s) {
         if (s == null) return;
-        if (sender instanceof Player player) sendPlayerMessage(player, Locale.MSG_Prefix + s);
-        else if (sender instanceof ConsoleCommandSender) sendConsoleMessage(Locale.MSG_Prefix + s);
+        if (sender instanceof Player player) sendPlayerMessage(player, CFLocale.MSG_Prefix + s);
+        else if (sender instanceof ConsoleCommandSender) sendConsoleMessage(CFLocale.MSG_Prefix + s);
     }
 
     @Override

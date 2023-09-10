@@ -27,7 +27,7 @@ import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
 import net.momirealms.customfishing.api.mechanic.statistic.Statistics;
 import net.momirealms.customfishing.api.util.InventoryUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
-import net.momirealms.customfishing.setting.Config;
+import net.momirealms.customfishing.setting.CFConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -53,7 +53,7 @@ public class OfflineUserImpl implements OfflineUser {
         this.holder.setInventory(InventoryUtils.createInventory(this.holder, playerData.getBagData().size,
                 AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
                         PlaceholderManagerImpl.getInstance().parse(
-                                offlinePlayer, Config.bagTitle, Map.of("{player}", Optional.ofNullable(offlinePlayer.getName()).orElse(String.valueOf(uuid)))
+                                offlinePlayer, CFConfig.bagTitle, Map.of("{player}", Optional.ofNullable(offlinePlayer.getName()).orElse(String.valueOf(uuid)))
                         )
                 )));
         this.holder.setItems(InventoryUtils.getInventoryItems(playerData.getBagData().serialized));

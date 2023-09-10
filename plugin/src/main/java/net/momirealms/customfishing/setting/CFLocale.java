@@ -32,7 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-public class Locale {
+public class CFLocale {
     public static String MSG_Total_Size;
     public static String MSG_Catch_Amount;
     public static String MSG_Total_Score;
@@ -53,6 +53,9 @@ public class Locale {
     public static String MSG_Unsafe_Modification;
     public static String MSG_Data_Not_Loaded;
     public static String MSG_Market_GUI_Open;
+    public static String MSG_Fishing_Bag_Open;
+    public static String MSG_Split_Char;
+    public static String MSG_Possible_Loots;
     public static String FORMAT_Day;
     public static String FORMAT_Hour;
     public static String FORMAT_Minute;
@@ -61,8 +64,8 @@ public class Locale {
     public static void load() {
         try {
             YamlDocument.create(
-                    new File(CustomFishingPlugin.getInstance().getDataFolder(), "messages/" + Config.language + ".yml"),
-                    Objects.requireNonNull(CustomFishingPlugin.getInstance().getResource("messages/" + Config.language + ".yml")),
+                    new File(CustomFishingPlugin.getInstance().getDataFolder(), "messages/" + CFConfig.language + ".yml"),
+                    Objects.requireNonNull(CustomFishingPlugin.getInstance().getResource("messages/" + CFConfig.language + ".yml")),
                     GeneralSettings.DEFAULT,
                     LoaderSettings
                             .builder()
@@ -77,7 +80,7 @@ public class Locale {
         } catch (IOException e) {
             LogUtils.warn(e.getMessage());
         }
-        loadSettings(CustomFishingPlugin.get().getConfig("messages/" + Config.language + ".yml"));
+        loadSettings(CustomFishingPlugin.get().getConfig("messages/" + CFConfig.language + ".yml"));
     }
 
     private static void loadSettings(YamlConfiguration locale) {
@@ -103,10 +106,13 @@ public class Locale {
             MSG_Unsafe_Modification = msgSection.getString("unsafe-modification");
             MSG_Data_Not_Loaded = msgSection.getString("data-not-loaded");
             MSG_Market_GUI_Open = msgSection.getString("open-market-gui");
+            MSG_Fishing_Bag_Open = msgSection.getString("open-fishing-bag");
             FORMAT_Day = msgSection.getString("format-day");
             FORMAT_Hour = msgSection.getString("format-hour");
             FORMAT_Minute = msgSection.getString("format-minute");
             FORMAT_Second = msgSection.getString("format-second");
+            MSG_Split_Char = msgSection.getString("split-char");
+            MSG_Possible_Loots = msgSection.getString("possible-loots");
         }
     }
 }

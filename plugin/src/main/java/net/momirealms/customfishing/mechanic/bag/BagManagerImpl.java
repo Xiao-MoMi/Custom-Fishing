@@ -22,8 +22,7 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.user.OfflineUser;
 import net.momirealms.customfishing.api.manager.BagManager;
 import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
-import net.momirealms.customfishing.api.mechanic.condition.Condition;
-import net.momirealms.customfishing.setting.Config;
+import net.momirealms.customfishing.setting.CFConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -51,7 +50,7 @@ public class BagManagerImpl implements BagManager, Listener {
 
     @Override
     public boolean isEnabled() {
-        return Config.enableFishingBag;
+        return CFConfig.enableFishingBag;
     }
 
     public void load() {
@@ -105,7 +104,7 @@ public class BagManagerImpl implements BagManager, Listener {
         ItemStack clickedItem = event.getCurrentItem();
         if (clickedItem == null || clickedItem.getType() == Material.AIR)
             return;
-        if (Config.bagWhiteListItems.contains(clickedItem.getType()))
+        if (CFConfig.bagWhiteListItems.contains(clickedItem.getType()))
             return;
         String id = plugin.getItemManager().getAnyItemID(clickedItem);
         if (plugin.getEffectManager().getEffect("rod", id) != null)
@@ -114,7 +113,7 @@ public class BagManagerImpl implements BagManager, Listener {
             return;
         if (plugin.getEffectManager().getEffect("util", id) != null)
             return;
-        if (Config.bagStoreLoots && plugin.getLootManager().getLoot(id) != null)
+        if (CFConfig.bagStoreLoots && plugin.getLootManager().getLoot(id) != null)
             return;
         event.setCancelled(true);
     }
