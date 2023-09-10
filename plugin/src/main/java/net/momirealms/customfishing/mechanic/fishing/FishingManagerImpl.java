@@ -208,7 +208,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         Loot loot = plugin.getLootManager().getLoot(id);
         if (loot != null) {
             Condition condition = new Condition(event.getPlayer());
-            GlobalSettings.triggerLootActions(ActionTrigger.CONSUME, condition);
+            GlobalSettings.triggerItemActions(ActionTrigger.CONSUME, condition);
             loot.triggerActions(ActionTrigger.CONSUME, condition);
         }
     }
@@ -522,7 +522,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 return;
             }
 
-            GlobalSettings.triggerLootActions(ActionTrigger.FAILURE, fishingPreparation);
+            GlobalSettings.triggerItemActions(ActionTrigger.FAILURE, fishingPreparation);
             loot.triggerActions(ActionTrigger.FAILURE, fishingPreparation);
             fishingPreparation.triggerActions(ActionTrigger.FAILURE);
 
@@ -551,7 +551,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
             }
 
             switch (loot.getType()) {
-                case LOOT -> {
+                case ITEM -> {
                     int amount = (int) effect.getMultipleLootChance();
                     amount += Math.random() < (effect.getMultipleLootChance() - amount) ? 2 : 1;
                     // build the items for multiple times instead of using setAmount() to make sure that each item is unique
@@ -572,7 +572,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
                     }
                     return;
                 }
-                case MOB -> plugin.getMobManager().summonMob(hook.getLocation(), player.getLocation(), loot);
+                case ENTITY -> plugin.getEntityManager().summonEntity(hook.getLocation(), player.getLocation(), loot);
                 case BLOCK -> plugin.getBlockManager().summonBlock(player, hook.getLocation(), player.getLocation(), loot);
             }
             doSuccessActions(loot, effect, fishingPreparation, player);
@@ -611,7 +611,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         }
 
         // events and actions
-        GlobalSettings.triggerLootActions(ActionTrigger.SUCCESS, fishingPreparation);
+        GlobalSettings.triggerItemActions(ActionTrigger.SUCCESS, fishingPreparation);
         loot.triggerActions(ActionTrigger.SUCCESS, fishingPreparation);
         fishingPreparation.triggerActions(ActionTrigger.SUCCESS);
 

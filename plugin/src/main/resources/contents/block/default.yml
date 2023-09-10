@@ -9,7 +9,7 @@ apple_crate:
   disable-stat: true
   nick: Apple Crate
   block: barrel
-  vector:
+  velocity:
     horizontal: 1.07
     vertical: 1.5
   properties:
@@ -52,7 +52,7 @@ carrot_crate:
   disable-stat: true
   nick: Carrot Crate
   block: barrel
-  vector:
+  velocity:
     horizontal: 1.07
     vertical: 1.5
   properties:

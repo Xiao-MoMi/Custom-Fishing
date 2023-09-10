@@ -15,18 +15,16 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.api.mechanic.mob;
+package net.momirealms.customfishing.api.mechanic.entity;
+
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 
 import java.util.Map;
 
-public interface MobSettings {
-    boolean isPersist();
+public interface EntityLibrary {
 
-    double getHorizontalVector();
+    String identification();
 
-    double getVerticalVector();
-
-    String getMobID();
-
-    Map<String, Object> getPropertyMap();
+    Entity spawn(Location location, String id, Map<String, Object> propertyMap);
 }

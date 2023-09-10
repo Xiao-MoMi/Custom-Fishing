@@ -33,7 +33,7 @@ public abstract class CustomFishingPlugin extends JavaPlugin {
     protected LootManager lootManager;
     protected FishingManager fishingManager;
     protected EffectManager effectManager;
-    protected MobManager mobManager;
+    protected EntityManager entityManager;
     protected BlockManager blockManager;
     protected AdventureManager adventure;
     protected BagManager bagManager;
@@ -87,8 +87,8 @@ public abstract class CustomFishingPlugin extends JavaPlugin {
         return blockManager;
     }
 
-    public MobManager getMobManager() {
-        return mobManager;
+    public EntityManager getEntityManager() {
+        return entityManager;
     }
 
     public ItemManager getItemManager() {

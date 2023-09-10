@@ -165,7 +165,7 @@ public class BlockManagerImpl implements BlockManager, Listener {
     @SuppressWarnings("DuplicatedCode")
     private void loadConfig() {
         Deque<File> fileDeque = new ArrayDeque<>();
-        for (String type : List.of("blocks")) {
+        for (String type : List.of("block")) {
             File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + type);
             if (!typeFolder.exists()) {
                 if (!typeFolder.mkdirs()) return;
@@ -215,8 +215,8 @@ public class BlockManagerImpl implements BlockManager, Listener {
                 BlockConfig blockConfig = new BlockConfig.Builder()
                         .blockID(blockID)
                         .persist(false)
-                        .horizontalVector(section.getDouble("vector.horizontal", 1.1))
-                        .verticalVector(section.getDouble("vector.vertical", 1.2))
+                        .horizontalVector(section.getDouble("velocity.horizontal", 1.1))
+                        .verticalVector(section.getDouble("velocity.vertical", 1.2))
                         .dataModifiers(dataModifiers)
                         .stateModifiers(stateModifiers)
                         .build();

@@ -15,15 +15,15 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.mechanic.mob;
+package net.momirealms.customfishing.mechanic.entity;
 
 import net.momirealms.customfishing.api.CustomFishingPlugin;
-import net.momirealms.customfishing.api.manager.MobManager;
+import net.momirealms.customfishing.api.manager.EntityManager;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
-import net.momirealms.customfishing.api.mechanic.mob.MobConfig;
-import net.momirealms.customfishing.api.mechanic.mob.MobLibrary;
+import net.momirealms.customfishing.api.mechanic.entity.EntityConfig;
+import net.momirealms.customfishing.api.mechanic.entity.EntityLibrary;
 import net.momirealms.customfishing.api.util.LogUtils;
-import net.momirealms.customfishing.compatibility.mob.VanillaMobImpl;
+import net.momirealms.customfishing.compatibility.entity.VanillaEntityImpl;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -33,28 +33,28 @@ import org.bukkit.util.Vector;
 import java.io.File;
 import java.util.*;
 
-public class MobManagerImpl implements MobManager {
+public class EntityManagerImpl implements EntityManager {
 
     private final CustomFishingPlugin plugin;
-    private final HashMap<String, MobLibrary> mobLibraryMap;
-    private final HashMap<String, MobConfig> mobConfigMap;
+    private final HashMap<String, EntityLibrary> entityLibraryMap;
+    private final HashMap<String, EntityConfig> entityConfigMap;
 
-    public MobManagerImpl(CustomFishingPlugin plugin) {
+    public EntityManagerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;
-        this.mobLibraryMap = new HashMap<>();
-        this.mobConfigMap = new HashMap<>();
-        this.registerMobLibrary(new VanillaMobImpl());
+        this.entityLibraryMap = new HashMap<>();
+        this.entityConfigMap = new HashMap<>();
+        this.registerEntityLibrary(new VanillaEntityImpl());
     }
 
     public void load() {
         this.loadConfig();
-        LogUtils.info("Loaded " + mobConfigMap.size() + " mobs.");
+        LogUtils.info("Loaded " + entityConfigMap.size() + " entities.");
     }
 
     public void unload() {
-        HashMap<String, MobConfig> tempMap = new HashMap<>(this.mobConfigMap);
-        this.mobConfigMap.clear();
-        for (Map.Entry<String, MobConfig> entry : tempMap.entrySet()) {
+        HashMap<String, EntityConfig> tempMap = new HashMap<>(this.entityConfigMap);
+        this.entityConfigMap.clear();
+        for (Map.Entry<String, EntityConfig> entry : tempMap.entrySet()) {
             if (entry.getValue().isPersist()) {
                 tempMap.put(entry.getKey(), entry.getValue());
             }
@@ -62,26 +62,26 @@ public class MobManagerImpl implements MobManager {
     }
 
     @Override
-    public boolean registerMobLibrary(MobLibrary mobLibrary) {
-        if (mobLibraryMap.containsKey(mobLibrary.identification())) return false;
-        else mobLibraryMap.put(mobLibrary.identification(), mobLibrary);
+    public boolean registerEntityLibrary(EntityLibrary entityLibrary) {
+        if (entityLibraryMap.containsKey(entityLibrary.identification())) return false;
+        else entityLibraryMap.put(entityLibrary.identification(), entityLibrary);
         return true;
     }
 
     @Override
-    public boolean unregisterMobLibrary(String lib) {
-        return mobLibraryMap.remove(lib) != null;
+    public boolean unregisterEntityLibrary(String lib) {
+        return entityLibraryMap.remove(lib) != null;
     }
 
     @Override
-    public boolean unregisterMobLibrary(MobLibrary mobLibrary) {
-        return unregisterMobLibrary(mobLibrary.identification());
+    public boolean unregisterEntityLibrary(EntityLibrary entityLibrary) {
+        return unregisterEntityLibrary(entityLibrary.identification());
     }
 
     @SuppressWarnings("DuplicatedCode")
     private void loadConfig() {
         Deque<File> fileDeque = new ArrayDeque<>();
-        for (String type : List.of("mobs")) {
+        for (String type : List.of("entity")) {
             File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + type);
             if (!typeFolder.exists()) {
                 if (!typeFolder.mkdirs()) return;
@@ -107,9 +107,9 @@ public class MobManagerImpl implements MobManager {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
         for (Map.Entry<String, Object> entry : config.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection section) {
-                String mobID = section.getString("mob");
-                if (mobID == null) {
-                    LogUtils.warn("Mob can't be null. File:" + file.getAbsolutePath() + "; Section:" + section.getCurrentPath());
+                String entityID = section.getString("entity");
+                if (entityID == null) {
+                    LogUtils.warn("Entity can't be null. File:" + file.getAbsolutePath() + "; Section:" + section.getCurrentPath());
                     continue;
                 }
                 HashMap<String, Object> propertyMap = new HashMap<>();
@@ -117,41 +117,41 @@ public class MobManagerImpl implements MobManager {
                 if (property != null) {
                     propertyMap.putAll(property.getValues(false));
                 }
-                MobConfig mobConfig = new MobConfig.Builder()
-                        .mobID(mobID)
+                EntityConfig entityConfig = new EntityConfig.Builder()
+                        .entityID(entityID)
                         .persist(false)
-                        .horizontalVector(section.getDouble("vector.horizontal", 1.1))
-                        .verticalVector(section.getDouble("vector.vertical", 1.2))
+                        .horizontalVector(section.getDouble("velocity.horizontal", 1.1))
+                        .verticalVector(section.getDouble("velocity.vertical", 1.2))
                         .propertyMap(propertyMap)
                         .build();
-                mobConfigMap.put(entry.getKey(), mobConfig);
+                entityConfigMap.put(entry.getKey(), entityConfig);
             }
         }
     }
 
     public void disable() {
         unload();
-        this.mobConfigMap.clear();
-        this.mobLibraryMap.clear();
+        this.entityConfigMap.clear();
+        this.entityLibraryMap.clear();
     }
 
     @Override
-    public void summonMob(Location hookLocation, Location playerLocation, Loot loot) {
-        MobConfig config = mobConfigMap.get(loot.getID());
+    public void summonEntity(Location hookLocation, Location playerLocation, Loot loot) {
+        EntityConfig config = entityConfigMap.get(loot.getID());
         if (config == null) {
-            LogUtils.warn("Mob: " + loot.getID() + " doesn't exist.");
+            LogUtils.warn("Entity: " + loot.getID() + " doesn't exist.");
             return;
         }
-        String mobID = config.getMobID();
+        String entityID = config.getEntityID();
         Entity entity;
-        if (mobID.contains(":")) {
-            String[] split = mobID.split(":", 2);
+        if (entityID.contains(":")) {
+            String[] split = entityID.split(":", 2);
             String identification = split[0];
             String id = split[1];
-            MobLibrary library = mobLibraryMap.get(identification);
+            EntityLibrary library = entityLibraryMap.get(identification);
             entity = library.spawn(hookLocation, id, config.getPropertyMap());
         } else {
-            entity = mobLibraryMap.get("vanilla").spawn(hookLocation, mobID, config.getPropertyMap());
+            entity = entityLibraryMap.get("vanilla").spawn(hookLocation, entityID, config.getPropertyMap());
         }
         Vector vector = playerLocation.subtract(hookLocation).toVector().multiply((config.getHorizontalVector()) - 1);
         vector = vector.setY((vector.getY() + 0.2) * config.getVerticalVector());

@@ -93,7 +93,7 @@ public class CompetitionManagerImpl implements CompetitionManager {
     @SuppressWarnings("DuplicatedCode")
     private void loadConfig() {
         Deque<File> fileDeque = new ArrayDeque<>();
-        for (String type : List.of("competitions")) {
+        for (String type : List.of("competition")) {
             File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + type);
             if (!typeFolder.exists()) {
                 if (!typeFolder.mkdirs()) return;

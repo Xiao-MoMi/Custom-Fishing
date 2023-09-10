@@ -15,9 +15,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.compatibility.mob;
+package net.momirealms.customfishing.compatibility.entity;
 
-import net.momirealms.customfishing.api.mechanic.mob.MobLibrary;
+import net.momirealms.customfishing.api.mechanic.entity.EntityLibrary;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -25,7 +25,7 @@ import org.bukkit.entity.EntityType;
 import java.util.Locale;
 import java.util.Map;
 
-public class VanillaMobImpl implements MobLibrary {
+public class VanillaEntityImpl implements EntityLibrary {
 
     @Override
     public String identification() {
@@ -33,7 +33,7 @@ public class VanillaMobImpl implements MobLibrary {
     }
 
     @Override
-    public Entity spawn(Location location, String id, Map<String, Object> mobPropertyMap) {
+    public Entity spawn(Location location, String id, Map<String, Object> propertyMap) {
         return location.getWorld().spawnEntity(location, EntityType.valueOf(id.toUpperCase(Locale.ENGLISH)));
     }
 }

@@ -61,7 +61,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
     @SuppressWarnings("DuplicatedCode")
     public void loadCategoriesFromPluginFolder() {
         Deque<File> fileDeque = new ArrayDeque<>();
-        for (String type : List.of("categories")) {
+        for (String type : List.of("category")) {
             File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + type);
             if (!typeFolder.exists()) {
                 if (!typeFolder.mkdirs()) return;

@@ -18,15 +18,15 @@
 package net.momirealms.customfishing.api.manager;
 
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
-import net.momirealms.customfishing.api.mechanic.mob.MobLibrary;
+import net.momirealms.customfishing.api.mechanic.entity.EntityLibrary;
 import org.bukkit.Location;
 
-public interface MobManager {
-    boolean registerMobLibrary(MobLibrary mobLibrary);
+public interface EntityManager {
+    boolean registerEntityLibrary(EntityLibrary entityLibrary);
 
-    boolean unregisterMobLibrary(String lib);
+    boolean unregisterEntityLibrary(String lib);
 
-    boolean unregisterMobLibrary(MobLibrary mobLibrary);
+    boolean unregisterEntityLibrary(EntityLibrary entityLibrary);
 
-    void summonMob(Location hookLocation, Location playerLocation, Loot loot);
+    void summonEntity(Location hookLocation, Location playerLocation, Loot loot);
 }

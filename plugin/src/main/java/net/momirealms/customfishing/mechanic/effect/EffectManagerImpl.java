@@ -73,7 +73,7 @@ public class EffectManagerImpl implements EffectManager {
     @SuppressWarnings("DuplicatedCode")
     public void load() {
         Deque<File> fileDeque = new ArrayDeque<>();
-        for (String type : List.of("rods", "baits", "enchants", "utils", "totems")) {
+        for (String type : List.of("rod", "bait", "enchant", "util", "totem")) {
             File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + type);
             if (!typeFolder.exists()) {
                 if (!typeFolder.mkdirs()) return;
@@ -88,7 +88,7 @@ public class EffectManagerImpl implements EffectManager {
                     if (subFile.isDirectory()) {
                         fileDeque.push(subFile);
                     } else if (subFile.isFile() && subFile.getName().endsWith(".yml")) {
-                        this.loadSingleFile(subFile, StringUtils.chop(type));
+                        this.loadSingleFile(subFile, type);
                     }
                 }
             }

@@ -61,7 +61,7 @@ public class LootManagerImpl implements LootManager {
     @SuppressWarnings("DuplicatedCode")
     public void loadLootsFromPluginFolder() {
         Deque<File> fileDeque = new ArrayDeque<>();
-        for (String type : List.of("loots", "mobs", "blocks")) {
+        for (String type : List.of("item", "entity", "block")) {
             File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + type);
             if (!typeFolder.exists()) {
                 if (!typeFolder.mkdirs()) return;
@@ -76,7 +76,7 @@ public class LootManagerImpl implements LootManager {
                     if (subFile.isDirectory()) {
                         fileDeque.push(subFile);
                     } else if (subFile.isFile() && subFile.getName().endsWith(".yml")) {
-                        loadSingleFile(subFile, StringUtils.chop(type));
+                        loadSingleFile(subFile, type);
                     }
                 }
             }

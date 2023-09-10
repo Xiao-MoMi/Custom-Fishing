@@ -42,7 +42,6 @@ functional-icons:
       name: '<#00CED1><b>● <!b>Ship the fish'
       lore:
         - '<font:uniform><gradient:#E6E6FA:#48D1CC:#E6E6FA>You will get <green>{money}$</green> by selling the fish</gradient></font>'
-        - '<dark_gray>You can earn {rest}'
     action:
       sound_action:
         type: sound

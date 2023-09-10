@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class GlobalSettings {
 
-    public static HashMap<ActionTrigger, Action[]> lootActions = new HashMap<>();
+    public static HashMap<ActionTrigger, Action[]> itemActions = new HashMap<>();
     public static HashMap<ActionTrigger, Action[]> rodActions = new HashMap<>();
     public static HashMap<ActionTrigger, Action[]> baitActions = new HashMap<>();
 
@@ -21,7 +21,7 @@ public class GlobalSettings {
             if (entry.getValue() instanceof ConfigurationSection inner) {
                 HashMap<ActionTrigger, Action[]> map = CustomFishingPlugin.get().getActionManager().getActionMap(inner);
                 switch (entry.getKey()) {
-                    case "loot" -> lootActions = map;
+                    case "item" -> itemActions = map;
                     case "rod" -> rodActions = map;
                     case "bait" -> baitActions = map;
                 }
@@ -30,13 +30,13 @@ public class GlobalSettings {
     }
 
     public static void unload() {
-        lootActions.clear();
+        itemActions.clear();
         rodActions.clear();
         baitActions.clear();
     }
 
-    public static void triggerLootActions(ActionTrigger trigger, Condition condition) {
-        Action[] actions = lootActions.get(trigger);
+    public static void triggerItemActions(ActionTrigger trigger, Condition condition) {
+        Action[] actions = itemActions.get(trigger);
         if (actions != null) {
             for (Action action : actions) {
                 action.trigger(condition);

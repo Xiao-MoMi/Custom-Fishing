@@ -7,36 +7,36 @@
 skeleton:
   show-in-fishfinder: false
   disable-stat: true
-  mob: skeleton
+  entity: skeleton
   nick: <white>Skeleton</white>
-  vector:
+  velocity:
     horizontal: 1
     vertical: 1.3
 
 wither_skeleton:
   show-in-fishfinder: false
   disable-stat: true
-  mob: wither_skeleton
+  entity: wither_skeleton
   nick: <black>Wither Skeleton</black>
-  vector:
+  velocity:
     horizontal: 1.1
     vertical: 1.2
 
 magma_cube:
   show-in-fishfinder: false
   disable-stat: true
-  mob: magma_cube
+  entity: magma_cube
   nick: <red>Magma Cube</black>
-  vector:
+  velocity:
     horizontal: 1.1
     vertical: 1.3
 
 skeletalknight:
   show-in-fishfinder: false
   disable-stat: true
-  mob: MythicMobs:SkeletalKnight
+  entity: MythicMobs:SkeletalKnight
   nick: Skeletal Knight
-  vector:
+  velocity:
     horizontal: 1.1
     vertical: 1.2
   properties:

@@ -193,6 +193,8 @@ public class MarketManagerImpl implements MarketManager, Listener {
                 return;
             }
         }
+
+        plugin.getScheduler().runTaskSyncLater(gui::refresh, player.getLocation(), 50, TimeUnit.MILLISECONDS);
     }
 
     @EventHandler
@@ -278,10 +280,30 @@ public class MarketManagerImpl implements MarketManager, Listener {
             if ((event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT)
             && (current != null && current.getType() != Material.AIR)) {
                 event.setCancelled(true);
-                int slot = gui.getEmptyItemSlot();
-                if (slot != -1) {
-                    gui.getInventory().setItem(slot, current.clone());
-                    current.setAmount(0);
+                MarketGUIElement element = gui.getElement(itemSlot);
+                if (element == null) return;
+                for (int slot : element.getSlots()) {
+                    ItemStack itemStack = gui.getInventory().getItem(slot);
+                    if (itemStack != null && itemStack.getType() != Material.AIR) {
+                        if (current.getType() == itemStack.getType()
+                                && itemStack.getAmount() != itemStack.getType().getMaxStackSize()
+                                && current.getItemMeta().getAsString().equals(itemStack.getItemMeta().getAsString())
+                        ) {
+                            int left = itemStack.getType().getMaxStackSize() - itemStack.getAmount();
+                            if (current.getAmount() <= left) {
+                                itemStack.setAmount(itemStack.getAmount() + current.getAmount());
+                                current.setAmount(0);
+                                return;
+                            } else {
+                                current.setAmount(current.getAmount() - left);
+                                itemStack.setAmount(itemStack.getType().getMaxStackSize());
+                            }
+                        }
+                    } else {
+                        gui.getInventory().setItem(slot, current.clone());
+                        current.setAmount(0);
+                        return;
+                    }
                 }
             }
         }

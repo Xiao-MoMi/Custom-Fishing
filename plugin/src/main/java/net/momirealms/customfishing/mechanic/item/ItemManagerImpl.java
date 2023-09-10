@@ -97,7 +97,7 @@ public class ItemManagerImpl implements ItemManager {
     @SuppressWarnings("DuplicatedCode")
     public void loadItemsFromPluginFolder() {
         Deque<File> fileDeque = new ArrayDeque<>();
-        for (String type : List.of("loots", "baits", "rods", "utils")) {
+        for (String type : List.of("item", "bait", "rod", "util")) {
             File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + type);
             if (!typeFolder.exists()) {
                 if (!typeFolder.mkdirs()) return;
@@ -112,7 +112,7 @@ public class ItemManagerImpl implements ItemManager {
                     if (subFile.isDirectory()) {
                         fileDeque.push(subFile);
                     } else if (subFile.isFile() && subFile.getName().endsWith(".yml")) {
-                        this.loadSingleFile(subFile, StringUtils.chop(type));
+                        this.loadSingleFile(subFile, type);
                     }
                 }
             }
@@ -271,7 +271,7 @@ public class ItemManagerImpl implements ItemManager {
 
     @Override
     public void dropItem(Player player, Location hookLocation, Location playerLocation, Loot loot, Map<String, String> args) {
-        ItemStack item = build(player, "loot", loot.getID(), args);
+        ItemStack item = build(player, "item", loot.getID(), args);
         if (item == null) {
             LogUtils.warn(String.format("Item %s not exists", loot.getID()));
             return;

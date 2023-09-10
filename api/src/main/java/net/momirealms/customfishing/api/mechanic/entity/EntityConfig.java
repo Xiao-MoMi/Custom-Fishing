@@ -15,13 +15,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.api.mechanic.mob;
+package net.momirealms.customfishing.api.mechanic.entity;
 
 import java.util.Map;
 
-public class MobConfig implements MobSettings {
+public class EntityConfig implements EntitySettings {
 
-    private String mob;
+    private String entity;
     private double horizontalVector;
     private double verticalVector;
     private Map<String, Object> propertyMap;
@@ -43,8 +43,8 @@ public class MobConfig implements MobSettings {
     }
 
     @Override
-    public String getMobID() {
-        return mob;
+    public String getEntityID() {
+        return entity;
     }
 
     @Override
@@ -54,14 +54,14 @@ public class MobConfig implements MobSettings {
 
     public static class Builder {
 
-        private final MobConfig config;
+        private final EntityConfig config;
 
         public Builder() {
-            this.config = new MobConfig();
+            this.config = new EntityConfig();
         }
 
-        public Builder mobID(String value) {
-            this.config.mob = value;
+        public Builder entityID(String value) {
+            this.config.entity = value;
             return this;
         }
 
@@ -85,7 +85,7 @@ public class MobConfig implements MobSettings {
             return this;
         }
 
-        public MobConfig build() {
+        public EntityConfig build() {
             return config;
         }
     }

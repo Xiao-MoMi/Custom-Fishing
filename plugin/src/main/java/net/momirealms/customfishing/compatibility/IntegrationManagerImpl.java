@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.compatibility;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.integration.EnchantmentInterface;
 import net.momirealms.customfishing.api.integration.LevelInterface;
@@ -27,9 +26,10 @@ import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.block.ItemsAdderBlockImpl;
 import net.momirealms.customfishing.compatibility.enchant.AdvancedEnchantmentsImpl;
 import net.momirealms.customfishing.compatibility.enchant.VanillaEnchantmentsImpl;
+import net.momirealms.customfishing.compatibility.entity.ItemsAdderEntityImpl;
 import net.momirealms.customfishing.compatibility.item.*;
 import net.momirealms.customfishing.compatibility.level.*;
-import net.momirealms.customfishing.compatibility.mob.MythicMobsLibraryImpl;
+import net.momirealms.customfishing.compatibility.entity.MythicEntityImpl;
 import net.momirealms.customfishing.compatibility.season.CustomCropsSeasonImpl;
 import net.momirealms.customfishing.compatibility.season.RealisticSeasonsImpl;
 import org.bukkit.inventory.ItemStack;
@@ -62,6 +62,7 @@ public class IntegrationManagerImpl implements IntegrationManager {
         if (plugin.isHookedPluginEnabled("ItemsAdder")) {
             plugin.getItemManager().registerItemLibrary(new ItemsAdderItemImpl());
             plugin.getBlockManager().registerBlockLibrary(new ItemsAdderBlockImpl());
+            plugin.getEntityManager().registerEntityLibrary(new ItemsAdderEntityImpl());
             hookMessage("ItemsAdder");
         }
         if (plugin.isHookedPluginEnabled("MMOItems")) {
@@ -78,7 +79,7 @@ public class IntegrationManagerImpl implements IntegrationManager {
         }
         if (plugin.isHookedPluginEnabled("MythicMobs")) {
             plugin.getItemManager().registerItemLibrary(new MythicMobsItemImpl());
-            plugin.getMobManager().registerMobLibrary(new MythicMobsLibraryImpl());
+            plugin.getEntityManager().registerEntityLibrary(new MythicEntityImpl());
             hookMessage("MythicMobs");
         }
         if (plugin.isHookedPluginEnabled("EcoJobs")) {
@@ -99,7 +100,7 @@ public class IntegrationManagerImpl implements IntegrationManager {
         }
         if (plugin.isHookedPluginEnabled("mcMMO")) {
             try {
-                plugin.getItemManager().registerCustomItem("loot", "mcmmo", new McMMOBuildableItem());
+                plugin.getItemManager().registerCustomItem("item", "mcmmo", new McMMOBuildableItem());
             } catch (ClassNotFoundException | NoSuchMethodException e) {
                 LogUtils.warn("Failed to initialize mcMMO Treasure");
             }
@@ -152,7 +153,7 @@ public class IntegrationManagerImpl implements IntegrationManager {
     }
 
     private void hookMessage(String plugin) {
-        AdventureManagerImpl.getInstance().sendConsoleMessage("[CustomFishing] <green>" + plugin + "</green> hooked!");
+        LogUtils.info( plugin + " hooked!");
     }
 
     @Override

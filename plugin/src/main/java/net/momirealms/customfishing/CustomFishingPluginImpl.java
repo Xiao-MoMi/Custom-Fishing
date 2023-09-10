@@ -40,7 +40,7 @@ import net.momirealms.customfishing.mechanic.item.ItemManagerImpl;
 import net.momirealms.customfishing.mechanic.loot.LootManagerImpl;
 import net.momirealms.customfishing.mechanic.market.MarketManagerImpl;
 import net.momirealms.customfishing.mechanic.misc.CoolDownManager;
-import net.momirealms.customfishing.mechanic.mob.MobManagerImpl;
+import net.momirealms.customfishing.mechanic.entity.EntityManagerImpl;
 import net.momirealms.customfishing.mechanic.requirement.RequirementManagerImpl;
 import net.momirealms.customfishing.mechanic.statistic.StatisticsManagerImpl;
 import net.momirealms.customfishing.scheduler.SchedulerImpl;
@@ -88,7 +88,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         this.itemManager = new ItemManagerImpl(this);
         this.lootManager = new LootManagerImpl(this);
         this.marketManager = new MarketManagerImpl(this);
-        this.mobManager = new MobManagerImpl(this);
+        this.entityManager = new EntityManagerImpl(this);
         this.placeholderManager = new PlaceholderManagerImpl(this);
         this.requirementManager = new RequirementManagerImpl(this);
         this.scheduler = new SchedulerImpl(this);
@@ -116,7 +116,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         ((ItemManagerImpl) this.itemManager).disable();
         ((LootManagerImpl) this.lootManager).disable();
         ((MarketManagerImpl) this.marketManager).disable();
-        ((MobManagerImpl) this.mobManager).disable();
+        ((EntityManagerImpl) this.entityManager).disable();
         ((RequirementManagerImpl) this.requirementManager).disable();
         ((SchedulerImpl) this.scheduler).shutdown();
         ((IntegrationManagerImpl) this.integrationManager).disable();
@@ -154,8 +154,8 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         ((BagManagerImpl) this.bagManager).load();
         ((BlockManagerImpl) this.blockManager).unload();
         ((BlockManagerImpl) this.blockManager).load();
-        ((MobManagerImpl) this.mobManager).unload();
-        ((MobManagerImpl) this.mobManager).load();
+        ((EntityManagerImpl) this.entityManager).unload();
+        ((EntityManagerImpl) this.entityManager).load();
         ((CompetitionManagerImpl) this.competitionManager).unload();
         ((CompetitionManagerImpl) this.competitionManager).load();
         ((StorageManagerImpl) this.storageManager).reload();

@@ -141,10 +141,10 @@ public class GameManagerImpl implements GameManager {
 
     public void loadGamesFromPluginFolder() {
         Deque<File> fileDeque = new ArrayDeque<>();
-        File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + "minigames");
+        File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + "minigame");
         if (!typeFolder.exists()) {
             if (!typeFolder.mkdirs()) return;
-            plugin.saveResource("contents" + File.separator + "minigames" + File.separator + "default.yml", false);
+            plugin.saveResource("contents" + File.separator + "minigame" + File.separator + "default.yml", false);
         }
         fileDeque.push(typeFolder);
         while (!fileDeque.isEmpty()) {
