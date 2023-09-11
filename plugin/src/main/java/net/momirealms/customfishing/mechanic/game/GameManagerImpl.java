@@ -19,13 +19,14 @@ package net.momirealms.customfishing.mechanic.game;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
+import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.manager.GameManager;
+import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.game.*;
 import net.momirealms.customfishing.api.util.FontUtils;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.api.util.OffsetUtils;
 import net.momirealms.customfishing.util.ClassUtils;
-import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
@@ -41,15 +42,13 @@ public class GameManagerImpl implements GameManager {
 
     private final CustomFishingPlugin plugin;
     private final HashMap<String, GameFactory> gameCreatorMap;
-    private final HashMap<String, GameInstance> gameMap;
-    private final HashMap<String, GameConfig> gameConfigMap;
-    private final String EXPANSION_FOLDER = "expansions/minigames";
+    private final HashMap<String, Pair<BasicGameConfig, GameInstance>> gameMap;
+    private final String EXPANSION_FOLDER = "expansions/minigame";
 
     public GameManagerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.gameCreatorMap = new HashMap<>();
         this.gameMap = new HashMap<>();
-        this.gameConfigMap = new HashMap<>();
         this.registerInbuiltGames();
     }
 
@@ -62,12 +61,10 @@ public class GameManagerImpl implements GameManager {
     public void load() {
         this.loadExpansions();
         this.loadGamesFromPluginFolder();
-        this.loadGameConfigs();
     }
 
     public void unload() {
         this.gameMap.clear();
-        this.gameConfigMap.clear();
     }
 
     public void disable() {
@@ -91,52 +88,18 @@ public class GameManagerImpl implements GameManager {
 
     @Override
     @Nullable
-    public GameFactory getGameCreator(String type) {
+    public GameFactory getGameFactory(String type) {
         return gameCreatorMap.get(type);
     }
 
     @Override
-    @Nullable
-    public GameInstance getGame(String key) {
-        return gameMap.get(key);
+    public Optional<Pair<BasicGameConfig, GameInstance>> getGame(String key) {
+        return Optional.ofNullable(gameMap.get(key));
     }
 
     @Override
-    @Nullable
-    public GameConfig getGameConfig(String key) {
-        if (key == null) return null;
-        return gameConfigMap.get(key);
-    }
-
-    @Override
-    public GameInstance getRandomGame() {
-        Collection<GameInstance> collection = gameMap.values();
-        return (GameInstance) collection.toArray()[ThreadLocalRandom.current().nextInt(collection.size())];
-    }
-
-    @Override
-    public GameConfig getRandomGameConfig() {
-        Collection<GameConfig> collection = gameConfigMap.values();
-        return (GameConfig) collection.toArray()[ThreadLocalRandom.current().nextInt(collection.size())];
-    }
-
-    public void loadGameConfigs() {
-        YamlConfiguration config = plugin.getConfig("game-groups.yml");
-        for (Map.Entry<String, Object> entry : config.getValues(false).entrySet()) {
-            if (entry.getValue() instanceof ConfigurationSection section) {
-                if (section.contains("groups")) {
-                    gameConfigMap.put(entry.getKey(), new GameGroups(ConfigUtils.getWeights(section.getStringList("groups"))));
-                } else if (section.contains("games")) {
-                    var pair1 = ConfigUtils.splitStringIntegerArgs(section.getString("difficulty", "1~100"));
-                    var pair2 = ConfigUtils.splitStringIntegerArgs(section.getString("time", "10~20"));
-                    gameConfigMap.put(entry.getKey(),
-                            new GameGroup(ConfigUtils.getWeights(section.getStringList("games")))
-                                    .difficulty(pair1.left(), pair1.right())
-                                    .time(pair2.left(), pair2.right())
-                    );
-                }
-            }
-        }
+    public HashMap<String, Double> getGameWithWeight(Condition condition) {
+        return plugin.getRequirementManager().getGameWithWeight(condition);
     }
 
     public void loadGamesFromPluginFolder() {
@@ -165,9 +128,24 @@ public class GameManagerImpl implements GameManager {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
         for (Map.Entry<String, Object> entry : config.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection section) {
-                GameFactory creator = this.getGameCreator(section.getString("game-type"));
+                GameFactory creator = this.getGameFactory(section.getString("game-type"));
+                BasicGameConfig.Builder basicGameBuilder = new BasicGameConfig.Builder();
+                Object time = section.get("time", 15);
+                if (time instanceof String str) {
+                    String[] split = str.split("~");
+                    basicGameBuilder.time(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+                } else if (time instanceof Integer integer) {
+                    basicGameBuilder.time(integer);
+                }
+                Object difficulty = section.get("difficulty", "20~80");
+                if (difficulty instanceof String str) {
+                    String[] split = str.split("~");
+                    basicGameBuilder.difficulty(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+                } else if (difficulty instanceof Integer integer) {
+                    basicGameBuilder.difficulty(integer);
+                }
                 if (creator != null) {
-                    gameMap.put(entry.getKey(), creator.setArgs(section));
+                    gameMap.put(entry.getKey(), Pair.of(basicGameBuilder.build(), creator.setArgs(section)));
                 }
             }
         }
@@ -242,11 +220,11 @@ public class GameManagerImpl implements GameManager {
 
             var timeRequirements = section.getIntegerList("hold-time-requirements").stream().mapToInt(Integer::intValue).toArray();
             var judgementAreaImage = section.getString("subtitle.judgment-area");
-            var fishImage = section.getString("subtitle.fish");
+            var pointerImage = section.getString("subtitle.pointer");
             var barEffectiveWidth = section.getInt("arguments.bar-effective-area-width");
             var judgementAreaOffset = section.getInt("arguments.judgment-area-offset");
             var judgementAreaWidth = section.getInt("arguments.judgment-area-width");
-            var fishIconWidth = section.getInt("arguments.fish-icon-width");
+            var pointerIconWidth = section.getInt("arguments.pointer-icon-width");
             var punishment = section.getDouble("arguments.punishment");
             var progress = section.getStringList("progress").toArray(new String[0]);
             var waterResistance = section.getDouble("arguments.water-resistance", 0.15);
@@ -296,7 +274,7 @@ public class GameManagerImpl implements GameManager {
                     fish_position += fish_velocity;
                     fraction();
                     calibrate();
-                    if (fish_position >= judgement_position - 2 && fish_position + fishIconWidth <= judgement_position + judgementAreaWidth + 2) {
+                    if (fish_position >= judgement_position && fish_position + pointerIconWidth <= judgement_position + judgementAreaWidth) {
                         hold_time += 33;
                     } else {
                         hold_time -= punishment * 33;
@@ -342,8 +320,8 @@ public class GameManagerImpl implements GameManager {
                         fish_position = 0;
                         fish_velocity = 0;
                     }
-                    if (fish_position + fishIconWidth > barEffectiveWidth) {
-                        fish_position = barEffectiveWidth - fishIconWidth;
+                    if (fish_position + pointerIconWidth > barEffectiveWidth) {
+                        fish_position = barEffectiveWidth - pointerIconWidth;
                         fish_velocity = 0;
                     }
                     if (judgement_position < 0) {
@@ -362,8 +340,8 @@ public class GameManagerImpl implements GameManager {
                             + FontUtils.surroundWithFont(judgementAreaImage, font)
                             + OffsetUtils.getOffsetChars((int) (barEffectiveWidth - judgement_position - judgementAreaWidth))
                             + OffsetUtils.getOffsetChars((int) (-barEffectiveWidth - 1 + fish_position))
-                            + FontUtils.surroundWithFont(fishImage, font)
-                            + OffsetUtils.getOffsetChars((int) (barEffectiveWidth - fish_position - fishIconWidth + 1))
+                            + FontUtils.surroundWithFont(pointerImage, font)
+                            + OffsetUtils.getOffsetChars((int) (barEffectiveWidth - fish_position - pointerIconWidth + 1))
                             ;
                     AdventureManagerImpl.getInstance().sendTitle(
                             player,
@@ -472,6 +450,7 @@ public class GameManagerImpl implements GameManager {
         }));
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void loadExpansions() {
         File expansionFolder = new File(plugin.getDataFolder(), EXPANSION_FOLDER);
         if (!expansionFolder.exists())

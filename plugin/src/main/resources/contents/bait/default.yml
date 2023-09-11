@@ -19,10 +19,10 @@ BOOK:
           value:
             - 'This bait can only be used on <#7B68EE>Magical Fishing Rod'
 
-common_bait:
+simple_bait:
   material: paper
   display:
-    name: '<b><#00BFFF>Common lures'
+    name: '<b><#00BFFF>Simple lures'
     lore:
       - ''
       - '<#7FFFD4>Desciption:'

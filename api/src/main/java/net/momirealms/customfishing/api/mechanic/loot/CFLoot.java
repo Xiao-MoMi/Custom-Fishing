@@ -1,10 +1,8 @@
 package net.momirealms.customfishing.api.mechanic.loot;
 
-import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
-import net.momirealms.customfishing.api.mechanic.game.GameConfig;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -151,16 +149,6 @@ public class CFLoot implements Loot {
     @Override
     public String[] getLootGroup() {
         return lootGroup;
-    }
-
-    @Override
-    public GameConfig getGameConfig() {
-        return CustomFishingPlugin.get().getGameManager().getGameConfig(this.gameConfig);
-    }
-
-    @Override
-    public String getGameConfigKey() {
-        return this.gameConfig;
     }
 
     @Override

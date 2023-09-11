@@ -11,7 +11,6 @@ global-group:
         '!rod':
           - magical_rod
       list:
-        - vanilla:+50
         - rubbish:+15
         - seagrass:+5
       sub-groups:
@@ -80,6 +79,7 @@ global-group:
               - minecraft:deep_lukewarm_ocean
               - minecraft:warm_ocean
           list:
+            - vanilla:+30
             - stick:+15
             - gold_fish:+15
             - gold_fish_silver_star:+3
@@ -118,7 +118,7 @@ global-group:
         curse_rod:
           conditions:
             rod:
-              - skeleton_rod
+              - bone_rod
             time:
               - 14000~22000
           list:
@@ -156,7 +156,7 @@ global-group:
             curse_rod:
               conditions:
                 rod:
-                  - skeleton_rod
+                  - bone_rod
                 time:
                   - 14000~22000
               list:

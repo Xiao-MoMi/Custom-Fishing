@@ -52,7 +52,7 @@ public interface FishingManager {
 
     Loot getNextLoot(Effect initialEffect, Condition condition);
 
-    void startFishingGame(Player player, Loot loot, Effect effect);
+    void startFishingGame(Player player, Condition condition, Effect effect);
 
     void startFishingGame(Player player, GameSettings settings, GameInstance gameInstance);
 }

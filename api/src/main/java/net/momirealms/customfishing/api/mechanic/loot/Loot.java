@@ -20,7 +20,6 @@ package net.momirealms.customfishing.api.mechanic.loot;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
-import net.momirealms.customfishing.api.mechanic.game.GameConfig;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -73,14 +72,6 @@ public interface Loot {
     boolean disableStats();
 
     String[] getLootGroup();
-
-    /**
-     * Get the game config
-     * @return game config
-     */
-    GameConfig getGameConfig();
-
-    String getGameConfigKey();
 
     /**
      * get actions triggered by certain events

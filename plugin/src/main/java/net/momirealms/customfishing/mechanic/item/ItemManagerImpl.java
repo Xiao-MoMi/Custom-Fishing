@@ -34,17 +34,16 @@ import net.momirealms.customfishing.compatibility.item.VanillaItemImpl;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.util.NBTUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -281,7 +280,7 @@ public class ItemManagerImpl implements ItemManager {
         }
         Entity itemEntity = hookLocation.getWorld().dropItem(hookLocation, item);
         Vector vector = playerLocation.subtract(hookLocation).toVector().multiply(0.105);
-        vector = vector.setY((vector.getY() + 0.2) * 1.18);
+        vector = vector.setY((vector.getY() + 0.22) * 1.18);
         itemEntity.setVelocity(vector);
     }
 
@@ -289,7 +288,7 @@ public class ItemManagerImpl implements ItemManager {
     public void dropItem(Location hookLocation, Location playerLocation, ItemStack itemStack) {
         Entity itemEntity = hookLocation.getWorld().dropItem(hookLocation, itemStack);
         Vector vector = playerLocation.subtract(hookLocation).toVector().multiply(0.105);
-        vector = vector.setY((vector.getY() + 0.2) * 1.18);
+        vector = vector.setY((vector.getY() + 0.22) * 1.18);
         itemEntity.setVelocity(vector);
     }
 
@@ -613,7 +612,7 @@ public class ItemManagerImpl implements ItemManager {
 
     public static int giveCertainAmountOfItem(Player player, ItemStack itemStack, int amount) {
         PlayerInventory inventory = player.getInventory();
-        String metaStr = itemStack.getItemMeta().getAsString();
+        ItemMeta meta = itemStack.getItemMeta();
         int maxStackSize = itemStack.getMaxStackSize();
 
         if (amount > maxStackSize * 100) {
@@ -625,7 +624,7 @@ public class ItemManagerImpl implements ItemManager {
 
         for (ItemStack other : inventory.getStorageContents()) {
             if (other != null) {
-                if (other.getType() == itemStack.getType() && other.getItemMeta().getAsString().equals(metaStr)) {
+                if (other.getType() == itemStack.getType() && other.getItemMeta().equals(meta)) {
                     if (other.getAmount() < maxStackSize) {
                         int delta = maxStackSize - other.getAmount();
                         if (amount > delta) {

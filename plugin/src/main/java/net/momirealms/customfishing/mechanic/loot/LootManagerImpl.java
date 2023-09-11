@@ -20,12 +20,12 @@ package net.momirealms.customfishing.mechanic.loot;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.manager.LootManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.loot.CFLoot;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
@@ -103,6 +103,11 @@ public class LootManagerImpl implements LootManager {
     @Override
     public Collection<Loot> getAllLoots() {
         return lootMap.values();
+    }
+
+    @Override
+    public HashMap<String, Double> getLootWithWeight(Condition condition) {
+        return plugin.getRequirementManager().getLootWithWeight(condition);
     }
 
     private void loadSingleFile(File file, String namespace) {

@@ -58,7 +58,7 @@ public class ActionManagerImpl implements ActionManager {
 
     private final CustomFishingPlugin plugin;
     private final HashMap<String, ActionFactory> actionBuilderMap;
-    private final String EXPANSION_FOLDER = "expansions/actions";
+    private final String EXPANSION_FOLDER = "expansions/action";
 
     public ActionManagerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;

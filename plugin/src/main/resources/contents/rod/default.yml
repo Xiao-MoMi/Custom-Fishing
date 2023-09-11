@@ -28,48 +28,80 @@ beginner_rod:
       - '<#FFD700>Effects:'
       - '<gray> - Increase the hook time'
       - '<gray> - Reduces the challenge of fishing'
+  custom-model-data: 50001
   effects:
     time_effect:
       type: hook-time
-      value: 2
+      value: 1.8
     difficulty:
       type: difficulty
-      value: -10
+      value: -8
 
-master_rod:
+silver_rod:
   material: fishing_rod
   display:
-    name: "<b><#FFFF00>Master's Fishing Rod"
+    name: "<b><#C0C0C0>Silver Fishing Rod"
     lore:
       - ''
       - '<#7FFFD4>Desciption:'
-      - '<gray> - Wielded only by the most skilled of anglers,'
-      - '<gray> - the Master''s Fishing Rod represents the pinnacle'
-      - '<gray> - of fishing craftsmanship. Meticulously crafted '
-      - '<gray> - for precision, it significantly reduces the '
-      - '<gray> - time it takes for a fish to bite.'
+      - '<gray> - Elegantly crafted with a gleaming finish, the'
+      - '<gray> - Silver Star Fishing Rod is the dream of every'
+      - '<gray> - angler seeking silver-star quality fish.'
       - ''
       - '<#FFD700>Effects:'
-      - '<gray> - Reduce the hook time'
-      - '<gray> - Increase the challenge of fishing'
-      - '<gray> - Higher chance of getting quality fish'
+      - '<gray> - Increase the chance of getting silver star fish'
+  custom-model-data: 50002
   effects:
-    time_effect:
-      type: hook-time
-      value: 0.8
-    difficulty:
-      type: difficulty
-      value: +20
     group:
       type: group-mod
       value:
-        - silver_star:+7
-        - golden_star:+3
+        - silver_star:+8
 
-skeleton_rod:
+golden_rod:
   material: fishing_rod
   display:
-    name: "<b><#CD2626>Skeleton Fishing Rod"
+    name: "<b><#FFD700>Golden Fishing Rod"
+    lore:
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray> - Glistening under the sunlight and exuding an'
+      - '<gray> - aura of luxury, the Golden Fishing Rod is the'
+      - '<gray> - epitome of high-tier angling gear.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Increase the chance of getting golden star fish'
+  custom-model-data: 50003
+  effects:
+    group:
+      type: group-mod
+      value:
+        - golden_star:+3
+
+star_rod:
+  material: fishing_rod
+  display:
+    name: "<b><#FFFF00>Star Fishing Rod"
+    lore:
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray> - Carved from stardust and bathed in cosmic energy,'
+      - '<gray> - the Star Fishing Rod is a testament to the wonders'
+      - '<gray> - of the universe. Its endless magical reservoir ensures'
+      - '<gray> - that time seems to stand still, granting anglers what'
+      - '<gray> - feels like an eternity to perfect their catch.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - +15s Game Time'
+  custom-model-data: 50004
+  effects:
+    time_effect:
+      type: game-time
+      value: 15
+
+bone_rod:
+  material: fishing_rod
+  display:
+    name: "<b><#CD2626>Bone Fishing Rod"
     lore:
       - ''
       - '<#7FFFD4>Desciption:'
@@ -83,6 +115,7 @@ skeleton_rod:
       - '<#FFD700>Effects:'
       - '<gray> - Fishing in lava'
       - '<gray> - Sometimes skeleton would grab the hook'
+  custom-model-data: 50005
   effects:
     lava:
       type: lava-fishing
@@ -102,11 +135,12 @@ magical_rod:
       - ''
       - '<#FFD700>Effects:'
       - '<gray> - Get an enchantment book from fishing.'
+      - '<gray> - Require a long time to get hooked.'
       - ''
       - '<#CD5C5C>Requirements:'
       - '<gray> - 1x book bait'
       - '<gray> - 10 exp levels'
-  custom-model-data: 10000
+  custom-model-data: 50006
   requirements:
     requirement_1:
       type: level
@@ -138,3 +172,34 @@ magical_rod:
     time_effect:
       type: hook-time
       value: 3
+
+master_rod:
+  material: fishing_rod
+  display:
+    name: "<b><#FFFF00>Master's Fishing Rod"
+    lore:
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray> - Wielded only by the most skilled of anglers,'
+      - '<gray> - the Master''s Fishing Rod represents the pinnacle'
+      - '<gray> - of fishing craftsmanship. Meticulously crafted '
+      - '<gray> - for precision, it significantly reduces the '
+      - '<gray> - time it takes for a fish to bite.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Reduce the hook time'
+      - '<gray> - Increase the challenge of fishing'
+      - '<gray> - Higher chance of getting quality fish'
+  custom-model-data: 50007
+  effects:
+    time_effect:
+      type: hook-time
+      value: 0.95
+    difficulty:
+      type: difficulty
+      value: +10
+    group:
+      type: group-mod
+      value:
+        - silver_star:+5
+        - golden_star:+3

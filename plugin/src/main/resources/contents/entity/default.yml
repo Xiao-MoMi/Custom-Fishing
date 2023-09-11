@@ -7,6 +7,7 @@
 skeleton:
   show-in-fishfinder: false
   disable-stat: true
+  disable-game: true
   entity: skeleton
   nick: <white>Skeleton</white>
   velocity:
@@ -16,6 +17,7 @@ skeleton:
 wither_skeleton:
   show-in-fishfinder: false
   disable-stat: true
+  disable-game: true
   entity: wither_skeleton
   nick: <black>Wither Skeleton</black>
   velocity:
@@ -25,6 +27,7 @@ wither_skeleton:
 magma_cube:
   show-in-fishfinder: false
   disable-stat: true
+  disable-game: true
   entity: magma_cube
   nick: <red>Magma Cube</black>
   velocity:
@@ -34,6 +37,7 @@ magma_cube:
 skeletalknight:
   show-in-fishfinder: false
   disable-stat: true
+  disable-game: true
   entity: MythicMobs:SkeletalKnight
   nick: Skeletal Knight
   velocity:

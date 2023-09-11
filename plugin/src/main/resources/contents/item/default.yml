@@ -8,6 +8,8 @@
 vanilla:
   show-in-fishfinder: false
   disable-stat: true
+  group:
+    - river
 # Some rubbish
 stick:
   tag: false
@@ -102,12 +104,12 @@ diamond:
   disable-stat: true
   disable-game: true
 rubbish:
-  material: paper
-  nick: <gray>Rubbish</gray>
+  material: cod
+  nick: <#00BFFF>Radioactive Fish</#00BFFF>
   display:
-    name: <gray>Rubbish</gray>
+    name: <#00BFFF>Radioactive Fish</#00BFFF>
     lore:
-      - <gray>We need to protect the environment...
+      - <gray>Protect the environment...
   custom-model-data: 50000
   show-in-fishfinder: false
   disable-stat: true
@@ -221,6 +223,7 @@ tuna_fish:
       - <gray>Tuna is a kind of healthy food.
       - '<white>size: {size}cm'
   custom-model-data: 50001
+  group: ocean
   events:
     success:
       action_mending:
@@ -241,7 +244,9 @@ tuna_fish_silver_star:
       - <gray>Tuna is a kind of healthy food.
       - '<white>size: {size}cm'
   custom-model-data: 50002
-  group: sliver_star
+  group:
+    - sliver_star
+    - ocean
   events:
     success:
       action_mending:
@@ -262,7 +267,9 @@ tuna_fish_golden_star:
       - <gray>Tuna is a kind of healthy food.
       - '<white>size: {size}cm'
   custom-model-data: 50003
-  group: golden_star
+  group:
+    - golden_star
+    - ocean
   events:
     success:
       action_mending:
@@ -285,6 +292,7 @@ pike_fish:
       - <gray>water and inland freshwater lakes
       - '<white>size: {size}cm'
   custom-model-data: 50004
+  group: ocean
   events:
     success:
       action_mending:
@@ -308,7 +316,9 @@ pike_fish_silver_star:
       - <gray>water and inland freshwater lakes
       - '<white>size: {size}cm'
   custom-model-data: 50005
-  group: sliver_star
+  group:
+    - sliver_star
+    - ocean
   events:
     success:
       action_mending:
@@ -332,7 +342,9 @@ pike_fish_golden_star:
       - <gray>water and inland freshwater lakes
       - '<white>size: {size}cm'
   custom-model-data: 50006
-  group: golden_star
+  group:
+    - golden_star
+    - ocean
   events:
     success:
       action_mending:
@@ -357,6 +369,7 @@ gold_fish:
     bonus: 2.6
   size: 2~3
   custom-model-data: 50007
+  group: river
   events:
     success:
       action_mending:
@@ -379,7 +392,9 @@ gold_fish_silver_star:
     bonus: 3
   size: 3~4
   custom-model-data: 50008
-  group: sliver_star
+  group:
+    - sliver_star
+    - river
   events:
     success:
       action_mending:
@@ -402,7 +417,9 @@ gold_fish_golden_star:
     bonus: 3.4
   size: 4~7
   custom-model-data: 50009
-  group: golden_star
+  group:
+    - golden_star
+    - river
   events:
     success:
       action_mending:
@@ -418,6 +435,7 @@ perch_fish:
       - <gray>foraging at dusk and early morning
       - '<white>size: {size}cm'
   custom-model-data: 50010
+  group: river
   events:
     success:
       action_mending:
@@ -439,7 +457,9 @@ perch_fish_silver_star:
       - <gray>foraging at dusk and early morning
       - '<white>size: {size}cm'
   custom-model-data: 50011
-  group: silver_star
+  group:
+    - silver_star
+    - river
   events:
     success:
       action_mending:
@@ -461,7 +481,9 @@ perch_fish_golden_star:
       - <gray>foraging at dusk and early morning
       - '<white>size: {size}cm'
   custom-model-data: 50012
-  group: golden_star
+  group:
+    - golden_star
+    - river
   events:
     success:
       action_mending:
@@ -482,6 +504,7 @@ mullet_fish:
       - <gray>to treat spleen and stomach weakness
       - '<white>size: {size}cm'
   custom-model-data: 50013
+  group: river
   events:
     success:
       action_mending:
@@ -503,7 +526,9 @@ mullet_fish_silver_star:
       - <gray>to treat spleen and stomach weakness
       - '<white>size: {size}cm'
   custom-model-data: 50014
-  group: silver_star
+  group:
+    - silver_star
+    - river
   events:
     success:
       action_mending:
@@ -525,7 +550,9 @@ mullet_fish_golden_star:
       - <gray>to treat spleen and stomach weakness
       - '<white>size: {size}cm'
   custom-model-data: 50015
-  group: golden_star
+  group:
+    - golden_star
+    - river
   events:
     success:
       action_mending:
@@ -546,6 +573,7 @@ sardine_fish:
       - <gray>Therefore, sardine are also called "smart food"
       - '<white>size: {size}cm'
   custom-model-data: 50016
+  group: ocean
   events:
     success:
       action_mending:
@@ -566,7 +594,9 @@ sardine_fish_silver_star:
       - <gray>Therefore, sardine are also called "smart food"
       - '<white>size: {size}cm'
   custom-model-data: 50017
-  group: silver_star
+  group:
+    - silver_star
+    - ocean
   events:
     success:
       action_mending:
@@ -587,7 +617,9 @@ sardine_fish_golden_star:
       - <gray>Therefore, sardine are also called "smart food"
       - '<white>size: {size}cm'
   custom-model-data: 50018
-  group: golden_star
+  group:
+    - golden_star
+    - ocean
   events:
     success:
       action_mending:
@@ -607,6 +639,7 @@ carp_fish:
       - <gray>One of the most common edible fish
       - '<white>size: {size}cm'
   custom-model-data: 50019
+  group: river
   events:
     success:
       action_mending:
@@ -626,7 +659,9 @@ carp_fish_silver_star:
       - <gray>One of the most common edible fish
       - '<white>size: {size}cm'
   custom-model-data: 50020
-  group: silver_star
+  group:
+    - silver_star
+    - river
   events:
     success:
       action_mending:
@@ -646,7 +681,9 @@ carp_fish_golden_star:
       - <gray>One of the most common edible fish
       - '<white>size: {size}cm'
   custom-model-data: 50021
-  group: golden_star
+  group:
+    - golden_star
+    - river
   events:
     success:
       action_mending:
@@ -666,6 +703,7 @@ cat_fish:
       - <gray>sharp jaw teeth, short intestine and stomach
       - '<white>size: {size}cm'
   custom-model-data: 50022
+  group: river
   events:
     success:
       action_mending:
@@ -686,7 +724,9 @@ cat_fish_silver_star:
       - <gray>sharp jaw teeth, short intestine and stomach
       - '<white>size: {size}cm'
   custom-model-data: 50023
-  group: silver_star
+  group:
+    - silver_star
+    - river
   events:
     success:
       action_mending:
@@ -707,7 +747,9 @@ cat_fish_golden_star:
       - <gray>sharp jaw teeth, short intestine and stomach
       - '<white>size: {size}cm'
   custom-model-data: 50024
-  group: golden_star
+  group:
+    - golden_star
+    - river
   events:
     success:
       action_mending:
@@ -728,6 +770,7 @@ octopus:
       - <gray>People often use pots to catch octopus
       - '<white>size: {size}cm'
   custom-model-data: 50025
+  group: ocean
   events:
     success:
       action_mending:
@@ -748,7 +791,9 @@ octopus_silver_star:
       - <gray>People often use pots to catch octopus
       - '<white>size: {size}cm'
   custom-model-data: 50026
-  group: silver_star
+  group:
+    - silver_star
+    - ocean
   events:
     success:
       action_mending:
@@ -769,7 +814,9 @@ octopus_golden_star:
       - <gray>People often use pots to catch octopus
       - '<white>size: {size}cm'
   custom-model-data: 50027
-  group: golden_star
+  group:
+    - golden_star
+    - ocean
   events:
     success:
       action_mending:
@@ -789,6 +836,7 @@ sunfish:
       - <gray>It only has one huge head
       - '<white>size: {size}cm'
   custom-model-data: 50028
+  group: ocean
   events:
     success:
       action_mending:
@@ -808,7 +856,9 @@ sunfish_silver_star:
       - <gray>It only has one huge head
       - '<white>size: {size}cm'
   custom-model-data: 50029
-  group: silver_star
+  group:
+    - silver_star
+    - ocean
   events:
     success:
       action_mending:
@@ -828,7 +878,9 @@ sunfish_golden_star:
       - <gray>It only has one huge head
       - '<white>size: {size}cm'
   custom-model-data: 50030
-  group: golden_star
+  group:
+    - golden_star
+    - ocean
   events:
     success:
       action_mending:
@@ -848,6 +900,7 @@ red_snapper_fish:
       - <gray>with a male as the "head of the family"
       - '<white>size: {size}cm'
   custom-model-data: 50031
+  group: ocean
   events:
     success:
       action_mending:
@@ -869,7 +922,9 @@ red_snapper_fish_silver_star:
       - <gray>with a male as the "head of the family"
       - '<white>size: {size}cm'
   custom-model-data: 50032
-  group: silver_star
+  group:
+    - silver_star
+    - ocean
   events:
     success:
       action_mending:
@@ -891,7 +946,9 @@ red_snapper_fish_golden_star:
       - <gray>with a male as the "head of the family"
       - '<white>size: {size}cm'
   custom-model-data: 50033
-  group: golden_star
+  group:
+    - golden_star
+    - ocean
   events:
     success:
       action_mending:
@@ -913,6 +970,7 @@ salmon_void_fish:
       - <gray>It's looking at you...
       - '<white>size: {size}cm'
   custom-model-data: 50034
+  group: lava
   events:
     success:
       action_mending:
@@ -934,7 +992,9 @@ salmon_void_fish_silver_star:
       - <gray>It's looking at you...
       - '<white>size: {size}cm'
   custom-model-data: 50035
-  group: silver_star
+  group:
+    - silver_star
+    - lava
   events:
     success:
       action_mending:
@@ -956,7 +1016,9 @@ salmon_void_fish_golden_star:
       - <gray>It's looking at you...
       - '<white>size: {size}cm'
   custom-model-data: 50036
-  group: golden_star
+  group:
+    - golden_star
+    - lava
   events:
     success:
       action_mending:
@@ -977,6 +1039,7 @@ woodskip_fish:
       - <gray>live in pools deep in the forest
       - '<white>size: {size}cm'
   custom-model-data: 50037
+  group: river
   events:
     success:
       action_mending:
@@ -997,7 +1060,9 @@ woodskip_fish_silver_star:
       - <gray>live in pools deep in the forest
       - '<white>size: {size}cm'
   custom-model-data: 50038
-  group: silver_star
+  group:
+    - silver_star
+    - river
   events:
     success:
       action_mending:
@@ -1018,7 +1083,9 @@ woodskip_fish_golden_star:
       - <gray>live in pools deep in the forest
       - '<white>size: {size}cm'
   custom-model-data: 50039
-  group: golden_star
+  group:
+    - golden_star
+    - river
   events:
     success:
       action_mending:
@@ -1039,6 +1106,7 @@ sturgeon_fish:
       - <gray>population. Females can live up to 150 years
       - '<white>size: {size}cm'
   custom-model-data: 50040
+  group: river
   events:
     success:
       action_mending:
@@ -1059,7 +1127,9 @@ sturgeon_fish_silver_star:
       - <gray>population. Females can live up to 150 years
       - '<white>size: {size}cm'
   custom-model-data: 50041
-  group: silver_star
+  group:
+    - silver_star
+    - river
   events:
     success:
       action_mending:
@@ -1080,7 +1150,9 @@ sturgeon_fish_golden_star:
       - <gray>population. Females can live up to 150 years
       - '<white>size: {size}cm'
   custom-model-data: 50042
-  group: golden_star
+  group:
+    - golden_star
+    - river
   events:
     success:
       action_mending:
@@ -1091,3 +1163,135 @@ sturgeon_fish_golden_star:
   price:
     base: 300
     bonus: 10
+blue_jellyfish:
+  material: cod
+  nick: <#87CEFA>Jellyfish</#87CEFA>
+  display:
+    name: <#87CEFA>Jellyfish</#87CEFA>
+    lore:
+      - <gray>Looks like a blue umbrella
+      - '<white>size: {size}cm'
+  custom-model-data: 50043
+  group: ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 4
+        chance: 1.0
+  size: 1~3
+  price:
+    base: 20
+    bonus: 6.4
+blue_jellyfish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  nick: <#87CEFA>Jellyfish</#87CEFA>
+  display:
+    name: <#87CEFA>Jellyfish</#87CEFA>
+    lore:
+      - <gray>Looks like a blue umbrella
+      - '<white>size: {size}cm'
+  custom-model-data: 50044
+  group:
+    - silver_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 6
+        chance: 1.0
+  size: 3~5
+  price:
+    base: 25
+    bonus: 7.2
+blue_jellyfish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  nick: <#87CEFA>Jellyfish</#87CEFA>
+  display:
+    name: <#87CEFA>Jellyfish</#87CEFA>
+    lore:
+      - <gray>Looks like a blue umbrella
+      - '<white>size: {size}cm'
+  custom-model-data: 50045
+  group:
+    - golden_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 8
+        chance: 1.0
+  size: 5~10
+  price:
+    base: 30
+    bonus: 8
+pink_jellyfish:
+  material: cod
+  nick: <#FFC0CB>Jellyfish</#FFC0CB>
+  display:
+    name: <#FFC0CB>Jellyfish</#FFC0CB>
+    lore:
+      - <gray>Seems to be sweet
+      - '<white>size: {size}cm'
+  custom-model-data: 50046
+  group: ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 4
+        chance: 1.0
+  size: 1~3
+  price:
+    base: 20
+    bonus: 6.4
+pink_jellyfish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  nick: <#FFC0CB>Jellyfish</#FFC0CB>
+  display:
+    name: <#FFC0CB>Jellyfish</#FFC0CB>
+    lore:
+      - <gray>Seems to be sweet
+      - '<white>size: {size}cm'
+  custom-model-data: 50047
+  group:
+    - silver_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 6
+        chance: 1.0
+  size: 3~5
+  price:
+    base: 25
+    bonus: 7.2
+pink_jellyfish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  nick: <#FFC0CB>Jellyfish</#FFC0CB>
+  display:
+    name: <#FFC0CB>Jellyfish</#FFC0CB>
+    lore:
+      - <gray>Seems to be sweet
+      - '<white>size: {size}cm'
+  custom-model-data: 50048
+  group:
+    - golden_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 8
+        chance: 1.0
+  size: 5~10
+  price:
+    base: 30
+    bonus: 8

@@ -287,7 +287,7 @@ public class MarketManagerImpl implements MarketManager, Listener {
                     if (itemStack != null && itemStack.getType() != Material.AIR) {
                         if (current.getType() == itemStack.getType()
                                 && itemStack.getAmount() != itemStack.getType().getMaxStackSize()
-                                && current.getItemMeta().getAsString().equals(itemStack.getItemMeta().getAsString())
+                                && current.getItemMeta().equals(itemStack.getItemMeta())
                         ) {
                             int left = itemStack.getType().getMaxStackSize() - itemStack.getAmount();
                             if (current.getAmount() <= left) {

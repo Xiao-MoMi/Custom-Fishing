@@ -17,8 +17,8 @@
 
 package net.momirealms.customfishing.api.manager;
 
-import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.entity.EntityLibrary;
+import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import org.bukkit.Location;
 
 public interface EntityManager {

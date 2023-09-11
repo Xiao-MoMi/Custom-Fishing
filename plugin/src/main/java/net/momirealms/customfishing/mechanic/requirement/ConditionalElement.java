@@ -26,16 +26,16 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.List;
 
-public class ConditionalLoots {
+public class ConditionalElement {
 
     private final List<Pair<String, WeightModifier>> modifierList;
-    private final HashMap<String, ConditionalLoots> subLoots;
+    private final HashMap<String, ConditionalElement> subLoots;
     private final Requirement[] requirements;
 
-    public ConditionalLoots(
+    public ConditionalElement(
             Requirement[] requirements,
             List<Pair<String, WeightModifier>> modifierList,
-            HashMap<String, ConditionalLoots> subLoots
+            HashMap<String, ConditionalElement> subLoots
     ) {
         this.modifierList = modifierList;
         this.requirements = requirements;
@@ -58,7 +58,7 @@ public class ConditionalLoots {
         return true;
     }
 
-    public HashMap<String, ConditionalLoots> getSubLoots() {
+    public HashMap<String, ConditionalElement> getSubLoots() {
         return subLoots;
     }
 }

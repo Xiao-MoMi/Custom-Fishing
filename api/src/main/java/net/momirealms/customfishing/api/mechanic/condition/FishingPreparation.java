@@ -113,9 +113,7 @@ public class FishingPreparation extends Condition {
             }
         }
 
-
         for (String enchant : plugin.getIntegrationManager().getEnchantments(rodItemStack)) {
-            System.out.println(enchant);
             EffectCarrier enchantEffect = plugin.getEffectManager().getEffect("enchant", enchant);
             if (enchantEffect != null) {
                 if (!enchantEffect.isConditionMet(this)) {

@@ -33,6 +33,8 @@ public interface RequirementManager {
 
     HashMap<String, Double> getLootWithWeight(Condition condition);
 
+    HashMap<String, Double> getGameWithWeight(Condition condition);
+
     @Nullable Requirement[] getRequirements(ConfigurationSection section, boolean advanced);
 
     Requirement getRequirement(ConfigurationSection section, boolean checkAction);

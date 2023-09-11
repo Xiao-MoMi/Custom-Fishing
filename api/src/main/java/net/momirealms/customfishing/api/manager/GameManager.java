@@ -17,10 +17,15 @@
 
 package net.momirealms.customfishing.api.manager;
 
-import net.momirealms.customfishing.api.mechanic.game.GameConfig;
+import net.momirealms.customfishing.api.common.Pair;
+import net.momirealms.customfishing.api.mechanic.condition.Condition;
+import net.momirealms.customfishing.api.mechanic.game.BasicGameConfig;
 import net.momirealms.customfishing.api.mechanic.game.GameFactory;
 import net.momirealms.customfishing.api.mechanic.game.GameInstance;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Optional;
 
 public interface GameManager {
 
@@ -29,15 +34,9 @@ public interface GameManager {
 
     boolean unregisterGameType(String type);
 
-    @Nullable GameFactory getGameCreator(String type);
+    @Nullable GameFactory getGameFactory(String type);
 
-    @Nullable GameInstance getGame(String key);
+    Optional<Pair<BasicGameConfig, GameInstance>> getGame(String key);
 
-    @Nullable GameConfig getGameConfig(String key);
-
-    GameInstance getRandomGame();
-
-    GameConfig getRandomGameConfig();
-
-
+    HashMap<String, Double> getGameWithWeight(Condition condition);
 }

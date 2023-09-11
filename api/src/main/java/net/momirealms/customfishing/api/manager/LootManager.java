@@ -17,10 +17,12 @@
 
 package net.momirealms.customfishing.api.manager;
 
+import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 public interface LootManager {
@@ -32,4 +34,6 @@ public interface LootManager {
     Collection<String> getAllLootKeys();
 
     Collection<Loot> getAllLoots();
+
+    HashMap<String, Double> getLootWithWeight(Condition condition);
 }

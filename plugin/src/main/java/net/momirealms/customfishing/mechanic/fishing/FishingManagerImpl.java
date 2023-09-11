@@ -36,7 +36,7 @@ import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
-import net.momirealms.customfishing.api.mechanic.game.GameConfig;
+import net.momirealms.customfishing.api.mechanic.game.BasicGameConfig;
 import net.momirealms.customfishing.api.mechanic.game.GameInstance;
 import net.momirealms.customfishing.api.mechanic.game.GameSettings;
 import net.momirealms.customfishing.api.mechanic.game.GamingPlayer;
@@ -208,7 +208,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         Loot loot = plugin.getLootManager().getLoot(id);
         if (loot != null) {
             Condition condition = new Condition(event.getPlayer());
-            GlobalSettings.triggerItemActions(ActionTrigger.CONSUME, condition);
+            GlobalSettings.triggerLootActions(ActionTrigger.CONSUME, condition);
             loot.triggerActions(ActionTrigger.CONSUME, condition);
         }
     }
@@ -375,7 +375,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
             if (!loot.disableGame()) {
                 // start the game if the loot has a game
                 event.setCancelled(true);
-                startFishingGame(player, temp.getLoot(), temp.getEffect());
+                startFishingGame(player, temp.getPreparation(), temp.getEffect());
             } else {
                 // If the game is disabled, then do success actions
                 success(temp, event.getHook());
@@ -414,7 +414,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
             if (loot.instanceGame() && !loot.disableGame()) {
                 loot.triggerActions(ActionTrigger.HOOK, temp.getPreparation());
                 temp.getPreparation().triggerActions(ActionTrigger.HOOK);
-                startFishingGame(player, loot, temp.getEffect());
+                startFishingGame(player, temp.getPreparation(), temp.getEffect());
             }
         }
     }
@@ -448,7 +448,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 temp.getPreparation().triggerActions(ActionTrigger.HOOK);
                 if (!loot.disableGame()) {
                     event.setCancelled(true);
-                    startFishingGame(player, loot, temp.getEffect());
+                    startFishingGame(player, temp.getPreparation(), temp.getEffect());
                 } else {
                     success(temp, event.getHook());
                 }
@@ -522,7 +522,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 return;
             }
 
-            GlobalSettings.triggerItemActions(ActionTrigger.FAILURE, fishingPreparation);
+            GlobalSettings.triggerLootActions(ActionTrigger.FAILURE, fishingPreparation);
             loot.triggerActions(ActionTrigger.FAILURE, fishingPreparation);
             fishingPreparation.triggerActions(ActionTrigger.FAILURE);
 
@@ -611,7 +611,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         }
 
         // events and actions
-        GlobalSettings.triggerItemActions(ActionTrigger.SUCCESS, fishingPreparation);
+        GlobalSettings.triggerLootActions(ActionTrigger.SUCCESS, fishingPreparation);
         loot.triggerActions(ActionTrigger.SUCCESS, fishingPreparation);
         fishingPreparation.triggerActions(ActionTrigger.SUCCESS);
 
@@ -663,20 +663,29 @@ public class FishingManagerImpl implements Listener, FishingManager {
     }
 
     @Override
-    public void startFishingGame(Player player, Loot loot, Effect effect) {
-        GameConfig gameConfig = loot.getGameConfig();
-        if (gameConfig == null) {
-            gameConfig = plugin.getGameManager().getRandomGameConfig();
+    public void startFishingGame(Player player, Condition condition, Effect effect) {
+        Map<String, Double> gameWithWeight = plugin.getRequirementManager().getGameWithWeight(condition);
+        if (CFConfig.debug) {
+            plugin.debug(gameWithWeight.toString());
         }
-        var gamePair = gameConfig.getRandomGame(effect);
-        if (gamePair == null) {
+        String random = WeightUtils.getRandom(gameWithWeight);
+        Optional<Pair<BasicGameConfig, GameInstance>> gamePair = plugin.getGameManager().getGame(random);
+        if (gamePair.isEmpty()) {
+            LogUtils.warn(String.format("Game %s doesn't exist!", random));
             return;
         }
-        startFishingGame(player, gamePair.right(), gamePair.left());
+        if (CFConfig.debug) {
+            plugin.debug("Game: " + random);
+        }
+        startFishingGame(player, gamePair.get().left().getGameSetting(effect), gamePair.get().right());
     }
 
     @Override
     public void startFishingGame(Player player, GameSettings settings, GameInstance gameInstance) {
+        if (CFConfig.debug) {
+            plugin.debug("Difficulty:" + settings.getDifficulty());
+            plugin.debug("Time:" + settings.getTime());
+        }
         Optional<FishHook> hook = getHook(player.getUniqueId());
         if (hook.isPresent()) {
             this.gamingPlayerMap.put(player.getUniqueId(), gameInstance.start(player, hook.get(), settings));

@@ -25,6 +25,7 @@ import net.momirealms.customfishing.api.integration.SeasonInterface;
 import net.momirealms.customfishing.api.manager.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
+import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementExpansion;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementFactory;
@@ -53,13 +54,15 @@ public class RequirementManagerImpl implements RequirementManager {
     public static Requirement[] mechanicRequirements;
     private final CustomFishingPluginImpl plugin;
     private final HashMap<String, RequirementFactory> requirementBuilderMap;
-    private final LinkedHashMap<String, ConditionalLoots> conditionalLootsMap;
-    private final String EXPANSION_FOLDER = "expansions/requirements";
+    private final LinkedHashMap<String, ConditionalElement> conditionalLootsMap;
+    private final LinkedHashMap<String, ConditionalElement> conditionalGamesMap;
+    private final String EXPANSION_FOLDER = "expansions/requirement";
 
     public RequirementManagerImpl(CustomFishingPluginImpl plugin) {
         this.plugin = plugin;
         this.requirementBuilderMap = new HashMap<>();
         this.conditionalLootsMap = new LinkedHashMap<>();
+        this.conditionalGamesMap = new LinkedHashMap<>();
         this.registerInbuiltRequirements();
     }
 
@@ -81,10 +84,17 @@ public class RequirementManagerImpl implements RequirementManager {
         YamlConfiguration main = plugin.getConfig("config.yml");
         mechanicRequirements = getRequirements(main.getConfigurationSection("mechanics.mechanic-requirements"), true);
 
-        YamlConfiguration config = plugin.getConfig("loot-conditions.yml");
-        for (Map.Entry<String, Object> entry : config.getValues(false).entrySet()) {
+        YamlConfiguration config1 = plugin.getConfig("loot-conditions.yml");
+        for (Map.Entry<String, Object> entry : config1.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection section) {
-                conditionalLootsMap.put(entry.getKey(), getConditionalLoots(section));
+                conditionalLootsMap.put(entry.getKey(), getConditionalElements(section));
+            }
+        }
+
+        YamlConfiguration config2 = plugin.getConfig("game-conditions.yml");
+        for (Map.Entry<String, Object> entry : config2.getValues(false).entrySet()) {
+            if (entry.getValue() instanceof ConfigurationSection section) {
+                conditionalGamesMap.put(entry.getKey(), getConditionalElements(section));
             }
         }
     }
@@ -125,40 +135,52 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerIceFishingRequirement();
         this.registerOpenWaterRequirement();
         this.registerCoolDownRequirement();
+        this.registerGroupRequirement();
+        this.registerLootRequirement();
     }
 
-    public ConditionalLoots getConditionalLoots(ConfigurationSection section) {
+    public ConditionalElement getConditionalElements(ConfigurationSection section) {
         var sub = section.getConfigurationSection("sub-groups");
         if (sub == null) {
-            return new ConditionalLoots(
+            return new ConditionalElement(
                     getRequirements(section.getConfigurationSection("conditions"), false),
                     ConfigUtils.getModifiers(section.getStringList("list")),
                     null
             );
         } else {
-            HashMap<String, ConditionalLoots> subLoots = new HashMap<>();
+            HashMap<String, ConditionalElement> subElements = new HashMap<>();
             for (Map.Entry<String, Object> entry : sub.getValues(false).entrySet()) {
                 if (entry.getValue() instanceof ConfigurationSection innerSection) {
-                    subLoots.put(entry.getKey(), getConditionalLoots(innerSection));
+                    subElements.put(entry.getKey(), getConditionalElements(innerSection));
                 }
             }
-            return new ConditionalLoots(
+            return new ConditionalElement(
                     getRequirements(section.getConfigurationSection("conditions"), false),
                     ConfigUtils.getModifiers(section.getStringList("list")),
-                    subLoots
+                    subElements
             );
         }
     }
 
     @Override
     public HashMap<String, Double> getLootWithWeight(Condition condition) {
+        return getString2DoubleMap(condition, conditionalLootsMap);
+    }
+
+    @Override
+    public HashMap<String, Double> getGameWithWeight(Condition condition) {
+        return getString2DoubleMap(condition, conditionalGamesMap);
+    }
+
+    @NotNull
+    private HashMap<String, Double> getString2DoubleMap(Condition condition, LinkedHashMap<String, ConditionalElement> conditionalGamesMap) {
         HashMap<String, Double> lootWeightMap = new HashMap<>();
-        Queue<HashMap<String, ConditionalLoots>> lootQueue = new LinkedList<>();
-        lootQueue.add(conditionalLootsMap);
+        Queue<HashMap<String, ConditionalElement>> lootQueue = new LinkedList<>();
+        lootQueue.add(conditionalGamesMap);
         Player player = condition.getPlayer();
         while (!lootQueue.isEmpty()) {
-            HashMap<String, ConditionalLoots> currentLootMap = lootQueue.poll();
-            for (ConditionalLoots loots : currentLootMap.values()) {
+            HashMap<String, ConditionalElement> currentLootMap = lootQueue.poll();
+            for (ConditionalElement loots : currentLootMap.values()) {
                 if (loots.isConditionsMet(condition)) {
                     loots.combine(player, lootWeightMap);
                     if (loots.getSubLoots() != null) {
@@ -248,6 +270,70 @@ public class RequirementManagerImpl implements RequirementManager {
         });
     }
 
+    @SuppressWarnings("all")
+    private void registerGroupRequirement() {
+        registerRequirement("group", (args, actions, advanced) -> {
+            List<String> arg = (List<String>) args;
+            return condition -> {
+                String lootID = condition.getArg("{loot}");
+                Loot loot = plugin.getLootManager().getLoot(lootID);
+                String[] groups = loot.getLootGroup();
+                if (groups != null) {
+                    for (String g : groups) {
+                        if (arg.contains(g)) {
+                            return true;
+                        }
+                    }
+                }
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+        registerRequirement("!group", (args, actions, advanced) -> {
+            List<String> arg = (List<String>) args;
+            return condition -> {
+                String lootID = condition.getArg("{loot}");
+                Loot loot = plugin.getLootManager().getLoot(lootID);
+                String[] groups = loot.getLootGroup();
+                if (groups == null) {
+                    return true;
+                }
+                outer: {
+                    for (String g : groups) {
+                        if (arg.contains(g)) {
+                            break outer;
+                        }
+                    }
+                    return true;
+                }
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+    }
+
+    @SuppressWarnings("all")
+    private void registerLootRequirement() {
+        registerRequirement("loot", (args, actions, advanced) -> {
+            List<String> arg = (List<String>) args;
+            return condition -> {
+                String lootID = condition.getArg("{loot}");
+                if (arg.contains(lootID)) return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+        registerRequirement("!loot", (args, actions, advanced) -> {
+            List<String> arg = (List<String>) args;
+            return condition -> {
+                String lootID = condition.getArg("{loot}");
+                if (!arg.contains(lootID)) return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+    }
+
     private void registerYRequirement() {
         registerRequirement("ypos", (args, actions, advanced) -> {
             List<Pair<Integer, Integer>> timePairs = ConfigUtils.stringListArgs(args).stream().map(this::getIntegerPair).toList();
@@ -324,7 +410,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("open-water", (args, actions, advanced) -> {
             boolean inLava = (boolean) args;
             return condition -> {
-                String current = condition.getArgs().get("{open-water}");
+                String current = condition.getArgs().getOrDefault("{open-water}", "false");
                 if (current.equals(String.valueOf(inLava)))
                     return true;
                 if (advanced) triggerActions(actions, condition);
