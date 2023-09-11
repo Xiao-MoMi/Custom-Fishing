@@ -1309,15 +1309,13 @@ hold_game_easy:
   arguments:
     punishment: 0.2
     bar-effective-area-width: 155
-    judgment-area-offset: -151
+    judgment-area-offset: -160
     judgment-area-width: 45
     pointer-icon-width: 5
     water-resistance: 0.15
     pulling-strength: 0.35
     loosening-strength-loss: 0.25
   hold-time-requirements:
-    - 2
-    - 2
     - 3
     - 3
     - 4
@@ -1347,17 +1345,17 @@ hold_game_normal:
   arguments:
     punishment: 0.2
     bar-effective-area-width: 155
-    judgment-area-offset: -151
+    judgment-area-offset: -160
     judgment-area-width: 36
     pointer-icon-width: 5
     water-resistance: 0.15
     pulling-strength: 0.35
     loosening-strength-loss: 0.25
   hold-time-requirements:
-    - 2
-    - 2
     - 3
     - 3
+    - 4
+    - 4
     - 4
   progress:
     - '<font:customfishing:icons>뀁</font>'
@@ -1392,11 +1390,11 @@ hold_game_hard:
     pulling-strength: 0.35
     loosening-strength-loss: 0.25
   hold-time-requirements:
-    - 2
-    - 2
-    - 3
     - 3
     - 4
+    - 4
+    - 5
+    - 5
   progress:
     - '<font:customfishing:icons>뀁</font>'
     - '<font:customfishing:icons>뀂</font>'
