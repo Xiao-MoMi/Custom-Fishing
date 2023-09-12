@@ -128,6 +128,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
             statement.setString(3, uuid.toString());
             statement.executeUpdate();
             future.complete(true);
+            plugin.debug("SQL data saved for " + uuid + "; unlock: " + unlock);
         } catch (SQLException e) {
             LogUtils.warn("Failed to update " + uuid + "'s data.", e);
             future.completeExceptionally(e);

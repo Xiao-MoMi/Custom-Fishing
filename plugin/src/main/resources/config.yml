@@ -2,6 +2,9 @@
 # Wiki: https://mo-mi.gitbook.io/xiaomomi-plugins/
 config-version: '26'
 
+# Debug
+debug: false
+
 # BStats
 metrics: true
 

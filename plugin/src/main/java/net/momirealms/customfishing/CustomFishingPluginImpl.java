@@ -239,6 +239,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         return protocolManager;
     }
 
+    @Override
     public void debug(String message) {
         if (!CFConfig.debug) return;
         LogUtils.info(message);

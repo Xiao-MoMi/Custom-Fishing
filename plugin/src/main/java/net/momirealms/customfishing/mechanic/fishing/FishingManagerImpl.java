@@ -214,12 +214,29 @@ public class FishingManagerImpl implements Listener, FishingManager {
     }
 
     @EventHandler
+    public void onLeftClick(PlayerInteractEvent event) {
+        if (event.useItemInHand() == Event.Result.DENY)
+            return;
+        if (event.getAction() != org.bukkit.event.block.Action.LEFT_CLICK_AIR)
+            return;
+        GamingPlayer gamingPlayer = gamingPlayerMap.get(event.getPlayer().getUniqueId());
+        if (gamingPlayer != null) {
+            if (gamingPlayer.onLeftClick()) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
     public void onInteractWithUtils(PlayerInteractEvent event) {
         if (event.useItemInHand() == Event.Result.DENY)
             return;
         ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
         if (itemStack.getType() == Material.AIR)
             return;
+        if (event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_AIR || event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK)
+            return;
+
         String id = plugin.getItemManager().getAnyItemID(itemStack);
         EffectCarrier carrier = plugin.getEffectManager().getEffect("util", id);
         if (carrier == null)
@@ -665,27 +682,21 @@ public class FishingManagerImpl implements Listener, FishingManager {
     @Override
     public void startFishingGame(Player player, Condition condition, Effect effect) {
         Map<String, Double> gameWithWeight = plugin.getRequirementManager().getGameWithWeight(condition);
-        if (CFConfig.debug) {
-            plugin.debug(gameWithWeight.toString());
-        }
+        plugin.debug(gameWithWeight.toString());
         String random = WeightUtils.getRandom(gameWithWeight);
         Optional<Pair<BasicGameConfig, GameInstance>> gamePair = plugin.getGameManager().getGame(random);
         if (gamePair.isEmpty()) {
             LogUtils.warn(String.format("Game %s doesn't exist!", random));
             return;
         }
-        if (CFConfig.debug) {
-            plugin.debug("Game: " + random);
-        }
+        plugin.debug("Game: " + random);
         startFishingGame(player, gamePair.get().left().getGameSetting(effect), gamePair.get().right());
     }
 
     @Override
     public void startFishingGame(Player player, GameSettings settings, GameInstance gameInstance) {
-        if (CFConfig.debug) {
-            plugin.debug("Difficulty:" + settings.getDifficulty());
-            plugin.debug("Time:" + settings.getTime());
-        }
+        plugin.debug("Difficulty:" + settings.getDifficulty());
+        plugin.debug("Time:" + settings.getTime());
         Optional<FishHook> hook = getHook(player.getUniqueId());
         if (hook.isPresent()) {
             this.gamingPlayerMap.put(player.getUniqueId(), gameInstance.start(player, hook.get(), settings));

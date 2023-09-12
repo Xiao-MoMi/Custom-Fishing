@@ -144,4 +144,6 @@ public abstract class CustomFishingPlugin extends JavaPlugin {
     public CompetitionManager getCompetitionManager() {
         return competitionManager;
     }
+
+    public abstract void debug(String message);
 }

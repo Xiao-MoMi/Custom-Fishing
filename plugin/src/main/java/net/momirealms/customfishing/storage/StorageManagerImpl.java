@@ -232,7 +232,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
 
         public RedisGetDataTask(UUID uuid) {
             this.uuid = uuid;
-            this.task = plugin.getScheduler().runTaskAsyncTimer(this, 200, 200, TimeUnit.MILLISECONDS);
+            this.task = plugin.getScheduler().runTaskAsyncTimer(this, 0, 333, TimeUnit.MILLISECONDS);
         }
 
         @Override
@@ -244,7 +244,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
                 task.cancel();
                 return;
             }
-            if (triedTimes >= 10) {
+            if (triedTimes >= 6) {
                 waitForDataLockRelease(uuid, 3);
                 return;
             }
