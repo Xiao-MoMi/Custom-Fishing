@@ -360,9 +360,6 @@ public class FishingManagerImpl implements Listener, FishingManager {
                     entity.remove();
             }
         }
-
-        // TODO It's unsure if the hook would hook into other entities when playing a game
-        // TODO But it should not affect the game result
     }
 
     private void onCaughtFish(PlayerFishEvent event) {

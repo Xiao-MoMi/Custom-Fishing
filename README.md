@@ -1,12 +1,32 @@
-# Note: This project is under recoding. New API would be available soon.
 # Custom-Fishing
-A fishing plugin that provides mini games.
 
-### How to buy
+![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/Xiao-MoMi/Custom-Fishing)
+![bStats Servers](https://img.shields.io/bstats/servers/16648)
+![bStats Players](https://img.shields.io/bstats/players/16648)
+![GitHub](https://img.shields.io/github/license/Xiao-MoMi/Custom-Fishing)
+<a href="https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing-2.0-beta" alt="GitBook">
+<img src="https://img.shields.io/badge/docs-gitbook-brightgreen" alt="Gitbook"/>
+</a>
 
-https://afdian.net/@xiaomomi
+CustomFishing is a Paper plugin that provides minigames and a powerful condition & action library for fishing.
+With the new concept of weight system, CustomFishing brings unlimited customization possibilities and best performance.
 
-https://polymart.org/resource/customfishing.2723
+## How to build
 
-### About compilation
-./gradlew build
+### Windows
+
+##### Command Line
+Install JDK 17 and set the JDK installation path to JAVA_HOME as an environment variable.\
+Start powershell and change directory to the project folder.\
+Execute ".\gradlew build" and get the jar at /target/CustomFishing-plugin-version.jar.
+
+##### IDLE
+Import the project and execute gradle build action.
+
+##### Proxy
+If you are using a proxy, configurate the proxy in gradle.properties. Otherwise comment the lines in gradle.properties.
+
+## Support the developer
+
+Polymart: https://polymart.org/resource/customfishing.2723 \
+Afdian: https://afdian.net/@xiaomomi
