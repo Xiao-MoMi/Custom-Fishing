@@ -52,12 +52,25 @@ subprojects {
 
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
+        options.release.set(17)
     }
 
     tasks.shadowJar {
         destinationDirectory.set(file("$rootDir/target"))
         archiveClassifier.set("")
         archiveFileName.set("CustomFishing-" + project.name + "-" + project.version + ".jar")
+    }
+
+    if ("api" == project.name) {
+        publishing {
+            publications {
+                create("maven_public", MavenPublication::class) {
+                    groupId = "net.momirealms"
+                    artifactId = "CustomFishing-API"
+                    from(components.getByName("java"))
+                }
+            }
+        }
     }
 
 //    tasks.javadoc.configure {
