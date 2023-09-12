@@ -73,6 +73,17 @@ subprojects {
         }
     }
 
+    publishing {
+        publications {
+            create<MavenPublication>("mavenJava") {
+                groupId = "net.momirealms"
+                artifactId = "CustomFishing"
+                version = rootProject.version.toString()
+                artifact(tasks.shadowJar)
+            }
+        }
+    }
+
 //    tasks.javadoc.configure {
 //        options.quiet()
 //    }
