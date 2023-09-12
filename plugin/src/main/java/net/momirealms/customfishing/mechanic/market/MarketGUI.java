@@ -147,7 +147,7 @@ public class MarketGUI {
 
     public double getTotalWorth() {
         double money = 0d;
-        MarketGUIElement itemElement = getElement(manager.getItemSlot());;
+        MarketGUIElement itemElement = getElement(manager.getItemSlot());
         if (itemElement == null) {
             LogUtils.warn("No item slot available. Please check if GUI layout contains the item slot symbol.");
             return money;
