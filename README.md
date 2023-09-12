@@ -30,3 +30,38 @@ If you are using a proxy, configurate the proxy in gradle.properties. Otherwise 
 
 Polymart: https://polymart.org/resource/customfishing.2723 \
 Afdian: https://afdian.net/@xiaomomi
+
+## Use CustomFishing API
+
+### Maven
+
+```
+<repositories>
+  <repository>
+    <id>jitpack</id>
+    <url>https://jitpack.io/</url>
+  </repository>
+</repositories>
+```
+```
+<dependencies>
+  <dependency>
+    <groupId>com.github.Xiao-MoMi</groupId>
+    <artifactId>Custom-Fishing</artifactId>
+    <version>{LATEST}</version>
+    <scope>provided</scope>
+  </dependency>
+</dependencies>
+```
+### Gradle
+
+```
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+```
+```
+dependencies {
+    compileOnly 'com.github.Xiao-MoMi:Custom-Fishing:{LATEST}'
+}
+```
