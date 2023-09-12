@@ -89,7 +89,7 @@ public class RedisManager extends AbstractStorage {
         }
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.ping();
-            LogUtils.warn("Redis server connected.");
+            LogUtils.info("Redis server connected.");
         } catch (JedisException e) {
             LogUtils.warn("Failed to connect redis.", e);
         }

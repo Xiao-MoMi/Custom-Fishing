@@ -184,6 +184,8 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
                 "com.google.code.gson:gson:2.10.1", libRepo,
                 "com.h2database:h2:2.2.220", libRepo,
                 "org.mongodb:mongodb-driver-sync:4.10.2", libRepo,
+                "org.mongodb:mongodb-driver-core:4.10.2", libRepo,
+                "org.mongodb:bson:4.10.2", libRepo,
                 "org.xerial:sqlite-jdbc:3.42.0.0", libRepo,
                 "dev.jorel:commandapi-bukkit-shade:9.1.0", "https://repo.maven.apache.org/maven2/"
         );

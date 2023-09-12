@@ -18,12 +18,14 @@
 package net.momirealms.customfishing.storage.method.database.nosql;
 
 import com.mongodb.*;
+import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.*;
 import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.result.UpdateResult;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.PlayerData;
 import net.momirealms.customfishing.api.data.StorageType;
@@ -32,16 +34,14 @@ import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.storage.method.AbstractStorage;
 import org.bson.Document;
 import org.bson.UuidRepresentation;
+import org.bson.conversions.Bson;
 import org.bson.types.Binary;
 import org.bson.types.ObjectId;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class MongoDBImpl extends AbstractStorage {
@@ -138,11 +138,12 @@ public class MongoDBImpl extends AbstractStorage {
         plugin.getScheduler().runTaskAsync(() -> {
         MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
         try {
-            InsertOneResult result = collection.insertOne(new Document()
-                    .append("_id", new ObjectId())
-                    .append("uuid", uuid)
-                    .append("lock", unlock ? 0 : getCurrentSeconds())
-                    .append("data", new Binary(plugin.getStorageManager().toBytes(playerData))));
+            Document query = new Document("uuid", uuid);
+            Bson updates = Updates.combine(
+                    Updates.set("lock", unlock ? 0 : getCurrentSeconds()),
+                    Updates.set("data", new Binary(plugin.getStorageManager().toBytes(playerData))));
+            UpdateOptions options = new UpdateOptions().upsert(true);
+            UpdateResult result = collection.updateOne(query, updates, options);
             future.complete(result.wasAcknowledged());
         } catch (MongoException e) {
             future.completeExceptionally(e);
@@ -155,11 +156,18 @@ public class MongoDBImpl extends AbstractStorage {
     public void savePlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
         MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
         try {
-            collection.insertMany(users.stream().map(it -> new Document()
-                    .append("_id", new ObjectId())
-                    .append("uuid", it.getUUID())
-                    .append("lock", unlock ? 0 : getCurrentSeconds())
-                    .append("data", new Binary(plugin.getStorageManager().toBytes(it.getPlayerData())))).toList());
+            int lock = unlock ? 0 : getCurrentSeconds();
+            var list = users.stream().map(it -> new UpdateOneModel<Document>(
+                    new Document("uuid", it.getUUID()),
+                    Updates.combine(
+                            Updates.set("lock", lock),
+                            Updates.set("data", new Binary(plugin.getStorageManager().toBytes(it.getPlayerData())))
+                    ),
+                    new UpdateOptions().upsert(true)
+            )
+            ).toList();
+            if (list.size() == 0) return;
+            collection.bulkWrite(list);
         } catch (MongoException e) {
             LogUtils.warn("Failed to update data for online players", e);
         }
