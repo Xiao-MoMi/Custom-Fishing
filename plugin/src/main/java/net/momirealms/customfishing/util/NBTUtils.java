@@ -71,7 +71,8 @@ public class NBTUtils {
 
     private static void setListValue(String key, String value, NBTCompound nbtCompound) {
         String[] parts = getTypeAndData(value);
-        String type = parts[0]; String data = parts[1];
+        String type = parts[0];
+        String data = parts[1];
         switch (type) {
             case "String" -> nbtCompound.getStringList(key).add(data);
             case "UUID" -> nbtCompound.getUUIDList(key).add(UUID.fromString(data));
@@ -90,7 +91,8 @@ public class NBTUtils {
 
     private static void setSingleValue(String key, String value, NBTCompound nbtCompound) {
         String[] parts = getTypeAndData(value);
-        String type = parts[0]; String data = parts[1];
+        String type = parts[0];
+        String data = parts[1];
         switch (type) {
             case "Int" -> nbtCompound.setInteger(key, Integer.valueOf(data));
             case "String" -> nbtCompound.setString(key, data);
