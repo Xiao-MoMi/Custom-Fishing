@@ -116,6 +116,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerYRequirement();
         this.registerContainRequirement();
         this.registerStartWithRequirement();
+        this.registerEndWithRequirement();
         this.registerEqualsRequirement();
         this.registerBiomeRequirement();
         this.registerDateRequirement();
@@ -127,7 +128,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerLavaFishingRequirement();
         this.registerRodRequirement();
         this.registerBaitRequirement();
-        this.registerCompareRequirement();
+        this.registerGreaterThanRequirement();
         this.registerAndRequirement();
         this.registerOrRequirement();
         this.registerLevelRequirement();
@@ -137,6 +138,8 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerCoolDownRequirement();
         this.registerGroupRequirement();
         this.registerLootRequirement();
+        this.registerLessThanRequirement();
+        this.registerNumberEqualRequirement();
     }
 
     public ConditionalElement getConditionalElements(ConfigurationSection section) {
@@ -603,7 +606,7 @@ public class RequirementManagerImpl implements RequirementManager {
         });
     }
 
-    private void registerCompareRequirement() {
+    private void registerGreaterThanRequirement() {
         registerRequirement(">=", (args, actions, advanced) -> {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");
@@ -636,38 +639,9 @@ public class RequirementManagerImpl implements RequirementManager {
                 return null;
             }
         });
-        registerRequirement("<", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
-                String v1 = section.getString("value1", "");
-                String v2 = section.getString("value2", "");
-                return condition -> {
-                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
-                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
-                    if (Double.parseDouble(p1) < Double.parseDouble(p2)) return true;
-                    if (advanced) triggerActions(actions, condition);
-                    return false;
-                };
-            } else {
-                LogUtils.warn("Wrong value format found at < requirement.");
-                return null;
-            }
-        });
-        registerRequirement("<=", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
-                String v1 = section.getString("value1", "");
-                String v2 = section.getString("value2", "");
-                return condition -> {
-                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
-                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
-                    if (Double.parseDouble(p1) <= Double.parseDouble(p2)) return true;
-                    if (advanced) triggerActions(actions, condition);
-                    return false;
-                };
-            } else {
-                LogUtils.warn("Wrong value format found at <= requirement.");
-                return null;
-            }
-        });
+    }
+
+    private void registerNumberEqualRequirement() {
         registerRequirement("==", (args, actions, advanced) -> {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");
@@ -702,6 +676,40 @@ public class RequirementManagerImpl implements RequirementManager {
         });
     }
 
+    private void registerLessThanRequirement() {
+        registerRequirement("<", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("value1", "");
+                String v2 = section.getString("value2", "");
+                return condition -> {
+                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
+                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
+                    if (Double.parseDouble(p1) < Double.parseDouble(p2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at < requirement.");
+                return null;
+            }
+        });
+        registerRequirement("<=", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("value1", "");
+                String v2 = section.getString("value2", "");
+                return condition -> {
+                    String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v1) : v1;
+                    String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), v2) : v2;
+                    if (Double.parseDouble(p1) <= Double.parseDouble(p2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at <= requirement.");
+                return null;
+            }
+        });
+    }
 
     private void registerStartWithRequirement() {
         registerRequirement("startsWith", (args, actions, advanced) -> {
@@ -736,6 +744,9 @@ public class RequirementManagerImpl implements RequirementManager {
                 return null;
             }
         });
+    }
+
+    private void registerEndWithRequirement() {
         registerRequirement("endsWith", (args, actions, advanced) -> {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");

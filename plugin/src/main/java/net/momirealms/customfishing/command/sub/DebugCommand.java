@@ -96,7 +96,6 @@ public class DebugCommand {
                     boolean inLava = (boolean) arg.getOrDefault("lava fishing", false);
                     fishingPreparation.insertArg("{lava}", String.valueOf(inLava));
                     fishingPreparation.mergeEffect(initialEffect);
-                    //TODO apply totems
 
                     var map = CustomFishingPlugin.get().getFishingManager().getPossibleLootKeysWithWeight(initialEffect, fishingPreparation);
                     List<LootWithWeight> loots = new ArrayList<>();

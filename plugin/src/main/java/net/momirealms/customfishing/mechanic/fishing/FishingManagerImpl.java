@@ -296,10 +296,6 @@ public class FishingManagerImpl implements Listener, FishingManager {
         FishingEffect initialEffect = plugin.getEffectManager().getInitialEffect();
         fishingPreparation.mergeEffect(initialEffect);
 
-        // Apply enchants
-
-        //TODO Apply totem effects
-
         // Call custom event
         RodCastEvent rodCastEvent = new RodCastEvent(event, fishingPreparation, initialEffect);
         Bukkit.getPluginManager().callEvent(rodCastEvent);

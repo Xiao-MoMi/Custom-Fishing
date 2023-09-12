@@ -91,7 +91,9 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
             if (rs.next()) {
                 int lock = rs.getInt(2);
                 if (!force && (lock != 0 && getCurrentSeconds() - CFConfig.dataSaveInterval <= lock)) {
-                    statement.close(); rs.close(); connection.close();
+                    statement.close();
+                    rs.close();
+                    connection.close();
                     future.complete(Optional.of(PlayerData.LOCKED));
                     return;
                 }
