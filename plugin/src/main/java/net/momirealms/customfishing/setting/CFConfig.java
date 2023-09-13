@@ -83,6 +83,8 @@ public class CFConfig {
 
     // Data save interval
     public static int dataSaveInterval;
+    // Lock data on join
+    public static boolean lockData;
 
     // Legacy color code support
     public static boolean legacyColorSupport;
@@ -140,6 +142,7 @@ public class CFConfig {
         placeholderLimit = config.getInt("mechanics.competition.placeholder-limit", 3);
 
         dataSaveInterval = config.getInt("other-settings.data-saving-interval", 600);
+        lockData = config.getBoolean("other-settings.lock-data", true);
         legacyColorSupport = config.getBoolean("other-settings.legacy-color-code-support", false);
 
         OffsetUtils.loadConfig(config.getConfigurationSection("other-settings.offset-characters"));

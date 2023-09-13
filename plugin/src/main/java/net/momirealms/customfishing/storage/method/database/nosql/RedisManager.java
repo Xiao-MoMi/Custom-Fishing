@@ -31,7 +31,9 @@ import redis.clients.jedis.resps.Tuple;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -226,7 +228,7 @@ public class RedisManager extends AbstractStorage {
     }
 
     @Override
-    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean ignore) {
+    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock) {
         var future = new CompletableFuture<Optional<PlayerData>>();
         plugin.getScheduler().runTaskAsync(() -> {
         try (Jedis jedis = jedisPool.getResource()) {
@@ -266,6 +268,11 @@ public class RedisManager extends AbstractStorage {
         }
         });
         return future;
+    }
+
+    @Override
+    public Set<UUID> getUniqueUsers(boolean legacy) {
+        return new HashSet<>();
     }
 
     private byte[] getRedisKey(String key, @NotNull UUID uuid) {

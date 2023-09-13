@@ -113,7 +113,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
             this.timerSaveTask = this.plugin.getScheduler().runTaskAsyncTimer(
                     () -> {
                         long time1 = System.currentTimeMillis();
-                        this.dataSource.savePlayersData(this.onlineUserMap.values(), false);
+                        this.dataSource.savePlayersData(this.onlineUserMap.values(), !CFConfig.lockData);
                         LogUtils.info("Data Saved for online players. Took " + (System.currentTimeMillis() - time1) + "ms.");
                     },
                     CFConfig.dataSaveInterval,
@@ -143,8 +143,8 @@ public class StorageManagerImpl implements StorageManager, Listener {
     }
 
     @Override
-    public CompletableFuture<Optional<OfflineUser>> getOfflineUser(UUID uuid, boolean force) {
-        var optionalDataFuture = dataSource.getPlayerData(uuid, force);
+    public CompletableFuture<Optional<OfflineUser>> getOfflineUser(UUID uuid, boolean lock) {
+        var optionalDataFuture = dataSource.getPlayerData(uuid, lock);
         return optionalDataFuture.thenCompose(optionalUser -> {
             if (optionalUser.isEmpty()) {
                 // locked
@@ -252,6 +252,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
                 if (optionalData.isPresent()) {
                     putDataInCache(player, optionalData.get());
                     task.cancel();
+                    if (CFConfig.lockData) dataSource.lockPlayerData(uuid, true);
                 }
             });
         }
@@ -264,7 +265,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
         var player = Bukkit.getPlayer(uuid);
         if (player == null || !player.isOnline() || times > 3)
             return;
-        this.dataSource.getPlayerData(uuid, false).thenAccept(optionalData -> {
+        this.dataSource.getPlayerData(uuid, CFConfig.lockData).thenAccept(optionalData -> {
             // should not be empty
             if (optionalData.isEmpty())
                 return;

@@ -79,7 +79,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
 
     @SuppressWarnings("DuplicatedCode")
     @Override
-    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean force) {
+    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock) {
         var future = new CompletableFuture<Optional<PlayerData>>();
         plugin.getScheduler().runTaskAsync(() -> {
         try (
@@ -89,10 +89,8 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
             statement.setString(1, uuid.toString());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                int lock = rs.getInt(2);
-                if (!force && (lock != 0 && getCurrentSeconds() - CFConfig.dataSaveInterval <= lock)) {
-                    statement.close();
-                    rs.close();
+                int lockValue = rs.getInt(2);
+                if (lockValue != 0 && getCurrentSeconds() - CFConfig.dataSaveInterval <= lockValue) {
                     connection.close();
                     future.complete(Optional.of(PlayerData.LOCKED));
                     return;
@@ -100,11 +98,11 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
                 final Blob blob = rs.getBlob("data");
                 final byte[] dataByteArray = blob.getBytes(1, (int) blob.length());
                 blob.free();
-                lockPlayerData(uuid);
+                if (lock) lockPlayerData(uuid, true);
                 future.complete(Optional.of(plugin.getStorageManager().fromBytes(dataByteArray)));
             } else if (Bukkit.getPlayer(uuid) != null) {
                 var data = PlayerData.empty();
-                insertPlayerData(uuid, data);
+                insertPlayerData(uuid, data, lock);
                 future.complete(Optional.of(data));
             } else {
                 future.complete(Optional.empty());
@@ -162,13 +160,13 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         }
     }
 
-    public void insertPlayerData(UUID uuid, PlayerData playerData) {
+    public void insertPlayerData(UUID uuid, PlayerData playerData, boolean lock) {
         try (
             Connection connection = getConnection();
             PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_INSERT_DATA_BY_UUID, getTableName("data")))
         ) {
             statement.setString(1, uuid.toString());
-            statement.setInt(2, getCurrentSeconds());
+            statement.setInt(2, lock ? getCurrentSeconds() : 0);
             statement.setBlob(3, new ByteArrayInputStream(plugin.getStorageManager().toBytes(playerData)));
             statement.execute();
         } catch (SQLException e) {
@@ -176,12 +174,13 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         }
     }
 
-    public void lockPlayerData(UUID uuid) {
+    @Override
+    public void lockPlayerData(UUID uuid, boolean lock) {
         try (
             Connection connection = getConnection();
             PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_LOCK_BY_UUID, getTableName("data")))
         ) {
-            statement.setInt(1, getCurrentSeconds());
+            statement.setInt(1, lock ? getCurrentSeconds() : 0);
             statement.setString(2, uuid.toString());
             statement.execute();
         } catch (SQLException e) {
@@ -189,8 +188,26 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         }
     }
 
+    @Override
+    public Set<UUID> getUniqueUsers(boolean legacy) {
+        Set<UUID> uuids = new HashSet<>();
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_SELECT_ALL_UUID, legacy ? getTableName("fishingbag") : getTableName("data")))) {
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    UUID uuid = UUID.fromString(rs.getString("uuid"));
+                    uuids.add(uuid);
+                }
+            }
+        } catch (SQLException e) {
+            LogUtils.warn("Failed to get unique data.", e);
+        }
+        return uuids;
+    }
+
     public static class SqlConstants {
         public static final String SQL_SELECT_BY_UUID = "SELECT * FROM `%s` WHERE `uuid` = ?";
+        public static final String SQL_SELECT_ALL_UUID = "SELECT uuid FROM `%s`";
         public static final String SQL_UPDATE_BY_UUID = "UPDATE `%s` SET `lock` = ?, `data` = ? WHERE `uuid` = ?";
         public static final String SQL_LOCK_BY_UUID = "UPDATE `%s` SET `lock` = ? WHERE `uuid` = ?";
         public static final String SQL_INSERT_DATA_BY_UUID = "INSERT INTO `%s`(`uuid`, `lock`, `data`) VALUES(?, ?, ?)";

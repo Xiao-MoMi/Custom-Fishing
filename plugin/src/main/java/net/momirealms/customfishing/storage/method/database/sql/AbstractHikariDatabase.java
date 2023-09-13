@@ -19,18 +19,20 @@ package net.momirealms.customfishing.storage.method.database.sql;
 
 import com.zaxxer.hikari.HikariDataSource;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
-import net.momirealms.customfishing.api.data.StorageType;
+import net.momirealms.customfishing.api.data.*;
 import net.momirealms.customfishing.api.util.LogUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
-public abstract class AbstractHikariDatabase extends AbstractSQLDatabase {
+public abstract class AbstractHikariDatabase extends AbstractSQLDatabase implements LegacyDataStorageInterface {
 
     private HikariDataSource dataSource;
     private final String driverClass;
@@ -116,5 +118,57 @@ public abstract class AbstractHikariDatabase extends AbstractSQLDatabase {
     @Override
     public Connection getConnection() throws SQLException {
         return dataSource.getConnection();
+    }
+
+    @Override
+    public CompletableFuture<Optional<PlayerData>> getLegacyPlayerData(UUID uuid) {
+        var future = new CompletableFuture<Optional<PlayerData>>();
+        plugin.getScheduler().runTaskAsync(() -> {
+            try (
+                Connection connection = getConnection()
+            ) {
+                var builder = new PlayerData.Builder().setName("");
+                PreparedStatement statementOne = connection.prepareStatement(String.format(SqlConstants.SQL_SELECT_BY_UUID, getTableName("fishingbag")));
+                statementOne.setString(1, uuid.toString());
+                ResultSet rsOne = statementOne.executeQuery();
+                if (rsOne.next()) {
+                    int size = rsOne.getInt("size");
+                    String contents = rsOne.getString("contents");
+                    builder.setBagData(new InventoryData(contents, size));
+                } else {
+                    builder.setBagData(InventoryData.empty());
+                }
+
+                PreparedStatement statementTwo = connection.prepareStatement(String.format(SqlConstants.SQL_SELECT_BY_UUID, getTableName("selldata")));
+                statementTwo.setString(1, uuid.toString());
+                ResultSet rsTwo = statementTwo.executeQuery();
+                if (rsTwo.next()) {
+                    int date = rsTwo.getInt("date");
+                    double money = rsTwo.getInt("money");
+                    builder.setEarningData(new EarningData(money, date));
+                } else {
+                    builder.setEarningData(EarningData.empty());
+                }
+
+                PreparedStatement statementThree = connection.prepareStatement(String.format(SqlConstants.SQL_SELECT_BY_UUID, getTableName("statistics")));
+                statementThree.setString(1, uuid.toString());
+                ResultSet rsThree = statementThree.executeQuery();
+                if (rsThree.next()) {
+                    String stats = rsThree.getString("stats");
+                    var amountMap = (Map<String, Integer>) Arrays.stream(stats.split(";"))
+                            .map(element -> element.split(":"))
+                            .filter(pair -> pair.length == 2)
+                            .collect(Collectors.toMap(pair -> pair[0], pair -> Integer.parseInt(pair[1])));
+                    builder.setStats(new StatisticData(amountMap));
+                } else {
+                    builder.setStats(StatisticData.empty());
+                }
+                future.complete(Optional.of(builder.build()));
+            } catch (SQLException e) {
+                LogUtils.warn("Failed to get " + uuid + "'s data.", e);
+                future.completeExceptionally(e);
+            }
+        });
+        return future;
     }
 }

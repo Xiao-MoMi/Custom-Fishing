@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class StatisticData {
 
-    @SerializedName("stats")
+    @SerializedName("map")
     public Map<String, Integer> statisticMap;
 
     public StatisticData(@NotNull Map<String, Integer> data) {

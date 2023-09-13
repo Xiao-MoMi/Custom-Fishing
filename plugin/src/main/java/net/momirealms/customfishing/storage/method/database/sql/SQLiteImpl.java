@@ -77,7 +77,7 @@ public class SQLiteImpl extends AbstractSQLDatabase {
 
     @SuppressWarnings("DuplicatedCode")
     @Override
-    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean force) {
+    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock) {
         var future = new CompletableFuture<Optional<PlayerData>>();
         plugin.getScheduler().runTaskAsync(() -> {
         try (
@@ -87,20 +87,18 @@ public class SQLiteImpl extends AbstractSQLDatabase {
             statement.setString(1, uuid.toString());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                int lock = rs.getInt(2);
-                if (!force && (lock != 0 && getCurrentSeconds() - CFConfig.dataSaveInterval <= lock)) {
-                    statement.close();
-                    rs.close();
+                int lockValue = rs.getInt(2);
+                if (lockValue != 0 && getCurrentSeconds() - CFConfig.dataSaveInterval <= lockValue) {
                     connection.close();
                     future.complete(Optional.of(PlayerData.LOCKED));
                     return;
                 }
                 final byte[] dataByteArray = rs.getBytes("data");
-                lockPlayerData(uuid);
+                if (lock) lockPlayerData(uuid, true);
                 future.complete(Optional.of(plugin.getStorageManager().fromBytes(dataByteArray)));
             } else if (Bukkit.getPlayer(uuid) != null) {
                 var data = PlayerData.empty();
-                insertPlayerData(uuid, data);
+                insertPlayerData(uuid, data, lock);
                 future.complete(Optional.of(data));
             } else {
                 future.complete(Optional.empty());
@@ -158,13 +156,13 @@ public class SQLiteImpl extends AbstractSQLDatabase {
     }
 
     @Override
-    public void insertPlayerData(UUID uuid, PlayerData playerData) {
+    public void insertPlayerData(UUID uuid, PlayerData playerData, boolean lock) {
         try (
             Connection connection = getConnection();
             PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_INSERT_DATA_BY_UUID, getTableName("data")))
         ) {
             statement.setString(1, uuid.toString());
-            statement.setInt(2, getCurrentSeconds());
+            statement.setInt(2, lock ? getCurrentSeconds() : 0);
             statement.setBytes(3, plugin.getStorageManager().toBytes(playerData));
             statement.execute();
         } catch (SQLException e) {

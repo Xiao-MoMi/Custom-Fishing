@@ -44,14 +44,13 @@ public interface StorageManager {
 
     /**
      * Get an offline user's data
-     * force reading would ignore the database lock
      * Otherwise it would return Optional.empty() if data is locked
      * It an offline user never played the server, its name would equal "" (empty string)
      * @param uuid uuid
-     * @param force force
+     * @param lock lock
      * @return offline user data
      */
-    CompletableFuture<Optional<OfflineUser>> getOfflineUser(UUID uuid, boolean force);
+    CompletableFuture<Optional<OfflineUser>> getOfflineUser(UUID uuid, boolean lock);
 
     CompletableFuture<Boolean> saveUserData(OfflineUser offlineUser, boolean unlock);
 

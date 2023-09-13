@@ -23,6 +23,7 @@ import dev.jorel.commandapi.arguments.UUIDArgument;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.user.OfflineUser;
+import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.storage.user.OfflineUserImpl;
 import org.bukkit.Bukkit;
@@ -79,7 +80,7 @@ public class FishingBagCommand {
                             return;
                         }
                     }
-                    CustomFishingPlugin.get().getStorageManager().getOfflineUser(uuid, false).thenAccept(optional -> {
+                    CustomFishingPlugin.get().getStorageManager().getOfflineUser(uuid, CFConfig.lockData).thenAccept(optional -> {
                         if (optional.isEmpty()) {
                             AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, CFLocale.MSG_Never_Played);
                             return;

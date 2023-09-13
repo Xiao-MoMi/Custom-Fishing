@@ -29,12 +29,15 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class JsonImpl extends AbstractStorage {
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public JsonImpl(CustomFishingPlugin plugin) {
         super(plugin);
         File folder = new File(plugin.getDataFolder(), "data");
@@ -47,7 +50,7 @@ public class JsonImpl extends AbstractStorage {
     }
 
     @Override
-    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean ignore) {
+    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock) {
         File file = getPlayerDataFile(uuid);
         PlayerData playerData;
         if (file.exists()) {
@@ -93,5 +96,21 @@ public class JsonImpl extends AbstractStorage {
             e.printStackTrace();
         }
         return fileBytes;
+    }
+
+    @Override
+    public Set<UUID> getUniqueUsers(boolean legacy) {
+        // No legacy files
+        File folder = new File(plugin.getDataFolder(), "data");
+        Set<UUID> uuids = new HashSet<>();
+        if (folder.exists()) {
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    uuids.add(UUID.fromString(file.getName().substring(file.getName().length() - 5)));
+                }
+            }
+        }
+        return uuids;
     }
 }

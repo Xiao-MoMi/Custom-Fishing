@@ -149,6 +149,10 @@ other-settings:
   # set to -1 to disable
   data-saving-interval: 600
 
+  # Lock player's data if a player is playing on a server that connected to database
+  # If you can ensure low database link latency and fast processing, you can consider disabling this option to save some performance
+  lock-data: true
+
   # Requires PlaceholderAPI to work
   placeholder-register:
     '{date}': '%server_time_yyyy-MM-dd-HH:mm:ss%'

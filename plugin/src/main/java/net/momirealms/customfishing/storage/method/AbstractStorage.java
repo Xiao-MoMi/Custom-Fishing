@@ -23,6 +23,7 @@ import net.momirealms.customfishing.api.data.user.OfflineUser;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.UUID;
 
 public abstract class AbstractStorage implements DataStorageInterface {
 
@@ -51,5 +52,9 @@ public abstract class AbstractStorage implements DataStorageInterface {
         for (OfflineUser user : users) {
             this.savePlayerData(user.getUUID(), user.getPlayerData(), unlock);
         }
+    }
+
+    public void lockPlayerData(UUID uuid, boolean lock) {
+
     }
 }

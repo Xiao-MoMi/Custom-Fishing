@@ -18,25 +18,20 @@
 package net.momirealms.customfishing.storage.method.database.nosql;
 
 import com.mongodb.*;
-import com.mongodb.bulk.BulkWriteResult;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import com.mongodb.client.model.*;
-import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.PlayerData;
 import net.momirealms.customfishing.api.data.StorageType;
 import net.momirealms.customfishing.api.data.user.OfflineUser;
 import net.momirealms.customfishing.api.util.LogUtils;
+import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.storage.method.AbstractStorage;
 import org.bson.Document;
 import org.bson.UuidRepresentation;
 import org.bson.conversions.Bson;
 import org.bson.types.Binary;
-import org.bson.types.ObjectId;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -109,23 +104,25 @@ public class MongoDBImpl extends AbstractStorage {
     }
 
     @Override
-    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean force) {
+    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock) {
         var future = new CompletableFuture<Optional<PlayerData>>();
         plugin.getScheduler().runTaskAsync(() -> {
         MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
         Document doc = collection.find(Filters.eq("uuid", uuid)).first();
         if (doc == null) {
             if (Bukkit.getPlayer(uuid) != null) {
+                if (lock) lockPlayerData(uuid, true);
                 future.complete(Optional.of(PlayerData.empty()));
             } else {
                 future.complete(Optional.empty());
             }
         } else {
-            if (!force && doc.getInteger("lock") != 0) {
+            if (doc.getInteger("lock") != 0 && getCurrentSeconds() - CFConfig.dataSaveInterval <= doc.getInteger("lock")) {
                 future.complete(Optional.of(PlayerData.LOCKED));
                 return;
             }
             Binary binary = (Binary) doc.get("data");
+            if (lock) lockPlayerData(uuid, true);
             future.complete(Optional.of(plugin.getStorageManager().fromBytes(binary.getData())));
         }
         });
@@ -171,5 +168,36 @@ public class MongoDBImpl extends AbstractStorage {
         } catch (MongoException e) {
             LogUtils.warn("Failed to update data for online players", e);
         }
+    }
+
+    @Override
+    public void lockPlayerData(UUID uuid, boolean lock) {
+        MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
+        try {
+            Document query = new Document("uuid", uuid);
+            Bson updates = Updates.combine(Updates.set("lock", !lock ? 0 : getCurrentSeconds()));
+            UpdateOptions options = new UpdateOptions().upsert(true);
+            collection.updateOne(query, updates, options);
+        } catch (MongoException e) {
+            LogUtils.warn("Failed to lock data for " + uuid, e);
+        }
+    }
+
+    @Override
+    public Set<UUID> getUniqueUsers(boolean legacy) {
+        // no legacy files
+        Set<UUID> uuids = new HashSet<>();
+        MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
+        try {
+            Bson projectionFields = Projections.fields(Projections.include("uuid"));
+            try (MongoCursor<Document> cursor = collection.find().projection(projectionFields).iterator()) {
+                while (cursor.hasNext()) {
+                    uuids.add(cursor.next().get("uuid", UUID.class));
+                }
+            }
+        } catch (MongoException e) {
+            LogUtils.warn("Failed to get unique data.", e);
+        }
+        return uuids;
     }
 }
