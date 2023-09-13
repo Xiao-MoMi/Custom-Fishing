@@ -70,7 +70,7 @@ public class YAMLImpl extends AbstractStorage implements LegacyDataStorageInterf
     }
 
     @Override
-    public CompletableFuture<Boolean> savePlayerData(UUID uuid, PlayerData playerData, boolean ignore) {
+    public CompletableFuture<Boolean> updatePlayerData(UUID uuid, PlayerData playerData, boolean ignore) {
         YamlConfiguration data = new YamlConfiguration();
         data.set("name", playerData.getName());
         data.set("bag", playerData.getBagData().serialized);

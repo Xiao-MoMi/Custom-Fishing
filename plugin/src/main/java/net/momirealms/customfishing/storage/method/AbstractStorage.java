@@ -19,11 +19,13 @@ package net.momirealms.customfishing.storage.method;
 
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.DataStorageInterface;
+import net.momirealms.customfishing.api.data.PlayerData;
 import net.momirealms.customfishing.api.data.user.OfflineUser;
 
 import java.time.Instant;
 import java.util.Collection;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class AbstractStorage implements DataStorageInterface {
 
@@ -48,13 +50,18 @@ public abstract class AbstractStorage implements DataStorageInterface {
     }
 
     @Override
-    public void savePlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
+    public void updateManyPlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
         for (OfflineUser user : users) {
-            this.savePlayerData(user.getUUID(), user.getPlayerData(), unlock);
+            this.updatePlayerData(user.getUUID(), user.getPlayerData(), unlock);
         }
     }
 
     public void lockPlayerData(UUID uuid, boolean lock) {
 
+    }
+
+    @Override
+    public CompletableFuture<Boolean> updateOrInsertPlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
+        return updatePlayerData(uuid, playerData, unlock);
     }
 }

@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.storage;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
@@ -70,11 +71,13 @@ public class StorageManagerImpl implements StorageManager, Listener {
     private RedisManager redisManager;
     private String uniqueID;
     private CancellableTask timerSaveTask;
+    private Gson gson;
 
     public StorageManagerImpl(CustomFishingPluginImpl plugin) {
         this.plugin = plugin;
         this.locked = new HashSet<>();
         this.onlineUserMap = new ConcurrentHashMap<>();
+        this.gson = new GsonBuilder().create();
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
@@ -113,7 +116,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
             this.timerSaveTask = this.plugin.getScheduler().runTaskAsyncTimer(
                     () -> {
                         long time1 = System.currentTimeMillis();
-                        this.dataSource.savePlayersData(this.onlineUserMap.values(), !CFConfig.lockData);
+                        this.dataSource.updateManyPlayersData(this.onlineUserMap.values(), !CFConfig.lockData);
                         LogUtils.info("Data Saved for online players. Took " + (System.currentTimeMillis() - time1) + "ms.");
                     },
                     CFConfig.dataSaveInterval,
@@ -124,7 +127,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
 
     public void disable() {
         HandlerList.unregisterAll(this);
-        this.dataSource.savePlayersData(onlineUserMap.values(), true);
+        this.dataSource.updateManyPlayersData(onlineUserMap.values(), true);
         this.onlineUserMap.clear();
         if (this.dataSource != null)
             this.dataSource.disable();
@@ -162,7 +165,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
 
     @Override
     public CompletableFuture<Boolean> saveUserData(OfflineUser offlineUser, boolean unlock) {
-        return dataSource.savePlayerData(offlineUser.getUUID(), offlineUser.getPlayerData(), unlock);
+        return dataSource.updatePlayerData(offlineUser.getUUID(), offlineUser.getPlayerData(), unlock);
     }
 
     @Override
@@ -200,13 +203,13 @@ public class StorageManagerImpl implements StorageManager, Listener {
 
         if (hasRedis) {
             redisManager.setChangeServer(uuid).thenRun(
-                    () -> redisManager.savePlayerData(uuid, data, true).thenRun(
-                            () -> dataSource.savePlayerData(uuid, data, true).thenAccept(
+                    () -> redisManager.updatePlayerData(uuid, data, true).thenRun(
+                            () -> dataSource.updatePlayerData(uuid, data, true).thenAccept(
                                     result -> {
                                       if (result) locked.remove(uuid);
             })));
         } else {
-            dataSource.savePlayerData(uuid, data, true).thenAccept(
+            dataSource.updatePlayerData(uuid, data, true).thenAccept(
                     result -> {
                         if (result) locked.remove(uuid);
                     });
@@ -302,14 +305,19 @@ public class StorageManagerImpl implements StorageManager, Listener {
     @Override
     @NotNull
     public String toJson(@NotNull PlayerData data) {
-        return new GsonBuilder().create().toJson(data);
+        return gson.toJson(data);
+    }
+
+    @Override
+    public PlayerData fromJson(String json) {
+        return gson.fromJson(json, PlayerData.class);
     }
 
     @Override
     @NotNull
     public PlayerData fromBytes(byte[] data) {
         try {
-            return new GsonBuilder().create().fromJson(new String(data, StandardCharsets.UTF_8), PlayerData.class);
+            return gson.fromJson(new String(data, StandardCharsets.UTF_8), PlayerData.class);
         } catch (JsonSyntaxException e) {
             throw new DataSerializationException("Failed to get PlayerData from bytes", e);
         }

@@ -112,7 +112,7 @@ public class SQLiteImpl extends AbstractSQLDatabase {
     }
 
     @Override
-    public CompletableFuture<Boolean> savePlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
+    public CompletableFuture<Boolean> updatePlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         var future = new CompletableFuture<Boolean>();
         plugin.getScheduler().runTaskAsync(() -> {
         try (
@@ -133,7 +133,7 @@ public class SQLiteImpl extends AbstractSQLDatabase {
     }
 
     @Override
-    public void savePlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
+    public void updateManyPlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
         String sql = String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data"));
         try (Connection connection = getConnection()) {
             connection.setAutoCommit(false);

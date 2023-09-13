@@ -34,9 +34,11 @@ public interface DataStorageInterface {
 
     CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock);
 
-    CompletableFuture<Boolean> savePlayerData(UUID uuid, PlayerData playerData, boolean unlock);
+    CompletableFuture<Boolean> updatePlayerData(UUID uuid, PlayerData playerData, boolean unlock);
 
-    void savePlayersData(Collection<? extends OfflineUser> users, boolean unlock);
+    CompletableFuture<Boolean> updateOrInsertPlayerData(UUID uuid, PlayerData playerData, boolean unlock);
+
+    void updateManyPlayersData(Collection<? extends OfflineUser> users, boolean unlock);
 
     void lockPlayerData(UUID uuid, boolean lock);
 

@@ -130,7 +130,7 @@ public class MongoDBImpl extends AbstractStorage {
     }
 
     @Override
-    public CompletableFuture<Boolean> savePlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
+    public CompletableFuture<Boolean> updatePlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         var future = new CompletableFuture<Boolean>();
         plugin.getScheduler().runTaskAsync(() -> {
         MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
@@ -150,7 +150,7 @@ public class MongoDBImpl extends AbstractStorage {
     }
 
     @Override
-    public void savePlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
+    public void updateManyPlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
         MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
         try {
             int lock = unlock ? 0 : getCurrentSeconds();

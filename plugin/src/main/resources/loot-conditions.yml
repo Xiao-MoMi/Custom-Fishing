@@ -80,6 +80,7 @@ global-group:
               - minecraft:warm_ocean
           list:
             - vanilla:+30
+            - rainbow_fish:+5
             - stick:+15
             - gold_fish:+15
             - gold_fish_silver_star:+3

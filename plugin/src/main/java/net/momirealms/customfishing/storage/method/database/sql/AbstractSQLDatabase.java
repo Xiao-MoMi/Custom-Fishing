@@ -116,7 +116,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
     }
 
     @Override
-    public CompletableFuture<Boolean> savePlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
+    public CompletableFuture<Boolean> updatePlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         var future = new CompletableFuture<Boolean>();
         plugin.getScheduler().runTaskAsync(() -> {
         try (
@@ -138,7 +138,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
     }
 
     @Override
-    public void savePlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
+    public void updateManyPlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
         String sql = String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data"));
         try (Connection connection = getConnection()) {
             connection.setAutoCommit(false);
@@ -186,6 +186,29 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         } catch (SQLException e) {
             LogUtils.warn("Failed to lock " + uuid + "'s data.", e);
         }
+    }
+
+    @Override
+    public CompletableFuture<Boolean> updateOrInsertPlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
+        var future = new CompletableFuture<Boolean>();
+        plugin.getScheduler().runTaskAsync(() -> {
+            try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_SELECT_BY_UUID, getTableName("data")))
+            ) {
+                statement.setString(1, uuid.toString());
+                ResultSet rs = statement.executeQuery();
+                if (rs.next()) {
+                    updatePlayerData(uuid, playerData, unlock).thenRun(() -> future.complete(true));
+                } else {
+                    insertPlayerData(uuid, playerData, !unlock);
+                    future.complete(true);
+                }
+            } catch (SQLException e) {
+                LogUtils.warn("Failed to get " + uuid + "'s data.", e);
+            }
+        });
+        return future;
     }
 
     @Override

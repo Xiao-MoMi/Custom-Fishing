@@ -72,5 +72,7 @@ public interface StorageManager {
 
     @NotNull String toJson(@NotNull PlayerData data);
 
+    PlayerData fromJson(String json);
+
     @NotNull PlayerData fromBytes(byte[] data);
 }

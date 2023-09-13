@@ -63,7 +63,7 @@ public class BagManagerImpl implements BagManager, Listener {
 
     public void disable() {
         unload();
-        plugin.getStorageManager().getDataSource().savePlayersData(tempEditMap.values(), true);
+        plugin.getStorageManager().getDataSource().updateManyPlayersData(tempEditMap.values(), true);
     }
 
     @Override

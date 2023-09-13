@@ -116,6 +116,16 @@ rubbish:
   disable-game: true
   instant-game: false
   prevent-grabbing: false
+rainbow_fish:
+  material: cod
+  nick: <Rainbow>Rainbow Fish</Rainbow>
+  display:
+    name: <Rainbow>Rainbow Fish</Rainbow>
+    lore:
+      - <gray>Bringing a good mood for the day
+  custom-model-data: 50100
+  price:
+    base: 100
 # Enchantments
 sharpness_book:
   tag: false

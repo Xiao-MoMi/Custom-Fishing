@@ -293,7 +293,7 @@ public class MarketManagerImpl implements MarketManager, Listener {
                             if (current.getAmount() <= left) {
                                 itemStack.setAmount(itemStack.getAmount() + current.getAmount());
                                 current.setAmount(0);
-                                return;
+                                break;
                             } else {
                                 current.setAmount(current.getAmount() - left);
                                 itemStack.setAmount(itemStack.getType().getMaxStackSize());
@@ -302,7 +302,7 @@ public class MarketManagerImpl implements MarketManager, Listener {
                     } else {
                         gui.getInventory().setItem(slot, current.clone());
                         current.setAmount(0);
-                        return;
+                        break;
                     }
                 }
             }
