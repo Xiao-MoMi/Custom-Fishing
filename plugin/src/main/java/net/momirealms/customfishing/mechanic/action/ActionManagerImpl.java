@@ -86,6 +86,7 @@ public class ActionManagerImpl implements ActionManager {
         this.registerHologramAction();
         this.registerFakeItemAction();
         this.registerFishFindAction();
+        this.registerFoodAction();
     }
 
     public void load() {
@@ -325,6 +326,25 @@ public class ActionManagerImpl implements ActionManager {
                     condition.getPlayer().giveExp(xp, true);
                     AdventureManagerImpl.getInstance().sendSound(condition.getPlayer(), Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
                 }
+            };
+        });
+    }
+
+    private void registerFoodAction() {
+        registerAction("food", (args, chance) -> {
+            int food = (int) (ConfigUtils.getDoubleValue(args) * 2);
+            return condition -> {
+                if (Math.random() > chance) return;
+                Player player = condition.getPlayer();
+                player.setFoodLevel(player.getFoodLevel() + food);
+            };
+        });
+        registerAction("saturation", (args, chance) -> {
+            double saturation = ConfigUtils.getDoubleValue(args);
+            return condition -> {
+                if (Math.random() > chance) return;
+                Player player = condition.getPlayer();
+                player.setSaturation((float) (player.getSaturation() + saturation));
             };
         });
     }

@@ -24,6 +24,12 @@ import net.momirealms.customfishing.api.common.Key;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.common.Tuple;
 import net.momirealms.customfishing.api.manager.ItemManager;
+import net.momirealms.customfishing.api.manager.RequirementManager;
+import net.momirealms.customfishing.api.mechanic.GlobalSettings;
+import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
+import net.momirealms.customfishing.api.mechanic.condition.Condition;
+import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.item.BuildableItem;
 import net.momirealms.customfishing.api.mechanic.item.ItemBuilder;
 import net.momirealms.customfishing.api.mechanic.item.ItemLibrary;
@@ -33,26 +39,40 @@ import net.momirealms.customfishing.compatibility.item.CustomFishingItemImpl;
 import net.momirealms.customfishing.compatibility.item.VanillaItemImpl;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.setting.CFConfig;
+import net.momirealms.customfishing.util.ItemUtils;
 import net.momirealms.customfishing.util.NBTUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryPickupItemEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.plaf.IconUIResource;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class ItemManagerImpl implements ItemManager {
+public class ItemManagerImpl implements ItemManager, Listener {
 
     private static ItemManager instance;
     private final CustomFishingPlugin plugin;
@@ -71,9 +91,11 @@ public class ItemManagerImpl implements ItemManager {
     public void load() {
         this.loadItemsFromPluginFolder();
         LogUtils.info("Loaded " + buildableItemMap.size() + " items.");
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     public void unload() {
+        HandlerList.unregisterAll(this);
         HashMap<Key, BuildableItem> tempMap = new HashMap<>(this.buildableItemMap);
         this.buildableItemMap.clear();
         for (Map.Entry<Key, BuildableItem> entry : tempMap.entrySet()) {
@@ -672,5 +694,100 @@ public class ItemManagerImpl implements ItemManager {
         }
 
         return actualAmount;
+    }
+
+    @EventHandler
+    public void onPickUp(PlayerAttemptPickupItemEvent event) {
+        if (event.isCancelled()) return;
+        ItemStack itemStack = event.getItem().getItemStack();
+        NBTItem nbtItem = new NBTItem(itemStack);
+        if (!nbtItem.hasTag("owner")) return;
+        if (!Objects.equals(nbtItem.getString("owner"), event.getPlayer().getName())) {
+            event.setCancelled(true);
+        } else {
+            nbtItem.removeKey("owner");
+            itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
+        }
+    }
+
+    @EventHandler
+    public void onMove(InventoryPickupItemEvent event) {
+        if (event.isCancelled()) return;
+        ItemStack itemStack = event.getItem().getItemStack();
+        NBTItem nbtItem = new NBTItem(itemStack);
+        if (!nbtItem.hasTag("owner")) return;
+        nbtItem.removeKey("owner");
+        itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
+    }
+
+
+    @EventHandler
+    public void onConsumeItem(PlayerItemConsumeEvent event) {
+        if (event.isCancelled()) return;
+        ItemStack itemStack = event.getItem();
+        String id = getAnyItemID(itemStack);
+        Loot loot = plugin.getLootManager().getLoot(id);
+        if (loot != null) {
+            Condition condition = new Condition(event.getPlayer());
+            GlobalSettings.triggerLootActions(ActionTrigger.CONSUME, condition);
+            loot.triggerActions(ActionTrigger.CONSUME, condition);
+        }
+    }
+
+    @EventHandler
+    public void onRepairItem(PrepareAnvilEvent event) {
+        ItemStack result = event.getInventory().getResult();
+        if (result == null || result.getType() == Material.AIR) return;
+        NBTItem nbtItem = new NBTItem(result);
+        NBTCompound compound = nbtItem.getCompound("CustomFishing");
+        if (compound == null || !compound.hasTag("max_dur")) return;
+        if (!(result.getItemMeta() instanceof Damageable damageable)) {
+            return;
+        }
+        int max_dur = compound.getInteger("max_dur");
+        compound.setInteger("cur_dur", (int) (max_dur * (1 - (double) damageable.getDamage() / result.getType().getMaxDurability())));
+        event.setResult(nbtItem.getItem());
+    }
+
+    @EventHandler
+    public void onMending(PlayerItemMendEvent event) {
+        if (event.isCancelled()) return;
+        ItemStack itemStack = event.getItem();
+        NBTItem nbtItem = new NBTItem(itemStack);
+        NBTCompound compound = nbtItem.getCompound("CustomFishing");
+        if (compound == null) return;
+        event.setCancelled(true);
+        ItemUtils.addDurability(itemStack, event.getRepairAmount());
+    }
+
+    @EventHandler
+    public void onInteractWithUtils(PlayerInteractEvent event) {
+        if (event.useItemInHand() == Event.Result.DENY)
+            return;
+        ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
+        if (itemStack.getType() == Material.AIR)
+            return;
+        if (event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_AIR || event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK)
+            return;
+
+        String id = getAnyItemID(itemStack);
+        EffectCarrier carrier = plugin.getEffectManager().getEffect("util", id);
+        if (carrier == null)
+            return;
+        Condition condition = new Condition(event.getPlayer());
+        if (!RequirementManager.isRequirementsMet(carrier.getRequirements(), condition))
+            return;
+        Action[] actions = carrier.getActions(ActionTrigger.INTERACT);
+        if (actions != null)
+            for (Action action : actions) {
+                action.trigger(condition);
+            }
+    }
+
+    @Override
+    public boolean isCustomFishingItem(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR) return false;
+        NBTItem nbtItem = new NBTItem(itemStack);
+        return nbtItem.hasTag("CustomFishing");
     }
 }

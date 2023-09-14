@@ -73,4 +73,6 @@ public interface ItemManager {
     void dropItem(Player player, Location hookLocation, Location playerLocation, Loot loot, Map<String, String> args);
 
     void dropItem(Location hookLocation, Location playerLocation, ItemStack itemStack);
+
+    boolean isCustomFishingItem(ItemStack itemStack);
 }

@@ -7,7 +7,7 @@ plugins {
 
 allprojects {
 
-    version = "2.0-beta-0914"
+    version = "2.0-beta-0915"
 
     apply<JavaPlugin>()
     apply(plugin = "java")
@@ -61,18 +61,6 @@ subprojects {
         archiveFileName.set("CustomFishing-" + project.name + "-" + project.version + ".jar")
     }
 
-    if ("api" == project.name) {
-        publishing {
-            publications {
-                create("maven_public", MavenPublication::class) {
-                    groupId = "net.momirealms"
-                    artifactId = "CustomFishing-API"
-                    from(components.getByName("java"))
-                }
-            }
-        }
-    }
-
     publishing {
         publications {
             create<MavenPublication>("mavenJava") {
@@ -84,14 +72,14 @@ subprojects {
         }
     }
 
-//    tasks.javadoc.configure {
-//        options.quiet()
-//    }
-//
-//    if ("api" == project.name) {
-//        java {
-//            withSourcesJar()
-//            withJavadocJar()
-//        }
-//    }
+    tasks.javadoc.configure {
+        options.quiet()
+    }
+
+    if ("api" == project.name) {
+        java {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
