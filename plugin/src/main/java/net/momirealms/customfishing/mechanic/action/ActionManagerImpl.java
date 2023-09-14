@@ -37,6 +37,7 @@ import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.util.ArmorStandUtils;
 import net.momirealms.customfishing.util.ClassUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
+import net.momirealms.customfishing.util.LocationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -187,6 +188,35 @@ public class ActionManagerImpl implements ActionManager {
                 }
             };
         });
+        registerAction("message-nearby", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                List<String> msg = section.getStringList("message");
+                int range = section.getInt("range");
+                return condition -> {
+                    if (Math.random() > chance) return;
+                    Player owner = condition.getPlayer();
+
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        double distance = LocationUtils.getDistance(player.getLocation(), owner.getLocation());
+                        if (distance <= range) {
+                            condition.insertArg("{near}", player.getName());
+                            List<String> replaced = PlaceholderManagerImpl.getInstance().parse(
+                                    owner,
+                                    msg,
+                                    condition.getArgs()
+                            );
+                            for (String text : replaced) {
+                                AdventureManagerImpl.getInstance().sendPlayerMessage(player, text);
+                            }
+                            condition.delArg("{near}");
+                        }
+                    }
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: message-nearby");
+                return null;
+            }
+        });
         registerAction("random-message", (args, chance) -> {
             ArrayList<String> msg = ConfigUtils.stringListArgs(args);
             return condition -> {
@@ -226,6 +256,34 @@ public class ActionManagerImpl implements ActionManager {
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), finalRandom);
                 }, condition.getLocation());
             };
+        });
+        registerAction("command-nearby", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                List<String> cmd = section.getStringList("command");
+                int range = section.getInt("range");
+                return condition -> {
+                    if (Math.random() > chance) return;
+                    Player owner = condition.getPlayer();
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        double distance = LocationUtils.getDistance(player.getLocation(), owner.getLocation());
+                        if (distance <= range) {
+                            condition.insertArg("{near}", player.getName());
+                            List<String> replaced = PlaceholderManagerImpl.getInstance().parse(
+                                    owner,
+                                    cmd,
+                                    condition.getArgs()
+                            );
+                            for (String text : replaced) {
+                                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), text);
+                            }
+                            condition.delArg("{near}");
+                        }
+                    }
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: command-nearby");
+                return null;
+            }
         });
     }
 

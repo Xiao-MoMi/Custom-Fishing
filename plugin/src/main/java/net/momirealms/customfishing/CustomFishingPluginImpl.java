@@ -43,6 +43,7 @@ import net.momirealms.customfishing.mechanic.market.MarketManagerImpl;
 import net.momirealms.customfishing.mechanic.misc.CoolDownManager;
 import net.momirealms.customfishing.mechanic.requirement.RequirementManagerImpl;
 import net.momirealms.customfishing.mechanic.statistic.StatisticsManagerImpl;
+import net.momirealms.customfishing.mechanic.totem.TotemManagerImpl;
 import net.momirealms.customfishing.scheduler.SchedulerImpl;
 import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.setting.CFLocale;
@@ -97,6 +98,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         this.integrationManager = new IntegrationManagerImpl(this);
         this.statisticsManager = new StatisticsManagerImpl(this);
         this.coolDownManager = new CoolDownManager(this);
+        this.totemManager = new TotemManagerImpl(this);
         this.reload();
         if (CFConfig.updateChecker)
             this.versionManager.checkUpdate().thenAccept(result -> {
@@ -125,6 +127,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         ((PlaceholderManagerImpl) this.placeholderManager).disable();
         ((StatisticsManagerImpl) this.statisticsManager).disable();
         ((ActionManagerImpl) this.actionManager).disable();
+        ((TotemManagerImpl) this.totemManager).disable();
         this.coolDownManager.disable();
         this.commandManager.unload();
     }
@@ -146,6 +149,8 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         ((LootManagerImpl) this.lootManager).load();
         ((FishingManagerImpl) this.fishingManager).unload();
         ((FishingManagerImpl) this.fishingManager).load();
+        ((TotemManagerImpl) this.totemManager).unload();
+        ((TotemManagerImpl) this.totemManager).load();
         ((EffectManagerImpl) this.effectManager).unload();
         ((EffectManagerImpl) this.effectManager).load();
         ((MarketManagerImpl) this.marketManager).unload();

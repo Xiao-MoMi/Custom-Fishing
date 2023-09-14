@@ -140,6 +140,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerLootRequirement();
         this.registerLessThanRequirement();
         this.registerNumberEqualRequirement();
+        this.registerRegexRequirement();
     }
 
     public ConditionalElement getConditionalElements(ConfigurationSection section) {
@@ -636,6 +637,23 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at > requirement.");
+                return null;
+            }
+        });
+    }
+
+    private void registerRegexRequirement() {
+        registerRequirement("regex", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String v1 = section.getString("papi", "");
+                String v2 = section.getString("regex", "");
+                return condition -> {
+                    if (ParseUtils.setPlaceholders(condition.getPlayer(), v1).matches(v2)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at regex requirement.");
                 return null;
             }
         });
