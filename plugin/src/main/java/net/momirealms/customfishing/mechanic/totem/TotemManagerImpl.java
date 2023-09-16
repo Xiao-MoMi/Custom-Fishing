@@ -18,40 +18,144 @@
 package net.momirealms.customfishing.mechanic.totem;
 
 import net.momirealms.customfishing.api.CustomFishingPlugin;
+import net.momirealms.customfishing.api.common.Pair;
+import net.momirealms.customfishing.api.common.SimpleLocation;
 import net.momirealms.customfishing.api.manager.TotemManager;
+import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
+import net.momirealms.customfishing.api.mechanic.condition.Condition;
+import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.mechanic.totem.block.AxisImpl;
 import net.momirealms.customfishing.mechanic.totem.block.FaceImpl;
 import net.momirealms.customfishing.mechanic.totem.block.TotemBlock;
 import net.momirealms.customfishing.mechanic.totem.block.TotemBlockProperty;
 import net.momirealms.customfishing.mechanic.totem.block.type.TypeCondition;
-import net.momirealms.customfishing.util.MatrixUtils;
-import org.apache.commons.lang3.SerializationUtils;
-import org.bukkit.Axis;
-import org.bukkit.Bukkit;
+import net.momirealms.customfishing.mechanic.totem.particle.DustParticleSetting;
+import net.momirealms.customfishing.mechanic.totem.particle.ParticleSetting;
+import net.momirealms.customfishing.util.LocationUtils;
+import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
-public class TotemManagerImpl implements TotemManager {
+public class TotemManagerImpl implements TotemManager, Listener {
 
     private final CustomFishingPlugin plugin;
-    private final HashMap<String, TotemConfig> totemConfigMap;
+    private final HashMap<String, List<TotemConfig>> totemConfigMap;
+    private final List<String> allMaterials;
+    private final ConcurrentHashMap<SimpleLocation, ActivatedTotem> activatedTotems;
 
     public TotemManagerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.totemConfigMap = new HashMap<>();
+        this.allMaterials = Arrays.stream(Material.values()).map(Enum::name).toList();
+        this.activatedTotems = new ConcurrentHashMap<>();
     }
 
     public void load() {
         this.loadConfig();
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     public void unload() {
         this.totemConfigMap.clear();
+        for (ActivatedTotem activatedTotem : activatedTotems.values()) {
+            activatedTotem.cancel();
+        }
+        activatedTotems.clear();
+        HandlerList.unregisterAll(this);
+    }
+
+    public void disable() {
+        unload();
+    }
+
+    @Override
+    @Nullable
+    public EffectCarrier getTotemEffect(Location location) {
+        for (ActivatedTotem activatedTotem : activatedTotems.values()) {
+            if (LocationUtils.getDistance(activatedTotem.getCoreLocation(), location) < activatedTotem.getTotemConfig().getRadius()) {
+                return plugin.getEffectManager().getEffect("totem", activatedTotem.getTotemConfig().getKey());
+            }
+        }
+        return null;
+    }
+
+    @EventHandler
+    public void onBreakTotemCore(BlockBreakEvent event) {
+        if (event.isCancelled())
+            return;
+        Location location = event.getBlock().getLocation();
+        SimpleLocation simpleLocation = SimpleLocation.getByBukkitLocation(location);
+        ActivatedTotem activatedTotem = activatedTotems.remove(simpleLocation);
+        if (activatedTotem != null)
+            activatedTotem.cancel();
+    }
+
+    @EventHandler
+    public void onInteractBlock(PlayerInteractEvent event) {
+        if (event.isBlockInHand())
+            return;
+        if (event.useItemInHand() == Event.Result.DENY)
+            return;
+        if (event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK)
+            return;
+        if (event.getHand() != EquipmentSlot.HAND)
+            return;
+        Block block = event.getClickedBlock();
+        assert block != null;
+        String id = plugin.getBlockManager().getAnyBlockID(block);
+        List<TotemConfig> configs = totemConfigMap.get(id);
+        if (configs == null)
+            return;
+        TotemConfig config = null;
+        for (TotemConfig temp : configs) {
+            if (temp.isRightPattern(block.getLocation())) {
+                config = temp;
+                break;
+            }
+        }
+        if (config == null)
+            return;
+        String totemKey = config.getKey();
+        EffectCarrier carrier = plugin.getEffectManager().getEffect("totem", totemKey);
+        if (carrier == null)
+            return;
+        Condition condition = new Condition(block.getLocation(), event.getPlayer(), new HashMap<>());
+        if (!carrier.isConditionMet(condition))
+            return;
+        Action[] actions = carrier.getActionMap().get(ActionTrigger.ACTIVATE);
+        if (actions != null)
+            for (Action action : actions) {
+                action.trigger(condition);
+            }
+        Location location = block.getLocation();
+        ActivatedTotem activatedTotem = new ActivatedTotem(location, config);
+        SimpleLocation simpleLocation = SimpleLocation.getByBukkitLocation(location);
+
+        ActivatedTotem previous = this.activatedTotems.put(simpleLocation, activatedTotem);
+        if (previous != null) {
+            previous.cancel();
+        }
+
+        plugin.getScheduler().runTaskAsyncLater(() -> {
+            ActivatedTotem activated = this.activatedTotems.remove(simpleLocation);
+            if (activated != null) activated.cancel();
+        }, config.getDuration(), TimeUnit.SECONDS);
     }
 
     @SuppressWarnings("DuplicatedCode")
@@ -81,46 +185,163 @@ public class TotemManagerImpl implements TotemManager {
 
     private void loadSingleFile(File file) {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+        for (Map.Entry<String, Object> entry : config.getValues(false).entrySet()) {
+            if (entry.getValue() instanceof ConfigurationSection section) {
+                TotemConfig totemConfig = new TotemConfig.Builder(entry.getKey())
+                        .setTotemModels(getTotemModels(section.getConfigurationSection("pattern")))
+                        .setParticleSettings(getParticleSettings(section.getConfigurationSection("particles")))
+                        .setRequirements(plugin.getRequirementManager().getRequirements(section.getConfigurationSection("requirements"), true))
+                        .setRadius(section.getDouble("radius", 8))
+                        .setDuration(section.getInt("duration", 300))
+                        .build();
 
-    }
-
-    public TotemBlock[][][][][] getMirroredRotatedModels(ConfigurationSection section) {
-        TotemBlock[][][][] originalModel = parseModel(section);
-        List<TotemBlock[][][][]> modelList = new ArrayList<>();
-
-        for (int i = 0; i < 4; i++) {
-            TotemBlock[][][][] tempModel = SerializationUtils.clone(originalModel);
-            for (TotemBlock[][][] totemBlocks : tempModel) {
-                TotemBlock[][][] rotatedTotemBlocks = MatrixUtils.rotate90(totemBlocks);
-                for (TotemBlock[][] totemBlocks1 : rotatedTotemBlocks) {
-                    for (TotemBlock[] totemBlocks2 : totemBlocks1) {
-                        for (TotemBlock totemBlock : totemBlocks2) {
-                            totemBlock.rotate90();
+                HashSet<String> coreMaterials = new HashSet<>();
+                for (TotemBlock totemBlock : totemConfig.getTotemCore()) {
+                    for (String text : totemBlock.getTypeCondition().getRawTexts()) {
+                        if (text.startsWith("*")) {
+                            String sub = text.substring(1);
+                            coreMaterials.addAll(allMaterials.stream().filter(it -> it.endsWith(sub)).toList());
+                        } else if (text.endsWith("*")) {
+                            String sub = text.substring(0, text.length() - 1);
+                            coreMaterials.addAll(allMaterials.stream().filter(it -> it.startsWith(sub)).toList());
+                        } else {
+                            coreMaterials.add(text);
                         }
                     }
                 }
-            }
-            modelList.add(tempModel);
 
-            TotemBlock[][][][] tempModel2 = SerializationUtils.clone(tempModel);
-            for (TotemBlock[][][] totemBlocks : tempModel2) {
-                MatrixUtils.mirrorHorizontally(totemBlocks);
+                for (String material : coreMaterials) {
+                    putTotemConfigToMap(material, totemConfig);
+                }
             }
-            modelList.add(tempModel2);
         }
+    }
 
-        return modelList.toArray(new TotemBlock[0][][][][]);
+    private void putTotemConfigToMap(String material, TotemConfig totemConfig) {
+        List<TotemConfig> configs = this.totemConfigMap.getOrDefault(material, new ArrayList<>());
+        configs.add(totemConfig);
+        this.totemConfigMap.put(material, configs);
+    }
+
+    public ParticleSetting[] getParticleSettings(ConfigurationSection section) {
+        List<ParticleSetting> particleSettings = new ArrayList<>();
+        if (section != null)
+            for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
+                if (entry.getValue() instanceof ConfigurationSection innerSection) {
+                    particleSettings.add(getParticleSetting(innerSection));
+                }
+            }
+        return particleSettings.toArray(new ParticleSetting[0]);
+    }
+
+    public ParticleSetting getParticleSetting(ConfigurationSection section) {
+        Particle particle = Particle.valueOf(section.getString("type","REDSTONE"));
+        String formulaHorizontal = section.getString("polar-coordinates-formula.horizontal");
+        String formulaVertical = section.getString("polar-coordinates-formula.vertical");
+        List<Pair<Double, Double>> ranges = section.getStringList("theta.range")
+                .stream().map(it -> {
+                    String[] split = it.split("~");
+                    return Pair.of(Double.parseDouble(split[0]) * Math.PI / 180, Double.parseDouble(split[1]) * Math.PI / 180);
+                }).toList();
+
+        double interval = section.getDouble("theta.draw-interval", 3d);
+        int delay = section.getInt("task.delay", 0);
+        int period = section.getInt("task.period", 0);
+        if (particle == Particle.REDSTONE) {
+            String color = section.getString("options.color","0,0,0");
+            String[] colorSplit = color.split(",");
+            return new DustParticleSetting(
+                    formulaHorizontal,
+                    formulaVertical,
+                    particle,
+                    interval,
+                    ranges,
+                    delay,
+                    period,
+                    new Particle.DustOptions(
+                            Color.fromRGB(
+                                    Integer.parseInt(colorSplit[0]),
+                                    Integer.parseInt(colorSplit[1]),
+                                    Integer.parseInt(colorSplit[2])
+                            ),
+                            (float) section.getDouble("options.scale", 1)
+                    )
+            );
+        } else if (particle == Particle.DUST_COLOR_TRANSITION) {
+            String color = section.getString("options.from","0,0,0");
+            String[] colorSplit = color.split(",");
+            String toColor = section.getString("options.to","255,255,255");
+            String[] toColorSplit = toColor.split(",");
+            return new DustParticleSetting(
+                    formulaHorizontal,
+                    formulaVertical,
+                    particle,
+                    interval,
+                    ranges,
+                    delay,
+                    period,
+                    new Particle.DustTransition(
+                            Color.fromRGB(
+                                    Integer.parseInt(colorSplit[0]),
+                                    Integer.parseInt(colorSplit[1]),
+                                    Integer.parseInt(colorSplit[2])
+                            ),
+                            Color.fromRGB(
+                                    Integer.parseInt(toColorSplit[0]),
+                                    Integer.parseInt(toColorSplit[1]),
+                                    Integer.parseInt(toColorSplit[2])
+                            ),
+                            (float) section.getDouble("options.scale", 1)
+                    )
+            );
+        } else {
+            return new ParticleSetting(
+                    formulaHorizontal,
+                    formulaVertical,
+                    particle,
+                    interval,
+                    ranges,
+                    delay,
+                    period
+            );
+        }
+    }
+
+    public TotemModel[] getTotemModels(ConfigurationSection section) {
+        TotemModel originalModel = parseModel(section);
+        List<TotemModel> modelList = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            originalModel = originalModel.clone().rotate90();
+            modelList.add(originalModel);
+            if (i % 2 == 0) {
+                modelList.add(originalModel.mirrorVertically());
+            } else {
+                modelList.add(originalModel.mirrorHorizontally());
+            }
+        }
+        return modelList.toArray(new TotemModel[0]);
     }
 
     @SuppressWarnings("unchecked")
-    public TotemBlock[][][][] parseModel(ConfigurationSection section) {
+    public TotemModel parseModel(ConfigurationSection section) {
+        ConfigurationSection layerSection = section.getConfigurationSection("layer");
         List<TotemBlock[][][]> totemBlocksList = new ArrayList<>();
-        for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
-            if (entry.getValue() instanceof List<?> list) {
-                totemBlocksList.add(parseLayer((List<String>) list));
+        if (layerSection != null) {
+            for (Map.Entry<String, Object> entry : layerSection.getValues(false).entrySet()) {
+                if (entry.getValue() instanceof List<?> list) {
+                    totemBlocksList.add(parseLayer((List<String>) list));
+                }
             }
         }
-        return totemBlocksList.toArray(new TotemBlock[0][][][]);
+
+        String[] core = section.getString("core","1,1,1").split(",");
+        int x = Integer.parseInt(core[2]) - 1;
+        int z = Integer.parseInt(core[1]) - 1;
+        int y = Integer.parseInt(core[0]) - 1;
+        return new TotemModel(
+                x,y,z,
+                totemBlocksList.toArray(new TotemBlock[0][][][])
+        );
     }
 
     public TotemBlock[][][] parseLayer(List<String> lines) {
@@ -141,30 +362,34 @@ public class TotemManagerImpl implements TotemManager {
     }
 
     public TotemBlock[] parseSingleElement(String element) {
-        String[] orBlocks = element.split("\\\\");
+        String[] orBlocks = element.split("\\|\\|");
         List<TotemBlock> totemBlockList = new ArrayList<>();
         for (String block : orBlocks) {
             int index = block.indexOf("{");
-            String type = block.substring(0, index-1);
-            String propertyStr = block.substring(index+1, block.length()-1);
-            String[] properties = propertyStr.split(";");
             List<TotemBlockProperty> propertyList = new ArrayList<>();
-            for (String property : properties) {
-                String[] split = property.split("=");
-                if (split.length <= 2) continue;
-                String key = split[0];
-                String value = split[1];
-                switch (key) {
-                    case "face" -> {
-                        BlockFace blockFace = BlockFace.valueOf(value.toUpperCase(Locale.ENGLISH));
-                        propertyList.add(new FaceImpl(blockFace));
-                    }
-                    case "axis" -> {
-                        Axis axis = Axis.valueOf(value.toUpperCase(Locale.ENGLISH));
-                        propertyList.add(new AxisImpl(axis));
+            if (index == -1) {
+                index = block.length();
+            } else {
+                String propertyStr = block.substring(index+1, block.length()-1);
+                String[] properties = propertyStr.split(";");
+                for (String property : properties) {
+                    String[] split = property.split("=");
+                    if (split.length <= 2) continue;
+                    String key = split[0];
+                    String value = split[1];
+                    switch (key) {
+                        case "face" -> {
+                            BlockFace blockFace = BlockFace.valueOf(value.toUpperCase(Locale.ENGLISH));
+                            propertyList.add(new FaceImpl(blockFace));
+                        }
+                        case "axis" -> {
+                            Axis axis = Axis.valueOf(value.toUpperCase(Locale.ENGLISH));
+                            propertyList.add(new AxisImpl(axis));
+                        }
                     }
                 }
             }
+            String type = block.substring(0, index);
             TotemBlock totemBlock = new TotemBlock(
                     TypeCondition.getTypeCondition(type),
                     propertyList.toArray(new TotemBlockProperty[0])
@@ -172,8 +397,5 @@ public class TotemManagerImpl implements TotemManager {
             totemBlockList.add(totemBlock);
         }
         return totemBlockList.toArray(new TotemBlock[0]);
-    }
-
-    public void disable() {
     }
 }

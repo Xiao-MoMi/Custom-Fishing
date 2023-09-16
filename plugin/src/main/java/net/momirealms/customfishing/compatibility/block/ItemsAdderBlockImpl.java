@@ -20,6 +20,7 @@ package net.momirealms.customfishing.compatibility.block;
 import dev.lone.itemsadder.api.CustomBlock;
 import net.momirealms.customfishing.api.mechanic.block.BlockDataModifier;
 import net.momirealms.customfishing.api.mechanic.block.BlockLibrary;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
@@ -39,5 +40,11 @@ public class ItemsAdderBlockImpl implements BlockLibrary {
             modifier.apply(player, blockData);
         }
         return blockData;
+    }
+
+    @Override
+    public String getBlockID(Block block) {
+        CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);
+        return customBlock == null ? null : customBlock.getId();
     }
 }

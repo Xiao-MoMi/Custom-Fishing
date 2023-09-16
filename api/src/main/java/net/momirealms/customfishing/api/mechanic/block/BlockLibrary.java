@@ -17,8 +17,10 @@
 
 package net.momirealms.customfishing.api.mechanic.block;
 
+import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -27,4 +29,7 @@ public interface BlockLibrary {
     String identification();
 
     BlockData getBlockData(Player player, String id, List<BlockDataModifier> modifiers);
+
+    @Nullable
+    String getBlockID(Block block);
 }

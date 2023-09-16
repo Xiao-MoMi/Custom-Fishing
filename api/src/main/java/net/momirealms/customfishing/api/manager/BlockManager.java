@@ -22,6 +22,7 @@ import net.momirealms.customfishing.api.mechanic.block.BlockLibrary;
 import net.momirealms.customfishing.api.mechanic.block.BlockStateModifierBuilder;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 public interface BlockManager {
@@ -36,4 +37,6 @@ public interface BlockManager {
     boolean registerBlockStateModifierBuilder(String type, BlockStateModifierBuilder builder);
 
     void summonBlock(Player player, Location hookLocation, Location playerLocation, Loot loot);
+
+    String getAnyBlockID(Block block);
 }

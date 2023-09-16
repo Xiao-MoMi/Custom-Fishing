@@ -33,17 +33,17 @@ import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
+import net.momirealms.customfishing.mechanic.item.ItemManagerImpl;
 import net.momirealms.customfishing.setting.CFLocale;
-import net.momirealms.customfishing.util.ArmorStandUtils;
-import net.momirealms.customfishing.util.ClassUtils;
-import net.momirealms.customfishing.util.ConfigUtils;
-import net.momirealms.customfishing.util.LocationUtils;
+import net.momirealms.customfishing.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
@@ -87,6 +87,9 @@ public class ActionManagerImpl implements ActionManager {
         this.registerFakeItemAction();
         this.registerFishFindAction();
         this.registerFoodAction();
+        this.registerItemAmountAction();
+        this.registerItemDurabilityAction();
+        this.registerGiveItemAction();
     }
 
     public void load() {
@@ -383,6 +386,63 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: hologram");
+                return null;
+            }
+        });
+    }
+
+    private void registerItemAmountAction() {
+        registerAction("item-amount", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                boolean mainOrOff = section.getString("hand", "main").equalsIgnoreCase("main");
+                int amount = section.getInt("amount", 1);
+                return condition -> {
+                    if (Math.random() > chance) return;
+                    Player player = condition.getPlayer();
+                    ItemStack itemStack = mainOrOff ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
+                    itemStack.setAmount(Math.max(0, itemStack.getAmount() + amount));
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: item-amount");
+                return null;
+            }
+        });
+    }
+
+    private void registerItemDurabilityAction() {
+        registerAction("durability", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                EquipmentSlot slot = EquipmentSlot.valueOf(section.getString("slot", "hand").toUpperCase(Locale.ENGLISH));
+                int amount = section.getInt("amount", 1);
+                return condition -> {
+                    if (Math.random() > chance) return;
+                    Player player = condition.getPlayer();
+                    ItemStack itemStack = player.getInventory().getItem(slot);
+                    if (amount > 0) {
+                        ItemUtils.addDurability(itemStack, amount);
+                    } else {
+                        ItemUtils.loseDurability(itemStack, -amount);
+                    }
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: item-durability");
+                return null;
+            }
+        });
+    }
+
+    private void registerGiveItemAction() {
+        registerAction("give-item", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                String id = section.getString("item");
+                int amount = section.getInt("amount", 1);
+                return condition -> {
+                    if (Math.random() > chance) return;
+                    Player player = condition.getPlayer();
+                    ItemManagerImpl.giveCertainAmountOfItem(player, CustomFishingPlugin.get().getItemManager().buildAnyItemByID(player, id), amount);
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: give-item");
                 return null;
             }
         });

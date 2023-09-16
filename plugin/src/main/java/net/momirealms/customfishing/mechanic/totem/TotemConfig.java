@@ -17,11 +17,93 @@
 
 package net.momirealms.customfishing.mechanic.totem;
 
+import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.mechanic.totem.block.TotemBlock;
+import net.momirealms.customfishing.mechanic.totem.particle.ParticleSetting;
+import org.bukkit.Location;
 
 public class TotemConfig {
 
-    private TotemBlock[][][][][] totemBlocks;
+    private String key;
+    private TotemModel[] totemModels;
+    private ParticleSetting[] particleSettings;
+    private Requirement[] requirements;
+    private double radius;
+    private int duration;
 
+    public TotemModel[] getTotemModels() {
+        return totemModels;
+    }
 
+    public Requirement[] getRequirements() {
+        return requirements;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public boolean isRightPattern(Location location) {
+        for (TotemModel totemModel : totemModels) {
+            if (totemModel.isPatternSatisfied(location)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public ParticleSetting[] getParticleSettings() {
+        return particleSettings;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public TotemBlock[] getTotemCore() {
+        return totemModels[0].getTotemCore();
+    }
+
+    public static class Builder {
+
+        private final TotemConfig config;
+
+        public Builder(String key) {
+            this.config = new TotemConfig();
+            this.config.key = key;
+        }
+
+        public Builder setTotemModels(TotemModel[] totemModels) {
+            config.totemModels = totemModels;
+            return this;
+        }
+
+        public Builder setParticleSettings(ParticleSetting[] particleSettings) {
+            config.particleSettings = particleSettings;
+            return this;
+        }
+
+        public Builder setRequirements(Requirement[] requirements) {
+            config.requirements = requirements;
+            return this;
+        }
+
+        public Builder setRadius(double radius) {
+            config.radius = radius;
+            return this;
+        }
+
+        public Builder setDuration(int duration) {
+            config.duration = duration;
+            return this;
+        }
+
+        public TotemConfig build() {
+            return config;
+        }
+    }
 }

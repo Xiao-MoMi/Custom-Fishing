@@ -1,0 +1,32 @@
+# Don't change this
+config-version: '26'
+
+messages:
+  prefix: '<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient>'
+  reload: '<white>Újratöltve. Időtartam: <green>{time}ms.'
+  item-not-exist: 'Tétel nem található.'
+  escape: 'A hal lecsúszott a horogról és elmenekült.'
+  give-item: 'Sikeresen adva {player} játékosnak {amount}x {item}.'
+  get-item: 'Sikeresen megszerezve {amount}x {item}.'
+  possible-loots: 'Lehetséges kapások itt: '
+  split-char: ', '
+  competition-not-exist: 'A(z) {id} verseny nem létezik.'
+  no-competition-ongoing: "Nincs folyamatban lévő verseny."
+  stop-competition: 'Leállítottad a jelenlegi versenyt.'
+  end-competition: 'Befejezted a jelenlegi versenyt.'
+  no-score: 'Nincs pontszám'
+  no-player: 'Nincs játékos'
+  no-rank: 'Nincs rang'
+  goal-catch-amount: 'Kifogott halak száma'
+  goal-max-size: 'Legnagyobb kifogott hal'
+  goal-total-size: 'Összes kifogott hal hossza'
+  goal-total-score: 'Kifogott halak összpontszáma'
+  unsafe-modification: "Nem lehet módosítani egy játékos horgász táskáját, ha aktív egy másik szerveren."
+  never-played: "A játékos még nem csatlakozott a szerverhez. Nem lehet módosítani egy nem létező játékos horgász táskáját."
+  data-not-loaded: "<red>Az adatok nem lettek betöltve. Kérjük, csatlakozz újra a szerverhez. Ha a probléma továbbra is fennáll, fordulj a szerveradminisztrátorhoz."
+  open-market-gui: "A piac menü sikeresen meg lett nyitva {player} részére"
+  open-fishing-bag: "A horgász táska sikeresen meg lett nyitva {player} részére"
+  format-day: 'n'
+  format-hour: 'ó'
+  format-minute: 'p'
+  format-second: 'mp'

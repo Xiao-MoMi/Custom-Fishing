@@ -1,15 +1,43 @@
-# it's still unavailable for the moment
 double_loot_fishing_totem:
-  rotate-check: true
-  mirror-check: true
-  core:
-    position: 3,1,2
-  layer:
-    1:
-      - 'AIR ANVIL AIR'
-    2:
-      - 'AIR *_LOG{axis:y}||*_PILLAR{axis:y} AIR'
-    3:
-      - 'AIR CRYING_OBSIDIAN AIR'
-    4:
-      - '*_STAIRS{face:south} OBSERVER{face:west} *_STAIRS{face:north}'
+  radius: 8
+  duration: 300
+  requirements: {}
+  particles:
+    particle_1:
+      type: REDSTONE
+      options:
+        color: 255,255,255
+        scale: 1
+      polar-coordinates-formula:
+        horizontal: '{radius}'
+        vertical: '-0.6'
+      theta:
+        draw-interval: 3
+        range:
+          - 0~359
+      task:
+        period: 4
+        delay: 0
+  effects:
+    double_loot:
+      type: multiple-loot
+      value: 1.0
+  events:
+    activate:
+      broadcast_action:
+        type: message-nearby
+        value:
+          message:
+            - '<#BA55D3>[TotemActivation]</#BA55D3> <#F5FFFA>{player}</#F5FFFA> <#F5F5F5>activated a totem nearby!</#F5F5F5>'
+          range: 32
+  pattern:
+    core: 3,1,2 # layer:3 line:1 index:2 -> CRYING_OBSIDIAN
+    layer:
+      1:
+        - 'AIR ANVIL AIR'
+      2:
+        - 'AIR *_LOG{axis:y}||*_PILLAR{axis:y} AIR'
+      3:
+        - 'AIR CRYING_OBSIDIAN AIR'
+      4:
+        - '*_STAIRS{face:south} OBSERVER{face:west} *_STAIRS{face:north}'

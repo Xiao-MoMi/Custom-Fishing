@@ -25,7 +25,7 @@ public interface Scheduler {
 
     void runTaskSync(Runnable runnable, Location location);
 
-    CancellableTask runTaskSyncTimer(Runnable runnable, Location location, long delay, long period);
+    CancellableTask runTaskSyncTimer(Runnable runnable, Location location, long delayTicks, long periodTicks);
 
     CancellableTask runTaskAsyncLater(Runnable runnable, long delay, TimeUnit timeUnit);
 
@@ -33,7 +33,7 @@ public interface Scheduler {
 
     CancellableTask runTaskSyncLater(Runnable runnable, Location location, long delay, TimeUnit timeUnit);
 
-    CancellableTask runTaskSyncLater(Runnable runnable, Location location, long delay);
+    CancellableTask runTaskSyncLater(Runnable runnable, Location location, long delayTicks);
 
     CancellableTask runTaskAsyncTimer(Runnable runnable, long delay, long period, TimeUnit timeUnit);
 }

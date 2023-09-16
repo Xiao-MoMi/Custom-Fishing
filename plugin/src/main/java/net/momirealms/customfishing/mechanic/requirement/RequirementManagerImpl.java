@@ -41,6 +41,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -141,6 +142,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerLessThanRequirement();
         this.registerNumberEqualRequirement();
         this.registerRegexRequirement();
+        this.registerItemInHandRequirement();
     }
 
     public ConditionalElement getConditionalElements(ConfigurationSection section) {
@@ -887,6 +889,28 @@ public class RequirementManagerImpl implements RequirementManager {
                 if (advanced) triggerActions(actions, condition);
                 return false;
             };
+        });
+    }
+
+    private void registerItemInHandRequirement() {
+        registerRequirement("item-in-hand", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                boolean mainOrOff = section.getString("hand","main").equalsIgnoreCase("main");
+                int amount = section.getInt("amount", 1);
+                List<String> items = ConfigUtils.stringListArgs(section.get("item"));
+                return condition -> {
+                    ItemStack itemStack = mainOrOff ?
+                            condition.getPlayer().getInventory().getItemInMainHand()
+                            : condition.getPlayer().getInventory().getItemInOffHand();
+                    String id = plugin.getItemManager().getAnyItemID(itemStack);
+                    if (items.contains(id) && itemStack.getAmount() >= amount) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at item-in-hand requirement.");
+                return null;
+            }
         });
     }
 

@@ -61,6 +61,7 @@ public class CFConfig {
 
     // detection order for item id
     public static List<String> itemDetectOrder;
+    public static List<String> blockDetectOrder;
 
     // fishing bag
     public static boolean enableFishingBag;
@@ -126,6 +127,7 @@ public class CFConfig {
         keepAliveTime = config.getInt("other-settings.thread-pool-settings.keepAliveTime", 10);
 
         itemDetectOrder = config.getStringList("other-settings.item-detection-order");
+        blockDetectOrder = config.getStringList("other-settings.block-detection-order");
 
         enableFishingBag = config.getBoolean("mechanics.fishing-bag.enable", true);
         bagTitle = config.getString("mechanics.fishing-bag.bag-title");

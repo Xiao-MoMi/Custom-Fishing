@@ -26,6 +26,7 @@ import net.momirealms.customfishing.api.mechanic.block.*;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.block.VanillaBlockImpl;
+import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.*;
 import org.bukkit.block.*;
@@ -251,6 +252,21 @@ public class BlockManagerImpl implements BlockManager, Listener {
         Vector vector = playerLocation.subtract(hookLocation).toVector().multiply((config.getHorizontalVector()) - 1);
         vector = vector.setY((vector.getY() + 0.2) * config.getVerticalVector());
         fallingBlock.setVelocity(vector);
+    }
+
+    @Override
+    public String getAnyBlockID(Block block) {
+        for (String plugin : CFConfig.blockDetectOrder) {
+            BlockLibrary blockLibrary = blockLibraryMap.get(plugin);
+            if (blockLibrary != null) {
+                String id = blockLibrary.getBlockID(block);
+                if (id != null) {
+                    return id;
+                }
+            }
+        }
+        // should not reach this because vanilla library would always work
+        return null;
     }
 
     private void registerDirectional() {

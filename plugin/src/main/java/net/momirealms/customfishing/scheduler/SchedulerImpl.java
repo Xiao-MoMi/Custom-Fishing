@@ -66,8 +66,8 @@ public class SchedulerImpl implements Scheduler {
     }
 
     @Override
-    public CancellableTask runTaskSyncTimer(Runnable runnable, Location location, long delay, long period) {
-        return this.syncScheduler.runTaskSyncTimer(runnable, location, delay, period);
+    public CancellableTask runTaskSyncTimer(Runnable runnable, Location location, long delayTicks, long periodTicks) {
+        return this.syncScheduler.runTaskSyncTimer(runnable, location, delayTicks, periodTicks);
     }
 
     @Override
@@ -83,8 +83,8 @@ public class SchedulerImpl implements Scheduler {
     }
 
     @Override
-    public CancellableTask runTaskSyncLater(Runnable runnable, Location location, long delay) {
-        return this.syncScheduler.runTaskSyncLater(runnable, location, delay);
+    public CancellableTask runTaskSyncLater(Runnable runnable, Location location, long delayTicks) {
+        return this.syncScheduler.runTaskSyncLater(runnable, location, delayTicks);
     }
 
     @Override

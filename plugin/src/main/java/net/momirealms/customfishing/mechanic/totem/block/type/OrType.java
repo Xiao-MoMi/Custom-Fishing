@@ -20,22 +20,33 @@ package net.momirealms.customfishing.mechanic.totem.block.type;
 import org.bukkit.block.Block;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.List;
 
-public class StartWithType implements TypeCondition, Serializable {
+public class OrType implements TypeCondition, Serializable {
 
-    private final String start;
+    private final TypeCondition[] typeConditions;
 
-    public StartWithType(String start) {
-        this.start = start;
+    public OrType(TypeCondition[] typeConditions) {
+        this.typeConditions = typeConditions;
     }
 
     @Override
-    public boolean isMet(Block type) {
-        return type.getType().name().startsWith(start);
+    public boolean isMet(Block block) {
+        for (TypeCondition typeCondition : typeConditions) {
+            if (typeCondition.isMet(block)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public String[] getRawTexts() {
-        return new String[]{start + "*"};
+        HashSet<String> strings = new HashSet<>();
+        for (TypeCondition condition : typeConditions) {
+            strings.addAll(List.of(condition.getRawTexts()));
+        }
+        return strings.toArray(new String[0]);
     }
 }

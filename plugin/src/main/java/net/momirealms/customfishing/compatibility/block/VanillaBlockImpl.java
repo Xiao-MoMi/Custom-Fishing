@@ -20,8 +20,10 @@ package net.momirealms.customfishing.compatibility.block;
 import net.momirealms.customfishing.api.mechanic.block.BlockDataModifier;
 import net.momirealms.customfishing.api.mechanic.block.BlockLibrary;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Locale;
@@ -40,5 +42,10 @@ public class VanillaBlockImpl implements BlockLibrary {
             modifier.apply(player, blockData);
         }
         return blockData;
+    }
+
+    @Override
+    public @Nullable String getBlockID(Block block) {
+        return block.getType().name();
     }
 }

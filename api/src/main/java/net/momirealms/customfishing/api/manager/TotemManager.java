@@ -17,5 +17,9 @@
 
 package net.momirealms.customfishing.api.manager;
 
+import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
+import org.bukkit.Location;
+
 public interface TotemManager {
+    EffectCarrier getTotemEffect(Location location);
 }

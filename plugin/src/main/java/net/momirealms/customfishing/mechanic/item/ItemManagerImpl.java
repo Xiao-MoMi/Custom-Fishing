@@ -67,7 +67,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.plaf.IconUIResource;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;

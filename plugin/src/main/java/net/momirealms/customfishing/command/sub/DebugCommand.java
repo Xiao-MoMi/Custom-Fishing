@@ -12,6 +12,8 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.integration.SeasonInterface;
 import net.momirealms.customfishing.api.manager.AdventureManager;
 import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
+import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
+import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
 
 import java.util.ArrayList;
@@ -96,7 +98,11 @@ public class DebugCommand {
                     boolean inLava = (boolean) arg.getOrDefault("lava fishing", false);
                     fishingPreparation.insertArg("{lava}", String.valueOf(inLava));
                     fishingPreparation.mergeEffect(initialEffect);
-
+                    EffectCarrier totemEffect = CustomFishingPlugin.get().getTotemManager().getTotemEffect(player.getLocation());
+                    if (totemEffect != null)
+                        for (EffectModifier modifier : totemEffect.getEffectModifiers()) {
+                            modifier.modify(initialEffect, fishingPreparation);
+                        }
                     var map = CustomFishingPlugin.get().getFishingManager().getPossibleLootKeysWithWeight(initialEffect, fishingPreparation);
                     List<LootWithWeight> loots = new ArrayList<>();
                     double sum = 0;

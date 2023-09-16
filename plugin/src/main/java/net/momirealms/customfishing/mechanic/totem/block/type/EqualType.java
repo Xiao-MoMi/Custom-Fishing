@@ -33,4 +33,9 @@ public class EqualType implements TypeCondition, Serializable {
     public boolean isMet(Block type) {
         return this.type.equals(type.getType().name());
     }
+
+    @Override
+    public String[] getRawTexts() {
+        return new String[]{type};
+    }
 }

@@ -165,6 +165,9 @@ other-settings:
     - CustomFishing
     - vanilla
 
+  block-detection-order:
+    - vanilla
+
   # Offset characters' unicodes
   # Never edit this unless you know what you are doing
   offset-characters:

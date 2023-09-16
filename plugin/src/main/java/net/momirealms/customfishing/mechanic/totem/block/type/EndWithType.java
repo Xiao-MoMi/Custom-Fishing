@@ -33,4 +33,9 @@ public class EndWithType implements TypeCondition, Serializable {
     public boolean isMet(Block type) {
         return type.getType().name().endsWith(end);
     }
+
+    @Override
+    public String[] getRawTexts() {
+        return new String[]{"*" + end};
+    }
 }

@@ -29,13 +29,13 @@ import net.momirealms.customfishing.api.manager.FishingManager;
 import net.momirealms.customfishing.api.manager.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.GlobalSettings;
 import net.momirealms.customfishing.api.mechanic.TempFishingState;
-import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
+import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
 import net.momirealms.customfishing.api.mechanic.game.BasicGameConfig;
 import net.momirealms.customfishing.api.mechanic.game.GameInstance;
@@ -51,9 +51,7 @@ import net.momirealms.customfishing.util.ItemUtils;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
-import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -253,6 +251,13 @@ public class FishingManagerImpl implements Listener, FishingManager {
         // Merge rod/bait/util effects
         FishingEffect initialEffect = plugin.getEffectManager().getInitialEffect();
         fishingPreparation.mergeEffect(initialEffect);
+
+        // Merge totem effects
+        EffectCarrier totemEffect = plugin.getTotemManager().getTotemEffect(player.getLocation());
+        if (totemEffect != null)
+            for (EffectModifier modifier : totemEffect.getEffectModifiers()) {
+                modifier.modify(initialEffect, fishingPreparation);
+            }
 
         // Call custom event
         RodCastEvent rodCastEvent = new RodCastEvent(event, fishingPreparation, initialEffect);
