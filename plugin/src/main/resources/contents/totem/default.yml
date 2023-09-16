@@ -3,21 +3,141 @@ double_loot_fishing_totem:
   duration: 300
   requirements: {}
   particles:
-    particle_1:
+    particle_01:
       type: REDSTONE
       options:
-        color: 255,255,255
-        scale: 1
+        color: 186,85,211
+        scale: 0.8
       polar-coordinates-formula:
         horizontal: '{radius}'
-        vertical: '-0.6'
+        vertical: '3'
       theta:
-        draw-interval: 3
+        draw-interval: 30
         range:
           - 0~359
       task:
-        period: 4
+        period: 5
         delay: 0
+    particle_02:
+      type: REDSTONE
+      options:
+        color: 148,0,211
+        scale: 1.1
+      polar-coordinates-formula:
+        horizontal: '{radius}'
+        vertical: '3'
+      theta:
+        draw-interval: 30
+        range:
+          - 6~365
+      task:
+        period: 5
+        delay: 1
+    particle_03:
+      type: REDSTONE
+      options:
+        color: 147,112,219
+        scale: 1.5
+      polar-coordinates-formula:
+        horizontal: '{radius}'
+        vertical: '3'
+      theta:
+        draw-interval: 30
+        range:
+          - 12~371
+      task:
+        period: 5
+        delay: 2
+    particle_04:
+      type: REDSTONE
+      options:
+        color: 123,104,238
+        scale: 2
+      polar-coordinates-formula:
+        horizontal: '{radius}'
+        vertical: '3'
+      theta:
+        draw-interval: 30
+        range:
+          - 18~377
+      task:
+        period: 5
+        delay: 3
+    particle_05:
+      type: REDSTONE
+      options:
+        color: 30,144,255
+        scale: 2.5
+      polar-coordinates-formula:
+        horizontal: '{radius}'
+        vertical: '3'
+      theta:
+        draw-interval: 30
+        range:
+          - 24~383
+      task:
+        period: 5
+        delay: 4
+    particle_06:
+      type: DRIPPING_OBSIDIAN_TEAR
+      options:
+        color: 30,144,255
+        scale: 3
+      polar-coordinates-formula:
+        horizontal: '{radius}'
+        vertical: '3'
+      theta:
+        draw-interval: 90
+        range:
+          - 0~359
+      task:
+        period: 40
+        delay: 0
+    particle_07:
+      type: DRIPPING_OBSIDIAN_TEAR
+      options:
+        color: 30,144,255
+        scale: 3
+      polar-coordinates-formula:
+        horizontal: '{radius}'
+        vertical: '3'
+      theta:
+        draw-interval: 90
+        range:
+          - 22.5~382
+      task:
+        period: 40
+        delay: 10
+    particle_08:
+      type: DRIPPING_OBSIDIAN_TEAR
+      options:
+        color: 30,144,255
+        scale: 3
+      polar-coordinates-formula:
+        horizontal: '{radius}'
+        vertical: '3'
+      theta:
+        draw-interval: 90
+        range:
+          - 45~404
+      task:
+        period: 40
+        delay: 20
+    particle_09:
+      type: DRIPPING_OBSIDIAN_TEAR
+      options:
+        color: 30,144,255
+        scale: 3
+      polar-coordinates-formula:
+        horizontal: '{radius}'
+        vertical: '3'
+      theta:
+        draw-interval: 90
+        range:
+          - 67.5~427
+      task:
+        period: 40
+        delay: 20
   effects:
     double_loot:
       type: multiple-loot

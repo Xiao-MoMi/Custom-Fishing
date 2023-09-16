@@ -68,9 +68,6 @@ public class TotemModel implements Serializable {
         this.coreX = this.coreZ;
         this.coreZ = this.model[0][0].length - 1 - tempX;
         this.model = rotate90(model);
-        System.out.println("rotate");
-        System.out.println(coreX);
-        System.out.println(coreZ);
         for (TotemBlock[][][] totemBlocks1 : model) {
             for (TotemBlock[][] totemBlocks2 : totemBlocks1) {
                 for (TotemBlock[] totemBlocks3 : totemBlocks2) {
@@ -86,9 +83,6 @@ public class TotemModel implements Serializable {
     public TotemModel mirrorHorizontally() {
         mirrorHorizontally(model);
         this.coreZ = model[0].length - this.coreZ - 1;
-        System.out.println("mirrorHorizontally");
-        System.out.println(coreX);
-        System.out.println(coreZ);
         for (TotemBlock[][][] totemBlocks1 : model) {
             for (TotemBlock[][] totemBlocks2 : totemBlocks1) {
                 for (TotemBlock[] totemBlocks3 : totemBlocks2) {
@@ -104,9 +98,7 @@ public class TotemModel implements Serializable {
     public TotemModel mirrorVertically() {
         mirrorVertically(model);
         this.coreX = model[0][0].length - this.coreX - 1;
-        System.out.println("mirrorVertically");
-        System.out.println(coreX);
-        System.out.println(coreZ);
+
         for (TotemBlock[][][] totemBlocks1 : model) {
             for (TotemBlock[][] totemBlocks2 : totemBlocks1) {
                 for (TotemBlock[] totemBlocks3 : totemBlocks2) {
