@@ -15,15 +15,18 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.mechanic.totem.block;
+package net.momirealms.customfishing.mechanic.totem.block.property;
 
 import org.bukkit.Axis;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Orientable;
 
-public class AxisImpl implements TotemBlockProperty {
+import java.io.Serializable;
+import java.util.Locale;
 
-    private final Axis axis;
+public class AxisImpl implements TotemBlockProperty, Serializable {
+
+    private Axis axis;
 
     public AxisImpl(Axis axis) {
         this.axis = axis;
@@ -36,13 +39,12 @@ public class AxisImpl implements TotemBlockProperty {
 
     @Override
     public TotemBlockProperty rotate90() {
-        if (this.axis == Axis.Y) {
-            return this;
-        } else if (this.axis == Axis.X) {
-            return new AxisImpl(Axis.Z);
-        } else {
-            return new AxisImpl(Axis.X);
+        if (this.axis == Axis.X) {
+            axis = Axis.Z;
+        } else if (this.axis == Axis.Z) {
+            axis = Axis.X;
         }
+        return this;
     }
 
     @Override
@@ -51,5 +53,10 @@ public class AxisImpl implements TotemBlockProperty {
             return orientable.getAxis().equals(this.axis);
         }
         return false;
+    }
+
+    @Override
+    public String getRawText() {
+        return "axis=" + axis.name().toLowerCase(Locale.ENGLISH);
     }
 }

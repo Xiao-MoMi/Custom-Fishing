@@ -19,26 +19,17 @@ package net.momirealms.customfishing.mechanic.totem.block.type;
 
 import org.bukkit.block.Block;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public interface TypeCondition  {
 
     boolean isMet(Block block);
 
-    String[] getRawTexts();
+    String getRawText();
 
     static TypeCondition getTypeCondition(String raw) {
         if (raw.startsWith("*")) {
             return new EndWithType(raw.substring(1));
         } else if (raw.endsWith("*")) {
             return new StartWithType(raw.substring(0, raw.length() -1));
-        } else if (raw.contains("||")) {
-            String[] split = raw.split("\\|\\|");
-            List<TypeCondition> typeConditionList = new ArrayList<>();
-            for (String element : split)
-                typeConditionList.add(getTypeCondition(element));
-            return new OrType(typeConditionList.toArray(new TypeCondition[0]));
         } else {
             return new EqualType(raw);
         }

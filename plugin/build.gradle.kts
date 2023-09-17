@@ -43,6 +43,7 @@ dependencies {
     compileOnly("pers.neige.neigeitems:NeigeItems:1.15.9")
     compileOnly("com.github.Zrips:Jobs:4.17.2")
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 
     // local jars
     compileOnly(files("libs/AdvancedEnchantments-api.jar"))

@@ -15,16 +15,19 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.mechanic.totem.block;
+package net.momirealms.customfishing.mechanic.totem.block.property;
 
 import org.bukkit.Axis;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
 
-public class FaceImpl implements TotemBlockProperty {
+import java.io.Serializable;
+import java.util.Locale;
 
-    private final BlockFace blockFace;
+public class FaceImpl implements TotemBlockProperty, Serializable {
+
+    private BlockFace blockFace;
 
     public FaceImpl(BlockFace blockFace) {
         this.blockFace = blockFace;
@@ -54,20 +57,13 @@ public class FaceImpl implements TotemBlockProperty {
             case UP, DOWN -> {
                 return this;
             }
-            case EAST -> {
-                return new FaceImpl(BlockFace.SOUTH);
-            }
-            case SOUTH -> {
-                return new FaceImpl(BlockFace.WEST);
-            }
-            case WEST -> {
-                return new FaceImpl(BlockFace.NORTH);
-            }
-            case NORTH -> {
-                return new FaceImpl(BlockFace.EAST);
-            }
+            case EAST -> blockFace = BlockFace.SOUTH;
+            case SOUTH -> blockFace = BlockFace.WEST;
+            case WEST -> blockFace = BlockFace.NORTH;
+            case NORTH -> blockFace = BlockFace.EAST;
             default -> throw new IllegalArgumentException("Unsupported block facing: " + blockFace);
         }
+        return this;
     }
 
     @Override
@@ -76,5 +72,10 @@ public class FaceImpl implements TotemBlockProperty {
             return directional.getFacing().equals(this.blockFace);
         }
         return false;
+    }
+
+    @Override
+    public String getRawText() {
+        return "face=" + blockFace.name().toLowerCase(Locale.ENGLISH);
     }
 }

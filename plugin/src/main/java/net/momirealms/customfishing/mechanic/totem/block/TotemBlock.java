@@ -17,11 +17,13 @@
 
 package net.momirealms.customfishing.mechanic.totem.block;
 
+import net.momirealms.customfishing.mechanic.totem.block.property.TotemBlockProperty;
 import net.momirealms.customfishing.mechanic.totem.block.type.TypeCondition;
 import org.bukkit.Axis;
 import org.bukkit.block.Block;
 
 import java.io.Serializable;
+import java.util.StringJoiner;
 
 public class TotemBlock implements Serializable {
 
@@ -63,5 +65,14 @@ public class TotemBlock implements Serializable {
         for (TotemBlockProperty property : properties) {
             property.mirror(axis);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringJoiner stringJoiner = new StringJoiner(";");
+        for (TotemBlockProperty property : properties) {
+            stringJoiner.add(property.getRawText());
+        }
+        return typeCondition.getRawText() + "{" + stringJoiner + "}";
     }
 }

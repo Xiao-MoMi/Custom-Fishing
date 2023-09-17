@@ -32,6 +32,7 @@ import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.util.LogUtils;
+import net.momirealms.customfishing.compatibility.VaultHook;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.mechanic.item.ItemManagerImpl;
 import net.momirealms.customfishing.setting.CFLocale;
@@ -40,6 +41,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -90,6 +92,7 @@ public class ActionManagerImpl implements ActionManager {
         this.registerItemAmountAction();
         this.registerItemDurabilityAction();
         this.registerGiveItemAction();
+        this.registerMoneyAction();
     }
 
     public void load() {
@@ -199,22 +202,23 @@ public class ActionManagerImpl implements ActionManager {
                 return condition -> {
                     if (Math.random() > chance) return;
                     Player owner = condition.getPlayer();
-
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        double distance = LocationUtils.getDistance(player.getLocation(), owner.getLocation());
-                        if (distance <= range) {
-                            condition.insertArg("{near}", player.getName());
-                            List<String> replaced = PlaceholderManagerImpl.getInstance().parse(
-                                    owner,
-                                    msg,
-                                    condition.getArgs()
-                            );
-                            for (String text : replaced) {
-                                AdventureManagerImpl.getInstance().sendPlayerMessage(player, text);
+                    plugin.getScheduler().runTaskSync(() -> {
+                        for (Entity player : condition.getLocation().getWorld().getNearbyEntities(condition.getLocation(), range, range, range, entity -> entity instanceof Player)) {
+                            double distance = LocationUtils.getDistance(player.getLocation(), condition.getLocation());
+                            if (distance <= range) {
+                                condition.insertArg("{near}", player.getName());
+                                List<String> replaced = PlaceholderManagerImpl.getInstance().parse(
+                                        owner,
+                                        msg,
+                                        condition.getArgs()
+                                );
+                                for (String text : replaced) {
+                                    AdventureManagerImpl.getInstance().sendPlayerMessage((Player) player, text);
+                                }
+                                condition.delArg("{near}");
                             }
-                            condition.delArg("{near}");
                         }
-                    }
+                    }, condition.getLocation());
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: message-nearby");
@@ -268,21 +272,23 @@ public class ActionManagerImpl implements ActionManager {
                 return condition -> {
                     if (Math.random() > chance) return;
                     Player owner = condition.getPlayer();
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        double distance = LocationUtils.getDistance(player.getLocation(), owner.getLocation());
-                        if (distance <= range) {
-                            condition.insertArg("{near}", player.getName());
-                            List<String> replaced = PlaceholderManagerImpl.getInstance().parse(
-                                    owner,
-                                    cmd,
-                                    condition.getArgs()
-                            );
-                            for (String text : replaced) {
-                                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), text);
+                    plugin.getScheduler().runTaskSync(() -> {
+                        for (Entity player : condition.getLocation().getWorld().getNearbyEntities(condition.getLocation(), range, range, range, entity -> entity instanceof Player)) {
+                            double distance = LocationUtils.getDistance(player.getLocation(), condition.getLocation());
+                            if (distance <= range) {
+                                condition.insertArg("{near}", player.getName());
+                                List<String> replaced = PlaceholderManagerImpl.getInstance().parse(
+                                        owner,
+                                        cmd,
+                                        condition.getArgs()
+                                );
+                                for (String text : replaced) {
+                                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), text);
+                                }
+                                condition.delArg("{near}");
                             }
-                            condition.delArg("{near}");
                         }
-                    }
+                    }, condition.getLocation());
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: command-nearby");
@@ -315,6 +321,35 @@ public class ActionManagerImpl implements ActionManager {
                 random = PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), random, condition.getArgs());
                 AdventureManagerImpl.getInstance().sendActionbar(condition.getPlayer(), random);
             };
+        });
+        registerAction("actionbar-nearby", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                String actionbar = section.getString("actionbar");
+                int range = section.getInt("range");
+                return condition -> {
+                    if (Math.random() > chance) return;
+                    Player owner = condition.getPlayer();
+                    plugin.getScheduler().runTaskSync(() -> {
+                        for (Entity player : condition.getLocation().getWorld().getNearbyEntities(condition.getLocation(), range, range, range, entity -> entity instanceof Player)) {
+                            double distance = LocationUtils.getDistance(player.getLocation(), condition.getLocation());
+                            if (distance <= range) {
+                                condition.insertArg("{near}", player.getName());
+                                String replaced = PlaceholderManagerImpl.getInstance().parse(
+                                        owner,
+                                        actionbar,
+                                        condition.getArgs()
+                                );
+                                AdventureManagerImpl.getInstance().sendActionbar((Player) player, replaced);
+                                condition.delArg("{near}");
+                            }
+                        }
+                        }, condition.getLocation()
+                    );
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: command-nearby");
+                return null;
+            }
         });
     }
 
@@ -367,21 +402,30 @@ public class ActionManagerImpl implements ActionManager {
             if (args instanceof ConfigurationSection section) {
                 String text = section.getString("text", "");
                 int duration = section.getInt("duration", 20);
-                boolean position = section.getString("position", "hook").equals("hook");
+                boolean position = section.getString("position", "other").equals("other");
                 double x = section.getDouble("x");
                 double y = section.getDouble("y");
                 double z = section.getDouble("z");
+                int range = section.getInt("range", 16);
                 return condition -> {
                     if (Math.random() > chance) return;
-                    Player player = condition.getPlayer();
-                    Location location = position ? condition.getLocation() : player.getLocation();
-                    ArmorStandUtils.sendHologram(
-                            condition.getPlayer(),
-                            location.clone().add(x, y, z),
-                            AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                    PlaceholderManagerImpl.getInstance().parse(player, text, condition.getArgs())
-                            ),
-                            duration
+                    Player owner = condition.getPlayer();
+                    Location location = position ? condition.getLocation() : owner.getLocation();
+                    plugin.getScheduler().runTaskSync(() -> {
+                            for (Entity player : condition.getLocation().getWorld().getNearbyEntities(condition.getLocation(), range, range, range, entity -> entity instanceof Player)) {
+                                double distance = LocationUtils.getDistance(player.getLocation(), condition.getLocation());
+                                if (distance <= range) {
+                                    ArmorStandUtils.sendHologram(
+                                            (Player) player,
+                                            location.clone().add(x, y, z),
+                                            AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                                                    PlaceholderManagerImpl.getInstance().parse(owner, text, condition.getArgs())
+                                            ),
+                                            duration
+                                    );
+                                }
+                            }
+                        }, condition.getLocation()
                     );
                 };
             } else {
@@ -494,6 +538,23 @@ public class ActionManagerImpl implements ActionManager {
         });
     }
 
+    private void registerMoneyAction() {
+        registerAction("give-money", (args, chance) -> {
+            double money = ConfigUtils.getDoubleValue(args);
+            return condition -> {
+                if (Math.random() > chance) return;
+                VaultHook.getEconomy().depositPlayer(condition.getPlayer(), money);
+            };
+        });
+        registerAction("take-money", (args, chance) -> {
+            double money = ConfigUtils.getDoubleValue(args);
+            return condition -> {
+                if (Math.random() > chance) return;
+                VaultHook.getEconomy().withdrawPlayer(condition.getPlayer(), money);
+            };
+        });
+    }
+
     private void registerDelayedAction() {
         registerAction("delay", (args, chance) -> {
             List<Action> actions = new ArrayList<>();
@@ -541,8 +602,44 @@ public class ActionManagerImpl implements ActionManager {
                             fadeOut * 50
                     );
                 };
+            } else {
+                LogUtils.warn("Illegal value format found at action: title");
+                return null;
             }
-            return null;
+        });
+        registerAction("title-nearby", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                String title = section.getString("title");
+                String subtitle = section.getString("subtitle");
+                int fadeIn = section.getInt("fade-in", 20);
+                int stay = section.getInt("stay", 30);
+                int fadeOut = section.getInt("fade-out", 10);
+                int range = section.getInt("range", 32);
+                return condition -> {
+                    if (Math.random() > chance) return;
+                    plugin.getScheduler().runTaskSync(() -> {
+                            for (Entity player : condition.getLocation().getWorld().getNearbyEntities(condition.getLocation(), range, range, range, entity -> entity instanceof Player)) {
+                                double distance = LocationUtils.getDistance(player.getLocation(), condition.getLocation());
+                                if (distance <= range) {
+                                    condition.insertArg("{near}", player.getName());
+                                    AdventureManagerImpl.getInstance().sendTitle(
+                                            condition.getPlayer(),
+                                            PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), title, condition.getArgs()),
+                                            PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), subtitle, condition.getArgs()),
+                                            fadeIn * 50,
+                                            stay * 50,
+                                            fadeOut * 50
+                                    );
+                                    condition.delArg("{near}");
+                                }
+                            }
+                        }, condition.getLocation()
+                    );
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: title-nearby");
+                return null;
+            }
         });
         registerAction("random-title", (args, chance) -> {
             if (args instanceof ConfigurationSection section) {
@@ -562,8 +659,10 @@ public class ActionManagerImpl implements ActionManager {
                             fadeOut * 50
                     );
                 };
+            } else {
+                LogUtils.warn("Illegal value format found at action: random-title");
+                return null;
             }
-            return null;
         });
     }
 

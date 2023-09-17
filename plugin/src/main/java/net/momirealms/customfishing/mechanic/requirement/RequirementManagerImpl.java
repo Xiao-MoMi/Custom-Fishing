@@ -30,6 +30,7 @@ import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementExpansion;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementFactory;
 import net.momirealms.customfishing.api.util.LogUtils;
+import net.momirealms.customfishing.compatibility.VaultHook;
 import net.momirealms.customfishing.compatibility.papi.ParseUtils;
 import net.momirealms.customfishing.util.ClassUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
@@ -143,6 +144,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerNumberEqualRequirement();
         this.registerRegexRequirement();
         this.registerItemInHandRequirement();
+        this.registerMoneyRequirement();
     }
 
     public ConditionalElement getConditionalElements(ConfigurationSection section) {
@@ -458,6 +460,19 @@ public class RequirementManagerImpl implements RequirementManager {
             return condition -> {
                 int current = condition.getPlayer().getLevel();
                 if (current >= level)
+                    return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+    }
+
+    private void registerMoneyRequirement() {
+        registerRequirement("money", (args, actions, advanced) -> {
+            double money = ConfigUtils.getDoubleValue(args);
+            return condition -> {
+                double current = VaultHook.getEconomy().getBalance(condition.getPlayer());
+                if (current >= money)
                     return true;
                 if (advanced) triggerActions(actions, condition);
                 return false;

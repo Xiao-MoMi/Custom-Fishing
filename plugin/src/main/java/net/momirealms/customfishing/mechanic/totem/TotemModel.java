@@ -23,6 +23,8 @@ import org.bukkit.Axis;
 import org.bukkit.Location;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.StringJoiner;
 
 public class TotemModel implements Serializable {
 
@@ -56,6 +58,26 @@ public class TotemModel implements Serializable {
 
     public TotemBlock[][][][] getModel() {
         return model;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int h = 0; h < model.length; h++) {
+            stringBuilder.append("layer: ").append(h + 1).append("\n");
+            TotemBlock[][][] totemBlocks1 = model[h];
+            for (TotemBlock[][] totemBlocks2 : totemBlocks1) {
+                for (TotemBlock[] totemBlocks3 : totemBlocks2) {
+                    StringJoiner stringJoiner = new StringJoiner("||");
+                    for (TotemBlock totemBlock : totemBlocks3) {
+                        stringJoiner.add(totemBlock.toString());
+                    }
+                    stringBuilder.append(stringJoiner).append("\t");
+                }
+                stringBuilder.append("\n");
+            }
+        }
+        return stringBuilder.toString();
     }
 
     @Override
@@ -139,7 +161,6 @@ public class TotemModel implements Serializable {
         int height = matrix.length;
         int rows = matrix[0].length;
         int cols = matrix[0][0].length;
-
         TotemBlock[][][][] rotated = new TotemBlock[height][cols][rows][];
         for (int h = 0; h < height; h++) {
             for (int r = 0; r < rows; r++) {

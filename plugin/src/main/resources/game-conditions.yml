@@ -44,8 +44,6 @@ global-group:
             - rainbow_7:+1
         ocean_fish_game:
           conditions:
-            group:
-              - ocean
             biome:
               - minecraft:ocean
               - minecraft:deep_ocean
@@ -78,8 +76,16 @@ global-group:
                   - tension_game_hard:+7
         river_fish_game:
           conditions:
-            group:
-              - river
+            '!biome':
+              - minecraft:ocean
+              - minecraft:deep_ocean
+              - minecraft:cold_ocean
+              - minecraft:deep_cold_ocean
+              - minecraft:frozen_ocean
+              - minecraft:deep_frozen_ocean
+              - minecraft:lukewarm_ocean
+              - minecraft:deep_lukewarm_ocean
+              - minecraft:warm_ocean
           list:
             - accurate_click_bar_1_easy:+15
             - accurate_click_bar_1_normal:+5

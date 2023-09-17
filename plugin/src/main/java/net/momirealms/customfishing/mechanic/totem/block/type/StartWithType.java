@@ -35,7 +35,7 @@ public class StartWithType implements TypeCondition, Serializable {
     }
 
     @Override
-    public String[] getRawTexts() {
-        return new String[]{start + "*"};
+    public String getRawText() {
+        return start + "*";
     }
 }

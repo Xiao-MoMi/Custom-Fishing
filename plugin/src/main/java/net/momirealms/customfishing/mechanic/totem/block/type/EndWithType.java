@@ -35,7 +35,7 @@ public class EndWithType implements TypeCondition, Serializable {
     }
 
     @Override
-    public String[] getRawTexts() {
-        return new String[]{"*" + end};
+    public String getRawText() {
+        return "*" + end;
     }
 }

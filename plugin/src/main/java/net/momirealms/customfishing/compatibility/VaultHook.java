@@ -15,17 +15,26 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.mechanic.totem.block;
+package net.momirealms.customfishing.compatibility;
 
-import org.bukkit.Axis;
-import org.bukkit.block.Block;
+import net.milkbowl.vault.economy.Economy;
+import net.momirealms.customfishing.api.CustomFishingPlugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
-public interface TotemBlockProperty {
+public class VaultHook {
 
+    private static Economy economy;
 
-    TotemBlockProperty mirror(Axis axis);
+    public static boolean initialize() {
+        RegisteredServiceProvider<Economy> rsp = CustomFishingPlugin.getInstance().getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        economy = rsp.getProvider();
+        return true;
+    }
 
-    TotemBlockProperty rotate90();
-
-    boolean isPropertyMet(Block block);
+    public static Economy getEconomy() {
+        return economy;
+    }
 }

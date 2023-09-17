@@ -126,6 +126,9 @@ public class IntegrationManagerImpl implements IntegrationManager {
         } else if (plugin.isHookedPluginEnabled("CustomCrops")) {
             this.seasonInterface = new CustomCropsSeasonImpl();
         }
+        if (plugin.isHookedPluginEnabled("Vault")) {
+            VaultHook.initialize();
+        }
     }
 
     @Override

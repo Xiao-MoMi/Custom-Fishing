@@ -25,10 +25,11 @@ import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
-import net.momirealms.customfishing.mechanic.totem.block.AxisImpl;
-import net.momirealms.customfishing.mechanic.totem.block.FaceImpl;
+import net.momirealms.customfishing.api.scheduler.CancellableTask;
+import net.momirealms.customfishing.mechanic.totem.block.property.AxisImpl;
+import net.momirealms.customfishing.mechanic.totem.block.property.FaceImpl;
 import net.momirealms.customfishing.mechanic.totem.block.TotemBlock;
-import net.momirealms.customfishing.mechanic.totem.block.TotemBlockProperty;
+import net.momirealms.customfishing.mechanic.totem.block.property.TotemBlockProperty;
 import net.momirealms.customfishing.mechanic.totem.block.type.TypeCondition;
 import net.momirealms.customfishing.mechanic.totem.particle.DustParticleSetting;
 import net.momirealms.customfishing.mechanic.totem.particle.ParticleSetting;
@@ -58,6 +59,7 @@ public class TotemManagerImpl implements TotemManager, Listener {
     private final HashMap<String, List<TotemConfig>> totemConfigMap;
     private final List<String> allMaterials;
     private final ConcurrentHashMap<SimpleLocation, ActivatedTotem> activatedTotems;
+    private CancellableTask timerCheckTask;
 
     public TotemManagerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;
@@ -69,6 +71,21 @@ public class TotemManagerImpl implements TotemManager, Listener {
     public void load() {
         this.loadConfig();
         Bukkit.getPluginManager().registerEvents(this, plugin);
+        this.timerCheckTask = plugin.getScheduler().runTaskAsyncTimer(() -> {
+            long time = System.currentTimeMillis();
+            ArrayList<SimpleLocation> removed = new ArrayList<>();
+            for (Map.Entry<SimpleLocation, ActivatedTotem> entry : activatedTotems.entrySet()) {
+                if (time > entry.getValue().getExpireTime()) {
+                    removed.add(entry.getKey());
+                    entry.getValue().cancel();
+                } else {
+                    entry.getValue().doTimerAction();
+                }
+            }
+            for (SimpleLocation simpleLocation : removed) {
+                activatedTotems.remove(simpleLocation);
+            }
+        }, 1, 1, TimeUnit.SECONDS);
     }
 
     public void unload() {
@@ -78,6 +95,8 @@ public class TotemManagerImpl implements TotemManager, Listener {
         }
         activatedTotems.clear();
         HandlerList.unregisterAll(this);
+        if (this.timerCheckTask != null && !this.timerCheckTask.isCancelled())
+            this.timerCheckTask.cancel();
     }
 
     public void disable() {
@@ -89,7 +108,7 @@ public class TotemManagerImpl implements TotemManager, Listener {
     public EffectCarrier getTotemEffect(Location location) {
         for (ActivatedTotem activatedTotem : activatedTotems.values()) {
             if (LocationUtils.getDistance(activatedTotem.getCoreLocation(), location) < activatedTotem.getTotemConfig().getRadius()) {
-                return plugin.getEffectManager().getEffect("totem", activatedTotem.getTotemConfig().getKey());
+                return activatedTotem.getEffectCarrier();
             }
         }
         return null;
@@ -151,11 +170,6 @@ public class TotemManagerImpl implements TotemManager, Listener {
         if (previous != null) {
             previous.cancel();
         }
-
-        plugin.getScheduler().runTaskAsyncLater(() -> {
-            ActivatedTotem activated = this.activatedTotems.remove(simpleLocation);
-            if (activated != null) activated.cancel();
-        }, config.getDuration(), TimeUnit.SECONDS);
     }
 
     @SuppressWarnings("DuplicatedCode")
@@ -197,19 +211,17 @@ public class TotemManagerImpl implements TotemManager, Listener {
 
                 HashSet<String> coreMaterials = new HashSet<>();
                 for (TotemBlock totemBlock : totemConfig.getTotemCore()) {
-                    for (String text : totemBlock.getTypeCondition().getRawTexts()) {
-                        if (text.startsWith("*")) {
-                            String sub = text.substring(1);
-                            coreMaterials.addAll(allMaterials.stream().filter(it -> it.endsWith(sub)).toList());
-                        } else if (text.endsWith("*")) {
-                            String sub = text.substring(0, text.length() - 1);
-                            coreMaterials.addAll(allMaterials.stream().filter(it -> it.startsWith(sub)).toList());
-                        } else {
-                            coreMaterials.add(text);
-                        }
+                    String text = totemBlock.getTypeCondition().getRawText();
+                    if (text.startsWith("*")) {
+                        String sub = text.substring(1);
+                        coreMaterials.addAll(allMaterials.stream().filter(it -> it.endsWith(sub)).toList());
+                    } else if (text.endsWith("*")) {
+                        String sub = text.substring(0, text.length() - 1);
+                        coreMaterials.addAll(allMaterials.stream().filter(it -> it.startsWith(sub)).toList());
+                    } else {
+                        coreMaterials.add(text);
                     }
                 }
-
                 for (String material : coreMaterials) {
                     putTotemConfigToMap(material, totemConfig);
                 }
@@ -319,6 +331,9 @@ public class TotemManagerImpl implements TotemManager, Listener {
                 modelList.add(originalModel.mirrorHorizontally());
             }
         }
+        for (TotemModel totemModel : modelList) {
+            System.out.println(totemModel.toString());
+        }
         return modelList.toArray(new TotemModel[0]);
     }
 
@@ -327,11 +342,14 @@ public class TotemManagerImpl implements TotemManager, Listener {
         ConfigurationSection layerSection = section.getConfigurationSection("layer");
         List<TotemBlock[][][]> totemBlocksList = new ArrayList<>();
         if (layerSection != null) {
-            for (Map.Entry<String, Object> entry : layerSection.getValues(false).entrySet()) {
+            var set = layerSection.getValues(false).entrySet();
+            TotemBlock[][][][] totemBlocks = new TotemBlock[set.size()][][][];
+            for (Map.Entry<String, Object> entry : set) {
                 if (entry.getValue() instanceof List<?> list) {
-                    totemBlocksList.add(parseLayer((List<String>) list));
+                    totemBlocks[Integer.parseInt(entry.getKey())-1] = parseLayer((List<String>) list);
                 }
             }
+            totemBlocksList.addAll(List.of(totemBlocks));
         }
 
         String[] core = section.getString("core","1,1,1").split(",");
@@ -354,7 +372,7 @@ public class TotemManagerImpl implements TotemManager, Listener {
 
     public TotemBlock[][] parseSingleLine(String line) {
         List<TotemBlock[]> totemBlocksList = new ArrayList<>();
-        String[] splits = line.split("\\s");
+        String[] splits = line.split("\\s+");
         for (String split : splits) {
             totemBlocksList.add(parseSingleElement(split));
         }
@@ -371,12 +389,16 @@ public class TotemManagerImpl implements TotemManager, Listener {
                 index = block.length();
             } else {
                 String propertyStr = block.substring(index+1, block.length()-1);
+                System.out.println(propertyStr);
                 String[] properties = propertyStr.split(";");
                 for (String property : properties) {
+                    System.out.println(property);
                     String[] split = property.split("=");
-                    if (split.length <= 2) continue;
+                    if (split.length < 2) continue;
                     String key = split[0];
                     String value = split[1];
+                    System.out.println(key);
+                    System.out.println(value);
                     switch (key) {
                         case "face" -> {
                             BlockFace blockFace = BlockFace.valueOf(value.toUpperCase(Locale.ENGLISH));

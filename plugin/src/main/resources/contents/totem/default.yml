@@ -1,7 +1,72 @@
-double_loot_fishing_totem:
+double_loot_totem:
   radius: 8
   duration: 300
-  requirements: {}
+  pattern:
+    core: 3,1,2 # layer:3 line:1 index:2 -> CRYING_OBSIDIAN
+    layer:
+      4:
+        - '*_STAIRS{face=east} OBSERVER{face=south} *_STAIRS{face=west}'
+      3:
+        - 'AIR CRYING_OBSIDIAN AIR'
+      2:
+        - 'AIR *_LOG{axis=y}||*_PILLAR{axis=y} AIR'
+      1:
+        - 'AIR ANVIL AIR'
+  effects:
+    double_loot:
+      type: multiple-loot
+      value: 1.0
+  requirements:
+    requirement_1:
+      type: item-in-hand
+      value:
+        hand: main
+        item: NAUTILUS_SHELL
+        amount: 1
+      not-met-actions:
+        action_1:
+          type: message
+          value:
+            - '<#BA55D3>[TotemActivation]</#BA55D3> <#F5FFFA>Hold a nautilus shell in main hand to activate the totem.'
+  events:
+    timer:
+      actionbar_action:
+        type: actionbar-nearby
+        value:
+          actionbar: '<#BA55D3>[Double Loot Totem]</#BA55D3> Time Left: {time_left} seconds'
+          range: 16
+      hologram_action_1:
+        type: hologram
+        value:
+          duration: 20
+          text: '<#BA55D3>[Double Loot Totem]</#BA55D3>'
+          position: other
+          range: 16
+          y: 3.3
+          x: 0
+          z: 0
+      hologram_action_2:
+        type: hologram
+        value:
+          duration: 20
+          text: 'Time Left: {time_left} seconds'
+          position: other
+          range: 16
+          y: 2.8
+          x: 0
+          z: 0
+    activate:
+      remove_item_action:
+        type: item-amount
+        value:
+          hand: main
+          amount: -1
+      broadcast_action:
+        type: message-nearby
+        value:
+          message:
+            - '<#BA55D3>[TotemActivation]</#BA55D3> <#F5FFFA>{player}</#F5FFFA> <#F5F5F5>activated a totem nearby!</#F5F5F5>'
+          range: 32
   particles:
     particle_01:
       type: REDSTONE
@@ -138,26 +203,97 @@ double_loot_fishing_totem:
       task:
         period: 40
         delay: 20
+golden_star_totem:
+  radius: 10
+  duration: 120
+  pattern:
+    core: 4,2,2 # layer:4 line:2 index:2 -> DAYLIGHT_DETECTOR
+    layer:
+      4:
+        - 'AIR        AIR        AIR'
+        - 'AIR DAYLIGHT_DETECTOR AIR'
+        - 'AIR        AIR        AIR'
+      3:
+        - 'AIR      AIR      AIR'
+        - 'AIR LIGHTNING_ROD AIR'
+        - 'AIR      AIR      AIR'
+      2:
+        - 'AIR    AIR     AIR'
+        - 'AIR GOLD_BLOCK AIR'
+        - 'AIR    AIR     AIR'
+      1:
+        - 'AIR        GOLD_BLOCK        AIR'
+        - 'GOLD_BLOCK GOLD_BLOCK GOLD_BLOCK'
+        - 'AIR        GOLD_BLOCK        AIR'
+  particles:
+    particle_01:
+      type: REDSTONE
+      options:
+        color: 255,215,0
+        scale: 3
+      polar-coordinates-formula:
+        horizontal: '{radius} + sin({theta} * 5) * 2.5'
+        vertical: '-2.5'
+      theta:
+        draw-interval: 5
+        range:
+          - 0~360
+      task:
+        period: 5
+        delay: 0
   effects:
-    double_loot:
-      type: multiple-loot
-      value: 1.0
+    golden_weight_increase:
+      type: group-mod
+      value:
+        - golden_star:+15
+  requirements:
+    requirement_1:
+      type: item-in-hand
+      value:
+        hand: main
+        item: GOLD_INGOT
+        amount: 1
+      not-met-actions:
+        action_1:
+          type: message
+          value:
+            - '<#BA55D3>[TotemActivation]</#BA55D3> <#F5FFFA>Hold a gold ingot in main hand to activate the totem.'
   events:
+    timer:
+      actionbar_action:
+        type: actionbar-nearby
+        value:
+          actionbar: '<#FFFF00>[Golden Star Totem]</#FFFF00> Time Left: {time_left} seconds'
+          range: 16
+      hologram_action_1:
+        type: hologram
+        value:
+          duration: 20
+          text: '<#FFFF00>[Golden Star Totem]</#FFFF00>'
+          position: other
+          range: 16
+          y: 1
+          x: 0
+          z: 0
+      hologram_action_2:
+        type: hologram
+        value:
+          duration: 20
+          text: 'Time Left: {time_left} seconds'
+          position: other
+          range: 16
+          y: 0.5
+          x: 0
+          z: 0
     activate:
+      remove_item_action:
+        type: item-amount
+        value:
+          hand: main
+          amount: -1
       broadcast_action:
         type: message-nearby
         value:
           message:
-            - '<#BA55D3>[TotemActivation]</#BA55D3> <#F5FFFA>{player}</#F5FFFA> <#F5F5F5>activated a totem nearby!</#F5F5F5>'
+            - '<#FFFF00>[TotemActivation]</#FFFF00> <#F5FFFA>{player}</#F5FFFA> <#F5F5F5>activated a totem nearby!</#F5F5F5>'
           range: 32
-  pattern:
-    core: 3,1,2 # layer:3 line:1 index:2 -> CRYING_OBSIDIAN
-    layer:
-      1:
-        - 'AIR ANVIL AIR'
-      2:
-        - 'AIR *_LOG{axis:y}||*_PILLAR{axis:y} AIR'
-      3:
-        - 'AIR CRYING_OBSIDIAN AIR'
-      4:
-        - '*_STAIRS{face:south} OBSERVER{face:west} *_STAIRS{face:north}'
