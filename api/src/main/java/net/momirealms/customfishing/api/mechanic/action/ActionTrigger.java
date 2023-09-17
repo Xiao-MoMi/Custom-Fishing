@@ -26,5 +26,7 @@ public enum ActionTrigger {
     CAST,
     BITE,
     LAND,
-    ACTIVATE, TIMER, INTERACT
+    ACTIVATE,
+    TIMER,
+    INTERACT
 }

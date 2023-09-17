@@ -51,6 +51,7 @@ import net.momirealms.customfishing.storage.StorageManagerImpl;
 import net.momirealms.customfishing.version.VersionManagerImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -130,6 +131,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         ((TotemManagerImpl) this.totemManager).disable();
         this.coolDownManager.disable();
         this.commandManager.unload();
+        HandlerList.unregisterAll(this);
     }
 
     @Override

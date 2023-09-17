@@ -5,7 +5,6 @@ messages:
   prefix: '<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient>'
   reload: '<white>Reloaded. Took <green>{time}ms.'
   item-not-exist: 'Item not found.'
-  escape: 'The fish slipped off the hook and escaped.'
   give-item: 'Successfully given player {player} {amount}x {item}.'
   get-item: 'Successfully got {amount}x {item}.'
   possible-loots: 'Possible loots here: '

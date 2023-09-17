@@ -25,6 +25,7 @@ import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class FishingResultEvent extends PlayerEvent implements Cancellable {
 
@@ -71,6 +72,10 @@ public class FishingResultEvent extends PlayerEvent implements Cancellable {
 
     public Loot getLoot() {
         return loot;
+    }
+
+    public int getAmount() {
+        return Integer.parseInt(Optional.ofNullable(getArg("{amount}")).orElse("1"));
     }
 
     public enum Result {

@@ -1,0 +1,31 @@
+# Don't change this
+config-version: '26'
+
+messages:
+  prefix: '<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient>'
+  reload: '<white>重载完成. 耗时 <green>{time}ms.'
+  item-not-exist: '物品不存在.'
+  give-item: '给予玩家 {player} {amount}x {item}.'
+  get-item: '获得 {amount}x {item}.'
+  possible-loots: '可能的战利品: '
+  split-char: ', '
+  competition-not-exist: '比赛 {id} 不存在.'
+  no-competition-ongoing: "没有正在进行的比赛."
+  stop-competition: '停止了当前的比赛.'
+  end-competition: '结束了当前的比赛.'
+  no-score: '无比分'
+  no-player: '无选手'
+  no-rank: '无排名'
+  goal-catch-amount: '捕鱼总数'
+  goal-max-size: '最大尺寸'
+  goal-total-size: '捕鱼总尺寸'
+  goal-total-score: '捕鱼总分'
+  unsafe-modification: "你不能修改一个正在其他子服游玩的玩家钓鱼背包."
+  never-played: "此玩家从未玩过服务器."
+  data-not-loaded: "<red>数据未能正常加载. 请尝试切换子服或重进. 如果问题依然存在请联系服务器管理员."
+  open-market-gui: "为玩家 {player} 打开了市场"
+  open-fishing-bag: "为玩家 {player} 打开了钓鱼背包"
+  format-day: '天'
+  format-hour: '小时'
+  format-minute: '分'
+  format-second: '秒'

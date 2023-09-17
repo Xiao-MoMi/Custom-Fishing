@@ -23,7 +23,6 @@ import org.bukkit.Axis;
 import org.bukkit.Location;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.StringJoiner;
 
 public class TotemModel implements Serializable {

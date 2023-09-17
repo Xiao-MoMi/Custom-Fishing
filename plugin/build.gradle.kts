@@ -44,12 +44,14 @@ dependencies {
     compileOnly("com.github.Zrips:Jobs:4.17.2")
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
+    compileOnly("org.betonquest:betonquest:2.0.0-SNAPSHOT")
 
     // local jars
     compileOnly(files("libs/AdvancedEnchantments-api.jar"))
     compileOnly(files("libs/RealisticSeasons-api.jar"))
     compileOnly(files("libs/CustomCrops-api.jar"))
     compileOnly(files("libs/mcMMO-api.jar"))
+    compileOnly(files("libs/ClueScrolls-4.8.7-api.jar"))
 
     // api module
     implementation(project(":api"))

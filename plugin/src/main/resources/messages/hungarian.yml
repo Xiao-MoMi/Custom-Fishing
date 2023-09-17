@@ -5,7 +5,6 @@ messages:
   prefix: '<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient>'
   reload: '<white>Újratöltve. Időtartam: <green>{time}ms.'
   item-not-exist: 'Tétel nem található.'
-  escape: 'A hal lecsúszott a horogról és elmenekült.'
   give-item: 'Sikeresen adva {player} játékosnak {amount}x {item}.'
   get-item: 'Sikeresen megszerezve {amount}x {item}.'
   possible-loots: 'Lehetséges kapások itt: '

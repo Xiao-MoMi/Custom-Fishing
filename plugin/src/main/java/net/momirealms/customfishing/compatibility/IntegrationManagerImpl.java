@@ -30,14 +30,18 @@ import net.momirealms.customfishing.compatibility.entity.ItemsAdderEntityImpl;
 import net.momirealms.customfishing.compatibility.entity.MythicEntityImpl;
 import net.momirealms.customfishing.compatibility.item.*;
 import net.momirealms.customfishing.compatibility.level.*;
+import net.momirealms.customfishing.compatibility.quest.BetonQuestHook;
+import net.momirealms.customfishing.compatibility.quest.ClueScrollsHook;
 import net.momirealms.customfishing.compatibility.season.CustomCropsSeasonImpl;
 import net.momirealms.customfishing.compatibility.season.RealisticSeasonsImpl;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class IntegrationManagerImpl implements IntegrationManager {
 
@@ -50,7 +54,7 @@ public class IntegrationManagerImpl implements IntegrationManager {
         this.plugin = plugin;
         this.levelPluginMap = new HashMap<>();
         this.enchantments = new HashMap<>();
-        this.init();
+        this.load();
     }
 
     public void disable() {
@@ -58,7 +62,7 @@ public class IntegrationManagerImpl implements IntegrationManager {
         this.levelPluginMap.clear();
     }
 
-    public void init() {
+    public void load() {
         if (plugin.isHookedPluginEnabled("ItemsAdder")) {
             plugin.getItemManager().registerItemLibrary(new ItemsAdderItemImpl());
             plugin.getBlockManager().registerBlockLibrary(new ItemsAdderBlockImpl());
@@ -128,6 +132,16 @@ public class IntegrationManagerImpl implements IntegrationManager {
         }
         if (plugin.isHookedPluginEnabled("Vault")) {
             VaultHook.initialize();
+        }
+        if (plugin.isHookedPluginEnabled("ClueScrolls")) {
+            ClueScrollsHook clueScrollsHook = new ClueScrollsHook();
+            Bukkit.getPluginManager().registerEvents(clueScrollsHook, plugin);
+            hookMessage("ClueScrolls");
+        }
+        if (plugin.isHookedPluginEnabled("BetonQuest")) {
+            if (Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("BetonQuest")).getPluginMeta().getVersion().startsWith("2")) {
+                BetonQuestHook.register();
+            }
         }
     }
 

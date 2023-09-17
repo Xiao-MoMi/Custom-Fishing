@@ -42,6 +42,7 @@ import net.momirealms.customfishing.api.mechanic.game.GameInstance;
 import net.momirealms.customfishing.api.mechanic.game.GameSettings;
 import net.momirealms.customfishing.api.mechanic.game.GamingPlayer;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import net.momirealms.customfishing.api.mechanic.loot.LootType;
 import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.api.util.WeightUtils;
@@ -525,6 +526,14 @@ public class FishingManagerImpl implements Listener, FishingManager {
         var fishingPreparation = state.getPreparation();
         var player = fishingPreparation.getPlayer();
         fishingPreparation.insertArg("{size-multiplier}", String.format("%.2f", effect.getSizeMultiplier()));
+        int amount;
+        if (loot.getType() == LootType.ITEM) {
+            amount = (int) effect.getMultipleLootChance();
+            amount += Math.random() < (effect.getMultipleLootChance() - amount) ? 2 : 1;
+        } else {
+            amount = 1;
+        }
+        fishingPreparation.insertArg("{amount}", String.valueOf(amount));
 
         // call event
         FishingResultEvent fishingResultEvent = new FishingResultEvent(
@@ -540,8 +549,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
 
         switch (loot.getType()) {
             case ITEM -> {
-                int amount = (int) effect.getMultipleLootChance();
-                amount += Math.random() < (effect.getMultipleLootChance() - amount) ? 2 : 1;
+
                 // build the items for multiple times instead of using setAmount() to make sure that each item is unique
                 if (loot.getID().equals("vanilla")) {
                     ItemStack itemStack = vanillaLootMap.remove(player.getUniqueId());
@@ -560,8 +568,12 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 }
                 return;
             }
-            case ENTITY -> plugin.getEntityManager().summonEntity(hook.getLocation(), player.getLocation(), loot);
-            case BLOCK -> plugin.getBlockManager().summonBlock(player, hook.getLocation(), player.getLocation(), loot);
+            case ENTITY -> {
+                plugin.getEntityManager().summonEntity(hook.getLocation(), player.getLocation(), loot);
+            }
+            case BLOCK -> {
+                plugin.getBlockManager().summonBlock(player, hook.getLocation(), player.getLocation(), loot);
+            }
         }
         doSuccessActions(loot, effect, fishingPreparation, player);
     }
