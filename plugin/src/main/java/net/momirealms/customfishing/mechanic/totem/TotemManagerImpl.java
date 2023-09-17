@@ -331,9 +331,6 @@ public class TotemManagerImpl implements TotemManager, Listener {
                 modelList.add(originalModel.mirrorHorizontally());
             }
         }
-        for (TotemModel totemModel : modelList) {
-            System.out.println(totemModel.toString());
-        }
         return modelList.toArray(new TotemModel[0]);
     }
 
@@ -389,16 +386,12 @@ public class TotemManagerImpl implements TotemManager, Listener {
                 index = block.length();
             } else {
                 String propertyStr = block.substring(index+1, block.length()-1);
-                System.out.println(propertyStr);
                 String[] properties = propertyStr.split(";");
                 for (String property : properties) {
-                    System.out.println(property);
                     String[] split = property.split("=");
                     if (split.length < 2) continue;
                     String key = split[0];
                     String value = split[1];
-                    System.out.println(key);
-                    System.out.println(value);
                     switch (key) {
                         case "face" -> {
                             BlockFace blockFace = BlockFace.valueOf(value.toUpperCase(Locale.ENGLISH));
