@@ -29,6 +29,7 @@ import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.mechanic.totem.block.property.AxisImpl;
 import net.momirealms.customfishing.mechanic.totem.block.property.FaceImpl;
 import net.momirealms.customfishing.mechanic.totem.block.TotemBlock;
+import net.momirealms.customfishing.mechanic.totem.block.property.HalfImpl;
 import net.momirealms.customfishing.mechanic.totem.block.property.TotemBlockProperty;
 import net.momirealms.customfishing.mechanic.totem.block.type.TypeCondition;
 import net.momirealms.customfishing.mechanic.totem.particle.DustParticleSetting;
@@ -37,6 +38,7 @@ import net.momirealms.customfishing.util.LocationUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Event;
@@ -393,13 +395,20 @@ public class TotemManagerImpl implements TotemManager, Listener {
                     String key = split[0];
                     String value = split[1];
                     switch (key) {
+                        // Block face
                         case "face" -> {
                             BlockFace blockFace = BlockFace.valueOf(value.toUpperCase(Locale.ENGLISH));
                             propertyList.add(new FaceImpl(blockFace));
                         }
+                        // Block axis
                         case "axis" -> {
                             Axis axis = Axis.valueOf(value.toUpperCase(Locale.ENGLISH));
                             propertyList.add(new AxisImpl(axis));
+                        }
+                        // Slab, Stair half
+                        case "half" -> {
+                            Bisected.Half half = Bisected.Half.valueOf(value.toUpperCase(Locale.ENGLISH));
+                            propertyList.add(new HalfImpl(half));
                         }
                     }
                 }

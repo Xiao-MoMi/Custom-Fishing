@@ -5,7 +5,7 @@ double_loot_totem:
     core: 3,1,2 # layer:3 line:1 index:2 -> CRYING_OBSIDIAN
     layer:
       4:
-        - '*_STAIRS{face=east} OBSERVER{face=south} *_STAIRS{face=west}'
+        - '*_STAIRS{face=east;half=top} OBSERVER{face=south} *_STAIRS{face=west;half=top}'
       3:
         - 'AIR CRYING_OBSIDIAN AIR'
       2:
