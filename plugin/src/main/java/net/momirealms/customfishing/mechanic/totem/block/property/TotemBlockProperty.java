@@ -22,12 +22,29 @@ import org.bukkit.block.Block;
 
 public interface TotemBlockProperty {
 
-
+    /**
+     * Mirrors the block face if the axis is X or Z.
+     * @param axis The axis to mirror.
+     * @return The mirrored block face.
+     */
     TotemBlockProperty mirror(Axis axis);
 
+    /**
+     * Rotates the block face 90 degrees.
+     * @return The rotated block face.
+     */
     TotemBlockProperty rotate90();
 
+    /**
+     * Checks if the block has the property.
+     * @param block The block to check.
+     * @return True if the block has the property.
+     */
     boolean isPropertyMet(Block block);
 
+    /**
+     * Gets the raw text of the property.
+     * @return The raw text of the property.
+     */
     String getRawText();
 }

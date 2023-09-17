@@ -67,6 +67,10 @@ public class TotemBlock implements Serializable {
         }
     }
 
+    /**
+     * Returns the raw text of the totem block.
+     * @return The raw text of the totem block.
+     */
     @Override
     public String toString() {
         StringJoiner stringJoiner = new StringJoiner(";");

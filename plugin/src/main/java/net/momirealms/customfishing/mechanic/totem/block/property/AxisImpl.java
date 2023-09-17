@@ -37,6 +37,10 @@ public class AxisImpl implements TotemBlockProperty, Serializable {
         return this;
     }
 
+    /**
+     * Rotates the block axis 90 degrees. (X -> Z, Z -> X)
+     * @return The rotated block axis.
+     */
     @Override
     public TotemBlockProperty rotate90() {
         if (this.axis == Axis.X) {
@@ -47,6 +51,11 @@ public class AxisImpl implements TotemBlockProperty, Serializable {
         return this;
     }
 
+    /**
+     * Checks if the block has the property.
+     * @param block The block to check.
+     * @return True if the block has the property.
+     */
     @Override
     public boolean isPropertyMet(Block block) {
         if (block.getBlockData() instanceof Orientable orientable) {
