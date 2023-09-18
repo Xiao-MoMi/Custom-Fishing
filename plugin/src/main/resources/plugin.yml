@@ -33,6 +33,7 @@ softdepend:
 
   - Jobs
   - EcoJobs
+  - Zaphkiel
 
 permissions:
   fishingbag.user:

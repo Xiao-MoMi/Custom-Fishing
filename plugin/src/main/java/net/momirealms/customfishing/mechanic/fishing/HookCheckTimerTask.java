@@ -230,8 +230,8 @@ public class HookCheckTimerTask implements Runnable {
             a.setGravity(false);
             a.getPersistentDataContainer().set(
                     Objects.requireNonNull(NamespacedKey.fromString("lavafishing", CustomFishingPlugin.get())),
-                    PersistentDataType.BOOLEAN,
-                    true
+                    PersistentDataType.STRING,
+                    "temp"
             );
         });
         fishHook.setHookedEntity(hookedEntity);

@@ -53,6 +53,7 @@ dependencies {
     compileOnly(files("libs/mcMMO-api.jar"))
     compileOnly(files("libs/ClueScrolls-4.8.7-api.jar"))
     compileOnly(files("libs/notquests-5.17.1.jar"))
+    compileOnly(files("libs/zaphkiel-2.0.24.jar"))
 
     // api module
     implementation(project(":api"))

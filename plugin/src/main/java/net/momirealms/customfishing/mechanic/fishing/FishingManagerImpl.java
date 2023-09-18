@@ -294,7 +294,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         if ((entity instanceof ArmorStand armorStand)
                 && armorStand.getPersistentDataContainer().get(
                 Objects.requireNonNull(NamespacedKey.fromString("lavafishing", plugin)),
-                PersistentDataType.BOOLEAN
+                PersistentDataType.STRING
         ) != null) {
             // The hook is hooked into the temp entity
             // This might be called both not in game and in game

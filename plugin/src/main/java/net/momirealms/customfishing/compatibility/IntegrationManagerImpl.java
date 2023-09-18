@@ -78,6 +78,10 @@ public class IntegrationManagerImpl implements IntegrationManager {
             plugin.getItemManager().registerItemLibrary(new OraxenItemImpl());
             hookMessage("Oraxen");
         }
+        if (plugin.isHookedPluginEnabled("Zaphkiel")) {
+            plugin.getItemManager().registerItemLibrary(new ZaphkielItemImpl());
+            hookMessage("Zaphkiel");
+        }
         if (plugin.isHookedPluginEnabled("NeigeItems")) {
             plugin.getItemManager().registerItemLibrary(new NeigeItemsItemImpl());
             hookMessage("NeigeItems");
