@@ -48,6 +48,7 @@ dependencies {
 
     // local jars
     compileOnly(files("libs/AdvancedEnchantments-api.jar"))
+    compileOnly(files("libs/BattlePass-4.0.6-api.jar"))
     compileOnly(files("libs/RealisticSeasons-api.jar"))
     compileOnly(files("libs/CustomCrops-api.jar"))
     compileOnly(files("libs/mcMMO-api.jar"))
