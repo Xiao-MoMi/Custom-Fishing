@@ -42,7 +42,7 @@ import java.util.HashSet;
 public class BetonQuestHook {
 
     public static void register() {
-        BetonQuest.getInstance().registerObjectives("customfishing_id", IDObjective.class);
+        BetonQuest.getInstance().registerObjectives("customfishing_loot", IDObjective.class);
         BetonQuest.getInstance().registerObjectives("customfishing_group", GroupObjective.class);
     }
 

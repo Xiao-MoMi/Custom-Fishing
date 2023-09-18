@@ -104,7 +104,7 @@ public class IntegrationManagerImpl implements IntegrationManager {
         }
         if (plugin.isHookedPluginEnabled("mcMMO")) {
             try {
-                plugin.getItemManager().registerCustomItem("item", "mcmmo", new McMMOBuildableItem());
+                plugin.getItemManager().registerItemLibrary(new McMMOTreasureImpl());
             } catch (ClassNotFoundException | NoSuchMethodException e) {
                 LogUtils.warn("Failed to initialize mcMMO Treasure");
             }

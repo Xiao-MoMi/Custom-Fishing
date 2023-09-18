@@ -554,7 +554,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 if (loot.getID().equals("vanilla")) {
                     ItemStack itemStack = vanillaLootMap.remove(player.getUniqueId());
                     if (itemStack != null) {
-                        fishingPreparation.insertArg("{loot}", "<lang:item.minecraft." + itemStack.getType().toString().toLowerCase() + ">");
+                        fishingPreparation.insertArg("{nick}", "<lang:item.minecraft." + itemStack.getType().toString().toLowerCase() + ">");
                         for (int i = 0; i < amount; i++) {
                             plugin.getItemManager().dropItem(hook.getLocation(), player.getLocation(), itemStack.clone());
                             doSuccessActions(loot, effect, fishingPreparation, player);

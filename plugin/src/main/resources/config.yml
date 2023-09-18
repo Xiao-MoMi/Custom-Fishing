@@ -38,9 +38,9 @@ mechanics:
               - '<green>GG!</green>'
               - '<green>Good Job!</green>'
             subtitles:
-              - 'You caught a {loot}'
+              - 'You caught a {nick}'
               - 'Whoa! Nice catch!'
-              - 'Oh {loot} here we go!'
+              - 'Oh {nick} here we go!'
               - 'Let''s see what it is!'
             fade-in: 20
             stay: 30
