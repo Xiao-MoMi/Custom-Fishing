@@ -32,6 +32,7 @@ import net.momirealms.customfishing.compatibility.item.*;
 import net.momirealms.customfishing.compatibility.level.*;
 import net.momirealms.customfishing.compatibility.quest.BetonQuestHook;
 import net.momirealms.customfishing.compatibility.quest.ClueScrollsHook;
+import net.momirealms.customfishing.compatibility.quest.NotQuestHook;
 import net.momirealms.customfishing.compatibility.season.CustomCropsSeasonImpl;
 import net.momirealms.customfishing.compatibility.season.RealisticSeasonsImpl;
 import org.bukkit.Bukkit;
@@ -135,13 +136,19 @@ public class IntegrationManagerImpl implements IntegrationManager {
         }
         if (plugin.isHookedPluginEnabled("ClueScrolls")) {
             ClueScrollsHook clueScrollsHook = new ClueScrollsHook();
-            Bukkit.getPluginManager().registerEvents(clueScrollsHook, plugin);
+            clueScrollsHook.register();
             hookMessage("ClueScrolls");
         }
         if (plugin.isHookedPluginEnabled("BetonQuest")) {
             if (Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("BetonQuest")).getPluginMeta().getVersion().startsWith("2")) {
                 BetonQuestHook.register();
+                hookMessage("BetonQuest");
             }
+        }
+        if (plugin.isHookedPluginEnabled("NotQuests")) {
+            NotQuestHook notQuestHook = new NotQuestHook();
+            notQuestHook.register();
+            hookMessage("NotQuests");
         }
     }
 

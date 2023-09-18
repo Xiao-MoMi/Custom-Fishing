@@ -21,6 +21,7 @@ import com.electro2560.dev.cluescrolls.api.*;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.event.FishingResultEvent;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,6 +34,10 @@ public class ClueScrollsHook implements Listener {
     public ClueScrollsHook() {
         idClue = ClueScrollsAPI.getInstance().registerCustomClue(CustomFishingPlugin.getInstance(), "loot", new ClueConfigData("id", DataType.STRING));
         groupClue = ClueScrollsAPI.getInstance().registerCustomClue(CustomFishingPlugin.getInstance(), "group", new ClueConfigData("group", DataType.STRING));
+    }
+
+    public void register() {
+        Bukkit.getPluginManager().registerEvents(this, CustomFishingPlugin.get());
     }
 
     @EventHandler

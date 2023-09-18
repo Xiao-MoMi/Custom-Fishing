@@ -52,6 +52,7 @@ dependencies {
     compileOnly(files("libs/CustomCrops-api.jar"))
     compileOnly(files("libs/mcMMO-api.jar"))
     compileOnly(files("libs/ClueScrolls-4.8.7-api.jar"))
+    compileOnly(files("libs/notquests-5.17.1.jar"))
 
     // api module
     implementation(project(":api"))
