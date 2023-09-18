@@ -33,7 +33,6 @@ import net.momirealms.customfishing.compatibility.level.*;
 import net.momirealms.customfishing.compatibility.quest.BattlePassHook;
 import net.momirealms.customfishing.compatibility.quest.BetonQuestHook;
 import net.momirealms.customfishing.compatibility.quest.ClueScrollsHook;
-import net.momirealms.customfishing.compatibility.quest.NotQuestHook;
 import net.momirealms.customfishing.compatibility.season.CustomCropsSeasonImpl;
 import net.momirealms.customfishing.compatibility.season.RealisticSeasonsImpl;
 import org.bukkit.Bukkit;
