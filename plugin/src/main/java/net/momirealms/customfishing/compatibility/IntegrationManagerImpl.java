@@ -30,6 +30,7 @@ import net.momirealms.customfishing.compatibility.entity.ItemsAdderEntityImpl;
 import net.momirealms.customfishing.compatibility.entity.MythicEntityImpl;
 import net.momirealms.customfishing.compatibility.item.*;
 import net.momirealms.customfishing.compatibility.level.*;
+import net.momirealms.customfishing.compatibility.quest.BattlePassHook;
 import net.momirealms.customfishing.compatibility.quest.BetonQuestHook;
 import net.momirealms.customfishing.compatibility.quest.ClueScrollsHook;
 import net.momirealms.customfishing.compatibility.quest.NotQuestHook;
@@ -133,6 +134,11 @@ public class IntegrationManagerImpl implements IntegrationManager {
         }
         if (plugin.isHookedPluginEnabled("Vault")) {
             VaultHook.initialize();
+        }
+        if (plugin.isHookedPluginEnabled("BattlePass")){
+            BattlePassHook battlePassHook = new BattlePassHook();
+            battlePassHook.register();
+            hookMessage("BattlePass");
         }
         if (plugin.isHookedPluginEnabled("ClueScrolls")) {
             ClueScrollsHook clueScrollsHook = new ClueScrollsHook();
