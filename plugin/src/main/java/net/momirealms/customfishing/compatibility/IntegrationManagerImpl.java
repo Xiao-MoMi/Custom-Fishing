@@ -151,11 +151,11 @@ public class IntegrationManagerImpl implements IntegrationManager {
                 hookMessage("BetonQuest");
             }
         }
-        if (plugin.isHookedPluginEnabled("NotQuests")) {
-            NotQuestHook notQuestHook = new NotQuestHook();
-            notQuestHook.register();
-            hookMessage("NotQuests");
-        }
+//        if (plugin.isHookedPluginEnabled("NotQuests")) {
+//            NotQuestHook notQuestHook = new NotQuestHook();
+//            notQuestHook.register();
+//            hookMessage("NotQuests");
+//        }
     }
 
     @Override

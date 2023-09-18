@@ -53,7 +53,7 @@ Afdian: https://afdian.net/@xiaomomi
   </dependency>
 </dependencies>
 ```
-### Gradle
+### Gradle (Groovy)
 
 ```
 repositories {
@@ -63,5 +63,17 @@ repositories {
 ```
 dependencies {
     compileOnly 'com.github.Xiao-MoMi:Custom-Fishing:{LATEST}'
+}
+```
+### Gradle (Kotlin)
+
+```
+repositories {
+    maven("https://jitpack.io/")
+}
+```
+```
+dependencies {
+    compileOnly("com.github.Xiao-MoMi:Custom-Fishing:{LATEST}")
 }
 ```
