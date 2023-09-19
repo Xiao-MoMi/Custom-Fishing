@@ -48,7 +48,6 @@ public class EntityManagerImpl implements EntityManager {
 
     public void load() {
         this.loadConfig();
-        LogUtils.info("Loaded " + entityConfigMap.size() + " entities.");
     }
 
     public void unload() {

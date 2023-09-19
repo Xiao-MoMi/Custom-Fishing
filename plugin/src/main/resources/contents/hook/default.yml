@@ -1,0 +1,25 @@
+delicate_hook:
+  material: SHEARS
+  display:
+    name: '<#1E90FF>Delicate hook'
+    lore:
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray> - An embodiment of craftsmanship and allure, the hook'
+      - '<gray> - is not your average piece of tackle. Polished to'
+      - '<gray> - perfection and intricately designed, it gleams in the'
+      - '<gray> - water, irresistibly drawing high-quality fish closer.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Increase the chance of getting high quality fish'
+  max-durability: 16
+  lore-on-rod:
+    - ''
+    - '<#7FFFAA>Equipped hook:'
+    - '<gray> - Delicate hook: <white>{dur}<white> times left'
+  effects:
+    group:
+      type: group-mod
+      value:
+        - silver_star:+1
+        - golden_star:+1

@@ -45,6 +45,7 @@ public abstract class CustomFishingPlugin extends JavaPlugin {
     protected PlaceholderManager placeholderManager;
     protected StatisticsManager statisticsManager;
     protected TotemManager totemManager;
+    protected HookManager hookManager;
 
     private static CustomFishingPlugin instance;
 
@@ -126,6 +127,10 @@ public abstract class CustomFishingPlugin extends JavaPlugin {
 
     public TotemManager getTotemManager() {
         return totemManager;
+    }
+
+    public HookManager getHookManager() {
+        return hookManager;
     }
 
     public IntegrationManager getIntegrationManager() {

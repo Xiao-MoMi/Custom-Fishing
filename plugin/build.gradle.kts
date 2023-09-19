@@ -34,7 +34,7 @@ dependencies {
     compileOnly("com.h2database:h2:2.2.220")
     compileOnly("org.mongodb:mongodb-driver-sync:4.10.2")
     compileOnly("com.zaxxer:HikariCP:5.0.1")
-    compileOnly("redis.clients:jedis:4.4.3")
+    compileOnly("redis.clients:jedis:5.0.0")
 
     // others
     compileOnly("com.github.LoneDev6:api-itemsadder:3.5.0c-r5")
@@ -74,7 +74,7 @@ dependencies {
     implementation(files("libs/BiomeAPI.jar"))
 
     // anvil
-    implementation("net.wesjd:anvilgui:1.7.0-SNAPSHOT")
+    implementation("net.wesjd:anvilgui:1.9.0-SNAPSHOT")
 }
 
 tasks {

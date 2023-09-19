@@ -29,6 +29,7 @@ beginner_rod:
       - '<gray> - Increase the hook time'
       - '<gray> - Reduces the challenge of fishing'
   custom-model-data: 50001
+  max-durability: 64
   effects:
     time_effect:
       type: hook-time
@@ -51,6 +52,7 @@ silver_rod:
       - '<#FFD700>Effects:'
       - '<gray> - Increase the chance of getting silver star fish'
   custom-model-data: 50002
+  max-durability: 96
   effects:
     group:
       type: group-mod
@@ -71,6 +73,7 @@ golden_rod:
       - '<#FFD700>Effects:'
       - '<gray> - Increase the chance of getting golden star fish'
   custom-model-data: 50003
+  max-durability: 80
   effects:
     group:
       type: group-mod
@@ -93,6 +96,7 @@ star_rod:
       - '<#FFD700>Effects:'
       - '<gray> - +15s Game Time'
   custom-model-data: 50004
+  max-durability: 128
   effects:
     time_effect:
       type: game-time
@@ -116,6 +120,7 @@ bone_rod:
       - '<gray> - Fishing in lava'
       - '<gray> - Sometimes skeleton would grab the hook'
   custom-model-data: 50005
+  max-durability: 32
   effects:
     lava:
       type: lava-fishing
@@ -141,6 +146,7 @@ magical_rod:
       - '<gray> - 1x book bait'
       - '<gray> - 10 exp levels'
   custom-model-data: 50006
+  max-durability: 16
   requirements:
     requirement_1:
       type: level
@@ -191,6 +197,7 @@ master_rod:
       - '<gray> - Increase the challenge of fishing'
       - '<gray> - Higher chance of getting quality fish'
   custom-model-data: 50007
+  max-durability: 128
   effects:
     time_effect:
       type: hook-time

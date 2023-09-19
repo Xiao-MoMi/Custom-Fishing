@@ -145,6 +145,8 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerRegexRequirement();
         this.registerItemInHandRequirement();
         this.registerMoneyRequirement();
+        this.registerInBagRequirement();
+        this.registerHookRequirement();
     }
 
     public ConditionalElement getConditionalElements(ConfigurationSection section) {
@@ -944,6 +946,40 @@ public class RequirementManagerImpl implements RequirementManager {
             return condition -> {
                 String id = condition.getArg("{bait}");
                 if (!baits.contains(id)) return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+    }
+
+    private void registerHookRequirement() {
+        registerRequirement("hook", (args, actions, advanced) -> {
+            List<String> hooks = ConfigUtils.stringListArgs(args);
+            return condition -> {
+                String id = condition.getArg("{hook}");
+                if (hooks.contains(id)) return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+        registerRequirement("!hook", (args, actions, advanced) -> {
+            List<String> hooks = ConfigUtils.stringListArgs(args);
+            return condition -> {
+                String id = condition.getArg("{hook}");
+                if (!hooks.contains(id)) return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+    }
+
+    private void registerInBagRequirement() {
+        registerRequirement("in-fishingbag", (args, actions, advanced) -> {
+            boolean arg = (boolean) args;
+            return condition -> {
+                String inBag = condition.getArg("{in-bag}");
+                if (inBag == null && !arg) return true;
+                if (inBag != null && inBag.equals(String.valueOf(arg))) return true;
                 if (advanced) triggerActions(actions, condition);
                 return false;
             };

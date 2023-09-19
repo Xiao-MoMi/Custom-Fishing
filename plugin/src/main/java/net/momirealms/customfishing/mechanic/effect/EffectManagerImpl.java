@@ -72,7 +72,7 @@ public class EffectManagerImpl implements EffectManager {
     @SuppressWarnings("DuplicatedCode")
     public void load() {
         Deque<File> fileDeque = new ArrayDeque<>();
-        for (String type : List.of("rod", "bait", "enchant", "util", "totem")) {
+        for (String type : List.of("rod", "bait", "enchant", "util", "totem", "hook")) {
             File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + type);
             if (!typeFolder.exists()) {
                 if (!typeFolder.mkdirs()) return;

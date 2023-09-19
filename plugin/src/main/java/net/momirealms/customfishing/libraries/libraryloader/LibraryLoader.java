@@ -88,7 +88,7 @@ public final class LibraryLoader {
     }
 
     public static void load(Dependency d) {
-        LogUtils.info(String.format("Loading dependency %s:%s:%s from %s", d.groupId, d.artifactId, d.version, d.repoUrl));
+        LogUtils.info(String.format("Loading dependency %s:%s:%s", d.groupId, d.artifactId, d.version));
         String name = d.artifactId() + "-" + d.version();
         File saveLocation = new File(getLibFolder(d), name + ".jar");
         if (!saveLocation.exists()) {

@@ -60,9 +60,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,7 +87,6 @@ public class ItemManagerImpl implements ItemManager, Listener {
 
     public void load() {
         this.loadItemsFromPluginFolder();
-        LogUtils.info("Loaded " + buildableItemMap.size() + " items.");
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
@@ -117,7 +114,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
     @SuppressWarnings("DuplicatedCode")
     public void loadItemsFromPluginFolder() {
         Deque<File> fileDeque = new ArrayDeque<>();
-        for (String type : List.of("item", "bait", "rod", "util")) {
+        for (String type : List.of("item", "bait", "rod", "util", "hook")) {
             File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + type);
             if (!typeFolder.exists()) {
                 if (!typeFolder.mkdirs()) return;
@@ -216,6 +213,13 @@ public class ItemManagerImpl implements ItemManager, Listener {
         }
     }
 
+    @Override
+    public boolean isCustomFishingItem(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR) return false;
+        NBTItem nbtItem = new NBTItem(itemStack);
+        return nbtItem.hasTag("CustomFishing");
+    }
+
     @Nullable
     @Override
     public String getItemID(ItemStack itemStack) {
@@ -269,6 +273,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
         for (ItemBuilder.ItemPropertyEditor editor : builder.getEditors()) {
             editor.edit(player, nbtItem, placeholders);
         }
+        ItemUtils.updateNBTItemLore(nbtItem);
         return nbtItem.getItem();
     }
 
@@ -631,70 +636,6 @@ public class ItemManagerImpl implements ItemManager, Listener {
         }
     }
 
-    public static int giveCertainAmountOfItem(Player player, ItemStack itemStack, int amount) {
-        PlayerInventory inventory = player.getInventory();
-        ItemMeta meta = itemStack.getItemMeta();
-        int maxStackSize = itemStack.getMaxStackSize();
-
-        if (amount > maxStackSize * 100) {
-            LogUtils.warn("Detected too many items spawning. Lowering the amount to " + (maxStackSize * 100));
-            amount = maxStackSize * 100;
-        }
-
-        int actualAmount = amount;
-
-        for (ItemStack other : inventory.getStorageContents()) {
-            if (other != null) {
-                if (other.getType() == itemStack.getType() && other.getItemMeta().equals(meta)) {
-                    if (other.getAmount() < maxStackSize) {
-                        int delta = maxStackSize - other.getAmount();
-                        if (amount > delta) {
-                            other.setAmount(maxStackSize);
-                            amount -= delta;
-                        } else {
-                            other.setAmount(amount + other.getAmount());
-                            return actualAmount;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (amount > 0) {
-            for (ItemStack other : inventory.getStorageContents()) {
-                if (other == null) {
-                    if (amount > maxStackSize) {
-                        amount -= maxStackSize;
-                        ItemStack cloned = itemStack.clone();
-                        cloned.setAmount(maxStackSize);
-                        inventory.addItem(cloned);
-                    } else {
-                        ItemStack cloned = itemStack.clone();
-                        cloned.setAmount(amount);
-                        inventory.addItem(cloned);
-                        return actualAmount;
-                    }
-                }
-            }
-        }
-
-        if (amount > 0) {
-            for (int i = 0; i < amount / maxStackSize; i++) {
-                ItemStack cloned = itemStack.clone();
-                cloned.setAmount(maxStackSize);
-                player.getWorld().dropItem(player.getLocation(), cloned);
-            }
-            int left = amount % maxStackSize;
-            if (left != 0) {
-                ItemStack cloned = itemStack.clone();
-                cloned.setAmount(left);
-                player.getWorld().dropItem(player.getLocation(), cloned);
-            }
-        }
-
-        return actualAmount;
-    }
-
     @EventHandler
     public void onPickUp(PlayerAttemptPickupItemEvent event) {
         if (event.isCancelled()) return;
@@ -756,7 +697,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
         NBTCompound compound = nbtItem.getCompound("CustomFishing");
         if (compound == null) return;
         event.setCancelled(true);
-        ItemUtils.addDurability(itemStack, event.getRepairAmount());
+        ItemUtils.addDurability(itemStack, event.getRepairAmount(), true);
     }
 
     @EventHandler
@@ -781,12 +722,5 @@ public class ItemManagerImpl implements ItemManager, Listener {
             for (Action action : actions) {
                 action.trigger(condition);
             }
-    }
-
-    @Override
-    public boolean isCustomFishingItem(ItemStack itemStack) {
-        if (itemStack == null || itemStack.getType() == Material.AIR) return false;
-        NBTItem nbtItem = new NBTItem(itemStack);
-        return nbtItem.hasTag("CustomFishing");
     }
 }

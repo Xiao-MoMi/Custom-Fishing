@@ -34,7 +34,6 @@ import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.VaultHook;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
-import net.momirealms.customfishing.mechanic.item.ItemManagerImpl;
 import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.util.*;
 import org.bukkit.Bukkit;
@@ -463,9 +462,9 @@ public class ActionManagerImpl implements ActionManager {
                     Player player = condition.getPlayer();
                     ItemStack itemStack = player.getInventory().getItem(slot);
                     if (amount > 0) {
-                        ItemUtils.addDurability(itemStack, amount);
+                        ItemUtils.addDurability(itemStack, amount, true);
                     } else {
-                        ItemUtils.loseDurability(itemStack, -amount);
+                        ItemUtils.loseDurability(itemStack, -amount, true);
                     }
                 };
             } else {
@@ -483,7 +482,7 @@ public class ActionManagerImpl implements ActionManager {
                 return condition -> {
                     if (Math.random() > chance) return;
                     Player player = condition.getPlayer();
-                    ItemManagerImpl.giveCertainAmountOfItem(player, CustomFishingPlugin.get().getItemManager().buildAnyItemByID(player, id), amount);
+                    ItemUtils.giveCertainAmountOfItem(player, CustomFishingPlugin.get().getItemManager().buildAnyItemByID(player, id), amount);
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: give-item");

@@ -17,6 +17,8 @@
 
 package net.momirealms.customfishing.api.mechanic.condition;
 
+import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.GlobalSettings;
 import net.momirealms.customfishing.api.mechanic.action.Action;
@@ -38,12 +40,10 @@ import java.util.List;
 
 public class FishingPreparation extends Condition {
 
-    private @Nullable EffectCarrier baitEffect;
-    private final @Nullable EffectCarrier rodEffect;
+    private boolean hasBait = false;
     private @Nullable ItemStack baitItemStack;
     private final @NotNull ItemStack rodItemStack;
-    private final List<EffectCarrier> utilEffects;
-    private final List<EffectCarrier> enchantEffects;
+    private final List<EffectCarrier> effects;
     private boolean canFish = true;
 
     public FishingPreparation(Player player, CustomFishingPlugin plugin) {
@@ -53,74 +53,74 @@ public class FishingPreparation extends Condition {
         ItemStack mainHandItem = playerInventory.getItemInMainHand();
         ItemStack offHandItem = playerInventory.getItemInOffHand();
 
-        this.utilEffects = new ArrayList<>();
-        this.enchantEffects = new ArrayList<>();
+        this.effects = new ArrayList<>();
         boolean rodOnMainHand = mainHandItem.getType() == Material.FISHING_ROD;
         this.rodItemStack = rodOnMainHand ? mainHandItem : offHandItem;
         String rodItemID = plugin.getItemManager().getAnyItemID(this.rodItemStack);
-        this.rodEffect = plugin.getEffectManager().getEffect("rod", rodItemID);
+        EffectCarrier rodEffect = plugin.getEffectManager().getEffect("rod", rodItemID);
+        if (rodEffect != null) effects.add(rodEffect);
         super.insertArg("{rod}", rodItemID);
+
+        NBTItem nbtItem = new NBTItem(rodItemStack);
+        NBTCompound cfCompound = nbtItem.getCompound("CustomFishing");
+        if (cfCompound != null && cfCompound.hasTag("hook_id")) {
+            String hookID = cfCompound.getString("hook_id");
+            super.insertArg("{hook}", rodItemID);
+            EffectCarrier carrier = plugin.getEffectManager().getEffect("hook", hookID);
+            if (carrier != null) {
+                this.effects.add(carrier);
+            }
+        }
 
         String baitItemID = plugin.getItemManager().getAnyItemID(rodOnMainHand ? offHandItem : mainHandItem);
         EffectCarrier baitEffect = plugin.getEffectManager().getEffect("bait", baitItemID);
 
         if (baitEffect != null) {
             this.baitItemStack = rodOnMainHand ? offHandItem : mainHandItem;
-            this.baitEffect = baitEffect;
+            this.effects.add(baitEffect);
+            this.hasBait = true;
+            super.insertArg("{bait}", baitItemID);
         }
 
         if (plugin.getBagManager().isEnabled()) {
             Inventory fishingBag = plugin.getBagManager().getOnlineBagInventory(player.getUniqueId());
             HashSet<String> uniqueUtils = new HashSet<>(4);
             if (fishingBag != null) {
+                this.insertArg("{in-bag}", "true");
                 for (int i = 0; i < fishingBag.getSize(); i++) {
                     ItemStack itemInBag = fishingBag.getItem(i);
                     String bagItemID = plugin.getItemManager().getItemID(itemInBag);
                     if (bagItemID == null) continue;
-                    if (this.baitEffect == null) {
+                    if (!hasBait) {
                         EffectCarrier effect = plugin.getEffectManager().getEffect("bait", bagItemID);
                         if (effect != null) {
                             this.baitItemStack = itemInBag;
-                            this.baitEffect = effect;
+                            this.effects.add(effect);
+                            super.insertArg("{bait}", bagItemID);
                             continue;
                         }
                     }
                     EffectCarrier utilEffect = plugin.getEffectManager().getEffect("util", bagItemID);
                     if (utilEffect != null && !uniqueUtils.contains(bagItemID)) {
-                        if (!utilEffect.isConditionMet(this)) {
-                            this.canFish = false;
-                            return;
-                        }
-                        utilEffects.add(utilEffect);
+                        effects.add(utilEffect);
                         uniqueUtils.add(bagItemID);
                     }
                 }
-            }
-        }
-
-        if (this.baitEffect != null) {
-            if (!this.baitEffect.isConditionMet(this)) {
-                this.canFish = false;
-                return;
-            }
-            super.insertArg("{bait}", this.baitEffect.getKey().value());
-        }
-
-        if (this.rodEffect != null) {
-            if (!this.rodEffect.isConditionMet(this)) {
-                this.canFish = false;
-                return;
+                this.delArg("{in-bag}");
             }
         }
 
         for (String enchant : plugin.getIntegrationManager().getEnchantments(rodItemStack)) {
             EffectCarrier enchantEffect = plugin.getEffectManager().getEffect("enchant", enchant);
             if (enchantEffect != null) {
-                if (!enchantEffect.isConditionMet(this)) {
-                    this.canFish = false;
-                    return;
-                }
-                this.enchantEffects.add(enchantEffect);
+                this.effects.add(enchantEffect);
+            }
+        }
+
+        for (EffectCarrier effectCarrier : effects) {
+            if (!effectCarrier.isConditionMet(this)) {
+                this.canFish = false;
+                return;
             }
         }
     }
@@ -135,38 +135,13 @@ public class FishingPreparation extends Condition {
         return baitItemStack;
     }
 
-    @Nullable
-    public EffectCarrier getBaitEffect() {
-        return baitEffect;
-    }
-
-    @Nullable
-    public EffectCarrier getRodEffect() {
-        return rodEffect;
-    }
-
     public boolean canFish() {
         return this.canFish;
     }
 
     public void mergeEffect(FishingEffect effect) {
-        if (this.rodEffect != null) {
-            for (EffectModifier modifier : rodEffect.getEffectModifiers()) {
-                modifier.modify(effect, this);
-            }
-        }
-        if (this.baitEffect != null) {
-            for (EffectModifier modifier : baitEffect.getEffectModifiers()) {
-                modifier.modify(effect, this);
-            }
-        }
-        for (EffectCarrier util : utilEffects) {
-            for (EffectModifier modifier : util.getEffectModifiers()) {
-                modifier.modify(effect, this);
-            }
-        }
-        for (EffectCarrier enchant : enchantEffects) {
-            for (EffectModifier modifier : enchant.getEffectModifiers()) {
+        for (EffectCarrier effectCarrier : effects) {
+            for (EffectModifier modifier : effectCarrier.getEffectModifiers()) {
                 modifier.modify(effect, this);
             }
         }
@@ -174,17 +149,8 @@ public class FishingPreparation extends Condition {
 
     public void triggerActions(ActionTrigger actionTrigger) {
         GlobalSettings.triggerRodActions(actionTrigger, this);
-        if (rodEffect != null) {
-            Action[] actions = rodEffect.getActions(actionTrigger);
-            if (actions != null)
-                for (Action action : actions) {
-                    action.trigger(this);
-                }
-        }
-
-        if (baitEffect != null) {
-            GlobalSettings.triggerBaitActions(actionTrigger, this);
-            Action[] actions = baitEffect.getActions(actionTrigger);
+        for (EffectCarrier effectCarrier : effects) {
+            Action[] actions = effectCarrier.getActions(actionTrigger);
             if (actions != null)
                 for (Action action : actions) {
                     action.trigger(this);

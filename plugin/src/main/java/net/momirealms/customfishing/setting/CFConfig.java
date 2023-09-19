@@ -40,7 +40,7 @@ import java.util.Objects;
 public class CFConfig {
 
     // config version
-    public static String configVersion = "26";
+    public static String configVersion = "27";
 
     // language
     public static String language;
@@ -89,6 +89,8 @@ public class CFConfig {
 
     // Legacy color code support
     public static boolean legacyColorSupport;
+    // Durability lore
+    public static List<String> durabilityLore;
 
     public static void load() {
         try {
@@ -146,6 +148,8 @@ public class CFConfig {
         dataSaveInterval = config.getInt("other-settings.data-saving-interval", 600);
         lockData = config.getBoolean("other-settings.lock-data", true);
         legacyColorSupport = config.getBoolean("other-settings.legacy-color-code-support", false);
+
+        durabilityLore = config.getStringList("other-settings.custom-durability-format").stream().map(it -> "<!i>" + it).toList();
 
         OffsetUtils.loadConfig(config.getConfigurationSection("other-settings.offset-characters"));
     }

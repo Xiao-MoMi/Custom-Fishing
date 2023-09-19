@@ -162,7 +162,7 @@ public class GameManagerImpl implements GameManager {
             var totalWidth = chances.size() * widthPerSection - 1;
             var pointerOffset = section.getInt("arguments.pointer-offset");
             var pointerWidth = section.getInt("arguments.pointer-width");
-            var title = section.getString("title");
+            var title = section.getStringList("title");
             var font = section.getString("subtitle.font");
             var barImage = section.getString("subtitle.bar");
             var pointerImage = section.getString("subtitle.pointer");
@@ -171,6 +171,7 @@ public class GameManagerImpl implements GameManager {
 
                 private int progress;
                 private boolean face;
+                private String sendTitle = title.get(ThreadLocalRandom.current().nextInt(title.size()));
 
                 @Override
                 public void arrangeTask() {
@@ -203,7 +204,7 @@ public class GameManagerImpl implements GameManager {
                                + OffsetUtils.getOffsetChars(pointerOffset + progress)
                                + FontUtils.surroundWithFont(pointerImage, font)
                                + OffsetUtils.getOffsetChars(totalWidth - progress - pointerWidth);
-                    AdventureManagerImpl.getInstance().sendTitle(player, title, bar,0,500,0);
+                    AdventureManagerImpl.getInstance().sendTitle(player, sendTitle, bar,0,500,0);
                 }
 
                 @Override

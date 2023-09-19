@@ -37,6 +37,7 @@ import net.momirealms.customfishing.mechanic.effect.EffectManagerImpl;
 import net.momirealms.customfishing.mechanic.entity.EntityManagerImpl;
 import net.momirealms.customfishing.mechanic.fishing.FishingManagerImpl;
 import net.momirealms.customfishing.mechanic.game.GameManagerImpl;
+import net.momirealms.customfishing.mechanic.hook.HookManagerImpl;
 import net.momirealms.customfishing.mechanic.item.ItemManagerImpl;
 import net.momirealms.customfishing.mechanic.loot.LootManagerImpl;
 import net.momirealms.customfishing.mechanic.market.MarketManagerImpl;
@@ -100,6 +101,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         this.statisticsManager = new StatisticsManagerImpl(this);
         this.coolDownManager = new CoolDownManager(this);
         this.totemManager = new TotemManagerImpl(this);
+        this.hookManager = new HookManagerImpl(this);
         this.reload();
         if (CFConfig.updateChecker)
             this.versionManager.checkUpdate().thenAccept(result -> {
@@ -129,6 +131,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         ((StatisticsManagerImpl) this.statisticsManager).disable();
         ((ActionManagerImpl) this.actionManager).disable();
         ((TotemManagerImpl) this.totemManager).disable();
+        ((HookManagerImpl) this.hookManager).disable();
         this.coolDownManager.disable();
         this.commandManager.unload();
         HandlerList.unregisterAll(this);
@@ -170,6 +173,8 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         ((StatisticsManagerImpl) this.statisticsManager).load();
         ((PlaceholderManagerImpl) this.placeholderManager).unload();
         ((PlaceholderManagerImpl) this.placeholderManager).load();
+        ((HookManagerImpl) this.hookManager).unload();
+        ((HookManagerImpl) this.hookManager).load();
         this.commandManager.unload();
         this.commandManager.load();
         this.coolDownManager.unload();
@@ -177,24 +182,24 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
     }
 
     private void loadDependencies() {
-        String libRepo = TimeZone.getDefault().getID().startsWith("Asia") ?
+        String mavenRepo = TimeZone.getDefault().getID().startsWith("Asia") ?
                 "https://maven.aliyun.com/repository/public/" : "https://repo.maven.apache.org/maven2/";
         LibraryLoader.loadDependencies(
-                "org.apache.commons:commons-pool2:2.11.1", libRepo,
-                "redis.clients:jedis:4.4.2", libRepo,
-                "dev.dejvokep:boosted-yaml:1.3.1", libRepo,
-                "com.zaxxer:HikariCP:5.0.1", libRepo,
-                "net.objecthunter:exp4j:0.4.8", libRepo,
-                "org.mariadb.jdbc:mariadb-java-client:3.1.4", libRepo,
-                "mysql:mysql-connector-java:8.0.30", libRepo,
-                "commons-io:commons-io:2.13.0", libRepo,
-                "com.google.code.gson:gson:2.10.1", libRepo,
-                "com.h2database:h2:2.2.220", libRepo,
-                "org.mongodb:mongodb-driver-sync:4.10.2", libRepo,
-                "org.mongodb:mongodb-driver-core:4.10.2", libRepo,
-                "org.mongodb:bson:4.10.2", libRepo,
-                "org.xerial:sqlite-jdbc:3.42.0.0", libRepo,
-                "dev.jorel:commandapi-bukkit-shade:9.1.0", libRepo
+                "org.apache.commons:commons-pool2:2.11.1", mavenRepo,
+                "redis.clients:jedis:5.0.0", mavenRepo,
+                "dev.dejvokep:boosted-yaml:1.3.1", mavenRepo,
+                "com.zaxxer:HikariCP:5.0.1", mavenRepo,
+                "net.objecthunter:exp4j:0.4.8", mavenRepo,
+                "org.mariadb.jdbc:mariadb-java-client:3.2.0", mavenRepo,
+                "mysql:mysql-connector-java:8.0.30", mavenRepo,
+                "commons-io:commons-io:2.13.0", mavenRepo,
+                "com.google.code.gson:gson:2.10.1", mavenRepo,
+                "com.h2database:h2:2.2.220", mavenRepo,
+                "org.mongodb:mongodb-driver-sync:4.10.2", mavenRepo,
+                "org.mongodb:mongodb-driver-core:4.10.2", mavenRepo,
+                "org.mongodb:bson:4.10.2", mavenRepo,
+                "org.xerial:sqlite-jdbc:3.42.0.0", mavenRepo,
+                "dev.jorel:commandapi-bukkit-shade:9.1.0", mavenRepo
         );
     }
 

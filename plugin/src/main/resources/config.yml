@@ -1,6 +1,6 @@
 # Developer: @Xiao-MoMi
 # Wiki: https://mo-mi.gitbook.io/xiaomomi-plugins/
-config-version: '26'
+config-version: '27'
 
 # Debug
 debug: false
@@ -167,6 +167,10 @@ other-settings:
 
   block-detection-order:
     - vanilla
+
+  custom-durability-format:
+    - ''
+    - '<gray>Durability</gray><white>: {dur} <gray>/</gray> {max}</white>'
 
   # Offset characters' unicodes
   # Never edit this unless you know what you are doing

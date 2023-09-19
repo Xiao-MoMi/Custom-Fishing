@@ -55,4 +55,6 @@ public interface FishingManager {
     void startFishingGame(Player player, Condition condition, Effect effect);
 
     void startFishingGame(Player player, GameSettings settings, GameInstance gameInstance);
+
+    boolean hasPlayerCastHook(UUID uuid);
 }

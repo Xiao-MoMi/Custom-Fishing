@@ -27,8 +27,8 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Key;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.item.BuildableItem;
-import net.momirealms.customfishing.mechanic.item.ItemManagerImpl;
 import net.momirealms.customfishing.setting.CFLocale;
+import net.momirealms.customfishing.util.ItemUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -48,7 +48,8 @@ public class ItemCommand {
                     getSubCommand("item"),
                     getSubCommand("util"),
                     getSubCommand("bait"),
-                    getSubCommand("rod")
+                    getSubCommand("rod"),
+                    getSubCommand("hook")
                 );
     }
 
@@ -80,7 +81,7 @@ public class ItemCommand {
                     int amount = (int) args.getOrDefault("amount", 1);
                     ItemStack item = CustomFishingPlugin.get().getItemManager().build(player, namespace, id, new Condition(player).getArgs());
                     if (item != null) {
-                        int actual = ItemManagerImpl.giveCertainAmountOfItem(player, item, amount);
+                        int actual = ItemUtils.giveCertainAmountOfItem(player, item, amount);
                         AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, CFLocale.MSG_Get_Item.replace("{item}", id).replace("{amount}", String.valueOf(actual)));
                     } else {
                         AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, CFLocale.MSG_Item_Not_Exists);
@@ -106,7 +107,7 @@ public class ItemCommand {
                         assert players != null;
                         for (Player player : players) {
                             ItemStack item = CustomFishingPlugin.get().getItemManager().build(player, namespace, id, new Condition(player).getArgs());
-                            int actual = ItemManagerImpl.giveCertainAmountOfItem(player, item, amount);
+                            int actual = ItemUtils.giveCertainAmountOfItem(player, item, amount);
                             AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Give_Item.replace("{item}", id).replace("{amount}", String.valueOf(actual)).replace("{player}", player.getName()));
                         }
                     } else {

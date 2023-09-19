@@ -64,7 +64,6 @@ public class CompetitionManagerImpl implements CompetitionManager {
                 1,
                 TimeUnit.SECONDS
         );
-        LogUtils.info("Loaded " + commandConfigMap.size() + " competitions.");
     }
 
     public void unload() {

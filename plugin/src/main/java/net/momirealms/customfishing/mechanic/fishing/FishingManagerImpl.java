@@ -229,7 +229,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 if (compound != null && compound.hasTag("max_dur")) {
                     event.setCancelled(true);
                     hook.remove();
-                    ItemUtils.loseDurability(itemStack, 2);
+                    ItemUtils.loseDurability(itemStack, 2, true);
                 }
             }
         }
@@ -330,7 +330,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
             if (nbtCompound != null && nbtCompound.hasTag("max_dur")) {
                 event.getHook().remove();
                 event.setCancelled(true);
-                ItemUtils.loseDurability(itemStack, 5);
+                ItemUtils.loseDurability(itemStack, 5, true);
             }
         }
     }
@@ -479,7 +479,8 @@ public class FishingManagerImpl implements Listener, FishingManager {
                     if (damageEvent.isCancelled()) {
                         break outer;
                     }
-                    ItemUtils.loseDurability(rod, 1);
+                    ItemUtils.reduceHookDurability(rod, false);
+                    ItemUtils.loseDurability(rod, 1, true);
                 }
 
             fishHook.remove();
@@ -518,6 +519,8 @@ public class FishingManagerImpl implements Listener, FishingManager {
         GlobalSettings.triggerLootActions(ActionTrigger.FAILURE, fishingPreparation);
         loot.triggerActions(ActionTrigger.FAILURE, fishingPreparation);
         fishingPreparation.triggerActions(ActionTrigger.FAILURE);
+
+        ItemUtils.reduceHookDurability(fishingPreparation.getRodItemStack(), true);
     }
 
     public void success(TempFishingState state, FishHook hook) {
@@ -685,6 +688,17 @@ public class FishingManagerImpl implements Listener, FishingManager {
         } else {
             LogUtils.warn("It seems that player " + player.getName() + " is not fishing. Fishing game failed to start.");
         }
+    }
+
+    @Override
+    public boolean hasPlayerCastHook(UUID uuid) {
+        FishHook fishHook = hookCacheMap.get(uuid);
+        if (fishHook == null) return false;
+        if (!fishHook.isValid()) {
+            hookCacheMap.remove(uuid);
+            return false;
+        }
+        return true;
     }
 
     @Override
