@@ -120,7 +120,7 @@ public class DebugCommand {
                         for (EffectModifier modifier : totemEffect.getEffectModifiers()) {
                             modifier.modify(initialEffect, fishingPreparation);
                         }
-                    var map = CustomFishingPlugin.get().getFishingManager().getPossibleLootKeysWithWeight(initialEffect, fishingPreparation);
+                    var map = CustomFishingPlugin.get().getLootManager().getPossibleLootKeysWithWeight(initialEffect, fishingPreparation);
                     List<LootWithWeight> loots = new ArrayList<>();
                     double sum = 0;
                     for (Map.Entry<String, Double> entry : map.entrySet()) {

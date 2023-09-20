@@ -56,8 +56,8 @@ public class FishingPreparation extends Condition {
         this.effects = new ArrayList<>();
         boolean rodOnMainHand = mainHandItem.getType() == Material.FISHING_ROD;
         this.rodItemStack = rodOnMainHand ? mainHandItem : offHandItem;
-        String rodItemID = plugin.getItemManager().getAnyItemID(this.rodItemStack);
-        EffectCarrier rodEffect = plugin.getEffectManager().getEffect("rod", rodItemID);
+        String rodItemID = plugin.getItemManager().getAnyPluginItemID(this.rodItemStack);
+        EffectCarrier rodEffect = plugin.getEffectManager().getEffectCarrier("rod", rodItemID);
         if (rodEffect != null) effects.add(rodEffect);
         super.insertArg("{rod}", rodItemID);
 
@@ -66,14 +66,14 @@ public class FishingPreparation extends Condition {
         if (cfCompound != null && cfCompound.hasTag("hook_id")) {
             String hookID = cfCompound.getString("hook_id");
             super.insertArg("{hook}", rodItemID);
-            EffectCarrier carrier = plugin.getEffectManager().getEffect("hook", hookID);
+            EffectCarrier carrier = plugin.getEffectManager().getEffectCarrier("hook", hookID);
             if (carrier != null) {
                 this.effects.add(carrier);
             }
         }
 
-        String baitItemID = plugin.getItemManager().getAnyItemID(rodOnMainHand ? offHandItem : mainHandItem);
-        EffectCarrier baitEffect = plugin.getEffectManager().getEffect("bait", baitItemID);
+        String baitItemID = plugin.getItemManager().getAnyPluginItemID(rodOnMainHand ? offHandItem : mainHandItem);
+        EffectCarrier baitEffect = plugin.getEffectManager().getEffectCarrier("bait", baitItemID);
 
         if (baitEffect != null) {
             this.baitItemStack = rodOnMainHand ? offHandItem : mainHandItem;
@@ -89,10 +89,10 @@ public class FishingPreparation extends Condition {
                 this.insertArg("{in-bag}", "true");
                 for (int i = 0; i < fishingBag.getSize(); i++) {
                     ItemStack itemInBag = fishingBag.getItem(i);
-                    String bagItemID = plugin.getItemManager().getItemID(itemInBag);
+                    String bagItemID = plugin.getItemManager().getCustomFishingItemID(itemInBag);
                     if (bagItemID == null) continue;
                     if (!hasBait) {
-                        EffectCarrier effect = plugin.getEffectManager().getEffect("bait", bagItemID);
+                        EffectCarrier effect = plugin.getEffectManager().getEffectCarrier("bait", bagItemID);
                         if (effect != null) {
                             this.baitItemStack = itemInBag;
                             this.effects.add(effect);
@@ -100,7 +100,7 @@ public class FishingPreparation extends Condition {
                             continue;
                         }
                     }
-                    EffectCarrier utilEffect = plugin.getEffectManager().getEffect("util", bagItemID);
+                    EffectCarrier utilEffect = plugin.getEffectManager().getEffectCarrier("util", bagItemID);
                     if (utilEffect != null && !uniqueUtils.contains(bagItemID)) {
                         effects.add(utilEffect);
                         uniqueUtils.add(bagItemID);
@@ -111,7 +111,7 @@ public class FishingPreparation extends Condition {
         }
 
         for (String enchant : plugin.getIntegrationManager().getEnchantments(rodItemStack)) {
-            EffectCarrier enchantEffect = plugin.getEffectManager().getEffect("enchant", enchant);
+            EffectCarrier enchantEffect = plugin.getEffectManager().getEffectCarrier("enchant", enchant);
             if (enchantEffect != null) {
                 this.effects.add(enchantEffect);
             }

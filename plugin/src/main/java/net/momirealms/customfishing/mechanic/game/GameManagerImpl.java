@@ -26,6 +26,7 @@ import net.momirealms.customfishing.api.mechanic.game.*;
 import net.momirealms.customfishing.api.util.FontUtils;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.api.util.OffsetUtils;
+import net.momirealms.customfishing.mechanic.requirement.RequirementManagerImpl;
 import net.momirealms.customfishing.util.ClassUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -42,13 +43,13 @@ public class GameManagerImpl implements GameManager {
 
     private final CustomFishingPlugin plugin;
     private final HashMap<String, GameFactory> gameCreatorMap;
-    private final HashMap<String, Pair<BasicGameConfig, GameInstance>> gameMap;
+    private final HashMap<String, Pair<BasicGameConfig, GameInstance>> gameInstanceMap;
     private final String EXPANSION_FOLDER = "expansions/minigame";
 
     public GameManagerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.gameCreatorMap = new HashMap<>();
-        this.gameMap = new HashMap<>();
+        this.gameInstanceMap = new HashMap<>();
         this.registerInbuiltGames();
     }
 
@@ -64,7 +65,7 @@ public class GameManagerImpl implements GameManager {
     }
 
     public void unload() {
-        this.gameMap.clear();
+        this.gameInstanceMap.clear();
     }
 
     public void disable() {
@@ -72,6 +73,13 @@ public class GameManagerImpl implements GameManager {
         this.gameCreatorMap.clear();
     }
 
+    /**
+     * Registers a new game type with the specified type identifier.
+     *
+     * @param type         The type identifier for the game.
+     * @param gameFactory  The {@link GameFactory} that creates instances of the game.
+     * @return {@code true} if the registration was successful, {@code false} if the type identifier is already registered.
+     */
     @Override
     public boolean registerGameType(String type, GameFactory gameFactory) {
         if (gameCreatorMap.containsKey(type))
@@ -81,27 +89,56 @@ public class GameManagerImpl implements GameManager {
         return true;
     }
 
+    /**
+     * Unregisters a game type with the specified type identifier.
+     *
+     * @param type The type identifier of the game to unregister.
+     * @return {@code true} if the game type was successfully unregistered, {@code false} if the type identifier was not found.
+     */
     @Override
     public boolean unregisterGameType(String type) {
         return gameCreatorMap.remove(type) != null;
     }
 
+    /**
+     * Retrieves the game factory associated with the specified game type.
+     *
+     * @param type The type identifier of the game.
+     * @return The {@code GameFactory} for the specified game type, or {@code null} if not found.
+     */
     @Override
     @Nullable
     public GameFactory getGameFactory(String type) {
         return gameCreatorMap.get(type);
     }
 
+    /**
+     * Retrieves a game instance and its basic configuration associated with the specified key.
+     *
+     * @param key The key identifying the game instance.
+     * @return An {@code Optional} containing a {@code Pair} of the basic game configuration and the game instance
+     *         if found, or an empty {@code Optional} if not found.
+     */
     @Override
-    public Optional<Pair<BasicGameConfig, GameInstance>> getGame(String key) {
-        return Optional.ofNullable(gameMap.get(key));
+    public Pair<BasicGameConfig, GameInstance> getGameInstance(String key) {
+        return gameInstanceMap.get(key);
     }
 
+    /**
+     * Retrieves a map of game names and their associated weights based on the specified conditions.
+     *
+     * @param condition The condition to evaluate game weights.
+     * @return A {@code HashMap} containing game names as keys and their associated weights as values.
+     */
     @Override
     public HashMap<String, Double> getGameWithWeight(Condition condition) {
-        return plugin.getRequirementManager().getGameWithWeight(condition);
+        return ((RequirementManagerImpl) plugin.getRequirementManager()).getGameWithWeight(condition);
     }
 
+    /**
+     * Loads minigames from the plugin folder.
+     * This method searches for minigame configuration files in the plugin's data folder and loads them.
+     */
     public void loadGamesFromPluginFolder() {
         Deque<File> fileDeque = new ArrayDeque<>();
         File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + "minigame");
@@ -124,11 +161,22 @@ public class GameManagerImpl implements GameManager {
         }
     }
 
+    /**
+     * Loads a minigame configuration from a YAML file.
+     * This method parses the YAML file and extracts minigame configurations to be used in the plugin.
+     *
+     * @param file The YAML file to load.
+     */
     private void loadSingleFile(File file) {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
         for (Map.Entry<String, Object> entry : config.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection section) {
                 GameFactory creator = this.getGameFactory(section.getString("game-type"));
+                if (creator == null) {
+                    LogUtils.warn("Game type:" + section.getString("game-type") + " doesn't exist.");
+                    continue;
+                }
+
                 BasicGameConfig.Builder basicGameBuilder = new BasicGameConfig.Builder();
                 Object time = section.get("time", 15);
                 if (time instanceof String str) {
@@ -144,9 +192,7 @@ public class GameManagerImpl implements GameManager {
                 } else if (difficulty instanceof Integer integer) {
                     basicGameBuilder.difficulty(integer);
                 }
-                if (creator != null) {
-                    gameMap.put(entry.getKey(), Pair.of(basicGameBuilder.build(), creator.setArgs(section)));
-                }
+                gameInstanceMap.put(entry.getKey(), Pair.of(basicGameBuilder.build(), creator.setArgs(section)));
             }
         }
     }
@@ -451,6 +497,9 @@ public class GameManagerImpl implements GameManager {
         }));
     }
 
+    /**
+     * Loads minigame expansions from the expansion folder.
+     */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void loadExpansions() {
         File expansionFolder = new File(plugin.getDataFolder(), EXPANSION_FOLDER);

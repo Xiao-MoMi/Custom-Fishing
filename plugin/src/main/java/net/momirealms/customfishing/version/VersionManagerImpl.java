@@ -28,6 +28,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * This class implements the VersionManager interface and is responsible for managing version-related information.
+ */
 public class VersionManagerImpl implements VersionManager {
 
     private final boolean isNewerThan1_19_R2;
@@ -41,9 +44,13 @@ public class VersionManagerImpl implements VersionManager {
     @SuppressWarnings("deprecation")
     public VersionManagerImpl(CustomFishingPluginImpl plugin) {
         this.plugin = plugin;
+
+        // Get the server version
         serverVersion = plugin.getServer().getClass().getPackage().getName().split("\\.")[3];
         String[] split = serverVersion.split("_");
         int main_ver = Integer.parseInt(split[1]);
+
+        // Determine if the server version is newer than 1_19_R2 and 1_20_R1
         if (main_ver >= 20) {
             isNewerThan1_19_R2 = true;
             isNewerThan1_20 = true;
@@ -54,12 +61,20 @@ public class VersionManagerImpl implements VersionManager {
             isNewerThan1_19_R2 = false;
             isNewerThan1_20 = false;
         }
+
+        // Check if the server is Spigot
         String server_name = plugin.getServer().getName();
         this.isSpigot = server_name.equals("CraftBukkit");
+
+        // Check if the server is Folia
         try {
             Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
             this.isFolia = true;
-        } catch (ClassNotFoundException ignored) {}
+        } catch (ClassNotFoundException ignored) {
+
+        }
+
+        // Get the plugin version
         this.pluginVersion = plugin.getDescription().getVersion();
     }
 
@@ -93,6 +108,7 @@ public class VersionManagerImpl implements VersionManager {
         return serverVersion;
     }
 
+    // Method to asynchronously check for plugin updates
     @Override
     public CompletableFuture<Boolean> checkUpdate() {
         CompletableFuture<Boolean> updateFuture = new CompletableFuture<>();
@@ -119,6 +135,7 @@ public class VersionManagerImpl implements VersionManager {
         return updateFuture;
     }
 
+    // Method to compare two version strings
     private boolean compareVer(String newV, String currentV) {
         if (newV == null || currentV == null || newV.isEmpty() || currentV.isEmpty()) {
             return false;

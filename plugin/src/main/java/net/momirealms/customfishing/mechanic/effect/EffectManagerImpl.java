@@ -21,7 +21,6 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Key;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.manager.EffectManager;
-import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
@@ -31,6 +30,7 @@ import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -51,24 +51,61 @@ public class EffectManagerImpl implements EffectManager {
         this.effectMap.clear();
     }
 
+    /**
+     * Registers an EffectCarrier with a unique Key.
+     *
+     * @param key    The unique Key associated with the EffectCarrier.
+     * @param effect The EffectCarrier to be registered.
+     * @return True if the registration was successful, false if the Key already exists.
+     */
     @Override
-    public boolean registerEffectItem(Key key, EffectCarrier effect) {
+    public boolean registerEffectCarrier(Key key, EffectCarrier effect) {
         if (effectMap.containsKey(key)) return false;
         this.effectMap.put(key, effect);
         return true;
     }
 
+    /**
+     * Unregisters an EffectCarrier associated with the specified Key.
+     *
+     * @param key The unique Key of the EffectCarrier to unregister.
+     * @return True if the EffectCarrier was successfully unregistered, false if the Key does not exist.
+     */
     @Override
-    public boolean unregisterEffectItem(Key key) {
+    public boolean unregisterEffectCarrier(Key key) {
         return this.effectMap.remove(key) != null;
     }
 
+    /**
+     * Checks if an EffectCarrier with the specified namespace and id exists.
+     *
+     * @param namespace The namespace of the EffectCarrier.
+     * @param id        The unique identifier of the EffectCarrier.
+     * @return True if an EffectCarrier with the given namespace and id exists, false otherwise.
+     */
+    @Override
+    public boolean hasEffectCarrier(String namespace, String id) {
+        return effectMap.containsKey(Key.of(namespace, id));
+    }
+
+    /**
+     * Retrieves an EffectCarrier with the specified namespace and id.
+     *
+     * @param namespace The namespace of the EffectCarrier.
+     * @param id        The unique identifier of the EffectCarrier.
+     * @return The EffectCarrier with the given namespace and id, or null if it doesn't exist.
+     */
     @Nullable
     @Override
-    public EffectCarrier getEffect(String namespace, String id) {
+    public EffectCarrier getEffectCarrier(String namespace, String id) {
         return effectMap.get(Key.of(namespace, id));
     }
 
+    /**
+     * Loads EffectCarrier configurations from YAML files in different content folders.
+     * EffectCarrier configurations are organized by type (rod, bait, enchant, util, totem, hook) in separate folders.
+     * Each YAML file within these folders is processed to populate the effectMap.
+     */
     @SuppressWarnings("DuplicatedCode")
     public void load() {
         Deque<File> fileDeque = new ArrayDeque<>();
@@ -94,43 +131,41 @@ public class EffectManagerImpl implements EffectManager {
         }
     }
 
+    /**
+     * Loads EffectCarrier configurations from a YAML file and populates the effectMap.
+     *
+     * @param file      The YAML file to load configurations from.
+     * @param namespace The namespace to use when creating keys for EffectCarriers.
+     */
     private void loadSingleFile(File file, String namespace) {
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
         for (Map.Entry<String, Object> entry : yaml.getValues(false).entrySet()) {
             String value = entry.getKey();
             if (entry.getValue() instanceof ConfigurationSection section) {
                 Key key = Key.of(namespace, value);
-                EffectCarrier item = getEffectItemFromSection(key, section);
+                EffectCarrier item = getEffectCarrierFromSection(key, section);
                 if (item != null)
                     effectMap.put(key, item);
             }
         }
     }
 
-    private EffectCarrier getEffectItemFromSection(Key key, ConfigurationSection section) {
+    /**
+     * Parses a ConfigurationSection to create an EffectCarrier based on the specified key and configuration.
+     *
+     * @param key     The key that uniquely identifies the EffectCarrier.
+     * @param section The ConfigurationSection containing the EffectCarrier configuration.
+     * @return An EffectCarrier instance based on the key and configuration, or null if the section is null.
+     */
+    @Override
+    @Nullable
+    public EffectCarrier getEffectCarrierFromSection(Key key, ConfigurationSection section) {
         if (section == null) return null;
         return new EffectCarrier.Builder()
                 .key(key)
                 .requirements(plugin.getRequirementManager().getRequirements(section.getConfigurationSection("requirements"), true))
                 .effect(getEffectModifiers(section.getConfigurationSection("effects")))
                 .actionMap(plugin.getActionManager().getActionMap(section.getConfigurationSection("events")))
-                .build();
-    }
-
-    public Effect getEffectFromSection(ConfigurationSection section) {
-        if (section == null) return getInitialEffect();
-        return new FishingEffect.Builder()
-                .addWeightModifier(ConfigUtils.getModifiers(section.getStringList("weight-single")))
-                .addWeightModifier(getGroupModifiers(section.getStringList("weight-group")))
-                .addWeightModifierIgnored(ConfigUtils.getModifiers(section.getStringList("weight-single-ignore-condition")))
-                .addWeightModifierIgnored(getGroupModifiers(section.getStringList("weight-group-ignore-condition")))
-                .timeModifier(section.getDouble("hook-time", 1))
-                .difficultyModifier(section.getDouble("difficulty", 0))
-                .multipleLootChance(section.getDouble("multiple-loot", 0))
-                .lavaFishing(section.getBoolean("lava-fishing", false))
-                .scoreMultiplier(section.getDouble("score-bonus", 1))
-                .sizeMultiplier(section.getDouble("size-bonus", 1))
-                .gameTimeModifier(section.getDouble("game-time", 0))
                 .build();
     }
 
@@ -144,11 +179,23 @@ public class EffectManagerImpl implements EffectManager {
         }
     }
 
+    /**
+     * Retrieves the initial FishingEffect that represents no special effects.
+     *
+     * @return The initial FishingEffect.
+     */
+    @NotNull
     @Override
     public FishingEffect getInitialEffect() {
         return new FishingEffect.Builder().build();
     }
 
+    /**
+     * Retrieves a list of modifiers based on specified loot groups.
+     *
+     * @param modList A list of strings containing group modifiers in the format "group:modifier".
+     * @return A list of pairs where each pair represents a loot item and its associated modifier.
+     */
     private List<Pair<String, WeightModifier>> getGroupModifiers(List<String> modList) {
         List<Pair<String, WeightModifier>> result = new ArrayList<>();
         for (String group : modList) {
@@ -166,6 +213,14 @@ public class EffectManagerImpl implements EffectManager {
         return result;
     }
 
+    /**
+     * Parses a ConfigurationSection to retrieve an array of EffectModifiers.
+     *
+     * @param section The ConfigurationSection to parse.
+     * @return An array of EffectModifiers based on the values found in the section.
+     */
+    @NotNull
+    @Override
     public EffectModifier[] getEffectModifiers(ConfigurationSection section) {
         if (section == null) return new EffectModifier[0];
         ArrayList<EffectModifier> modifiers = new ArrayList<>();
@@ -179,6 +234,14 @@ public class EffectManagerImpl implements EffectManager {
         return modifiers.toArray(new EffectModifier[0]);
     }
 
+    /**
+     * Parses a ConfigurationSection to create an EffectModifier based on the specified type and configuration.
+     *
+     * @param section The ConfigurationSection containing the effect modifier configuration.
+     * @return An EffectModifier instance based on the type and configuration.
+     */
+    @Override
+    @Nullable
     public EffectModifier getEffectModifier(ConfigurationSection section) {
         String type = section.getString("type");
         if (type == null) return null;

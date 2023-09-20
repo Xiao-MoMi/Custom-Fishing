@@ -19,24 +19,46 @@ package net.momirealms.customfishing.api.mechanic.game;
 
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public interface GamingPlayer {
 
+    /**
+     * Cancel the game
+     */
     void cancel();
 
     boolean isSuccessful();
 
+    /**
+     * @return whether to cancel the event
+     */
     boolean onRightClick();
 
+    /**
+     * @return whether to cancel the event
+     */
     boolean onLeftClick();
 
+    /**
+     * @return whether to cancel the event
+     */
     boolean onSwapHand();
 
+    /**
+     * @return whether to cancel the event
+     */
+    boolean onChat(String message);
+
+    /**
+     * @return whether to cancel the event
+     */
     boolean onJump();
 
     Player getPlayer();
 
-    Effect getEffectReward();
-
-    boolean onChat(String message);
+    /**
+     * @return effect reward based on game results
+     */
+    @Nullable Effect getEffectReward();
 }

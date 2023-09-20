@@ -34,13 +34,22 @@ import java.util.Map;
 
 public class MarketGUI {
 
+    // A map that associates characters with MarketGUI elements.
     private final HashMap<Character, MarketGUIElement> itemsCharMap;
+    // A map that associates slot indices with MarketGUI elements.
     private final HashMap<Integer, MarketGUIElement> itemsSlotMap;
     private final Inventory inventory;
     private final MarketManagerImpl manager;
     private final Player owner;
     private final EarningData earningData;
 
+    /**
+     * Constructor for creating a MarketGUI.
+     *
+     * @param manager     The Market Manager implementation associated with this MarketGUI.
+     * @param player      The player who owns this MarketGUI.
+     * @param earningData Data related to earnings for this MarketGUI.
+     */
     public MarketGUI(MarketManagerImpl manager, Player player, EarningData earningData) {
         this.manager = manager;
         this.owner = player;
@@ -56,6 +65,9 @@ public class MarketGUI {
         holder.setInventory(this.inventory);
     }
 
+    /**
+     * Initialize the GUI layout by mapping elements to inventory slots.
+     */
     private void init() {
         int line = 0;
         for (String content : manager.getLayout()) {
@@ -79,6 +91,12 @@ public class MarketGUI {
         }
     }
 
+    /**
+     * Add one or more elements to the GUI.
+     * @param elements Elements to be added.
+     * @return The MarketGUI instance.
+     */
+    @SuppressWarnings("UnusedReturnValue")
     public MarketGUI addElement(MarketGUIElement... elements) {
         for (MarketGUIElement element : elements) {
             itemsCharMap.put(element.getSymbol(), element);
@@ -86,26 +104,47 @@ public class MarketGUI {
         return this;
     }
 
+    /**
+     * Build and initialize the GUI.
+     */
     public MarketGUI build() {
         init();
         return this;
     }
 
+    /**
+     * Show the GUI to a player if the player is the owner.
+     * @param player The player to show the GUI to.
+     */
     public void show(Player player) {
         if (player != owner) return;
         player.openInventory(inventory);
     }
 
+    /**
+     * Get the MarketGUIElement associated with a specific inventory slot.
+     * @param slot The slot index in the inventory.
+     * @return The associated MarketGUIElement or null if not found.
+     */
     @Nullable
     public MarketGUIElement getElement(int slot) {
         return itemsSlotMap.get(slot);
     }
 
+    /**
+     * Get the MarketGUIElement associated with a specific character symbol.
+     * @param slot The character symbol.
+     * @return The associated MarketGUIElement or null if not found.
+     */
     @Nullable
     public MarketGUIElement getElement(char slot) {
         return itemsCharMap.get(slot);
     }
 
+    /**
+     * Refresh the GUI, updating the display based on current data.
+     * @return The MarketGUI instance.
+     */
     public MarketGUI refresh() {
         double totalWorth = getTotalWorth();
         MarketDynamicGUIElement functionElement = (MarketDynamicGUIElement) getElement(manager.getFunctionSlot());
@@ -145,6 +184,10 @@ public class MarketGUI {
         return this;
     }
 
+    /**
+     * Calculate and return the total worth of items in the inventory.
+     * @return The total worth of items.
+     */
     public double getTotalWorth() {
         double money = 0d;
         MarketGUIElement itemElement = getElement(manager.getItemSlot());
@@ -158,10 +201,17 @@ public class MarketGUI {
         return money;
     }
 
+    /**
+     * Get the inventory associated with this MarketGUI.
+     * @return The Inventory object.
+     */
     public Inventory getInventory() {
         return inventory;
     }
 
+    /**
+     * Clear items with non-zero value from the inventory.
+     */
     public void clearWorthyItems() {
         MarketGUIElement itemElement = getElement(manager.getItemSlot());
         if (itemElement == null) {
@@ -175,6 +225,10 @@ public class MarketGUI {
         }
     }
 
+    /**
+     * Get an empty slot in the item section of the inventory.
+     * @return The index of an empty slot or -1 if none are found.
+     */
     public int getEmptyItemSlot() {
         MarketGUIElement itemElement = getElement(manager.getItemSlot());
         if (itemElement == null) {
@@ -189,6 +243,9 @@ public class MarketGUI {
         return -1;
     }
 
+    /**
+     * Return items to the owner's inventory.
+     */
     public void returnItems() {
         MarketGUIElement itemElement = getElement(manager.getItemSlot());
         if (itemElement == null) {
@@ -203,6 +260,10 @@ public class MarketGUI {
         }
     }
 
+    /**
+     * Get the earning data associated with this MarketGUI.
+     * @return The EarningData object.
+     */
     public EarningData getEarningData() {
         return earningData;
     }

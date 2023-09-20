@@ -30,7 +30,6 @@ public class DynamicText {
     private String originalValue;
     private String latestValue;
     private String[] placeholders;
-    private String[] previousParsedValues;
 
     public DynamicText(Player owner, String rawValue) {
         this.owner = owner;
@@ -38,6 +37,8 @@ public class DynamicText {
     }
 
     private void analyze(String value) {
+        // Analyze the provided text to find and replace placeholders with '%s'.
+        // Store the original value, placeholders, and the initial latest value.
         List<String> placeholdersOwner = new ArrayList<>(PlaceholderManagerImpl.getInstance().detectPlaceholders(value));
         String origin = value;
         for (String placeholder : placeholdersOwner) {
@@ -53,6 +54,7 @@ public class DynamicText {
     }
 
     public boolean update(Map<String, String> placeholders) {
+        // Update the dynamic text by replacing placeholders with actual values.
         String string = originalValue;
         if (this.placeholders.length != 0) {
             PlaceholderManagerImpl placeholderManagerImpl = PlaceholderManagerImpl.getInstance();
@@ -67,6 +69,7 @@ public class DynamicText {
             }
         }
         if (!latestValue.equals(string)) {
+            // If the updated value is different from the latest value, update it.
             latestValue = string;
             return true;
         }

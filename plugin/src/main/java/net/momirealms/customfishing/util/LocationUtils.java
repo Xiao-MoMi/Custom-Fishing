@@ -21,6 +21,13 @@ import org.bukkit.Location;
 
 public class LocationUtils {
 
+    /**
+     * Calculates the Euclidean distance between two locations in 3D space.
+     *
+     * @param location1 The first location
+     * @param location2 The second location
+     * @return The Euclidean distance between the two locations
+     */
     public static double getDistance(Location location1, Location location2) {
         return Math.sqrt(Math.pow(location2.getX() - location1.getX(), 2) +
                 Math.pow(location2.getY() - location1.getY(), 2) +

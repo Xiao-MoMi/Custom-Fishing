@@ -36,6 +36,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Implementation of the OfflineUser interface for representing offline player data.
+ */
 public class OfflineUserImpl implements OfflineUser {
 
     private final UUID uuid;
@@ -43,13 +46,22 @@ public class OfflineUserImpl implements OfflineUser {
     private final FishingBagHolder holder;
     private final EarningData earningData;
     private final Statistics statistics;
-    public static OfflineUserImpl LOCKED_USER = new OfflineUserImpl(UUID.randomUUID(), "", PlayerData.empty());
+    public static OfflineUserImpl LOCKED_USER = new OfflineUserImpl(UUID.randomUUID(), "-locked-", PlayerData.empty());
 
+    /**
+     * Constructor to create an OfflineUserImpl instance.
+     *
+     * @param uuid       The UUID of the player.
+     * @param name       The name of the player.
+     * @param playerData The player's data, including bag contents, earnings, and statistics.
+     */
     public OfflineUserImpl(UUID uuid, String name, PlayerData playerData) {
         this.name = name;
         this.uuid = uuid;
         this.holder = new FishingBagHolder(uuid);
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+
+        // Set up the inventory for the FishingBagHolder
         this.holder.setInventory(InventoryUtils.createInventory(this.holder, playerData.getBagData().size,
                 AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
                         PlaceholderManagerImpl.getInstance().parse(
@@ -57,6 +69,7 @@ public class OfflineUserImpl implements OfflineUser {
                         )
                 )));
         this.holder.setItems(InventoryUtils.getInventoryItems(playerData.getBagData().serialized));
+
         this.earningData = playerData.getEarningData();
         this.statistics = new Statistics(playerData.getStatistics());
     }
@@ -94,6 +107,7 @@ public class OfflineUserImpl implements OfflineUser {
 
     @Override
     public PlayerData getPlayerData() {
+        // Create a new PlayerData instance based on the stored information
         return new PlayerData.Builder()
                 .setBagData(new InventoryData(InventoryUtils.stacksToBase64(holder.getInventory().getStorageContents()), holder.getInventory().getSize()))
                 .setEarningData(earningData)

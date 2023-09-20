@@ -82,10 +82,15 @@ public class RequirementManagerImpl implements RequirementManager {
         this.conditionalLootsMap.clear();
     }
 
+    /**
+     * Loads requirement group configuration data from various configuration files.
+     */
     public void loadRequirementGroupFileConfig() {
+        // Load mechanic requirements from the main configuration file
         YamlConfiguration main = plugin.getConfig("config.yml");
         mechanicRequirements = getRequirements(main.getConfigurationSection("mechanics.mechanic-requirements"), true);
 
+        // Load conditional loot data from the loot conditions configuration file
         YamlConfiguration config1 = plugin.getConfig("loot-conditions.yml");
         for (Map.Entry<String, Object> entry : config1.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection section) {
@@ -93,6 +98,7 @@ public class RequirementManagerImpl implements RequirementManager {
             }
         }
 
+        // Load conditional game data from the game conditions configuration file
         YamlConfiguration config2 = plugin.getConfig("game-conditions.yml");
         for (Map.Entry<String, Object> entry : config2.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection section) {
@@ -101,6 +107,13 @@ public class RequirementManagerImpl implements RequirementManager {
         }
     }
 
+    /**
+     * Registers a custom requirement type with its corresponding factory.
+     *
+     * @param type               The type identifier of the requirement.
+     * @param requirementFactory The factory responsible for creating instances of the requirement.
+     * @return True if registration was successful, false if the type is already registered.
+     */
     @Override
     public boolean registerRequirement(String type, RequirementFactory requirementFactory) {
         if (this.requirementBuilderMap.containsKey(type)) return false;
@@ -108,9 +121,44 @@ public class RequirementManagerImpl implements RequirementManager {
         return true;
     }
 
+    /**
+     * Unregisters a custom requirement type.
+     *
+     * @param type The type identifier of the requirement to unregister.
+     * @return True if unregistration was successful, false if the type is not registered.
+     */
     @Override
     public boolean unregisterRequirement(String type) {
         return this.requirementBuilderMap.remove(type) != null;
+    }
+
+    /**
+     * Retrieves a ConditionalElement from a given ConfigurationSection.
+     *
+     * @param section The ConfigurationSection containing the conditional element data.
+     * @return A ConditionalElement instance representing the data in the section.
+     */
+    private ConditionalElement getConditionalElements(ConfigurationSection section) {
+        var sub = section.getConfigurationSection("sub-groups");
+        if (sub == null) {
+            return new ConditionalElement(
+                    getRequirements(section.getConfigurationSection("conditions"), false),
+                    ConfigUtils.getModifiers(section.getStringList("list")),
+                    null
+            );
+        } else {
+            HashMap<String, ConditionalElement> subElements = new HashMap<>();
+            for (Map.Entry<String, Object> entry : sub.getValues(false).entrySet()) {
+                if (entry.getValue() instanceof ConfigurationSection innerSection) {
+                    subElements.put(entry.getKey(), getConditionalElements(innerSection));
+                }
+            }
+            return new ConditionalElement(
+                    getRequirements(section.getConfigurationSection("conditions"), false),
+                    ConfigUtils.getModifiers(section.getStringList("list")),
+                    subElements
+            );
+        }
     }
 
     private void registerInbuiltRequirements() {
@@ -149,39 +197,21 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerHookRequirement();
     }
 
-    public ConditionalElement getConditionalElements(ConfigurationSection section) {
-        var sub = section.getConfigurationSection("sub-groups");
-        if (sub == null) {
-            return new ConditionalElement(
-                    getRequirements(section.getConfigurationSection("conditions"), false),
-                    ConfigUtils.getModifiers(section.getStringList("list")),
-                    null
-            );
-        } else {
-            HashMap<String, ConditionalElement> subElements = new HashMap<>();
-            for (Map.Entry<String, Object> entry : sub.getValues(false).entrySet()) {
-                if (entry.getValue() instanceof ConfigurationSection innerSection) {
-                    subElements.put(entry.getKey(), getConditionalElements(innerSection));
-                }
-            }
-            return new ConditionalElement(
-                    getRequirements(section.getConfigurationSection("conditions"), false),
-                    ConfigUtils.getModifiers(section.getStringList("list")),
-                    subElements
-            );
-        }
-    }
-
-    @Override
     public HashMap<String, Double> getLootWithWeight(Condition condition) {
         return getString2DoubleMap(condition, conditionalLootsMap);
     }
 
-    @Override
     public HashMap<String, Double> getGameWithWeight(Condition condition) {
         return getString2DoubleMap(condition, conditionalGamesMap);
     }
 
+    /**
+     * Retrieves a mapping of strings to doubles based on conditional elements and a player's condition.
+     *
+     * @param condition The player's condition.
+     * @param conditionalGamesMap The map of conditional elements representing loots/games.
+     * @return A HashMap with strings as keys and doubles as values representing loot/game weights.
+     */
     @NotNull
     private HashMap<String, Double> getString2DoubleMap(Condition condition, LinkedHashMap<String, ConditionalElement> conditionalGamesMap) {
         HashMap<String, Double> lootWeightMap = new HashMap<>();
@@ -191,10 +221,10 @@ public class RequirementManagerImpl implements RequirementManager {
         while (!lootQueue.isEmpty()) {
             HashMap<String, ConditionalElement> currentLootMap = lootQueue.poll();
             for (ConditionalElement loots : currentLootMap.values()) {
-                if (loots.isConditionsMet(condition)) {
+                if (RequirementManager.isRequirementMet(condition, loots.getRequirements())) {
                     loots.combine(player, lootWeightMap);
-                    if (loots.getSubLoots() != null) {
-                        lootQueue.add(loots.getSubLoots());
+                    if (loots.getSubElements() != null) {
+                        lootQueue.add(loots.getSubElements());
                     }
                 }
             }
@@ -202,15 +232,24 @@ public class RequirementManagerImpl implements RequirementManager {
         return lootWeightMap;
     }
 
-    @Nullable
+    /**
+     * Retrieves an array of requirements based on a configuration section.
+     *
+     * @param section The configuration section containing requirement definitions.
+     * @param advanced A flag indicating whether to use advanced requirements.
+     * @return An array of Requirement objects based on the configuration section
+     */
+    @NotNull
     @Override
     public Requirement[] getRequirements(ConfigurationSection section, boolean advanced) {
-        if (section == null) return null;
         List<Requirement> requirements = new ArrayList<>();
+        if (section == null) {
+            return requirements.toArray(new Requirement[0]);
+        }
         for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
             String typeOrName = entry.getKey();
             if (hasRequirement(typeOrName)) {
-                requirements.add(getRequirementBuilder(typeOrName).build(entry.getValue(), null, advanced));
+                requirements.add(getRequirement(typeOrName, entry.getValue()));
             } else {
                 requirements.add(getRequirement(section.getConfigurationSection(typeOrName), advanced));
             }
@@ -222,6 +261,13 @@ public class RequirementManagerImpl implements RequirementManager {
         return requirementBuilderMap.containsKey(type);
     }
 
+    /**
+     * Retrieves a Requirement object based on a configuration section and advanced flag.
+     *
+     * @param section  The configuration section containing requirement definitions.
+     * @param advanced A flag indicating whether to use advanced requirements.
+     * @return A Requirement object based on the configuration section, or an EmptyRequirement if the section is null or invalid.
+     */
     @NotNull
     @Override
     public Requirement getRequirement(ConfigurationSection section, boolean advanced) {
@@ -244,31 +290,48 @@ public class RequirementManagerImpl implements RequirementManager {
             LogUtils.warn("No requirement type found at " + section.getCurrentPath());
             return EmptyRequirement.instance;
         }
-        var builder = getRequirementBuilder(type);
+        var builder = getRequirementFactory(type);
         if (builder == null) {
             return EmptyRequirement.instance;
         }
         return builder.build(section.get("value"), actionList, advanced);
     }
 
+    /**
+     * Gets a requirement based on the provided key and value.
+     * If a valid RequirementFactory is found for the key, it is used to create the requirement.
+     * If no factory is found, a warning is logged, and an empty requirement instance is returned.
+     *
+     * @param type   The key representing the requirement type.
+     * @param value The value associated with the requirement.
+     * @return A Requirement instance based on the key and value, or an empty requirement if not found.
+     */
     @Override
-    public Requirement getRequirement(String key, Object value) {
-        return getRequirementBuilder(key).build(value);
+    @NotNull
+    public Requirement getRequirement(String type, Object value) {
+        RequirementFactory factory = getRequirementFactory(type);
+        if (factory == null) {
+            LogUtils.warn("Requirement type: " + type + " doesn't exist.");
+            return EmptyRequirement.instance;
+        }
+        return factory.build(value);
     }
 
-    private Pair<Integer, Integer> getIntegerPair(String range) {
-        String[] split = range.split("~");
-        return Pair.of(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-    }
-
+    /**
+     * Retrieves a RequirementFactory based on the specified requirement type.
+     *
+     * @param type The requirement type for which to retrieve a factory.
+     * @return A RequirementFactory for the specified type, or null if no factory is found.
+     */
     @Override
-    public RequirementFactory getRequirementBuilder(String type) {
+    @Nullable
+    public RequirementFactory getRequirementFactory(String type) {
         return requirementBuilderMap.get(type);
     }
 
     private void registerTimeRequirement() {
         registerRequirement("time", (args, actions, advanced) -> {
-            List<Pair<Integer, Integer>> timePairs = ConfigUtils.stringListArgs(args).stream().map(this::getIntegerPair).toList();
+            List<Pair<Integer, Integer>> timePairs = ConfigUtils.stringListArgs(args).stream().map(ConfigUtils::splitStringIntegerArgs).toList();
             return condition -> {
                 long time = condition.getLocation().getWorld().getTime();
                 for (Pair<Integer, Integer> pair : timePairs)
@@ -322,7 +385,7 @@ public class RequirementManagerImpl implements RequirementManager {
         });
     }
 
-    @SuppressWarnings("all")
+    @SuppressWarnings("unchecked")
     private void registerLootRequirement() {
         registerRequirement("loot", (args, actions, advanced) -> {
             List<String> arg = (List<String>) args;
@@ -346,7 +409,7 @@ public class RequirementManagerImpl implements RequirementManager {
 
     private void registerYRequirement() {
         registerRequirement("ypos", (args, actions, advanced) -> {
-            List<Pair<Integer, Integer>> timePairs = ConfigUtils.stringListArgs(args).stream().map(this::getIntegerPair).toList();
+            List<Pair<Integer, Integer>> timePairs = ConfigUtils.stringListArgs(args).stream().map(ConfigUtils::splitStringIntegerArgs).toList();
             return condition -> {
                 int y = condition.getLocation().getBlockY();
                 for (Pair<Integer, Integer> pair : timePairs)
@@ -363,7 +426,6 @@ public class RequirementManagerImpl implements RequirementManager {
             if (args instanceof ConfigurationSection section) {
                 Requirement[] requirements = getRequirements(section, advanced);
                 return condition -> {
-                    if (requirements == null) return true;
                     for (Requirement requirement : requirements) {
                         if (requirement.isConditionMet(condition)) {
                             return true;
@@ -384,7 +446,6 @@ public class RequirementManagerImpl implements RequirementManager {
             if (args instanceof ConfigurationSection section) {
                 Requirement[] requirements = getRequirements(section, advanced);
                 return condition -> {
-                    if (requirements == null) return true;
                     outer: {
                         for (Requirement requirement : requirements) {
                             if (!requirement.isConditionMet(condition)) {
@@ -626,6 +687,7 @@ public class RequirementManagerImpl implements RequirementManager {
         });
     }
 
+    @SuppressWarnings("DuplicatedCode")
     private void registerGreaterThanRequirement() {
         registerRequirement(">=", (args, actions, advanced) -> {
             if (args instanceof ConfigurationSection section) {
@@ -713,6 +775,7 @@ public class RequirementManagerImpl implements RequirementManager {
         });
     }
 
+    @SuppressWarnings("DuplicatedCode")
     private void registerLessThanRequirement() {
         registerRequirement("<", (args, actions, advanced) -> {
             if (args instanceof ConfigurationSection section) {
@@ -919,7 +982,7 @@ public class RequirementManagerImpl implements RequirementManager {
                     ItemStack itemStack = mainOrOff ?
                             condition.getPlayer().getInventory().getItemInMainHand()
                             : condition.getPlayer().getInventory().getItemInOffHand();
-                    String id = plugin.getItemManager().getAnyItemID(itemStack);
+                    String id = plugin.getItemManager().getAnyPluginItemID(itemStack);
                     if (items.contains(id) && itemStack.getAmount() >= amount) return true;
                     if (advanced) triggerActions(actions, condition);
                     return false;
@@ -993,7 +1056,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 int level = section.getInt("level");
                 String target = section.getString("target");
                 return condition -> {
-                    LevelInterface levelInterface = plugin.getIntegrationManager().getLevelHook(pluginName);
+                    LevelInterface levelInterface = plugin.getIntegrationManager().getLevelPlugin(pluginName);
                     if (levelInterface == null) {
                         LogUtils.warn("Plugin (" + pluginName + "'s) level is not compatible. Please double check if it's a problem caused by pronunciation.");
                         return true;
@@ -1010,12 +1073,25 @@ public class RequirementManagerImpl implements RequirementManager {
         });
     }
 
+    /**
+     * Triggers a list of actions with the given condition.
+     * If the list of actions is not null, each action in the list is triggered.
+     *
+     * @param actions   The list of actions to trigger.
+     * @param condition The condition associated with the actions.
+     */
     private void triggerActions(List<Action> actions, Condition condition) {
         if (actions != null)
             for (Action action : actions)
                 action.trigger(condition);
     }
 
+    /**
+     * Loads requirement expansions from external JAR files located in the expansion folder.
+     * Each expansion JAR should contain classes that extends the RequirementExpansion class.
+     * Expansions are registered and used to create custom requirements.
+     * If an error occurs while loading or initializing an expansion, a warning message is logged.
+     */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void loadExpansions() {
         File expansionFolder = new File(plugin.getDataFolder(), EXPANSION_FOLDER);

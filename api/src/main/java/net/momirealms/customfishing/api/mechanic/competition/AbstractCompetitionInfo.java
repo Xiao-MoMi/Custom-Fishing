@@ -17,25 +17,49 @@
 
 package net.momirealms.customfishing.api.mechanic.competition;
 
+/**
+ * Abstract base class for competition information.
+ * Contains common properties and methods for competition info.
+ */
 public abstract class AbstractCompetitionInfo {
-
+    
     protected int refreshRate;
     protected int switchInterval;
     protected boolean showToAll;
     protected String[] texts;
 
+    /**
+     * Get the refresh rate for updating competition information.
+     *
+     * @return The refresh rate in ticks.
+     */
     public int getRefreshRate() {
         return refreshRate;
     }
 
+    /**
+     * Get the switch interval for displaying different competition texts.
+     *
+     * @return The switch interval in ticks.
+     */
     public int getSwitchInterval() {
         return switchInterval;
     }
 
+    /**
+     * Check if competition information should be shown to all players.
+     *
+     * @return True if information is shown to all players, otherwise only to participants.
+     */
     public boolean isShowToAll() {
         return showToAll;
     }
 
+    /**
+     * Get an array of competition information texts.
+     *
+     * @return An array of competition information texts.
+     */
     public String[] getTexts() {
         return texts;
     }

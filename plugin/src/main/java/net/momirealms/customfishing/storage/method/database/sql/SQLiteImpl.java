@@ -35,6 +35,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * An implementation of AbstractSQLDatabase that uses the SQLite database for player data storage.
+ */
 public class SQLiteImpl extends AbstractSQLDatabase {
 
     private Connection connection;
@@ -44,6 +47,9 @@ public class SQLiteImpl extends AbstractSQLDatabase {
         super(plugin);
     }
 
+    /**
+     * Initialize the SQLite database and connection based on the configuration.
+     */
     @Override
     public void initialize() {
         YamlConfiguration config = plugin.getConfig("database.yml");
@@ -52,6 +58,9 @@ public class SQLiteImpl extends AbstractSQLDatabase {
         super.createTableIfNotExist();
     }
 
+    /**
+     * Disable the SQLite database by closing the connection.
+     */
     @Override
     public void disable() {
         try {
@@ -67,6 +76,12 @@ public class SQLiteImpl extends AbstractSQLDatabase {
         return StorageType.SQLite;
     }
 
+    /**
+     * Get a connection to the SQLite database.
+     *
+     * @return A database connection.
+     * @throws SQLException If there is an error establishing a connection.
+     */
     @Override
     public Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
@@ -75,6 +90,13 @@ public class SQLiteImpl extends AbstractSQLDatabase {
         return connection;
     }
 
+    /**
+     * Asynchronously retrieve player data from the SQLite database.
+     *
+     * @param uuid The UUID of the player.
+     * @param lock Flag indicating whether to lock the data.
+     * @return A CompletableFuture with an optional PlayerData.
+     */
     @SuppressWarnings("DuplicatedCode")
     @Override
     public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock) {
@@ -94,7 +116,7 @@ public class SQLiteImpl extends AbstractSQLDatabase {
                     return;
                 }
                 final byte[] dataByteArray = rs.getBytes("data");
-                if (lock) lockPlayerData(uuid, true);
+                if (lock) lockOrUnlockPlayerData(uuid, true);
                 future.complete(Optional.of(plugin.getStorageManager().fromBytes(dataByteArray)));
             } else if (Bukkit.getPlayer(uuid) != null) {
                 var data = PlayerData.empty();
@@ -111,6 +133,14 @@ public class SQLiteImpl extends AbstractSQLDatabase {
         return future;
     }
 
+    /**
+     * Asynchronously update player data in the SQLite database.
+     *
+     * @param uuid       The UUID of the player.
+     * @param playerData The player's data to update.
+     * @param unlock     Flag indicating whether to unlock the data.
+     * @return A CompletableFuture indicating the update result.
+     */
     @Override
     public CompletableFuture<Boolean> updatePlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         var future = new CompletableFuture<Boolean>();
@@ -132,6 +162,12 @@ public class SQLiteImpl extends AbstractSQLDatabase {
         return future;
     }
 
+    /**
+     * Asynchronously update data for multiple players in the SQLite database.
+     *
+     * @param users  A collection of OfflineUser instances to update.
+     * @param unlock Flag indicating whether to unlock the data.
+     */
     @Override
     public void updateManyPlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
         String sql = String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data"));
@@ -155,6 +191,13 @@ public class SQLiteImpl extends AbstractSQLDatabase {
         }
     }
 
+    /**
+     * Insert player data into the SQLite database.
+     *
+     * @param uuid       The UUID of the player.
+     * @param playerData The player's data to insert.
+     * @param lock       Flag indicating whether to lock the data.
+     */
     @Override
     public void insertPlayerData(UUID uuid, PlayerData playerData, boolean lock) {
         try (
@@ -170,6 +213,10 @@ public class SQLiteImpl extends AbstractSQLDatabase {
         }
     }
 
+    /**
+     * Set up the connection to the SQLite database.
+     */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void setConnection() {
         try {
             if (!databaseFile.exists()) databaseFile.createNewFile();

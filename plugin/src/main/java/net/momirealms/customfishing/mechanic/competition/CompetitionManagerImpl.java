@@ -25,7 +25,6 @@ import net.momirealms.customfishing.api.mechanic.competition.*;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.api.util.LogUtils;
-import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.storage.method.database.nosql.RedisManager;
 import org.bukkit.Bukkit;
@@ -33,12 +32,12 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class CompetitionManagerImpl implements CompetitionManager {
@@ -84,8 +83,14 @@ public class CompetitionManagerImpl implements CompetitionManager {
             currentCompetition.stop();
     }
 
+    /**
+     * Retrieves a set of all competition names.
+     *
+     * @return A set of competition names.
+     */
+    @NotNull
     @Override
-    public Set<String> getAllCompetitions() {
+    public Set<String> getAllCompetitionKeys() {
         return commandConfigMap.keySet();
     }
 
@@ -202,8 +207,15 @@ public class CompetitionManagerImpl implements CompetitionManager {
         }
     }
 
+    /**
+     * Retrieves the localization key for a given competition goal.
+     *
+     * @param goal The competition goal to retrieve the localization key for.
+     * @return The localization key for the specified competition goal.
+     */
+    @NotNull
     @Override
-    public String getCompetitionLocale(CompetitionGoal goal) {
+    public String getCompetitionGoalLocale(CompetitionGoal goal) {
         switch (goal) {
             case MAX_SIZE -> {
                 return CFLocale.MSG_Max_Size;
@@ -221,16 +233,29 @@ public class CompetitionManagerImpl implements CompetitionManager {
         return "";
     }
 
+    /**
+     * Starts a competition with the specified name, allowing for the option to force start it or apply it to the entire server.
+     *
+     * @param competition The name of the competition to start.
+     * @param force       Whether to force start the competition even if amount of the online players is lower than the requirement
+     * @param allServer   Whether to apply the competition to the servers that connected to Redis.
+     * @return {@code true} if the competition was started successfully, {@code false} otherwise.
+     */
     @Override
-    public void startCompetition(String competition, boolean force, boolean allServer) {
+    public boolean startCompetition(String competition, boolean force, boolean allServer) {
         CompetitionConfig config = commandConfigMap.get(competition);
         if (config == null) {
             LogUtils.warn("Competition " + competition + " doesn't exist.");
-            return;
+            return false;
         }
-        startCompetition(config, force, allServer);
+        return startCompetition(config, force, allServer);
     }
 
+    /**
+     * Gets the ongoing fishing competition, if one is currently in progress.
+     *
+     * @return The ongoing fishing competition, or null if there is none.
+     */
     @Override
     @Nullable
     public FishingCompetition getOnGoingCompetition() {
@@ -238,26 +263,36 @@ public class CompetitionManagerImpl implements CompetitionManager {
         return currentCompetition.isOnGoing() ? currentCompetition : null;
     }
 
+    /**
+     * Starts a competition using the specified configuration.
+     *
+     * @param config    The configuration of the competition to start.
+     * @param force     Whether to force the start of the competition.
+     * @param allServer Whether the competition should start across all servers in the network.
+     * @return True if the competition was started successfully, false otherwise.
+     */
     @Override
-    public void startCompetition(CompetitionConfig config, boolean force, boolean allServer) {
-        if (!force)
-            this.getPlayerCount().thenAccept(count -> {
-               if (count < config.getMinPlayers()) {
-                   var actions = config.getSkipActions();
-                    if (actions != null)
-                        for (Player player : Bukkit.getOnlinePlayers()) {
-                            for (Action action : actions) {
-                                action.trigger(new Condition(player));
-                            }
+    public boolean startCompetition(CompetitionConfig config, boolean force, boolean allServer) {
+        if (!force) {
+            int players = Bukkit.getOnlinePlayers().size();
+            if (players < config.getMinPlayersToStart()) {
+                var actions = config.getSkipActions();
+                if (actions != null)
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        for (Action action : actions) {
+                            action.trigger(new Condition(player));
                         }
-                   return;
-               }
-               start(config);
-            });
-        else if (!allServer) {
+                    }
+                return false;
+            }
             start(config);
+            return true;
+        } else if (!allServer) {
+            start(config);
+            return true;
         } else {
             RedisManager.getInstance().sendRedisMessage("cf_competition", "start;" + config.getKey());
+            return true;
         }
     }
 
@@ -274,20 +309,22 @@ public class CompetitionManagerImpl implements CompetitionManager {
         }
     }
 
+    /**
+     * Gets the number of seconds until the next competition.
+     *
+     * @return The number of seconds until the next competition.
+     */
     @Override
     public int getNextCompetitionSeconds() {
         return nextCompetitionSeconds;
     }
 
-    @Override
-    public CompletableFuture<Integer> getPlayerCount() {
-        if (!CFConfig.redisRanking) {
-            return CompletableFuture.completedFuture(Bukkit.getOnlinePlayers().size());
-        } else {
-            return plugin.getStorageManager().getRedisPlayerCount();
-        }
-    }
-
+    /**
+     * Retrieves the configuration for a competition based on its key.
+     *
+     * @param key The key of the competition configuration to retrieve.
+     * @return The {@link CompetitionConfig} for the specified key, or {@code null} if no configuration exists with that key.
+     */
     @Nullable
     @Override
     public CompetitionConfig getConfig(String key) {

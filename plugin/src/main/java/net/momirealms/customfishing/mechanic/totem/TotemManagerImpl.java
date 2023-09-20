@@ -105,6 +105,12 @@ public class TotemManagerImpl implements TotemManager, Listener {
         unload();
     }
 
+    /**
+     * Get the EffectCarrier associated with an activated totem located near the specified location.
+     *
+     * @param location The location to search for activated totems.
+     * @return The EffectCarrier associated with the nearest activated totem or null if none are found.
+     */
     @Override
     @Nullable
     public EffectCarrier getTotemEffect(Location location) {
@@ -139,7 +145,7 @@ public class TotemManagerImpl implements TotemManager, Listener {
             return;
         Block block = event.getClickedBlock();
         assert block != null;
-        String id = plugin.getBlockManager().getAnyBlockID(block);
+        String id = plugin.getBlockManager().getAnyPluginBlockID(block);
         List<TotemConfig> configs = totemConfigMap.get(id);
         if (configs == null)
             return;
@@ -153,7 +159,7 @@ public class TotemManagerImpl implements TotemManager, Listener {
         if (config == null)
             return;
         String totemKey = config.getKey();
-        EffectCarrier carrier = plugin.getEffectManager().getEffect("totem", totemKey);
+        EffectCarrier carrier = plugin.getEffectManager().getEffectCarrier("totem", totemKey);
         if (carrier == null)
             return;
         Condition condition = new Condition(block.getLocation(), event.getPlayer(), new HashMap<>());

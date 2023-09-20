@@ -40,7 +40,7 @@ public interface DataStorageInterface {
 
     void updateManyPlayersData(Collection<? extends OfflineUser> users, boolean unlock);
 
-    void lockPlayerData(UUID uuid, boolean lock);
+    void lockOrUnlockPlayerData(UUID uuid, boolean lock);
 
     Set<UUID> getUniqueUsers(boolean legacy);
 }

@@ -32,6 +32,9 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+/**
+ * An abstract base class for SQL databases using the HikariCP connection pool, which handles player data storage.
+ */
 public abstract class AbstractHikariDatabase extends AbstractSQLDatabase implements LegacyDataStorageInterface {
 
     private HikariDataSource dataSource;
@@ -58,6 +61,9 @@ public abstract class AbstractHikariDatabase extends AbstractSQLDatabase impleme
         }
     }
 
+    /**
+     * Initialize the database connection pool and create tables if they don't exist.
+     */
     @Override
     public void initialize() {
         YamlConfiguration config = plugin.getConfig("database.yml");
@@ -109,17 +115,32 @@ public abstract class AbstractHikariDatabase extends AbstractSQLDatabase impleme
         super.createTableIfNotExist();
     }
 
+    /**
+     * Disable the database by closing the connection pool.
+     */
     @Override
     public void disable() {
         if (dataSource != null && !dataSource.isClosed())
             dataSource.close();
     }
 
+    /**
+     * Get a connection to the SQL database from the connection pool.
+     *
+     * @return A database connection.
+     * @throws SQLException If there is an error establishing a connection.
+     */
     @Override
     public Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }
 
+    /**
+     * Retrieve legacy player data from the SQL database.
+     *
+     * @param uuid The UUID of the player.
+     * @return A CompletableFuture containing the optional legacy player data.
+     */
     @Override
     public CompletableFuture<Optional<PlayerData>> getLegacyPlayerData(UUID uuid) {
         var future = new CompletableFuture<Optional<PlayerData>>();

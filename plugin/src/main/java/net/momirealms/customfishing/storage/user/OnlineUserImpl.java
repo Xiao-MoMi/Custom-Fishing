@@ -21,10 +21,19 @@ import net.momirealms.customfishing.api.data.PlayerData;
 import net.momirealms.customfishing.api.data.user.OnlineUser;
 import org.bukkit.entity.Player;
 
+/**
+ * Implementation of the OnlineUser interface, extending OfflineUserImpl to represent online player data.
+ */
 public class OnlineUserImpl extends OfflineUserImpl implements OnlineUser {
 
     private final Player player;
 
+    /**
+     * Constructor to create an OnlineUserImpl instance.
+     *
+     * @param player     The online player associated with this user.
+     * @param playerData The player's data, including bag contents, earnings, and statistics.
+     */
     public OnlineUserImpl(Player player, PlayerData playerData) {
         super(player.getUniqueId(), player.getName(), playerData);
         this.player = player;

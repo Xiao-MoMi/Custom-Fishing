@@ -29,6 +29,10 @@ public class BasicGameConfig {
     private int minDifficulty;
     private int maxDifficulty;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static class Builder {
 
         private final BasicGameConfig basicGameConfig;
@@ -37,11 +41,13 @@ public class BasicGameConfig {
             basicGameConfig = new BasicGameConfig();
         }
 
+        @SuppressWarnings("UnusedReturnValue")
         public Builder difficulty(int value) {
             basicGameConfig.minDifficulty = (basicGameConfig.maxDifficulty = value);
             return this;
         }
 
+        @SuppressWarnings("UnusedReturnValue")
         public Builder difficulty(int min, int max) {
             basicGameConfig.minDifficulty = min;
             basicGameConfig.maxDifficulty = max;
@@ -64,6 +70,12 @@ public class BasicGameConfig {
         }
     }
 
+    /**
+     * Generates random game settings based on specified time and difficulty ranges, adjusted by an effect's difficulty modifier.
+     *
+     * @param effect The effect to adjust the difficulty.
+     * @return A {@link GameSettings} object representing the generated game settings.
+     */
     @Nullable
     public GameSettings getGameSetting(Effect effect) {
         return new GameSettings(

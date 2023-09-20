@@ -36,8 +36,17 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
+/**
+ * Utility class for various item-related operations.
+ */
 public class ItemUtils {
 
+    /**
+     * Updates the lore of an NBTItem based on its custom NBT tags.
+     *
+     * @param nbtItem The NBTItem to update
+     * @return The updated NBTItem
+     */
     public static NBTItem updateNBTItemLore(NBTItem nbtItem) {
         NBTCompound cfCompound = nbtItem.getCompound("CustomFishing");
         if (cfCompound == null)
@@ -84,6 +93,11 @@ public class ItemUtils {
         return nbtItem;
     }
 
+    /**
+     * Updates the lore of an ItemStack based on its custom NBT tags.
+     *
+     * @param itemStack The ItemStack to update
+     */
     public static void updateItemLore(ItemStack itemStack) {
         if (itemStack == null || itemStack.getType() == Material.AIR)
             return;
@@ -91,26 +105,104 @@ public class ItemUtils {
         itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
     }
 
-    public static void reduceHookDurability(ItemStack itemStack, boolean updateLore) {
-        if (itemStack == null || itemStack.getType() == Material.AIR)
+    /**
+     * Reduces the durability of a fishing hook item.
+     *
+     * @param rod  The fishing rod ItemStack
+     * @param updateLore Whether to update the lore after reducing durability
+     */
+    public static void decreaseHookDurability(ItemStack rod, int amount, boolean updateLore) {
+        if (rod == null || rod.getType() != Material.FISHING_ROD)
             return;
-        NBTItem nbtItem = new NBTItem(itemStack);
+        NBTItem nbtItem = new NBTItem(rod);
         NBTCompound cfCompound = nbtItem.getCompound("CustomFishing");
         if (cfCompound != null && cfCompound.hasTag("hook_dur")) {
             int hookDur = cfCompound.getInteger("hook_dur");
-            if (hookDur > 0) {
-                cfCompound.setInteger("hook_dur", hookDur - 1);
-            } else if (hookDur != -1) {
-                cfCompound.removeKey("hook_id");
-                cfCompound.removeKey("hook_dur");
-                cfCompound.removeKey("hook_id");
+            if (hookDur != -1) {
+                hookDur = Math.max(0, hookDur - amount);
+                if (hookDur > 0) {
+                    cfCompound.setInteger("hook_dur", hookDur);
+                } else {
+                    cfCompound.removeKey("hook_id");
+                    cfCompound.removeKey("hook_dur");
+                    cfCompound.removeKey("hook_item");
+                }
             }
         }
         if (updateLore) updateNBTItemLore(nbtItem);
-        itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
+        rod.setItemMeta(nbtItem.getItem().getItemMeta());
     }
 
-    public static void loseDurability(ItemStack itemStack, int amount, boolean updateLore) {
+    /**
+     * Increases the durability of a fishing hook by a specified amount and optionally updates its lore.
+     *
+     * @param rod   The fishing rod ItemStack to modify.
+     * @param amount      The amount by which to increase the durability.
+     * @param updateLore  Whether to update the lore of the fishing rod.
+     */
+    public static void increaseHookDurability(ItemStack rod, int amount, boolean updateLore) {
+        if (rod == null || rod.getType() != Material.FISHING_ROD)
+            return;
+        NBTItem nbtItem = new NBTItem(rod);
+        NBTCompound cfCompound = nbtItem.getCompound("CustomFishing");
+        if (cfCompound != null && cfCompound.hasTag("hook_dur")) {
+            int hookDur = cfCompound.getInteger("hook_dur");
+            if (hookDur != -1) {
+                String id = cfCompound.getString("hook_id");
+                HookSetting setting = CustomFishingPlugin.get().getHookManager().getHookSetting(id);
+                if (setting == null) {
+                    cfCompound.removeKey("hook_id");
+                    cfCompound.removeKey("hook_dur");
+                    cfCompound.removeKey("hook_item");
+                } else {
+                    hookDur = Math.min(setting.getMaxDurability(), hookDur + amount);
+                    cfCompound.setInteger("hook_dur", hookDur);
+                }
+            }
+        }
+        if (updateLore) updateNBTItemLore(nbtItem);
+        rod.setItemMeta(nbtItem.getItem().getItemMeta());
+    }
+
+    /**
+     * Sets the durability of a fishing hook to a specific amount and optionally updates its lore.
+     *
+     * @param rod         The fishing rod ItemStack to modify.
+     * @param amount      The new durability value to set.
+     * @param updateLore  Whether to update the lore of the fishing rod.
+     */
+    public static void setHookDurability(ItemStack rod, int amount, boolean updateLore) {
+        if (rod == null || rod.getType() != Material.FISHING_ROD)
+            return;
+        NBTItem nbtItem = new NBTItem(rod);
+        NBTCompound cfCompound = nbtItem.getCompound("CustomFishing");
+        if (cfCompound != null && cfCompound.hasTag("hook_dur")) {
+            int hookDur = cfCompound.getInteger("hook_dur");
+            if (hookDur != -1) {
+                String id = cfCompound.getString("hook_id");
+                HookSetting setting = CustomFishingPlugin.get().getHookManager().getHookSetting(id);
+                if (setting == null) {
+                    cfCompound.removeKey("hook_id");
+                    cfCompound.removeKey("hook_dur");
+                    cfCompound.removeKey("hook_item");
+                } else {
+                    hookDur = Math.min(setting.getMaxDurability(), amount);
+                    cfCompound.setInteger("hook_dur", hookDur);
+                }
+            }
+        }
+        if (updateLore) updateNBTItemLore(nbtItem);
+        rod.setItemMeta(nbtItem.getItem().getItemMeta());
+    }
+
+    /**
+     * Decreases the durability of an item and updates its lore.
+     *
+     * @param itemStack  The ItemStack to reduce durability for
+     * @param amount     The amount by which to reduce durability
+     * @param updateLore Whether to update the lore after reducing durability
+     */
+    public static void decreaseDurability(ItemStack itemStack, int amount, boolean updateLore) {
         if (itemStack == null || itemStack.getType() == Material.AIR)
             return;
         int unBreakingLevel = itemStack.getEnchantmentLevel(Enchantment.DURABILITY);
@@ -145,7 +237,14 @@ public class ItemUtils {
         }
     }
 
-    public static void addDurability(ItemStack itemStack, int amount, boolean updateLore) {
+    /**
+     * Increases the durability of an item and updates its lore.
+     *
+     * @param itemStack  The ItemStack to increase durability for
+     * @param amount     The amount by which to increase durability
+     * @param updateLore Whether to update the lore after increasing durability
+     */
+    public static void increaseDurability(ItemStack itemStack, int amount, boolean updateLore) {
         if (itemStack == null || itemStack.getType() == Material.AIR)
             return;
         NBTItem nbtItem = new NBTItem(itemStack);
@@ -167,6 +266,13 @@ public class ItemUtils {
         itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
     }
 
+    /**
+     * Sets the durability of an item and updates its lore.
+     *
+     * @param itemStack  The ItemStack to set durability for
+     * @param amount     The new durability value
+     * @param updateLore Whether to update the lore after setting durability
+     */
     public static void setDurability(ItemStack itemStack, int amount, boolean updateLore) {
         if (itemStack == null || itemStack.getType() == Material.AIR)
             return;
@@ -192,6 +298,12 @@ public class ItemUtils {
         itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
     }
 
+    /**
+     * Retrieves the current durability of an item.
+     *
+     * @param itemStack The ItemStack to get durability from
+     * @return The current durability value
+     */
     public static int getDurability(ItemStack itemStack) {
         if (!(itemStack.getItemMeta() instanceof Damageable damageable))
             return -1;
@@ -206,6 +318,14 @@ public class ItemUtils {
         }
     }
 
+    /**
+     * Gives a certain amount of an item to a player, handling stacking and item drops.
+     *
+     * @param player     The player to give the item to
+     * @param itemStack  The ItemStack to give
+     * @param amount     The amount of items to give
+     * @return The actual amount of items given
+     */
     public static int giveCertainAmountOfItem(Player player, ItemStack itemStack, int amount) {
         PlayerInventory inventory = player.getInventory();
         ItemMeta meta = itemStack.getItemMeta();

@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.mechanic.competition;
 
 import net.momirealms.customfishing.api.mechanic.action.Action;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
@@ -43,11 +44,11 @@ public class CompetitionConfig {
         return key;
     }
 
-    public int getDuration() {
+    public int getDurationInSeconds() {
         return duration;
     }
 
-    public int getMinPlayers() {
+    public int getMinPlayersToStart() {
         return minPlayers;
     }
 
@@ -59,10 +60,20 @@ public class CompetitionConfig {
         return endActions;
     }
 
+    /**
+     * Get the actions to perform if player joined the competition
+     *
+     * @return actions
+     */
     public Action[] getJoinActions() {
         return joinActions;
     }
 
+    /**
+     * Get the actions to perform if the amount of players doesn't meet the requirement
+     *
+     * @return actions
+     */
     public Action[] getSkipActions() {
         return skipActions;
     }
@@ -71,16 +82,27 @@ public class CompetitionConfig {
         return goal;
     }
 
+    /**
+     * Get the reward map
+     *
+     * @return reward map
+     */
     public HashMap<String, Action[]> getRewards() {
         return rewards;
     }
 
+    @Nullable
     public BossBarConfig getBossBarConfig() {
         return bossBarConfig;
     }
 
+    @Nullable
     public ActionBarConfig getActionBarConfig() {
         return actionBarConfig;
+    }
+
+    public static Builder builder(String key) {
+        return new Builder(key);
     }
 
     public static class Builder {
@@ -121,11 +143,13 @@ public class CompetitionConfig {
             return this;
         }
 
+        @SuppressWarnings("UnusedReturnValue")
         public Builder actionbar(ActionBarConfig actionBarConfig) {
             config.actionBarConfig = actionBarConfig;
             return this;
         }
 
+        @SuppressWarnings("UnusedReturnValue")
         public Builder bossbar(BossBarConfig bossBarConfig) {
             config.bossBarConfig = bossBarConfig;
             return this;

@@ -21,15 +21,85 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public interface MarketManager {
+
+    /**
+     * Open the market GUI for a player
+     *
+     * @param player player
+     */
     void openMarketGUI(Player player);
 
+    /**
+     * Retrieves the current date as an integer in the format MMDD (e.g., September 21 as 0921).
+     *
+     * @return An integer representing the current date.
+     */
     int getDate();
 
+    /**
+     * Calculates the price of an ItemStack based on custom data or a predefined price map.
+     *
+     * @param itemStack The ItemStack for which the price is calculated.
+     * @return The calculated price of the ItemStack.
+     */
     double getItemPrice(ItemStack itemStack);
 
+    /**
+     * Retrieves the formula used for calculating prices.
+     *
+     * @return The pricing formula as a string.
+     */
     String getFormula();
 
-    double getPrice(float base, float bonus, float size);
+    /**
+     * Calculates the price based on a formula with provided variables.
+     *
+     * @param base  The base value for the formula.
+     * @param bonus The bonus value for the formula.
+     * @param size  The size value for the formula.
+     * @return The calculated price based on the formula and provided variables.
+     */
+    double getFishPrice(float base, float bonus, float size);
 
+    /**
+     * Gets the character representing the item slot in the MarketGUI.
+     *
+     * @return The item slot character.
+     */
+    char getItemSlot();
+
+    /**
+     * Gets the character representing the function slot in the MarketGUI.
+     *
+     * @return The function slot character.
+     */
+    char getFunctionSlot();
+
+    /**
+     * Gets the layout of the MarketGUI as an array of strings.
+     *
+     * @return The layout of the MarketGUI.
+     */
+    String[] getLayout();
+
+    /**
+     * Gets the title of the MarketGUI.
+     *
+     * @return The title of the MarketGUI.
+     */
+    String getTitle();
+
+    /**
+     * Gets the earning limit
+     *
+     * @return The earning limit
+     */
+    double getEarningLimit();
+
+    /**
+     * Is market enabled
+     *
+     * @return enable or not
+     */
     boolean isEnable();
 }

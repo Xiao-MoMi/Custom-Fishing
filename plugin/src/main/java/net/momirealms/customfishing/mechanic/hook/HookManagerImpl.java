@@ -67,6 +67,9 @@ public class HookManagerImpl implements Listener, HookManager {
         unload();
     }
 
+    /**
+     * Loads configuration files for the specified types.
+     */
     @SuppressWarnings("DuplicatedCode")
     private void loadConfig() {
         Deque<File> fileDeque = new ArrayDeque<>();
@@ -92,6 +95,11 @@ public class HookManagerImpl implements Listener, HookManager {
         }
     }
 
+    /**
+     * Loads data from a single configuration file.
+     *
+     * @param file The configuration file to load.
+     */
     private void loadSingleFile(File file) {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
         for (Map.Entry<String, Object> entry : config.getValues(false).entrySet()) {
@@ -105,13 +113,120 @@ public class HookManagerImpl implements Listener, HookManager {
         }
     }
 
+    /**
+     * Get the hook setting by its ID.
+     *
+     * @param id The ID of the hook setting to retrieve.
+     * @return The hook setting with the given ID, or null if not found.
+     */
     @Nullable
     @Override
     public HookSetting getHookSetting(String id) {
         return hookSettingMap.get(id);
     }
 
+    /**
+     * Decreases the durability of a fishing hook by a specified amount and optionally updates its lore.
+     *
+     * @param rod         The fishing rod ItemStack to modify.
+     * @param amount      The amount by which to decrease the durability.
+     * @param updateLore  Whether to update the lore of the fishing rod.
+     */
+    @Override
+    public void decreaseHookDurability(ItemStack rod, int amount, boolean updateLore) {
+        ItemUtils.decreaseHookDurability(rod, amount, updateLore);
+    }
+
+    /**
+     * Increases the durability of a fishing hook by a specified amount and optionally updates its lore.
+     *
+     * @param rod   The fishing rod ItemStack to modify.
+     * @param amount      The amount by which to increase the durability.
+     * @param updateLore  Whether to update the lore of the fishing rod.
+     */
+    @Override
+    public void increaseHookDurability(ItemStack rod, int amount, boolean updateLore) {
+        ItemUtils.increaseHookDurability(rod, amount, updateLore);
+    }
+
+    /**
+     * Sets the durability of a fishing hook to a specific amount and optionally updates its lore.
+     *
+     * @param rod         The fishing rod ItemStack to modify.
+     * @param amount      The new durability value to set.
+     * @param updateLore  Whether to update the lore of the fishing rod.
+     */
+    @Override
+    public void setHookDurability(ItemStack rod, int amount, boolean updateLore) {
+        ItemUtils.setHookDurability(rod, amount, updateLore);
+    }
+
+    /**
+     * Equips a fishing hook on a fishing rod.
+     *
+     * @param rod  The fishing rod ItemStack.
+     * @param hook The fishing hook ItemStack.
+     * @return True if the hook was successfully equipped, false otherwise.
+     */
+    @Override
+    public boolean equipHookOnRod(ItemStack rod, ItemStack hook) {
+        if (rod == null || hook == null || hook.getType() == Material.AIR || hook.getAmount() != 1)
+            return false;
+        if (rod.getType() != Material.FISHING_ROD)
+            return false;
+
+        String hookID = plugin.getItemManager().getAnyPluginItemID(hook);
+        HookSetting setting = getHookSetting(hookID);
+        if (setting == null)
+            return false;
+
+        NBTItem rodNBTItem = new NBTItem(rod);
+        NBTCompound cfCompound = rodNBTItem.getOrCreateCompound("CustomFishing");
+
+        cfCompound.setString("hook_id", hookID);
+        cfCompound.setItemStack("hook_item", hook);
+        cfCompound.setInteger("hook_dur", ItemUtils.getDurability(hook));
+
+        ItemUtils.updateNBTItemLore(rodNBTItem);
+        rod.setItemMeta(rodNBTItem.getItem().getItemMeta());
+        return true;
+    }
+
+    /**
+     * Removes the fishing hook from a fishing rod.
+     *
+     * @param rod The fishing rod ItemStack.
+     * @return The removed fishing hook ItemStack, or null if no hook was found.
+     */
+    @Override
+    public ItemStack removeHookFromRod(ItemStack rod) {
+        if (rod == null || rod.getType() != Material.FISHING_ROD)
+            return null;
+
+        NBTItem rodNBTItem = new NBTItem(rod);
+        NBTCompound cfCompound = rodNBTItem.getCompound("CustomFishing");
+        if (cfCompound == null)
+            return null;
+
+        ItemStack hook = cfCompound.getItemStack("hook_item");
+        if (hook != null) {
+            cfCompound.removeKey("hook_item");
+            cfCompound.removeKey("hook_id");
+            cfCompound.removeKey("hook_dur");
+            ItemUtils.updateNBTItemLore(rodNBTItem);
+            rod.setItemMeta(rodNBTItem.getItem().getItemMeta());
+        }
+
+        return hook;
+    }
+
+    /**
+     * Handles the event when a player clicks on a fishing rod in their inventory.
+     *
+     * @param event The InventoryClickEvent to handle.
+     */
     @EventHandler
+    @SuppressWarnings("deprecation")
     public void onDragDrop(InventoryClickEvent event) {
         if (event.isCancelled())
             return;
@@ -123,14 +238,12 @@ public class HookManagerImpl implements Listener, HookManager {
             return;
         if (player.getGameMode() != GameMode.SURVIVAL)
             return;
+        if (plugin.getFishingManager().hasPlayerCastHook(player.getUniqueId()))
+            return;
 
         ItemStack cursor = event.getCursor();
         if (cursor == null || cursor.getType() == Material.AIR) {
             if (event.getClick() == ClickType.RIGHT) {
-                if (plugin.getFishingManager().hasPlayerCastHook(player.getUniqueId())) {
-                    return;
-                }
-
                 NBTItem nbtItem = new NBTItem(clicked);
                 NBTCompound cfCompound = nbtItem.getCompound("CustomFishing");
                 if (cfCompound == null)
@@ -150,16 +263,16 @@ public class HookManagerImpl implements Listener, HookManager {
             return;
         }
 
-        String hookID = plugin.getItemManager().getAnyItemID(cursor);
+        String hookID = plugin.getItemManager().getAnyPluginItemID(cursor);
         HookSetting setting = getHookSetting(hookID);
         if (setting == null)
             return;
 
         Condition condition = new Condition(player, new HashMap<>());
-        condition.insertArg("{rod}", plugin.getItemManager().getAnyItemID(clicked));
-        EffectCarrier effectCarrier = plugin.getEffectManager().getEffect("hook", hookID);
+        condition.insertArg("{rod}", plugin.getItemManager().getAnyPluginItemID(clicked));
+        EffectCarrier effectCarrier = plugin.getEffectManager().getEffectCarrier("hook", hookID);
         if (effectCarrier != null) {
-            if (!RequirementManager.isRequirementsMet(effectCarrier.getRequirements(), condition)) {
+            if (!RequirementManager.isRequirementMet(condition, effectCarrier.getRequirements())) {
                 return;
             }
         }

@@ -37,6 +37,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * A RedisManager class responsible for managing interactions with a Redis server for data storage.
+ */
 public class RedisManager extends AbstractStorage {
 
     private static RedisManager instance;
@@ -44,7 +47,6 @@ public class RedisManager extends AbstractStorage {
     private String password;
     private int port;
     private String host;
-    private JedisPoolConfig jedisPoolConfig;
     private boolean useSSL;
 
     public RedisManager(CustomFishingPlugin plugin) {
@@ -52,14 +54,27 @@ public class RedisManager extends AbstractStorage {
         instance = this;
     }
 
+    /**
+     * Get the singleton instance of the RedisManager.
+     *
+     * @return The RedisManager instance.
+     */
     public static RedisManager getInstance() {
         return instance;
     }
 
+    /**
+     * Get a Jedis resource for interacting with the Redis server.
+     *
+     * @return A Jedis resource.
+     */
     public Jedis getJedis() {
         return jedisPool.getResource();
     }
 
+    /**
+     * Initialize the Redis connection and configuration based on the plugin's YAML configuration.
+     */
     @Override
     public void initialize() {
         YamlConfiguration config = plugin.getConfig("database.yml");
@@ -69,7 +84,7 @@ public class RedisManager extends AbstractStorage {
             return;
         }
 
-        jedisPoolConfig = new JedisPoolConfig();
+        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setTestWhileIdle(true);
         jedisPoolConfig.setTimeBetweenEvictionRuns(Duration.ofMillis(30000));
         jedisPoolConfig.setNumTestsPerEvictionRun(-1);
@@ -99,13 +114,21 @@ public class RedisManager extends AbstractStorage {
         subscribe();
     }
 
+    /**
+     * Disable the Redis connection by closing the JedisPool.
+     */
     @Override
     public void disable() {
-        this.removeServerPlayers(plugin.getStorageManager().getUniqueID());
         if (jedisPool != null && !jedisPool.isClosed())
             jedisPool.close();
     }
 
+    /**
+     * Send a message to Redis on a specified channel.
+     *
+     * @param channel The Redis channel to send the message to.
+     * @param message The message to send.
+     */
     public void sendRedisMessage(@NotNull String channel, @NotNull String message) {
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.publish(channel, message);
@@ -113,6 +136,9 @@ public class RedisManager extends AbstractStorage {
         }
     }
 
+    /**
+     * Subscribe to Redis messages on a separate thread and handle received messages.
+     */
     private void subscribe() {
         Thread thread = new Thread(() -> {
             try (final Jedis jedis = password.isBlank() ?
@@ -160,38 +186,12 @@ public class RedisManager extends AbstractStorage {
         return StorageType.Redis;
     }
 
-    public CompletableFuture<Integer> getPlayerCount() {
-        var future = new CompletableFuture<Integer>();
-        plugin.getScheduler().runTaskAsync(() -> {
-            int players = 0;
-            try (Jedis jedis = jedisPool.getResource()) {
-                var list = jedis.zrangeWithScores("cf_players",0, -1);
-                for (Tuple tuple : list) {
-                    players += (int) tuple.getScore();
-                }
-            }
-            future.complete(players);
-        });
-        return future;
-    }
-
-    public CompletableFuture<Void> setServerPlayers(int amount, String unique) {
-        var future = new CompletableFuture<Void>();
-        plugin.getScheduler().runTaskAsync(() -> {
-            try (Jedis jedis = jedisPool.getResource()) {
-                jedis.zadd("cf_players", amount, unique);
-            }
-            future.complete(null);
-        });
-        return future;
-    }
-
-    public void removeServerPlayers(String unique) {
-        try (Jedis jedis = jedisPool.getResource()) {
-            jedis.zrem("cf_players", unique);
-        }
-    }
-
+    /**
+     * Set a "change server" flag for a specified player UUID in Redis.
+     *
+     * @param uuid The UUID of the player.
+     * @return A CompletableFuture indicating the operation's completion.
+     */
     public CompletableFuture<Void> setChangeServer(UUID uuid) {
         var future = new CompletableFuture<Void>();
         plugin.getScheduler().runTaskAsync(() -> {
@@ -208,6 +208,12 @@ public class RedisManager extends AbstractStorage {
         return future;
     }
 
+    /**
+     * Get the "change server" flag for a specified player UUID from Redis and remove it.
+     *
+     * @param uuid The UUID of the player.
+     * @return A CompletableFuture with a Boolean indicating whether the flag was set.
+     */
     public CompletableFuture<Boolean> getChangeServer(UUID uuid) {
         var future = new CompletableFuture<Boolean>();
         plugin.getScheduler().runTaskAsync(() -> {
@@ -227,6 +233,13 @@ public class RedisManager extends AbstractStorage {
         return future;
     }
 
+    /**
+     * Asynchronously retrieve player data from Redis.
+     *
+     * @param uuid The UUID of the player.
+     * @param lock Flag indicating whether to lock the data.
+     * @return A CompletableFuture with an optional PlayerData.
+     */
     @Override
     public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock) {
         var future = new CompletableFuture<Optional<PlayerData>>();
@@ -250,6 +263,14 @@ public class RedisManager extends AbstractStorage {
         return future;
     }
 
+    /**
+     * Asynchronously update player data in Redis.
+     *
+     * @param uuid       The UUID of the player.
+     * @param playerData The player's data to update.
+     * @param ignore     Flag indicating whether to ignore the update (not used).
+     * @return A CompletableFuture indicating the update result.
+     */
     @Override
     public CompletableFuture<Boolean> updatePlayerData(UUID uuid, PlayerData playerData, boolean ignore) {
         var future = new CompletableFuture<Boolean>();
@@ -270,11 +291,25 @@ public class RedisManager extends AbstractStorage {
         return future;
     }
 
+    /**
+     * Get a set of unique player UUIDs from Redis (Returns an empty set).
+     * This method is designed for importing and exporting so it would not actually be called.
+     *
+     * @param legacy Flag indicating whether to retrieve legacy data (not used).
+     * @return An empty set of UUIDs.
+     */
     @Override
     public Set<UUID> getUniqueUsers(boolean legacy) {
         return new HashSet<>();
     }
 
+    /**
+     * Generate a Redis key for a specified key and UUID.
+     *
+     * @param key  The key identifier.
+     * @param uuid The UUID to include in the key.
+     * @return A byte array representing the Redis key.
+     */
     private byte[] getRedisKey(String key, @NotNull UUID uuid) {
         return (key + ":" + uuid).getBytes(StandardCharsets.UTF_8);
     }

@@ -60,6 +60,12 @@ public class EntityManagerImpl implements EntityManager {
         }
     }
 
+    /**
+     * Registers an entity library for use in the plugin.
+     *
+     * @param entityLibrary The entity library to register.
+     * @return {@code true} if the entity library was successfully registered, {@code false} if it already exists.
+     */
     @Override
     public boolean registerEntityLibrary(EntityLibrary entityLibrary) {
         if (entityLibraryMap.containsKey(entityLibrary.identification())) return false;
@@ -67,14 +73,15 @@ public class EntityManagerImpl implements EntityManager {
         return true;
     }
 
+    /**
+     * Unregisters an entity library by its identification key.
+     *
+     * @param identification The identification key of the entity library to unregister.
+     * @return {@code true} if the entity library was successfully unregistered, {@code false} if it does not exist.
+     */
     @Override
-    public boolean unregisterEntityLibrary(String lib) {
-        return entityLibraryMap.remove(lib) != null;
-    }
-
-    @Override
-    public boolean unregisterEntityLibrary(EntityLibrary entityLibrary) {
-        return unregisterEntityLibrary(entityLibrary.identification());
+    public boolean unregisterEntityLibrary(String identification) {
+        return entityLibraryMap.remove(identification) != null;
     }
 
     @SuppressWarnings("DuplicatedCode")
@@ -134,6 +141,13 @@ public class EntityManagerImpl implements EntityManager {
         this.entityLibraryMap.clear();
     }
 
+    /**
+     * Summons an entity based on the given loot configuration to a specified location.
+     *
+     * @param hookLocation   The location where the entity will be summoned, typically where the fishing hook is.
+     * @param playerLocation The location of the player who triggered the entity summoning.
+     * @param loot           The loot configuration that defines the entity to be summoned.
+     */
     @Override
     public void summonEntity(Location hookLocation, Location playerLocation, Loot loot) {
         EntityConfig config = entityConfigMap.get(loot.getID());

@@ -31,8 +31,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Utility class for configuration-related operations.
+ */
 public class ConfigUtils {
 
+    /**
+     * Converts an object into an ArrayList of strings.
+     *
+     * @param object The input object
+     * @return An ArrayList of strings
+     */
     @SuppressWarnings("unchecked")
     public static ArrayList<String> stringListArgs(Object object) {
         ArrayList<String> list = new ArrayList<>();
@@ -46,11 +55,23 @@ public class ConfigUtils {
         return list;
     }
 
+    /**
+     * Splits a string into a pair of integers using the "~" delimiter.
+     *
+     * @param value The input string
+     * @return A Pair of integers
+     */
     public static Pair<Integer, Integer> splitStringIntegerArgs(String value) {
         String[] split = value.split("~");
         return Pair.of(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
     }
 
+    /**
+     * Converts a list of strings in the format "key:value" into a list of Pairs with keys and doubles.
+     *
+     * @param list The input list of strings
+     * @return A list of Pairs containing keys and doubles
+     */
     public static List<Pair<String, Double>> getWeights(List<String> list) {
         List<Pair<String, Double>> result = new ArrayList<>(list.size());
         for (String member : list) {
@@ -61,6 +82,12 @@ public class ConfigUtils {
         return result;
     }
 
+    /**
+     * Converts an object into a double value.
+     *
+     * @param arg The input object
+     * @return A double value
+     */
     public static double getDoubleValue(Object arg) {
         if (arg instanceof Double d) {
             return d;
@@ -70,6 +97,12 @@ public class ConfigUtils {
         return 0;
     }
 
+    /**
+     * Converts a list of strings in the format "key:value" into a list of Pairs with keys and WeightModifiers.
+     *
+     * @param modList The input list of strings
+     * @return A list of Pairs containing keys and WeightModifiers
+     */
     public static List<Pair<String, WeightModifier>> getModifiers(List<String> modList) {
         List<Pair<String, WeightModifier>> result = new ArrayList<>(modList.size());
         for (String member : modList) {
@@ -81,9 +114,10 @@ public class ConfigUtils {
     }
 
     /**
-     * Create a data file if not exists
-     * @param file file path
-     * @return yaml data
+     * Reads data from a YAML configuration file and creates it if it doesn't exist.
+     *
+     * @param file The file path
+     * @return The YamlConfiguration
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static YamlConfiguration readData(File file) {
@@ -99,6 +133,13 @@ public class ConfigUtils {
         return YamlConfiguration.loadConfiguration(file);
     }
 
+    /**
+     * Parses a WeightModifier from a string representation.
+     *
+     * @param text The input string
+     * @return A WeightModifier based on the provided text
+     * @throws IllegalArgumentException if the weight format is invalid
+     */
     public static WeightModifier getModifier(String text) {
         if (text.length() == 0) {
             throw new IllegalArgumentException("Weight format is invalid.");
@@ -130,7 +171,7 @@ public class ConfigUtils {
                 return (player, weight) -> {
                     String temp = formula;
                     if (hasPapi)
-                        temp = PlaceholderManagerImpl.getInstance().parseCacheable(player, formula);
+                        temp = PlaceholderManagerImpl.getInstance().parseCacheablePlaceholders(player, formula);
                     Expression expression = new ExpressionBuilder(temp)
                             .variables("0")
                             .build()

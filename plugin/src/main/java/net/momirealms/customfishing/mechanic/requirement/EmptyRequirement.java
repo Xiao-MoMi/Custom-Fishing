@@ -20,6 +20,9 @@ package net.momirealms.customfishing.mechanic.requirement;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 
+/**
+ * Represents an empty requirement that always returns true when checking conditions.
+ */
 public class EmptyRequirement implements Requirement {
 
     public static EmptyRequirement instance = new EmptyRequirement();

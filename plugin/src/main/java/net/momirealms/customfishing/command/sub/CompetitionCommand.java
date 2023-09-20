@@ -47,7 +47,7 @@ public class CompetitionCommand {
     }
 
     private CommandAPICommand getCompetitionStartCommand() {
-        Set<String> allCompetitions = CustomFishingPlugin.get().getCompetitionManager().getAllCompetitions();
+        Set<String> allCompetitions = CustomFishingPlugin.get().getCompetitionManager().getAllCompetitionKeys();
         var command = new CommandAPICommand("start")
                 .withArguments(
                     new StringArgument("id")

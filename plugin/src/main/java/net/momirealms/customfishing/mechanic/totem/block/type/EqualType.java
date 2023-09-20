@@ -32,7 +32,7 @@ public class EqualType implements TypeCondition, Serializable {
 
     @Override
     public boolean isMet(Block type) {
-        return this.type.equals(CustomFishingPlugin.get().getBlockManager().getAnyBlockID(type));
+        return this.type.equals(CustomFishingPlugin.get().getBlockManager().getAnyPluginBlockID(type));
     }
 
     @Override

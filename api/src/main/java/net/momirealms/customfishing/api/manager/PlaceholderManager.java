@@ -26,17 +26,68 @@ import java.util.Map;
 
 public interface PlaceholderManager {
 
+    /**
+     * Set placeholders in a text string for a player.
+     *
+     * @param player The player for whom the placeholders should be set.
+     * @param text   The text string containing placeholders.
+     * @return The text string with placeholders replaced if PlaceholderAPI is available; otherwise, the original text.
+     */
     String setPlaceholders(Player player, String text);
 
+    /**
+     * Set placeholders in a text string for an offline player.
+     *
+     * @param player The offline player for whom the placeholders should be set.
+     * @param text   The text string containing placeholders.
+     * @return The text string with placeholders replaced if PlaceholderAPI is available; otherwise, the original text.
+     */
     String setPlaceholders(OfflinePlayer player, String text);
 
+    /**
+     * Detect and extract placeholders from a text string.
+     *
+     * @param text The text string to search for placeholders.
+     * @return A list of detected placeholders in the text.
+     */
     List<String> detectPlaceholders(String text);
 
+    /**
+     * Get the value associated with a single placeholder.
+     *
+     * @param player      The player for whom the placeholders are being resolved (nullable).
+     * @param placeholder The placeholder to look up.
+     * @param placeholders A map of placeholders to their corresponding values.
+     * @return The value associated with the placeholder, or the original placeholder if not found.
+     */
     String getSingleValue(@Nullable Player player, String placeholder, Map<String, String> placeholders);
 
+    /**
+     * Parse a text string by replacing placeholders with their corresponding values.
+     *
+     * @param player      The offline player for whom the placeholders are being resolved (nullable).
+     * @param text        The text string containing placeholders.
+     * @param placeholders A map of placeholders to their corresponding values.
+     * @return The text string with placeholders replaced by their values.
+     */
     String parse(@Nullable OfflinePlayer player, String text, Map<String, String> placeholders);
 
-    String parseCacheable(Player player, String text);
-
+    /**
+     * Parse a list of text strings by replacing placeholders with their corresponding values.
+     *
+     * @param player       The player for whom the placeholders are being resolved (can be null for offline players).
+     * @param list         The list of text strings containing placeholders.
+     * @param replacements A map of custom replacements for placeholders.
+     * @return The list of text strings with placeholders replaced by their values.
+     */
     List<String> parse(@Nullable OfflinePlayer player, List<String> list, Map<String, String> replacements);
+
+    /**
+     * Parse a text string by replacing placeholders with their corresponding values, using caching for the player's placeholders.
+     *
+     * @param player The player for whom the placeholders are being resolved.
+     * @param text   The text string containing placeholders.
+     * @return The text string with placeholders replaced by their values.
+     */
+    String parseCacheablePlaceholders(Player player, String text);;
 }

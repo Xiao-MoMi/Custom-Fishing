@@ -137,6 +137,9 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         HandlerList.unregisterAll(this);
     }
 
+    /**
+     * Reload the plugin
+     */
     @Override
     public void reload() {
         CFConfig.load();
@@ -181,6 +184,9 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         this.coolDownManager.load();
     }
 
+    /**
+     * Load plugin dependencies
+     */
     private void loadDependencies() {
         String mavenRepo = TimeZone.getDefault().getID().startsWith("Asia") ?
                 "https://maven.aliyun.com/repository/public/" : "https://repo.maven.apache.org/maven2/";
@@ -203,6 +209,9 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         );
     }
 
+    /**
+     * Disable NBT API logs
+     */
     private void disableNBTAPILogs() {
         MinecraftVersion.disableBStats();
         MinecraftVersion.disableUpdateCheck();
@@ -236,6 +245,12 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         }
     }
 
+    /**
+     * Retrieves a YAML configuration from a file within the plugin's data folder.
+     *
+     * @param file The name of the configuration file.
+     * @return A YamlConfiguration object representing the configuration.
+     */
     @Override
     public YamlConfiguration getConfig(String file) {
         File config = new File(this.getDataFolder(), file);
@@ -243,23 +258,44 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         return YamlConfiguration.loadConfiguration(config);
     }
 
+    /**
+     * Checks if a specified plugin is enabled on the Bukkit server.
+     *
+     * @param plugin The name of the plugin to check.
+     * @return True if the plugin is enabled, false otherwise.
+     */
     @Override
     public boolean isHookedPluginEnabled(String plugin) {
         return Bukkit.getPluginManager().isPluginEnabled(plugin);
     }
 
-    @NotNull
-    public static ProtocolManager getProtocolManager() {
-        return protocolManager;
-    }
-
+    /**
+     * Outputs a debugging message if the debug mode is enabled.
+     *
+     * @param message The debugging message to be logged.
+     */
     @Override
     public void debug(String message) {
         if (!CFConfig.debug) return;
         LogUtils.info(message);
     }
 
+    /**
+     * Gets the CoolDownManager instance associated with the plugin.
+     *
+     * @return The CoolDownManager instance.
+     */
     public CoolDownManager getCoolDownManager() {
         return coolDownManager;
+    }
+
+    /**
+     * Retrieves the ProtocolManager instance used for managing packets.
+     *
+     * @return The ProtocolManager instance.
+     */
+    @NotNull
+    public static ProtocolManager getProtocolManager() {
+        return protocolManager;
     }
 }

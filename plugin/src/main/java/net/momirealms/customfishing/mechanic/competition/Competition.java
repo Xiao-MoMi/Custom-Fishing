@@ -35,10 +35,12 @@ import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -62,13 +64,19 @@ public class Competition implements FishingCompetition {
         if (CFConfig.redisRanking) this.ranking = new RedisRankingImpl();
                             else this.ranking = new LocalRankingImpl();
         this.publicPlaceholders = new ConcurrentHashMap<>();
-        this.publicPlaceholders.put("{goal}", CustomFishingPlugin.get().getCompetitionManager().getCompetitionLocale(goal));
+        this.publicPlaceholders.put("{goal}", CustomFishingPlugin.get().getCompetitionManager().getCompetitionGoalLocale(goal));
     }
 
+    /**
+     * Starts the fishing competition, initializing its settings and actions.
+     * This method sets the initial progress, remaining time, start time, and updates public placeholders.
+     * It also arranges timer tasks for competition timing and initializes boss bar and action bar managers if configured.
+     * Additionally, it triggers the start actions defined in the competition's configuration.
+     */
     @Override
     public void start() {
         this.progress = 1;
-        this.remainingTime = config.getDuration();
+        this.remainingTime = config.getDurationInSeconds();
         this.startTime = Instant.now().getEpochSecond();
         this.updatePublicPlaceholders();
 
@@ -92,6 +100,11 @@ public class Competition implements FishingCompetition {
         }
     }
 
+    /**
+     * Arranges the timer task for the fishing competition.
+     * This method schedules a recurring task that updates the competition's remaining time and public placeholders.
+     * If the remaining time reaches zero, the competition is ended.
+     */
     private void arrangeTimerTask() {
         this.competitionTimerTask = CustomFishingPlugin.get().getScheduler().runTaskAsyncTimer(() -> {
             if (decreaseTime()) {
@@ -102,6 +115,12 @@ public class Competition implements FishingCompetition {
         }, 1, 1, TimeUnit.SECONDS);
     }
 
+    /**
+     * Update public placeholders for the fishing competition.
+     * This method updates placeholders representing player rankings, remaining time, and score in public messages.
+     * Placeholders for player rankings include {1_player}, {1_score}, {2_player}, {2_score}, and so on.
+     * The placeholders for time include {hour}, {minute}, {second}, and {seconds}.
+     */
     private void updatePublicPlaceholders() {
         for (int i = 1; i < CFConfig.placeholderLimit + 1; i++) {
             int finalI = i;
@@ -119,6 +138,11 @@ public class Competition implements FishingCompetition {
         publicPlaceholders.put("{seconds}", String.valueOf(remainingTime));
     }
 
+    /**
+     * Stop the fishing competition.
+     * This method cancels the competition timer task, unloads boss bars and action bars, clears the ranking,
+     * and sets the remaining time to zero.
+     */
     @Override
     public void stop() {
         if (!competitionTimerTask.isCancelled()) this.competitionTimerTask.cancel();
@@ -128,6 +152,11 @@ public class Competition implements FishingCompetition {
         this.remainingTime = 0;
     }
 
+    /**
+     * End the fishing competition.
+     * This method marks the competition as ended, cancels sub-tasks such as timers and bar management,
+     * gives prizes to top participants and participation rewards, performs end actions, and clears the ranking.
+     */
     @Override
     public void end() {
         // mark it as ended
@@ -182,19 +211,36 @@ public class Competition implements FishingCompetition {
         CustomFishingPlugin.get().getScheduler().runTaskAsyncLater(this.ranking::clear, 1500, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Check if the fishing competition is ongoing.
+     *
+     * @return {@code true} if the competition is still ongoing, {@code false} if it has ended.
+     */
     @Override
     public boolean isOnGoing() {
         return remainingTime > 0;
     }
 
+    /**
+     * Decreases the remaining time for the fishing competition and updates the progress.
+     *
+     * @return {@code true} if the remaining time becomes zero or less, indicating the competition has ended.
+     */
     private boolean decreaseTime() {
         long current = Instant.now().getEpochSecond();
-        int duration = config.getDuration();
+        int duration = config.getDurationInSeconds();
         remainingTime = duration - (current - startTime);
         progress = (float) remainingTime / duration;
         return remainingTime <= 0;
     }
 
+    /**
+     * Refreshes the data for a player in the fishing competition, including updating their score and triggering
+     * actions if it's their first time joining the competition.
+     *
+     * @param player The player whose data needs to be refreshed.
+     * @param score The player's current score in the competition.
+     */
     @Override
     public void refreshData(Player player, double score) {
         // if player join for the first time, trigger join actions
@@ -224,46 +270,97 @@ public class Competition implements FishingCompetition {
         }
     }
 
+    /**
+     * Checks if a player has joined the fishing competition based on their name.
+     *
+     * @param player The player to check for participation.
+     * @return {@code true} if the player has joined the competition; {@code false} otherwise.
+     */
     @Override
     public boolean hasPlayerJoined(OfflinePlayer player) {
         return ranking.getPlayerRank(player.getName()) != -1;
     }
 
+    /**
+     * Gets the progress of the fishing competition as a float value (0~1).
+     *
+     * @return The progress of the fishing competition as a float.
+     */
     @Override
     public float getProgress() {
         return progress;
     }
 
+    /**
+     * Gets the remaining time in seconds for the fishing competition.
+     *
+     * @return The remaining time in seconds.
+     */
     @Override
     public long getRemainingTime() {
         return remainingTime;
     }
 
+    /**
+     * Gets the start time of the fishing competition.
+     *
+     * @return The start time of the fishing competition.
+     */
     @Override
     public long getStartTime() {
         return startTime;
     }
 
+    /**
+     * Gets the configuration of the fishing competition.
+     *
+     * @return The configuration of the fishing competition.
+     */
+    @NotNull
     @Override
     public CompetitionConfig getConfig() {
         return config;
     }
 
+    /**
+     * Gets the goal of the fishing competition.
+     *
+     * @return The goal of the fishing competition.
+     */
+    @NotNull
     @Override
     public CompetitionGoal getGoal() {
         return goal;
     }
 
+    /**
+     * Gets the ranking data for the fishing competition.
+     *
+     * @return The ranking data for the fishing competition.
+     */
+    @NotNull
     @Override
     public Ranking getRanking() {
         return ranking;
     }
 
+    /**
+     * Gets the cached placeholders for the fishing competition.
+     *
+     * @return A ConcurrentHashMap containing cached placeholders.
+     */
+    @NotNull
     @Override
-    public ConcurrentHashMap<String, String> getCachedPlaceholders() {
+    public Map<String, String> getCachedPlaceholders() {
         return publicPlaceholders;
     }
 
+    /**
+     * Gets a specific cached placeholder value by its key.
+     *
+     * @param papi The key of the cached placeholder.
+     * @return The cached placeholder value as a string, or null if not found.
+     */
     @Override
     public String getCachedPlaceholder(String papi) {
         return publicPlaceholders.get(papi);

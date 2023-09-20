@@ -31,6 +31,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * A data storage implementation that uses YAML files to store player data, with support for legacy data.
+ */
 public class YAMLImpl extends AbstractStorage implements LegacyDataStorageInterface {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -45,6 +48,12 @@ public class YAMLImpl extends AbstractStorage implements LegacyDataStorageInterf
         return StorageType.YAML;
     }
 
+    /**
+     * Get the file associated with a player's UUID for storing YAML data.
+     *
+     * @param uuid The UUID of the player.
+     * @return The file for the player's data.
+     */
     public File getPlayerDataFile(UUID uuid) {
         return new File(plugin.getDataFolder(), "data" + File.separator + uuid + ".yml");
     }
@@ -109,7 +118,13 @@ public class YAMLImpl extends AbstractStorage implements LegacyDataStorageInterf
         return uuids;
     }
 
-    public StatisticData getStatistics(ConfigurationSection section) {
+    /**
+     * Parse statistics data from a YAML ConfigurationSection.
+     *
+     * @param section The ConfigurationSection containing statistics data.
+     * @return The parsed StatisticData object.
+     */
+    private StatisticData getStatistics(ConfigurationSection section) {
         if (section == null)
             return StatisticData.empty();
         else {
@@ -123,6 +138,7 @@ public class YAMLImpl extends AbstractStorage implements LegacyDataStorageInterf
 
     @Override
     public CompletableFuture<Optional<PlayerData>> getLegacyPlayerData(UUID uuid) {
+        // Retrieve legacy player data (YAML format) for a given UUID.
         var builder = new PlayerData.Builder().setName("");
         File bagFile = new File(plugin.getDataFolder(), "data/fishingbag/" + uuid + ".yml");
         if (bagFile.exists()) {

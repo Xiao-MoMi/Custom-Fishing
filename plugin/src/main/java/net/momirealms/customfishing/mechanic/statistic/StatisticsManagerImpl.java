@@ -49,7 +49,14 @@ public class StatisticsManagerImpl implements StatisticsManager {
         unload();
     }
 
+    /**
+     * Get the statistics for a player with the given UUID.
+     *
+     * @param uuid The UUID of the player for whom statistics are retrieved.
+     * @return The player's statistics or null if the player is not found.
+     */
     @Override
+    @Nullable
     public Statistics getStatistics(UUID uuid) {
         OnlineUser onlineUser = plugin.getStorageManager().getOnlineUser(uuid);
         if (onlineUser == null) return null;
@@ -88,6 +95,12 @@ public class StatisticsManagerImpl implements StatisticsManager {
         }
     }
 
+    /**
+     * Get a list of strings associated with a specific key in a category map.
+     *
+     * @param key The key to look up in the category map.
+     * @return A list of strings associated with the key or null if the key is not found.
+     */
     @Override
     @Nullable
     public List<String> getCategory(String key) {

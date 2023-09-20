@@ -31,6 +31,16 @@ import java.util.jar.JarInputStream;
 
 public class ClassUtils {
 
+    /**
+     * Attempts to find a class within a JAR file that extends or implements a given class or interface.
+     *
+     * @param file  The JAR file in which to search for the class.
+     * @param clazz The base class or interface to match against.
+     * @param <T>   The type of the base class or interface.
+     * @return A Class object representing the found class, or null if not found.
+     * @throws IOException            If there is an issue reading the JAR file.
+     * @throws ClassNotFoundException If the specified class cannot be found.
+     */
     @Nullable
     public static <T> Class<? extends T> findClass(
             @NotNull File file,

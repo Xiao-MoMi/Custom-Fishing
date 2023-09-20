@@ -54,7 +54,7 @@ public class BaitAnimationTask implements Runnable {
         ) {
             cancelAnimation();
         } else {
-            CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, FakeItemUtils.getVelocity(entityID, fishHook.getVelocity()));
+            CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, FakeItemUtils.getVelocityPacket(entityID, fishHook.getVelocity()));
             CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, FakeItemUtils.getTpPacket(entityID, fishHook.getLocation()));
         }
     }

@@ -43,7 +43,7 @@ public class ActivatedTotem {
         this.expireTime = System.currentTimeMillis() + config.getDuration() * 1000L;
         this.coreLocation = coreLocation.clone().add(0.5,0,0.5);
         this.totemConfig = config;
-        this.effectCarrier = CustomFishingPlugin.get().getEffectManager().getEffect("totem", config.getKey());
+        this.effectCarrier = CustomFishingPlugin.get().getEffectManager().getEffectCarrier("totem", config.getKey());
         for (ParticleSetting particleSetting : config.getParticleSettings()) {
             this.subTasks.add(particleSetting.start(coreLocation, config.getRadius()));
         }

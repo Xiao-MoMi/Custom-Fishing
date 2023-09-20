@@ -24,8 +24,14 @@ import org.bukkit.configuration.MemorySection;
 
 import java.util.*;
 
+/**
+ * Utility class for working with NBT (Named Binary Tag) data.
+ */
 public class NBTUtils {
 
+    /**
+     * Inner class representing a stack element used during NBT data conversion.
+     */
     public static class StackElement {
         final Map<String, Object> currentMap;
         final NBTCompound currentNbtCompound;
@@ -36,6 +42,12 @@ public class NBTUtils {
         }
     }
 
+    /**
+     * Converts data from a Bukkit YAML configuration to NBT tags.
+     *
+     * @param nbtCompound The target NBT compound
+     * @param map The source map from Bukkit YAML
+     */
     @SuppressWarnings("unchecked")
     public static void setTagsFromBukkitYAML(NBTCompound nbtCompound, Map<String, Object> map) {
 
@@ -69,6 +81,7 @@ public class NBTUtils {
         }
     }
 
+    // Private helper method
     private static void setListValue(String key, String value, NBTCompound nbtCompound) {
         String[] parts = getTypeAndData(value);
         String type = parts[0];
@@ -89,6 +102,7 @@ public class NBTUtils {
         }
     }
 
+    // Private helper method
     private static void setSingleValue(String key, String value, NBTCompound nbtCompound) {
         String[] parts = getTypeAndData(value);
         String type = parts[0];
@@ -120,6 +134,12 @@ public class NBTUtils {
         }
     }
 
+    /**
+     * Converts an NBT compound to a map of key-value pairs.
+     *
+     * @param nbtCompound The source NBT compound
+     * @return A map representing the NBT data
+     */
     public static Map<String, Object> compoundToMap(ReadWriteNBT nbtCompound){
         Map<String, Object> map = new HashMap<>();
         for (String key : nbtCompound.getKeys()) {
@@ -155,6 +175,12 @@ public class NBTUtils {
         return map;
     }
 
+    /**
+     * Splits a value into type and data components.
+     *
+     * @param str The input value string
+     * @return An array containing type and data strings
+     */
     private static String[] getTypeAndData(String str) {
         String[] parts = str.split("\\s+", 2);
         if (parts.length != 2) {
@@ -165,6 +191,12 @@ public class NBTUtils {
         return new String[]{type, data};
     }
 
+    /**
+     * Splits a value containing arrays into individual elements.
+     *
+     * @param value The input value containing arrays
+     * @return An array of individual elements
+     */
     private static String[] splitValue(String value) {
         return value.substring(value.indexOf('[') + 1, value.lastIndexOf(']'))
                 .replaceAll("\\s", "")

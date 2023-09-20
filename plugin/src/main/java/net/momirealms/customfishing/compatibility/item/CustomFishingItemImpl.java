@@ -37,6 +37,6 @@ public class CustomFishingItemImpl implements ItemLibrary {
 
     @Override
     public String getItemID(ItemStack itemStack) {
-        return CustomFishingPlugin.get().getItemManager().getItemID(itemStack);
+        return CustomFishingPlugin.get().getItemManager().getCustomFishingItemID(itemStack);
     }
 }

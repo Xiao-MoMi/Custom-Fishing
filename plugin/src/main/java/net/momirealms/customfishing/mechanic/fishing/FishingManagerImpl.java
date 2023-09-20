@@ -43,7 +43,6 @@ import net.momirealms.customfishing.api.mechanic.game.GameSettings;
 import net.momirealms.customfishing.api.mechanic.game.GamingPlayer;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
-import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.api.util.WeightUtils;
 import net.momirealms.customfishing.mechanic.requirement.RequirementManagerImpl;
@@ -55,7 +54,6 @@ import org.bukkit.event.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -142,7 +140,9 @@ public class FishingManagerImpl implements Listener, FishingManager {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
+        final Player player = event.getPlayer();
         this.removeHook(event.getPlayer().getUniqueId());
+        this.removeTempFishingState(player);
     }
 
     @EventHandler
@@ -189,6 +189,12 @@ public class FishingManagerImpl implements Listener, FishingManager {
         }
     }
 
+    /**
+     * Removes a fishing hook entity associated with a given UUID.
+     *
+     * @param uuid The UUID of the fishing hook entity to be removed.
+     * @return {@code true} if the fishing hook was successfully removed, {@code false} otherwise.
+     */
     @Override
     public boolean removeHook(UUID uuid) {
         FishHook hook = hookCacheMap.remove(uuid);
@@ -200,11 +206,32 @@ public class FishingManagerImpl implements Listener, FishingManager {
         }
     }
 
+    /**
+     * Retrieves a FishHook object associated with the provided player's UUID
+     *
+     * @param uuid The UUID of the player
+     * @return fishhook entity, null if not exists
+     */
     @Override
-    public Optional<FishHook> getHook(UUID uuid) {
-        return Optional.ofNullable(hookCacheMap.get(uuid));
+    @Nullable
+    public FishHook getHook(UUID uuid) {
+        FishHook fishHook = hookCacheMap.get(uuid);
+        if (fishHook != null) {
+            if (!fishHook.isValid()) {
+                hookCacheMap.remove(uuid);
+                return null;
+            } else {
+                return fishHook;
+            }
+        }
+        return null;
     }
 
+    /**
+     * Selects the appropriate fishing state based on the provided PlayerFishEvent and triggers the corresponding action.
+     *
+     * @param event The PlayerFishEvent that represents the fishing action.
+     */
     public void selectState(PlayerFishEvent event) {
         if (event.isCancelled()) return;
         switch (event.getState()) {
@@ -229,7 +256,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 if (compound != null && compound.hasTag("max_dur")) {
                     event.setCancelled(true);
                     hook.remove();
-                    ItemUtils.loseDurability(itemStack, 2, true);
+                    ItemUtils.decreaseDurability(itemStack, 2, true);
                 }
             }
         }
@@ -243,9 +270,8 @@ public class FishingManagerImpl implements Listener, FishingManager {
             return;
         }
         // Check mechanic requirements
-        if (!RequirementManager.isRequirementsMet(
-                RequirementManagerImpl.mechanicRequirements,
-                fishingPreparation
+        if (!RequirementManager.isRequirementMet(
+                fishingPreparation, RequirementManagerImpl.mechanicRequirements
         )) {
             return;
         }
@@ -330,7 +356,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
             if (nbtCompound != null && nbtCompound.hasTag("max_dur")) {
                 event.getHook().remove();
                 event.setCancelled(true);
-                ItemUtils.loseDurability(itemStack, 5, true);
+                ItemUtils.decreaseDurability(itemStack, 5, true);
             }
         }
     }
@@ -444,11 +470,21 @@ public class FishingManagerImpl implements Listener, FishingManager {
         }
     }
 
+    /**
+     * Removes the temporary fishing state associated with a player.
+     *
+     * @param player The player whose temporary fishing state should be removed.
+     */
     @Override
-    public void removeTempFishingState(Player player) {
-        this.tempFishingStateMap.remove(player.getUniqueId());
+    public TempFishingState removeTempFishingState(Player player) {
+        return this.tempFishingStateMap.remove(player.getUniqueId());
     }
 
+    /**
+     * Processes the game result for a gaming player
+     *
+     * @param gamingPlayer The gaming player whose game result should be processed.
+     */
     @Override
     public void processGameResult(GamingPlayer gamingPlayer) {
         final Player player = gamingPlayer.getPlayer();
@@ -458,7 +494,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
             LogUtils.warn("Unexpected situation: Can't get player's fish hook when processing game results.");
             return;
         }
-        TempFishingState tempFishingState = tempFishingStateMap.remove(uuid);
+        TempFishingState tempFishingState = removeTempFishingState(player);
         if (tempFishingState == null) {
             LogUtils.warn("Unexpected situation: Can't get player's fishing state when processing game results.");
             return;
@@ -479,8 +515,8 @@ public class FishingManagerImpl implements Listener, FishingManager {
                     if (damageEvent.isCancelled()) {
                         break outer;
                     }
-                    ItemUtils.reduceHookDurability(rod, false);
-                    ItemUtils.loseDurability(rod, 1, true);
+                    ItemUtils.decreaseHookDurability(rod, 1, false);
+                    ItemUtils.decreaseDurability(rod, 1, true);
                 }
 
             fishHook.remove();
@@ -520,7 +556,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         loot.triggerActions(ActionTrigger.FAILURE, fishingPreparation);
         fishingPreparation.triggerActions(ActionTrigger.FAILURE);
 
-        ItemUtils.reduceHookDurability(fishingPreparation.getRodItemStack(), true);
+        ItemUtils.decreaseHookDurability(fishingPreparation.getRodItemStack(), 1, true);
     }
 
     public void success(TempFishingState state, FishHook hook) {
@@ -565,7 +601,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
                     }
                 } else {
                     for (int i = 0; i < amount; i++) {
-                        plugin.getItemManager().dropItem(player, hook.getLocation(), player.getLocation(), loot, fishingPreparation.getArgs());
+                        plugin.getItemManager().dropItem(player, hook.getLocation(), player.getLocation(), loot.getID(), fishingPreparation.getArgs());
                         doSuccessActions(loot, effect, fishingPreparation, player);
                     }
                 }
@@ -629,67 +665,56 @@ public class FishingManagerImpl implements Listener, FishingManager {
             ).ifPresent(it -> it.addLootAmount(loot, fishingPreparation, 1));
     }
 
-    @Override
-    public Collection<String> getPossibleLootKeys (Condition condition) {
-        return plugin.getRequirementManager().getLootWithWeight(condition).keySet();
-    }
-
-    @NotNull
-    @Override
-    public Map<String, Double> getPossibleLootKeysWithWeight(Effect initialEffect, Condition condition) {
-        Map<String, Double> lootWithWeight = plugin.getRequirementManager().getLootWithWeight(condition);
-
-        Player player = condition.getPlayer();
-        for (Pair<String, WeightModifier> pair : initialEffect.getWeightModifier()) {
-            Double previous = lootWithWeight.get(pair.left());
-            if (previous != null)
-                lootWithWeight.put(pair.left(), pair.right().modify(player, previous));
-        }
-        for (Pair<String, WeightModifier> pair : initialEffect.getWeightModifierIgnored()) {
-            double previous = lootWithWeight.getOrDefault(pair.left(), 0d);
-            lootWithWeight.put(pair.left(), pair.right().modify(player, previous));
-        }
-        return lootWithWeight;
-    }
-
-    @Override
-    @Nullable
-    public Loot getNextLoot(Effect initialEffect, Condition condition) {
-        String key = WeightUtils.getRandom(getPossibleLootKeysWithWeight(initialEffect, condition));
-        Loot loot = plugin.getLootManager().getLoot(key);
-        if (loot == null) {
-            LogUtils.warn(String.format("Loot %s doesn't exist!", key));
-            return null;
-        }
-        return loot;
-    }
-
+    /**
+     * Starts a fishing game for the specified player with the given condition and effect.
+     *
+     * @param player    The player starting the fishing game.
+     * @param condition The condition used to determine the game.
+     * @param effect    The effect applied to the game.
+     */
     @Override
     public void startFishingGame(Player player, Condition condition, Effect effect) {
-        Map<String, Double> gameWithWeight = plugin.getRequirementManager().getGameWithWeight(condition);
+        Map<String, Double> gameWithWeight = plugin.getGameManager().getGameWithWeight(condition);
         plugin.debug(gameWithWeight.toString());
         String random = WeightUtils.getRandom(gameWithWeight);
-        Optional<Pair<BasicGameConfig, GameInstance>> gamePair = plugin.getGameManager().getGame(random);
-        if (gamePair.isEmpty()) {
-            LogUtils.warn(String.format("Game %s doesn't exist!", random));
+        Pair<BasicGameConfig, GameInstance> gamePair = plugin.getGameManager().getGameInstance(random);
+        if (random == null) {
+            LogUtils.warn("No game is available for player:" + player.getName() + " location:" + condition.getLocation());
+            return;
+        }
+        if (gamePair == null) {
+            LogUtils.warn(String.format("Game %s doesn't exist.", random));
             return;
         }
         plugin.debug("Game: " + random);
-        startFishingGame(player, Objects.requireNonNull(gamePair.get().left().getGameSetting(effect)), gamePair.get().right());
+        startFishingGame(player, Objects.requireNonNull(gamePair.left().getGameSetting(effect)), gamePair.right());
     }
 
+    /**
+     * Starts a fishing game for the specified player with the given settings and game instance.
+     *
+     * @param player       The player starting the fishing game.
+     * @param settings     The game settings for the fishing game.
+     * @param gameInstance The instance of the fishing game to start.
+     */
     @Override
     public void startFishingGame(Player player, GameSettings settings, GameInstance gameInstance) {
         plugin.debug("Difficulty:" + settings.getDifficulty());
         plugin.debug("Time:" + settings.getTime());
-        Optional<FishHook> hook = getHook(player.getUniqueId());
-        if (hook.isPresent()) {
-            this.gamingPlayerMap.put(player.getUniqueId(), gameInstance.start(player, hook.get(), settings));
+        FishHook hook = getHook(player.getUniqueId());
+        if (hook != null) {
+            this.gamingPlayerMap.put(player.getUniqueId(), gameInstance.start(player, hook, settings));
         } else {
             LogUtils.warn("It seems that player " + player.getName() + " is not fishing. Fishing game failed to start.");
         }
     }
 
+    /**
+     * Checks if a player with the given UUID has cast their fishing hook.
+     *
+     * @param uuid The UUID of the player to check.
+     * @return {@code true} if the player has cast their fishing hook, {@code false} otherwise.
+     */
     @Override
     public boolean hasPlayerCastHook(UUID uuid) {
         FishHook fishHook = hookCacheMap.get(uuid);
@@ -701,13 +726,42 @@ public class FishingManagerImpl implements Listener, FishingManager {
         return true;
     }
 
+    /**
+     * Sets the temporary fishing state for a player.
+     *
+     * @param player            The player for whom to set the temporary fishing state.
+     * @param tempFishingState  The temporary fishing state to set for the player.
+     */
     @Override
     public void setTempFishingState(Player player, TempFishingState tempFishingState) {
         tempFishingStateMap.put(player.getUniqueId(), tempFishingState);
     }
 
-    @Override
     public void removeHookCheckTask(Player player) {
         hookCheckMap.remove(player.getUniqueId());
+    }
+
+    /**
+     * Gets the {@link GamingPlayer} object associated with the given UUID.
+     *
+     * @param uuid The UUID of the player.
+     * @return The {@link GamingPlayer} object if found, or {@code null} if not found.
+     */
+    @Override
+    @Nullable
+    public GamingPlayer getGamingPlayer(UUID uuid) {
+        return gamingPlayerMap.get(uuid);
+    }
+
+    /**
+     * Gets the {@link TempFishingState} object associated with the given UUID.
+     *
+     * @param uuid The UUID of the player.
+     * @return The {@link TempFishingState} object if found, or {@code null} if not found.
+     */
+    @Override
+    @Nullable
+    public TempFishingState getTempFishingState(UUID uuid) {
+        return tempFishingStateMap.get(uuid);
     }
 }

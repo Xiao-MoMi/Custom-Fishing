@@ -26,6 +26,9 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * An implementation of AbstractSQLDatabase that uses the H2 embedded database for player data storage.
+ */
 public class H2Impl extends AbstractSQLDatabase {
 
     private JdbcConnectionPool connectionPool;
@@ -34,6 +37,9 @@ public class H2Impl extends AbstractSQLDatabase {
         super(plugin);
     }
 
+    /**
+     * Initialize the H2 database and connection pool based on the configuration.
+     */
     @Override
     public void initialize() {
         YamlConfiguration config = plugin.getConfig("database.yml");
@@ -45,6 +51,9 @@ public class H2Impl extends AbstractSQLDatabase {
         super.createTableIfNotExist();
     }
 
+    /**
+     * Disable the H2 database by disposing of the connection pool.
+     */
     @Override
     public void disable() {
         if (connectionPool != null) {

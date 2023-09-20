@@ -7,11 +7,11 @@ double_loot_totem:
       4:
         - '*_STAIRS{face=east;half=top} OBSERVER{face=south} *_STAIRS{face=west;half=top}'
       3:
-        - 'AIR CRYING_OBSIDIAN AIR'
+        - 'AIR                            CRYING_OBSIDIAN                             AIR'
       2:
-        - 'AIR *_LOG{axis=y}||*_PILLAR{axis=y} AIR'
+        - 'AIR                     *_LOG{axis=y}||*_PILLAR{axis=y}                    AIR'
       1:
-        - 'AIR ANVIL AIR'
+        - 'AIR||GRASS||SNOW                   ANVIL                      AIR||GRASS||SNOW'
   effects:
     double_loot:
       type: multiple-loot

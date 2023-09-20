@@ -60,6 +60,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This class implements the StorageManager interface and is responsible for managing player data storage.
+ * It includes methods to handle player data retrieval, storage, and serialization.
+ */
 public class StorageManagerImpl implements StorageManager, Listener {
 
     private final CustomFishingPlugin plugin;
@@ -81,9 +85,14 @@ public class StorageManagerImpl implements StorageManager, Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
+    /**
+     * Reloads the storage manager configuration.
+     */
     public void reload() {
         YamlConfiguration config = plugin.getConfig("database.yml");
         this.uniqueID = config.getString("unique-server-id", "default");
+
+        // Check if storage type has changed and reinitialize if necessary
         StorageType storageType = StorageType.valueOf(config.getString("data-storage-method", "H2"));
         if (storageType != previousType) {
             if (this.dataSource != null) this.dataSource.disable();
@@ -100,19 +109,27 @@ public class StorageManagerImpl implements StorageManager, Listener {
             if (this.dataSource != null) this.dataSource.initialize();
             else LogUtils.severe("No storage type is set.");
         }
+
+        // Handle Redis configuration
         if (!this.hasRedis && config.getBoolean("Redis.enable", false)) {
             this.hasRedis = true;
             this.redisManager = new RedisManager(plugin);
             this.redisManager.initialize();
         }
+
+        // Disable Redis if it was enabled but is now disabled
         if (this.hasRedis && !config.getBoolean("Redis.enable", false) && this.redisManager != null) {
             this.redisManager.disable();
             this.redisManager = null;
         }
+
+        // Cancel any existing timerSaveTask
         if (this.timerSaveTask != null && !this.timerSaveTask.isCancelled()) {
             this.timerSaveTask.cancel();
         }
-        if (CFConfig.dataSaveInterval != -1)
+
+        // Schedule periodic data saving if dataSaveInterval is configured
+        if (CFConfig.dataSaveInterval != -1 && CFConfig.dataSaveInterval != 0)
             this.timerSaveTask = this.plugin.getScheduler().runTaskAsyncTimer(
                     () -> {
                         long time1 = System.currentTimeMillis();
@@ -125,6 +142,9 @@ public class StorageManagerImpl implements StorageManager, Listener {
             );
     }
 
+    /**
+     * Disables the storage manager and cleans up resources.
+     */
     public void disable() {
         HandlerList.unregisterAll(this);
         this.dataSource.updateManyPlayersData(onlineUserMap.values(), true);
@@ -135,16 +155,35 @@ public class StorageManagerImpl implements StorageManager, Listener {
             this.redisManager.disable();
     }
 
+    /**
+     * Gets the unique server identifier.
+     *
+     * @return The unique server identifier.
+     */
+    @NotNull
     @Override
     public String getUniqueID() {
         return uniqueID;
     }
 
+    /**
+     * Gets an OnlineUser instance for the specified UUID.
+     *
+     * @param uuid The UUID of the player.
+     * @return An OnlineUser instance if the player is online, or null if not.
+     */
     @Override
     public OnlineUser getOnlineUser(UUID uuid) {
         return onlineUserMap.get(uuid);
     }
 
+    /**
+     * Asynchronously retrieves an OfflineUser instance for the specified UUID.
+     *
+     * @param uuid The UUID of the player.
+     * @param lock Whether to lock the data during retrieval.
+     * @return A CompletableFuture that resolves to an Optional containing the OfflineUser instance if found, or empty if not found or locked.
+     */
     @Override
     public CompletableFuture<Optional<OfflineUser>> getOfflineUser(UUID uuid, boolean lock) {
         var optionalDataFuture = dataSource.getPlayerData(uuid, lock);
@@ -164,20 +203,37 @@ public class StorageManagerImpl implements StorageManager, Listener {
     }
 
     @Override
+    public boolean isLockedData(OfflineUser offlineUser) {
+        return OfflineUserImpl.LOCKED_USER == offlineUser;
+    }
+
+    /**
+     * Asynchronously saves user data for an OfflineUser.
+     *
+     * @param offlineUser The OfflineUser whose data needs to be saved.
+     * @param unlock Whether to unlock the data after saving.
+     * @return A CompletableFuture that resolves to a boolean indicating the success of the data saving operation.
+     */
+    @Override
     public CompletableFuture<Boolean> saveUserData(OfflineUser offlineUser, boolean unlock) {
         return dataSource.updatePlayerData(offlineUser.getUUID(), offlineUser.getPlayerData(), unlock);
     }
 
-    @Override
-    public CompletableFuture<Integer> getRedisPlayerCount() {
-        return redisManager.getPlayerCount();
-    }
-
+    /**
+     * Gets the data source used for data storage.
+     *
+     * @return The data source.
+     */
     @Override
     public DataStorageInterface getDataSource() {
         return dataSource;
     }
 
+    /**
+     * Event handler for when a player joins the server.
+     * Locks the player's data and initiates data retrieval if Redis is not used,
+     * otherwise, it starts a Redis data retrieval task.
+     */
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -186,10 +242,21 @@ public class StorageManagerImpl implements StorageManager, Listener {
         if (!hasRedis) {
             waitForDataLockRelease(uuid, 1);
         } else {
-            redisReadingData(uuid);
+            plugin.getScheduler().runTaskAsyncLater(() -> redisManager.getChangeServer(uuid).thenAccept(changeServer -> {
+                if (!changeServer) {
+                    waitForDataLockRelease(uuid, 3);
+                } else {
+                    new RedisGetDataTask(uuid);
+                }
+            }), 500, TimeUnit.MILLISECONDS);
         }
     }
 
+    /**
+     * Event handler for when a player quits the server.
+     * If the player is not locked, it removes their OnlineUser instance,
+     * updates the player's data in Redis and the data source.
+     */
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
@@ -216,17 +283,10 @@ public class StorageManagerImpl implements StorageManager, Listener {
         }
     }
 
-    public void redisReadingData(UUID uuid) {
-        // delay 0.5s for another server to insert the key
-        plugin.getScheduler().runTaskAsyncLater(() -> redisManager.getChangeServer(uuid).thenAccept(changeServer -> {
-           if (!changeServer) {
-               waitForDataLockRelease(uuid, 3);
-           } else {
-               new RedisGetDataTask(uuid);
-           }
-        }), 500, TimeUnit.MILLISECONDS);
-    }
-
+    /**
+     * Runnable task for asynchronously retrieving data from Redis.
+     * Retries up to 6 times and cancels the task if the player is offline.
+     */
     public class RedisGetDataTask implements Runnable {
 
         private final UUID uuid;
@@ -255,21 +315,25 @@ public class StorageManagerImpl implements StorageManager, Listener {
                 if (optionalData.isPresent()) {
                     putDataInCache(player, optionalData.get());
                     task.cancel();
-                    if (CFConfig.lockData) dataSource.lockPlayerData(uuid, true);
+                    if (CFConfig.lockData) dataSource.lockOrUnlockPlayerData(uuid, true);
                 }
             });
         }
     }
 
-    // wait 1 second for the lock to release
-    // try three times at most
+    /**
+     * Waits for data lock release with a delay and a maximum of three retries.
+     *
+     * @param uuid  The UUID of the player.
+     * @param times The number of times this method has been retried.
+     */
     public void waitForDataLockRelease(UUID uuid, int times) {
         plugin.getScheduler().runTaskAsyncLater(() -> {
         var player = Bukkit.getPlayer(uuid);
         if (player == null || !player.isOnline() || times > 3)
             return;
         this.dataSource.getPlayerData(uuid, CFConfig.lockData).thenAccept(optionalData -> {
-            // should not be empty
+            // Data should not be empty
             if (optionalData.isEmpty())
                 return;
             if (optionalData.get() == PlayerData.LOCKED) {
@@ -281,38 +345,80 @@ public class StorageManagerImpl implements StorageManager, Listener {
         }, 1, TimeUnit.SECONDS);
     }
 
+    /**
+     * Puts player data in cache and removes the player from the locked set.
+     *
+     * @param player     The player whose data is being cached.
+     * @param playerData The data to be cached.
+     */
     public void putDataInCache(Player player, PlayerData playerData) {
         locked.remove(player.getUniqueId());
         OnlineUserImpl bukkitUser = new OnlineUserImpl(player, playerData);
         onlineUserMap.put(player.getUniqueId(), bukkitUser);
     }
 
+    /**
+     * Checks if Redis is enabled.
+     *
+     * @return True if Redis is enabled; otherwise, false.
+     */
     @Override
     public boolean isRedisEnabled() {
         return hasRedis;
     }
 
+    /**
+     * Gets the RedisManager instance.
+     *
+     * @return The RedisManager instance.
+     */
     @Nullable
     public RedisManager getRedisManager() {
         return redisManager;
     }
 
+    /**
+     * Converts PlayerData to bytes.
+     *
+     * @param data The PlayerData to be converted.
+     * @return The byte array representation of PlayerData.
+     */
+    @NotNull
     @Override
     public byte[] toBytes(@NotNull PlayerData data) {
         return toJson(data).getBytes(StandardCharsets.UTF_8);
     }
 
+    /**
+     * Converts PlayerData to JSON format.
+     *
+     * @param data The PlayerData to be converted.
+     * @return The JSON string representation of PlayerData.
+     */
     @Override
     @NotNull
     public String toJson(@NotNull PlayerData data) {
         return gson.toJson(data);
     }
 
+    /**
+     * Converts JSON string to PlayerData.
+     *
+     * @param json The JSON string to be converted.
+     * @return The PlayerData object.
+     */
+    @NotNull
     @Override
     public PlayerData fromJson(String json) {
         return gson.fromJson(json, PlayerData.class);
     }
 
+    /**
+     * Converts bytes to PlayerData.
+     *
+     * @param data The byte array to be converted.
+     * @return The PlayerData object.
+     */
     @Override
     @NotNull
     public PlayerData fromBytes(byte[] data) {
@@ -323,6 +429,9 @@ public class StorageManagerImpl implements StorageManager, Listener {
         }
     }
 
+    /**
+     * Custom exception class for data serialization errors.
+     */
     public static class DataSerializationException extends RuntimeException {
         protected DataSerializationException(String message, Throwable cause) {
             super(message, cause);

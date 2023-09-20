@@ -33,6 +33,9 @@ import java.sql.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * An abstract base class for SQL database implementations that handle player data storage.
+ */
 public abstract class AbstractSQLDatabase extends AbstractStorage {
 
     protected String tablePrefix;
@@ -41,8 +44,17 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         super(plugin);
     }
 
+    /**
+     * Get a connection to the SQL database.
+     *
+     * @return A database connection.
+     * @throws SQLException If there is an error establishing a connection.
+     */
     public abstract Connection getConnection() throws SQLException;
 
+    /**
+     * Create tables for storing data if they don't exist in the database.
+     */
     public void createTableIfNotExist() {
         try (Connection connection = getConnection()) {
             final String[] databaseSchema = getSchema(getStorageType().name().toLowerCase(Locale.ENGLISH));
@@ -60,23 +72,54 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         }
     }
 
+    /**
+     * Get the SQL schema from a resource file.
+     *
+     * @param fileName The name of the schema file.
+     * @return An array of SQL statements to create tables.
+     * @throws IOException If there is an error reading the schema resource.
+     */
     private String[] getSchema(@NotNull String fileName) throws IOException {
         return replaceSchemaPlaceholder(new String(Objects.requireNonNull(plugin.getResource("schema/" + fileName + ".sql"))
                .readAllBytes(), StandardCharsets.UTF_8)).split(";");
     }
 
+    /**
+     * Replace placeholder values in SQL schema with the table prefix.
+     *
+     * @param sql The SQL schema string.
+     * @return The SQL schema string with placeholders replaced.
+     */
     private String replaceSchemaPlaceholder(@NotNull String sql) {
         return sql.replace("{prefix}", tablePrefix);
     }
 
+    /**
+     * Get the name of a database table based on a sub-table name and the table prefix.
+     *
+     * @param sub The sub-table name.
+     * @return The full table name.
+     */
     public String getTableName(String sub) {
         return getTablePrefix() + "_" + sub;
     }
 
+    /**
+     * Get the current table prefix.
+     *
+     * @return The table prefix.
+     */
     public String getTablePrefix() {
         return tablePrefix;
     }
 
+    /**
+     * Retrieve a player's data from the SQL database.
+     *
+     * @param uuid The UUID of the player.
+     * @param lock Whether to lock the player data during retrieval.
+     * @return A CompletableFuture containing the optional player data.
+     */
     @SuppressWarnings("DuplicatedCode")
     @Override
     public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock) {
@@ -98,7 +141,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
                 final Blob blob = rs.getBlob("data");
                 final byte[] dataByteArray = blob.getBytes(1, (int) blob.length());
                 blob.free();
-                if (lock) lockPlayerData(uuid, true);
+                if (lock) lockOrUnlockPlayerData(uuid, true);
                 future.complete(Optional.of(plugin.getStorageManager().fromBytes(dataByteArray)));
             } else if (Bukkit.getPlayer(uuid) != null) {
                 var data = PlayerData.empty();
@@ -115,6 +158,14 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         return future;
     }
 
+    /**
+     * Update a player's data in the SQL database.
+     *
+     * @param uuid      The UUID of the player.
+     * @param playerData The player data to update.
+     * @param unlock    Whether to unlock the player data after updating.
+     * @return A CompletableFuture indicating the success of the update.
+     */
     @Override
     public CompletableFuture<Boolean> updatePlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         var future = new CompletableFuture<Boolean>();
@@ -137,6 +188,12 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         return future;
     }
 
+    /**
+     * Update data for multiple players in the SQL database.
+     *
+     * @param users  A collection of OfflineUser objects representing players.
+     * @param unlock Whether to unlock the player data after updating.
+     */
     @Override
     public void updateManyPlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
         String sql = String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data"));
@@ -160,6 +217,13 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         }
     }
 
+    /**
+     * Insert a new player's data into the SQL database.
+     *
+     * @param uuid      The UUID of the player.
+     * @param playerData The player data to insert.
+     * @param lock      Whether to lock the player data upon insertion.
+     */
     public void insertPlayerData(UUID uuid, PlayerData playerData, boolean lock) {
         try (
             Connection connection = getConnection();
@@ -174,8 +238,14 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         }
     }
 
+    /**
+     * Lock or unlock a player's data in the SQL database.
+     *
+     * @param uuid The UUID of the player.
+     * @param lock Whether to lock or unlock the player data.
+     */
     @Override
-    public void lockPlayerData(UUID uuid, boolean lock) {
+    public void lockOrUnlockPlayerData(UUID uuid, boolean lock) {
         try (
             Connection connection = getConnection();
             PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_LOCK_BY_UUID, getTableName("data")))
@@ -188,6 +258,14 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         }
     }
 
+    /**
+     * Update or insert a player's data into the SQL database.
+     *
+     * @param uuid      The UUID of the player.
+     * @param playerData The player data to update or insert.
+     * @param unlock    Whether to unlock the player data after updating or inserting.
+     * @return A CompletableFuture indicating the success of the operation.
+     */
     @Override
     public CompletableFuture<Boolean> updateOrInsertPlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         var future = new CompletableFuture<Boolean>();
@@ -211,6 +289,12 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         return future;
     }
 
+    /**
+     * Get a set of unique user UUIDs from the SQL database.
+     *
+     * @param legacy Whether to include legacy data in the retrieval.
+     * @return A set of unique user UUIDs.
+     */
     @Override
     public Set<UUID> getUniqueUsers(boolean legacy) {
         Set<UUID> uuids = new HashSet<>();
@@ -228,6 +312,9 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         return uuids;
     }
 
+    /**
+     * Constants defining SQL statements used for database operations.
+     */
     public static class SqlConstants {
         public static final String SQL_SELECT_BY_UUID = "SELECT * FROM `%s` WHERE `uuid` = ?";
         public static final String SQL_SELECT_ALL_UUID = "SELECT uuid FROM `%s`";

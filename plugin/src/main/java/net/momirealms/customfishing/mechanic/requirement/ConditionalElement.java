@@ -35,13 +35,19 @@ public class ConditionalElement {
     public ConditionalElement(
             Requirement[] requirements,
             List<Pair<String, WeightModifier>> modifierList,
-            HashMap<String, ConditionalElement> subLoots
+            HashMap<String, ConditionalElement> subElements
     ) {
         this.modifierList = modifierList;
         this.requirements = requirements;
-        this.subLoots = subLoots;
+        this.subLoots = subElements;
     }
 
+    /**
+     * Combines the weight modifiers for this element.
+     *
+     * @param player    The player for whom the modifiers are applied.
+     * @param weightMap The map of weight modifiers.
+     */
     synchronized public void combine(Player player, HashMap<String, Double> weightMap) {
         for (Pair<String, WeightModifier> modifierPair : this.modifierList) {
             double previous = weightMap.getOrDefault(modifierPair.left(), 0d);
@@ -49,16 +55,11 @@ public class ConditionalElement {
         }
     }
 
-    public boolean isConditionsMet(Condition condition) {
-        for (Requirement requirement : requirements) {
-            if (!requirement.isConditionMet(condition)) {
-                return false;
-            }
-        }
-        return true;
+    public Requirement[] getRequirements() {
+        return requirements;
     }
 
-    public HashMap<String, ConditionalElement> getSubLoots() {
+    public HashMap<String, ConditionalElement> getSubElements() {
         return subLoots;
     }
 }

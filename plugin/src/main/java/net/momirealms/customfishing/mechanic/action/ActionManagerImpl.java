@@ -29,6 +29,7 @@ import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionExpansion;
 import net.momirealms.customfishing.api.mechanic.action.ActionFactory;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
+import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.util.LogUtils;
@@ -47,6 +48,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -68,6 +70,7 @@ public class ActionManagerImpl implements ActionManager {
         this.registerInbuiltActions();
     }
 
+    // Method to register various built-in actions during initialization.
     private void registerInbuiltActions() {
         this.registerMessageAction();
         this.registerCommandAction();
@@ -94,6 +97,7 @@ public class ActionManagerImpl implements ActionManager {
         this.registerMoneyAction();
     }
 
+    // Method to load expansions and global event actions.
     public void load() {
         this.loadExpansions();
         this.loadGlobalEventActions();
@@ -108,11 +112,20 @@ public class ActionManagerImpl implements ActionManager {
         this.actionBuilderMap.clear();
     }
 
+    // Method to load global event actions from the plugin's configuration file.
     private void loadGlobalEventActions() {
         YamlConfiguration config = plugin.getConfig("config.yml");
         GlobalSettings.load(config.getConfigurationSection("mechanics.global-events"));
     }
 
+    /**
+     * Registers an ActionFactory for a specific action type.
+     * This method allows you to associate an ActionFactory with a custom action type.
+     *
+     * @param type           The custom action type to register.
+     * @param actionFactory  The ActionFactory responsible for creating actions of the specified type.
+     * @return True if the registration was successful (the action type was not already registered), false otherwise.
+     */
     @Override
     public boolean registerAction(String type, ActionFactory actionFactory) {
         if (this.actionBuilderMap.containsKey(type)) return false;
@@ -120,36 +133,92 @@ public class ActionManagerImpl implements ActionManager {
         return true;
     }
 
+    /**
+     * Unregisters an ActionFactory for a specific action type.
+     * This method allows you to remove the association between an action type and its ActionFactory.
+     *
+     * @param type The custom action type to unregister.
+     * @return True if the action type was successfully unregistered, false if it was not found.
+     */
     @Override
     public boolean unregisterAction(String type) {
         return this.actionBuilderMap.remove(type) != null;
     }
 
+    /**
+     * Retrieves an Action object based on the configuration provided in a ConfigurationSection.
+     * This method reads the type of action from the section, obtains the corresponding ActionFactory,
+     * and builds an Action object using the specified values and chance.
+     *
+     * @param section The ConfigurationSection containing the action configuration.
+     * @return An Action object created based on the configuration, or an EmptyAction instance if the action type is invalid.
+     */
     @Override
+    @NotNull
     public Action getAction(ConfigurationSection section) {
-        return getActionBuilder(section.getString("type")).build(section.get("value"), section.getDouble("chance", 1d));
+        ActionFactory factory = getActionFactory(section.getString("type"));
+        if (factory == null) {
+            LogUtils.warn("Action type: " + section.getString("type") + " doesn't exist.");
+            // to prevent NPE
+            return EmptyAction.instance;
+        }
+        return factory.build(
+                        section.get("value"),
+                        section.getDouble("chance", 1d)
+                );
     }
 
+    /**
+     * Retrieves a mapping of ActionTriggers to arrays of Actions from a ConfigurationSection.
+     * This method iterates through the provided ConfigurationSection to extract action triggers
+     * and their associated arrays of Actions.
+     *
+     * @param section The ConfigurationSection containing action mappings.
+     * @return A HashMap where keys are ActionTriggers and values are arrays of Action objects.
+     */
     @Override
+    @NotNull
     public HashMap<ActionTrigger, Action[]> getActionMap(ConfigurationSection section) {
+        // Create an empty HashMap to store the action mappings
         HashMap<ActionTrigger, Action[]> actionMap = new HashMap<>();
+
+        // If the provided ConfigurationSection is null, return the empty actionMap
         if (section == null) return actionMap;
+
+        // Iterate through all key-value pairs in the ConfigurationSection
         for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection innerSection) {
-                actionMap.put(
-                        ActionTrigger.valueOf(entry.getKey().toUpperCase(Locale.ENGLISH)),
-                        getActions(innerSection)
-                );
+                // Convert the key to an ActionTrigger enum (assuming it's in uppercase English)
+                // and map it to an array of Actions obtained from the inner section
+                try {
+                    actionMap.put(
+                            ActionTrigger.valueOf(entry.getKey().toUpperCase(Locale.ENGLISH)),
+                            getActions(innerSection)
+                    );
+                } catch (IllegalArgumentException e) {
+                    LogUtils.warn("Event: " + entry.getKey() + " doesn't exist!");
+                }
             }
         }
         return actionMap;
     }
 
-    @Nullable
+    /**
+     * Retrieves an array of Action objects from a ConfigurationSection.
+     * This method iterates through the provided ConfigurationSection to extract Action configurations
+     * and build an array of Action objects.
+     *
+     * @param section The ConfigurationSection containing action configurations.
+     * @return An array of Action objects created based on the configurations in the section.
+     */
+    @NotNull
     @Override
     public Action[] getActions(ConfigurationSection section) {
-        if (section == null) return null;
+        // Create an ArrayList to store the Actions
         ArrayList<Action> actionList = new ArrayList<>();
+        if (section == null) return actionList.toArray(new Action[0]);
+
+        // Iterate through all key-value pairs in the ConfigurationSection
         for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection innerSection) {
                 actionList.add(getAction(innerSection));
@@ -158,9 +227,84 @@ public class ActionManagerImpl implements ActionManager {
         return actionList.toArray(new Action[0]);
     }
 
+    /**
+     * Retrieves an ActionFactory associated with a specific action type.
+     *
+     * @param type The action type for which to retrieve the ActionFactory.
+     * @return The ActionFactory associated with the specified action type, or null if not found.
+     */
+    @Nullable
     @Override
-    public ActionFactory getActionBuilder(String type) {
+    public ActionFactory getActionFactory(String type) {
         return actionBuilderMap.get(type);
+    }
+
+    /**
+     * Loads custom ActionExpansions from JAR files located in the expansion directory.
+     * This method scans the expansion folder for JAR files, loads classes that extend ActionExpansion,
+     * and registers them with the appropriate action type and ActionFactory.
+     */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private void loadExpansions() {
+        File expansionFolder = new File(plugin.getDataFolder(), EXPANSION_FOLDER);
+        if (!expansionFolder.exists())
+            expansionFolder.mkdirs();
+
+        List<Class<? extends ActionExpansion>> classes = new ArrayList<>();
+        File[] expansionJars = expansionFolder.listFiles();
+        if (expansionJars == null) return;
+        for (File expansionJar : expansionJars) {
+            if (expansionJar.getName().endsWith(".jar")) {
+                try {
+                    Class<? extends ActionExpansion> expansionClass = ClassUtils.findClass(expansionJar, ActionExpansion.class);
+                    classes.add(expansionClass);
+                } catch (IOException | ClassNotFoundException e) {
+                    LogUtils.warn("Failed to load expansion: " + expansionJar.getName(), e);
+                }
+            }
+        }
+        try {
+            for (Class<? extends ActionExpansion> expansionClass : classes) {
+                ActionExpansion expansion = expansionClass.getDeclaredConstructor().newInstance();
+                unregisterAction(expansion.getActionType());
+                registerAction(expansion.getActionType(), expansion.getActionFactory());
+                LogUtils.info("Loaded action expansion: " + expansion.getActionType() + "[" + expansion.getVersion() + "]" + " by " + expansion.getAuthor() );
+            }
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+            LogUtils.warn("Error occurred when creating expansion instance.", e);
+        }
+    }
+
+    /**
+     * Retrieves a mapping of success times to corresponding arrays of actions from a ConfigurationSection.
+     *
+     * @param section The ConfigurationSection containing success times actions.
+     * @return A HashMap where success times associated with actions.
+     */
+    @Override
+    public HashMap<Integer, Action[]> getTimesActionMap(ConfigurationSection section) {
+        HashMap<Integer, Action[]> actionMap = new HashMap<>();
+        if (section == null) return actionMap;
+        for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
+            if (entry.getValue() instanceof ConfigurationSection innerSection) {
+                actionMap.put(Integer.parseInt(entry.getKey()), plugin.getActionManager().getActions(innerSection));
+            }
+        }
+        return actionMap;
+    }
+
+    /**
+     * Triggers a list of actions with the given condition.
+     * If the list of actions is not null, each action in the list is triggered.
+     *
+     * @param actions   The list of actions to trigger.
+     * @param condition The condition associated with the actions.
+     */
+    @Override
+    public void triggerActions(List<Action> actions, Condition condition) {
+        if (actions != null)
+            for (Action action : actions)
+                action.trigger(condition);
     }
 
     private void registerMessageAction() {
@@ -462,9 +606,9 @@ public class ActionManagerImpl implements ActionManager {
                     Player player = condition.getPlayer();
                     ItemStack itemStack = player.getInventory().getItem(slot);
                     if (amount > 0) {
-                        ItemUtils.addDurability(itemStack, amount, true);
+                        ItemUtils.increaseDurability(itemStack, amount, true);
                     } else {
-                        ItemUtils.loseDurability(itemStack, -amount, true);
+                        ItemUtils.decreaseDurability(itemStack, -amount, true);
                     }
                 };
             } else {
@@ -482,7 +626,7 @@ public class ActionManagerImpl implements ActionManager {
                 return condition -> {
                     if (Math.random() > chance) return;
                     Player player = condition.getPlayer();
-                    ItemUtils.giveCertainAmountOfItem(player, CustomFishingPlugin.get().getItemManager().buildAnyItemByID(player, id), amount);
+                    ItemUtils.giveCertainAmountOfItem(player, CustomFishingPlugin.get().getItemManager().buildAnyPluginItemByID(player, id), amount);
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: give-item");
@@ -780,7 +924,7 @@ public class ActionManagerImpl implements ActionManager {
                 String target = section.getString("target");
                 return condition -> {
                     if (Math.random() > chance) return;
-                    Optional.ofNullable(plugin.getIntegrationManager().getLevelHook(pluginName)).ifPresentOrElse(it -> {
+                    Optional.ofNullable(plugin.getIntegrationManager().getLevelPlugin(pluginName)).ifPresentOrElse(it -> {
                         it.addXp(condition.getPlayer(), target, exp);
                     }, () -> LogUtils.warn("Plugin (" + pluginName + "'s) level is not compatible. Please double check if it's a problem caused by pronunciation."));
                 };
@@ -796,7 +940,7 @@ public class ActionManagerImpl implements ActionManager {
                 if (Math.random() > chance) return;
                 condition.insertArg("{lava}", String.valueOf(arg));
                 LootManager lootManager = plugin.getLootManager();
-                List<String> loots = plugin.getFishingManager().getPossibleLootKeys(condition).stream().map(lootManager::getLoot).filter(Objects::nonNull).filter(Loot::showInFinder).map(Loot::getNick).toList();
+                List<String> loots = plugin.getLootManager().getPossibleLootKeys(condition).stream().map(lootManager::getLoot).filter(Objects::nonNull).filter(Loot::showInFinder).map(Loot::getNick).toList();
                 StringJoiner stringJoiner = new StringJoiner(CFLocale.MSG_Split_Char);
                 for (String loot : loots) {
                     stringJoiner.add(loot);
@@ -805,36 +949,5 @@ public class ActionManagerImpl implements ActionManager {
                 AdventureManagerImpl.getInstance().sendMessageWithPrefix(condition.getPlayer(), CFLocale.MSG_Possible_Loots + stringJoiner);
             };
         });
-    }
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    private void loadExpansions() {
-        File expansionFolder = new File(plugin.getDataFolder(), EXPANSION_FOLDER);
-        if (!expansionFolder.exists())
-            expansionFolder.mkdirs();
-
-        List<Class<? extends ActionExpansion>> classes = new ArrayList<>();
-        File[] expansionJars = expansionFolder.listFiles();
-        if (expansionJars == null) return;
-        for (File expansionJar : expansionJars) {
-            if (expansionJar.getName().endsWith(".jar")) {
-                try {
-                    Class<? extends ActionExpansion> expansionClass = ClassUtils.findClass(expansionJar, ActionExpansion.class);
-                    classes.add(expansionClass);
-                } catch (IOException | ClassNotFoundException e) {
-                    LogUtils.warn("Failed to load expansion: " + expansionJar.getName(), e);
-                }
-            }
-        }
-        try {
-            for (Class<? extends ActionExpansion> expansionClass : classes) {
-                ActionExpansion expansion = expansionClass.getDeclaredConstructor().newInstance();
-                unregisterAction(expansion.getActionType());
-                registerAction(expansion.getActionType(), expansion.getActionFactory());
-                LogUtils.info("Loaded action expansion: " + expansion.getActionType() + "[" + expansion.getVersion() + "]" + " by " + expansion.getAuthor() );
-            }
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-            LogUtils.warn("Error occurred when creating expansion instance.", e);
-        }
     }
 }

@@ -21,5 +21,12 @@ import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import org.bukkit.Location;
 
 public interface TotemManager {
+
+    /**
+     * Get the EffectCarrier associated with an activated totem located near the specified location.
+     *
+     * @param location The location to search for activated totems.
+     * @return The EffectCarrier associated with the nearest activated totem or null if none are found.
+     */
     EffectCarrier getTotemEffect(Location location);
 }

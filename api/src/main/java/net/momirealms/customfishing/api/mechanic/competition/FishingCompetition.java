@@ -19,35 +19,106 @@ package net.momirealms.customfishing.api.mechanic.competition;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 
 public interface FishingCompetition {
+
+    /**
+     * Start the fishing competition
+     */
     void start();
 
+    /**
+     * Stop the fishing competition
+     */
     void stop();
 
+    /**
+     * End the fishing competition
+     */
     void end();
 
+    /**
+     * Check if the fishing competition is ongoing.
+     *
+     * @return {@code true} if the competition is still ongoing, {@code false} if it has ended.
+     */
     boolean isOnGoing();
 
+    /**
+     * Refreshes the data for a player in the fishing competition, including updating their score and triggering
+     * actions if it's their first time joining the competition.
+     *
+     * @param player The player whose data needs to be refreshed.
+     * @param score The player's current score in the competition.
+     */
     void refreshData(Player player, double score);
 
+    /**
+     * Checks if a player has joined the fishing competition based on their name.
+     *
+     * @param player The player to check for participation.
+     * @return {@code true} if the player has joined the competition; {@code false} otherwise.
+     */
     boolean hasPlayerJoined(OfflinePlayer player);
 
+    /**
+     * Gets the progress of the fishing competition as a float value (0~1).
+     *
+     * @return The progress of the fishing competition as a float.
+     */
     float getProgress();
 
+    /**
+     * Gets the remaining time in seconds for the fishing competition.
+     *
+     * @return The remaining time in seconds.
+     */
     long getRemainingTime();
 
+    /**
+     * Gets the start time of the fishing competition.
+     *
+     * @return The start time of the fishing competition.
+     */
     long getStartTime();
 
-    CompetitionConfig getConfig();
+    /**
+     * Gets the configuration of the fishing competition.
+     *
+     * @return The configuration of the fishing competition.
+     */
+    @NotNull CompetitionConfig getConfig();
 
-    CompetitionGoal getGoal();
+    /**
+     * Gets the goal of the fishing competition.
+     *
+     * @return The goal of the fishing competition.
+     */
+    @NotNull CompetitionGoal getGoal();
 
-    Ranking getRanking();
+    /**
+     * Gets the ranking data for the fishing competition.
+     *
+     * @return The ranking data for the fishing competition.
+     */
+    @NotNull Ranking getRanking();
 
-    ConcurrentHashMap<String, String> getCachedPlaceholders();
+    /**
+     * Gets the cached placeholders for the fishing competition.
+     *
+     * @return A ConcurrentHashMap containing cached placeholders.
+     */
+    @NotNull Map<String, String> getCachedPlaceholders();
 
-    String getCachedPlaceholder(String papi);
+    /**
+     * Gets a specific cached placeholder value by its key.
+     *
+     * @param papi The key of the cached placeholder.
+     * @return The cached placeholder value as a string, or null if not found.
+     */
+    @Nullable String getCachedPlaceholder(String papi);
 }

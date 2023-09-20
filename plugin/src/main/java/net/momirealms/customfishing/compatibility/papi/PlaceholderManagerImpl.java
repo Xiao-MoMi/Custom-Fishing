@@ -92,16 +92,36 @@ public class PlaceholderManagerImpl implements PlaceholderManager, Listener {
         }
     }
 
+    /**
+     * Set placeholders in a text string for a player.
+     *
+     * @param player The player for whom the placeholders should be set.
+     * @param text   The text string containing placeholders.
+     * @return The text string with placeholders replaced if PlaceholderAPI is available; otherwise, the original text.
+     */
     @Override
     public String setPlaceholders(Player player, String text) {
         return hasPapi ? ParseUtils.setPlaceholders(player, text) : text;
     }
 
+    /**
+     * Set placeholders in a text string for an offline player.
+     *
+     * @param player The offline player for whom the placeholders should be set.
+     * @param text   The text string containing placeholders.
+     * @return The text string with placeholders replaced if PlaceholderAPI is available; otherwise, the original text.
+     */
     @Override
     public String setPlaceholders(OfflinePlayer player, String text) {
         return hasPapi ? ParseUtils.setPlaceholders(player, text) : text;
     }
 
+    /**
+     * Detect and extract placeholders from a text string.
+     *
+     * @param text The text string to search for placeholders.
+     * @return A list of detected placeholders in the text.
+     */
     @Override
     public List<String> detectPlaceholders(String text) {
         List<String> placeholders = new ArrayList<>();
@@ -110,6 +130,14 @@ public class PlaceholderManagerImpl implements PlaceholderManager, Listener {
         return placeholders;
     }
 
+    /**
+     * Get the value associated with a single placeholder.
+     *
+     * @param player      The player for whom the placeholders are being resolved (nullable).
+     * @param placeholder The placeholder to look up.
+     * @param placeholders A map of placeholders to their corresponding values.
+     * @return The value associated with the placeholder, or the original placeholder if not found.
+     */
     @Override
     public String getSingleValue(@Nullable Player player, String placeholder, Map<String, String> placeholders) {
         String result = null;
@@ -123,6 +151,14 @@ public class PlaceholderManagerImpl implements PlaceholderManager, Listener {
         return setPlaceholders(player, custom);
     }
 
+    /**
+     * Parse a text string by replacing placeholders with their corresponding values.
+     *
+     * @param player      The offline player for whom the placeholders are being resolved (nullable).
+     * @param text        The text string containing placeholders.
+     * @param placeholders A map of placeholders to their corresponding values.
+     * @return The text string with placeholders replaced by their values.
+     */
     @Override
     public String parse(@Nullable OfflinePlayer player, String text, Map<String, String> placeholders) {
         var list = detectPlaceholders(text);
@@ -144,8 +180,30 @@ public class PlaceholderManagerImpl implements PlaceholderManager, Listener {
         return text;
     }
 
+    /**
+     * Parse a list of text strings by replacing placeholders with their corresponding values.
+     *
+     * @param player       The player for whom the placeholders are being resolved (can be null for offline players).
+     * @param list         The list of text strings containing placeholders.
+     * @param replacements A map of custom replacements for placeholders.
+     * @return The list of text strings with placeholders replaced by their values.
+     */
     @Override
-    public String parseCacheable(Player player, String text) {
+    public List<String> parse(@Nullable OfflinePlayer player, List<String> list, Map<String, String> replacements) {
+        return list.stream()
+                .map(s -> parse(player, s, replacements))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Parse a text string by replacing placeholders with their corresponding values, using caching for the player's placeholders.
+     *
+     * @param player The player for whom the placeholders are being resolved.
+     * @param text   The text string containing placeholders.
+     * @return The text string with placeholders replaced by their values.
+     */
+    @Override
+    public String parseCacheablePlaceholders(Player player, String text) {
         var list = detectPlaceholders(text);
         CachedPlaceholder cachedPlaceholder = cachedPlaceholders.computeIfAbsent(player.getUniqueId(), k -> new CachedPlaceholder());
         for (String papi : list) {
@@ -155,13 +213,6 @@ public class PlaceholderManagerImpl implements PlaceholderManager, Listener {
             }
         }
         return text;
-    }
-
-    @Override
-    public List<String> parse(@Nullable OfflinePlayer player, List<String> list, Map<String, String> replacements) {
-        return list.stream()
-                .map(s -> parse(player, s, replacements))
-                .collect(Collectors.toList());
     }
 
     public static PlaceholderManagerImpl getInstance() {
