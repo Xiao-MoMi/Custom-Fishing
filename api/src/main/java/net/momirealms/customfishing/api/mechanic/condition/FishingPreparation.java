@@ -125,20 +125,40 @@ public class FishingPreparation extends Condition {
         }
     }
 
+    /**
+     * Retrieves the ItemStack representing the fishing rod.
+     *
+     * @return The ItemStack representing the fishing rod.
+     */
     @NotNull
     public ItemStack getRodItemStack() {
         return rodItemStack;
     }
 
+    /**
+     * Retrieves the ItemStack representing the bait (if available).
+     *
+     * @return The ItemStack representing the bait, or null if no bait is set.
+     */
     @Nullable
     public ItemStack getBaitItemStack() {
         return baitItemStack;
     }
 
+    /**
+     * Checks if player meet the requirements for fishing gears
+     *
+     * @return True if can fish, false otherwise.
+     */
     public boolean canFish() {
         return this.canFish;
     }
 
+    /**
+     * Merges a FishingEffect into this fishing rod, applying effect modifiers.
+     *
+     * @param effect The FishingEffect to merge into this rod.
+     */
     public void mergeEffect(FishingEffect effect) {
         for (EffectCarrier effectCarrier : effects) {
             for (EffectModifier modifier : effectCarrier.getEffectModifiers()) {
@@ -147,8 +167,15 @@ public class FishingPreparation extends Condition {
         }
     }
 
+    /**
+     * Triggers actions associated with a specific action trigger.
+     *
+     * @param actionTrigger The action trigger that initiates the actions.
+     */
     public void triggerActions(ActionTrigger actionTrigger) {
         GlobalSettings.triggerRodActions(actionTrigger, this);
+        GlobalSettings.triggerBaitActions(actionTrigger, this);
+        GlobalSettings.triggerHookActions(actionTrigger, this);
         for (EffectCarrier effectCarrier : effects) {
             Action[] actions = effectCarrier.getActions(actionTrigger);
             if (actions != null)

@@ -17,23 +17,50 @@
 
 package net.momirealms.customfishing.api.event;
 
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * This class represents an event that occurs when a fishing hook lands in either lava or water.
+ */
 public class FishHookLandEvent extends PlayerEvent {
 
     private static final HandlerList handlerList = new HandlerList();
     private final Target target;
+    private final FishHook fishHook;
 
-    public FishHookLandEvent(@NotNull Player who, Target target) {
+    /**
+     * Constructs a new FishHookLandEvent.
+     *
+     * @param who    The player who triggered the event.
+     * @param target The target where the fishing hook has landed (LAVA or WATER).
+     * @param hook   The fishing hook entity.
+     */
+    public FishHookLandEvent(@NotNull Player who, Target target, FishHook hook) {
         super(who);
         this.target = target;
+        this.fishHook = hook;
     }
 
+    /**
+     * Gets the target where the fishing hook has landed.
+     *
+     * @return The target, which can be either LAVA or WATER.
+     */
     public Target getTarget() {
         return target;
+    }
+
+    /**
+     * Gets the fish hook bukkit entity
+     *
+     * @return fish hook
+     */
+    public FishHook getFishHook() {
+        return fishHook;
     }
 
     public static HandlerList getHandlerList() {

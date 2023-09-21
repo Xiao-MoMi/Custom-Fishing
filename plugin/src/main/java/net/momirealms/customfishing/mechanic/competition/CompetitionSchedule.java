@@ -31,22 +31,47 @@ public class CompetitionSchedule {
         this.second = second;
     }
 
+    /**
+     * Gets the weekday associated with this time schedule.
+     *
+     * @return The weekday value (e.g., 1 for Monday, 2 for Tuesday, etc.).
+     */
     public int getWeekday() {
         return weekday;
     }
 
+    /**
+     * Gets the hour of the day associated with this time schedule.
+     *
+     * @return The hour value (0-23).
+     */
     public int getHour() {
         return hour;
     }
 
+    /**
+     * Gets the minute of the hour associated with this time schedule.
+     *
+     * @return The minute value (0-59).
+     */
     public int getMinute() {
         return minute;
     }
 
+    /**
+     * Gets the second of the minute associated with this time schedule.
+     *
+     * @return The second value (0-59).
+     */
     public int getSecond() {
         return second;
     }
 
+    /**
+     * Calculates the total number of seconds represented by this time schedule.
+     *
+     * @return The total number of seconds.
+     */
     public int getTotalSeconds() {
         return  second +
                 minute * 60 +
@@ -54,6 +79,12 @@ public class CompetitionSchedule {
                 weekday * 24 * 60 * 60;
     }
 
+    /**
+     * Calculates the time difference (delta) in seconds between this time schedule and a given total seconds value.
+     *
+     * @param totalSeconds The total seconds value to compare against.
+     * @return The time difference in seconds.
+     */
     public int getTimeDelta(int totalSeconds) {
         int thisSeconds = getTotalSeconds();
         if (thisSeconds >= totalSeconds) {

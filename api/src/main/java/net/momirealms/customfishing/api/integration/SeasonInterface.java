@@ -18,8 +18,15 @@
 package net.momirealms.customfishing.api.integration;
 
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
 public interface SeasonInterface {
 
-    String getSeason(World world);
+    /**
+     * Get a world's season
+     *
+     * @param world world
+     * @return spring, summer, autumn, winter or disabled
+     */
+    @NotNull String getSeason(World world);
 }

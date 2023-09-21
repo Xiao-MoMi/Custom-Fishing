@@ -28,6 +28,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * A task responsible for animating bait when it's attached to a fishing hook.
+ */
 public class BaitAnimationTask implements Runnable {
 
     private final CancellableTask cancellableTask;
@@ -35,6 +38,14 @@ public class BaitAnimationTask implements Runnable {
     private final Player player;
     private final FishHook fishHook;
 
+    /**
+     * Constructs a new BaitAnimationTask.
+     *
+     * @param plugin   The CustomFishingPlugin instance.
+     * @param player   The player who cast the fishing rod.
+     * @param fishHook The FishHook entity.
+     * @param baitItem The bait ItemStack.
+     */
     public BaitAnimationTask(CustomFishingPlugin plugin, Player player, FishHook fishHook, ItemStack baitItem) {
         this.player = player;
         this.fishHook = fishHook;
@@ -46,7 +57,7 @@ public class BaitAnimationTask implements Runnable {
 
     @Override
     public void run() {
-        if (    fishHook == null
+        if (       fishHook == null
                 || fishHook.isOnGround()
                 || fishHook.isInLava()
                 || fishHook.isInWater()
@@ -59,6 +70,9 @@ public class BaitAnimationTask implements Runnable {
         }
     }
 
+    /**
+     * Cancels the bait animation and cleans up resources.
+     */
     private void cancelAnimation() {
         cancellableTask.cancel();
         CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, FakeItemUtils.getDestroyPacket(entityID));

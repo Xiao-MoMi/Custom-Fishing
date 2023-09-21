@@ -18,18 +18,23 @@
 package net.momirealms.customfishing.util;
 
 import net.momirealms.customfishing.api.common.Pair;
+import net.momirealms.customfishing.api.common.Tuple;
 import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Utility class for configuration-related operations.
@@ -98,6 +103,19 @@ public class ConfigUtils {
     }
 
     /**
+     * Parses a string representing a size range and returns a pair of floats.
+     *
+     * @param size The size string in the format "min~max".
+     * @return A pair of floats representing the minimum and maximum size.
+     */
+    @Nullable
+    public static Pair<Float, Float> getSizePair(String size) {
+        if (size == null) return null;
+        String[] split = size.split("~", 2);
+        return Pair.of(Float.parseFloat(split[0]), Float.parseFloat(split[1]));
+    }
+
+    /**
      * Converts a list of strings in the format "key:value" into a list of Pairs with keys and WeightModifiers.
      *
      * @param modList The input list of strings
@@ -111,6 +129,47 @@ public class ConfigUtils {
             result.add(Pair.of(key, getModifier(split[1])));
         }
         return result;
+    }
+
+    /**
+     * Retrieves a list of enchantment pairs from a configuration section.
+     *
+     * @param section The configuration section to extract enchantment data from.
+     * @return A list of enchantment pairs.
+     */
+    @NotNull
+    public static List<Pair<String, Short>> getEnchantmentPair(ConfigurationSection section) {
+        List<Pair<String, Short>> list = new ArrayList<>();
+        if (section == null) return list;
+        for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
+            if (entry.getValue() instanceof Integer integer) {
+                list.add(Pair.of(entry.getKey(), Short.valueOf(String.valueOf(integer))));
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Retrieves a list of enchantment tuples from a configuration section.
+     *
+     * @param section The configuration section to extract enchantment data from.
+     * @return A list of enchantment tuples.
+     */
+    @NotNull
+    public static List<Tuple<Double, String, Short>> getEnchantmentTuple(ConfigurationSection section) {
+        List<Tuple<Double, String, Short>> list = new ArrayList<>();
+        if (section == null) return list;
+        for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
+            if (entry.getValue() instanceof ConfigurationSection inner) {
+                Tuple<Double, String, Short> tuple = Tuple.of(
+                        inner.getDouble("chance"),
+                        inner.getString("enchant"),
+                        Short.valueOf(String.valueOf(inner.getInt("level")))
+                );
+                list.add(tuple);
+            }
+        }
+        return list;
     }
 
     /**

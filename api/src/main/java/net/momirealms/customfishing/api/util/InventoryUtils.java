@@ -35,8 +35,23 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * Utility class for working with Bukkit Inventories and item stacks.
+ */
 public class InventoryUtils {
 
+    private InventoryUtils() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
+
+    /**
+     * Create a custom inventory with a specified size and title component.
+     *
+     * @param inventoryHolder The holder of the inventory.
+     * @param size            The size of the inventory.
+     * @param component       The title component of the inventory.
+     * @return The created Inventory instance.
+     */
     public static Inventory createInventory(InventoryHolder inventoryHolder, int size, Component component) {
         try {
             boolean isSpigot = CustomFishingPlugin.get().getVersionManager().isSpigot();
@@ -58,6 +73,14 @@ public class InventoryUtils {
         }
     }
 
+    /**
+     * Create a custom inventory with a specified type and title component.
+     *
+     * @param inventoryHolder The holder of the inventory.
+     * @param type            The type of the inventory.
+     * @param component       The title component of the inventory.
+     * @return The created Inventory instance.
+     */
     public static Inventory createInventory(InventoryHolder inventoryHolder, InventoryType type, Component component) {
         try {
             boolean isSpigot = CustomFishingPlugin.get().getVersionManager().isSpigot();
@@ -79,6 +102,12 @@ public class InventoryUtils {
         }
     }
 
+    /**
+     * Serialize an array of ItemStacks to a Base64-encoded string.
+     *
+     * @param contents The ItemStack array to serialize.
+     * @return The Base64-encoded string representing the serialized ItemStacks.
+     */
     public static @NotNull String stacksToBase64(ItemStack[] contents) {
         if (contents.length == 0) {
             return "";
@@ -101,9 +130,10 @@ public class InventoryUtils {
     }
 
     /**
-     * Get itemStacks from base64
-     * @param base64 base64
-     * @return itemStacks
+     * Deserialize an ItemStack array from a Base64-encoded string.
+     *
+     * @param base64 The Base64-encoded string representing the serialized ItemStacks.
+     * @return An array of ItemStacks deserialized from the input string.
      */
     @Nullable
     public static ItemStack[] getInventoryItems(String base64) {

@@ -22,8 +22,10 @@ import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
-import net.momirealms.customfishing.api.scheduler.CancellableTask;
+import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
+import net.momirealms.customfishing.api.mechanic.totem.TotemParticle;
 import net.momirealms.customfishing.mechanic.totem.particle.ParticleSetting;
+import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ public class ActivatedTotem {
         this.coreLocation = coreLocation.clone().add(0.5,0,0.5);
         this.totemConfig = config;
         this.effectCarrier = CustomFishingPlugin.get().getEffectManager().getEffectCarrier("totem", config.getKey());
-        for (ParticleSetting particleSetting : config.getParticleSettings()) {
+        for (TotemParticle particleSetting : config.getParticleSettings()) {
             this.subTasks.add(particleSetting.start(coreLocation, config.getRadius()));
         }
     }

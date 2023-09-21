@@ -23,6 +23,9 @@ import net.momirealms.customfishing.api.mechanic.competition.Ranking;
 
 import java.util.*;
 
+/**
+ * Implementation of the Ranking interface that manages the ranking of competition players locally.
+ */
 public class LocalRankingImpl implements Ranking {
 
     private final Set<CompetitionPlayer> competitionPlayers;
@@ -31,19 +34,38 @@ public class LocalRankingImpl implements Ranking {
         competitionPlayers = Collections.synchronizedSet(new TreeSet<>());
     }
 
+    /**
+     * Adds a competition player to the ranking.
+     *
+     * @param competitionPlayer The CompetitionPlayer to add.
+     */
     public void addPlayer(CompetitionPlayer competitionPlayer) {
         competitionPlayers.add(competitionPlayer);
     }
 
+    /**
+     * Removes a competition player from the ranking.
+     *
+     * @param competitionPlayer The CompetitionPlayer to remove.
+     */
     public void removePlayer(CompetitionPlayer competitionPlayer) {
         competitionPlayers.removeIf(e -> e.equals(competitionPlayer));
     }
 
+    /**
+     * Clears the list of competition players.
+     */
     @Override
     public void clear() {
         competitionPlayers.clear();
     }
 
+    /**
+     * Retrieves a competition player by their name.
+     *
+     * @param player The name of the player to retrieve.
+     * @return The CompetitionPlayer object if found, or null if not found.
+     */
     @Override
     public CompetitionPlayer getCompetitionPlayer(String player) {
         for (CompetitionPlayer competitionPlayer : competitionPlayers) {
@@ -54,6 +76,11 @@ public class LocalRankingImpl implements Ranking {
         return null;
     }
 
+    /**
+     * Returns an iterator for iterating over pairs of player names and scores.
+     *
+     * @return An iterator for pairs of player names and scores.
+     */
     @Override
     public Iterator<Pair<String, Double>> getIterator() {
         List<Pair<String, Double>> players = new ArrayList<>();
@@ -63,11 +90,22 @@ public class LocalRankingImpl implements Ranking {
         return players.iterator();
     }
 
+    /**
+     * Returns the number of competition players.
+     *
+     * @return The number of competition players.
+     */
     @Override
     public int getSize() {
         return competitionPlayers.size();
     }
 
+    /**
+     * Returns the rank of a player based on their name.
+     *
+     * @param player The name of the player to get the rank for.
+     * @return The rank of the player, or -1 if the player is not found.
+     */
     @Override
     public int getPlayerRank(String player) {
         int index = 1;
@@ -81,6 +119,12 @@ public class LocalRankingImpl implements Ranking {
         return -1;
     }
 
+    /**
+     * Returns the score of a player based on their name.
+     *
+     * @param player The name of the player to get the score for.
+     * @return The score of the player, or 0 if the player is not found.
+     */
     @Override
     public double getPlayerScore(String player) {
         for (CompetitionPlayer competitionPlayer : competitionPlayers) {
@@ -91,6 +135,12 @@ public class LocalRankingImpl implements Ranking {
         return 0;
     }
 
+    /**
+     * Returns the name of a player at a given index.
+     *
+     * @param i The index of the player to retrieve.
+     * @return The name of the player at the specified index, or null if not found.
+     */
     @Override
     public String getPlayerAt(int i) {
         int index = 1;
@@ -103,6 +153,12 @@ public class LocalRankingImpl implements Ranking {
         return null;
     }
 
+    /**
+     * Returns the score of a player at a given index.
+     *
+     * @param i The index of the player to retrieve.
+     * @return The score of the player at the specified index, or 0 if not found.
+     */
     @Override
     public double getScoreAt(int i) {
         int index = 1;
@@ -115,6 +171,12 @@ public class LocalRankingImpl implements Ranking {
         return 0f;
     }
 
+    /**
+     * Refreshes the data for a player by adding a score to their existing score or creating a new player.
+     *
+     * @param player The name of the player to update or create.
+     * @param score  The score to add to the player's existing score or set as their initial score.
+     */
     @Override
     public void refreshData(String player, double score) {
         CompetitionPlayer competitionPlayer = getCompetitionPlayer(player);
@@ -128,6 +190,12 @@ public class LocalRankingImpl implements Ranking {
         }
     }
 
+    /**
+     * Sets the data for a player, updating their score or creating a new player.
+     *
+     * @param player The name of the player to update or create.
+     * @param score  The score to set for the player.
+     */
     @Override
     public void setData(String player, double score) {
         CompetitionPlayer competitionPlayer = getCompetitionPlayer(player);

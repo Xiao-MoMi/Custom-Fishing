@@ -244,6 +244,11 @@ public class FishingManagerImpl implements Listener, FishingManager {
         }
     }
 
+    /**
+     * Handle the event when the fishing hook lands on the ground.
+     *
+     * @param event The PlayerFishEvent that occurred.
+     */
     private void onInGround(PlayerFishEvent event) {
         final Player player = event.getPlayer();
         FishHook hook = event.getHook();
@@ -262,6 +267,11 @@ public class FishingManagerImpl implements Listener, FishingManager {
         }
     }
 
+    /**
+     * Handle the event when a player casts a fishing rod.
+     *
+     * @param event The PlayerFishEvent that occurred.
+     */
     public void onCastRod(PlayerFishEvent event) {
         var player = event.getPlayer();
         var fishingPreparation = new FishingPreparation(player, plugin);
@@ -312,6 +322,11 @@ public class FishingManagerImpl implements Listener, FishingManager {
         fishingPreparation.triggerActions(ActionTrigger.CAST);
     }
 
+    /**
+     * Handle the event when a player catches an entity.
+     *
+     * @param event The PlayerFishEvent that occurred.
+     */
     private void onCaughtEntity(PlayerFishEvent event) {
         final Player player = event.getPlayer();
         final UUID uuid = player.getUniqueId();
@@ -361,6 +376,11 @@ public class FishingManagerImpl implements Listener, FishingManager {
         }
     }
 
+    /**
+     * Handle the event when a player catches a fish.
+     *
+     * @param event The PlayerFishEvent that occurred.
+     */
     private void onCaughtFish(PlayerFishEvent event) {
         final Player player = event.getPlayer();
         final UUID uuid = player.getUniqueId();
@@ -405,6 +425,11 @@ public class FishingManagerImpl implements Listener, FishingManager {
         }
     }
 
+    /**
+     * Handle the event when a player receives a bite on their fishing hook.
+     *
+     * @param event The PlayerFishEvent that occurred.
+     */
     private void onBite(PlayerFishEvent event) {
         final Player player = event.getPlayer();
         final UUID uuid = player.getUniqueId();
@@ -432,6 +457,11 @@ public class FishingManagerImpl implements Listener, FishingManager {
         }
     }
 
+    /**
+     * Handle the event when a player reels in their fishing line.
+     *
+     * @param event The PlayerFishEvent that occurred.
+     */
     private void onReelIn(PlayerFishEvent event) {
         final Player player = event.getPlayer();
         final UUID uuid = player.getUniqueId();
@@ -559,6 +589,12 @@ public class FishingManagerImpl implements Listener, FishingManager {
         ItemUtils.decreaseHookDurability(fishingPreparation.getRodItemStack(), 1, true);
     }
 
+    /**
+     * Handle the success of a fishing attempt, including spawning loot, calling events, and executing success actions.
+     *
+     * @param state The temporary fishing state containing information about the loot and effect.
+     * @param hook The FishHook entity associated with the fishing attempt.
+     */
     public void success(TempFishingState state, FishHook hook) {
         var loot = state.getLoot();
         var effect = state.getEffect();
@@ -617,6 +653,14 @@ public class FishingManagerImpl implements Listener, FishingManager {
         doSuccessActions(loot, effect, fishingPreparation, player);
     }
 
+    /**
+     * Execute success-related actions after a successful fishing attempt, including updating competition data, triggering events and actions, and updating player statistics.
+     *
+     * @param loot The loot that was successfully caught.
+     * @param effect The effect applied during fishing.
+     * @param fishingPreparation The fishing preparation containing preparation data.
+     * @param player The player who successfully caught the loot.
+     */
     private void doSuccessActions(Loot loot, Effect effect, FishingPreparation fishingPreparation, Player player) {
         FishingCompetition competition = plugin.getCompetitionManager().getOnGoingCompetition();
         if (competition != null) {

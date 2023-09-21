@@ -22,5 +22,14 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public interface EnchantmentInterface {
+
+    /**
+     * Get a list of enchantments with level for itemStack
+     * format:   plugin:enchantment:level
+     * example:  minecraft:sharpness:5
+     *
+     * @param itemStack itemStack
+     * @return enchantment list
+     */
     List<String> getEnchants(ItemStack itemStack);
 }

@@ -39,6 +39,7 @@ import net.momirealms.customfishing.compatibility.item.CustomFishingItemImpl;
 import net.momirealms.customfishing.compatibility.item.VanillaItemImpl;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.setting.CFConfig;
+import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.ItemUtils;
 import net.momirealms.customfishing.util.NBTUtils;
 import org.bukkit.Bukkit;
@@ -116,6 +117,10 @@ public class ItemManagerImpl implements ItemManager, Listener {
         this.itemLibraryMap.clear();
     }
 
+    /**
+     * Loads items from the plugin folder.
+     * This method scans various item types (item, bait, rod, util, hook) in the plugin's content folder and loads their configurations.
+     */
     @SuppressWarnings("DuplicatedCode")
     public void loadItemsFromPluginFolder() {
         Deque<File> fileDeque = new ArrayDeque<>();
@@ -141,6 +146,12 @@ public class ItemManagerImpl implements ItemManager, Listener {
         }
     }
 
+    /**
+     * Loads a single item configuration file.
+     *
+     * @param file      The YAML configuration file to load.
+     * @param namespace The namespace of the item type (item, bait, rod, util, hook).
+     */
     private void loadSingleFile(File file, String namespace) {
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
         for (Map.Entry<String, Object> entry : yaml.getValues(false).entrySet()) {
@@ -304,16 +315,16 @@ public class ItemManagerImpl implements ItemManager, Listener {
         itemCFBuilder
                 .amount(section.getInt("amount", 1))
                 .stackable(section.getBoolean("stackable", true))
-                .size(getSizePair(section.getString("size")))
+                .size(ConfigUtils.getSizePair(section.getString("size")))
                 .price((float) section.getDouble("price.base"), (float) section.getDouble("price.bonus"))
                 .customModelData(section.getInt("custom-model-data"))
                 .nbt(section.getConfigurationSection("nbt"))
                 .maxDurability(section.getInt("max-durability"))
                 .itemFlag(section.getStringList("item-flags").stream().map(flag -> ItemFlag.valueOf(flag.toUpperCase())).toList())
-                .enchantment(getEnchantmentPair(section.getConfigurationSection("enchantments")), false)
-                .enchantment(getEnchantmentPair(section.getConfigurationSection("stored-enchantments")), true)
-                .randomEnchantments(getEnchantmentTuple(section.getConfigurationSection("random-enchantments")), false)
-                .randomEnchantments(getEnchantmentTuple(section.getConfigurationSection("random-stored-enchantments")), true)
+                .enchantment(ConfigUtils.getEnchantmentPair(section.getConfigurationSection("enchantments")), false)
+                .enchantment(ConfigUtils.getEnchantmentPair(section.getConfigurationSection("stored-enchantments")), true)
+                .randomEnchantments(ConfigUtils.getEnchantmentTuple(section.getConfigurationSection("random-enchantments")), false)
+                .randomEnchantments(ConfigUtils.getEnchantmentTuple(section.getConfigurationSection("random-stored-enchantments")), true)
                 .tag(section.getBoolean("tag", true), type, id)
                 .randomDamage(section.getBoolean("random-durability", false))
                 .unbreakable(section.getBoolean("unbreakable", false))
@@ -443,42 +454,6 @@ public class ItemManagerImpl implements ItemManager, Listener {
     @Override
     public void setDurability(ItemStack itemStack, int amount, boolean updateLore) {
         ItemUtils.setDurability(itemStack, amount, updateLore);
-    }
-
-    @NotNull
-    private List<Pair<String, Short>> getEnchantmentPair(ConfigurationSection section) {
-        List<Pair<String, Short>> list = new ArrayList<>();
-        if (section == null) return list;
-        for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
-            if (entry.getValue() instanceof Integer integer) {
-                list.add(Pair.of(entry.getKey(), Short.valueOf(String.valueOf(integer))));
-            }
-        }
-        return list;
-    }
-
-    @NotNull
-    private List<Tuple<Double, String, Short>> getEnchantmentTuple(ConfigurationSection section) {
-        List<Tuple<Double, String, Short>> list = new ArrayList<>();
-        if (section == null) return list;
-        for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
-            if (entry.getValue() instanceof ConfigurationSection inner) {
-                Tuple<Double, String, Short> tuple = Tuple.of(
-                        inner.getDouble("chance"),
-                        inner.getString("enchant"),
-                        Short.valueOf(String.valueOf(inner.getInt("level")))
-                );
-                list.add(tuple);
-            }
-        }
-        return list;
-    }
-
-    @Nullable
-    private Pair<Float, Float> getSizePair(String size) {
-        if (size == null) return null;
-        String[] split = size.split("~", 2);
-        return Pair.of(Float.parseFloat(split[0]), Float.parseFloat(split[1]));
     }
 
     public static class CFBuilder implements ItemBuilder {
@@ -763,6 +738,11 @@ public class ItemManagerImpl implements ItemManager, Listener {
         }
     }
 
+    /**
+     * Handles item pickup by players.
+     *
+     * @param event The PlayerAttemptPickupItemEvent.
+     */
     @EventHandler
     public void onPickUp(PlayerAttemptPickupItemEvent event) {
         if (event.isCancelled()) return;
@@ -777,6 +757,11 @@ public class ItemManagerImpl implements ItemManager, Listener {
         }
     }
 
+    /**
+     * Handles item movement in inventories.
+     *
+     * @param event The InventoryPickupItemEvent.
+     */
     @EventHandler
     public void onMove(InventoryPickupItemEvent event) {
         if (event.isCancelled()) return;
@@ -787,7 +772,11 @@ public class ItemManagerImpl implements ItemManager, Listener {
         itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
     }
 
-
+    /**
+     * Handles item consumption by players.
+     *
+     * @param event The PlayerItemConsumeEvent.
+     */
     @EventHandler
     public void onConsumeItem(PlayerItemConsumeEvent event) {
         if (event.isCancelled()) return;
@@ -801,6 +790,11 @@ public class ItemManagerImpl implements ItemManager, Listener {
         }
     }
 
+    /**
+     * Handles the repair of custom items in an anvil.
+     *
+     * @param event The PrepareAnvilEvent.
+     */
     @EventHandler
     public void onRepairItem(PrepareAnvilEvent event) {
         ItemStack result = event.getInventory().getResult();
@@ -816,6 +810,11 @@ public class ItemManagerImpl implements ItemManager, Listener {
         event.setResult(nbtItem.getItem());
     }
 
+    /**
+     * Handles the mending of custom items.
+     *
+     * @param event The PlayerItemMendEvent.
+     */
     @EventHandler
     public void onMending(PlayerItemMendEvent event) {
         if (event.isCancelled()) return;
@@ -827,6 +826,11 @@ public class ItemManagerImpl implements ItemManager, Listener {
         ItemUtils.increaseDurability(itemStack, event.getRepairAmount(), true);
     }
 
+    /**
+     * Handles interactions with custom utility items.
+     *
+     * @param event The PlayerInteractEvent.
+     */
     @EventHandler
     public void onInteractWithUtils(PlayerInteractEvent event) {
         if (event.useItemInHand() == Event.Result.DENY)

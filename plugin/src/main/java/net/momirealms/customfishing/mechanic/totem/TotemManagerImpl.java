@@ -20,18 +20,21 @@ package net.momirealms.customfishing.mechanic.totem;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.common.SimpleLocation;
+import net.momirealms.customfishing.api.event.TotemActivateEvent;
 import net.momirealms.customfishing.api.manager.TotemManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
+import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
+import net.momirealms.customfishing.api.mechanic.totem.TotemModel;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
-import net.momirealms.customfishing.mechanic.totem.block.TotemBlock;
-import net.momirealms.customfishing.mechanic.totem.block.property.AxisImpl;
-import net.momirealms.customfishing.mechanic.totem.block.property.FaceImpl;
-import net.momirealms.customfishing.mechanic.totem.block.property.HalfImpl;
-import net.momirealms.customfishing.mechanic.totem.block.property.TotemBlockProperty;
-import net.momirealms.customfishing.mechanic.totem.block.type.TypeCondition;
+import net.momirealms.customfishing.api.mechanic.totem.block.TotemBlock;
+import net.momirealms.customfishing.api.mechanic.totem.block.property.AxisImpl;
+import net.momirealms.customfishing.api.mechanic.totem.block.property.FaceImpl;
+import net.momirealms.customfishing.api.mechanic.totem.block.property.HalfImpl;
+import net.momirealms.customfishing.api.mechanic.totem.block.property.TotemBlockProperty;
+import net.momirealms.customfishing.api.mechanic.totem.block.type.TypeCondition;
 import net.momirealms.customfishing.mechanic.totem.particle.DustParticleSetting;
 import net.momirealms.customfishing.mechanic.totem.particle.ParticleSetting;
 import net.momirealms.customfishing.util.LocationUtils;
@@ -165,6 +168,13 @@ public class TotemManagerImpl implements TotemManager, Listener {
         Condition condition = new Condition(block.getLocation(), event.getPlayer(), new HashMap<>());
         if (!carrier.isConditionMet(condition))
             return;
+
+        TotemActivateEvent totemActivateEvent = new TotemActivateEvent(event.getPlayer(), block.getLocation(), config);
+        Bukkit.getPluginManager().callEvent(totemActivateEvent);
+        if (totemActivateEvent.isCancelled()) {
+            return;
+        }
+
         Action[] actions = carrier.getActionMap().get(ActionTrigger.ACTIVATE);
         if (actions != null)
             for (Action action : actions) {
@@ -331,7 +341,7 @@ public class TotemManagerImpl implements TotemManager, Listener {
         TotemModel originalModel = parseModel(section);
         List<TotemModel> modelList = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            originalModel = originalModel.clone().rotate90();
+            originalModel = originalModel.deepClone().rotate90();
             modelList.add(originalModel);
             if (i % 2 == 0) {
                 modelList.add(originalModel.mirrorVertically());

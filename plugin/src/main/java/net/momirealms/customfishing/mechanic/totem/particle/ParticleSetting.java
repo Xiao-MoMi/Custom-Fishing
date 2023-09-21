@@ -19,6 +19,7 @@ package net.momirealms.customfishing.mechanic.totem.particle;
 
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
+import net.momirealms.customfishing.api.mechanic.totem.TotemParticle;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
@@ -29,7 +30,7 @@ import org.bukkit.World;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class ParticleSetting {
+public class ParticleSetting implements TotemParticle {
 
     protected final Expression expressionHorizontal;
     protected final Expression expressionVertical;

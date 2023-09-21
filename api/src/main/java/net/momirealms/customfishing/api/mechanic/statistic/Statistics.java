@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.api.mechanic.statistic;
 
-import com.google.gson.annotations.SerializedName;
 import net.momirealms.customfishing.api.data.StatisticData;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
@@ -27,17 +26,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Represents a statistics system for tracking loot and catch amounts.
+ */
 public class Statistics {
 
-    @SerializedName("statistic_map")
     private final ConcurrentHashMap<String, Integer> statisticMap;
     private int total;
 
+    /**
+     * Creates a new instance of Statistics based on provided statistic data.
+     *
+     * @param statisticData The initial statistic data.
+     */
     public Statistics(StatisticData statisticData) {
         this.statisticMap = new ConcurrentHashMap<>(statisticData.statisticMap);
         this.total = statisticMap.values().stream().mapToInt(Integer::intValue).sum();
     }
 
+    /**
+     * Adds an amount of loot to the statistics.
+     *
+     * @param loot      The loot item.
+     * @param condition The condition associated with the loot.
+     * @param amount    The amount of loot to add.
+     */
     public synchronized void addLootAmount(Loot loot, Condition condition, int amount) {
         if (amount == 1) {
             addSingleLootAmount(loot, condition);
@@ -51,6 +64,14 @@ public class Statistics {
         doSuccessTimesAction(previous, after, condition, loot);
     }
 
+    /**
+     * Performs actions associated with the success times of acquiring loot.
+     *
+     * @param previous  The previous success times.
+     * @param after     The updated success times.
+     * @param condition The condition associated with the loot.
+     * @param loot      The loot item.
+     */
     private void doSuccessTimesAction(Integer previous, int after, Condition condition, Loot loot) {
         HashMap<Integer, Action[]> actionMap = loot.getSuccessTimesActionMap();
         if (actionMap != null) {
@@ -64,6 +85,12 @@ public class Statistics {
         }
     }
 
+    /**
+     * Adds a single loot amount to the statistics.
+     *
+     * @param loot      The loot item.
+     * @param condition The condition associated with the loot.
+     */
     private void addSingleLootAmount(Loot loot, Condition condition) {
         Integer previous = statisticMap.get(loot.getID());
         if (previous == null) previous = 0;
@@ -77,20 +104,40 @@ public class Statistics {
             }
     }
 
+    /**
+     * Gets the amount of a specific loot item in the statistics.
+     *
+     * @param key The key of the loot item.
+     * @return The amount of the specified loot item.
+     */
     public int getLootAmount(String key) {
         Integer amount = statisticMap.get(key);
         return amount == null ? 0 : amount;
     }
 
+    /**
+     * Resets the statistics data.
+     */
     public void reset() {
         statisticMap.clear();
         total = 0;
     }
 
+    /**
+     * Gets the statistic map containing loot item keys and their respective amounts.
+     *
+     * @return The statistic map.
+     */
     public Map<String, Integer> getStatisticMap() {
         return statisticMap;
     }
 
+    /**
+     * Sets data for a specific key in the statistics.
+     *
+     * @param key   The key to set data for.
+     * @param value The value to set.
+     */
     public void setData(String key, int value) {
         if (value <= 0) {
             statisticMap.remove(key);
@@ -99,6 +146,11 @@ public class Statistics {
         statisticMap.put(key, value);
     }
 
+    /**
+     * Gets the total catch amount across all loot items.
+     *
+     * @return The total catch amount.
+     */
     public int getTotalCatchAmount() {
         return total;
     }

@@ -26,67 +26,98 @@ import java.util.HashMap;
 
 public interface Loot {
 
+    /**
+     * Check if this loot has an instance game.
+     *
+     * @return True if it's an instance game, false otherwise.
+     */
     boolean instanceGame();
 
     /**
-     * get the loot id
-     * @return id
+     * Get the unique ID of this loot.
+     *
+     * @return The unique ID.
      */
     String getID();
 
     /**
-     * get the loot type
-     * @return type
+     * Get the type of this loot.
+     *
+     * @return The loot type.
      */
     LootType getType();
 
     /**
-     * nick would be display.name or key name if not set (MiniMessage format)
-     * @return nick
+     * Get the nickname of this loot.
+     *
+     * @return The nickname.
      */
     @NotNull
     String getNick();
 
     /**
-     * if the loot can be seen from the finder
-     * @return show in finder or not
+     * Check if this loot should be shown in the finder.
+     *
+     * @return True if it should be shown, false otherwise.
      */
     boolean showInFinder();
 
     /**
-     * get the score in competition
-     * @return score
+     * Get the score of this loot.
+     *
+     * @return The score.
      */
     double getScore();
 
     /**
-     * if the game is disabled
-     * @return disabled or not
+     * Check if games are disabled for this loot.
+     *
+     * @return True if games are disabled, false otherwise.
      */
     boolean disableGame();
 
     /**
-     * if the statistics is disabled
-     * @return disabled or not
+     * Check if statistics are disabled for this loot.
+     *
+     * @return True if statistics are disabled, false otherwise.
      */
     boolean disableStats();
 
+    /**
+     * Get the loot group of this loot.
+     *
+     * @return The loot group.
+     */
     String[] getLootGroup();
 
     /**
-     * get actions triggered by certain events
-     * @return actions
+     * Get the actions triggered by a specific action trigger.
+     *
+     * @param actionTrigger The action trigger.
+     * @return The actions triggered by the given trigger.
      */
     Action[] getActions(ActionTrigger actionTrigger);
 
+    /**
+     * Trigger actions associated with a specific action trigger.
+     *
+     * @param actionTrigger The action trigger.
+     * @param condition     The condition under which the actions are triggered.
+     */
     void triggerActions(ActionTrigger actionTrigger, Condition condition);
 
     /**
-     * get actions when succeeding in fishing for certain times
-     * @param times times
-     * @return actions
+     * Get the actions triggered by a specific number of successes.
+     *
+     * @param times The number of successes.
+     * @return The actions triggered by the specified number of successes.
      */
     Action[] getSuccessTimesActions(int times);
 
+    /**
+     * Get a map of actions triggered by different numbers of successes.
+     *
+     * @return A map of actions triggered by success times.
+     */
     HashMap<Integer, Action[]> getSuccessTimesActionMap();
 }

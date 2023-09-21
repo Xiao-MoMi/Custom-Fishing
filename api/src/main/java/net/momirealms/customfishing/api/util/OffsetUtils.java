@@ -19,7 +19,15 @@ package net.momirealms.customfishing.api.util;
 
 import org.bukkit.configuration.ConfigurationSection;
 
+/**
+ * Utility class for generating offset characters based on a font configuration.
+ */
+@SuppressWarnings("DuplicatedCode")
 public class OffsetUtils {
+
+    private OffsetUtils() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
 
     private static String font;
     private static String negative_1;
@@ -39,6 +47,11 @@ public class OffsetUtils {
     private static String positive_64;
     private static String positive_128;
 
+    /**
+     * Load font configuration from a given section.
+     *
+     * @param section The configuration section containing font settings.
+     */
     public static void loadConfig(ConfigurationSection section) {
         if (section != null) {
             font = section.getString("font", "customfishing:offset_chars");
@@ -61,6 +74,12 @@ public class OffsetUtils {
         }
     }
 
+    /**
+     * Get the shortest negative offset characters for a given number.
+     *
+     * @param n The number for which to generate offset characters.
+     * @return Offset characters as a string.
+     */
     public static String getShortestNegChars(int n) {
         StringBuilder stringBuilder = new StringBuilder();
         while (n >= 128) {
@@ -97,6 +116,12 @@ public class OffsetUtils {
         return stringBuilder.toString();
     }
 
+    /**
+     * Get the shortest positive offset characters for a given number.
+     *
+     * @param n The number for which to generate offset characters.
+     * @return Offset characters as a string.
+     */
     public static String getShortestPosChars(int n) {
         StringBuilder stringBuilder = new StringBuilder();
         while (n >= 128) {
@@ -133,6 +158,13 @@ public class OffsetUtils {
         return stringBuilder.toString();
     }
 
+    /**
+     * Get offset characters for a given number. This method selects between positive and negative
+     * offset characters based on the sign of the number.
+     *
+     * @param n The number for which to generate offset characters.
+     * @return Offset characters as a string.
+     */
     public static String getOffsetChars(int n) {
         if (n > 0) {
             return "<font:" + font + ">" + getShortestPosChars(n) + "</font>";

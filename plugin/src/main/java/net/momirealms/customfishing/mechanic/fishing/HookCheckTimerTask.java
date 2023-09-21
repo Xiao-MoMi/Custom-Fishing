@@ -46,6 +46,9 @@ import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * A task responsible for checking the state of a fishing hook and handling lava fishing mechanics.
+ */
 public class HookCheckTimerTask implements Runnable {
 
     private final FishingManagerImpl manager;
@@ -62,6 +65,14 @@ public class HookCheckTimerTask implements Runnable {
     private Entity hookedEntity;
     private Loot loot;
 
+    /**
+     * Constructs a new HookCheckTimerTask.
+     *
+     * @param manager             The FishingManagerImpl instance.
+     * @param fishHook            The FishHook entity being checked.
+     * @param fishingPreparation  The FishingPreparation instance.
+     * @param initialEffect       The initial fishing effect.
+     */
     public HookCheckTimerTask(
             FishingManagerImpl manager,
             FishHook fishHook,
@@ -99,7 +110,7 @@ public class HookCheckTimerTask implements Runnable {
                 this.fishingPreparation.setLocation(fishHook.getLocation());
                 this.fishingPreparation.insertArg("{lava}", "true");
                 this.fishingPreparation.triggerActions(ActionTrigger.LAND);
-                FishHookLandEvent event = new FishHookLandEvent(fishingPreparation.getPlayer(), FishHookLandEvent.Target.LAVA);
+                FishHookLandEvent event = new FishHookLandEvent(fishingPreparation.getPlayer(), FishHookLandEvent.Target.LAVA, fishHook);
                 Bukkit.getPluginManager().callEvent(event);
                 firstTime = false;
                 this.setTempState();
@@ -130,7 +141,7 @@ public class HookCheckTimerTask implements Runnable {
             this.fishingPreparation.insertArg("{lava}", "false");
             this.fishingPreparation.insertArg("{open-water}", String.valueOf(fishHook.isInOpenWater()));
             this.fishingPreparation.triggerActions(ActionTrigger.LAND);
-            FishHookLandEvent event = new FishHookLandEvent(fishingPreparation.getPlayer(), FishHookLandEvent.Target.WATER);
+            FishHookLandEvent event = new FishHookLandEvent(fishingPreparation.getPlayer(), FishHookLandEvent.Target.WATER, fishHook);
             Bukkit.getPluginManager().callEvent(event);
             // if the hook is in water
             // then cancel the task
@@ -140,6 +151,9 @@ public class HookCheckTimerTask implements Runnable {
         }
     }
 
+    /**
+     * Destroys the task and associated entities.
+     */
     public void destroy() {
         this.cancelSubTask();
         this.removeTempEntity();
@@ -147,6 +161,9 @@ public class HookCheckTimerTask implements Runnable {
         this.manager.removeHookCheckTask(fishingPreparation.getPlayer());
     }
 
+    /**
+     * Cancels the lava fishing subtask if it's active.
+     */
     public void cancelSubTask() {
         if (lavaFishingTask != null && !lavaFishingTask.isCancelled()) {
             lavaFishingTask.cancel();
@@ -154,6 +171,9 @@ public class HookCheckTimerTask implements Runnable {
         }
     }
 
+    /**
+     * Sets temporary state and prepares for the next loot.
+     */
     private void setTempState() {
         Loot nextLoot = CustomFishingPlugin.get().getLootManager().getNextLoot(initialEffect, fishingPreparation);
         if (nextLoot == null)
@@ -171,11 +191,17 @@ public class HookCheckTimerTask implements Runnable {
         )));
     }
 
+    /**
+     * Removes the temporary hooked entity.
+     */
     public void removeTempEntity() {
         if (hookedEntity != null && !hookedEntity.isDead())
             hookedEntity.remove();
     }
 
+    /**
+     * Starts the lava fishing mechanic.
+     */
     private void startLavaFishingMechanic() {
         // get random time
         int random = ThreadLocalRandom.current().nextInt(CFConfig.lavaMinTime, CFConfig.lavaMaxTime);
@@ -191,6 +217,9 @@ public class HookCheckTimerTask implements Runnable {
         );
     }
 
+    /**
+     * Handles the hook state of the fish hook.
+     */
     public void getHooked() {
         LavaFishingEvent lavaFishingEvent = new LavaFishingEvent(fishingPreparation.getPlayer(), LavaFishingEvent.State.BITE, fishHook);
         Bukkit.getPluginManager().callEvent(lavaFishingEvent);
@@ -240,6 +269,11 @@ public class HookCheckTimerTask implements Runnable {
         fishHook.setHookedEntity(hookedEntity);
     }
 
+    /**
+     * Checks if the fish hook is currently hooked.
+     *
+     * @return True if the fish hook is hooked, false otherwise.
+     */
     public boolean isFishHooked() {
         return fishHooked;
     }

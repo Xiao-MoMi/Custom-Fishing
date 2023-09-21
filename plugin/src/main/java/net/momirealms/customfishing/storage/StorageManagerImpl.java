@@ -75,7 +75,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
     private RedisManager redisManager;
     private String uniqueID;
     private CancellableTask timerSaveTask;
-    private Gson gson;
+    private final Gson gson;
 
     public StorageManagerImpl(CustomFishingPluginImpl plugin) {
         this.plugin = plugin;

@@ -29,6 +29,9 @@ import java.util.List;
 
 public class RedisRankingImpl implements Ranking {
 
+    /**
+     * Clears the ranking data by removing all players and scores.
+     */
     @Override
     public void clear() {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
@@ -36,6 +39,12 @@ public class RedisRankingImpl implements Ranking {
         }
     }
 
+    /**
+     * Retrieves a competition player by their name from the Redis ranking.
+     *
+     * @param player The name of the player to retrieve.
+     * @return The CompetitionPlayer object if found, or null if not found.
+     */
     @Override
     public CompetitionPlayer getCompetitionPlayer(String player) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
@@ -45,6 +54,11 @@ public class RedisRankingImpl implements Ranking {
         }
     }
 
+    /**
+     * Returns an iterator for iterating over pairs of player names and scores in descending order.
+     *
+     * @return An iterator for pairs of player names and scores.
+     */
     @Override
     public Iterator<Pair<String, Double>> getIterator() {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
@@ -53,6 +67,11 @@ public class RedisRankingImpl implements Ranking {
         }
     }
 
+    /**
+     * Returns the number of players in the Redis ranking.
+     *
+     * @return The number of players in the ranking.
+     */
     @Override
     public int getSize() {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
@@ -61,6 +80,12 @@ public class RedisRankingImpl implements Ranking {
         }
     }
 
+    /**
+     * Returns the rank of a player based on their name in descending order (1-based).
+     *
+     * @param player The name of the player to get the rank for.
+     * @return The rank of the player, or -1 if the player is not found.
+     */
     @Override
     public int getPlayerRank(String player) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
@@ -71,6 +96,12 @@ public class RedisRankingImpl implements Ranking {
         }
     }
 
+    /**
+     * Returns the score of a player based on their name from the Redis ranking.
+     *
+     * @param player The name of the player to get the score for.
+     * @return The score of the player, or 0 if the player is not found.
+     */
     @Override
     public double getPlayerScore(String player) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
@@ -81,6 +112,12 @@ public class RedisRankingImpl implements Ranking {
         }
     }
 
+    /**
+     * Refreshes the data for a player in the Redis ranking by adding a score to their existing score or creating a new player.
+     *
+     * @param player The name of the player to update or create.
+     * @param score  The score to add to the player's existing score or set as their initial score.
+     */
     @Override
     public void refreshData(String player, double score) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
@@ -88,6 +125,12 @@ public class RedisRankingImpl implements Ranking {
         }
     }
 
+    /**
+     * Sets the data for a player in the Redis ranking, updating their score or creating a new player.
+     *
+     * @param player The name of the player to update or create.
+     * @param score  The score to set for the player.
+     */
     @Override
     public void setData(String player, double score) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
@@ -95,6 +138,12 @@ public class RedisRankingImpl implements Ranking {
         }
     }
 
+    /**
+     * Returns the name of the player at a given rank in descending order.
+     *
+     * @param rank The rank of the player to retrieve (1-based).
+     * @return The name of the player at the specified rank, or null if not found.
+     */
     @Override
     public String getPlayerAt(int rank) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
@@ -104,6 +153,12 @@ public class RedisRankingImpl implements Ranking {
         }
     }
 
+    /**
+     * Returns the score of the player at a given rank in descending order.
+     *
+     * @param rank The rank of the player to retrieve (1-based).
+     * @return The score of the player at the specified rank, or 0 if not found.
+     */
     @Override
     public double getScoreAt(int rank) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {

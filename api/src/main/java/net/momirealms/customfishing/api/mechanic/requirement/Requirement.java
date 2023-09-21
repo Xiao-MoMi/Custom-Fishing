@@ -21,5 +21,11 @@ import net.momirealms.customfishing.api.mechanic.condition.Condition;
 
 public interface Requirement {
 
+    /**
+     * Is condition met the requirement
+     *
+     * @param condition condition
+     * @return meet or not
+     */
     boolean isConditionMet(Condition condition);
 }

@@ -40,6 +40,9 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Manages and updates boss bars for a specific player in a competition context.
+ */
 public class BossBarSender {
 
     private final Player player;
@@ -54,6 +57,13 @@ public class BossBarSender {
     private final Competition competition;
     private final HashMap<String, String> privatePlaceholders;
 
+    /**
+     * Creates a new BossBarSender instance for a player.
+     *
+     * @param player      The player to manage the boss bar for.
+     * @param config      The configuration for the boss bar.
+     * @param competition The competition associated with this boss bar.
+     */
     public BossBarSender(Player player, BossBarConfig config, Competition competition) {
         this.player = player;
         this.uuid = UUID.randomUUID();
@@ -72,6 +82,9 @@ public class BossBarSender {
         }
     }
 
+    /**
+     * Updates private placeholders used in boss bar messages.
+     */
     @SuppressWarnings("DuplicatedCode")
     private void updatePrivatePlaceholders() {
         this.privatePlaceholders.put("{score}", String.format("%.2f", competition.getRanking().getPlayerScore(player.getName())));
@@ -80,6 +93,9 @@ public class BossBarSender {
         this.privatePlaceholders.putAll(competition.getCachedPlaceholders());
     }
 
+    /**
+     * Shows the boss bar to the player.
+     */
     public void show() {
         this.isShown = true;
         CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getCreatePacket());
@@ -103,14 +119,27 @@ public class BossBarSender {
         }, 50, 50, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Checks if the boss bar is currently visible to the player.
+     *
+     * @return True if the boss bar is visible, false otherwise.
+     */
     public boolean isVisible() {
         return this.isShown;
     }
 
+    /**
+     * Gets the boss bar configuration.
+     *
+     * @return The boss bar configuration.
+     */
     public BossBarConfig getConfig() {
         return config;
     }
 
+    /**
+     * Hides the boss bar from the player.
+     */
     public void hide() {
         CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getRemovePacket());
         if (senderTask != null && !senderTask.isCancelled()) senderTask.cancel();

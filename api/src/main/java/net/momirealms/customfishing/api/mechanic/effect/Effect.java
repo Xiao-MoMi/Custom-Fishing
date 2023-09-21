@@ -42,5 +42,5 @@ public interface Effect {
 
     List<Pair<String, WeightModifier>> getWeightModifierIgnored();
 
-    void merge(Effect bonus);
+    void merge(Effect effect);
 }

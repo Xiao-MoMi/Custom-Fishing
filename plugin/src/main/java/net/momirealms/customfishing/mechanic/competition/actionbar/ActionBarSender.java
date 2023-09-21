@@ -29,6 +29,9 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Manages and updates ActionBar messages for a specific player in a competition context.
+ */
 public class ActionBarSender {
 
     private final Player player;
@@ -42,6 +45,13 @@ public class ActionBarSender {
     private final Competition competition;
     private final HashMap<String, String> privatePlaceholders;
 
+    /**
+     * Creates a new ActionBarSender instance for a player.
+     *
+     * @param player      The player to manage ActionBar messages for.
+     * @param config      The configuration for ActionBar messages.
+     * @param competition The competition associated with this ActionBarSender.
+     */
     public ActionBarSender(Player player, ActionBarConfig config, Competition competition) {
         this.player = player;
         this.config = config;
@@ -59,6 +69,9 @@ public class ActionBarSender {
         }
     }
 
+    /**
+     * Updates private placeholders used in ActionBar messages.
+     */
     @SuppressWarnings("DuplicatedCode")
     private void updatePrivatePlaceholders() {
         this.privatePlaceholders.put("{score}", String.format("%.2f", competition.getRanking().getPlayerScore(player.getName())));
@@ -67,6 +80,9 @@ public class ActionBarSender {
         this.privatePlaceholders.putAll(competition.getCachedPlaceholders());
     }
 
+    /**
+     * Shows the ActionBar message to the player.
+     */
     public void show() {
         this.isShown = true;
         senderTask = CustomFishingPlugin.get().getScheduler().runTaskAsyncTimer(() -> {
@@ -90,16 +106,29 @@ public class ActionBarSender {
         }, 50, 50, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Hides the ActionBar message from the player.
+     */
     public void hide() {
         if (senderTask != null && !senderTask.isCancelled())
             senderTask.cancel();
         this.isShown = false;
     }
 
+    /**
+     * Checks if the ActionBar message is currently visible to the player.
+     *
+     * @return True if the ActionBar message is visible, false otherwise.
+     */
     public boolean isVisible() {
         return this.isShown;
     }
 
+    /**
+     * Gets the ActionBar configuration.
+     *
+     * @return The ActionBar configuration.
+     */
     public ActionBarConfig getConfig() {
         return config;
     }

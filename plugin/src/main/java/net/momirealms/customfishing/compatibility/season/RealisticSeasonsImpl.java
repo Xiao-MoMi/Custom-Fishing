@@ -20,9 +20,11 @@ package net.momirealms.customfishing.compatibility.season;
 import me.casperge.realisticseasons.api.SeasonsAPI;
 import net.momirealms.customfishing.api.integration.SeasonInterface;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
 public class RealisticSeasonsImpl implements SeasonInterface {
 
+    @NotNull
     @Override
     public String getSeason(World world) {
         return switch (SeasonsAPI.getInstance().getSeason(world)) {

@@ -34,6 +34,10 @@ public class PlayerData {
 
     public static PlayerData LOCKED = empty();
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static PlayerData empty() {
         return new Builder()
                 .setBagData(InventoryData.empty())

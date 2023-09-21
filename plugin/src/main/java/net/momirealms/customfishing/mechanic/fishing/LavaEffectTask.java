@@ -24,6 +24,9 @@ import org.bukkit.Particle;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * A task responsible for creating a lava effect animation between two points.
+ */
 public class LavaEffectTask implements Runnable {
 
     private final Location startLoc;
@@ -33,9 +36,16 @@ public class LavaEffectTask implements Runnable {
     private final CancellableTask lavaTask;
     private final HookCheckTimerTask hookCheckTimerTask;
 
-    public LavaEffectTask(HookCheckTimerTask hookCheckTimerTask, Location loc, int delay) {
+    /**
+     * Constructs a new LavaEffectTask.
+     *
+     * @param hookCheckTimerTask The HookCheckTimerTask instance.
+     * @param location                The starting location for the lava effect.
+     * @param delay              The delay before starting the task.
+     */
+    public LavaEffectTask(HookCheckTimerTask hookCheckTimerTask, Location location, int delay) {
         this.hookCheckTimerTask = hookCheckTimerTask;
-        this.startLoc = loc.clone().add(0,0.3,0);
+        this.startLoc = location.clone().add(0,0.3,0);
         this.endLoc = this.startLoc.clone().add((Math.random() * 16 - 8), startLoc.getY(), (Math.random() * 16 - 8));
         this.controlLoc = new Location(
                 startLoc.getWorld(),
@@ -60,11 +70,19 @@ public class LavaEffectTask implements Runnable {
         }
     }
 
+    /**
+     * Cancels the lava effect task.
+     */
     public void cancel() {
         if (lavaTask != null && !lavaTask.isCancelled())
             lavaTask.cancel();
     }
 
+    /**
+     * Checks if the lava effect task is cancelled.
+     *
+     * @return True if the task is cancelled, false otherwise.
+     */
     public boolean isCancelled() {
         return lavaTask.isCancelled();
     }

@@ -84,6 +84,9 @@ public class EntityManagerImpl implements EntityManager {
         return entityLibraryMap.remove(identification) != null;
     }
 
+    /**
+     * Load configuration files for entity properties.
+     */
     @SuppressWarnings("DuplicatedCode")
     private void loadConfig() {
         Deque<File> fileDeque = new ArrayDeque<>();
@@ -109,6 +112,11 @@ public class EntityManagerImpl implements EntityManager {
         }
     }
 
+    /**
+     * Load a single entity configuration file.
+     *
+     * @param file The YAML file to load.
+     */
     private void loadSingleFile(File file) {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
         for (Map.Entry<String, Object> entry : config.getValues(false).entrySet()) {

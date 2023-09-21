@@ -20,5 +20,11 @@ package net.momirealms.customfishing.api.data.user;
 import org.bukkit.entity.Player;
 
 public interface OnlineUser extends OfflineUser {
+
+    /**
+     * Get the bukkit player
+     *
+     * @return player
+     */
     Player getPlayer();
 }

@@ -22,30 +22,59 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
 
+/**
+ * Utility class for logging messages with various log levels.
+ */
 public final class LogUtils {
 
-    public static void info(@NotNull String s) {
-        CustomFishingPlugin.getInstance().getLogger().info(s);
+    /**
+     * Log an informational message.
+     *
+     * @param message The message to log.
+     */
+    public static void info(@NotNull String message) {
+        CustomFishingPlugin.getInstance().getLogger().info(message);
     }
 
-    public static void warn(@NotNull String s) {
-        CustomFishingPlugin.getInstance().getLogger().warning(s);
+    /**
+     * Log a warning message.
+     *
+     * @param message The message to log.
+     */
+    public static void warn(@NotNull String message) {
+        CustomFishingPlugin.getInstance().getLogger().warning(message);
     }
 
-    public static void severe(@NotNull String s) {
-        CustomFishingPlugin.getInstance().getLogger().severe(s);
+    /**
+     * Log a severe error message.
+     *
+     * @param message The message to log.
+     */
+    public static void severe(@NotNull String message) {
+        CustomFishingPlugin.getInstance().getLogger().severe(message);
     }
 
-    public static void warn(@NotNull String s, Throwable t) {
-        CustomFishingPlugin.getInstance().getLogger().log(Level.WARNING, s, t);
+    /**
+     * Log a warning message with a throwable exception.
+     *
+     * @param message    The message to log.
+     * @param throwable  The throwable exception to log.
+     */
+    public static void warn(@NotNull String message, Throwable throwable) {
+        CustomFishingPlugin.getInstance().getLogger().log(Level.WARNING, message, throwable);
     }
 
-    public static void severe(@NotNull String s, Throwable t) {
-        CustomFishingPlugin.getInstance().getLogger().log(Level.SEVERE, s, t);
+    /**
+     * Log a severe error message with a throwable exception.
+     *
+     * @param message    The message to log.
+     * @param throwable  The throwable exception to log.
+     */
+    public static void severe(@NotNull String message, Throwable throwable) {
+        CustomFishingPlugin.getInstance().getLogger().log(Level.SEVERE, message, throwable);
     }
 
     private LogUtils() {
         throw new UnsupportedOperationException("This class cannot be instantiated");
     }
-
 }

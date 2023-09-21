@@ -27,6 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * This class represents an event that occurs when a player gets a result from fishing.
+ */
 public class FishingResultEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlerList = new HandlerList();
@@ -35,6 +38,14 @@ public class FishingResultEvent extends PlayerEvent implements Cancellable {
     private final Loot loot;
     private final Map<String, String> args;
 
+    /**
+     * Constructs a new FishingResultEvent.
+     *
+     * @param who    The player who triggered the event.
+     * @param result The result of the fishing action (SUCCESS or FAILURE).
+     * @param loot   The loot received from fishing.
+     * @param args   A map of placeholders and their corresponding values.
+     */
     public FishingResultEvent(@NotNull Player who, Result result, Loot loot, Map<String, String> args) {
         super(who);
         this.result = result;
@@ -62,22 +73,47 @@ public class FishingResultEvent extends PlayerEvent implements Cancellable {
         isCancelled = cancel;
     }
 
+    /**
+     * Gets the value associated with a specific argument key.
+     * Usage example event.getArg("{x}")
+     *
+     * @param key The argument key enclosed in curly braces, e.g., "{amount}".
+     * @return The value associated with the argument key, or null if not found.
+     */
     public String getArg(String key) {
-        return args.get("{" + key + "}");
+        return args.get(key);
     }
 
+    /**
+     * Gets the result of the fishing action.
+     *
+     * @return The fishing result, which can be either SUCCESS or FAILURE.
+     */
     public Result getResult() {
         return result;
     }
 
+    /**
+     * Gets the loot received from fishing.
+     *
+     * @return The loot obtained from the fishing action.
+     */
     public Loot getLoot() {
         return loot;
     }
 
+    /**
+     * Gets the amount of loot received
+     *
+     * @return The amount of loot received, or 1 if the loot is block or entity
+     */
     public int getAmount() {
         return Integer.parseInt(Optional.ofNullable(getArg("{amount}")).orElse("1"));
     }
 
+    /**
+     * An enumeration representing possible fishing results (SUCCESS or FAILURE).
+     */
     public enum Result {
         SUCCESS,
         FAILURE

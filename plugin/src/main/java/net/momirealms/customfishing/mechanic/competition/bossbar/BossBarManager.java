@@ -43,6 +43,9 @@ public class BossBarManager implements Listener {
         this.competition = competition;
     }
 
+    /**
+     * Loads the boss bar manager, registering events and showing boss bars to online players.
+     */
     public void load() {
         Bukkit.getPluginManager().registerEvents(this, CustomFishingPlugin.getInstance());
         if (bossBarConfig.isShowToAll()) {
@@ -56,6 +59,9 @@ public class BossBarManager implements Listener {
         }
     }
 
+    /**
+     * Unloads the boss bar manager, unregistering events and hiding boss bars for all players.
+     */
     public void unload() {
         HandlerList.unregisterAll(this);
         for (BossBarSender bossBarSender : senderMap.values()) {
@@ -64,6 +70,11 @@ public class BossBarManager implements Listener {
         senderMap.clear();
     }
 
+    /**
+     * Handles the PlayerQuitEvent to hide the boss bar for a player when they quit the game.
+     *
+     * @param event The PlayerQuitEvent.
+     */
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
@@ -74,6 +85,11 @@ public class BossBarManager implements Listener {
         }
     }
 
+    /**
+     * Handles the PlayerJoinEvent to show boss bars to players when they join the game.
+     *
+     * @param event The PlayerJoinEvent.
+     */
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
@@ -90,6 +106,11 @@ public class BossBarManager implements Listener {
         }, 200, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Shows a boss bar to a specific player.
+     *
+     * @param player The player to show the boss bar to.
+     */
     public void showBossBarTo(Player player) {
         BossBarSender sender = senderMap.get(player.getUniqueId());
         if (sender == null) {

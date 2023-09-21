@@ -43,6 +43,9 @@ public class ActionBarManager implements Listener {
         this.competition = competition;
     }
 
+    /**
+     * Loads the ActionBar manager, registering events and showing ActionBar messages to online players.
+     */
     public void load() {
         Bukkit.getPluginManager().registerEvents(this, CustomFishingPlugin.getInstance());
         if (actionBarConfig.isShowToAll()) {
@@ -56,6 +59,9 @@ public class ActionBarManager implements Listener {
         }
     }
 
+    /**
+     * Unloads the ActionBar manager, unregistering events and hiding ActionBar messages for all players.
+     */
     public void unload() {
         HandlerList.unregisterAll(this);
         for (ActionBarSender ActionBarSender : senderMap.values()) {
@@ -64,6 +70,11 @@ public class ActionBarManager implements Listener {
         senderMap.clear();
     }
 
+    /**
+     * Handles the PlayerQuitEvent to hide ActionBar messages for a player when they quit the game.
+     *
+     * @param event The PlayerQuitEvent.
+     */
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
@@ -74,6 +85,11 @@ public class ActionBarManager implements Listener {
         }
     }
 
+    /**
+     * Handles the PlayerJoinEvent to show ActionBar messages to players when they join the game.
+     *
+     * @param event The PlayerJoinEvent.
+     */
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
@@ -90,6 +106,11 @@ public class ActionBarManager implements Listener {
         }, 200, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Shows an ActionBar message to a specific player.
+     *
+     * @param player The player to show the ActionBar message to.
+     */
     public void showActionBarTo(Player player) {
         ActionBarSender sender = senderMap.get(player.getUniqueId());
         if (sender == null) {
