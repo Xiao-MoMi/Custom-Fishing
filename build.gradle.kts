@@ -7,7 +7,7 @@ plugins {
 
 allprojects {
 
-    version = "2.0-beta-7"
+    version = "2.0.0"
 
     apply<JavaPlugin>()
     apply(plugin = "java")
@@ -71,13 +71,6 @@ subprojects {
                     artifact(tasks.shadowJar)
                 }
             }
-        }
-        tasks.javadoc.configure {
-            options.quiet()
-        }
-        java {
-            withSourcesJar()
-            withJavadocJar()
         }
     }
 }
