@@ -331,7 +331,7 @@ public class RequirementManagerImpl implements RequirementManager {
 
     private void registerTimeRequirement() {
         registerRequirement("time", (args, actions, advanced) -> {
-            List<Pair<Integer, Integer>> timePairs = ConfigUtils.stringListArgs(args).stream().map(ConfigUtils::splitStringIntegerArgs).toList();
+            List<Pair<Integer, Integer>> timePairs = ConfigUtils.stringListArgs(args).stream().map(it -> ConfigUtils.splitStringIntegerArgs(it, "~")).toList();
             return condition -> {
                 long time = condition.getLocation().getWorld().getTime();
                 for (Pair<Integer, Integer> pair : timePairs)
@@ -409,7 +409,7 @@ public class RequirementManagerImpl implements RequirementManager {
 
     private void registerYRequirement() {
         registerRequirement("ypos", (args, actions, advanced) -> {
-            List<Pair<Integer, Integer>> timePairs = ConfigUtils.stringListArgs(args).stream().map(ConfigUtils::splitStringIntegerArgs).toList();
+            List<Pair<Integer, Integer>> timePairs = ConfigUtils.stringListArgs(args).stream().map(it -> ConfigUtils.splitStringIntegerArgs(it, "~")).toList();
             return condition -> {
                 int y = condition.getLocation().getBlockY();
                 for (Pair<Integer, Integer> pair : timePairs)

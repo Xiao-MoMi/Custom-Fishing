@@ -461,7 +461,7 @@ public class BlockManagerImpl implements BlockManager, Listener {
                 for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
                     if (entry.getValue() instanceof ConfigurationSection inner) {
                         String item = inner.getString("item");
-                        Pair<Integer, Integer> amountPair = ConfigUtils.splitStringIntegerArgs(inner.getString("amount","1~1"));
+                        Pair<Integer, Integer> amountPair = ConfigUtils.splitStringIntegerArgs(inner.getString("amount","1~1"), "~");
                         double chance = inner.getDouble("chance", 1);
                         tempChanceList.add(Tuple.of(chance, item, amountPair));
                     }

@@ -22,7 +22,6 @@ import net.momirealms.customfishing.api.data.PlayerData;
 import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
 import net.momirealms.customfishing.api.mechanic.statistic.Statistics;
 
-import java.io.Serializable;
 import java.util.UUID;
 
 public interface OfflineUser {

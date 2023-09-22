@@ -27,7 +27,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.*;
 import redis.clients.jedis.exceptions.JedisException;
-import redis.clients.jedis.resps.Tuple;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;

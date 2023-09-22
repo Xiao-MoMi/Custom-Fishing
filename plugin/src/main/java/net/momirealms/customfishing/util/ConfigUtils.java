@@ -66,8 +66,8 @@ public class ConfigUtils {
      * @param value The input string
      * @return A Pair of integers
      */
-    public static Pair<Integer, Integer> splitStringIntegerArgs(String value) {
-        String[] split = value.split("~");
+    public static Pair<Integer, Integer> splitStringIntegerArgs(String value, String regex) {
+        String[] split = value.split(regex);
         return Pair.of(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
     }
 

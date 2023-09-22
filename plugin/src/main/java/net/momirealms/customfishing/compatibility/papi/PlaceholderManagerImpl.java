@@ -170,7 +170,7 @@ public class PlaceholderManagerImpl implements PlaceholderManager, Listener {
             if (replacer == null) {
                 String custom = customPlaceholderMap.get(papi);
                 if (custom != null) {
-                    replacer = setPlaceholders(player, custom);
+                    replacer = setPlaceholders(player, parse(player, custom, placeholders));
                 }
             }
             if (replacer != null) {

@@ -24,7 +24,6 @@ import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import net.momirealms.customfishing.api.mechanic.totem.TotemParticle;
-import net.momirealms.customfishing.mechanic.totem.particle.ParticleSetting;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import org.bukkit.Location;
 

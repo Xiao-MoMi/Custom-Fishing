@@ -25,7 +25,6 @@ import net.momirealms.customfishing.api.mechanic.game.GameInstance;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.Optional;
 
 public interface GameManager {
 

@@ -41,9 +41,9 @@ public class SchedulerImpl implements Scheduler {
         this.plugin = plugin;
         this.syncScheduler = plugin.getVersionManager().isFolia() ?
                 new FoliaSchedulerImpl(plugin) : new BukkitSchedulerImpl(plugin);
-        this.schedule = new ScheduledThreadPoolExecutor(4);
-        this.schedule.setMaximumPoolSize(4);
-        this.schedule.setKeepAliveTime(10, TimeUnit.SECONDS);
+        this.schedule = new ScheduledThreadPoolExecutor(1);
+        this.schedule.setMaximumPoolSize(1);
+        this.schedule.setKeepAliveTime(30, TimeUnit.SECONDS);
         this.schedule.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
     }
 

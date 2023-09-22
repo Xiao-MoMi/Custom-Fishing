@@ -23,8 +23,6 @@ import net.momirealms.customfishing.api.integration.SeasonInterface;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 public class CustomCropsSeasonImpl implements SeasonInterface {
 
     private final CustomCropsAPI customCropsAPI;
