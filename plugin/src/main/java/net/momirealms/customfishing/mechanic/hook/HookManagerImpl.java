@@ -25,6 +25,7 @@ import net.momirealms.customfishing.api.manager.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.hook.HookSetting;
+import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.util.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -104,6 +105,10 @@ public class HookManagerImpl implements Listener, HookManager {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
         for (Map.Entry<String, Object> entry : config.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection section) {
+                if (!section.contains("max-durability")) {
+                    LogUtils.warn("Please set max-durability to hook: " + entry.getKey());
+                    continue;
+                }
                 var setting = new HookSetting.Builder(entry.getKey())
                         .durability(section.getInt("max-durability", 16))
                         .lore(section.getStringList("lore-on-rod").stream().map(it -> "<!i>" + it).toList())

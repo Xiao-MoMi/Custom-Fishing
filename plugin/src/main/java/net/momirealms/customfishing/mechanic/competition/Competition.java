@@ -19,6 +19,7 @@ package net.momirealms.customfishing.mechanic.competition;
 
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
+import net.momirealms.customfishing.api.event.CompetitionEvent;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionConfig;
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionGoal;
@@ -90,7 +91,6 @@ public class Competition implements FishingCompetition {
             this.actionBarManager.load();
         }
 
-
         Action[] actions = config.getStartActions();
         if (actions != null) {
             Condition condition = new Condition(null, null, new HashMap<>());
@@ -98,6 +98,9 @@ public class Competition implements FishingCompetition {
                 action.trigger(condition);
             }
         }
+
+        CompetitionEvent competitionStartEvent = new CompetitionEvent(CompetitionEvent.State.START, this);
+        Bukkit.getPluginManager().callEvent(competitionStartEvent);
     }
 
     /**
@@ -150,6 +153,9 @@ public class Competition implements FishingCompetition {
         if (this.actionBarManager != null) this.actionBarManager.unload();
         this.ranking.clear();
         this.remainingTime = 0;
+
+        CompetitionEvent competitionEvent = new CompetitionEvent(CompetitionEvent.State.STOP, this);
+        Bukkit.getPluginManager().callEvent(competitionEvent);
     }
 
     /**
@@ -207,8 +213,12 @@ public class Competition implements FishingCompetition {
             }
         }
 
-        // 1.5 seconds delay for other servers to read the redis data
-        CustomFishingPlugin.get().getScheduler().runTaskAsyncLater(this.ranking::clear, 1500, TimeUnit.MILLISECONDS);
+        // call event
+        CompetitionEvent competitionEndEvent = new CompetitionEvent(CompetitionEvent.State.END, this);
+        Bukkit.getPluginManager().callEvent(competitionEndEvent);
+
+        // 1 seconds delay for other servers to read the redis data
+        CustomFishingPlugin.get().getScheduler().runTaskAsyncLater(this.ranking::clear, 1, TimeUnit.SECONDS);
     }
 
     /**

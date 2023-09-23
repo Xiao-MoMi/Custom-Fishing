@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.command.sub;
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
@@ -27,13 +28,21 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Key;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.item.BuildableItem;
+import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.setting.CFLocale;
+import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.ItemUtils;
+import net.momirealms.customfishing.util.NBTUtils;
+import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ItemCommand {
 
@@ -64,8 +73,45 @@ public class ItemCommand {
         return new CommandAPICommand(namespace)
                 .withSubcommands(
                         getCommand(namespace),
-                        giveCommand(namespace)
+                        giveCommand(namespace),
+                        importCommand(namespace)
                 );
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private CommandAPICommand importCommand(String namespace) {
+        return new CommandAPICommand("import")
+                .withArguments(new StringArgument("key"))
+                .withOptionalArguments(new StringArgument("file"))
+                .executesPlayer((player, args) -> {
+                    String key = (String) args.get("key");
+                    String fileName = args.getOrDefault("file","import") + ".yml";
+                    ItemStack itemStack = player.getInventory().getItemInMainHand();
+                    if (itemStack.getType() == Material.AIR)
+                        return;
+                    File file = new File(CustomFishingPlugin.get().getDataFolder(),
+                            "contents" + File.separator + namespace + File.separator + fileName);
+                    try {
+                        if (!file.exists()) {
+                            file.createNewFile();
+                        }
+                        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+                        config.set(key + ".material", itemStack.getType().toString());
+                        config.set(key + ".amount", itemStack.getAmount());
+                        Map<String, Object> nbtMap = NBTUtils.compoundToMap(new NBTItem(itemStack));
+                        if (nbtMap.size() != 0) {
+                            config.createSection(key + ".nbt", nbtMap);
+                        }
+                        try {
+                            config.save(file);
+                            AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, "Imported! Saved to " + file.getAbsolutePath());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (IOException e) {
+                        LogUtils.warn("Failed to create imported file.", e);
+                    }
+                });
     }
 
     private CommandAPICommand getCommand(String namespace) {

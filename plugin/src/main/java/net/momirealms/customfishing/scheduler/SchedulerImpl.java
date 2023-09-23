@@ -53,9 +53,9 @@ public class SchedulerImpl implements Scheduler {
      */
     public void reload() {
         try {
+            this.schedule.setMaximumPoolSize(CFConfig.maximumPoolSize);
             this.schedule.setCorePoolSize(CFConfig.corePoolSize);
             this.schedule.setKeepAliveTime(CFConfig.keepAliveTime, TimeUnit.SECONDS);
-            this.schedule.setMaximumPoolSize(CFConfig.maximumPoolSize);
         } catch (IllegalArgumentException e) {
             LogUtils.warn("Failed to create thread pool. Please lower the corePoolSize in config.yml.", e);
         }

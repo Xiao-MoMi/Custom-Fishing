@@ -120,9 +120,9 @@ public class CFConfig {
         metrics = config.getBoolean("metrics");
         eventPriority = EventPriority.valueOf(config.getString("other-settings.event-priority", "NORMAL").toUpperCase(Locale.ENGLISH));
 
-        corePoolSize = config.getInt("other-settings.thread-pool-settings.corePoolSize", 4);
-        maximumPoolSize = config.getInt("other-settings.thread-pool-settings.maximumPoolSize", 8);
-        keepAliveTime = config.getInt("other-settings.thread-pool-settings.keepAliveTime", 10);
+        corePoolSize = config.getInt("other-settings.thread-pool-settings.corePoolSize", 1);
+        maximumPoolSize = config.getInt("other-settings.thread-pool-settings.maximumPoolSize", 1);
+        keepAliveTime = config.getInt("other-settings.thread-pool-settings.keepAliveTime", 30);
 
         itemDetectOrder = config.getStringList("other-settings.item-detection-order");
         blockDetectOrder = config.getStringList("other-settings.block-detection-order");

@@ -19,6 +19,7 @@ package net.momirealms.customfishing.mechanic.competition;
 
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
+import net.momirealms.customfishing.api.event.CompetitionEvent;
 import net.momirealms.customfishing.api.manager.CompetitionManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.competition.*;
@@ -305,12 +306,15 @@ public class CompetitionManagerImpl implements CompetitionManager {
 
     private void start(CompetitionConfig config) {
         if (getOnGoingCompetition() != null) {
+            // END
             currentCompetition.end();
             plugin.getScheduler().runTaskAsyncLater(() -> {
+                // start one second later
                 this.currentCompetition = new Competition(config);
                 this.currentCompetition.start();
             }, 1, TimeUnit.SECONDS);
         } else {
+            // start instantly
             this.currentCompetition = new Competition(config);
             this.currentCompetition.start();
         }
