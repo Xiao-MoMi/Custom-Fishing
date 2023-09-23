@@ -20,6 +20,7 @@ package net.momirealms.customfishing.scheduler;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.api.scheduler.Scheduler;
+import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.setting.CFConfig;
 import org.bukkit.Location;
 
@@ -44,16 +45,20 @@ public class SchedulerImpl implements Scheduler {
         this.schedule = new ScheduledThreadPoolExecutor(1);
         this.schedule.setMaximumPoolSize(1);
         this.schedule.setKeepAliveTime(30, TimeUnit.SECONDS);
-        this.schedule.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        this.schedule.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardOldestPolicy());
     }
 
     /**
      * Reloads the scheduler configuration based on CustomFishingPlugin settings.
      */
     public void reload() {
-        this.schedule.setCorePoolSize(CFConfig.corePoolSize);
-        this.schedule.setKeepAliveTime(CFConfig.keepAliveTime, TimeUnit.SECONDS);
-        this.schedule.setMaximumPoolSize(CFConfig.maximumPoolSize);
+        try {
+            this.schedule.setCorePoolSize(CFConfig.corePoolSize);
+            this.schedule.setKeepAliveTime(CFConfig.keepAliveTime, TimeUnit.SECONDS);
+            this.schedule.setMaximumPoolSize(CFConfig.maximumPoolSize);
+        } catch (IllegalArgumentException e) {
+            LogUtils.warn("Failed to create thread pool. Please lower the corePoolSize in config.yml.", e);
+        }
     }
 
     /**

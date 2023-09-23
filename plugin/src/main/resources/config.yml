@@ -117,16 +117,6 @@ mechanics:
     # Increase this value would allow you to use more placeholders like {4_player} {5_score} in sacrifice of some performance
     placeholder-limit: 3
 
-  # Enable vanilla fishing mechanic if there's no loot available
-  vanilla-mechanic-if-no-loot:
-    enable: false
-    # actions to trigger if vanilla mechanic not allowed
-    actions:
-      message_action:
-        type: message
-        value:
-          - 'There''s no loot here. Try to find another place for fishing.'
-
 # Other settings
 other-settings:
   # It's recommended to use MiniMessage format. If you insist on using legacy color code "&", enable the support below.

@@ -112,6 +112,11 @@ public class ConfigUtils {
     public static Pair<Float, Float> getSizePair(String size) {
         if (size == null) return null;
         String[] split = size.split("~", 2);
+        if (split.length != 2) {
+            LogUtils.warn("Illegal size argument: " + size);
+            LogUtils.warn("Correct usage example: 10.5~25.6");
+            return null;
+        }
         return Pair.of(Float.parseFloat(split[0]), Float.parseFloat(split[1]));
     }
 

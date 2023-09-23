@@ -199,9 +199,13 @@ public class LootManagerImpl implements LootManager {
     @Nullable
     public Loot getNextLoot(Effect initialEffect, Condition condition) {
         String key = WeightUtils.getRandom(getPossibleLootKeysWithWeight(initialEffect, condition));
+        if (key == null) {
+            LogUtils.warn("No loot available at " + condition.getLocation() + " for player: " + condition.getPlayer().getName());
+            return null;
+        }
         Loot loot = getLoot(key);
         if (loot == null) {
-            LogUtils.warn(String.format("Loot %s doesn't exist.", key));
+            LogUtils.warn(String.format("Loot %s doesn't exist in any of the subfolders[item/entity/block].", key));
             return null;
         }
         return loot;

@@ -56,10 +56,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.text.DecimalFormatSymbols;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FishingManagerImpl implements Listener, FishingManager {
@@ -286,6 +284,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         if (!RequirementManager.isRequirementMet(
                 fishingPreparation, RequirementManagerImpl.mechanicRequirements
         )) {
+            removeTempFishingState(player);
             return;
         }
         // Merge rod/bait/util effects
@@ -387,20 +386,20 @@ public class FishingManagerImpl implements Listener, FishingManager {
     private void onCaughtFish(PlayerFishEvent event) {
         final Player player = event.getPlayer();
         final UUID uuid = player.getUniqueId();
-        if (!(event.getCaught() instanceof Item item)) return;
+        if (!(event.getCaught() instanceof Item item))
+            return;
 
         // If player is playing the game
         GamingPlayer gamingPlayer = gamingPlayerMap.get(uuid);
         if (gamingPlayer != null) {
-            if (gamingPlayer.onRightClick()) {
+            if (gamingPlayer.onRightClick())
                 event.setCancelled(true);
-            }
             return;
         }
 
         // If player is not playing the game
-        var temp = this.tempFishingStateMap.get(uuid);
-        if (temp != null ) {
+        var temp = this.getTempFishingState(uuid);
+        if (temp != null) {
             var loot = temp.getLoot();
             if (loot.getID().equals("vanilla")) {
                 // put vanilla loot in map
@@ -421,11 +420,6 @@ public class FishingManagerImpl implements Listener, FishingManager {
             }
             return;
         }
-
-        if (!CFConfig.vanillaMechanicIfNoLoot) {
-            event.setCancelled(true);
-            event.getHook().remove();
-        }
     }
 
     /**
@@ -439,13 +433,13 @@ public class FishingManagerImpl implements Listener, FishingManager {
 
         // If player is already in game
         // then ignore the event
-        GamingPlayer gamingPlayer = gamingPlayerMap.get(uuid);
+        GamingPlayer gamingPlayer = getGamingPlayer(uuid);
         if (gamingPlayer != null) {
             return;
         }
 
         // If the loot's game is instant
-        TempFishingState temp = tempFishingStateMap.get(uuid);
+        TempFishingState temp = getTempFishingState(uuid);
         if (temp != null) {
             var loot = temp.getLoot();
 
@@ -470,7 +464,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         final UUID uuid = player.getUniqueId();
 
         // If player is in game
-        GamingPlayer gamingPlayer = gamingPlayerMap.get(uuid);
+        GamingPlayer gamingPlayer = getGamingPlayer(uuid);
         if (gamingPlayer != null) {
             if (gamingPlayer.onRightClick())
                 event.setCancelled(true);
@@ -487,7 +481,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 return;
             }
 
-            var temp = this.tempFishingStateMap.get(uuid);
+            var temp = getTempFishingState(uuid);
             if (temp != null ) {
                 Loot loot = temp.getLoot();
                 loot.triggerActions(ActionTrigger.HOOK, temp.getPreparation());
@@ -603,7 +597,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         var effect = state.getEffect();
         var fishingPreparation = state.getPreparation();
         var player = fishingPreparation.getPlayer();
-        fishingPreparation.insertArg("{size-multiplier}", String.format("%.2f", effect.getSizeMultiplier()));
+        fishingPreparation.insertArg("{size-multiplier}", String.valueOf(effect.getSizeMultiplier()));
         int amount;
         if (loot.getType() == LootType.ITEM) {
             amount = (int) effect.getMultipleLootChance();

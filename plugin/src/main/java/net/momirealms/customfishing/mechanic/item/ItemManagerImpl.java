@@ -627,7 +627,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
                 if (bonus != 0) {
                     placeholders.put("{bonus}", String.format("%.2f", bonus));
                 }
-                float size = Float.parseFloat(placeholders.getOrDefault("{size}", "0"));
+                float size = Float.parseFloat(placeholders.getOrDefault("{size}", "0").replace(",", "."));
                 double price = CustomFishingPlugin.get().getMarketManager().getFishPrice(
                         base,
                         bonus,
