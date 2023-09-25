@@ -45,7 +45,6 @@ public class BattlePassHook implements Listener {
         register();
     }
 
-
     private static class BPFishingQuest extends ActionQuestExecutor {
         public BPFishingQuest(JavaPlugin plugin) {
             super(plugin, "customfishing");

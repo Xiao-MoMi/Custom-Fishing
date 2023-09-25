@@ -233,6 +233,8 @@ public class ItemManagerImpl implements ItemManager, Listener {
     @NotNull
     @Override
     public String getAnyPluginItemID(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR)
+            return "AIR";
         for (String plugin : CFConfig.itemDetectOrder) {
             ItemLibrary itemLibrary = itemLibraryMap.get(plugin);
             if (itemLibrary != null) {

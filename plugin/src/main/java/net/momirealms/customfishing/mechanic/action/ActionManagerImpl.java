@@ -365,7 +365,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: message-nearby");
-                return null;
+                return EmptyAction.instance;
             }
         });
         registerAction("random-message", (args, chance) -> {
@@ -435,7 +435,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: command-nearby");
-                return null;
+                return EmptyAction.instance;
             }
         });
     }
@@ -491,7 +491,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: command-nearby");
-                return null;
+                return EmptyAction.instance;
             }
         });
     }
@@ -573,7 +573,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: hologram");
-                return null;
+                return EmptyAction.instance;
             }
         });
     }
@@ -591,7 +591,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: item-amount");
-                return null;
+                return EmptyAction.instance;
             }
         });
     }
@@ -612,8 +612,8 @@ public class ActionManagerImpl implements ActionManager {
                     }
                 };
             } else {
-                LogUtils.warn("Illegal value format found at action: item-durability");
-                return null;
+                LogUtils.warn("Illegal value format found at action: durability");
+                return EmptyAction.instance;
             }
         });
     }
@@ -630,7 +630,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: give-item");
-                return null;
+                return EmptyAction.instance;
             }
         });
     }
@@ -656,8 +656,8 @@ public class ActionManagerImpl implements ActionManager {
                     );
                 };
             } else {
-                LogUtils.warn("Illegal value format found at action: hologram");
-                return null;
+                LogUtils.warn("Illegal value format found at action: fake-item");
+                return EmptyAction.instance;
             }
         });
     }
@@ -747,7 +747,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: title");
-                return null;
+                return EmptyAction.instance;
             }
         });
         registerAction("title-nearby", (args, chance) -> {
@@ -781,7 +781,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: title-nearby");
-                return null;
+                return EmptyAction.instance;
             }
         });
         registerAction("random-title", (args, chance) -> {
@@ -804,7 +804,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: random-title");
-                return null;
+                return EmptyAction.instance;
             }
         });
     }
@@ -821,9 +821,10 @@ public class ActionManagerImpl implements ActionManager {
                     if (Math.random() > chance) return;
                     condition.getPlayer().addPotionEffect(potionEffect);
                 };
+            } else {
+                LogUtils.warn("Illegal value format found at action: potion-effect");
+                return EmptyAction.instance;
             }
-            LogUtils.warn("Illegal value format found at action: potion-effect");
-            return null;
         });
     }
 
@@ -852,9 +853,10 @@ public class ActionManagerImpl implements ActionManager {
                     if (Math.random() > chance) return;
                     AdventureManagerImpl.getInstance().sendSound(condition.getPlayer(), sound);
                 };
+            } else {
+                LogUtils.warn("Illegal value format found at action: sound");
+                return EmptyAction.instance;
             }
-            LogUtils.warn("Illegal value format found at action: sound");
-            return null;
         });
     }
 
@@ -871,14 +873,14 @@ public class ActionManagerImpl implements ActionManager {
                                 return;
                             }
                         }
-                    if (actions != null)
-                        for (Action action : actions) {
-                            action.trigger(condition);
-                        }
+                    for (Action action : actions) {
+                        action.trigger(condition);
+                    }
                 };
+            } else {
+                LogUtils.warn("Illegal value format found at action: conditional");
+                return EmptyAction.instance;
             }
-            LogUtils.warn("Illegal value format found at action: conditional");
-            return null;
         });
     }
 
@@ -910,9 +912,10 @@ public class ActionManagerImpl implements ActionManager {
                             return;
                         }
                 };
+            } else {
+                LogUtils.warn("Illegal value format found at action: priority");
+                return EmptyAction.instance;
             }
-            LogUtils.warn("Illegal value format found at action: conditional");
-            return null;
         });
     }
 
@@ -928,8 +931,10 @@ public class ActionManagerImpl implements ActionManager {
                         it.addXp(condition.getPlayer(), target, exp);
                     }, () -> LogUtils.warn("Plugin (" + pluginName + "'s) level is not compatible. Please double check if it's a problem caused by pronunciation."));
                 };
+            } else {
+                LogUtils.warn("Illegal value format found at action: plugin-exp");
+                return EmptyAction.instance;
             }
-            return null;
         });
     }
 
@@ -948,6 +953,20 @@ public class ActionManagerImpl implements ActionManager {
                 condition.delArg("{lava}");
                 AdventureManagerImpl.getInstance().sendMessageWithPrefix(condition.getPlayer(), CFLocale.MSG_Possible_Loots + stringJoiner);
             };
+        });
+    }
+
+    private void registerTempEffectAction() {
+        registerAction("temp-effects", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                return condition -> {
+                    if (Math.random() > chance) return;
+
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: temp-effects");
+                return EmptyAction.instance;
+            }
         });
     }
 }
