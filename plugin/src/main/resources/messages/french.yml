@@ -1,0 +1,31 @@
+# Don't change this
+config-version: '26'
+
+messages:
+  prefix: '<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient>'
+  reload: '<white>Rechargé. A pris <green>{time}ms.</green>'
+  item-not-exist: 'Objet non trouvé.'
+  give-item: 'Joueur {player} a reçu avec succès {amount}x {item}.'
+  get-item: 'A obtenu avec succès {amount}x {item}.'
+  possible-loots: 'Butins possibles ici : '
+  split-char: ', '
+  competition-not-exist: 'La compétition {id} n'existe pas.'
+  no-competition-ongoing: "Aucune compétition en cours."
+  stop-competition: 'Compétition actuelle arrêtée.'
+  end-competition: 'Compétition actuelle terminée.'
+  no-score: 'Pas de score'
+  no-player: 'Pas de joueur'
+  no-rank: 'Pas de classement'
+  goal-catch-amount: 'Nombre de poissons attrapés'
+  goal-max-size: 'Plus gros poisson attrapé'
+  goal-total-size: 'Longueur totale des poissons attrapés'
+  goal-total-score: 'Score cumulatif des poissons attrapés'
+  unsafe-modification: "Impossible de modifier le sac de pêche d'un joueur s'il est actif sur un autre serveur lié."
+  never-played: "Le joueur n'a jamais rejoint le serveur auparavant. Impossible de modifier le sac de pêche d'un joueur inexistant."
+  data-not-loaded: "<red>Les données n'ont pas été chargées. Veuillez réessayer de rejoindre le serveur. Si les problèmes persistent, contactez l'administrateur du serveur."
+  open-market-gui: "L'interface du marché a été ouverte avec succès pour {player}."
+  open-fishing-bag: "Le sac de pêche de {player} a été ouvert avec succès."
+  format-day: 'j'
+  format-hour: 'h'
+  format-minute: 'm'
+  format-second: 's'
