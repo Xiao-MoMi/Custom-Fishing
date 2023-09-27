@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.event;
 
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -36,6 +37,7 @@ public class FishingResultEvent extends PlayerEvent implements Cancellable {
     private boolean isCancelled;
     private final Result result;
     private final Loot loot;
+    private final FishHook fishHook;
     private final Map<String, String> args;
 
     /**
@@ -46,11 +48,12 @@ public class FishingResultEvent extends PlayerEvent implements Cancellable {
      * @param loot   The loot received from fishing.
      * @param args   A map of placeholders and their corresponding values.
      */
-    public FishingResultEvent(@NotNull Player who, Result result, Loot loot, Map<String, String> args) {
+    public FishingResultEvent(@NotNull Player who, Result result, FishHook fishHook, Loot loot, Map<String, String> args) {
         super(who);
         this.result = result;
         this.loot = loot;
         this.args = args;
+        this.fishHook = fishHook;
     }
 
     public static HandlerList getHandlerList() {
@@ -91,6 +94,15 @@ public class FishingResultEvent extends PlayerEvent implements Cancellable {
      */
     public Result getResult() {
         return result;
+    }
+
+    /**
+     * Get the fish hook entity.
+     *
+     * @return fish hook
+     */
+    public FishHook getFishHook() {
+        return fishHook;
     }
 
     /**

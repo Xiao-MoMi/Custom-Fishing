@@ -37,6 +37,7 @@ public class CFLoot implements Loot {
     private boolean instanceGame;
     private double score;
     private String[] lootGroup;
+    private String filePath;
 
     public CFLoot(String id, LootType type) {
         this.id = id;
@@ -58,6 +59,17 @@ public class CFLoot implements Loot {
 
         public Builder(String id, LootType type) {
             this.loot = new CFLoot(id, type);
+        }
+
+        /**
+         * Set the file path for this loot.
+         *
+         * @param path file path
+         * @return The builder.
+         */
+        public Builder filePath(String path) {
+            this.loot.filePath = path;
+            return this;
         }
 
         /**
@@ -308,6 +320,14 @@ public class CFLoot implements Loot {
                 action.trigger(condition);
             }
         }
+    }
+
+    /**
+     * Get the file path of the loot registered by CustomFishing
+     * @return file path
+     */
+    public String getFilePath() {
+        return filePath;
     }
 
     /**

@@ -52,6 +52,7 @@ public class CommandManagerImpl implements CommandManager {
                         getReloadCommand(),
                         getMarketCommand(),
                         getAboutCommand(),
+                        GUIEditorCommand.INSTANCE.getEditorCommand(),
                         DataCommand.INSTANCE.getDataCommand(),
                         CompetitionCommand.INSTANCE.getCompetitionCommand(),
                         ItemCommand.INSTANCE.getItemCommand(),

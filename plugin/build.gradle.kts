@@ -75,6 +75,7 @@ dependencies {
 
     // anvil
     implementation("net.wesjd:anvilgui:1.9.0-SNAPSHOT")
+    implementation("de.themoep:inventorygui:1.6.1-SNAPSHOT")
 }
 
 tasks {

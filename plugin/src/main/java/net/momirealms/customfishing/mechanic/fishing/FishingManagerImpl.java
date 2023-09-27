@@ -546,12 +546,13 @@ public class FishingManagerImpl implements Listener, FishingManager {
                     ItemUtils.decreaseDurability(rod, 1, true);
                 }
 
-            fishHook.remove();
-
             if (gamingPlayer.isSuccessful())
                 success(tempFishingState, fishHook);
             else
                 fail(tempFishingState, fishHook);
+
+            fishHook.remove();
+
         }, fishHook.getLocation());
     }
 
@@ -571,6 +572,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         FishingResultEvent fishingResultEvent = new FishingResultEvent(
                 fishingPreparation.getPlayer(),
                 FishingResultEvent.Result.FAILURE,
+                hook,
                 loot,
                 fishingPreparation.getArgs()
         );
@@ -611,6 +613,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         FishingResultEvent fishingResultEvent = new FishingResultEvent(
                 player,
                 FishingResultEvent.Result.SUCCESS,
+                hook,
                 loot,
                 fishingPreparation.getArgs()
         );

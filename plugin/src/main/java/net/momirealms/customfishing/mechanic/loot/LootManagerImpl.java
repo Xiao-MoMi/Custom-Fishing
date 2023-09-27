@@ -222,6 +222,7 @@ public class LootManagerImpl implements LootManager {
         for (Map.Entry<String, Object> entry : yaml.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection section) {
                 var loot = getSingleSectionItem(
+                        file.getPath(),
                         section,
                         namespace,
                         entry.getKey()
@@ -252,8 +253,9 @@ public class LootManagerImpl implements LootManager {
      * @param key       The unique key identifying the loot configuration.
      * @return A CFLoot object representing the loot configuration.
      */
-    private CFLoot getSingleSectionItem(ConfigurationSection section, String namespace, String key) {
+    private CFLoot getSingleSectionItem(String filePath, ConfigurationSection section, String namespace, String key) {
         return new CFLoot.Builder(key, LootType.valueOf(namespace.toUpperCase(Locale.ENGLISH)))
+                .filePath(filePath)
                 .disableStats(section.getBoolean("disable-stat", false))
                 .disableGames(section.getBoolean("disable-game", false))
                 .instantGame(section.getBoolean("instant-game", false))

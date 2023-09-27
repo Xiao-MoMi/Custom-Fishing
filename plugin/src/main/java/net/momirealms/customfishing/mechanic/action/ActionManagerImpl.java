@@ -955,18 +955,4 @@ public class ActionManagerImpl implements ActionManager {
             };
         });
     }
-
-    private void registerTempEffectAction() {
-        registerAction("temp-effects", (args, chance) -> {
-            if (args instanceof ConfigurationSection section) {
-                return condition -> {
-                    if (Math.random() > chance) return;
-
-                };
-            } else {
-                LogUtils.warn("Illegal value format found at action: temp-effects");
-                return EmptyAction.instance;
-            }
-        });
-    }
 }
