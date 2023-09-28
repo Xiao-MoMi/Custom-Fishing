@@ -205,7 +205,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
                 "org.mongodb:mongodb-driver-core:4.10.2", mavenRepo,
                 "org.mongodb:bson:4.10.2", mavenRepo,
                 "org.xerial:sqlite-jdbc:3.42.0.0", mavenRepo,
-                "dev.jorel:commandapi-bukkit-shade:9.1.0", mavenRepo
+                "dev.jorel:commandapi-bukkit-shade:9.2.0", mavenRepo
         );
     }
 

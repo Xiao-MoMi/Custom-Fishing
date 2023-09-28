@@ -37,6 +37,7 @@ allprojects {
         maven("https://betonquest.org/nexus/repository/betonquest/")
         maven("https://repo.william278.net/releases/")
         maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+        maven("https://repo.minebench.de/")
     }
 }
 
