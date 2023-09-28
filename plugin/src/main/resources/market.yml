@@ -5,7 +5,8 @@ enable: true
 
 limitation:
   enable: true
-  earnings: 10000
+  # Support expression and placeholders
+  earnings: '10000'
 
 # Market menu layout
 layout:

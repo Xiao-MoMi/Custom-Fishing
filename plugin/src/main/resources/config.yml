@@ -1,6 +1,6 @@
 # Developer: @Xiao-MoMi
 # Wiki: https://mo-mi.gitbook.io/xiaomomi-plugins/
-config-version: '27'
+config-version: '28'
 
 # Debug
 debug: false
@@ -26,8 +26,10 @@ mechanics:
       value:
         - blacklist_world
 
-  # Configures how events related to bait, loot, and rods behave
+  # Configures global events for hook/bait/rod/loot
+  # which would help you reduce duplicated lines
   global-events:
+    hook: {}
     bait: {}
     loot:
       success:
@@ -92,7 +94,15 @@ mechanics:
                     y: 0
                     x: 0
                     z: 0
-  # Fishing bag is where players can store their baits, utils and rods (Fish optional)
+
+  # Global properties which would help you reduce duplicated lines
+  global-loot-property:
+    show-in-fishfinder: true
+    disable-stat: false
+    disable-game: false
+    instant-game: false
+
+  # Fishing bag is where players can store their baits, utils, hooks and rods (Loot optional)
   fishing-bag:
     # Enable
     enable: true
@@ -105,6 +115,7 @@ mechanics:
       - fishing_rod
 
   # Lava fishing settings
+  # To modify vanilla fishing time, you should edit paper-world-defaults.yml where there's a section called fishing-time-range
   lava-fishing:
     # ticks
     min-wait-time: 100
@@ -136,23 +147,23 @@ other-settings:
   event-priority: NORMAL
 
   # Save the data from cache to file periodically to minimize the data loss if server crashes
-  # set to -1 to disable
+  # -1 to disable
   data-saving-interval: 600
 
   # Lock player's data if a player is playing on a server that connected to database
-  # If you can ensure low database link latency and fast processing, you can consider disabling this option to save some performance
+  # If you can ensure low database link latency and fast processing, you can consider disabling this option to improve performance
   lock-data: true
 
   # Requires PlaceholderAPI to work
   placeholder-register:
     '{date}': '%server_time_yyyy-MM-dd-HH:mm:ss%'
 
-  # CustomFishing supports using items from other plugins
+  # CustomFishing supports using items/blocks from other plugins
   # If items share the same id, they would inherit the effects
+  # Check the wiki for examples
   item-detection-order:
     - CustomFishing
     - vanilla
-
   block-detection-order:
     - vanilla
 

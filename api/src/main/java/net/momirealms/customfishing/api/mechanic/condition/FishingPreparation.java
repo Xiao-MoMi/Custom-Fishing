@@ -41,6 +41,7 @@ import java.util.List;
 public class FishingPreparation extends Condition {
 
     private boolean hasBait = false;
+    private boolean hasHook = false;
     private @Nullable ItemStack baitItemStack;
     private final @NotNull ItemStack rodItemStack;
     private final List<EffectCarrier> effects;
@@ -66,6 +67,7 @@ public class FishingPreparation extends Condition {
         if (cfCompound != null && cfCompound.hasTag("hook_id")) {
             String hookID = cfCompound.getString("hook_id");
             super.insertArg("{hook}", rodItemID);
+            this.hasHook = true;
             EffectCarrier carrier = plugin.getEffectManager().getEffectCarrier("hook", hookID);
             if (carrier != null) {
                 this.effects.add(carrier);
@@ -174,8 +176,8 @@ public class FishingPreparation extends Condition {
      */
     public void triggerActions(ActionTrigger actionTrigger) {
         GlobalSettings.triggerRodActions(actionTrigger, this);
-        GlobalSettings.triggerBaitActions(actionTrigger, this);
-        GlobalSettings.triggerHookActions(actionTrigger, this);
+        if (hasBait) GlobalSettings.triggerBaitActions(actionTrigger, this);
+        if (hasHook) GlobalSettings.triggerHookActions(actionTrigger, this);
         for (EffectCarrier effectCarrier : effects) {
             Action[] actions = effectCarrier.getActions(actionTrigger);
             if (actions != null)

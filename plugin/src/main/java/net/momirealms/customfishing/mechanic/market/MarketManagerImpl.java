@@ -27,6 +27,7 @@ import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.item.BuildableItem;
 import net.momirealms.customfishing.api.mechanic.market.MarketGUIHolder;
 import net.momirealms.customfishing.api.util.LogUtils;
+import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
@@ -66,7 +67,7 @@ public class MarketManagerImpl implements MarketManager, Listener {
     private Action[] denyActions;
     private Action[] allowActions;
     private Action[] limitActions;
-    private double earningLimit;
+    private String earningLimitExpression;
     private boolean allowItemWithNoPrice;
     private final ConcurrentHashMap<UUID, MarketGUI> marketGUIMap;
     private boolean enable;
@@ -111,7 +112,7 @@ public class MarketManagerImpl implements MarketManager, Listener {
         this.allowActions = plugin.getActionManager().getActions(config.getConfigurationSection("functional-icons.allow-icon.action"));
         this.denyActions = plugin.getActionManager().getActions(config.getConfigurationSection("functional-icons.deny-icon.action"));
         this.limitActions = plugin.getActionManager().getActions(config.getConfigurationSection("functional-icons.limit-icon.action"));
-        this.earningLimit = config.getBoolean("limitation.enable", true) ? config.getDouble("limitation.earnings", 100) : -1;
+        this.earningLimitExpression = config.getBoolean("limitation.enable", true) ? config.getString("limitation.earnings", "10000") : "-1";
         this.allowItemWithNoPrice = config.getBoolean("item-slot.allow-items-with-no-price", true);
 
         // Load item prices from the configuration
@@ -271,6 +272,7 @@ public class MarketManagerImpl implements MarketManager, Listener {
 
             if (element.getSymbol() == functionSlot) {
                 double worth = gui.getTotalWorth();
+                double earningLimit = getEarningLimit(player);
                 Condition condition = new Condition(player, new HashMap<>(Map.of(
                         "{money}", String.format("%.2f", worth)
                         ,"{rest}", String.format("%.2f", (earningLimit - data.earnings))
@@ -463,8 +465,15 @@ public class MarketManagerImpl implements MarketManager, Listener {
      * @return The earning limit
      */
     @Override
-    public double getEarningLimit() {
-        return earningLimit;
+    public double getEarningLimit(Player player) {
+        return new ExpressionBuilder(
+                PlaceholderManagerImpl.getInstance().parse(
+                        player,
+                        earningLimitExpression,
+                        new HashMap<>()
+                ))
+                .build()
+                .evaluate();
     }
 
     /**

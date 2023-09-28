@@ -94,7 +94,7 @@ public interface MarketManager {
      *
      * @return The earning limit
      */
-    double getEarningLimit();
+    double getEarningLimit(Player player);
 
     /**
      * Is market enabled

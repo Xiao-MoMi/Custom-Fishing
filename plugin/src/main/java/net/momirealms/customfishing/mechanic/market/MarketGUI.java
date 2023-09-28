@@ -151,20 +151,21 @@ public class MarketGUI {
         if (functionElement == null) {
             return this;
         }
+        double earningLimit = manager.getEarningLimit(owner);
         if (totalWorth <= 0) {
             functionElement.setItemStack(
                     manager.getFunctionIconDenyBuilder().build(owner,
                             Map.of("{money}", String.format("%.2f", totalWorth)
                                     ,"{player}", owner.getName()
-                                    ,"{rest}", String.format("%.2f", manager.getEarningLimit() - earningData.earnings))
+                                    ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings))
                     )
             );
-        } else if (manager.getEarningLimit() != -1 && (manager.getEarningLimit() - earningData.earnings < totalWorth)) {
+        } else if (earningLimit != -1 && (earningLimit - earningData.earnings < totalWorth)) {
             functionElement.setItemStack(
                     manager.getFunctionIconLimitBuilder().build(owner,
                             Map.of("{money}", String.format("%.2f", totalWorth)
                                     ,"{player}", owner.getName()
-                                    ,"{rest}", String.format("%.2f", manager.getEarningLimit() - earningData.earnings))
+                                    ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings))
                     )
             );
         } else {
@@ -172,7 +173,7 @@ public class MarketGUI {
                     manager.getFunctionIconAllowBuilder().build(owner,
                             Map.of("{money}", String.format("%.2f", totalWorth)
                                     ,"{player}", owner.getName()
-                                    ,"{rest}", String.format("%.2f", manager.getEarningLimit() - earningData.earnings))
+                                    ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings))
                     )
             );
         }

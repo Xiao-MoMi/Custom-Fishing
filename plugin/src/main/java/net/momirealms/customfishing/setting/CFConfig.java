@@ -40,7 +40,7 @@ import java.util.Objects;
 public class CFConfig {
 
     // config version
-    public static String configVersion = "27";
+    public static String configVersion = "28";
     // Debug mode
     public static boolean debug;
     // language
@@ -87,6 +87,11 @@ public class CFConfig {
     public static boolean legacyColorSupport;
     // Durability lore
     public static List<String> durabilityLore;
+
+    public static boolean globalShowInFinder;
+    public static boolean globalDisableStats;
+    public static boolean globalDisableGame;
+    public static boolean globalInstantGame;
 
     public static void load() {
         try {
@@ -135,6 +140,11 @@ public class CFConfig {
         lavaMinTime = config.getInt("mechanics.lava-fishing.min-wait-time", 100);
         lavaMaxTime = config.getInt("mechanics.lava-fishing.max-wait-time", 600);
 
+        globalShowInFinder = config.getBoolean("mechanics.global-loot-property.show-in-fishfinder", true);
+        globalDisableStats = config.getBoolean("mechanics.global-loot-property.disable-stat", false);
+        globalDisableGame = config.getBoolean("mechanics.global-loot-property.disable-game", false);
+        globalInstantGame = config.getBoolean("mechanics.global-loot-property.instant-game", false);
+
         redisRanking = config.getBoolean("mechanics.competition.redis-ranking", false);
         placeholderLimit = config.getInt("mechanics.competition.placeholder-limit", 3);
 
@@ -143,6 +153,7 @@ public class CFConfig {
         legacyColorSupport = config.getBoolean("other-settings.legacy-color-code-support", false);
 
         durabilityLore = config.getStringList("other-settings.custom-durability-format").stream().map(it -> "<!i>" + it).toList();
+
 
         OffsetUtils.loadConfig(config.getConfigurationSection("other-settings.offset-characters"));
     }
