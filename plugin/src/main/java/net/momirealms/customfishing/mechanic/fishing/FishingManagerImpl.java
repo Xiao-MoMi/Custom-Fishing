@@ -664,32 +664,37 @@ public class FishingManagerImpl implements Listener, FishingManager {
     private void doSuccessActions(Loot loot, Effect effect, FishingPreparation fishingPreparation, Player player) {
         FishingCompetition competition = plugin.getCompetitionManager().getOnGoingCompetition();
         if (competition != null) {
-            switch (competition.getGoal()) {
-                case CATCH_AMOUNT -> {
-                    fishingPreparation.insertArg("{score}", "1");
-                    competition.refreshData(player, 1);
-                }
-                case MAX_SIZE, TOTAL_SIZE -> {
-                    String size = fishingPreparation.getArg("{size}");
-                    if (size != null) {
-                        fishingPreparation.insertArg("{score}", size);
-                        competition.refreshData(player, Double.parseDouble(size));
-                    } else {
-                        fishingPreparation.insertArg("{score}", "0");
+            String scoreStr = fishingPreparation.getArg("{SCORE}");
+            if (scoreStr != null) {
+                competition.refreshData(player, Double.parseDouble(scoreStr));
+            } else {
+                switch (competition.getGoal()) {
+                    case CATCH_AMOUNT -> {
+                        double score = effect.getScoreMultiplier();
+                        fishingPreparation.insertArg("{score}", String.format("%.2f", score));
+                        competition.refreshData(player, score);
                     }
-                }
-                case TOTAL_SCORE -> {
-                    double score = loot.getScore();
-                    if (score != 0) {
-                        fishingPreparation.insertArg("{score}", String.format("%.2f", score * effect.getScoreMultiplier()));
-                        competition.refreshData(player, score * effect.getScoreMultiplier());
-                    } else {
-                        fishingPreparation.insertArg("{score}", "0");
+                    case MAX_SIZE, TOTAL_SIZE -> {
+                        String size = fishingPreparation.getArg("{size}");
+                        if (size != null) {
+                            double score = Double.parseDouble(size) * effect.getScoreMultiplier();
+                            fishingPreparation.insertArg("{score}", String.format("%.2f", score));
+                            competition.refreshData(player, score);
+                        } else {
+                            fishingPreparation.insertArg("{score}", "0");
+                        }
+                    }
+                    case TOTAL_SCORE -> {
+                        double score = loot.getScore();
+                        if (score != 0) {
+                            fishingPreparation.insertArg("{score}", String.format("%.2f", score * effect.getScoreMultiplier()));
+                            competition.refreshData(player, score * effect.getScoreMultiplier());
+                        } else {
+                            fishingPreparation.insertArg("{score}", "0");
+                        }
                     }
                 }
             }
-        } else {
-            fishingPreparation.insertArg("{score}","-1");
         }
 
         // events and actions

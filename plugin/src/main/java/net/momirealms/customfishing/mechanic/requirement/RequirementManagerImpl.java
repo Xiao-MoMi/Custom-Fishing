@@ -24,6 +24,7 @@ import net.momirealms.customfishing.api.integration.LevelInterface;
 import net.momirealms.customfishing.api.integration.SeasonInterface;
 import net.momirealms.customfishing.api.manager.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
@@ -195,6 +196,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerMoneyRequirement();
         this.registerInBagRequirement();
         this.registerHookRequirement();
+        this.registerCompetitionRequirement();
     }
 
     public HashMap<String, Double> getLootWithWeight(Condition condition) {
@@ -1046,6 +1048,40 @@ public class RequirementManagerImpl implements RequirementManager {
                 if (advanced) triggerActions(actions, condition);
                 return false;
             };
+        });
+    }
+
+    private void registerCompetitionRequirement() {
+        registerRequirement("competition", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                boolean onCompetition = section.getBoolean("ongoing", true);
+                List<String> ids = ConfigUtils.stringListArgs(section.get("id"));
+                return condition -> {
+                    if (ids.size() == 0) {
+                        if (plugin.getCompetitionManager().getOnGoingCompetition() != null == onCompetition) {
+                            return true;
+                        }
+                    } else {
+                        FishingCompetition competition = plugin.getCompetitionManager().getOnGoingCompetition();
+                        if (onCompetition) {
+                            if (competition != null) {
+                                if (ids.contains(competition.getConfig().getKey())) {
+                                    return true;
+                                }
+                            }
+                        } else {
+                            if (competition == null) {
+                                return true;
+                            }
+                        }
+                    }
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at competition requirement.");
+                return null;
+            }
         });
     }
 

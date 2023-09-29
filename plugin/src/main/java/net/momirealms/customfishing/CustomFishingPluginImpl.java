@@ -50,6 +50,7 @@ import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.storage.StorageManagerImpl;
 import net.momirealms.customfishing.version.VersionManagerImpl;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.HandlerList;
@@ -103,6 +104,8 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         this.totemManager = new TotemManagerImpl(this);
         this.hookManager = new HookManagerImpl(this);
         this.reload();
+
+        if (CFConfig.metrics) new Metrics(this, 16648);
         if (CFConfig.updateChecker)
             this.versionManager.checkUpdate().thenAccept(result -> {
                 if (!result) this.getAdventure().sendConsoleMessage("[CustomFishing] You are using the latest version.");

@@ -24,6 +24,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Optional;
@@ -88,6 +89,17 @@ public class FishingResultEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
+     * Set the value associated with a specific argument key.
+     * @param key key
+     * @param value value
+     * @return previous value
+     */
+    @Nullable
+    public String setArg(String key, String value) {
+        return args.put(key, value);
+    }
+
+    /**
      * Gets the result of the fishing action.
      *
      * @return The fishing result, which can be either SUCCESS or FAILURE.
@@ -121,6 +133,24 @@ public class FishingResultEvent extends PlayerEvent implements Cancellable {
      */
     public int getAmount() {
         return Integer.parseInt(Optional.ofNullable(getArg("{amount}")).orElse("1"));
+    }
+
+    /**
+     * Set the loot amount (Only works for items)
+     *
+     * @param amount amount
+     */
+    public void setAmount(int amount) {
+        setArg("{amount}", String.valueOf(amount));
+    }
+
+    /**
+     * Set the score to get in competition
+     *
+     * @param score score
+     */
+    public void setScore(double score) {
+        setArg("{SCORE}", String.valueOf(score));
     }
 
     /**
