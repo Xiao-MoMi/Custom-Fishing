@@ -317,7 +317,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
         itemCFBuilder
                 .amount(section.getInt("amount", 1))
                 .stackable(section.getBoolean("stackable", true))
-                .size(ConfigUtils.getSizePair(section.getString("size")))
+                .size(ConfigUtils.getFloatPair(section.getString("size")))
                 .price((float) section.getDouble("price.base"), (float) section.getDouble("price.bonus"))
                 .customModelData(section.getInt("custom-model-data"))
                 .nbt(section.getConfigurationSection("nbt"))

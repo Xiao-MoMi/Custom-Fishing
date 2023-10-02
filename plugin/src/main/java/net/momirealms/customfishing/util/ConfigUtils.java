@@ -105,19 +105,37 @@ public class ConfigUtils {
     /**
      * Parses a string representing a size range and returns a pair of floats.
      *
-     * @param size The size string in the format "min~max".
+     * @param string The size string in the format "min~max".
      * @return A pair of floats representing the minimum and maximum size.
      */
     @Nullable
-    public static Pair<Float, Float> getSizePair(String size) {
-        if (size == null) return null;
-        String[] split = size.split("~", 2);
+    public static Pair<Float, Float> getFloatPair(String string) {
+        if (string == null) return null;
+        String[] split = string.split("~", 2);
         if (split.length != 2) {
-            LogUtils.warn("Illegal size argument: " + size);
+            LogUtils.warn("Illegal size argument: " + string);
             LogUtils.warn("Correct usage example: 10.5~25.6");
-            return null;
+            throw new IllegalArgumentException("Illegal float range");
         }
         return Pair.of(Float.parseFloat(split[0]), Float.parseFloat(split[1]));
+    }
+
+    /**
+     * Parses a string representing a size range and returns a pair of ints.
+     *
+     * @param string The size string in the format "min~max".
+     * @return A pair of ints representing the minimum and maximum size.
+     */
+    @Nullable
+    public static Pair<Integer, Integer> getIntegerPair(String string) {
+        if (string == null) return null;
+        String[] split = string.split("~", 2);
+        if (split.length != 2) {
+            LogUtils.warn("Illegal size argument: " + string);
+            LogUtils.warn("Correct usage example: 10~20");
+            throw new IllegalArgumentException("Illegal int range");
+        }
+        return Pair.of(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
     }
 
     /**

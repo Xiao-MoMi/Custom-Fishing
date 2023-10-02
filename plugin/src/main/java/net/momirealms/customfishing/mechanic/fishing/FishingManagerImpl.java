@@ -51,7 +51,9 @@ import net.momirealms.customfishing.util.ItemUtils;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
@@ -173,20 +175,6 @@ public class FishingManagerImpl implements Listener, FishingManager {
         if (gamingPlayer != null) {
             if (gamingPlayer.onChat(event.getMessage()))
                 event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onLeftClick(PlayerInteractEvent event) {
-        if (event.useItemInHand() == Event.Result.DENY)
-            return;
-        if (event.getAction() != org.bukkit.event.block.Action.LEFT_CLICK_AIR)
-            return;
-        GamingPlayer gamingPlayer = gamingPlayerMap.get(event.getPlayer().getUniqueId());
-        if (gamingPlayer != null) {
-            if (gamingPlayer.onLeftClick()) {
-                event.setCancelled(true);
-            }
         }
     }
 

@@ -28,6 +28,7 @@ import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.api.util.OffsetUtils;
 import net.momirealms.customfishing.mechanic.requirement.RequirementManagerImpl;
 import net.momirealms.customfishing.util.ClassUtils;
+import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
@@ -57,6 +58,7 @@ public class GameManagerImpl implements GameManager {
         this.registerAccurateClickGame();
         this.registerHoldGame();
         this.registerTensionGame();
+        this.registerClickGame();
     }
 
     public void load() {
@@ -488,6 +490,52 @@ public class GameManagerImpl implements GameManager {
                             player,
                             tip != null && !played ? tip : title.replace("{tension}", tension[(int) ((strain / ultimateTension) * tension.length)]),
                             bar,
+                            0,
+                            500,
+                            0
+                    );
+                }
+            };
+        }));
+    }
+
+    private void registerClickGame() {
+        this.registerGameType("click", (section -> {
+
+            var title = section.getString("title","<red>{click}");
+            var subtitle = section.getString("subtitle", "<gray>Click <white>{clicks} <gray>times to win. Time left <white>{time}s");
+
+            return (player, fishHook, settings) -> new AbstractGamingPlayer(player, fishHook, settings) {
+
+                private int clickedTimes;
+                private final int requiredTimes = settings.getDifficulty();
+
+                @Override
+                public void arrangeTask() {
+                    this.task = CustomFishingPlugin.get().getScheduler().runTaskAsyncTimer(this, 50, 50, TimeUnit.MILLISECONDS);
+                }
+
+                @Override
+                public void run() {
+                    super.run();
+                    showUI();
+                }
+
+                @Override
+                public boolean onRightClick() {
+                    clickedTimes++;
+                    if (clickedTimes >= requiredTimes) {
+                        setGameResult(true);
+                        endGame();
+                    }
+                    return true;
+                }
+
+                public void showUI() {
+                    AdventureManagerImpl.getInstance().sendTitle(
+                            player,
+                            title.replace("{click}", String.valueOf(clickedTimes)),
+                            subtitle.replace("{clicks}", String.valueOf(requiredTimes)).replace("{time}", String.format("%.1f", ((double) deadline - System.currentTimeMillis())/1000)),
                             0,
                             500,
                             0

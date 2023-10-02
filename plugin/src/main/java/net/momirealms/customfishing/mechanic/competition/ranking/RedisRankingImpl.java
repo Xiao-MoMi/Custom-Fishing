@@ -54,6 +54,20 @@ public class RedisRankingImpl implements Ranking {
         }
     }
 
+    @Override
+    public void addPlayer(CompetitionPlayer competitionPlayer) {
+        try (Jedis jedis = RedisManager.getInstance().getJedis()) {
+            jedis.zincrby("cf_competition", competitionPlayer.getScore(), competitionPlayer.getPlayer());
+        }
+    }
+
+    @Override
+    public void removePlayer(String player) {
+        try (Jedis jedis = RedisManager.getInstance().getJedis()) {
+            jedis.del("cf_competition", player);
+        }
+    }
+
     /**
      * Returns an iterator for iterating over pairs of player names and scores in descending order.
      *

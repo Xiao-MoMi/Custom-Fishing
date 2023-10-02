@@ -29,8 +29,7 @@ import org.bukkit.inventory.PlayerInventory;
 public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
 
     private final FishingManager manager;
-    private final long deadline;
-
+    protected long deadline;
     protected boolean success;
     protected CancellableTask task;
     protected Player player;
@@ -65,11 +64,6 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     public boolean onRightClick() {
         endGame();
         return true;
-    }
-
-    @Override
-    public boolean onLeftClick() {
-        return false;
     }
 
     @Override

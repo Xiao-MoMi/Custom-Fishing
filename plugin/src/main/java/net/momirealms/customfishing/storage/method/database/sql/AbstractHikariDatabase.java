@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.storage.method.database.sql;
 
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.*;
@@ -68,31 +69,33 @@ public abstract class AbstractHikariDatabase extends AbstractSQLDatabase impleme
     public void initialize() {
         YamlConfiguration config = plugin.getConfig("database.yml");
         ConfigurationSection section = config.getConfigurationSection(sqlBrand);
+
         if (section == null) {
             LogUtils.warn("Failed to load database config. It seems that your config is broken. Please regenerate a new one.");
             return;
         }
 
         super.tablePrefix = section.getString("table-prefix", "customfishing");
-        dataSource = new HikariDataSource();
-        dataSource.setDriverClassName(driverClass);
-        dataSource.setJdbcUrl(String.format("jdbc:%s://%s:%s/%s%s",
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setUsername(section.getString("user", "root"));
+        hikariConfig.setPassword(section.getString("password", "pa55w0rd"));
+        hikariConfig.setJdbcUrl(String.format("jdbc:%s://%s:%s/%s%s",
                 sqlBrand.toLowerCase(Locale.ENGLISH),
                 section.getString("host", "localhost"),
                 section.getString("port", "3306"),
                 section.getString("database", "minecraft"),
                 section.getString("connection-parameters")
         ));
-
-        dataSource.setUsername(section.getString("user", "root"));
-        dataSource.setPassword(section.getString("password", "pa55w0rd"));
-
-        dataSource.setMaximumPoolSize(section.getInt("Pool-Settings.max-pool-size", 10));
-        dataSource.setMinimumIdle(section.getInt("Pool-Settings.min-idle", 10));
-        dataSource.setMaxLifetime(section.getLong("Pool-Settings.max-lifetime", 180000L));
-        dataSource.setKeepaliveTime(section.getLong("Pool-Settings.keep-alive-time", 60000L));
-        dataSource.setConnectionTimeout(section.getLong("Pool-Settings.time-out", 20000L));
-        dataSource.setPoolName("CustomFishingHikariPool");
+        hikariConfig.setDriverClassName(driverClass);
+        hikariConfig.setMaximumPoolSize(section.getInt("Pool-Settings.max-pool-size", 10));
+        hikariConfig.setMinimumIdle(section.getInt("Pool-Settings.min-idle", 10));
+        hikariConfig.setMaxLifetime(section.getLong("Pool-Settings.max-lifetime", 180000L));
+        hikariConfig.setConnectionTimeout(section.getLong("Pool-Settings.time-out", 20000L));
+        hikariConfig.setPoolName("CustomFishingHikariPool");
+        try {
+            hikariConfig.setKeepaliveTime(section.getLong("Pool-Settings.keep-alive-time", 60000L));
+        } catch (NoSuchMethodError ignored) {
+        }
 
         final Properties properties = new Properties();
         properties.putAll(
@@ -111,7 +114,8 @@ public abstract class AbstractHikariDatabase extends AbstractSQLDatabase impleme
                         "elideSetAutoCommits", "true",
                         "maintainTimeStats", "false")
         );
-        dataSource.setDataSourceProperties(properties);
+        hikariConfig.setDataSourceProperties(properties);
+        dataSource = new HikariDataSource(hikariConfig);
         super.createTableIfNotExist();
     }
 

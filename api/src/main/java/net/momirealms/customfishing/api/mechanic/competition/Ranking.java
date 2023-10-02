@@ -38,6 +38,20 @@ public interface Ranking {
     CompetitionPlayer getCompetitionPlayer(String player);
 
     /**
+     * Add a player to ranking
+     *
+     * @param competitionPlayer player
+     */
+    void addPlayer(CompetitionPlayer competitionPlayer);
+
+    /**
+     * Remove a player from ranking
+     *
+     * @param player player
+     */
+    void removePlayer(String player);
+
+    /**
      * Returns an iterator for iterating over pairs of player names and scores.
      *
      * @return An iterator for pairs of player names and scores.

@@ -47,7 +47,7 @@ public class CommandManagerImpl implements CommandManager {
     public void load() {
         new CommandAPICommand("customfishing")
                 .withAliases("cfishing")
-                .withPermission(CommandPermission.OP)
+                .withPermission("customfishing.admin")
                 .withSubcommands(
                         getReloadCommand(),
                         getMarketCommand(),
