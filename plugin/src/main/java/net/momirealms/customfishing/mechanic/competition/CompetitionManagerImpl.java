@@ -19,7 +19,6 @@ package net.momirealms.customfishing.mechanic.competition;
 
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
-import net.momirealms.customfishing.api.event.CompetitionEvent;
 import net.momirealms.customfishing.api.manager.CompetitionManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.competition.*;

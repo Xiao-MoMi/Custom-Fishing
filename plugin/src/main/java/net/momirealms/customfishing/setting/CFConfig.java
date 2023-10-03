@@ -24,7 +24,6 @@ import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
-import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.api.util.OffsetUtils;
 import org.bukkit.Material;

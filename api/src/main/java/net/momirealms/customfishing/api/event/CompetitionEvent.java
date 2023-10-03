@@ -1,6 +1,5 @@
 package net.momirealms.customfishing.api.event;
 
-import net.momirealms.customfishing.api.mechanic.competition.CompetitionConfig;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

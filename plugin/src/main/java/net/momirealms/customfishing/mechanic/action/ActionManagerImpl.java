@@ -30,7 +30,6 @@ import net.momirealms.customfishing.api.mechanic.action.ActionExpansion;
 import net.momirealms.customfishing.api.mechanic.action.ActionFactory;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
-import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.util.LogUtils;

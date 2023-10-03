@@ -55,10 +55,12 @@ public class GameManagerImpl implements GameManager {
     }
 
     private void registerInbuiltGames() {
-        this.registerAccurateClickGame();
         this.registerHoldGame();
         this.registerTensionGame();
         this.registerClickGame();
+        this.registerAccurateClickGame();
+        this.registerAccurateClickV2Game();
+        this.registerAccurateClickV3Game();
     }
 
     public void load() {
@@ -210,16 +212,16 @@ public class GameManagerImpl implements GameManager {
             var totalWidth = chances.size() * widthPerSection - 1;
             var pointerOffset = section.getInt("arguments.pointer-offset");
             var pointerWidth = section.getInt("arguments.pointer-width");
-            var title = section.getStringList("title");
+            var title = ConfigUtils.stringListArgs(section.get("title"));
             var font = section.getString("subtitle.font");
             var barImage = section.getString("subtitle.bar");
             var pointerImage = section.getString("subtitle.pointer");
 
             return (player, fishHook, settings) -> new AbstractGamingPlayer(player, fishHook, settings) {
 
-                private int progress;
-                private boolean face;
-                private String sendTitle = title.get(ThreadLocalRandom.current().nextInt(title.size()));
+                private int progress = -1;
+                private boolean face = true;
+                private final String sendTitle = title.get(ThreadLocalRandom.current().nextInt(title.size()));
 
                 @Override
                 public void arrangeTask() {
@@ -390,12 +392,10 @@ public class GameManagerImpl implements GameManager {
                             + OffsetUtils.getOffsetChars((int) (barEffectiveWidth - judgement_position - judgementAreaWidth))
                             + OffsetUtils.getOffsetChars((int) (-barEffectiveWidth - 1 + fish_position))
                             + FontUtils.surroundWithFont(pointerImage, font)
-                            + OffsetUtils.getOffsetChars((int) (barEffectiveWidth - fish_position - pointerIconWidth + 1))
-                            ;
+                            + OffsetUtils.getOffsetChars((int) (barEffectiveWidth - fish_position - pointerIconWidth + 1));
                     AdventureManagerImpl.getInstance().sendTitle(
                             player,
-                            tip != null && !played ? tip : title.replace("{progress}", progress[(int) ((hold_time / time_requirement) * progress.length)])
-                            ,
+                            tip != null && !played ? tip : title.replace("{progress}", progress[(int) ((hold_time / time_requirement) * progress.length)]),
                             bar,
                             0,
                             500,
@@ -540,6 +540,165 @@ public class GameManagerImpl implements GameManager {
                             500,
                             0
                     );
+                }
+            };
+        }));
+    }
+
+    private void registerAccurateClickV2Game() {
+
+        this.registerGameType("accurate_click_v2", (section -> {
+
+            var barWidth = ConfigUtils.getIntegerPair(section.getString("title.total-width", "15~20"));
+            var barSuccess = ConfigUtils.getIntegerPair(section.getString("title.success-width","3~4"));
+            var barBody = section.getString("title.body","");
+            var barPointer = section.getString("title.pointer", "");
+            var barTarget = section.getString("title.target","");
+
+            var subtitle = section.getString("subtitle", "<gray>Reel in at the most critical moment");
+
+            return (player, fishHook, settings) -> new AbstractGamingPlayer(player, fishHook, settings) {
+
+                private final int totalWidth = ThreadLocalRandom.current().nextInt(barWidth.right() - barWidth.left() + 1) + barWidth.left();
+                private final int successWidth = ThreadLocalRandom.current().nextInt(barSuccess.right() - barSuccess.left() + 1) + barSuccess.left();
+                private final int successPosition = ThreadLocalRandom.current().nextInt((totalWidth - successWidth + 1)) + 1;
+                private int currentIndex = 0;
+                private int timer = 0;
+                private boolean face = true;
+
+                @Override
+                public void arrangeTask() {
+                    this.task = CustomFishingPlugin.get().getScheduler().runTaskAsyncTimer(this, 50, 50, TimeUnit.MILLISECONDS);
+                }
+
+                @Override
+                public void run() {
+                    super.run();
+                    timer++;
+                    if (timer % (21 - settings.getDifficulty() / 5) == 0) {
+                        movePointer();
+                    }
+                    showUI();
+                }
+
+                private void movePointer() {
+                    if (face) {
+                        currentIndex++;
+                        if (currentIndex >= totalWidth - 1) {
+                            face = false;
+                        }
+                    } else {
+                        currentIndex--;
+                        if (currentIndex <= 0) {
+                            face = true;
+                        }
+                    }
+                }
+
+                public void showUI() {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    for (int i = 1; i <= totalWidth; i++) {
+                        if (i == currentIndex + 1) {
+                            stringBuilder.append(barPointer);
+                            continue;
+                        }
+                        if (i >= successPosition && i <= successPosition + successWidth - 1) {
+                            stringBuilder.append(barTarget);
+                            continue;
+                        }
+                        stringBuilder.append(barBody);
+                    }
+
+                    AdventureManagerImpl.getInstance().sendTitle(
+                            player,
+                            stringBuilder.toString(),
+                            subtitle,
+                            0,
+                            500,
+                            0
+                    );
+                }
+
+                @Override
+                public boolean isSuccessful() {
+                    return currentIndex + 1 <= successPosition + successWidth - 1 && currentIndex + 1 >= successPosition;
+                }
+            };
+        }));
+    }
+
+    private void registerAccurateClickV3Game() {
+
+        this.registerGameType("accurate_click_v3", (section -> {
+
+            var font = section.getString("subtitle.font");
+            var pointerImage = section.getString("subtitle.pointer");
+            var barImage = section.getString("subtitle.bar");
+            var judgementAreaImage = section.getString("subtitle.judgment-area");
+            var titles = ConfigUtils.stringListArgs(section.get("title"));
+
+            var barEffectiveWidth = section.getInt("arguments.bar-effective-area-width");
+            var judgementAreaWidth = section.getInt("arguments.judgment-area-width");
+            var judgementAreaOffset = section.getInt("arguments.judgment-area-offset");
+            var pointerIconWidth = section.getInt("arguments.pointer-icon-width");
+            var pointerOffset = section.getInt("arguments.pointer-offset");
+
+            return (player, fishHook, settings) -> new AbstractGamingPlayer(player, fishHook, settings) {
+
+                private int progress = -1;
+                private boolean face = true;
+                private final int judgement_position = ThreadLocalRandom.current().nextInt(barEffectiveWidth - judgementAreaWidth + 1);
+                private final String title = titles.get(ThreadLocalRandom.current().nextInt(titles.size()));
+
+                @Override
+                public void arrangeTask() {
+                    var period = ((double) 10*(200-settings.getDifficulty()))/((double) (1+4*settings.getDifficulty()));
+                    this.task = CustomFishingPlugin.get().getScheduler().runTaskAsyncTimer(
+                            this,
+                            50,
+                            (long) period,
+                            TimeUnit.MILLISECONDS
+                    );
+                }
+
+                @Override
+                public void run() {
+                    super.run();
+                    if (face) {
+                        progress++;
+                        if (progress >= barEffectiveWidth - 1) {
+                            face = false;
+                        }
+                    } else {
+                        progress--;
+                        if (progress <= 0) {
+                            face = true;
+                        }
+                    }
+                    showUI();
+                }
+
+                public void showUI() {
+                    String bar = FontUtils.surroundWithFont(barImage, font)
+                            + OffsetUtils.getOffsetChars(judgementAreaOffset + judgement_position)
+                            + FontUtils.surroundWithFont(judgementAreaImage, font)
+                            + OffsetUtils.getOffsetChars(barEffectiveWidth - judgement_position - judgementAreaWidth)
+                            + OffsetUtils.getOffsetChars(progress + pointerOffset)
+                            + FontUtils.surroundWithFont(pointerImage, font)
+                            + OffsetUtils.getOffsetChars(barEffectiveWidth - progress - pointerIconWidth + 1);
+                    AdventureManagerImpl.getInstance().sendTitle(
+                            player,
+                            title,
+                            bar,
+                            0,
+                            500,
+                            0
+                    );
+                }
+
+                @Override
+                public boolean isSuccessful() {
+                    return progress < judgement_position + judgementAreaWidth && progress >= judgement_position;
                 }
             };
         }));

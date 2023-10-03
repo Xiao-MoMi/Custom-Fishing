@@ -30,7 +30,6 @@ import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.item.BuildableItem;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.setting.CFLocale;
-import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.ItemUtils;
 import net.momirealms.customfishing.util.NBTUtils;
 import org.bukkit.Material;
