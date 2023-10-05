@@ -40,6 +40,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("DuplicatedCode")
 public class GameManagerImpl implements GameManager {
 
     private final CustomFishingPlugin plugin;
@@ -56,6 +57,7 @@ public class GameManagerImpl implements GameManager {
 
     private void registerInbuiltGames() {
         this.registerHoldGame();
+        this.registerHoldV2Game();
         this.registerTensionGame();
         this.registerClickGame();
         this.registerAccurateClickGame();
@@ -699,6 +701,146 @@ public class GameManagerImpl implements GameManager {
                 @Override
                 public boolean isSuccessful() {
                     return progress < judgement_position + judgementAreaWidth && progress >= judgement_position;
+                }
+            };
+        }));
+    }
+
+    private void registerHoldV2Game() {
+        this.registerGameType("hold_v2", (section -> {
+
+            var timeRequirements = section.getIntegerList("hold-time-requirements").stream().mapToInt(Integer::intValue).toArray();
+            var judgementAreaImage = section.getString("subtitle.judgment-area");
+            var pointerImage = section.getString("subtitle.pointer");
+            var barEffectiveWidth = section.getInt("arguments.bar-effective-area-width");
+            var judgementAreaOffset = section.getInt("arguments.judgment-area-offset");
+            var judgementAreaWidth = section.getInt("arguments.judgment-area-width");
+            var pointerIconWidth = section.getInt("arguments.pointer-icon-width");
+            var punishment = section.getDouble("arguments.punishment");
+            var progress = section.getStringList("progress").toArray(new String[0]);
+            var waterResistance = section.getDouble("arguments.water-resistance", 0.15);
+            var pullingStrength = section.getDouble("arguments.pulling-strength", 3);
+            var looseningLoss = section.getDouble("arguments.loosening-strength-loss", 0.5);
+
+            var title = section.getString("title", "{progress}");
+            var font = section.getString("subtitle.font");
+            var barImage = section.getString("subtitle.bar");
+            var tip = section.getString("tip");
+
+            return (player, fishHook, settings) -> new AbstractGamingPlayer(player, fishHook, settings) {
+                private double hold_time;
+                private double judgement_position;
+                private double fish_position;
+                private double judgement_velocity;
+                private double fish_velocity;
+                private int timer;
+                private final int time_requirement = timeRequirements[ThreadLocalRandom.current().nextInt(timeRequirements.length)] * 1000;
+                private boolean played;
+
+                @Override
+                public void arrangeTask() {
+                    this.judgement_position = (double) (barEffectiveWidth - judgementAreaWidth) / 2;
+                    this.task = CustomFishingPlugin.get().getScheduler().runTaskAsyncTimer(
+                            this,
+                            50,
+                            33,
+                            TimeUnit.MILLISECONDS
+                    );
+                }
+
+                @Override
+                public void run() {
+                    super.run();
+                    if (timer < 40 - (settings.getDifficulty() / 10)) {
+                        timer++;
+                    } else {
+                        timer = 0;
+                        if (Math.random() > ((double) 25 / (settings.getDifficulty() + 100))) {
+                            burst();
+                        }
+                    }
+                    judgement_position += judgement_velocity;
+                    fish_position += fish_velocity;
+                    fraction();
+                    calibrate();
+                    if (fish_position >= judgement_position && fish_position + pointerIconWidth <= judgement_position + judgementAreaWidth) {
+                        hold_time += 33;
+                    } else {
+                        hold_time -= punishment * 33;
+                    }
+                    if (hold_time >= time_requirement) {
+                        setGameResult(true);
+                        endGame();
+                        return;
+                    }
+                    hold_time = Math.max(0, Math.min(hold_time, time_requirement));
+                    showUI();
+                }
+
+                private void burst() {
+                    if (Math.random() < (judgement_position / barEffectiveWidth)) {
+                        judgement_velocity = -1 - 0.8 * Math.random() * ((double) settings.getDifficulty() / 15);
+                    } else {
+                        judgement_velocity = 1 + 0.8 * Math.random() * ((double) settings.getDifficulty() / 15);
+                    }
+                }
+
+                private void fraction() {
+                    if (judgement_velocity > 0) {
+                        judgement_velocity -= waterResistance;
+                        if (judgement_velocity < 0) judgement_velocity = 0;
+                    } else {
+                        judgement_velocity += waterResistance;
+                        if (judgement_velocity > 0) judgement_velocity = 0;
+                    }
+                    fish_velocity -= looseningLoss;
+                    if (fish_velocity < -10 * looseningLoss) {
+                        fish_velocity = -10 * looseningLoss;
+                    }
+                }
+
+                private void calibrate() {
+                    if (fish_position < 0) {
+                        fish_position = 0;
+                        fish_velocity = 0;
+                    }
+                    if (fish_position + pointerIconWidth > barEffectiveWidth) {
+                        fish_position = barEffectiveWidth - pointerIconWidth;
+                        fish_velocity = 0;
+                    }
+                    if (judgement_position < 0) {
+                        judgement_position = 0;
+                        judgement_velocity = 0;
+                    }
+                    if (judgement_position + judgementAreaWidth > barEffectiveWidth) {
+                        judgement_position = barEffectiveWidth - judgementAreaWidth;
+                        judgement_velocity = 0;
+                    }
+                }
+
+                @Override
+                public boolean onRightClick() {
+                    played = true;
+                    fish_velocity = pullingStrength;
+                    return true;
+                }
+
+                public void showUI() {
+                    String bar = FontUtils.surroundWithFont(barImage, font)
+                            + OffsetUtils.getOffsetChars((int) (judgementAreaOffset + judgement_position))
+                            + FontUtils.surroundWithFont(judgementAreaImage, font)
+                            + OffsetUtils.getOffsetChars((int) (barEffectiveWidth - judgement_position - judgementAreaWidth))
+                            + OffsetUtils.getOffsetChars((int) (-barEffectiveWidth - 1 + fish_position))
+                            + FontUtils.surroundWithFont(pointerImage, font)
+                            + OffsetUtils.getOffsetChars((int) (barEffectiveWidth - fish_position - pointerIconWidth + 1));
+                    AdventureManagerImpl.getInstance().sendTitle(
+                            player,
+                            tip != null && !played ? tip : title.replace("{progress}", progress[(int) ((hold_time / time_requirement) * progress.length)]),
+                            bar,
+                            0,
+                            500,
+                            0
+                    );
                 }
             };
         }));
