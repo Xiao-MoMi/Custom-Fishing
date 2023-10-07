@@ -22,10 +22,14 @@ import net.momirealms.customfishing.api.common.Tuple;
 import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
+import net.momirealms.customfishing.mechanic.misc.value.ExpressionValue;
+import net.momirealms.customfishing.mechanic.misc.value.PlainValue;
+import net.momirealms.customfishing.mechanic.misc.value.Value;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,6 +104,38 @@ public class ConfigUtils {
             return Double.valueOf(i);
         }
         return 0;
+    }
+
+    /**
+     * Converts an object into an integer value.
+     *
+     * @param arg The input object
+     * @return An integer value
+     */
+    public static int getIntegerValue(Object arg) {
+        if (arg instanceof Integer i) {
+            return i;
+        } else if (arg instanceof Double d) {
+            return d.intValue();
+        }
+        return 0;
+    }
+
+    /**
+     * Converts an object into a "value".
+     *
+     * @param arg int / double / expression
+     * @return Value
+     */
+    public static Value getValue(Object arg) {
+        if (arg instanceof Integer i) {
+            return new PlainValue(i);
+        } else if (arg instanceof Double d) {
+            return new PlainValue(d);
+        } else if (arg instanceof String s) {
+            return new ExpressionValue(s);
+        }
+        throw new IllegalArgumentException("Illegal value type");
     }
 
     /**
@@ -249,19 +285,24 @@ public class ConfigUtils {
             }
             case '=' -> {
                 String formula = text.substring(1);
-                boolean hasPapi = PlaceholderManagerImpl.getInstance().hasPapi();
-                return (player, weight) -> {
-                    String temp = formula;
-                    if (hasPapi)
-                        temp = PlaceholderManagerImpl.getInstance().parseCacheablePlaceholders(player, formula);
-                    Expression expression = new ExpressionBuilder(temp)
-                            .variables("0")
-                            .build()
-                            .setVariable("0", weight);
-                    return expression.evaluate();
-                };
+                return (player, weight) -> getExpressionValue(player, formula, Map.of("0", weight));
             }
             default -> throw new IllegalArgumentException("Invalid weight: " + text);
         }
+    }
+
+    public static double getExpressionValue(Player player, String formula, Map<String, Double> vars) {
+        boolean hasPapi = PlaceholderManagerImpl.getInstance().hasPapi();
+        if (hasPapi)
+            formula = PlaceholderManagerImpl.getInstance().parseCacheablePlaceholders(player, formula);
+        ExpressionBuilder expressionBuilder = new ExpressionBuilder(formula);
+        for (Map.Entry<String, Double> entry : vars.entrySet()) {
+            expressionBuilder.variables(entry.getKey());
+        }
+        Expression expression = expressionBuilder.build();
+        for (Map.Entry<String, Double> entry : vars.entrySet()) {
+            expression.setVariable(entry.getKey(), entry.getValue());
+        }
+        return expression.evaluate();
     }
 }

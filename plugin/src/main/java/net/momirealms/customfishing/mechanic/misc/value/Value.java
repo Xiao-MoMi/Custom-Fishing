@@ -15,28 +15,11 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.mechanic.totem.block.type;
+package net.momirealms.customfishing.mechanic.misc.value;
 
-import net.momirealms.customfishing.api.CustomFishingPlugin;
-import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
-import java.io.Serializable;
+public interface Value {
 
-public class EqualType implements TypeCondition, Serializable {
-
-    private final String type;
-
-    public EqualType(String type) {
-        this.type = type;
-    }
-
-    @Override
-    public boolean isMet(Block type) {
-        return this.type.equals(CustomFishingPlugin.get().getBlockManager().getAnyPluginBlockID(type));
-    }
-
-    @Override
-    public String getRawText() {
-        return type;
-    }
+    double get(Player player);
 }

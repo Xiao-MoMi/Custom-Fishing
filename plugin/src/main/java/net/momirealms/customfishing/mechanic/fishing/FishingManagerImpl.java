@@ -20,7 +20,10 @@ package net.momirealms.customfishing.mechanic.fishing;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
+import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.event.FishingResultEvent;
 import net.momirealms.customfishing.api.event.LavaFishingEvent;
@@ -72,7 +75,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
     private final ConcurrentHashMap<UUID, HookCheckTimerTask> hookCheckMap;
     private final ConcurrentHashMap<UUID, TempFishingState> tempFishingStateMap;
     private final ConcurrentHashMap<UUID, GamingPlayer> gamingPlayerMap;
-    private final ConcurrentHashMap<UUID, ItemStack> vanillaLootMap;
+    private final ConcurrentHashMap<UUID, Pair<ItemStack, Integer>> vanillaLootMap;
 
     public FishingManagerImpl(CustomFishingPluginImpl plugin) {
         this.plugin = plugin;
@@ -394,7 +397,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
             var loot = temp.getLoot();
             if (loot.getID().equals("vanilla")) {
                 // put vanilla loot in map
-                this.vanillaLootMap.put(uuid, item.getItemStack());
+                this.vanillaLootMap.put(uuid, Pair.of(item.getItemStack(), event.getExpToDrop()));
             }
             loot.triggerActions(ActionTrigger.HOOK, temp.getPreparation());
             temp.getPreparation().triggerActions(ActionTrigger.HOOK);
@@ -552,10 +555,10 @@ public class FishingManagerImpl implements Listener, FishingManager {
         var fishingPreparation = state.getPreparation();
 
         if (loot.getID().equals("vanilla")) {
-            ItemStack itemStack = this.vanillaLootMap.remove(fishingPreparation.getPlayer().getUniqueId());
-            if (itemStack != null) {
-                fishingPreparation.insertArg("{nick}", "<lang:item.minecraft." + itemStack.getType().toString().toLowerCase() + ">");
-                fishingPreparation.insertArg("{loot}", itemStack.getType().toString());
+            Pair<ItemStack, Integer> pair = this.vanillaLootMap.remove(fishingPreparation.getPlayer().getUniqueId());
+            if (pair != null) {
+                fishingPreparation.insertArg("{nick}", "<lang:item.minecraft." + pair.left().getType().toString().toLowerCase() + ">");
+                fishingPreparation.insertArg("{loot}", pair.left().getType().toString());
             }
         }
 
@@ -618,12 +621,16 @@ public class FishingManagerImpl implements Listener, FishingManager {
 
                 // build the items for multiple times instead of using setAmount() to make sure that each item is unique
                 if (loot.getID().equals("vanilla")) {
-                    ItemStack itemStack = vanillaLootMap.remove(player.getUniqueId());
-                    if (itemStack != null) {
-                        fishingPreparation.insertArg("{nick}", "<lang:item.minecraft." + itemStack.getType().toString().toLowerCase() + ">");
+                    Pair<ItemStack, Integer> pair = vanillaLootMap.remove(player.getUniqueId());
+                    if (pair != null) {
+                        fishingPreparation.insertArg("{nick}", "<lang:item.minecraft." + pair.left().getType().toString().toLowerCase() + ">");
                         for (int i = 0; i < amount; i++) {
-                            plugin.getItemManager().dropItem(hook.getLocation(), player.getLocation(), itemStack.clone());
+                            plugin.getItemManager().dropItem(hook.getLocation(), player.getLocation(), pair.left().clone());
                             doSuccessActions(loot, effect, fishingPreparation, player);
+                            if (pair.right() > 0) {
+                                player.giveExp(pair.right(), true);
+                                AdventureManagerImpl.getInstance().sendSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
+                            }
                         }
                     }
                 } else {

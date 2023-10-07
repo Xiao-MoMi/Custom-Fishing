@@ -15,27 +15,23 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.mechanic.totem.block.type;
+package net.momirealms.customfishing.mechanic.misc.value;
 
-import org.bukkit.block.Block;
+import net.momirealms.customfishing.util.ConfigUtils;
+import org.bukkit.entity.Player;
 
-import java.io.Serializable;
+import java.util.HashMap;
 
-public class EndWithType implements TypeCondition, Serializable {
+public class ExpressionValue implements Value {
 
-    private final String end;
+    private final String expression;
 
-    public EndWithType(String end) {
-        this.end = end;
+    public ExpressionValue(String expression) {
+        this.expression = expression;
     }
 
     @Override
-    public boolean isMet(Block type) {
-        return type.getType().name().endsWith(end);
-    }
-
-    @Override
-    public String getRawText() {
-        return "*" + end;
+    public double get(Player player) {
+        return ConfigUtils.getExpressionValue(player, expression, new HashMap<>(0));
     }
 }

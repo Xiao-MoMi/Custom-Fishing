@@ -15,27 +15,20 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.mechanic.totem.block.type;
+package net.momirealms.customfishing.mechanic.misc.value;
 
-import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
-import java.io.Serializable;
+public class PlainValue implements Value{
 
-public class StartWithType implements TypeCondition, Serializable {
+    private final double value;
 
-    private final String start;
-
-    public StartWithType(String start) {
-        this.start = start;
+    public PlainValue(double value) {
+        this.value = value;
     }
 
     @Override
-    public boolean isMet(Block type) {
-        return type.getType().name().startsWith(start);
-    }
-
-    @Override
-    public String getRawText() {
-        return start + "*";
+    public double get(Player player) {
+        return value;
     }
 }

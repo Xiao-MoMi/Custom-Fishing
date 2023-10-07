@@ -498,13 +498,13 @@ public class ActionManagerImpl implements ActionManager {
 
     private void registerMendingAction() {
         registerAction("mending", (args, chance) -> {
-            int xp = (int) args;
+            var value = ConfigUtils.getValue(args);
             return condition -> {
                 if (Math.random() > chance) return;
                 if (CustomFishingPlugin.get().getVersionManager().isSpigot()) {
-                    condition.getPlayer().getLocation().getWorld().spawn(condition.getPlayer().getLocation(), ExperienceOrb.class, e -> e.setExperience(xp));
+                    condition.getPlayer().getLocation().getWorld().spawn(condition.getPlayer().getLocation(), ExperienceOrb.class, e -> e.setExperience((int) value.get(condition.getPlayer())));
                 } else {
-                    condition.getPlayer().giveExp(xp, true);
+                    condition.getPlayer().giveExp((int) value.get(condition.getPlayer()), true);
                     AdventureManagerImpl.getInstance().sendSound(condition.getPlayer(), Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
                 }
             };
@@ -513,29 +513,30 @@ public class ActionManagerImpl implements ActionManager {
 
     private void registerFoodAction() {
         registerAction("food", (args, chance) -> {
-            int food = (int) (ConfigUtils.getDoubleValue(args) * 2);
+            var value = ConfigUtils.getValue(args);
             return condition -> {
                 if (Math.random() > chance) return;
                 Player player = condition.getPlayer();
-                player.setFoodLevel(player.getFoodLevel() + food);
+                player.setFoodLevel((int) (player.getFoodLevel() + value.get(player)));
             };
         });
         registerAction("saturation", (args, chance) -> {
-            double saturation = ConfigUtils.getDoubleValue(args);
+            var value = ConfigUtils.getValue(args);
             return condition -> {
                 if (Math.random() > chance) return;
                 Player player = condition.getPlayer();
-                player.setSaturation((float) (player.getSaturation() + saturation));
+                player.setSaturation((float) (player.getSaturation() + value.get(player)));
             };
         });
     }
 
     private void registerExpAction() {
         registerAction("exp", (args, chance) -> {
-            int xp = (int) args;
+            var value = ConfigUtils.getValue(args);
             return condition -> {
                 if (Math.random() > chance) return;
-                condition.getPlayer().giveExp(xp);
+                condition.getPlayer().giveExp((int) value.get(condition.getPlayer()));
+                AdventureManagerImpl.getInstance().sendSound(condition.getPlayer(), Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
             };
         });
     }
@@ -683,17 +684,17 @@ public class ActionManagerImpl implements ActionManager {
 
     private void registerMoneyAction() {
         registerAction("give-money", (args, chance) -> {
-            double money = ConfigUtils.getDoubleValue(args);
+            var value = ConfigUtils.getValue(args);
             return condition -> {
                 if (Math.random() > chance) return;
-                VaultHook.getEconomy().depositPlayer(condition.getPlayer(), money);
+                VaultHook.getEconomy().depositPlayer(condition.getPlayer(), value.get(condition.getPlayer()));
             };
         });
         registerAction("take-money", (args, chance) -> {
-            double money = ConfigUtils.getDoubleValue(args);
+            var value = ConfigUtils.getValue(args);
             return condition -> {
                 if (Math.random() > chance) return;
-                VaultHook.getEconomy().withdrawPlayer(condition.getPlayer(), money);
+                VaultHook.getEconomy().withdrawPlayer(condition.getPlayer(), value.get(condition.getPlayer()));
             };
         });
     }
@@ -830,11 +831,11 @@ public class ActionManagerImpl implements ActionManager {
 
     private void registerLevelAction() {
         registerAction("level", (args, chance) -> {
-            int level = (int) args;
+            var value = ConfigUtils.getValue(args);
             return condition -> {
                 if (Math.random() > chance) return;
                 Player player = condition.getPlayer();
-                player.setLevel(Math.max(0, player.getLevel() + level));
+                player.setLevel((int) Math.max(0, player.getLevel() + value.get(condition.getPlayer())));
             };
         });
     }
@@ -923,12 +924,12 @@ public class ActionManagerImpl implements ActionManager {
         registerAction("plugin-exp", (args, chance) -> {
             if (args instanceof ConfigurationSection section) {
                 String pluginName = section.getString("plugin");
-                double exp = section.getDouble("exp", 1);
+                var value = ConfigUtils.getValue(section.get("exp"));
                 String target = section.getString("target");
                 return condition -> {
                     if (Math.random() > chance) return;
                     Optional.ofNullable(plugin.getIntegrationManager().getLevelPlugin(pluginName)).ifPresentOrElse(it -> {
-                        it.addXp(condition.getPlayer(), target, exp);
+                        it.addXp(condition.getPlayer(), target, value.get(condition.getPlayer()));
                     }, () -> LogUtils.warn("Plugin (" + pluginName + "'s) level is not compatible. Please double check if it's a problem caused by pronunciation."));
                 };
             } else {

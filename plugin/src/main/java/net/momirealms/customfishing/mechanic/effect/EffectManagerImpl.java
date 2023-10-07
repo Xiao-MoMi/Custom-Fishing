@@ -245,7 +245,6 @@ public class EffectManagerImpl implements EffectManager {
     public EffectModifier getEffectModifier(ConfigurationSection section) {
         String type = section.getString("type");
         if (type == null) return null;
-
         switch (type) {
             case "weight-mod" -> {
                 var modList = ConfigUtils.getModifiers(section.getStringList("value"));
@@ -272,39 +271,39 @@ public class EffectManagerImpl implements EffectManager {
                 });
             }
             case "hook-time" -> {
-                double time = section.getDouble("value");
+                var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setHookTimeModifier(effect.getHookTimeModifier() + time - 1);
+                    effect.setHookTimeModifier(effect.getHookTimeModifier() + value.get(condition.getPlayer()) - 1);
                 });
             }
             case "difficulty" -> {
-                double difficulty = section.getDouble("value");
+                var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setDifficultyModifier(effect.getDifficultyModifier() + difficulty);
+                    effect.setDifficultyModifier(effect.getDifficultyModifier() + value.get(condition.getPlayer()));
                 });
             }
             case "multiple-loot" -> {
-                double multiple = section.getDouble("value");
+                var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setMultipleLootChance(effect.getMultipleLootChance() + multiple);
+                    effect.setMultipleLootChance(effect.getMultipleLootChance() + value.get(condition.getPlayer()));
                 });
             }
             case "score-bonus" -> {
-                double multiple = section.getDouble("value");
+                var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setScoreMultiplier(effect.getScoreMultiplier() + multiple - 1);
+                    effect.setScoreMultiplier(effect.getScoreMultiplier() + value.get(condition.getPlayer()) - 1);
                 });
             }
             case "size-bonus" -> {
-                double multiple = section.getDouble("value");
+                var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setSizeMultiplier(effect.getSizeMultiplier() + multiple - 1);
+                    effect.setSizeMultiplier(effect.getSizeMultiplier() + value.get(condition.getPlayer()) - 1);
                 });
             }
             case "game-time" -> {
-                double time = section.getDouble("value");
+                var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setGameTimeModifier(effect.getGameTimeModifier() + time);
+                    effect.setGameTimeModifier(effect.getGameTimeModifier() + value.get(condition.getPlayer()));
                 });
             }
             case "lava-fishing" -> {
