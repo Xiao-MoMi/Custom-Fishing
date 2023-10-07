@@ -35,7 +35,17 @@ public interface Ranking {
      * @param player The name of the player to retrieve.
      * @return The CompetitionPlayer object if found, or null if not found.
      */
+    @Nullable
     CompetitionPlayer getCompetitionPlayer(String player);
+
+    /**
+     * Retrieves a competition player by rank.
+     *
+     * @param rank The rank of the player.
+     * @return The CompetitionPlayer object if found, or null if not found.
+     */
+    @Nullable
+    CompetitionPlayer getCompetitionPlayer(int rank);
 
     /**
      * Add a player to ranking

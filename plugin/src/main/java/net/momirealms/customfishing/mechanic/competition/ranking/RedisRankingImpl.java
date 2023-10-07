@@ -21,6 +21,7 @@ import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionPlayer;
 import net.momirealms.customfishing.api.mechanic.competition.Ranking;
 import net.momirealms.customfishing.storage.method.database.nosql.RedisManager;
+import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.resps.Tuple;
 
@@ -51,6 +52,15 @@ public class RedisRankingImpl implements Ranking {
             Double score = jedis.zscore("cf_competition", player);
             if (score == null || score == 0) return null;
             return new CompetitionPlayer(player, Float.parseFloat(score.toString()));
+        }
+    }
+
+    @Override
+    public CompetitionPlayer getCompetitionPlayer(int rank) {
+        try (Jedis jedis = RedisManager.getInstance().getJedis()) {
+            List<Tuple> player = jedis.zrevrangeWithScores("cf_competition", rank - 1, rank -1);
+            if (player == null || player.size() == 0) return null;
+            return new CompetitionPlayer(player.get(0).getElement(), player.get(0).getScore());
         }
     }
 

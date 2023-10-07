@@ -20,6 +20,7 @@ package net.momirealms.customfishing.mechanic.competition.ranking;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionPlayer;
 import net.momirealms.customfishing.api.mechanic.competition.Ranking;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -83,6 +84,20 @@ public class LocalRankingImpl implements Ranking {
             if (competitionPlayer.getPlayer().equals(player)) {
                 return competitionPlayer;
             }
+        }
+        return null;
+    }
+
+    @Override
+    public CompetitionPlayer getCompetitionPlayer(int rank) {
+        int i = 1;
+        int size = getSize();
+        if (rank > size) return null;
+        for (CompetitionPlayer player : competitionPlayers) {
+            if (rank == i) {
+                return player;
+            }
+            i++;
         }
         return null;
     }
