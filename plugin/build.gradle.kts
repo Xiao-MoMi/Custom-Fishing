@@ -30,20 +30,21 @@ dependencies {
     compileOnly("com.willfp:libreforge:4.34.0")
 
     // database
-    compileOnly("org.xerial:sqlite-jdbc:3.42.0.0")
-    compileOnly("com.h2database:h2:2.2.220")
+    compileOnly("org.xerial:sqlite-jdbc:3.43.0.0")
+    compileOnly("com.h2database:h2:2.2.224")
     compileOnly("org.mongodb:mongodb-driver-sync:4.10.2")
     compileOnly("com.zaxxer:HikariCP:5.0.1")
-    compileOnly("redis.clients:jedis:5.0.0")
+    compileOnly("redis.clients:jedis:5.0.1")
 
     // others
     compileOnly("com.github.LoneDev6:api-itemsadder:3.5.0c-r5")
-    compileOnly("com.github.oraxen:oraxen:1.161.0")
-    compileOnly("pers.neige.neigeitems:NeigeItems:1.15.24")
+    compileOnly("com.github.oraxen:oraxen:1.162.0")
+    compileOnly("pers.neige.neigeitems:NeigeItems:1.15.57")
     compileOnly("com.github.Zrips:Jobs:4.17.2")
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("org.betonquest:betonquest:2.0.0-SNAPSHOT")
+    compileOnly("xyz.xenondevs.invui:invui:1.19")
 
     // local jars
     compileOnly(files("libs/AdvancedEnchantments-api.jar"))
@@ -68,14 +69,10 @@ dependencies {
     implementation("de.tr7zw:item-nbt-api:2.12.0")
 
     // bStats
-    implementation("org.bstats:bstats-bukkit:3.0.1")
+    implementation("org.bstats:bstats-bukkit:3.0.2")
 
     // local lib
     implementation(files("libs/BiomeAPI.jar"))
-
-    // anvil
-    implementation("net.wesjd:anvilgui:1.9.0-SNAPSHOT")
-    implementation("de.themoep:inventorygui:1.6.1-SNAPSHOT")
 }
 
 tasks {

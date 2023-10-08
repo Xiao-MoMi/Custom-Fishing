@@ -21,6 +21,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
+import io.papermc.paper.plugin.loader.library.impl.MavenLibraryResolver;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.util.LogUtils;
@@ -194,21 +195,27 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         String mavenRepo = TimeZone.getDefault().getID().startsWith("Asia") ?
                 "https://maven.aliyun.com/repository/public/" : "https://repo.maven.apache.org/maven2/";
         LibraryLoader.loadDependencies(
-                "org.apache.commons:commons-pool2:2.11.1", mavenRepo,
-                "redis.clients:jedis:5.0.0", mavenRepo,
+                "org.apache.commons:commons-pool2:2.12.0", mavenRepo,
+                "redis.clients:jedis:5.0.1", mavenRepo,
                 "dev.dejvokep:boosted-yaml:1.3.1", mavenRepo,
                 "com.zaxxer:HikariCP:5.0.1", mavenRepo,
                 "net.objecthunter:exp4j:0.4.8", mavenRepo,
                 "org.mariadb.jdbc:mariadb-java-client:3.2.0", mavenRepo,
-                "mysql:mysql-connector-java:8.0.30", mavenRepo,
-                "commons-io:commons-io:2.13.0", mavenRepo,
+                "com.mysql:mysql-connector-j:8.0.33", mavenRepo,
+                "commons-io:commons-io:2.14.0", mavenRepo,
                 "com.google.code.gson:gson:2.10.1", mavenRepo,
-                "com.h2database:h2:2.2.220", mavenRepo,
+                "com.h2database:h2:2.2.224", mavenRepo,
                 "org.mongodb:mongodb-driver-sync:4.10.2", mavenRepo,
                 "org.mongodb:mongodb-driver-core:4.10.2", mavenRepo,
                 "org.mongodb:bson:4.10.2", mavenRepo,
-                "org.xerial:sqlite-jdbc:3.42.0.0", mavenRepo,
-                "dev.jorel:commandapi-bukkit-shade:9.2.0", mavenRepo
+                "org.xerial:sqlite-jdbc:3.43.0.0", mavenRepo,
+                "dev.jorel:commandapi-bukkit-shade:9.2.0", mavenRepo,
+                "xyz.xenondevs.invui:invui-core:1.19", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r8:1.19", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r9:1.19", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r13:1.19", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r14:1.19", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r15:1.19", "https://repo.xenondevs.xyz/releases/"
         );
     }
 
