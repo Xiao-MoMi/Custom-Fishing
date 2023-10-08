@@ -13,18 +13,18 @@ global-group:
           conditions:
             group:
               - silver_star
-            list:
-              - hold_game_easy:-10
-              - hold_game_normal:+12
-              - hold_game_hard:+3
+          list:
+            - hold_game_easy:-10
+            - hold_game_normal:+12
+            - hold_game_hard:+3
         golden:
           conditions:
             group:
               - golden_star
-            list:
-              - hold_game_easy:-15
-              - hold_game_normal:-2
-              - hold_game_hard:+7
+          list:
+            - hold_game_easy:-15
+            - hold_game_normal:-2
+            - hold_game_hard:+7
     water_fish_game:
       conditions:
         lava-fishing: false
@@ -62,18 +62,18 @@ global-group:
               conditions:
                 group:
                   - silver_star
-                list:
-                  - tension_game_easy:-10
-                  - tension_game_normal:+12
-                  - tension_game_hard:+3
+              list:
+                - tension_game_easy:-10
+                - tension_game_normal:+12
+                - tension_game_hard:+3
             golden:
               conditions:
                 group:
                   - golden_star
-                list:
-                  - tension_game_easy:-15
-                  - tension_game_normal:-2
-                  - tension_game_hard:+7
+              list:
+                - tension_game_easy:-15
+                - tension_game_normal:-2
+                - tension_game_hard:+7
         river_fish_game:
           conditions:
             '!biome':
@@ -110,54 +110,54 @@ global-group:
               conditions:
                 group:
                   - silver_star
-                list:
-                  - accurate_click_bar_1_easy:-10
-                  - accurate_click_bar_1_normal:+5
-                  - accurate_click_bar_1_hard:+3
-                  - accurate_click_bar_2_easy:-10
-                  - accurate_click_bar_2_normal:+5
-                  - accurate_click_bar_2_hard:+3
-                  - accurate_click_bar_3_easy:-10
-                  - accurate_click_bar_3_normal:+5
-                  - accurate_click_bar_3_hard:+3
-                  - accurate_click_bar_4_easy:-10
-                  - accurate_click_bar_4_normal:+5
-                  - accurate_click_bar_4_hard:+3
-                  - accurate_click_bar_5_easy:-10
-                  - accurate_click_bar_5_normal:+5
-                  - accurate_click_bar_5_hard:+3
-                  - accurate_click_bar_6_easy:-10
-                  - accurate_click_bar_6_normal:+5
-                  - accurate_click_bar_6_hard:+3
-                  - accurate_click_bar_7_easy:-10
-                  - accurate_click_bar_7_normal:+5
-                  - accurate_click_bar_7_hard:+3
-                  - accurate_click_bar_8_easy:-10
-                  - accurate_click_bar_8_normal:+5
-                  - accurate_click_bar_8_hard:+3
-                  - accurate_click_bar_9_easy:-10
-                  - accurate_click_bar_9_normal:+5
-                  - accurate_click_bar_9_hard:+3
+              list:
+                - accurate_click_bar_1_easy:-10
+                - accurate_click_bar_1_normal:+5
+                - accurate_click_bar_1_hard:+3
+                - accurate_click_bar_2_easy:-10
+                - accurate_click_bar_2_normal:+5
+                - accurate_click_bar_2_hard:+3
+                - accurate_click_bar_3_easy:-10
+                - accurate_click_bar_3_normal:+5
+                - accurate_click_bar_3_hard:+3
+                - accurate_click_bar_4_easy:-10
+                - accurate_click_bar_4_normal:+5
+                - accurate_click_bar_4_hard:+3
+                - accurate_click_bar_5_easy:-10
+                - accurate_click_bar_5_normal:+5
+                - accurate_click_bar_5_hard:+3
+                - accurate_click_bar_6_easy:-10
+                - accurate_click_bar_6_normal:+5
+                - accurate_click_bar_6_hard:+3
+                - accurate_click_bar_7_easy:-10
+                - accurate_click_bar_7_normal:+5
+                - accurate_click_bar_7_hard:+3
+                - accurate_click_bar_8_easy:-10
+                - accurate_click_bar_8_normal:+5
+                - accurate_click_bar_8_hard:+3
+                - accurate_click_bar_9_easy:-10
+                - accurate_click_bar_9_normal:+5
+                - accurate_click_bar_9_hard:+3
             golden:
               conditions:
                 group:
                   - golden_star
-                list:
-                  - accurate_click_bar_1_easy:-15
-                  - accurate_click_bar_1_hard:+7
-                  - accurate_click_bar_2_easy:-15
-                  - accurate_click_bar_2_hard:+7
-                  - accurate_click_bar_3_easy:-15
-                  - accurate_click_bar_3_hard:+7
-                  - accurate_click_bar_4_easy:-15
-                  - accurate_click_bar_4_hard:+7
-                  - accurate_click_bar_5_easy:-15
-                  - accurate_click_bar_5_hard:+7
-                  - accurate_click_bar_6_easy:-15
-                  - accurate_click_bar_6_hard:+7
-                  - accurate_click_bar_7_easy:-15
-                  - accurate_click_bar_7_hard:+7
-                  - accurate_click_bar_8_easy:-15
-                  - accurate_click_bar_8_hard:+7
-                  - accurate_click_bar_9_easy:-15
-                  - accurate_click_bar_9_hard:+7
+              list:
+                - accurate_click_bar_1_easy:-15
+                - accurate_click_bar_1_hard:+7
+                - accurate_click_bar_2_easy:-15
+                - accurate_click_bar_2_hard:+7
+                - accurate_click_bar_3_easy:-15
+                - accurate_click_bar_3_hard:+7
+                - accurate_click_bar_4_easy:-15
+                - accurate_click_bar_4_hard:+7
+                - accurate_click_bar_5_easy:-15
+                - accurate_click_bar_5_hard:+7
+                - accurate_click_bar_6_easy:-15
+                - accurate_click_bar_6_hard:+7
+                - accurate_click_bar_7_easy:-15
+                - accurate_click_bar_7_hard:+7
+                - accurate_click_bar_8_easy:-15
+                - accurate_click_bar_8_hard:+7
+                - accurate_click_bar_9_easy:-15
+                - accurate_click_bar_9_hard:+7

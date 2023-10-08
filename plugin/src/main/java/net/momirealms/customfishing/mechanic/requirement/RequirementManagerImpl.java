@@ -197,6 +197,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerInBagRequirement();
         this.registerHookRequirement();
         this.registerCompetitionRequirement();
+        this.registerListRequirement();
     }
 
     public HashMap<String, Double> getLootWithWeight(Condition condition) {
@@ -1048,6 +1049,18 @@ public class RequirementManagerImpl implements RequirementManager {
                 if (advanced) triggerActions(actions, condition);
                 return false;
             };
+        });
+    }
+
+    private void registerListRequirement() {
+        registerRequirement("list", (args, actions, advanced) -> {
+            LogUtils.severe("It seems that you made a mistake where you put \"list\" into \"conditions\" section.");
+            ArrayList<String> list = ConfigUtils.stringListArgs(args);
+            LogUtils.warn("list:");
+            for (String e : list) {
+                LogUtils.warn(" - " + e);
+            }
+            return EmptyRequirement.instance;
         });
     }
 
