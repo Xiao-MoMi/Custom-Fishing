@@ -65,7 +65,7 @@ public class InventoryUtils {
                     null,
                     inventoryHolder,
                     size,
-                    isSpigot ? CustomFishingPlugin.get().getAdventure().componentToLegacy(component) : CustomFishingPlugin.get().getAdventure().shadedComponentToPaperComponent(component)
+                    isSpigot ? CustomFishingPlugin.get().getAdventure().componentToLegacy(component) : CustomFishingPlugin.get().getAdventure().shadedComponentToOriginalComponent(component)
             );
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException exception) {
             exception.printStackTrace();
@@ -94,7 +94,7 @@ public class InventoryUtils {
                     null,
                     inventoryHolder,
                     type,
-                    isSpigot ? CustomFishingPlugin.get().getAdventure().componentToLegacy(component) : CustomFishingPlugin.get().getAdventure().shadedComponentToPaperComponent(component)
+                    isSpigot ? CustomFishingPlugin.get().getAdventure().componentToLegacy(component) : CustomFishingPlugin.get().getAdventure().shadedComponentToOriginalComponent(component)
             );
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException exception) {
             exception.printStackTrace();

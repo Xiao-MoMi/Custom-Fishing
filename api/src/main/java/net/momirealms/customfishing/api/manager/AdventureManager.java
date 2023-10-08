@@ -129,5 +129,5 @@ public interface AdventureManager {
      * @param component shaded component
      * @return paper component
      */
-    Object shadedComponentToPaperComponent(Component component);
+    Object shadedComponentToOriginalComponent(Component component);
 }

@@ -213,7 +213,7 @@ public class AdventureManagerImpl implements AdventureManager {
     }
 
     @Override
-    public Object shadedComponentToPaperComponent(Component component) {
+    public Object shadedComponentToOriginalComponent(Component component) {
         Object cp;
         try {
             cp = ReflectionUtils.gsonDeserializeMethod.invoke(ReflectionUtils.gsonInstance, GsonComponentSerializer.gson().serialize(component));

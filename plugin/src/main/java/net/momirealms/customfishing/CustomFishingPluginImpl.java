@@ -21,7 +21,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
-import io.papermc.paper.plugin.loader.library.impl.MavenLibraryResolver;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.util.LogUtils;
@@ -211,8 +210,12 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
                 "org.xerial:sqlite-jdbc:3.43.0.0", mavenRepo,
                 "dev.jorel:commandapi-bukkit-shade:9.2.0", mavenRepo,
                 "xyz.xenondevs.invui:invui-core:1.19", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access:1.19", "https://repo.xenondevs.xyz/releases/",
                 "xyz.xenondevs.invui:inventory-access-r8:1.19", "https://repo.xenondevs.xyz/releases/",
                 "xyz.xenondevs.invui:inventory-access-r9:1.19", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r10:1.19", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r11:1.19", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r12:1.19", "https://repo.xenondevs.xyz/releases/",
                 "xyz.xenondevs.invui:inventory-access-r13:1.19", "https://repo.xenondevs.xyz/releases/",
                 "xyz.xenondevs.invui:inventory-access-r14:1.19", "https://repo.xenondevs.xyz/releases/",
                 "xyz.xenondevs.invui:inventory-access-r15:1.19", "https://repo.xenondevs.xyz/releases/"

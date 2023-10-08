@@ -21,7 +21,6 @@ import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionPlayer;
 import net.momirealms.customfishing.api.mechanic.competition.Ranking;
 import net.momirealms.customfishing.storage.method.database.nosql.RedisManager;
-import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.resps.Tuple;
 

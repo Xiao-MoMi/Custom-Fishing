@@ -1,6 +1,10 @@
 package net.momirealms.customfishing.command.sub;
 
 import dev.jorel.commandapi.CommandAPICommand;
+import net.momirealms.customfishing.api.CustomFishingPlugin;
+import net.momirealms.customfishing.gui.SelectFileGUI;
+
+import java.io.File;
 
 public class GUIEditorCommand {
 
@@ -8,15 +12,8 @@ public class GUIEditorCommand {
 
     public CommandAPICommand getEditorCommand() {
         return new CommandAPICommand("edit")
-                .withSubcommands(
-
-                );
-    }
-
-    private CommandAPICommand getLootCommand() {
-        return new CommandAPICommand("loot")
-                .withSubcommands(
-
-                );
+                .executesPlayer((player, arg) -> {
+                    new SelectFileGUI(player, new File(CustomFishingPlugin.get().getDataFolder(), "contents"));
+                });
     }
 }

@@ -20,7 +20,6 @@ package net.momirealms.customfishing.mechanic.competition.ranking;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionPlayer;
 import net.momirealms.customfishing.api.mechanic.competition.Ranking;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
