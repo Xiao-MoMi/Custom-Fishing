@@ -23,6 +23,7 @@ import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.bukkit.utils.serialize.Position;
 import io.lumine.mythic.core.mobs.ActiveMob;
 import net.momirealms.customfishing.api.mechanic.entity.EntityLibrary;
+import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
@@ -52,7 +53,7 @@ public class MythicEntityImpl implements EntityLibrary {
             MythicMob theMob = mythicMob.get();
             Position position = Position.of(location);
             AbstractLocation abstractLocation = new AbstractLocation(position);
-            ActiveMob activeMob = theMob.spawn(abstractLocation, (Double) propertyMap.get("{level}"));
+            ActiveMob activeMob = theMob.spawn(abstractLocation, ConfigUtils.getDoubleValue(propertyMap.get("level")));
             return activeMob.getEntity().getBukkitEntity();
         }
         throw new NullPointerException("MythicMobs: " + id + " doesn't exist.");

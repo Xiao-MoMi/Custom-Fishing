@@ -11,7 +11,7 @@ skeleton:
   entity: skeleton
   nick: <white>Skeleton</white>
   velocity:
-    horizontal: 1
+    horizontal: 1.1
     vertical: 1.3
 
 wither_skeleton:
