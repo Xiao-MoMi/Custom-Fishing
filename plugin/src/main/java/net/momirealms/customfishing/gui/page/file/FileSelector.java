@@ -98,8 +98,8 @@ public class FileSelector {
             String[] split = path.split("\\\\");
             String type = split[3];
             switch (type) {
-                case "item" -> {
-                    new ItemSelector(player, file);
+                case "item", "rod", "bait", "util", "hook" -> {
+                    new ItemSelector(player, file, type);
                 }
             }
         }

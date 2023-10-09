@@ -2,7 +2,6 @@ package net.momirealms.customfishing.gui.page.property;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
-import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.gui.YamlPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
 import org.bukkit.Material;
@@ -21,32 +20,23 @@ import xyz.xenondevs.invui.item.impl.AbstractItem;
 import xyz.xenondevs.invui.item.impl.SimpleItem;
 import xyz.xenondevs.invui.window.AnvilWindow;
 
-public class CustomModelDataEditor {
+public class ScoreEditor {
 
     private final Player player;
     private final YamlPage parentPage;
-    private String cmd;
+    private String score;
     private final ConfigurationSection section;
-    private final String material;
 
-    public CustomModelDataEditor(Player player, YamlPage parentPage, ConfigurationSection section) {
+    public ScoreEditor(Player player, YamlPage parentPage, ConfigurationSection section) {
         this.player = player;
         this.parentPage = parentPage;
         this.section = section;
-        this.material = section.getString("material");
 
         Item border = new SimpleItem(new ItemBuilder(Material.AIR));
-        var confirm = new ConfirmIcon();
+        var confirm  = new ConfirmIcon();
         Gui upperGui = Gui.normal()
-                .setStructure(
-                        "a # b"
-                )
-                .addIngredient('a', new ItemBuilder(CustomFishingPlugin.get()
-                        .getItemManager()
-                        .getItemStackAppearance(player, material)
-                )
-                .setCustomModelData(section.getInt("custom-model-data", 0))
-                .setDisplayName(String.valueOf(section.getInt("custom-model-data", 0))))
+                .setStructure("a # b")
+                .addIngredient('a', new ItemBuilder(Material.NETHER_STAR).setDisplayName(String.valueOf(section.getDouble("score", 0))))
                 .addIngredient('#', border)
                 .addIngredient('b', confirm)
                 .build();
@@ -66,10 +56,10 @@ public class CustomModelDataEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Edit CustomModelData")
+                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Edit Score")
                 ))
                 .addRenameHandler(s -> {
-                    cmd = s;
+                    score = s;
                     confirm.notifyWindows();
                 })
                 .setUpperGui(upperGui)
@@ -83,21 +73,18 @@ public class CustomModelDataEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            if (cmd == null || cmd.isEmpty()) {
+            if (score == null || score.isEmpty()) {
                 return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
                         "<#00CED1>● Delete property"
                 )));
             } else {
                 try {
-                    int value = Integer.parseInt(cmd);
-                    if (value >= 0) {
-                        return new ItemBuilder(
-                                CustomFishingPlugin.get()
-                                        .getItemManager()
-                                        .getItemStackAppearance(player, material)
-                        )
-                                .setCustomModelData(value)
-                                .setDisplayName("New value: " + value)
+                    double m = Double.parseDouble(score);
+                    if (m >= 0) {
+                        return new ItemBuilder(Material.NETHER_STAR)
+                                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                                      "New value: " + score
+                                )))
                                 .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
                                         "<#00FF7F> -> Click to confirm"
                                 )));
@@ -116,13 +103,13 @@ public class CustomModelDataEditor {
 
         @Override
         public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
-            if (cmd == null || cmd.isEmpty()) {
-                section.set("custom-model-data", null);
+            if (score == null || score.isEmpty()) {
+                section.set("score", null);
             } else {
                 try {
-                    int value = Integer.parseInt(cmd);
+                    double value = Double.parseDouble(score);
                     if (value >= 0) {
-                        section.set("custom-model-data", value);
+                        section.set("score", value);
                     } else {
                         return;
                     }

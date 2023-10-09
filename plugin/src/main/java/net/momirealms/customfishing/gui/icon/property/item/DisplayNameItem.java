@@ -1,4 +1,4 @@
-package net.momirealms.customfishing.gui.icon.property;
+package net.momirealms.customfishing.gui.icon.property.item;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;

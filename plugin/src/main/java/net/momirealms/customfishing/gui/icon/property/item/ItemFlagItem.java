@@ -1,9 +1,9 @@
-package net.momirealms.customfishing.gui.icon.property;
+package net.momirealms.customfishing.gui.icon.property.item;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.ItemPage;
-import net.momirealms.customfishing.gui.page.property.CustomModelDataEditor;
+import net.momirealms.customfishing.gui.page.property.ItemFlagEditor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -13,26 +13,31 @@ import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
 
-public class CMDItem extends AbstractItem {
+public class ItemFlagItem extends AbstractItem {
 
     private final ItemPage itemPage;
 
-    public CMDItem(ItemPage itemPage) {
+    public ItemFlagItem(ItemPage itemPage) {
         this.itemPage = itemPage;
     }
 
     @Override
     public ItemProvider getItemProvider() {
-        ItemBuilder itemBuilder = new ItemBuilder(Material.GLOW_INK_SAC)
+        ItemBuilder itemBuilder = new ItemBuilder(Material.CYAN_BANNER)
                 .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                        "<#FFC0CB>● Custom Model Data"
+                        "<#E6E6FA>● Item Flag"
                 )));
 
-        if (itemPage.getSection().contains("custom-model-data")) {
+        if (itemPage.getSection().contains("item-flags")) {
             itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<gray>Current value: <white>" + itemPage.getSection().getInt("custom-model-data")
-                    )))
-                    .addLoreLines("");
+                    "<gray>Current value: </gray>"
+            )));
+            for (String lore : itemPage.getSection().getStringList("item-flags")) {
+                itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                        " <gray>-</gray> " + lore
+                )));
+            }
+            itemBuilder.addLoreLines("");
             itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
                     "<#00FF7F> -> Left click to edit"
             ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
@@ -50,9 +55,9 @@ public class CMDItem extends AbstractItem {
     @Override
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
         if (clickType.isLeftClick()) {
-            new CustomModelDataEditor(player, itemPage, itemPage.getSection().getString("material", ""), itemPage.getSection());
+            new ItemFlagEditor(player, itemPage, itemPage.getSection());
         } else if (clickType.isRightClick()) {
-            itemPage.getSection().set("custom-model-data", null);
+            itemPage.getSection().set("item-flags", null);
             itemPage.save();
             itemPage.reOpen();
         }

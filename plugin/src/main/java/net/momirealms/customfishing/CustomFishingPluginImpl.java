@@ -28,6 +28,7 @@ import net.momirealms.customfishing.api.util.ReflectionUtils;
 import net.momirealms.customfishing.command.CommandManagerImpl;
 import net.momirealms.customfishing.compatibility.IntegrationManagerImpl;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
+import net.momirealms.customfishing.gui.icon.property.item.PriceItem;
 import net.momirealms.customfishing.libraries.libraryloader.LibraryLoader;
 import net.momirealms.customfishing.mechanic.action.ActionManagerImpl;
 import net.momirealms.customfishing.mechanic.bag.BagManagerImpl;
@@ -41,6 +42,7 @@ import net.momirealms.customfishing.mechanic.hook.HookManagerImpl;
 import net.momirealms.customfishing.mechanic.item.ItemManagerImpl;
 import net.momirealms.customfishing.mechanic.loot.LootManagerImpl;
 import net.momirealms.customfishing.mechanic.market.MarketManagerImpl;
+import net.momirealms.customfishing.mechanic.misc.ChatCatcherManager;
 import net.momirealms.customfishing.mechanic.misc.CoolDownManager;
 import net.momirealms.customfishing.mechanic.requirement.RequirementManagerImpl;
 import net.momirealms.customfishing.mechanic.statistic.StatisticsManagerImpl;
@@ -64,6 +66,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
 
     private static ProtocolManager protocolManager;
     private CoolDownManager coolDownManager;
+    private ChatCatcherManager chatCatcherManager;
 
     public CustomFishingPluginImpl() {
         super();
@@ -103,6 +106,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         this.coolDownManager = new CoolDownManager(this);
         this.totemManager = new TotemManagerImpl(this);
         this.hookManager = new HookManagerImpl(this);
+        this.chatCatcherManager = new ChatCatcherManager(this);
         this.reload();
 
         if (CFConfig.metrics) new Metrics(this, 16648);
@@ -136,6 +140,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         ((TotemManagerImpl) this.totemManager).disable();
         ((HookManagerImpl) this.hookManager).disable();
         this.coolDownManager.disable();
+        this.chatCatcherManager.disable();
         this.commandManager.unload();
         HandlerList.unregisterAll(this);
     }
@@ -185,6 +190,8 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         this.commandManager.load();
         this.coolDownManager.unload();
         this.coolDownManager.load();
+        this.chatCatcherManager.unload();
+        this.chatCatcherManager.load();
     }
 
     /**
@@ -300,6 +307,15 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
      */
     public CoolDownManager getCoolDownManager() {
         return coolDownManager;
+    }
+
+    /**
+     * Gets the ChatCatcherManager instance associated with the plugin.
+     *
+     * @return The ChatCatcherManager instance.
+     */
+    public ChatCatcherManager getChatCatcherManager() {
+        return chatCatcherManager;
     }
 
     /**

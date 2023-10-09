@@ -29,14 +29,14 @@ import xyz.xenondevs.invui.window.AnvilWindow;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemEditor implements ItemPage {
+public class BaitEditor implements ItemPage {
 
     private final Player player;
     private final ItemSelector itemSelector;
     private final ConfigurationSection section;
     private final String key;
 
-    public ItemEditor(Player player, String key, ItemSelector itemSelector, ConfigurationSection section) {
+    public BaitEditor(Player player, String key, ItemSelector itemSelector, ConfigurationSection section) {
         this.player = player;
         this.section = section;
         this.itemSelector = itemSelector;
@@ -91,7 +91,7 @@ public class ItemEditor implements ItemPage {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(CustomFishingPlugin.get().getItemManager().getItemBuilder(section, "item", key).build(player));
+            return new ItemBuilder(CustomFishingPlugin.get().getItemManager().getItemBuilder(section, "bait", key).build(player));
         }
 
         @Override
@@ -103,24 +103,14 @@ public class ItemEditor implements ItemPage {
     public List<Item> getItemList() {
         ArrayList<Item> items = new ArrayList<>();
         items.add(new MaterialItem(this));
-        items.add(new NickItem(this));
         items.add(new DisplayNameItem(this));
         items.add(new LoreItem(this));
         items.add(new CMDItem(this));
-        items.add(new AmountItem(this));
         items.add(new TagItem(this));
         items.add(new UnbreakableItem(this));
         items.add(new DurabilityItem(this));
         items.add(new RandomDurabilityItem(this));
         items.add(new StackableItem(this));
-        items.add(new PreventGrabItem(this));
-        items.add(new PriceItem(this));
-        items.add(new ShowInFinderItem(this));
-        items.add(new DisableStatsItem(this));
-        items.add(new DisableGameItem(this));
-        items.add(new InstantGameItem(this));
-        items.add(new ScoreItem(this));
-        items.add(new SizeItem(this));
         items.add(new ItemFlagItem(this));
         items.add(new Head64Item(this));
         return items;

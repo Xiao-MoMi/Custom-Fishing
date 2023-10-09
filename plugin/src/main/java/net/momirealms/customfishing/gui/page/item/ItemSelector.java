@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class ItemSelector implements YamlPage {
@@ -42,11 +41,13 @@ public class ItemSelector implements YamlPage {
     private String prefix;
     private final File file;
     private long coolDown;
+    private String type;
 
-    public ItemSelector(Player player, File file) {
+    public ItemSelector(Player player, File file, String type) {
         this.yaml = YamlConfiguration.loadConfiguration(file);
         this.player = player;
         this.file = file;
+        this.type = type;
         this.prefix = SEARCH;
         this.reOpenWithFilter(SEARCH);
     }
@@ -109,21 +110,15 @@ public class ItemSelector implements YamlPage {
                 if (!prefix.equals(SEARCH) && !entry.getKey().startsWith(prefix)) continue;
                 String material = section.getString("material");
                 if (material != null) {
-                    if (material.contains(":")) {
-                        ItemStack itemStack = CustomFishingPlugin.get().getItemManager().buildAnyPluginItemByID(player, material);
-                        if (itemStack != null) {
-                            ItemBuilder itemBuilder = new ItemBuilder(itemStack.getType());
-                            itemBuilder.setCustomModelData(itemStack.getItemMeta().getCustomModelData());
-                            itemBuilder.setCustomModelData(section.getInt("custom-model-data"));
-                            itemList.add(new ItemInList(key, itemBuilder, this));
-                            continue;
-                        }
-                    } else {
-                        ItemBuilder itemBuilder = new ItemBuilder(Material.valueOf(material.toUpperCase(Locale.ENGLISH)));
-                        itemBuilder.setCustomModelData(section.getInt("custom-model-data"));
-                        itemList.add(new ItemInList(key, itemBuilder, this));
-                        continue;
+                    if (!material.contains(":")) {
+                        material = "CustomFishing:" + type + ":" + key;
                     }
+                    ItemStack appearance = CustomFishingPlugin.get().getItemManager().getItemStackAppearance(player, material);
+                    ItemBuilder itemBuilder = new ItemBuilder(appearance);
+                    if (section.contains("custom-model-data"))
+                        itemBuilder.setCustomModelData(section.getInt("custom-model-data"));
+                    itemList.add(new ItemInList(key, itemBuilder, this));
+                    continue;
                 }
             }
             itemList.add(new ItemInList(key, new ItemBuilder(Material.STRUCTURE_VOID), this));
@@ -133,6 +128,23 @@ public class ItemSelector implements YamlPage {
 
     public void removeKey(String key) {
         yaml.set(key, null);
+    }
+
+    public void openEditor(String key) {
+        switch (type) {
+            case "item" -> {
+                new ItemEditor(player, key, this, yaml.getConfigurationSection(key));
+            }
+            case "rod" -> {
+                new RodEditor(player, key, this, yaml.getConfigurationSection(key));
+            }
+            case "bait" -> {
+                new BaitEditor(player, key, this, yaml.getConfigurationSection(key));
+            }
+            case "hook" -> {
+                new HookEditor(player, key, this, yaml.getConfigurationSection(key));
+            }
+        }
     }
 
     @Override
@@ -171,7 +183,7 @@ public class ItemSelector implements YamlPage {
         @Override
         public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
             if (clickType.isLeftClick()) {
-                new ItemEditor(player, key, itemSelector, itemSelector.yaml.getConfigurationSection(key));
+                this.itemSelector.openEditor(key);
             } else if (clickType.isRightClick()) {
                 this.itemSelector.removeKey(key);
                 this.itemSelector.save();

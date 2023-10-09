@@ -103,6 +103,10 @@ public class ItemManagerImpl implements ItemManager, Listener {
         }
     }
 
+    public Collection<String> getItemLibraries() {
+        return itemLibraryMap.keySet();
+    }
+
     /**
      * Get a set of all item keys in the CustomFishing plugin.
      *
@@ -362,28 +366,13 @@ public class ItemManagerImpl implements ItemManager, Listener {
     @Override
     public ItemStack getItemStackAppearance(Player player, String material) {
         if (material != null) {
-            if (material.contains(":")) {
-                ItemStack itemStack = buildAnyPluginItemByID(player, material);
-                if (itemStack != null) {
-                    ItemStack stack = new ItemStack(itemStack.getType());
-                    ItemMeta meta = stack.getItemMeta();
-                    meta.setCustomModelData(itemStack.getItemMeta().getCustomModelData());
-                    stack.setItemMeta(meta);
-                    return stack;
-                } else {
-                    return new ItemStack(Material.BARRIER);
-                }
+            ItemStack itemStack = buildAnyPluginItemByID(player, material);
+            if (itemStack != null) {
+                NBTItem nbtItem = new NBTItem(itemStack);
+                nbtItem.removeKey("display");
+                return nbtItem.getItem();
             } else {
-                try {
-                    var m = Material.valueOf(material.toUpperCase(Locale.ENGLISH));
-                    if (m.isItem()) {
-                        return new ItemStack(m);
-                    } else {
-                        return new ItemStack(Material.BARRIER);
-                    }
-                } catch (IllegalArgumentException e) {
-                    return new ItemStack(Material.BARRIER);
-                }
+                return new ItemStack(Material.BARRIER);
             }
         } else {
             return new ItemStack(Material.STRUCTURE_VOID);
@@ -711,7 +700,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
             if (base64 == null) return this;
             editors.put("head", (player, nbtItem, placeholders) -> {
                 NBTCompound nbtCompound = nbtItem.addCompound("SkullOwner");
-                nbtCompound.setUUID("Id", UUID.nameUUIDFromBytes(base64.substring(0,8).getBytes()));
+                nbtCompound.setUUID("Id", UUID.nameUUIDFromBytes(id.getBytes()));
                 NBTListCompound texture = nbtCompound.addCompound("Properties").getCompoundList("textures").addCompound();
                 texture.setString("Value", base64);
             });
