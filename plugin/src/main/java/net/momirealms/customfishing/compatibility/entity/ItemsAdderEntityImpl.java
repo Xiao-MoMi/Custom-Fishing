@@ -36,9 +36,9 @@ public class ItemsAdderEntityImpl implements EntityLibrary {
         CustomEntity customEntity = CustomEntity.spawn(
                 id,
                 location,
-                (Boolean) propertyMap.get("frustumCulling"),
-                (Boolean) propertyMap.get("noBase"),
-                (Boolean) propertyMap.get("noHitbox")
+                (Boolean) propertyMap.getOrDefault("frustumCulling", true),
+                (Boolean) propertyMap.getOrDefault("noBase", false),
+                (Boolean) propertyMap.getOrDefault("noHitbox", false)
         );
         return customEntity.getEntity();
     }

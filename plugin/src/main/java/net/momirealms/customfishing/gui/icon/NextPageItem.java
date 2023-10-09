@@ -1,5 +1,6 @@
 package net.momirealms.customfishing.gui.icon;
 
+import net.momirealms.customfishing.gui.Icon;
 import org.bukkit.Material;
 import xyz.xenondevs.invui.gui.PagedGui;
 import xyz.xenondevs.invui.item.ItemProvider;

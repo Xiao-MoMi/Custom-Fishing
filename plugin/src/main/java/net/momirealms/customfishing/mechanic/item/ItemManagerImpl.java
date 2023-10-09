@@ -62,6 +62,7 @@ import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -356,6 +357,37 @@ public class ItemManagerImpl implements ItemManager, Listener {
         }
         ItemUtils.updateNBTItemLore(nbtItem);
         return nbtItem.getItem();
+    }
+
+    @Override
+    public ItemStack getItemStackAppearance(Player player, String material) {
+        if (material != null) {
+            if (material.contains(":")) {
+                ItemStack itemStack = buildAnyPluginItemByID(player, material);
+                if (itemStack != null) {
+                    ItemStack stack = new ItemStack(itemStack.getType());
+                    ItemMeta meta = stack.getItemMeta();
+                    meta.setCustomModelData(itemStack.getItemMeta().getCustomModelData());
+                    stack.setItemMeta(meta);
+                    return stack;
+                } else {
+                    return new ItemStack(Material.BARRIER);
+                }
+            } else {
+                try {
+                    var m = Material.valueOf(material.toUpperCase(Locale.ENGLISH));
+                    if (m.isItem()) {
+                        return new ItemStack(m);
+                    } else {
+                        return new ItemStack(Material.BARRIER);
+                    }
+                } catch (IllegalArgumentException e) {
+                    return new ItemStack(Material.BARRIER);
+                }
+            }
+        } else {
+            return new ItemStack(Material.STRUCTURE_VOID);
+        }
     }
 
     /**

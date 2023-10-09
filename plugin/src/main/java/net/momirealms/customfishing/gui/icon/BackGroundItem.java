@@ -1,5 +1,6 @@
 package net.momirealms.customfishing.gui.icon;
 
+import net.momirealms.customfishing.gui.Icon;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -13,7 +14,7 @@ public class BackGroundItem extends AbstractItem implements Icon {
 
     @Override
     public ItemProvider getItemProvider() {
-        return new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE);
+        return new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("");
     }
 
     @Override

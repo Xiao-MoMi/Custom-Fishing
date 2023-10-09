@@ -133,6 +133,8 @@ public interface ItemManager {
     @Nullable
     BuildableItem getBuildableItem(String namespace, String value);
 
+    ItemStack getItemStackAppearance(Player player, String material);
+
     /**
      * Register an item library.
      *

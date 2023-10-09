@@ -2,7 +2,8 @@ package net.momirealms.customfishing.gui.icon;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
-import net.momirealms.customfishing.gui.SelectFileGUI;
+import net.momirealms.customfishing.gui.Icon;
+import net.momirealms.customfishing.gui.page.file.FileSelector;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -15,7 +16,7 @@ import xyz.xenondevs.invui.item.impl.AbstractItem;
 import java.io.File;
 import java.util.List;
 
-public class BackToFolderItem extends AbstractItem implements Icon  {
+public class BackToFolderItem extends AbstractItem implements Icon {
 
     private final File file;
 
@@ -41,6 +42,6 @@ public class BackToFolderItem extends AbstractItem implements Icon  {
     @Override
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
         if (file != null && file.getPath().startsWith("plugins\\CustomFishing\\contents"))
-            new SelectFileGUI(player, file);
+            new FileSelector(player, file);
     }
 }

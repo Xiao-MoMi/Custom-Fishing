@@ -1,8 +1,13 @@
-package net.momirealms.customfishing.gui;
+package net.momirealms.customfishing.gui.page.file;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
-import net.momirealms.customfishing.gui.icon.*;
+import net.momirealms.customfishing.gui.Icon;
+import net.momirealms.customfishing.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.gui.icon.BackToFolderItem;
+import net.momirealms.customfishing.gui.icon.ScrollDownItem;
+import net.momirealms.customfishing.gui.icon.ScrollUpItem;
+import net.momirealms.customfishing.gui.page.item.ItemSelector;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -23,9 +28,9 @@ import java.io.File;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class SelectFileGUI {
+public class FileSelector {
 
-    public SelectFileGUI(Player player, File folder) {
+    public FileSelector(Player player, File folder) {
         File[] files = folder.listFiles();
         Deque<Item> items = new ArrayDeque<>();
         if (files != null) {
@@ -94,7 +99,7 @@ public class SelectFileGUI {
             String type = split[3];
             switch (type) {
                 case "item" -> {
-                    new ItemEditor(player, file);
+                    new ItemSelector(player, file);
                 }
             }
         }
@@ -117,7 +122,7 @@ public class SelectFileGUI {
 
         @Override
         public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
-            new SelectFileGUI(player, file);
+            new FileSelector(player, file);
         }
     }
 }
