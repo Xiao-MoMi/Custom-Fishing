@@ -111,6 +111,7 @@ public class RodEditor implements ItemPage {
         items.add(new RandomDurabilityItem(this));
         items.add(new ItemFlagItem(this));
         items.add(new NBTItem(this));
+        items.add(new EnchantmentItem(this));
         return items;
     }
 

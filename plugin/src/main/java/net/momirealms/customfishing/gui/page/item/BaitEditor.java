@@ -113,6 +113,8 @@ public class BaitEditor implements ItemPage {
         items.add(new ItemFlagItem(this));
         items.add(new Head64Item(this));
         items.add(new NBTItem(this));
+        items.add(new EnchantmentItem(this));
+        items.add(new StoredEnchantmentItem(this));
         return items;
     }
 
