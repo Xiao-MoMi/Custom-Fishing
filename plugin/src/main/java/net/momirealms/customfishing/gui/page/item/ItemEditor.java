@@ -15,6 +15,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.gui.PagedGui;
@@ -46,13 +47,12 @@ public class ItemEditor implements ItemPage {
 
     @Override
     public void reOpen() {
-        Item border = new SimpleItem(new ItemBuilder(Material.AIR));
         Gui upperGui = Gui.normal()
                 .setStructure(
                         "# a #"
                 )
                 .addIngredient('a', new RefreshExample())
-                .addIngredient('#', border)
+                .addIngredient('#', new ItemStack(Material.AIR))
                 .build();
 
         var gui = PagedGui.items()
@@ -124,6 +124,8 @@ public class ItemEditor implements ItemPage {
         items.add(new ItemFlagItem(this));
         items.add(new Head64Item(this));
         items.add(new NBTItem(this));
+        items.add(new EnchantmentItem(this));
+        items.add(new StoredEnchantmentItem(this));
         return items;
     }
 

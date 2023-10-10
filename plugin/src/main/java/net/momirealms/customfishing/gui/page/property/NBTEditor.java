@@ -416,7 +416,7 @@ public class NBTEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.ANVIL).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            return new ItemBuilder(Material.OAK_SIGN).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
                     "Add a new compound"
             )));
         }
@@ -431,7 +431,7 @@ public class NBTEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.ANVIL).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            return new ItemBuilder(Material.SPRUCE_SIGN).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
                     "Add a new list"
             )));
         }
@@ -446,7 +446,7 @@ public class NBTEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.ANVIL).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            return new ItemBuilder(Material.ACACIA_SIGN).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
                     "Add a new value"
             )));
         }
