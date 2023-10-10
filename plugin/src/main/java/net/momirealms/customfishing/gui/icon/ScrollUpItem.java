@@ -19,7 +19,6 @@ public class ScrollUpItem extends ScrollItem implements Icon {
         builder.setDisplayName("§7Scroll up");
         if (!gui.canScroll(-1))
             builder.addLoreLines("§cYou've reached the top");
-
         return builder;
     }
 }

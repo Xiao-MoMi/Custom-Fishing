@@ -17,13 +17,9 @@
 
 package net.momirealms.customfishing.mechanic.misc;
 
-import io.papermc.paper.event.player.AsyncChatEvent;
-import io.papermc.paper.event.player.ChatEvent;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.gui.ItemPage;
-import net.momirealms.customfishing.gui.ParentPage;
-import net.momirealms.customfishing.gui.YamlPage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

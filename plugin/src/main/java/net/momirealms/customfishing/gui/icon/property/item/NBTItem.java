@@ -1,10 +1,10 @@
 package net.momirealms.customfishing.gui.icon.property.item;
 
-import net.momirealms.customfishing.CustomFishingPluginImpl;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
-import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.gui.ItemPage;
+import net.momirealms.customfishing.gui.page.property.NBTEditor;
+import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -14,40 +14,28 @@ import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
 
-import java.util.ArrayList;
-
-public class Head64Item extends AbstractItem {
+public class NBTItem extends AbstractItem {
 
     private final ItemPage itemPage;
 
-    public Head64Item(ItemPage itemPage) {
+    public NBTItem(ItemPage itemPage) {
         this.itemPage = itemPage;
     }
 
     @Override
     public ItemProvider getItemProvider() {
-        ItemBuilder itemBuilder = new ItemBuilder(Material.PLAYER_HEAD)
+        ItemBuilder itemBuilder = new ItemBuilder(Material.COMMAND_BLOCK)
                 .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                        "<#2E8B57>● Head64"
+                        "<#FA8072>● NBT"
                 )));
-
-        if (itemPage.getSection().contains("head64")) {
+        var section = itemPage.getSection().getConfigurationSection("nbt");
+        if (section != null) {
             itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<gray>Current value: <white>"
+                            "<gray>Current value: "
                     )));
-            String head64 = itemPage.getSection().getString("head64", "");
-
-            ArrayList<String> list = new ArrayList<>();
-            for (int i = 0; i < head64.length(); i += 16) {
-                if (i + 16 > head64.length()) {
-                    list.add(head64.substring(i));
-                } else {
-                    list.add(head64.substring(i, i + 16));
-                }
-            }
-            for (String line : list) {
+            for (String line : ConfigUtils.getReadableSection(section.getValues(false))) {
                 itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                        "<white>"+ line
+                        line
                 )));
             }
 
@@ -68,11 +56,9 @@ public class Head64Item extends AbstractItem {
     @Override
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
         if (clickType.isLeftClick()) {
-            player.closeInventory();
-            AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, "Input the head64 value in chat");
-            ((CustomFishingPluginImpl) CustomFishingPlugin.get()).getChatCatcherManager().catchMessage(player, "head64", itemPage);
+            new NBTEditor(player, itemPage, itemPage.getSection());
         } else if (clickType.isRightClick()) {
-            itemPage.getSection().set("head64", null);
+            itemPage.getSection().set("nbt", null);
             itemPage.save();
             itemPage.reOpen();
         }

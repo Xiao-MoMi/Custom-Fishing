@@ -154,12 +154,12 @@ public class NBTUtils {
                 case NBTTagByteArray -> map.put(key, "(ByteArray) " + Arrays.toString(nbtCompound.getByteArray(key)));
                 case NBTTagIntArray -> map.put(key, "(IntArray) " + Arrays.toString(nbtCompound.getIntArray(key)));
                 case NBTTagCompound -> {
-                    Map<String, Object> map1 = compoundToMap(nbtCompound.getCompound(key));
+                    Map<String, Object> map1 = compoundToMap(Objects.requireNonNull(nbtCompound.getCompound(key)));
                     if (map1.size() != 0) map.put(key, map1);
                 }
                 case NBTTagList -> {
                     List<Object> list = new ArrayList<>();
-                    switch (nbtCompound.getListType(key)) {
+                    switch (Objects.requireNonNull(nbtCompound.getListType(key))) {
                         case NBTTagCompound -> nbtCompound.getCompoundList(key).forEach(a -> list.add(compoundToMap(a)));
                         case NBTTagInt -> nbtCompound.getIntegerList(key).forEach(a -> list.add("(Int) " + a));
                         case NBTTagDouble -> nbtCompound.getDoubleList(key).forEach(a -> list.add("(Double) " + a));
@@ -181,8 +181,11 @@ public class NBTUtils {
      * @param str The input value string
      * @return An array containing type and data strings
      */
-    private static String[] getTypeAndData(String str) {
+    public static String[] getTypeAndData(String str) {
         String[] parts = str.split("\\s+", 2);
+        if (parts.length == 1) {
+            return new String[]{"String", str};
+        }
         if (parts.length != 2) {
             throw new IllegalArgumentException("Invalid value format: " + str);
         }
@@ -197,7 +200,7 @@ public class NBTUtils {
      * @param value The input value containing arrays
      * @return An array of individual elements
      */
-    private static String[] splitValue(String value) {
+    public static String[] splitValue(String value) {
         return value.substring(value.indexOf('[') + 1, value.lastIndexOf(']'))
                 .replaceAll("\\s", "")
                 .split(",");

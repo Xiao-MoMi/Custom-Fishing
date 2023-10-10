@@ -28,7 +28,6 @@ import net.momirealms.customfishing.api.util.ReflectionUtils;
 import net.momirealms.customfishing.command.CommandManagerImpl;
 import net.momirealms.customfishing.compatibility.IntegrationManagerImpl;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
-import net.momirealms.customfishing.gui.icon.property.item.PriceItem;
 import net.momirealms.customfishing.libraries.libraryloader.LibraryLoader;
 import net.momirealms.customfishing.mechanic.action.ActionManagerImpl;
 import net.momirealms.customfishing.mechanic.bag.BagManagerImpl;

@@ -1,5 +1,6 @@
 package net.momirealms.customfishing.gui.page.item;
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
@@ -110,13 +111,10 @@ public class ItemSelector implements YamlPage {
                 if (!prefix.equals(SEARCH) && !entry.getKey().startsWith(prefix)) continue;
                 String material = section.getString("material");
                 if (material != null) {
-                    if (!material.contains(":")) {
-                        material = "CustomFishing:" + type + ":" + key;
-                    }
-                    ItemStack appearance = CustomFishingPlugin.get().getItemManager().getItemStackAppearance(player, material);
-                    ItemBuilder itemBuilder = new ItemBuilder(appearance);
-                    if (section.contains("custom-model-data"))
-                        itemBuilder.setCustomModelData(section.getInt("custom-model-data"));
+                    ItemStack build = CustomFishingPlugin.get().getItemManager().getItemBuilder(section, type, key).build(player);
+                    NBTItem nbtItem = new NBTItem(build);
+                    nbtItem.removeKey("display");
+                    ItemBuilder itemBuilder = new ItemBuilder(nbtItem.getItem());
                     itemList.add(new ItemInList(key, itemBuilder, this));
                     continue;
                 }

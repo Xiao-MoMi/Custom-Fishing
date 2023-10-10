@@ -89,10 +89,10 @@ public class MaterialEditor {
         ArrayList<Item> items = new ArrayList<>();
         for (String lib : ((ItemManagerImpl) CustomFishingPlugin.get().getItemManager()).getItemLibraries()) {
             switch (lib) {
-                case "MMOItems", "CustomFishing" -> {
+                case "MMOItems" -> {
                     items.add(new SimpleItem(new ItemBuilder(Material.BELL).setDisplayName(lib + ":TYPE:ID")));
                 }
-                case "vanilla" -> {
+                case "vanilla", "CustomFishing" -> {
                 }
                 default -> {
                     items.add(new SimpleItem(new ItemBuilder(Material.BELL).setDisplayName(lib + ":ID")));

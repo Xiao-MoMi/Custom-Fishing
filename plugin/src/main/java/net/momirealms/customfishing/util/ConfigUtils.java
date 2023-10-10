@@ -305,4 +305,56 @@ public class ConfigUtils {
         }
         return expression.evaluate();
     }
+
+    public static ArrayList<String> getReadableSection(Map<String, Object> map) {
+        ArrayList<String> list = new ArrayList<>();
+        mapToReadableStringList(map, list, 0, false);
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void mapToReadableStringList(Map<String, Object> map, List<String> readableList, int loop_times, boolean isMapList) {
+        boolean first = true;
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            Object nbt = entry.getValue();
+            if (nbt instanceof String value) {
+                if (isMapList && first) {
+                    first = false;
+                    readableList.add("  ".repeat(loop_times - 1) + "<white>- <gold>" + entry.getKey() + ": <white>" + value);
+                } else {
+                    readableList.add("  ".repeat(loop_times) + "<gold>" + entry.getKey() + ": <white>" + value);
+                }
+            } else if (nbt instanceof List<?> list) {
+                if (isMapList && first) {
+                    first = false;
+                    readableList.add("  ".repeat(loop_times - 1) + "<white>- <gold>" + entry.getKey() + ":");
+                } else {
+                    readableList.add("  ".repeat(loop_times) + "<gold>" + entry.getKey() + ":");
+                }
+                for (Object value : list) {
+                    if (value instanceof Map<?,?> nbtMap) {
+                        mapToReadableStringList((Map<String, Object>) nbtMap, readableList, loop_times + 2, true);
+                    } else {
+                        readableList.add("  ".repeat(loop_times + 1) + "<white>- " + value);
+                    }
+                }
+            } else if (nbt instanceof ConfigurationSection section) {
+                if (isMapList && first) {
+                    first = false;
+                    readableList.add("  ".repeat(loop_times - 1) + "<white>- <gold>" + entry.getKey() + ":");
+                } else {
+                    readableList.add("  ".repeat(loop_times) + "<gold>" + entry.getKey() + ":");
+                }
+                mapToReadableStringList(section.getValues(false), readableList, loop_times + 1, false);
+            } else if (nbt instanceof Map<?,?> innerMap) {
+                if (isMapList && first) {
+                    first = false;
+                    readableList.add("  ".repeat(loop_times - 1) + "<white>- <gold>" + entry.getKey() + ":");
+                } else {
+                    readableList.add("  ".repeat(loop_times) + "<gold>" + entry.getKey() + ":");
+                }
+                mapToReadableStringList((Map<String, Object>) innerMap, readableList, loop_times + 1, false);
+            }
+        }
+    }
 }

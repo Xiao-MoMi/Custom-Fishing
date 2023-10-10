@@ -73,7 +73,7 @@ public class ItemEditor implements ItemPage {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Editing " + key)
+                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Edit " + key)
                 ))
                 .setUpperGui(upperGui)
                 .setLowerGui(gui)
@@ -123,6 +123,7 @@ public class ItemEditor implements ItemPage {
         items.add(new SizeItem(this));
         items.add(new ItemFlagItem(this));
         items.add(new Head64Item(this));
+        items.add(new NBTItem(this));
         return items;
     }
 

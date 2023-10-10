@@ -9,7 +9,6 @@ import net.momirealms.customfishing.gui.icon.BackToPageItem;
 import net.momirealms.customfishing.gui.icon.NextPageItem;
 import net.momirealms.customfishing.gui.icon.PreviousPageItem;
 import net.momirealms.customfishing.gui.icon.property.item.*;
-import net.momirealms.customfishing.gui.icon.property.loot.*;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -73,7 +72,7 @@ public class BaitEditor implements ItemPage {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Editing " + key)
+                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Edit " + key)
                 ))
                 .setUpperGui(upperGui)
                 .setLowerGui(gui)
@@ -113,6 +112,7 @@ public class BaitEditor implements ItemPage {
         items.add(new StackableItem(this));
         items.add(new ItemFlagItem(this));
         items.add(new Head64Item(this));
+        items.add(new NBTItem(this));
         return items;
     }
 
