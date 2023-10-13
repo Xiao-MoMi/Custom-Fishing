@@ -2,6 +2,7 @@ package net.momirealms.customfishing.gui.page.property;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
+import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.YamlPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
 import org.bukkit.Material;
@@ -26,15 +27,15 @@ import java.util.List;
 public class LoreEditor {
 
     private final Player player;
-    private final YamlPage parentPage;
+    private final SectionPage parentPage;
     private final ArrayList<String> lore;
     private final ConfigurationSection section;
     private int index;
 
-    public LoreEditor(Player player, YamlPage parentPage, ConfigurationSection section) {
+    public LoreEditor(Player player, SectionPage parentPage) {
         this.player = player;
         this.parentPage = parentPage;
-        this.section = section;
+        this.section = parentPage.getSection();
         this.index = 0;
         this.lore = new ArrayList<>(section.getStringList("display.lore"));
         this.lore.add(0, "Select one line");

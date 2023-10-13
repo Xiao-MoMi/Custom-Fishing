@@ -2,7 +2,7 @@ package net.momirealms.customfishing.gui.icon.property.item;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
-import net.momirealms.customfishing.gui.ItemPage;
+import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.page.property.LoreEditor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -15,9 +15,9 @@ import xyz.xenondevs.invui.item.impl.AbstractItem;
 
 public class LoreItem extends AbstractItem {
 
-    private final ItemPage itemPage;
+    private final SectionPage itemPage;
 
-    public LoreItem(ItemPage itemPage) {
+    public LoreItem(SectionPage itemPage) {
         this.itemPage = itemPage;
     }
 
@@ -55,7 +55,7 @@ public class LoreItem extends AbstractItem {
     @Override
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
         if (clickType.isLeftClick()) {
-            new LoreEditor(player, itemPage, itemPage.getSection());
+            new LoreEditor(player, itemPage);
         } else if (clickType.isRightClick()) {
             itemPage.getSection().set("display.lore", null);
             itemPage.save();

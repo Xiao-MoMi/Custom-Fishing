@@ -2,6 +2,7 @@ package net.momirealms.customfishing.gui.page.property;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
+import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.YamlPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
 import net.momirealms.customfishing.util.ConfigUtils;
@@ -28,18 +29,18 @@ import java.util.*;
 public class NBTEditor {
 
     private final Player player;
-    private final YamlPage parentPage;
+    private final SectionPage parentPage;
     private ConfigurationSection nbtSection;
     private ConfigurationSection currentSection;
     private String value;
     private String currentNode;
 
-    public NBTEditor(Player player, YamlPage parentPage, ConfigurationSection section) {
+    public NBTEditor(Player player, SectionPage parentPage) {
         this.player = player;
         this.parentPage = parentPage;
-        this.nbtSection = section.getConfigurationSection("nbt");
+        this.nbtSection = parentPage.getSection().getConfigurationSection("nbt");
         if (this.nbtSection == null)
-            this.nbtSection = section.createSection("nbt");
+            this.nbtSection = parentPage.getSection().createSection("nbt");
         this.currentSection = nbtSection;
         this.currentNode = "";
         reOpenMain();

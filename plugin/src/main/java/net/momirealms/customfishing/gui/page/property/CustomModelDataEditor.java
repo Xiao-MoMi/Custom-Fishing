@@ -3,6 +3,7 @@ package net.momirealms.customfishing.gui.page.property;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
+import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.YamlPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
 import org.bukkit.Material;
@@ -24,15 +25,15 @@ import xyz.xenondevs.invui.window.AnvilWindow;
 public class CustomModelDataEditor {
 
     private final Player player;
-    private final YamlPage parentPage;
+    private final SectionPage parentPage;
     private String cmd;
     private final ConfigurationSection section;
     private final String material;
 
-    public CustomModelDataEditor(Player player, YamlPage parentPage, ConfigurationSection section) {
+    public CustomModelDataEditor(Player player, SectionPage parentPage) {
         this.player = player;
         this.parentPage = parentPage;
-        this.section = section;
+        this.section = parentPage.getSection();
         this.material = section.getString("material");
 
         Item border = new SimpleItem(new ItemBuilder(Material.AIR));

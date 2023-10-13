@@ -1,9 +1,10 @@
-package net.momirealms.customfishing.gui.icon.property.item;
+package net.momirealms.customfishing.gui.icon.property.requirement;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.SectionPage;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -12,27 +13,23 @@ import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
 
-public class PreventGrabItem extends AbstractItem {
+public class RequirementEditorIcon extends AbstractItem {
 
-    private final SectionPage itemPage;
+    private final SectionPage sectionPage;
 
-    public PreventGrabItem(SectionPage itemPage) {
-        this.itemPage = itemPage;
+    public RequirementEditorIcon(SectionPage sectionPage) {
+        this.sectionPage = sectionPage;
     }
 
     @Override
     public ItemProvider getItemProvider() {
-        ItemBuilder itemBuilder = new ItemBuilder(Material.DRAGON_EGG)
+        ItemBuilder itemBuilder = new ItemBuilder(Material.COMPASS)
                 .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                        "<#FF4500>● Prevent Grabbing"
-                )));
-
-        itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                        "<gray>Current value: <white>" + itemPage.getSection().getBoolean("prevent-grabbing", false)
+                        "<#B0E0E6>● Requirements"
                 )))
                 .addLoreLines("")
                 .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "<#00FF7F> -> Click to toggle"
+                        "<#00FF7F> -> Click to edit requirements"
                 )));
 
         return itemBuilder;
@@ -40,8 +37,10 @@ public class PreventGrabItem extends AbstractItem {
 
     @Override
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
-        itemPage.getSection().set("prevent-grabbing", !itemPage.getSection().getBoolean("prevent-grabbing", false));
-        itemPage.save();
-        itemPage.reOpen();
+        ConfigurationSection reqSection = sectionPage.getSection().getConfigurationSection("requirements");
+        if (reqSection == null)
+            reqSection = sectionPage.getSection().createSection("requirements");
+
+
     }
 }

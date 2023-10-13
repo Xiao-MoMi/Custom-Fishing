@@ -131,7 +131,7 @@ public class ItemSelector implements YamlPage {
     public void openEditor(String key) {
         switch (type) {
             case "item" -> {
-                new ItemEditor(player, key, this, yaml.getConfigurationSection(key));
+                new SectionEditor(player, key, this, yaml.getConfigurationSection(key));
             }
             case "rod" -> {
                 new RodEditor(player, key, this, yaml.getConfigurationSection(key));

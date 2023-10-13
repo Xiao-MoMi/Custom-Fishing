@@ -2,7 +2,7 @@ package net.momirealms.customfishing.gui.icon.property.loot;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
-import net.momirealms.customfishing.gui.ItemPage;
+import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.page.property.ScoreEditor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -15,9 +15,9 @@ import xyz.xenondevs.invui.item.impl.AbstractItem;
 
 public class ScoreItem extends AbstractItem {
 
-    private final ItemPage itemPage;
+    private final SectionPage itemPage;
 
-    public ScoreItem(ItemPage itemPage) {
+    public ScoreItem(SectionPage itemPage) {
         this.itemPage = itemPage;
     }
 
@@ -50,7 +50,7 @@ public class ScoreItem extends AbstractItem {
     @Override
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
         if (clickType.isLeftClick()) {
-            new ScoreEditor(player, itemPage, itemPage.getSection());
+            new ScoreEditor(player, itemPage);
         } else if (clickType.isRightClick()) {
             itemPage.getSection().set("score", null);
             itemPage.save();

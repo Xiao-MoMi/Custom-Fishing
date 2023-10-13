@@ -2,6 +2,7 @@ package net.momirealms.customfishing.gui.page.property;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
+import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.YamlPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
 import org.bukkit.Material;
@@ -27,16 +28,16 @@ import java.util.Map;
 public class EnchantmentEditor {
 
     private final Player player;
-    private final YamlPage parentPage;
+    private final SectionPage parentPage;
     private final ArrayList<String> enchantments;
     private final ConfigurationSection section;
     private int index;
-    private boolean store;
+    private final boolean store;
 
-    public EnchantmentEditor(Player player, YamlPage parentPage, ConfigurationSection section, boolean store) {
+    public EnchantmentEditor(Player player, SectionPage parentPage, boolean store) {
         this.player = player;
         this.parentPage = parentPage;
-        this.section = section;
+        this.section = parentPage.getSection();
         this.store = store;
         this.index = 0;
         this.enchantments = new ArrayList<>();

@@ -2,9 +2,8 @@ package net.momirealms.customfishing.gui.icon.property.item;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
-import net.momirealms.customfishing.gui.ItemPage;
+import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.page.property.EnchantmentEditor;
-import net.momirealms.customfishing.gui.page.property.SizeEditor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -20,9 +19,9 @@ import java.util.Map;
 
 public class EnchantmentItem extends AbstractItem {
 
-    private final ItemPage itemPage;
+    private final SectionPage itemPage;
 
-    public EnchantmentItem(ItemPage itemPage) {
+    public EnchantmentItem(SectionPage itemPage) {
         this.itemPage = itemPage;
     }
 
@@ -63,7 +62,7 @@ public class EnchantmentItem extends AbstractItem {
     @Override
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
         if (clickType.isLeftClick()) {
-            new EnchantmentEditor(player, itemPage, itemPage.getSection(), false);
+            new EnchantmentEditor(player, itemPage, false);
         } else if (clickType.isRightClick()) {
             itemPage.getSection().set("enchantments", null);
             itemPage.save();

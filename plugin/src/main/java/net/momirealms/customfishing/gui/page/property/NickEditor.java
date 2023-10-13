@@ -2,6 +2,7 @@ package net.momirealms.customfishing.gui.page.property;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
+import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.YamlPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
 import org.bukkit.Material;
@@ -22,15 +23,13 @@ import xyz.xenondevs.invui.window.AnvilWindow;
 
 public class NickEditor {
 
-    private final Player player;
-    private final YamlPage parentPage;
+    private final SectionPage parentPage;
     private String nick;
     private final ConfigurationSection section;
 
-    public NickEditor(Player player, YamlPage parentPage, ConfigurationSection section) {
-        this.player = player;
+    public NickEditor(Player player, SectionPage parentPage) {
         this.parentPage = parentPage;
-        this.section = section;
+        this.section = parentPage.getSection();
 
         Item border = new SimpleItem(new ItemBuilder(Material.AIR));
         var confirm  = new ConfirmIcon();

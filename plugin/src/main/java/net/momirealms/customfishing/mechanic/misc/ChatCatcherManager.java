@@ -19,7 +19,7 @@ package net.momirealms.customfishing.mechanic.misc;
 
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
-import net.momirealms.customfishing.gui.ItemPage;
+import net.momirealms.customfishing.gui.SectionPage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChatCatcherManager implements Listener {
 
     private final CustomFishingPlugin plugin;
-    private final ConcurrentHashMap<UUID, Pair<String, ItemPage>> pageMap;
+    private final ConcurrentHashMap<UUID, Pair<String, SectionPage>> pageMap;
 
     public ChatCatcherManager(CustomFishingPlugin plugin) {
         this.pageMap = new ConcurrentHashMap<>();
@@ -54,7 +54,7 @@ public class ChatCatcherManager implements Listener {
         unload();
     }
 
-    public void catchMessage(Player player, String key, ItemPage page) {
+    public void catchMessage(Player player, String key, SectionPage page) {
         this.pageMap.put(player.getUniqueId(), Pair.of(key, page));
     }
 

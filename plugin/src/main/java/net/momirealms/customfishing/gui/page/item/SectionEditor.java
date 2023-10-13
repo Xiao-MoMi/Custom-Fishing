@@ -1,6 +1,7 @@
 package net.momirealms.customfishing.gui.page.item;
 
 import net.momirealms.customfishing.gui.icon.property.item.*;
+import net.momirealms.customfishing.gui.icon.property.loot.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import xyz.xenondevs.invui.item.Item;
@@ -8,10 +9,9 @@ import xyz.xenondevs.invui.item.Item;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("DuplicatedCode")
-public class HookEditor extends AbstractSectionEditor {
+public class SectionEditor extends AbstractSectionEditor {
 
-    public HookEditor(Player player, String key, ItemSelector itemSelector, ConfigurationSection section) {
+    public SectionEditor(Player player, String key, ItemSelector itemSelector, ConfigurationSection section) {
         super(player, itemSelector, section, key);
     }
 
@@ -19,14 +19,24 @@ public class HookEditor extends AbstractSectionEditor {
     public List<Item> getItemList() {
         ArrayList<Item> items = new ArrayList<>();
         items.add(new MaterialItem(this));
+        items.add(new NickItem(this));
         items.add(new DisplayNameItem(this));
         items.add(new LoreItem(this));
         items.add(new CMDItem(this));
+        items.add(new AmountItem(this));
         items.add(new TagItem(this));
         items.add(new UnbreakableItem(this));
         items.add(new DurabilityItem(this));
         items.add(new RandomDurabilityItem(this));
         items.add(new StackableItem(this));
+        items.add(new PreventGrabItem(this));
+        items.add(new PriceItem(this));
+        items.add(new ShowInFinderItem(this));
+        items.add(new DisableStatsItem(this));
+        items.add(new DisableGameItem(this));
+        items.add(new InstantGameItem(this));
+        items.add(new ScoreItem(this));
+        items.add(new SizeItem(this));
         items.add(new ItemFlagItem(this));
         items.add(new Head64Item(this));
         items.add(new NBTItem(this));

@@ -2,7 +2,7 @@ package net.momirealms.customfishing.gui.icon.property.item;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
-import net.momirealms.customfishing.gui.ItemPage;
+import net.momirealms.customfishing.gui.SectionPage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -14,9 +14,9 @@ import xyz.xenondevs.invui.item.impl.AbstractItem;
 
 public class TagItem extends AbstractItem {
 
-    private final ItemPage itemPage;
+    private final SectionPage itemPage;
 
-    public TagItem(ItemPage itemPage) {
+    public TagItem(SectionPage itemPage) {
         this.itemPage = itemPage;
     }
 

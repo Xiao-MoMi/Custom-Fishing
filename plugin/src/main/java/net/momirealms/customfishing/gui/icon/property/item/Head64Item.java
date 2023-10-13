@@ -4,7 +4,7 @@ import net.momirealms.customfishing.CustomFishingPluginImpl;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
-import net.momirealms.customfishing.gui.ItemPage;
+import net.momirealms.customfishing.gui.SectionPage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -18,9 +18,9 @@ import java.util.ArrayList;
 
 public class Head64Item extends AbstractItem {
 
-    private final ItemPage itemPage;
+    private final SectionPage itemPage;
 
-    public Head64Item(ItemPage itemPage) {
+    public Head64Item(SectionPage itemPage) {
         this.itemPage = itemPage;
     }
 

@@ -2,7 +2,7 @@ package net.momirealms.customfishing.gui.icon.property.item;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
-import net.momirealms.customfishing.gui.ItemPage;
+import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.page.property.NBTEditor;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.Material;
@@ -16,9 +16,9 @@ import xyz.xenondevs.invui.item.impl.AbstractItem;
 
 public class NBTItem extends AbstractItem {
 
-    private final ItemPage itemPage;
+    private final SectionPage itemPage;
 
-    public NBTItem(ItemPage itemPage) {
+    public NBTItem(SectionPage itemPage) {
         this.itemPage = itemPage;
     }
 
@@ -56,7 +56,7 @@ public class NBTItem extends AbstractItem {
     @Override
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
         if (clickType.isLeftClick()) {
-            new NBTEditor(player, itemPage, itemPage.getSection());
+            new NBTEditor(player, itemPage);
         } else if (clickType.isRightClick()) {
             itemPage.getSection().set("nbt", null);
             itemPage.save();

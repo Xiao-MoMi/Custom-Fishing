@@ -2,7 +2,7 @@ package net.momirealms.customfishing.gui.icon.property.loot;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
-import net.momirealms.customfishing.gui.ItemPage;
+import net.momirealms.customfishing.gui.SectionPage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -14,9 +14,9 @@ import xyz.xenondevs.invui.item.impl.AbstractItem;
 
 public class DisableGameItem extends AbstractItem {
 
-    private final ItemPage itemPage;
+    private final SectionPage itemPage;
 
-    public DisableGameItem(ItemPage itemPage) {
+    public DisableGameItem(SectionPage itemPage) {
         this.itemPage = itemPage;
     }
 

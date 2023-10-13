@@ -3,6 +3,7 @@ package net.momirealms.customfishing.gui.page.property;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
+import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.YamlPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
 import org.bukkit.Material;
@@ -28,15 +29,14 @@ import java.util.List;
 public class ItemFlagEditor {
 
     private final Player player;
-    private final YamlPage parentPage;
+    private final SectionPage parentPage;
     private final List<String> flags;
     private final ConfigurationSection section;
 
-    public ItemFlagEditor(Player player, YamlPage parentPage, ConfigurationSection section) {
+    public ItemFlagEditor(Player player, SectionPage parentPage) {
         this.player = player;
         this.parentPage = parentPage;
-        this.section = section;
-        int index = 0;
+        this.section = parentPage.getSection();
         this.flags = section.getStringList("item-flags");
         reOpen();
     }
