@@ -16,9 +16,11 @@ import xyz.xenondevs.invui.item.impl.AbstractItem;
 public class RequirementEditorIcon extends AbstractItem {
 
     private final SectionPage sectionPage;
+    private final String sectionName;
 
-    public RequirementEditorIcon(SectionPage sectionPage) {
+    public RequirementEditorIcon(SectionPage sectionPage, String requirementSectionName) {
         this.sectionPage = sectionPage;
+        this.sectionName = requirementSectionName;
     }
 
     @Override
@@ -37,9 +39,9 @@ public class RequirementEditorIcon extends AbstractItem {
 
     @Override
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
-        ConfigurationSection reqSection = sectionPage.getSection().getConfigurationSection("requirements");
+        ConfigurationSection reqSection = sectionPage.getSection().getConfigurationSection(sectionName);
         if (reqSection == null)
-            reqSection = sectionPage.getSection().createSection("requirements");
+            reqSection = sectionPage.getSection().createSection(sectionName);
 
 
     }
