@@ -256,7 +256,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 if (compound != null && compound.hasTag("max_dur")) {
                     event.setCancelled(true);
                     hook.remove();
-                    ItemUtils.decreaseDurability(itemStack, 2, true);
+                    ItemUtils.decreaseDurability(player, itemStack, 2, true);
                 }
             }
         }
@@ -367,7 +367,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
             if (nbtCompound != null && nbtCompound.hasTag("max_dur")) {
                 event.getHook().remove();
                 event.setCancelled(true);
-                ItemUtils.decreaseDurability(itemStack, 5, true);
+                ItemUtils.decreaseDurability(player, itemStack, 5, true);
             }
         }
     }
@@ -537,7 +537,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
                         break outer;
                     }
                     ItemUtils.decreaseHookDurability(rod, 1, false);
-                    ItemUtils.decreaseDurability(rod, 1, true);
+                    ItemUtils.decreaseDurability(player, rod, 1, true);
                 }
 
             if (gamingPlayer.isSuccessful())

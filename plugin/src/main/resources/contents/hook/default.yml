@@ -1,3 +1,9 @@
+# Note: These are the default configurations of the plugin
+# and do not necessarily mean that players can have a good
+# gaming experience. We hope that you will create
+# customized configurations based on your own ideas,
+# allowing players to experience the uniqueness of your server.
+
 delicate_hook:
   material: SHEARS
   display:
@@ -13,6 +19,8 @@ delicate_hook:
       - '<#FFD700>Effects:'
       - '<gray> - Increase the chance of getting high quality fish'
   max-durability: 16
+  custom-model-data: 50000
+  # {dur} / {max}
   lore-on-rod:
     - ''
     - '<#7FFFAA>Equipped hook:'

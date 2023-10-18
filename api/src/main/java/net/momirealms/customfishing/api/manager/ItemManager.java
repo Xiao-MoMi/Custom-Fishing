@@ -186,7 +186,7 @@ public interface ItemManager {
      * @param amount      The amount by which to decrease the durability.
      * @param updateLore  Whether to update the lore of the ItemStack.
      */
-    void decreaseDurability(ItemStack itemStack, int amount, boolean updateLore);
+    void decreaseDurability(Player player, ItemStack itemStack, int amount, boolean updateLore);
 
     /**
      * Increases the durability of an ItemStack by a specified amount and optionally updates its lore.

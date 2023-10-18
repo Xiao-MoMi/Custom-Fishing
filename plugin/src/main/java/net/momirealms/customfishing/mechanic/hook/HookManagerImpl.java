@@ -26,6 +26,7 @@ import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.hook.HookSetting;
 import net.momirealms.customfishing.api.util.LogUtils;
+import net.momirealms.customfishing.mechanic.item.ItemManagerImpl;
 import net.momirealms.customfishing.util.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -185,12 +186,16 @@ public class HookManagerImpl implements Listener, HookManager {
         if (setting == null)
             return false;
 
+        var curDurability = ItemUtils.getCustomDurability(hook);
+        if (curDurability.left() == 0)
+            return false;
+
         NBTItem rodNBTItem = new NBTItem(rod);
         NBTCompound cfCompound = rodNBTItem.getOrCreateCompound("CustomFishing");
 
         cfCompound.setString("hook_id", hookID);
         cfCompound.setItemStack("hook_item", hook);
-        cfCompound.setInteger("hook_dur", ItemUtils.getDurability(hook));
+        cfCompound.setInteger("hook_dur", curDurability.right());
 
         ItemUtils.updateNBTItemLore(rodNBTItem);
         rod.setItemMeta(rodNBTItem.getItem().getItemMeta());
@@ -273,6 +278,24 @@ public class HookManagerImpl implements Listener, HookManager {
         if (setting == null)
             return;
 
+        var cursorDurability = ItemUtils.getCustomDurability(cursor);
+        if (cursorDurability.left() == 0) {
+            if (plugin.getItemManager().getBuildableItem("hook", hookID) instanceof ItemManagerImpl.CFBuilder cfBuilder) {
+                ItemStack itemStack = cfBuilder.build(player, new HashMap<>());
+                var pair = ItemUtils.getCustomDurability(itemStack);
+                cursorDurability = pair;
+                NBTItem nbtItem = new NBTItem(cursor);
+                NBTCompound compound = nbtItem.getOrCreateCompound("CustomFishing");
+                compound.setInteger("max_dur", pair.left());
+                compound.setInteger("cur_dur", pair.right());
+                compound.setString("type", "hook");
+                compound.setString("id", hookID);
+                cursor.setItemMeta(nbtItem.getItem().getItemMeta());
+            } else {
+                return;
+            }
+        }
+
         Condition condition = new Condition(player, new HashMap<>());
         condition.insertArg("{rod}", plugin.getItemManager().getAnyPluginItemID(clicked));
         EffectCarrier effectCarrier = plugin.getEffectManager().getEffectCarrier("hook", hookID);
@@ -305,7 +328,7 @@ public class HookManagerImpl implements Listener, HookManager {
 
         cfCompound.setString("hook_id", hookID);
         cfCompound.setItemStack("hook_item", clonedHook);
-        cfCompound.setInteger("hook_dur", ItemUtils.getDurability(clonedHook));
+        cfCompound.setInteger("hook_dur", cursorDurability.right());
 
         ItemUtils.updateNBTItemLore(rodNBTItem);
         clicked.setItemMeta(rodNBTItem.getItem().getItemMeta());

@@ -446,13 +446,14 @@ public class ItemManagerImpl implements ItemManager, Listener {
     /**
      * Decreases the durability of an ItemStack by a specified amount and optionally updates its lore.
      *
+     * @param player      Player
      * @param itemStack   The ItemStack to modify.
      * @param amount      The amount by which to decrease the durability.
      * @param updateLore  Whether to update the lore of the ItemStack.
      */
     @Override
-    public void decreaseDurability(ItemStack itemStack, int amount, boolean updateLore) {
-        ItemUtils.decreaseDurability(itemStack, amount, updateLore);
+    public void decreaseDurability(Player player, ItemStack itemStack, int amount, boolean updateLore) {
+        ItemUtils.decreaseDurability(player, itemStack, amount, updateLore);
     }
 
     /**

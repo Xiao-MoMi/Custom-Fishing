@@ -25,12 +25,15 @@ import net.kyori.adventure.text.ScoreComponent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
+import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.mechanic.hook.HookSetting;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.setting.CFConfig;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.Damageable;
@@ -51,9 +54,6 @@ public class ItemUtils {
         NBTCompound cfCompound = nbtItem.getCompound("CustomFishing");
         if (cfCompound == null)
             return nbtItem;
-
-        boolean hasLoreUpdate = cfCompound.hasTag("hook_id") || cfCompound.hasTag("max_dur");
-        if (!hasLoreUpdate) return nbtItem;
 
         NBTCompound displayCompound = nbtItem.getOrCreateCompound("display");
         NBTList<String> lore = displayCompound.getStringList("Lore");
@@ -202,7 +202,7 @@ public class ItemUtils {
      * @param amount     The amount by which to reduce durability
      * @param updateLore Whether to update the lore after reducing durability
      */
-    public static void decreaseDurability(ItemStack itemStack, int amount, boolean updateLore) {
+    public static void decreaseDurability(Player player, ItemStack itemStack, int amount, boolean updateLore) {
         if (itemStack == null || itemStack.getType() == Material.AIR)
             return;
         int unBreakingLevel = itemStack.getEnchantmentLevel(Enchantment.DURABILITY);
@@ -227,6 +227,12 @@ public class ItemUtils {
                 itemStack.setAmount(0);
             }
         } else {
+            ItemMeta previousMeta = itemStack.getItemMeta().clone();
+            PlayerItemDamageEvent itemDamageEvent = new PlayerItemDamageEvent(player, itemStack, amount);
+            Bukkit.getPluginManager().callEvent(itemDamageEvent);
+            if (!itemStack.getItemMeta().equals(previousMeta)) {
+                return;
+            }
             int damage = nbtItem.getInteger("Damage") + amount;
             if (damage > itemStack.getType().getMaxDurability()) {
                 itemStack.setAmount(0);
@@ -304,17 +310,17 @@ public class ItemUtils {
      * @param itemStack The ItemStack to get durability from
      * @return The current durability value
      */
-    public static int getDurability(ItemStack itemStack) {
-        if (!(itemStack.getItemMeta() instanceof Damageable damageable))
-            return -1;
-        if (damageable.isUnbreakable())
-            return -1;
+    public static Pair<Integer, Integer> getCustomDurability(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR)
+            return Pair.of(0, 0);
+        if (itemStack.getItemMeta() instanceof Damageable damageable && damageable.isUnbreakable())
+            return Pair.of(-1, -1);
         NBTItem nbtItem = new NBTItem(itemStack);
         NBTCompound cfCompound = nbtItem.getCompound("CustomFishing");
         if (cfCompound != null && cfCompound.hasTag("max_dur")) {
-            return cfCompound.getInteger("cur_dur");
+            return Pair.of(cfCompound.getInteger("max_dur"), cfCompound.getInteger("cur_dur"));
         } else {
-            return itemStack.getType().getMaxDurability() - damageable.getDamage();
+            return Pair.of(0, 0);
         }
     }
 

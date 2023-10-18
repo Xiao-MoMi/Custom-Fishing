@@ -101,7 +101,7 @@ public class IntegrationManagerImpl implements IntegrationManager {
         }
         if (plugin.isHookedPluginEnabled("Jobs")) {
             registerLevelPlugin("JobsReborn", new JobsRebornImpl());
-            hookMessage("Jobs");
+            hookMessage("JobsReborn");
         }
         if (plugin.isHookedPluginEnabled("MMOCore")) {
             registerLevelPlugin("MMOCore", new MMOCoreImpl());

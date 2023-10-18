@@ -609,7 +609,7 @@ public class ActionManagerImpl implements ActionManager {
                     if (amount > 0) {
                         ItemUtils.increaseDurability(itemStack, amount, true);
                     } else {
-                        ItemUtils.decreaseDurability(itemStack, -amount, true);
+                        ItemUtils.decreaseDurability(condition.getPlayer(), itemStack, -amount, true);
                     }
                 };
             } else {
