@@ -99,7 +99,7 @@ public class IntegrationManagerImpl implements IntegrationManager {
             registerLevelPlugin("EcoSkills", new EcoSkillsImpl());
             hookMessage("EcoSkills");
         }
-        if (plugin.isHookedPluginEnabled("Jobs")) {
+        if (Bukkit.getPluginManager().getPlugin("Jobs") != null) {
             registerLevelPlugin("JobsReborn", new JobsRebornImpl());
             hookMessage("JobsReborn");
         }

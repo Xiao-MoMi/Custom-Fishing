@@ -24,7 +24,7 @@ delicate_hook:
   lore-on-rod:
     - ''
     - '<#7FFFAA>Equipped hook:'
-    - '<gray> - Delicate hook: <white>{dur}<white> times left'
+    - '<gray> - Delicate hook: <white>{dur}</white> times left'
   effects:
     group:
       type: group-mod
