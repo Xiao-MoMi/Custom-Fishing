@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.storage.user;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.EarningData;
 import net.momirealms.customfishing.api.data.InventoryData;
 import net.momirealms.customfishing.api.data.PlayerData;
@@ -71,6 +72,13 @@ public class OfflineUserImpl implements OfflineUser {
         this.holder.setItems(InventoryUtils.getInventoryItems(playerData.getBagData().serialized));
 
         this.earningData = playerData.getEarningData();
+
+        int date = CustomFishingPlugin.get().getMarketManager().getDate();
+        if (earningData.date != date) {
+            earningData.date = date;
+            earningData.earnings = 0d;
+        }
+
         this.statistics = new Statistics(playerData.getStatistics());
     }
 

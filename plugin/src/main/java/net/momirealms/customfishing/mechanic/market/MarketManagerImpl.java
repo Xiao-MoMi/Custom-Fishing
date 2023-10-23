@@ -26,6 +26,7 @@ import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.item.BuildableItem;
 import net.momirealms.customfishing.api.mechanic.market.MarketGUIHolder;
+import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.util.ConfigUtils;
@@ -71,23 +72,41 @@ public class MarketManagerImpl implements MarketManager, Listener {
     private boolean allowItemWithNoPrice;
     private final ConcurrentHashMap<UUID, MarketGUI> marketGUIMap;
     private boolean enable;
+    private CancellableTask resetEarningsTask;
+    private int date;
 
     public MarketManagerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.priceMap = new HashMap<>();
         this.decorativeIcons = new HashMap<>();
         this.marketGUIMap = new ConcurrentHashMap<>();
+        this.date = getDate();
     }
 
     public void load() {
         this.loadConfig();
         Bukkit.getPluginManager().registerEvents(this, plugin);
+        if (!enable) return;
+        this.resetEarningsTask = plugin.getScheduler().runTaskAsyncTimer(() -> {
+            int now = getDate();
+            if (this.date != now) {
+                this.date = now;
+                for (OnlineUser onlineUser : plugin.getStorageManager().getOnlineUsers()) {
+                    onlineUser.getEarningData().date = now;
+                    onlineUser.getEarningData().earnings = 0d;
+                }
+            }
+        }, 1, 1, TimeUnit.SECONDS);
     }
 
     public void unload() {
         HandlerList.unregisterAll(this);
         this.priceMap.clear();
         this.decorativeIcons.clear();
+        if (this.resetEarningsTask != null && !this.resetEarningsTask.isCancelled()) {
+            this.resetEarningsTask.cancel();
+            this.resetEarningsTask = null;
+        }
     }
 
     public void disable() {
@@ -254,8 +273,8 @@ public class MarketManagerImpl implements MarketManager, Listener {
 
         if (clickedInv != player.getInventory()) {
             EarningData data = gui.getEarningData();
-            if (data.date != getDate()) {
-                data.date = getDate();
+            if (data.date != getCachedDate()) {
+                data.date = getCachedDate();
                 data.earnings = 0;
             }
 
@@ -356,6 +375,11 @@ public class MarketManagerImpl implements MarketManager, Listener {
      *
      * @return An integer representing the current date.
      */
+    @Override
+    public int getCachedDate() {
+        return date;
+    }
+
     @Override
     public int getDate() {
         Calendar calendar = Calendar.getInstance();

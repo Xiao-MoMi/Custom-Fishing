@@ -45,6 +45,7 @@ public class PlaceholderManagerImpl implements PlaceholderManager, Listener {
     private final HashMap<String, String> customPlaceholderMap;
     private CompetitionPapi competitionPapi;
     private StatisticsPapi statisticsPapi;
+    private CFPapi cfPapi;
     private final ConcurrentHashMap<UUID, CachedPlaceholder> cachedPlaceholders;
 
     public PlaceholderManagerImpl(CustomFishingPlugin plugin) {
@@ -57,12 +58,14 @@ public class PlaceholderManagerImpl implements PlaceholderManager, Listener {
         if (this.hasPapi) {
             competitionPapi = new CompetitionPapi(plugin);
             statisticsPapi = new StatisticsPapi(plugin);
+            cfPapi = new CFPapi(plugin);
         }
     }
 
     public void load() {
         if (competitionPapi != null) competitionPapi.load();
         if (statisticsPapi != null) statisticsPapi.load();
+        if (cfPapi != null) cfPapi.load();
         Bukkit.getPluginManager().registerEvents(this, plugin);
         loadCustomPlaceholders();
     }
@@ -70,6 +73,7 @@ public class PlaceholderManagerImpl implements PlaceholderManager, Listener {
     public void unload() {
         if (competitionPapi != null) competitionPapi.unload();
         if (statisticsPapi != null) statisticsPapi.unload();
+        if (cfPapi != null) cfPapi.unload();
         HandlerList.unregisterAll(this);
     }
 

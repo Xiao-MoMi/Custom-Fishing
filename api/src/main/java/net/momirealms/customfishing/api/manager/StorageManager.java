@@ -24,6 +24,7 @@ import net.momirealms.customfishing.api.data.user.OnlineUser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -44,6 +45,8 @@ public interface StorageManager {
      * @return An OnlineUser instance if the player is online, or null if not.
      */
     @Nullable OnlineUser getOnlineUser(UUID uuid);
+
+    Collection<OnlineUser> getOnlineUsers();
 
     /**
      * Asynchronously retrieves an OfflineUser instance for the specified UUID.

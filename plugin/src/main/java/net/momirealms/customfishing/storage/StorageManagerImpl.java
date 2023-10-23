@@ -53,6 +53,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
@@ -175,6 +176,11 @@ public class StorageManagerImpl implements StorageManager, Listener {
     @Override
     public OnlineUser getOnlineUser(UUID uuid) {
         return onlineUserMap.get(uuid);
+    }
+
+    @Override
+    public Collection<OnlineUser> getOnlineUsers() {
+        return onlineUserMap.values();
     }
 
     /**

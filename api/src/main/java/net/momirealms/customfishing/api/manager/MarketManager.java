@@ -34,6 +34,8 @@ public interface MarketManager {
      *
      * @return An integer representing the current date.
      */
+    int getCachedDate();
+
     int getDate();
 
     /**
