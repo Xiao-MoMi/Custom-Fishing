@@ -284,12 +284,12 @@ public class CompetitionManagerImpl implements CompetitionManager {
             int players = Bukkit.getOnlinePlayers().size();
             if (players < config.getMinPlayersToStart()) {
                 var actions = config.getSkipActions();
-                if (actions != null)
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        for (Action action : actions) {
-                            action.trigger(new Condition(player));
-                        }
+                if (actions != null) {
+                    Condition condition = new Condition(null, null, new HashMap<>());
+                    for (Action action : actions) {
+                        action.trigger(condition);
                     }
+                }
                 return false;
             }
             start(config);
