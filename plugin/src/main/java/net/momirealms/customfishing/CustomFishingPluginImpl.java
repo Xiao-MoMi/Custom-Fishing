@@ -131,8 +131,8 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         ((RequirementManagerImpl) this.requirementManager).disable();
         ((SchedulerImpl) this.scheduler).shutdown();
         ((IntegrationManagerImpl) this.integrationManager).disable();
-        ((StorageManagerImpl) this.storageManager).disable();
         ((CompetitionManagerImpl) this.competitionManager).disable();
+        ((StorageManagerImpl) this.storageManager).disable();
         ((PlaceholderManagerImpl) this.placeholderManager).disable();
         ((StatisticsManagerImpl) this.statisticsManager).disable();
         ((ActionManagerImpl) this.actionManager).disable();

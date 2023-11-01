@@ -47,10 +47,10 @@ public interface CompetitionManager {
      *
      * @param competition The name of the competition to start.
      * @param force       Whether to force start the competition even if amount of the online players is lower than the requirement
-     * @param allServers   Whether to apply the competition to the servers that connected to Redis.
+     * @param serverGroup   Whether to apply the competition to the servers that connected to Redis.
      * @return {@code true} if the competition was started successfully, {@code false} otherwise.
      */
-    boolean startCompetition(String competition, boolean force, boolean allServers);
+    boolean startCompetition(String competition, boolean force, @Nullable String serverGroup);
 
     /**
      * Gets the ongoing fishing competition, if one is currently in progress.
@@ -64,10 +64,10 @@ public interface CompetitionManager {
      *
      * @param config    The configuration of the competition to start.
      * @param force     Whether to force start the competition even if amount of the online players is lower than the requirement
-     * @param allServers Whether the competition should start across all servers that connected to Redis
+     * @param serverGroup Whether the competition should start across all servers that connected to Redis
      * @return True if the competition was started successfully, false otherwise.
      */
-    boolean startCompetition(CompetitionConfig config, boolean force, boolean allServers);
+    boolean startCompetition(CompetitionConfig config, boolean force, @Nullable String serverGroup);
 
     /**
      * Gets the number of seconds until the next competition.

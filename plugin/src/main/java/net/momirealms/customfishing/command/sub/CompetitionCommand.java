@@ -55,10 +55,7 @@ public class CompetitionCommand {
                             ArgumentSuggestions.strings(allCompetitions)
                         )
                 );
-        if (CFConfig.redisRanking) command.withOptionalArguments(new BooleanArgument("servers").replaceSuggestions(ArgumentSuggestions.stringsWithTooltips(new IStringTooltip[]{
-                StringTooltip.ofString("true", "all the servers that connected to Redis"),
-                StringTooltip.ofString("false", "only this server")
-        })));
+        if (CFConfig.redisRanking) command.withOptionalArguments(new StringArgument("server-group"));
         command.executes((sender, args) -> {
             String id = (String) args.get(0);
             assert id != null;
@@ -66,22 +63,23 @@ public class CompetitionCommand {
                 AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Competition_Not_Exist.replace("{id}", id));
                 return;
             }
-            boolean allServer = (boolean) args.getOrDefault("servers", false);
-            CustomFishingPlugin.get().getCompetitionManager().startCompetition(id, true, allServer);
+            Object server = args.get("server-group");
+            if (server != null) {
+                CustomFishingPlugin.get().getCompetitionManager().startCompetition(id, true, (String) server);
+            } else {
+                CustomFishingPlugin.get().getCompetitionManager().startCompetition(id, true, null);
+            }
         });
         return command;
     }
 
     private CommandAPICommand getCompetitionEndCommand() {
         var command = new CommandAPICommand("end");
-        if (CFConfig.redisRanking) command.withOptionalArguments(new BooleanArgument("servers").replaceSuggestions(ArgumentSuggestions.stringsWithTooltips(new IStringTooltip[]{
-                StringTooltip.ofString("true", "all the servers that connected to Redis"),
-                StringTooltip.ofString("false", "only this server")
-        })));
+        if (CFConfig.redisRanking) command.withOptionalArguments(new StringArgument("server-group"));
         command.executes((sender, args) -> {
-            boolean allServer = (boolean) args.getOrDefault("servers", false);
-            if (allServer) {
-                RedisManager.getInstance().sendRedisMessage("cf_competition", "end");
+            Object server = args.get("server-group");
+            if (server != null) {
+                RedisManager.getInstance().publishRedisMessage((String) server, "end");
             } else {
                 FishingCompetition competition = CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition();
                 if (competition != null) {
@@ -97,14 +95,11 @@ public class CompetitionCommand {
 
     private CommandAPICommand getCompetitionStopCommand() {
         var command = new CommandAPICommand("stop");
-        if (CFConfig.redisRanking) command.withOptionalArguments(new BooleanArgument("servers").replaceSuggestions(ArgumentSuggestions.stringsWithTooltips(new IStringTooltip[]{
-                StringTooltip.ofString("true", "all the servers that connected to Redis"),
-                StringTooltip.ofString("false", "only this server")
-        })));
+        if (CFConfig.redisRanking) command.withOptionalArguments(new StringArgument("server-group"));
         command.executes((sender, args) -> {
-            boolean allServer = (boolean) args.getOrDefault("servers", false);
-            if (allServer) {
-                RedisManager.getInstance().sendRedisMessage("cf_competition", "stop");
+            Object server = args.get("server-group");
+            if (server != null) {
+                RedisManager.getInstance().publishRedisMessage((String) server, "stop");
             } else {
                 FishingCompetition competition = CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition();
                 if (competition != null) {

@@ -26,6 +26,7 @@ import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.api.util.OffsetUtils;
+import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventPriority;
@@ -75,6 +76,7 @@ public class CFConfig {
 
     // Competition
     public static boolean redisRanking;
+    public static List<String> serverGroup;
     public static int placeholderLimit;
 
     // Data save interval
@@ -146,6 +148,7 @@ public class CFConfig {
 
         redisRanking = config.getBoolean("mechanics.competition.redis-ranking", false);
         placeholderLimit = config.getInt("mechanics.competition.placeholder-limit", 3);
+        serverGroup = ConfigUtils.stringListArgs(config.get("mechanics.competition.server-group","default"));
 
         dataSaveInterval = config.getInt("other-settings.data-saving-interval", 600);
         lockData = config.getBoolean("other-settings.lock-data", true);

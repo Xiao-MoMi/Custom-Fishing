@@ -21,19 +21,21 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.PlayerData;
 import net.momirealms.customfishing.api.data.StorageType;
 import net.momirealms.customfishing.api.util.LogUtils;
+import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.storage.method.AbstractStorage;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.*;
 import redis.clients.jedis.exceptions.JedisException;
+import redis.clients.jedis.params.XReadParams;
+import redis.clients.jedis.resps.StreamEntry;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -42,11 +44,14 @@ import java.util.concurrent.CompletableFuture;
 public class RedisManager extends AbstractStorage {
 
     private static RedisManager instance;
+    private final static String STREAM = "customfishing";
     private JedisPool jedisPool;
     private String password;
     private int port;
     private String host;
     private boolean useSSL;
+    private BlockingThreadTask threadTask;
+    private boolean isNewerThan5;
 
     public RedisManager(CustomFishingPlugin plugin) {
         super(plugin);
@@ -103,14 +108,25 @@ public class RedisManager extends AbstractStorage {
         } else {
             jedisPool = new JedisPool(jedisPoolConfig, host, port, 0, password, useSSL);
         }
+        String info;
         try (Jedis jedis = jedisPool.getResource()) {
-            jedis.ping();
+            info = jedis.info();
             LogUtils.info("Redis server connected.");
         } catch (JedisException e) {
             LogUtils.warn("Failed to connect redis.", e);
+            return;
         }
 
-        subscribe();
+        String version = parseRedisVersion(info);
+        if (isRedisNewerThan5(version)) {
+            // For Redis 5.0+
+            this.threadTask = new BlockingThreadTask();
+            this.isNewerThan5 = true;
+        } else {
+            // For Redis 2.0+
+            this.subscribe();
+            this.isNewerThan5 = false;
+        }
     }
 
     /**
@@ -118,6 +134,8 @@ public class RedisManager extends AbstractStorage {
      */
     @Override
     public void disable() {
+        if (threadTask != null)
+            threadTask.stop();
         if (jedisPool != null && !jedisPool.isClosed())
             jedisPool.close();
     }
@@ -125,13 +143,22 @@ public class RedisManager extends AbstractStorage {
     /**
      * Send a message to Redis on a specified channel.
      *
-     * @param channel The Redis channel to send the message to.
+     * @param server The Redis channel to send the message to.
      * @param message The message to send.
      */
-    public void sendRedisMessage(@NotNull String channel, @NotNull String message) {
-        try (Jedis jedis = jedisPool.getResource()) {
-            jedis.publish(channel, message);
-            plugin.debug("Sent Redis message: " + message);
+    public void publishRedisMessage(@NotNull String server, @NotNull String message) {
+        message = server + ";" + message;
+        plugin.debug("Sent Redis message: " + message);
+        if (isNewerThan5) {
+            try (Jedis jedis = jedisPool.getResource()) {
+                HashMap<String, String> messages = new HashMap<>();
+                messages.put("value", message);
+                jedis.xadd(getStream(), StreamEntryID.NEW_ENTRY, messages);
+            }
+        } else {
+            try (Jedis jedis = jedisPool.getResource()) {
+                jedis.publish(getStream(), message);
+            }
         }
     }
 
@@ -153,31 +180,41 @@ public class RedisManager extends AbstractStorage {
                 jedis.subscribe(new JedisPubSub() {
                     @Override
                     public void onMessage(String channel, String message) {
-                        if (!channel.equals("cf_competition")) {
+                        if (!channel.equals(getStream())) {
                             return;
                         }
-                        plugin.debug("Received Redis message: " + message);
-                        String[] split = message.split(";");
-                        String action = split[0];
-                        switch (action) {
-                            case "start" -> {
-                                // start competition for all the servers that connected to redis
-                                plugin.getCompetitionManager().startCompetition(split[1], true, false);
-                            }
-                            case "end" -> {
-                                if (plugin.getCompetitionManager().getOnGoingCompetition() != null)
-                                    plugin.getCompetitionManager().getOnGoingCompetition().end();
-                            }
-                            case "stop" -> {
-                                if (plugin.getCompetitionManager().getOnGoingCompetition() != null)
-                                    plugin.getCompetitionManager().getOnGoingCompetition().stop();
-                            }
-                        }
+                        handleMessage(message);
                     }
-                }, "cf_competition");
+                }, getStream());
             }
         });
         thread.start();
+    }
+
+    private static void handleMessage(String message) {
+        CustomFishingPlugin.get().debug("Received Redis message: " + message);
+        String[] split = message.split(";");
+        String server = split[0];
+        if (!CFConfig.serverGroup.contains(server)) {
+            return;
+        }
+        String action = split[1];
+        CustomFishingPlugin.get().getScheduler().runTaskSync(() -> {
+            switch (action) {
+                case "start" -> {
+                    // start competition for all the servers that connected to redis
+                    CustomFishingPlugin.get().getCompetitionManager().startCompetition(split[2], true, null);
+                }
+                case "end" -> {
+                    if (CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition() != null)
+                        CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition().end();
+                }
+                case "stop" -> {
+                    if (CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition() != null)
+                        CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition().stop();
+                }
+            }
+        }, new Location(Bukkit.getWorlds().get(0),0,0,0));
     }
 
     @Override
@@ -226,7 +263,6 @@ public class RedisManager extends AbstractStorage {
                 future.complete(false);
                 plugin.debug("Server data retrieved for " + uuid + "; value: false");
             }
-
         }
         });
         return future;
@@ -311,5 +347,71 @@ public class RedisManager extends AbstractStorage {
      */
     private byte[] getRedisKey(String key, @NotNull UUID uuid) {
         return (key + ":" + uuid).getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static String getStream() {
+        return STREAM;
+    }
+
+    private static boolean isRedisNewerThan5(String version) {
+        String[] split = version.split("\\.");
+        int major = Integer.parseInt(split[0]);
+        if (major < 7) {
+            LogUtils.warn(String.format("Detected that you are running an outdated Redis server. v%s. ", version));
+            LogUtils.warn("It's recommended to update to avoid security vulnerabilities!");
+        }
+        return major >= 5;
+    }
+
+    private static String parseRedisVersion(String info) {
+        for (String line : info.split("\n")) {
+            if (line.startsWith("redis_version:")) {
+                return line.split(":")[1];
+            }
+        }
+        return "Unknown";
+    }
+
+    public class BlockingThreadTask {
+
+        private boolean stopped;
+
+        public void stop() {
+            stopped = true;
+        }
+
+        public BlockingThreadTask() {
+            Thread thread = new Thread(() -> {
+                var map = new HashMap<String, StreamEntryID>();
+                map.put(getStream(), StreamEntryID.LAST_ENTRY);
+                while (!this.stopped) {
+                    try {
+                        var connection = getJedis();
+                        if (connection != null) {
+                            var messages = connection.xread(XReadParams.xReadParams().count(1).block(2000), map);
+                            connection.close();
+                            if (messages != null && messages.size() != 0) {
+                                for (Map.Entry<String, List<StreamEntry>> message : messages) {
+                                    if (message.getKey().equals(getStream())) {
+                                        var value = message.getValue().get(0).getFields().get("value");
+                                        handleMessage(value);
+                                    }
+                                }
+                            }
+                        } else {
+                            Thread.sleep(2000);
+                        }
+                    } catch (Exception e) {
+                        LogUtils.warn("Failed to connect redis. Try reconnecting 10s later",e);
+                        try {
+                            Thread.sleep(10000);
+                        } catch (InterruptedException ex) {
+                            this.stopped = true;
+                        }
+                    }
+                }
+            });
+            thread.start();
+        }
     }
 }

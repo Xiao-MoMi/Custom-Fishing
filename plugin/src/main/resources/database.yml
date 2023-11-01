@@ -13,9 +13,6 @@
 #
 data-storage-method: H2
 
-# Server unique id, make sure that all the servers are using different ids
-server-unique-id: "plz_edit_this"
-
 SQLite:
   file: 'sqlite'
   table-prefix: customfishing

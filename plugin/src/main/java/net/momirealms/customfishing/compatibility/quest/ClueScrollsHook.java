@@ -49,21 +49,21 @@ public class ClueScrollsHook implements Listener {
         idClue.handle(
                 player,
                 event.getAmount(),
-                new ClueDataPair("loot_id", "any")
+                new ClueDataPair("id", "any")
         );
         Loot loot = event.getLoot();
         if (loot != null)
             idClue.handle(
                     player,
                     event.getAmount(),
-                    new ClueDataPair("loot_id", loot.getID())
+                    new ClueDataPair("id", loot.getID())
             );
         if (loot != null && loot.getLootGroup() != null)
             for (String group : event.getLoot().getLootGroup()) {
                 groupClue.handle(
                         player,
                         event.getAmount(),
-                        new ClueDataPair("loot_group", group)
+                        new ClueDataPair("group", group)
                 );
             }
     }
