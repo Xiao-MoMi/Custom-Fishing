@@ -11,7 +11,7 @@ metrics: true
 # Check updates
 update-checker: true
 
-# Available locales: english
+# Available locales: english / chinese / french / hungarian
 lang: english
 
 # Mechanic settings
