@@ -19,15 +19,15 @@ package net.momirealms.customfishing.api.mechanic.game;
 
 public class GameSettings {
 
-    private final int time;
+    private final double time;
     private final int difficulty;
 
-    public GameSettings(int time, int difficulty) {
+    public GameSettings(double time, int difficulty) {
         this.time = time;
         this.difficulty = difficulty;
     }
 
-    public int getTime() {
+    public double getTime() {
         return time;
     }
 

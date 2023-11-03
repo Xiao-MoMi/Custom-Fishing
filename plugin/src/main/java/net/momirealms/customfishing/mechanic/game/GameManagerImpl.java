@@ -261,6 +261,7 @@ public class GameManagerImpl implements GameManager {
 
                 @Override
                 public boolean isSuccessful() {
+                    if (isTimeOut) return false;
                     int last = progress / widthPerSection;
                     return (Math.random() < successRate[last]);
                 }

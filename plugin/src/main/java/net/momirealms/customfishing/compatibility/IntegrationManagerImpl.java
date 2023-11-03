@@ -146,7 +146,6 @@ public class IntegrationManagerImpl implements IntegrationManager {
         if (plugin.isHookedPluginEnabled("ClueScrolls")) {
             ClueScrollsHook clueScrollsHook = new ClueScrollsHook();
             clueScrollsHook.register();
-            Bukkit.getPluginManager().registerEvents(clueScrollsHook, plugin);
             hookMessage("ClueScrolls");
         }
         if (plugin.isHookedPluginEnabled("BetonQuest")) {

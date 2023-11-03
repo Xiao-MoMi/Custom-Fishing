@@ -35,13 +35,14 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     protected Player player;
     protected GameSettings settings;
     protected FishHook fishHook;
+    protected boolean isTimeOut;
 
     public AbstractGamingPlayer(Player player, FishHook hook, GameSettings settings) {
         this.player = player;
         this.fishHook = hook;
         this.settings = settings;
         this.manager = CustomFishingPlugin.get().getFishingManager();
-        this.deadline = System.currentTimeMillis() + settings.getTime() * 1000L;
+        this.deadline = (long) (System.currentTimeMillis() + settings.getTime() * 1000L);
         this.arrangeTask();
     }
 
@@ -107,6 +108,7 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
 
     protected void timeOutCheck() {
         if (System.currentTimeMillis() > deadline) {
+            isTimeOut = true;
             cancel();
             endGame();
         }

@@ -18,11 +18,14 @@
 package net.momirealms.customfishing.mechanic.bag;
 
 import net.momirealms.customfishing.CustomFishingPluginImpl;
+import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.user.OfflineUser;
 import net.momirealms.customfishing.api.manager.BagManager;
 import net.momirealms.customfishing.api.manager.EffectManager;
 import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
+import net.momirealms.customfishing.api.util.InventoryUtils;
+import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.setting.CFConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -38,6 +41,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public class BagManagerImpl implements BagManager, Listener {
@@ -81,7 +86,38 @@ public class BagManagerImpl implements BagManager, Listener {
         if (onlinePlayer == null) {
             return null;
         }
+        Player player = onlinePlayer.getPlayer();
+        int rows = getBagInventoryRows(player);
+        Inventory bag = onlinePlayer.getHolder().getInventory();
+        if (bag.getSize() != rows * 9) {
+            Inventory newBag = InventoryUtils.createInventory(onlinePlayer.getHolder(), rows * 9,
+                    AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                            PlaceholderManagerImpl.getInstance().parse(
+                                    player, CFConfig.bagTitle, Map.of("{player}", player.getName())
+                            )
+                    ));
+            onlinePlayer.getHolder().setInventory(newBag);
+            assert newBag != null;
+            ItemStack[] newContents = new ItemStack[rows * 9];
+            ItemStack[] oldContents = bag.getContents();
+            for (int i = 0; i < rows * 9 && i < oldContents.length; i++) {
+                newContents[i] = oldContents[i];
+            }
+            newBag.setContents(newContents);
+        }
         return onlinePlayer.getHolder().getInventory();
+    }
+
+    @Override
+    public int getBagInventoryRows(Player player) {
+        int size = 1;
+        for (int i = 6; i > 1; i--) {
+            if (player.hasPermission("fishingbag.rows." + i)) {
+                size = i;
+                break;
+            }
+        }
+        return size;
     }
 
     /**

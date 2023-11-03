@@ -35,6 +35,8 @@ public interface BagManager {
      */
     Inventory getOnlineBagInventory(UUID uuid);
 
+    int getBagInventoryRows(Player player);
+
     /**
      * Initiates the process of editing the bag inventory of an offline player by an admin.
      *

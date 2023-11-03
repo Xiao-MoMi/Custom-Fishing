@@ -81,13 +81,4 @@ public interface PlaceholderManager {
      * @return The list of text strings with placeholders replaced by their values.
      */
     List<String> parse(@Nullable OfflinePlayer player, List<String> list, Map<String, String> replacements);
-
-    /**
-     * Parse a text string by replacing placeholders with their corresponding values, using caching for the player's placeholders.
-     *
-     * @param player The player for whom the placeholders are being resolved.
-     * @param text   The text string containing placeholders.
-     * @return The text string with placeholders replaced by their values.
-     */
-    String parseCacheablePlaceholders(Player player, String text);;
 }

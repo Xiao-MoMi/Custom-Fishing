@@ -9,32 +9,22 @@ depend:
 softdepend:
   - Vault
   - PlaceholderAPI
-
   - RealisticSeasons
-
   - ItemsAdder
   - MythicMobs
   - Oraxen
-  - eco
   - MMOItems
-
   - mcMMO
   - AureliumSkills
   - CustomCrops
   - MMOCore
   - EcoSkills
-
   - BattlePass
   - ClueScrolls
   - BetonQuest
-
   - AdvancedEnchantments
-  - EcoEnchants
-
-  - Jobs
   - EcoJobs
   - Zaphkiel
-
 permissions:
   fishingbag.user:
     default: true
