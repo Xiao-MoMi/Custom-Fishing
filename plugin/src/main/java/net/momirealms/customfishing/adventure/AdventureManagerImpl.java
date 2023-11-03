@@ -184,7 +184,7 @@ public class AdventureManagerImpl implements AdventureManager {
                             .append(chars[i+11])
                             .append(chars[i+13])
                             .append(">");
-                    i += 13;
+                    i += 12;
                 }
                 default -> {
                     stringBuilder.append(chars[i]);
