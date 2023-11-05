@@ -670,7 +670,9 @@ public class ItemManagerImpl implements ItemManager, Listener {
                 NBTCompound cfCompound = nbtItem.getOrCreateCompound("CustomFishing");
                 float random = size.left() + ThreadLocalRandom.current().nextFloat(size.right() - size.left());
                 float bonus = Float.parseFloat(placeholders.getOrDefault("{size-multiplier}", "1.0"));
+                double fixed = Double.parseDouble(placeholders.getOrDefault("{size-fixed}", "0.0"));
                 random *= bonus;
+                random += fixed;
                 cfCompound.setFloat("size", random);
                 placeholders.put("{size}", String.format("%.2f", random));
             });

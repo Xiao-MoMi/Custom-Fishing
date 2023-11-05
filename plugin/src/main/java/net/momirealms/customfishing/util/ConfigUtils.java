@@ -25,7 +25,6 @@ import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.mechanic.misc.value.ExpressionValue;
 import net.momirealms.customfishing.mechanic.misc.value.PlainValue;
 import net.momirealms.customfishing.mechanic.misc.value.Value;
-import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;

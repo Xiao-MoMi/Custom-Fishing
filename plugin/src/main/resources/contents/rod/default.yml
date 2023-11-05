@@ -10,7 +10,7 @@ FISHING_ROD:
   material: fishing_rod
   effects:
     time_effect:
-      type: hook-time
+      type: wait-time-multiplier
       value: 1.5
 
 # Custom rods
@@ -32,7 +32,7 @@ beginner_rod:
   max-durability: 64
   effects:
     time_effect:
-      type: hook-time
+      type: wait-time-multiplier
       value: 1.8
     difficulty:
       type: difficulty
@@ -176,7 +176,7 @@ magical_rod:
       value:
         - enchantments:+10
     time_effect:
-      type: hook-time
+      type: wait-time-multiplier
       value: 3
 
 master_rod:
@@ -200,7 +200,7 @@ master_rod:
   max-durability: 128
   effects:
     time_effect:
-      type: hook-time
+      type: wait-time-multiplier
       value: 0.95
     difficulty:
       type: difficulty

@@ -187,7 +187,7 @@ public class EffectManagerImpl implements EffectManager {
     @NotNull
     @Override
     public FishingEffect getInitialEffect() {
-        return new FishingEffect.Builder().build();
+        return new FishingEffect();
     }
 
     /**
@@ -270,16 +270,28 @@ public class EffectManagerImpl implements EffectManager {
                     effect.addWeightModifierIgnored(modList);
                 });
             }
-            case "hook-time" -> {
+            case "wait-time" -> {
                 var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setHookTimeModifier(effect.getHookTimeModifier() + value.get(condition.getPlayer()) - 1);
+                    effect.setWaitTime(effect.getWaitTime() + value.get(condition.getPlayer()));
+                });
+            }
+            case "hook-time", "wait-time-multiplier" -> {
+                var value = ConfigUtils.getValue(section.get("value"));
+                return ((effect, condition) -> {
+                    effect.setWaitTimeMultiplier(effect.getWaitTimeMultiplier() + value.get(condition.getPlayer()) - 1);
                 });
             }
             case "difficulty" -> {
                 var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setDifficultyModifier(effect.getDifficultyModifier() + value.get(condition.getPlayer()));
+                    effect.setDifficulty(effect.getDifficulty() + value.get(condition.getPlayer()));
+                });
+            }
+            case "difficulty-multiplier", "difficulty-bonus" -> {
+                var value = ConfigUtils.getValue(section.get("value"));
+                return ((effect, condition) -> {
+                    effect.setDifficultyMultiplier(effect.getDifficultyMultiplier() + value.get(condition.getPlayer()) - 1);
                 });
             }
             case "multiple-loot" -> {
@@ -288,13 +300,25 @@ public class EffectManagerImpl implements EffectManager {
                     effect.setMultipleLootChance(effect.getMultipleLootChance() + value.get(condition.getPlayer()));
                 });
             }
-            case "score-bonus" -> {
+            case "score" -> {
+                var value = ConfigUtils.getValue(section.get("value"));
+                return ((effect, condition) -> {
+                    effect.setScore(effect.getScore() + value.get(condition.getPlayer()));
+                });
+            }
+            case "score-bonus", "score-multiplier" -> {
                 var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
                     effect.setScoreMultiplier(effect.getScoreMultiplier() + value.get(condition.getPlayer()) - 1);
                 });
             }
-            case "size-bonus" -> {
+            case "size" -> {
+                var value = ConfigUtils.getValue(section.get("value"));
+                return ((effect, condition) -> {
+                    effect.setSize(effect.getSize() + value.get(condition.getPlayer()));
+                });
+            }
+            case "size-bonus", "size-multiplier" -> {
                 var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
                     effect.setSizeMultiplier(effect.getSizeMultiplier() + value.get(condition.getPlayer()) - 1);
@@ -303,7 +327,13 @@ public class EffectManagerImpl implements EffectManager {
             case "game-time" -> {
                 var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setGameTimeModifier(effect.getGameTimeModifier() + value.get(condition.getPlayer()));
+                    effect.setGameTime(effect.getGameTime() + value.get(condition.getPlayer()));
+                });
+            }
+            case "game-time-bonus", "game-time-multiplier" -> {
+                var value = ConfigUtils.getValue(section.get("value"));
+                return ((effect, condition) -> {
+                    effect.setGameTimeMultiplier(effect.getGameTimeMultiplier() + value.get(condition.getPlayer()) - 1);
                 });
             }
             case "lava-fishing" -> {

@@ -302,8 +302,9 @@ public class FishingManagerImpl implements Listener, FishingManager {
         // Store fishhook entity and apply the effects
         final FishHook fishHook = event.getHook();
         this.hookCacheMap.put(player.getUniqueId(), fishHook);
-        fishHook.setMaxWaitTime((int) (fishHook.getMaxWaitTime() * initialEffect.getHookTimeModifier()));
-        fishHook.setMinWaitTime((int) (fishHook.getMinWaitTime() * initialEffect.getHookTimeModifier()));
+//        fishHook.setMaxWaitTime(Math.max(100, (int) (fishHook.getMaxWaitTime() * initialEffect.getHookTimeModifier())));
+//        fishHook.setMinWaitTime(Math.max(100, (int) (fishHook.getMinWaitTime() * initialEffect.getHookTimeModifier())));
+        fishHook.setWaitTime(Math.max(1, (int) (fishHook.getWaitTime() * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
         // Reduce amount & Send animation
         var baitItem = fishingPreparation.getBaitItemStack();
         if (baitItem != null) {
@@ -594,6 +595,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         var fishingPreparation = state.getPreparation();
         var player = fishingPreparation.getPlayer();
         fishingPreparation.insertArg("{size-multiplier}", String.valueOf(effect.getSizeMultiplier()));
+        fishingPreparation.insertArg("{size-fixed}", String.valueOf(effect.getSize()));
         int amount;
         if (loot.getType() == LootType.ITEM) {
             amount = (int) effect.getMultipleLootChance();
@@ -668,27 +670,27 @@ public class FishingManagerImpl implements Listener, FishingManager {
             } else {
                 switch (competition.getGoal()) {
                     case CATCH_AMOUNT -> {
-                        double score = effect.getScoreMultiplier();
-                        fishingPreparation.insertArg("{score}", String.format("%.2f", score));
-                        competition.refreshData(player, score);
+                        fishingPreparation.insertArg("{score}", "1.00");
+                        competition.refreshData(player, 1);
                     }
                     case MAX_SIZE, TOTAL_SIZE -> {
                         String size = fishingPreparation.getArg("{size}");
                         if (size != null) {
-                            double score = Double.parseDouble(size) * effect.getScoreMultiplier();
+                            double score = Double.parseDouble(size);
                             fishingPreparation.insertArg("{score}", String.format("%.2f", score));
                             competition.refreshData(player, score);
                         } else {
-                            fishingPreparation.insertArg("{score}", "0");
+                            fishingPreparation.insertArg("{score}", "0.00");
                         }
                     }
                     case TOTAL_SCORE -> {
                         double score = loot.getScore();
                         if (score != 0) {
-                            fishingPreparation.insertArg("{score}", String.format("%.2f", score * effect.getScoreMultiplier()));
-                            competition.refreshData(player, score * effect.getScoreMultiplier());
+                            double finalScore = score * effect.getScoreMultiplier() + effect.getScore();
+                            fishingPreparation.insertArg("{score}", String.format("%.2f", finalScore));
+                            competition.refreshData(player, finalScore);
                         } else {
-                            fishingPreparation.insertArg("{score}", "0");
+                            fishingPreparation.insertArg("{score}", "0.00");
                         }
                     }
                 }

@@ -25,7 +25,6 @@ import net.momirealms.customfishing.api.mechanic.competition.*;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.api.util.LogUtils;
-import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.storage.method.database.nosql.RedisManager;
 import net.momirealms.customfishing.util.ConfigUtils;

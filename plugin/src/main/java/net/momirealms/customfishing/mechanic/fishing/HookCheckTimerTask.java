@@ -206,7 +206,7 @@ public class HookCheckTimerTask implements Runnable {
         // get random time
         int random = ThreadLocalRandom.current().nextInt(CFConfig.lavaMinTime, CFConfig.lavaMaxTime);
         random -= lureLevel * 100;
-        random *= initialEffect.getHookTimeModifier();
+        random *= initialEffect.getWaitTimeMultiplier();
         random = Math.max(CFConfig.lavaMinTime, random);
 
         // lava effect task (Three seconds in advance)

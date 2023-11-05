@@ -17,28 +17,18 @@
 
 package net.momirealms.customfishing.api.event;
 
-import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
+import net.momirealms.customfishing.api.CustomFishingPlugin;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class CompetitionEvent extends Event {
+public class CustomFishingReloadEvent extends Event {
 
     private static final HandlerList handlerList = new HandlerList();
-    private final State state;
-    private final FishingCompetition competition;
+    private final CustomFishingPlugin plugin;
 
-    public CompetitionEvent(State state, FishingCompetition competition) {
-        this.state = state;
-        this.competition = competition;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public FishingCompetition getCompetition() {
-        return competition;
+    public CustomFishingReloadEvent(CustomFishingPlugin plugin) {
+        this.plugin = plugin;
     }
 
     public static HandlerList getHandlerList() {
@@ -51,9 +41,7 @@ public class CompetitionEvent extends Event {
         return getHandlerList();
     }
 
-    public static enum State {
-        END,
-        STOP,
-        START
+    public CustomFishingPlugin getPluginInstance() {
+        return plugin;
     }
 }

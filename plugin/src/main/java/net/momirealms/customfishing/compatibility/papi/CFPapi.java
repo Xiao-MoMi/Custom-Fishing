@@ -20,15 +20,11 @@ package net.momirealms.customfishing.compatibility.papi;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.user.OnlineUser;
-import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
-import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
 
 public class CFPapi extends PlaceholderExpansion {
 

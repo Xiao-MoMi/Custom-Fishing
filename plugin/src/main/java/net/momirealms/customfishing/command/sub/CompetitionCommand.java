@@ -18,10 +18,7 @@
 package net.momirealms.customfishing.command.sub;
 
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.IStringTooltip;
-import dev.jorel.commandapi.StringTooltip;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
-import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;

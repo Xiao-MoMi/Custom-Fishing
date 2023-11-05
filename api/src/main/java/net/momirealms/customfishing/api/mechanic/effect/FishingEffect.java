@@ -27,11 +27,17 @@ public class FishingEffect implements Effect {
 
     private boolean lavaFishing = false;
     private double multipleLootChance = 0;
+    private double waitTime = 0;
+    private double waitTimeMultiplier = 1;
+    private double size = 0;
     private double sizeMultiplier = 1;
+    private double score = 0;
     private double scoreMultiplier = 1;
-    private double hookTimeModifier = 1;
-    private double difficultyModifier = 0;
-    private double gameTimeModifier = 0;
+    private double difficulty = 0;
+    private double difficultyMultiplier = 1;
+    private double gameTime = 0;
+    private double gameTimeMultiplier = 1;
+
     private final List<Pair<String, WeightModifier>> weightModifier = new ArrayList<>();
     private final List<Pair<String, WeightModifier>> weightModifierIgnored = new ArrayList<>();
 
@@ -69,6 +75,17 @@ public class FishingEffect implements Effect {
     }
 
     /**
+     * Sets the size.
+     *
+     * @param size The size value to set.
+     * @return The FishingEffect instance for method chaining.
+     */
+    public FishingEffect setSize(double size) {
+        this.size = size;
+        return this;
+    }
+
+    /**
      * Sets the score multiplier.
      *
      * @param scoreMultiplier The score multiplier value to set.
@@ -80,37 +97,82 @@ public class FishingEffect implements Effect {
     }
 
     /**
-     * Sets the hook time modifier.
+     * Sets the score
      *
-     * @param timeModifier The hook time modifier value to set.
+     * @param score The score value to set.
      * @return The FishingEffect instance for method chaining.
      */
-    public FishingEffect setHookTimeModifier(double timeModifier) {
-        this.hookTimeModifier = timeModifier;
+    public FishingEffect setScore(double score) {
+        this.score = score;
         return this;
     }
 
     /**
-     * Sets the difficulty modifier.
+     * Sets the wait time multiplier.
      *
-     * @param difficultyModifier The difficulty modifier value to set.
+     * @param timeMultiplier The wait time multiplier value to set.
      * @return The FishingEffect instance for method chaining.
      */
-    public FishingEffect setDifficultyModifier(double difficultyModifier) {
-        this.difficultyModifier = difficultyModifier;
+    public FishingEffect setWaitTimeMultiplier(double timeMultiplier) {
+        this.waitTimeMultiplier = timeMultiplier;
         return this;
     }
 
     /**
-     * Sets the game time modifier.
+     * Sets the wait time.
      *
-     * @param gameTimeModifier The game time modifier value to set.
+     * @param waitTime The wait time value to set.
      * @return The FishingEffect instance for method chaining.
      */
-    public FishingEffect setGameTimeModifier(double gameTimeModifier) {
-        this.gameTimeModifier = gameTimeModifier;
+    public FishingEffect setWaitTime(double waitTime) {
+        this.waitTime = waitTime;
         return this;
     }
+
+    /**
+     * Sets the difficulty.
+     *
+     * @param difficulty The difficulty value to set.
+     * @return The FishingEffect instance for method chaining.
+     */
+    public FishingEffect setDifficulty(double difficulty) {
+        this.difficulty = difficulty;
+        return this;
+    }
+
+    /**
+     * Sets the difficulty multiplier.
+     *
+     * @param difficultyMultiplier The difficulty multiplier value to set.
+     * @return The FishingEffect instance for method chaining.
+     */
+    public FishingEffect setDifficultyMultiplier(double difficultyMultiplier) {
+        this.difficultyMultiplier = difficultyMultiplier;
+        return this;
+    }
+
+    /**
+     * Sets the game time.
+     *
+     * @param gameTime The game time value to set.
+     * @return The FishingEffect instance for method chaining.
+     */
+    public FishingEffect setGameTime(double gameTime) {
+        this.gameTime = gameTime;
+        return this;
+    }
+
+    /**
+     * Sets the game time multiplier.
+     *
+     * @param gameTimeMultiplier The game time multiplier value to set.
+     * @return The FishingEffect instance for method chaining.
+     */
+    public FishingEffect setGameTimeMultiplier(double gameTimeMultiplier) {
+        this.gameTimeMultiplier = gameTimeMultiplier;
+        return this;
+    }
+
 
     /**
      * Adds weight modifiers to the FishingEffect.
@@ -165,6 +227,16 @@ public class FishingEffect implements Effect {
     }
 
     /**
+     * Retrieves the size.
+     *
+     * @return The size value.
+     */
+    @Override
+    public double getSize() {
+        return size;
+    }
+
+    /**
      * Retrieves the score multiplier.
      *
      * @return The score multiplier value.
@@ -175,33 +247,73 @@ public class FishingEffect implements Effect {
     }
 
     /**
-     * Retrieves the hook time modifier.
+     * Retrieves the wait time multiplier.
      *
-     * @return The hook time modifier value.
+     * @return The wait time multiplier value.
      */
     @Override
-    public double getHookTimeModifier() {
-        return hookTimeModifier;
+    public double getWaitTimeMultiplier() {
+        return waitTimeMultiplier;
     }
 
     /**
-     * Retrieves the game time modifier.
+     * Retrieves the wait time.
      *
-     * @return The game time modifier value.
+     * @return The wait time .
      */
     @Override
-    public double getGameTimeModifier() {
-        return gameTimeModifier;
+    public double getWaitTime() {
+        return waitTime;
     }
 
     /**
-     * Retrieves the difficulty modifier.
+     * Retrieves the game time.
      *
-     * @return The difficulty modifier value.
+     * @return The game time value.
      */
     @Override
-    public double getDifficultyModifier() {
-        return difficultyModifier;
+    public double getGameTime() {
+        return gameTime;
+    }
+
+    /**
+     * Retrieves the game time multiplier.
+     *
+     * @return The game time value multiplier.
+     */
+    @Override
+    public double getGameTimeMultiplier() {
+        return gameTimeMultiplier;
+    }
+
+    /**
+     * Retrieves score modifier.
+     *
+     * @return The score value.
+     */
+    @Override
+    public double getScore() {
+        return score;
+    }
+
+    /**
+     * Retrieves the difficulty.
+     *
+     * @return The difficulty value.
+     */
+    @Override
+    public double getDifficulty() {
+        return difficulty;
+    }
+
+    /**
+     * Retrieves the difficulty multiplier.
+     *
+     * @return The difficulty multiplier value.
+     */
+    @Override
+    public double getDifficultyMultiplier() {
+        return difficultyMultiplier;
     }
 
     /**
@@ -234,136 +346,16 @@ public class FishingEffect implements Effect {
         if (another == null) return;
         if (another.canLavaFishing()) this.lavaFishing = true;
         this.scoreMultiplier += (another.getScoreMultiplier() -1);
+        this.score += another.getScore();
         this.sizeMultiplier += (another.getSizeMultiplier() -1);
-        this.hookTimeModifier += (another.getHookTimeModifier() -1);
+        this.size += another.getSize();
+        this.difficultyMultiplier += (another.getDifficultyMultiplier() -1);
+        this.difficulty += another.getDifficulty();
+        this.gameTimeMultiplier += (another.getGameTimeMultiplier() - 1);
+        this.gameTime += another.getGameTime();
+        this.waitTimeMultiplier += (another.getWaitTimeMultiplier() -1);
         this.multipleLootChance += another.getMultipleLootChance();
-        this.difficultyModifier += another.getDifficultyModifier();
-        this.gameTimeModifier += another.getGameTimeModifier();
         this.weightModifierIgnored.addAll(another.getWeightModifierIgnored());
         this.weightModifier.addAll(another.getWeightModifier());
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
-     * Builder class for creating instances of the {@link FishingEffect} class with customizable properties.
-     */
-    public static class Builder {
-
-        private final FishingEffect effect;
-
-        public Builder() {
-            this.effect = new FishingEffect();
-        }
-
-        /**
-         * Adds weight modifiers to the FishingEffect.
-         *
-         * @param modifier A list of pairs representing weight modifiers.
-         * @return The Builder instance for method chaining.
-         */
-        public Builder addWeightModifier(List<Pair<String, WeightModifier>> modifier) {
-            effect.weightModifier.addAll(modifier);
-            return this;
-        }
-
-        /**
-         * Adds weight modifiers ignoring conditions to the FishingEffect.
-         *
-         * @param modifier A list of pairs representing ignoring conditions weight modifiers.
-         * @return The Builder instance for method chaining.
-         */
-        public Builder addWeightModifierIgnored(List<Pair<String, WeightModifier>> modifier) {
-            effect.weightModifierIgnored.addAll(modifier);
-            return this;
-        }
-
-        /**
-         * Sets the multiple loot chance for the FishingEffect.
-         *
-         * @param multipleLootChance The multiple loot chance value to set.
-         * @return The Builder instance for method chaining.
-         */
-        public Builder multipleLootChance(double multipleLootChance) {
-            effect.multipleLootChance = multipleLootChance;
-            return this;
-        }
-
-        /**
-         * Sets the difficulty modifier for the FishingEffect.
-         *
-         * @param difficultyModifier The difficulty modifier value to set.
-         * @return The Builder instance for method chaining.
-         */
-        public Builder difficultyModifier(double difficultyModifier) {
-            effect.difficultyModifier = difficultyModifier;
-            return this;
-        }
-
-        /**
-         * Sets the size multiplier for the FishingEffect.
-         *
-         * @param sizeMultiplier The size multiplier value to set.
-         * @return The Builder instance for method chaining.
-         */
-        public Builder sizeMultiplier(double sizeMultiplier) {
-            effect.sizeMultiplier = sizeMultiplier;
-            return this;
-        }
-
-        /**
-         * Sets the time modifier for the FishingEffect.
-         *
-         * @param timeModifier The time modifier value to set.
-         * @return The Builder instance for method chaining.
-         */
-        public Builder timeModifier(double timeModifier) {
-            effect.hookTimeModifier = timeModifier;
-            return this;
-        }
-
-        /**
-         * Sets the score multiplier for the FishingEffect.
-         *
-         * @param scoreMultiplier The score multiplier value to set.
-         * @return The Builder instance for method chaining.
-         */
-        public Builder scoreMultiplier(double scoreMultiplier) {
-            effect.scoreMultiplier = scoreMultiplier;
-            return this;
-        }
-
-        /**
-         * Sets the game time modifier for the FishingEffect.
-         *
-         * @param gameTimeModifier The game time modifier value to set.
-         * @return The Builder instance for method chaining.
-         */
-        public Builder gameTimeModifier(double gameTimeModifier) {
-            effect.gameTimeModifier = gameTimeModifier;
-            return this;
-        }
-
-        /**
-         * Sets whether lava fishing is enabled for the FishingEffect.
-         *
-         * @param lavaFishing True if lava fishing is enabled, false otherwise.
-         * @return The Builder instance for method chaining.
-         */
-        public Builder lavaFishing(boolean lavaFishing) {
-            effect.lavaFishing = lavaFishing;
-            return this;
-        }
-
-        /**
-         * Builds and returns the finalized FishingEffect instance.
-         *
-         * @return The created FishingEffect instance.
-         */
-        public FishingEffect build() {
-            return effect;
-        }
     }
 }

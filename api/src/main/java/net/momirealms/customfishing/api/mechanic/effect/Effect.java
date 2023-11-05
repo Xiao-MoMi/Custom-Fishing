@@ -28,15 +28,25 @@ public interface Effect {
 
     double getMultipleLootChance();
 
+    double getSize();
+
     double getSizeMultiplier();
+
+    double getScore();
 
     double getScoreMultiplier();
 
-    double getHookTimeModifier();
+    double getWaitTime();
 
-    double getGameTimeModifier();
+    double getWaitTimeMultiplier();
 
-    double getDifficultyModifier();
+    double getGameTime();
+
+    double getGameTimeMultiplier();
+
+    double getDifficulty();
+
+    double getDifficultyMultiplier();
 
     List<Pair<String, WeightModifier>> getWeightModifier();
 

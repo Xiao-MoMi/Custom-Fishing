@@ -27,6 +27,7 @@ package net.momirealms.customfishing.libraries.libraryloader;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import net.momirealms.customfishing.CustomFishingPluginImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.util.LogUtils;
 
@@ -46,7 +47,7 @@ import java.util.StringJoiner;
 public final class LibraryLoader {
 
     @SuppressWarnings("Guava")
-    private static final Supplier<URLClassLoaderAccess> URL_INJECTOR = Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) CustomFishingPlugin.getInstance().getClass().getClassLoader()));
+    private static final Supplier<URLClassLoaderAccess> URL_INJECTOR = Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) CustomFishingPluginImpl.getInstance().getClass().getClassLoader()));
 
     /**
      * Resolves all {@link MavenLibrary} annotations on the given object.

@@ -54,13 +54,13 @@ magnetic_bait:
       - '<gray>can''t help but investigate.'
       - ''
       - '<#FFD700>Effects:'
-      - '<gray> - Reduce hook time'
+      - '<gray> - Reduce wait time'
       - '<gray> - More time for fishing'
       - ''
   custom-model-data: 50002
   effects:
     hooktime:
-      type: hook-time
+      type: wait-time-multiplier
       value: 0.9
     gametime:
       type: game-time
@@ -86,9 +86,9 @@ wild_bait:
   effects:
     difficulty:
       type: difficulty
-      value: 20
+      value: +20
     size:
-      type: size-bonus
+      type: size-multiplier
       value: 1.5
     gametime:
       type: game-time

@@ -21,9 +21,11 @@ import net.momirealms.customfishing.api.manager.*;
 import net.momirealms.customfishing.api.scheduler.Scheduler;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class CustomFishingPlugin extends JavaPlugin {
 
+    protected boolean initialized;
     protected Scheduler scheduler;
     protected CommandManager commandManager;
     protected VersionManager versionManager;
@@ -54,9 +56,10 @@ public abstract class CustomFishingPlugin extends JavaPlugin {
     }
 
     public static CustomFishingPlugin get() {
-        return instance;
+        return getInstance();
     }
 
+    @NotNull
     public static CustomFishingPlugin getInstance() {
         return instance;
     }
@@ -145,15 +148,15 @@ public abstract class CustomFishingPlugin extends JavaPlugin {
         return placeholderManager;
     }
 
+    public CompetitionManager getCompetitionManager() {
+        return competitionManager;
+    }
+
     public abstract void reload();
 
     public abstract YamlConfiguration getConfig(String file);
 
     public abstract boolean isHookedPluginEnabled(String plugin);
-
-    public CompetitionManager getCompetitionManager() {
-        return competitionManager;
-    }
 
     public abstract void debug(String message);
 }

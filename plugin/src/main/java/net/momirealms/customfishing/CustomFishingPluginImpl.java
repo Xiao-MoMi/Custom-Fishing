@@ -23,6 +23,7 @@ import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
+import net.momirealms.customfishing.api.event.CustomFishingReloadEvent;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.api.util.ReflectionUtils;
 import net.momirealms.customfishing.command.CommandManagerImpl;
@@ -107,6 +108,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         this.hookManager = new HookManagerImpl(this);
         this.chatCatcherManager = new ChatCatcherManager(this);
         this.reload();
+        super.initialized = true;
 
         if (CFConfig.metrics) new Metrics(this, 16648);
         if (CFConfig.updateChecker)
@@ -191,6 +193,9 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         this.coolDownManager.load();
         this.chatCatcherManager.unload();
         this.chatCatcherManager.load();
+
+        CustomFishingReloadEvent event = new CustomFishingReloadEvent(this);
+        Bukkit.getPluginManager().callEvent(event);
     }
 
     /**
