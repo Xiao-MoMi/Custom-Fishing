@@ -40,7 +40,7 @@ import java.util.Objects;
 public class CFConfig {
 
     // config version
-    public static String configVersion = "28";
+    public static String configVersion = "29";
     // Debug mode
     public static boolean debug;
     // language
@@ -70,6 +70,10 @@ public class CFConfig {
     public static String bagTitle;
     public static List<Material> bagWhiteListItems;
 
+    // Fishing wait time
+    public static boolean overrideVanilla;
+    public static int waterMinTime;
+    public static int waterMaxTime;
     // Lava fishing
     public static int lavaMinTime;
     public static int lavaMaxTime;
@@ -137,6 +141,10 @@ public class CFConfig {
         bagTitle = config.getString("mechanics.fishing-bag.bag-title");
         bagStoreLoots = config.getBoolean("mechanics.fishing-bag.can-store-loot", false);
         bagWhiteListItems = config.getStringList("mechanics.fishing-bag.whitelist-items").stream().map(it -> Material.valueOf(it.toUpperCase(Locale.ENGLISH))).toList();
+
+        overrideVanilla = config.getBoolean("mechanics.fishing-wait-time.override-vanilla", false);
+        waterMinTime = config.getInt("mechanics.fishing-wait-time.min-wait-time", 100);
+        waterMaxTime = config.getInt("mechanics.fishing-wait-time.min-wait-time", 600);
 
         lavaMinTime = config.getInt("mechanics.lava-fishing.min-wait-time", 100);
         lavaMaxTime = config.getInt("mechanics.lava-fishing.max-wait-time", 600);

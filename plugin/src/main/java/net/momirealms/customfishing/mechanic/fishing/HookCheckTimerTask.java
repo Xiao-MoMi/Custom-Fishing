@@ -204,10 +204,20 @@ public class HookCheckTimerTask implements Runnable {
      */
     private void startLavaFishingMechanic() {
         // get random time
-        int random = ThreadLocalRandom.current().nextInt(CFConfig.lavaMinTime, CFConfig.lavaMaxTime);
-        random -= lureLevel * 100;
-        random *= initialEffect.getWaitTimeMultiplier();
-        random = Math.max(CFConfig.lavaMinTime, random);
+        int random;
+        if (CFConfig.overrideVanilla) {
+            random = ThreadLocalRandom.current().nextInt(CFConfig.lavaMinTime, CFConfig.lavaMaxTime);
+            random *= initialEffect.getWaitTimeMultiplier();
+            random += initialEffect.getWaitTime();
+            random = Math.max(1, random);
+        } else {
+            random = ThreadLocalRandom.current().nextInt(CFConfig.lavaMinTime, CFConfig.lavaMaxTime);
+            random -= lureLevel * 100;
+            random = Math.max(CFConfig.lavaMinTime, random);
+            random *= initialEffect.getWaitTimeMultiplier();
+            random += initialEffect.getWaitTime();
+            random = Math.max(1, random);
+        }
 
         // lava effect task (Three seconds in advance)
         this.lavaFishingTask = new LavaEffectTask(

@@ -220,16 +220,16 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
                 "org.mongodb:bson:4.10.2", mavenRepo,
                 "org.xerial:sqlite-jdbc:3.43.0.0", mavenRepo,
                 "dev.jorel:commandapi-bukkit-shade:9.2.0", mavenRepo,
-                "xyz.xenondevs.invui:invui-core:1.19", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access:1.19", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r8:1.19", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r9:1.19", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r10:1.19", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r11:1.19", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r12:1.19", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r13:1.19", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r14:1.19", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r15:1.19", "https://repo.xenondevs.xyz/releases/"
+                "xyz.xenondevs.invui:invui-core:1.23", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access:1.23", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r8:1.23", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r9:1.23", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r10:1.23", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r11:1.23", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r12:1.23", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r13:1.23", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r14:1.23", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r15:1.23", "https://repo.xenondevs.xyz/releases/"
         );
     }
 

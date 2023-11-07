@@ -20,6 +20,7 @@ package net.momirealms.customfishing.mechanic.fishing;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import io.lumine.mythic.lib.api.event.PlayerAttackEvent;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
@@ -57,7 +58,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
@@ -67,6 +70,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class FishingManagerImpl implements Listener, FishingManager {
 
@@ -152,6 +156,25 @@ public class FishingManagerImpl implements Listener, FishingManager {
         final Player player = event.getPlayer();
         this.removeHook(event.getPlayer().getUniqueId());
         this.removeTempFishingState(player);
+    }
+
+    /**
+     * Known bug: When you fish, both left click air and right click air
+     * are triggered. And you can't cancel the left click event.
+     */
+    @EventHandler
+    public void onLeftClick(PlayerInteractEvent event) {
+        if (event.getAction() != Action.LEFT_CLICK_AIR)
+            return;
+        if (event.getMaterial() != Material.FISHING_ROD)
+            return;
+        if (event.getHand() != EquipmentSlot.HAND)
+            return;
+        GamingPlayer gamingPlayer = gamingPlayerMap.get(event.getPlayer().getUniqueId());
+        if (gamingPlayer != null) {
+            if (gamingPlayer.onLeftClick())
+                event.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -304,7 +327,12 @@ public class FishingManagerImpl implements Listener, FishingManager {
         this.hookCacheMap.put(player.getUniqueId(), fishHook);
 //        fishHook.setMaxWaitTime(Math.max(100, (int) (fishHook.getMaxWaitTime() * initialEffect.getHookTimeModifier())));
 //        fishHook.setMinWaitTime(Math.max(100, (int) (fishHook.getMinWaitTime() * initialEffect.getHookTimeModifier())));
-        fishHook.setWaitTime(Math.max(1, (int) (fishHook.getWaitTime() * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
+        if (CFConfig.overrideVanilla) {
+            double initialTime = ThreadLocalRandom.current().nextInt(CFConfig.waterMaxTime - CFConfig.waterMinTime + 1) + CFConfig.waterMinTime;
+            fishHook.setWaitTime(Math.max(1, (int) (initialTime * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
+        } else {
+            fishHook.setWaitTime(Math.max(1, (int) (fishHook.getWaitTime() * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
+        }
         // Reduce amount & Send animation
         var baitItem = fishingPreparation.getBaitItemStack();
         if (baitItem != null) {
@@ -532,11 +560,11 @@ public class FishingManagerImpl implements Listener, FishingManager {
             if (player.getGameMode() != GameMode.CREATIVE)
                 outer: {
                     ItemStack rod = tempFishingState.getPreparation().getRodItemStack();
-                    PlayerItemDamageEvent damageEvent = new PlayerItemDamageEvent(player, rod, 1, 1);
-                    Bukkit.getPluginManager().callEvent(damageEvent);
-                    if (damageEvent.isCancelled()) {
-                        break outer;
-                    }
+//                    PlayerItemDamageEvent damageEvent = new PlayerItemDamageEvent(player, rod, 1, 1);
+//                    Bukkit.getPluginManager().callEvent(damageEvent);
+//                    if (damageEvent.isCancelled()) {
+//                        break outer;
+//                    }
                     ItemUtils.decreaseHookDurability(rod, 1, false);
                     ItemUtils.decreaseDurability(player, rod, 1, true);
                 }

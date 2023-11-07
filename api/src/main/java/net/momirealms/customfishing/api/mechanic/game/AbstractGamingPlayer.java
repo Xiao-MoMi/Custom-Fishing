@@ -68,6 +68,11 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     }
 
     @Override
+    public boolean onLeftClick() {
+        return false;
+    }
+
+    @Override
     public boolean onChat(String message) {
         return false;
     }
@@ -94,8 +99,15 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
 
     @Override
     public void run() {
-        timeOutCheck();
+        if (timeOutCheck()) {
+            return;
+        }
         switchItemCheck();
+        onTick();
+    }
+
+    public void onTick() {
+
     }
 
     protected void endGame() {
@@ -106,18 +118,21 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
         this.success = success;
     }
 
-    protected void timeOutCheck() {
+    protected boolean timeOutCheck() {
         if (System.currentTimeMillis() > deadline) {
             isTimeOut = true;
             cancel();
             endGame();
+            return true;
         }
+        return false;
     }
 
     protected void switchItemCheck() {
         PlayerInventory playerInventory = player.getInventory();
         if (playerInventory.getItemInMainHand().getType() != Material.FISHING_ROD
-                && playerInventory.getItemInOffHand().getType() != Material.FISHING_ROD) {
+            && playerInventory.getItemInOffHand().getType() != Material.FISHING_ROD
+        ) {
             cancel();
             endGame();
         }

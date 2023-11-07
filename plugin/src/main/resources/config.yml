@@ -1,6 +1,6 @@
 # Developer: @Xiao-MoMi
 # Wiki: https://mo-mi.gitbook.io/xiaomomi-plugins/
-config-version: '28'
+config-version: '29'
 
 # Debug
 debug: false
@@ -113,6 +113,18 @@ mechanics:
     # Other whitelist-items
     whitelist-items:
       - fishing_rod
+
+  # Fishing wait time
+  # This section would take effect if you set "override-vanilla" to true
+  # That also means vanilla mechanics for example lure enchantment
+  # would not longer take effect, so you have to configurate its effect
+  # in enchantment effects.
+  fishing-wait-time:
+    # override vanilla mechanic
+    override-vanilla: false
+    # ticks
+    min-wait-time: 100
+    max-wait-time: 600
 
   # Lava fishing settings
   # To modify vanilla fishing time, you should edit paper-world-defaults.yml where there's a section called fishing-time-range
