@@ -114,6 +114,7 @@ public class CFConfig {
                             .setVersioning(new BasicVersioning("config-version"))
                             .addIgnoredRoute(configVersion, "mechanics.mechanic-requirements", '.')
                             .addIgnoredRoute(configVersion, "mechanics.global-events", '.')
+                            .addIgnoredRoute(configVersion, "other-settings.placeholder-register", '.')
                             .build()
             );
             loadSettings(CustomFishingPlugin.getInstance().getConfig("config.yml"));

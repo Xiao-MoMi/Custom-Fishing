@@ -203,7 +203,7 @@ public class EffectManagerImpl implements EffectManager {
             String key = split[0];
             List<String> members = plugin.getLootManager().getLootGroup(key);
             if (members == null) {
-                LogUtils.warn("Group " + key + " doesn't include any loot. The effect would not take effect.");
+                LogUtils.warn("Group " + key + " doesn't contain any loot. The effect would not take effect.");
                 return result;
             }
             for (String loot : members) {

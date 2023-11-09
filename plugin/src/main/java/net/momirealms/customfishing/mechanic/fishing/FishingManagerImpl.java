@@ -557,22 +557,19 @@ public class FishingManagerImpl implements Listener, FishingManager {
         gamingPlayerMap.remove(uuid);
         plugin.getScheduler().runTaskSync(() -> {
 
-            if (player.getGameMode() != GameMode.CREATIVE)
-                outer: {
-                    ItemStack rod = tempFishingState.getPreparation().getRodItemStack();
-//                    PlayerItemDamageEvent damageEvent = new PlayerItemDamageEvent(player, rod, 1, 1);
-//                    Bukkit.getPluginManager().callEvent(damageEvent);
-//                    if (damageEvent.isCancelled()) {
-//                        break outer;
-//                    }
+            if (player.getGameMode() != GameMode.CREATIVE) {
+                ItemStack rod = tempFishingState.getPreparation().getRodItemStack();
+                plugin.getScheduler().runTaskSyncLater(() -> {
                     ItemUtils.decreaseHookDurability(rod, 1, false);
                     ItemUtils.decreaseDurability(player, rod, 1, true);
-                }
+                }, player.getLocation(), 1);
+            }
 
-            if (gamingPlayer.isSuccessful())
+            if (gamingPlayer.isSuccessful()) {
                 success(tempFishingState, fishHook);
-            else
+            } else {
                 fail(tempFishingState, fishHook);
+            }
 
             fishHook.remove();
 
@@ -648,7 +645,6 @@ public class FishingManagerImpl implements Listener, FishingManager {
 
         switch (loot.getType()) {
             case ITEM -> {
-
                 // build the items for multiple times instead of using setAmount() to make sure that each item is unique
                 if (loot.getID().equals("vanilla")) {
                     Pair<ItemStack, Integer> pair = vanillaLootMap.remove(player.getUniqueId());
