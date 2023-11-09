@@ -331,7 +331,8 @@ public class FishingManagerImpl implements Listener, FishingManager {
             double initialTime = ThreadLocalRandom.current().nextInt(CFConfig.waterMaxTime - CFConfig.waterMinTime + 1) + CFConfig.waterMinTime;
             fishHook.setWaitTime(Math.max(1, (int) (initialTime * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
         } else {
-            fishHook.setWaitTime(Math.max(1, (int) (fishHook.getWaitTime() * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
+            fishHook.setMaxWaitTime(Math.max(2, (int) (fishHook.getMaxWaitTime() * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
+            fishHook.setMinWaitTime(Math.max(1, (int) (fishHook.getMinWaitTime() * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
         }
         // Reduce amount & Send animation
         var baitItem = fishingPreparation.getBaitItemStack();
@@ -432,8 +433,10 @@ public class FishingManagerImpl implements Listener, FishingManager {
             temp.getPreparation().triggerActions(ActionTrigger.HOOK);
             if (!loot.disableGame()) {
                 // start the game if the loot has a game
-                event.setCancelled(true);
-                startFishingGame(player, temp.getPreparation(), temp.getEffect());
+
+                if (startFishingGame(player, temp.getPreparation(), temp.getEffect())) {
+                    event.setCancelled(true);
+                }
             } else {
                 // If the game is disabled, then do success actions
                 success(temp, event.getHook());
@@ -746,21 +749,21 @@ public class FishingManagerImpl implements Listener, FishingManager {
      * @param effect    The effect applied to the game.
      */
     @Override
-    public void startFishingGame(Player player, Condition condition, Effect effect) {
+    public boolean startFishingGame(Player player, Condition condition, Effect effect) {
         Map<String, Double> gameWithWeight = plugin.getGameManager().getGameWithWeight(condition);
         plugin.debug(gameWithWeight.toString());
         String random = WeightUtils.getRandom(gameWithWeight);
         Pair<BasicGameConfig, GameInstance> gamePair = plugin.getGameManager().getGameInstance(random);
         if (random == null) {
-            LogUtils.warn("No game is available for player:" + player.getName() + " location:" + condition.getLocation());
-            return;
+            plugin.debug("No game is available for player:" + player.getName() + " location:" + condition.getLocation());
+            return false;
         }
         if (gamePair == null) {
             LogUtils.warn(String.format("Game %s doesn't exist.", random));
-            return;
+            return false;
         }
         plugin.debug("Game: " + random);
-        startFishingGame(player, Objects.requireNonNull(gamePair.left().getGameSetting(effect)), gamePair.right());
+        return startFishingGame(player, Objects.requireNonNull(gamePair.left().getGameSetting(effect)), gamePair.right());
     }
 
     /**
@@ -771,14 +774,16 @@ public class FishingManagerImpl implements Listener, FishingManager {
      * @param gameInstance The instance of the fishing game to start.
      */
     @Override
-    public void startFishingGame(Player player, GameSettings settings, GameInstance gameInstance) {
+    public boolean startFishingGame(Player player, GameSettings settings, GameInstance gameInstance) {
         plugin.debug("Difficulty:" + settings.getDifficulty());
         plugin.debug("Time:" + settings.getTime());
         FishHook hook = getHook(player.getUniqueId());
         if (hook != null) {
             this.gamingPlayerMap.put(player.getUniqueId(), gameInstance.start(player, hook, settings));
+            return true;
         } else {
             LogUtils.warn("It seems that player " + player.getName() + " is not fishing. Fishing game failed to start.");
+            return false;
         }
     }
 

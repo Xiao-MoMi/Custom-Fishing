@@ -84,7 +84,7 @@ public interface FishingManager {
      * @param condition The condition used to determine the game.
      * @param effect    The effect applied to the game.
      */
-    void startFishingGame(Player player, Condition condition, Effect effect);
+    boolean startFishingGame(Player player, Condition condition, Effect effect);
 
     /**
      * Starts a fishing game for the specified player with the given settings and game instance.
@@ -93,7 +93,7 @@ public interface FishingManager {
      * @param settings     The game settings for the fishing game.
      * @param gameInstance The instance of the fishing game to start.
      */
-    void startFishingGame(Player player, GameSettings settings, GameInstance gameInstance);
+    boolean startFishingGame(Player player, GameSettings settings, GameInstance gameInstance);
 
     /**
      * Checks if a player with the given UUID has cast their fishing hook.
