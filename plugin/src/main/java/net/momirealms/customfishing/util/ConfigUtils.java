@@ -24,7 +24,7 @@ import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.mechanic.misc.value.ExpressionValue;
 import net.momirealms.customfishing.mechanic.misc.value.PlainValue;
-import net.momirealms.customfishing.mechanic.misc.value.Value;
+import net.momirealms.customfishing.api.mechanic.misc.Value;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -201,10 +201,36 @@ public class ConfigUtils {
         if (section == null) return list;
         for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
             if (entry.getValue() instanceof Integer integer) {
-                list.add(Pair.of(entry.getKey(), Short.valueOf(String.valueOf(integer))));
+                list.add(Pair.of(entry.getKey(), Short.parseShort(String.valueOf(Math.max(1, Math.min(Short.MAX_VALUE, integer))))));
             }
         }
         return list;
+    }
+
+    public static List<Pair<Integer, Value>> getEnchantAmountPair(ConfigurationSection section) {
+        List<Pair<Integer, Value>> list = new ArrayList<>();
+        if (section == null) return list;
+        for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
+            list.add(Pair.of(Integer.parseInt(entry.getKey()), getValue(entry.getValue())));
+        }
+        return list;
+    }
+
+    public static List<Pair<Pair<String, Short>, Value>> getEnchantPoolPair(ConfigurationSection section) {
+        List<Pair<Pair<String, Short>, Value>> list = new ArrayList<>();
+        if (section == null) return list;
+        for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
+            list.add(Pair.of(getEnchantmentPair(entry.getKey()), getValue(entry.getValue())));
+        }
+        return list;
+    }
+
+    public static Pair<String, Short> getEnchantmentPair(String value) {
+        int last = value.lastIndexOf(":");
+        if (last == -1 || last == 0 || last == value.length() - 1) {
+            throw new IllegalArgumentException("Invalid format of the input enchantment");
+        }
+        return Pair.of(value.substring(0, last), Short.parseShort(value.substring(last + 1)));
     }
 
     /**

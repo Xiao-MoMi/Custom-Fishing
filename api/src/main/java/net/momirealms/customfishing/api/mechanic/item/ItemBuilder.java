@@ -20,6 +20,7 @@ package net.momirealms.customfishing.api.mechanic.item;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.common.Tuple;
+import net.momirealms.customfishing.api.mechanic.misc.Value;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -52,6 +53,8 @@ public interface ItemBuilder extends BuildableItem {
     ItemBuilder enchantment(List<Pair<String, Short>> enchantments, boolean store);
 
     ItemBuilder randomEnchantments(List<Tuple<Double, String, Short>> enchantments, boolean store);
+
+    ItemBuilder enchantmentPool(List<Pair<Integer, Value>> amountPairs, List<Pair<Pair<String, Short>, Value>> enchantments, boolean store);
 
     ItemBuilder maxDurability(int max);
 

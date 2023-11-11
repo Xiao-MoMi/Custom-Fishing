@@ -20,8 +20,11 @@ package net.momirealms.customfishing.scheduler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
+import net.momirealms.customfishing.util.LocationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+
+import java.util.Optional;
 
 /**
  * A scheduler implementation for "synchronous" tasks using Folia's RegionScheduler.
@@ -42,7 +45,7 @@ public class FoliaSchedulerImpl implements SyncScheduler {
      */
     @Override
     public void runSyncTask(Runnable runnable, Location location) {
-        Bukkit.getRegionScheduler().execute(plugin, location, runnable);
+        Bukkit.getRegionScheduler().execute(plugin, Optional.ofNullable(location).orElse(LocationUtils.getAnyLocationInstance()), runnable);
     }
 
     /**

@@ -15,21 +15,11 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.mechanic.misc.value;
+package net.momirealms.customfishing.api.mechanic.misc;
 
-import net.momirealms.customfishing.api.mechanic.misc.Value;
 import org.bukkit.entity.Player;
 
-public class PlainValue implements Value {
+public interface Value {
 
-    private final double value;
-
-    public PlainValue(double value) {
-        this.value = value;
-    }
-
-    @Override
-    public double get(Player player) {
-        return value;
-    }
+    double get(Player player);
 }

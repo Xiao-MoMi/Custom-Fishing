@@ -42,7 +42,7 @@ public class ItemSelector implements YamlPage {
     private String prefix;
     private final File file;
     private long coolDown;
-    private String type;
+    private final String type;
 
     public ItemSelector(Player player, File file, String type) {
         this.yaml = YamlConfiguration.loadConfiguration(file);
@@ -103,6 +103,54 @@ public class ItemSelector implements YamlPage {
         window.open();
     }
 
+    public void reOpenWithNewKey() {
+        String tempKey = "New Key";
+        prefix = tempKey;
+        var confirmIcon = new ConfirmIcon();
+        Item border = new SimpleItem(new ItemBuilder(Material.AIR));
+        Gui upperGui = Gui.normal()
+                .setStructure(
+                        "a # b"
+                )
+                .addIngredient('a', new SimpleItem(new ItemBuilder(Material.NAME_TAG).setDisplayName(tempKey)))
+                .addIngredient('b', confirmIcon)
+                .addIngredient('#', border)
+                .build();
+
+        var gui = PagedGui.items()
+                .setStructure(
+                        "x x x x x x x x x",
+                        "x x x x x x x x x",
+                        "x x x x x x x x x",
+                        "# # a # c # b # #"
+                )
+                .addIngredient('x', Markers.CONTENT_LIST_SLOT_HORIZONTAL)
+                .addIngredient('#', new BackGroundItem())
+                .addIngredient('a', new PreviousPageItem())
+                .addIngredient('b', new NextPageItem())
+                .addIngredient('c', new BackToFolderItem(file.getParentFile()))
+                .build();
+
+        var window = AnvilWindow.split()
+                .setViewer(player)
+                .setTitle(new ShadedAdventureComponentWrapper(
+                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Set key name")
+                ))
+                .addRenameHandler(s -> {
+                    long current = System.currentTimeMillis();
+                    if (current - coolDown < 100) return;
+                    if (s.equals(tempKey)) return;
+                    prefix = s;
+                    coolDown = current;
+                    confirmIcon.notifyWindows();
+                })
+                .setUpperGui(upperGui)
+                .setLowerGui(gui)
+                .build();
+
+        window.open();
+    }
+
     public List<Item> getItemList() {
         List<Item> itemList = new ArrayList<>();
         for (Map.Entry<String, Object> entry : this.yaml.getValues(false).entrySet()) {
@@ -121,6 +169,7 @@ public class ItemSelector implements YamlPage {
             }
             itemList.add(new ItemInList(key, new ItemBuilder(Material.STRUCTURE_VOID), this));
         }
+        itemList.add(new AddKey());
         return itemList;
     }
 
@@ -187,6 +236,59 @@ public class ItemSelector implements YamlPage {
                 this.itemSelector.save();
                 this.itemSelector.reOpenWithFilter(itemSelector.prefix);
             }
+        }
+    }
+
+    public class AddKey extends AbstractItem {
+
+        @Override
+        public ItemProvider getItemProvider() {
+            return new ItemBuilder(Material.ANVIL).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                    "<green>[+] Add a new key"
+            )));
+        }
+
+        @Override
+        public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
+            reOpenWithNewKey();
+        }
+    }
+
+    public class ConfirmIcon extends AbstractItem {
+
+        @Override
+        public ItemProvider getItemProvider() {
+            if (prefix != null && !yaml.contains(prefix) && prefix.matches("^[a-zA-Z0-9_]+$")) {
+                var builder = new ItemBuilder(Material.NAME_TAG)
+                        .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                                prefix
+                        )));
+                builder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                        "<#00FF7F> -> Left click to confirm"
+                ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                        "<#00CED1> -> Right click to cancel"
+                )));
+                return builder;
+            } else {
+                return new ItemBuilder(Material.BARRIER)
+                        .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                                "<red>● Duplicated or invalid key"
+                        )));
+            }
+        }
+
+        @Override
+        public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
+            if (clickType.isLeftClick()) {
+                if (prefix != null && !yaml.contains(prefix) && prefix.matches("^[a-zA-Z0-9_]+$")) {
+                    yaml.createSection(prefix);
+                    save();
+                } else {
+                    return;
+                }
+            }
+            prefix = SEARCH;
+            reOpenWithFilter(SEARCH);
         }
     }
 }

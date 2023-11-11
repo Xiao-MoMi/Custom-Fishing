@@ -35,9 +35,11 @@ import net.momirealms.customfishing.api.mechanic.item.ItemBuilder;
 import net.momirealms.customfishing.api.mechanic.item.ItemLibrary;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.util.LogUtils;
+import net.momirealms.customfishing.api.util.WeightUtils;
 import net.momirealms.customfishing.compatibility.item.CustomFishingItemImpl;
 import net.momirealms.customfishing.compatibility.item.VanillaItemImpl;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
+import net.momirealms.customfishing.api.mechanic.misc.Value;
 import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.ItemUtils;
@@ -45,8 +47,10 @@ import net.momirealms.customfishing.util.NBTUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -263,7 +267,11 @@ public class ItemManagerImpl implements ItemManager, Listener {
             String[] split = id.split(":", 2);
             return itemLibraryMap.get(split[0]).buildItem(player, split[1]);
         } else {
-            return new ItemStack(Material.valueOf(id.toUpperCase(Locale.ENGLISH)));
+            try {
+                return new ItemStack(Material.valueOf(id.toUpperCase(Locale.ENGLISH)));
+            } catch (IllegalArgumentException e) {
+                return new ItemStack(Material.COD);
+            }
         }
     }
 
@@ -327,6 +335,8 @@ public class ItemManagerImpl implements ItemManager, Listener {
                 .itemFlag(section.getStringList("item-flags").stream().map(flag -> ItemFlag.valueOf(flag.toUpperCase())).toList())
                 .enchantment(ConfigUtils.getEnchantmentPair(section.getConfigurationSection("enchantments")), false)
                 .enchantment(ConfigUtils.getEnchantmentPair(section.getConfigurationSection("stored-enchantments")), true)
+                .enchantmentPool(ConfigUtils.getEnchantAmountPair(section.getConfigurationSection("enchantment-pool.amount")), ConfigUtils.getEnchantPoolPair(section.getConfigurationSection("enchantment-pool.pool")), false)
+                .enchantmentPool(ConfigUtils.getEnchantAmountPair(section.getConfigurationSection("stored-enchantment-pool.amount")), ConfigUtils.getEnchantPoolPair(section.getConfigurationSection("stored-enchantment-pool.pool")), true)
                 .randomEnchantments(ConfigUtils.getEnchantmentTuple(section.getConfigurationSection("random-enchantments")), false)
                 .randomEnchantments(ConfigUtils.getEnchantmentTuple(section.getConfigurationSection("random-stored-enchantments")), true)
                 .tag(section.getBoolean("tag", true), type, id)
@@ -622,6 +632,51 @@ public class ItemManagerImpl implements ItemManager, Listener {
                         nbtCompound.setShort("lvl", pair.getRight());
                         ids.add(pair.getMid());
                     }
+                }
+            });
+            return this;
+        }
+
+        @Override
+        public ItemBuilder enchantmentPool(List<Pair<Integer, Value>> amountPairs, List<Pair<Pair<String, Short>, Value>> enchantments, boolean store) {
+            if (enchantments.size() == 0 || amountPairs.size() == 0) return this;
+            editors.put("enchantment-pool", (player, nbtItem, placeholders) -> {
+                List<Pair<Integer, Double>> parsedAmountPair = new ArrayList<>(amountPairs.size());
+                for (Pair<Integer, Value> rawValue : amountPairs) {
+                    parsedAmountPair.add(Pair.of(rawValue.left(), rawValue.right().get(player)));
+                }
+
+                int amount = WeightUtils.getRandom(parsedAmountPair);
+                if (amount <= 0) return;
+                NBTCompoundList list = nbtItem.getCompoundList(store ? "StoredEnchantments" : "Enchantments");
+
+                HashSet<Enchantment> addedEnchantments = new HashSet<>();
+
+                List<Pair<Pair<String, Short>, Double>> cloned = new ArrayList<>(enchantments.size());
+                for (Pair<Pair<String, Short>, Value> rawValue : enchantments) {
+                    cloned.add(Pair.of(rawValue.left(), rawValue.right().get(player)));
+                }
+
+                int i = 0;
+                outer:
+                while (i < amount && cloned.size() != 0) {
+                    Pair<String, Short> enchantPair = WeightUtils.getRandom(cloned);
+                    Enchantment enchantment = Enchantment.getByKey(NamespacedKey.fromString(enchantPair.left()));
+                    if (enchantment == null) {
+                        throw new NullPointerException("Enchantment: " + enchantPair.left() + " doesn't exist on your server.");
+                    }
+                    for (Enchantment added : addedEnchantments) {
+                        if (enchantment.conflictsWith(added)) {
+                            cloned.removeIf(pair -> pair.left().left().equals(enchantPair.left()));
+                            continue outer;
+                        }
+                    }
+                    NBTCompound nbtCompound = list.addCompound();
+                    nbtCompound.setString("id", enchantPair.left());
+                    nbtCompound.setShort("lvl", enchantPair.right());
+                    addedEnchantments.add(enchantment);
+                    cloned.removeIf(pair -> pair.left().left().equals(enchantPair.left()));
+                    i++;
                 }
             });
             return this;

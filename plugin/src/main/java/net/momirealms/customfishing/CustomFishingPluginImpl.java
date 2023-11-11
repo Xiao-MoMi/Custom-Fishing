@@ -229,7 +229,9 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
                 "xyz.xenondevs.invui:inventory-access-r12:1.23", "https://repo.xenondevs.xyz/releases/",
                 "xyz.xenondevs.invui:inventory-access-r13:1.23", "https://repo.xenondevs.xyz/releases/",
                 "xyz.xenondevs.invui:inventory-access-r14:1.23", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r15:1.23", "https://repo.xenondevs.xyz/releases/"
+                "xyz.xenondevs.invui:inventory-access-r15:1.23", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r16:1.23", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access-r17:1.23", "https://repo.xenondevs.xyz/releases/"
         );
     }
 

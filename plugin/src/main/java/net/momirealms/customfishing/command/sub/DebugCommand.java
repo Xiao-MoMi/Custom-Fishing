@@ -32,6 +32,7 @@ import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
+import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,6 +111,10 @@ public class DebugCommand {
                                 StringTooltip.ofString("false", "loots in water")
                         })))
                 .executesPlayer((player, arg) -> {
+                    if (player.getInventory().getItemInMainHand().getType() != Material.FISHING_ROD) {
+                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, "<red>Please hold a fishing rod before using this command.");
+                        return;
+                    }
                     FishingEffect initialEffect = CustomFishingPlugin.get().getEffectManager().getInitialEffect();
                     FishingPreparation fishingPreparation = new FishingPreparation(player, CustomFishingPlugin.get());
                     boolean inLava = (boolean) arg.getOrDefault("lava fishing", false);

@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 public class LocationUtils {
@@ -33,5 +34,9 @@ public class LocationUtils {
                 Math.pow(location2.getY() - location1.getY(), 2) +
                 Math.pow(location2.getZ() - location1.getZ(), 2)
         );
+    }
+
+    public static Location getAnyLocationInstance() {
+        return new Location(Bukkit.getWorlds().get(0), 0, 64, 0);
     }
 }

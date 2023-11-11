@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.mechanic.misc.value;
 
+import net.momirealms.customfishing.api.mechanic.misc.Value;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.entity.Player;
 
