@@ -37,6 +37,8 @@ import java.util.UUID;
  */
 public class FakeItemUtils {
 
+    private FakeItemUtils() {}
+
     /**
      * Creates a destroy packet for removing a fake item entity.
      *

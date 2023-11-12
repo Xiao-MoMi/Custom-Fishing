@@ -45,6 +45,8 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public class ItemUtils {
 
+    private ItemUtils() {}
+
     /**
      * Updates the lore of an NBTItem based on its custom NBT tags.
      *

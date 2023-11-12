@@ -31,6 +31,8 @@ import java.util.jar.JarInputStream;
 
 public class ClassUtils {
 
+    private ClassUtils() {}
+
     /**
      * Attempts to find a class within a JAR file that extends or implements a given class or interface.
      *

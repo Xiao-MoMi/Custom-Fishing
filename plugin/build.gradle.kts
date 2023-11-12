@@ -24,22 +24,22 @@ dependencies {
     compileOnly("com.google.code.gson:gson:2.10.1")
 
     // eco
-    compileOnly("com.willfp:eco:6.65.5")
-    compileOnly("com.willfp:EcoJobs:3.32.3")
+    compileOnly("com.willfp:eco:6.66.1")
+    compileOnly("com.willfp:EcoJobs:3.41.0")
     compileOnly("com.willfp:EcoSkills:3.21.0")
-    compileOnly("com.willfp:libreforge:4.34.0")
+    compileOnly("com.willfp:libreforge:4.42.0")
 
     // database
-    compileOnly("org.xerial:sqlite-jdbc:3.43.0.0")
+    compileOnly("org.xerial:sqlite-jdbc:3.43.2.2")
     compileOnly("com.h2database:h2:2.2.224")
-    compileOnly("org.mongodb:mongodb-driver-sync:4.10.2")
+    compileOnly("org.mongodb:mongodb-driver-sync:4.11.1")
     compileOnly("com.zaxxer:HikariCP:5.0.1")
-    compileOnly("redis.clients:jedis:5.0.1")
+    compileOnly("redis.clients:jedis:5.0.2")
 
     // others
     compileOnly("com.github.LoneDev6:api-itemsadder:3.5.0c-r5")
     compileOnly("com.github.oraxen:oraxen:1.162.0")
-    compileOnly("pers.neige.neigeitems:NeigeItems:1.15.57")
+    compileOnly("pers.neige.neigeitems:NeigeItems:1.15.95")
     compileOnly("com.github.Zrips:Jobs:4.17.2")
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
@@ -66,7 +66,7 @@ dependencies {
     implementation("net.kyori:adventure-text-serializer-legacy:4.14.0")
 
     // nbt
-    implementation("de.tr7zw:item-nbt-api:2.12.0")
+    implementation("de.tr7zw:item-nbt-api:2.12.1")
 
     // bStats
     implementation("org.bstats:bstats-bukkit:3.0.2")

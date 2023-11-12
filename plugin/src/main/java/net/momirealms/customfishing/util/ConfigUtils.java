@@ -44,6 +44,8 @@ import java.util.Map;
  */
 public class ConfigUtils {
 
+    private ConfigUtils() {}
+
     /**
      * Converts an object into an ArrayList of strings.
      *

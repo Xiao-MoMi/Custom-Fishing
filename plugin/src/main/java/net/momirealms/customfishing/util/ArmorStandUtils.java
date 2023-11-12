@@ -38,6 +38,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class ArmorStandUtils {
 
+    private ArmorStandUtils() {}
+
     /**
      * Creates a destroy packet for removing an armor stand entity.
      *

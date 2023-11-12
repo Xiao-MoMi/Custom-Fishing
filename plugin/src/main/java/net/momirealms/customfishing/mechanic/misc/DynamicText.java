@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.util;
+package net.momirealms.customfishing.mechanic.misc;
 
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import org.bukkit.entity.Player;

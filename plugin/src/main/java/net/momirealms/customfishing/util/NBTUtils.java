@@ -29,6 +29,8 @@ import java.util.*;
  */
 public class NBTUtils {
 
+    private NBTUtils() {}
+
     /**
      * Inner class representing a stack element used during NBT data conversion.
      */
