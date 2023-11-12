@@ -91,8 +91,7 @@ public class FishingPreparation extends Condition {
                 this.insertArg("{in-bag}", "true");
                 for (int i = 0; i < fishingBag.getSize(); i++) {
                     ItemStack itemInBag = fishingBag.getItem(i);
-                    String bagItemID = plugin.getItemManager().getCustomFishingItemID(itemInBag);
-                    if (bagItemID == null) continue;
+                    String bagItemID = plugin.getItemManager().getAnyPluginItemID(itemInBag);
                     if (!hasBait) {
                         EffectCarrier effect = plugin.getEffectManager().getEffectCarrier("bait", bagItemID);
                         if (effect != null) {

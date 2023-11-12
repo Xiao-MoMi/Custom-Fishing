@@ -361,6 +361,9 @@ public class ItemManagerImpl implements ItemManager, Listener {
     @NotNull
     public ItemStack build(Player player, ItemBuilder builder, Map<String, String> placeholders) {
         ItemStack temp = itemLibraryMap.get(builder.getLibrary()).buildItem(player, builder.getId());
+        if (temp.getType() == Material.AIR) {
+            return temp;
+        }
         temp.setAmount(builder.getAmount());
         NBTItem nbtItem = new NBTItem(temp);
         for (ItemBuilder.ItemPropertyEditor editor : builder.getEditors()) {

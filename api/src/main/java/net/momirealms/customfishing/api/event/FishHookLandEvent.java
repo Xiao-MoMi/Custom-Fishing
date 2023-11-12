@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.api.event;
 
+import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -31,18 +32,21 @@ public class FishHookLandEvent extends PlayerEvent {
     private static final HandlerList handlerList = new HandlerList();
     private final Target target;
     private final FishHook fishHook;
+    private final Effect effect;
 
     /**
      * Constructs a new FishHookLandEvent.
      *
-     * @param who    The player who triggered the event.
-     * @param target The target where the fishing hook has landed (LAVA or WATER).
-     * @param hook   The fishing hook entity.
+     * @param who           The player who triggered the event.
+     * @param target        The target where the fishing hook has landed (LAVA or WATER).
+     * @param hook          The fishing hook entity.
+     * @param initialEffect The initial effect
      */
-    public FishHookLandEvent(@NotNull Player who, Target target, FishHook hook) {
+    public FishHookLandEvent(@NotNull Player who, Target target, FishHook hook, Effect initialEffect) {
         super(who);
         this.target = target;
         this.fishHook = hook;
+        this.effect = initialEffect;
     }
 
     /**
@@ -65,6 +69,15 @@ public class FishHookLandEvent extends PlayerEvent {
 
     public static HandlerList getHandlerList() {
         return handlerList;
+    }
+
+    /**
+     * Get the fishing effect
+     *
+     * @return fishing effect
+     */
+    public Effect getEffect() {
+        return effect;
     }
 
     @NotNull

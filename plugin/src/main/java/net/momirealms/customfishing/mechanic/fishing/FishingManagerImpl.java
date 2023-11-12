@@ -299,15 +299,13 @@ public class FishingManagerImpl implements Listener, FishingManager {
         }
         // Check mechanic requirements
         if (!RequirementManager.isRequirementMet(
-                fishingPreparation, RequirementManagerImpl.mechanicRequirements
+            fishingPreparation, RequirementManagerImpl.mechanicRequirements
         )) {
             removeTempFishingState(player);
             return;
         }
         // Merge rod/bait/util effects
         FishingEffect initialEffect = plugin.getEffectManager().getInitialEffect();
-        fishingPreparation.mergeEffect(initialEffect);
-
         // Merge totem effects
         EffectCarrier totemEffect = plugin.getTotemManager().getTotemEffect(player.getLocation());
         if (totemEffect != null)

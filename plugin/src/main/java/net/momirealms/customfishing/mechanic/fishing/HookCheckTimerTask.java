@@ -26,7 +26,7 @@ import net.momirealms.customfishing.api.event.LavaFishingEvent;
 import net.momirealms.customfishing.api.mechanic.TempFishingState;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
-import net.momirealms.customfishing.api.mechanic.effect.Effect;
+import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.setting.CFConfig;
@@ -56,7 +56,7 @@ public class HookCheckTimerTask implements Runnable {
     private LavaEffectTask lavaFishingTask;
     private final FishHook fishHook;
     private final FishingPreparation fishingPreparation;
-    private final Effect initialEffect;
+    private final FishingEffect initialEffect;
     private final int lureLevel;
     private boolean firstTime;
     private boolean fishHooked;
@@ -77,7 +77,7 @@ public class HookCheckTimerTask implements Runnable {
             FishingManagerImpl manager,
             FishHook fishHook,
             FishingPreparation fishingPreparation,
-            Effect initialEffect
+            FishingEffect initialEffect
     ) {
         this.manager = manager;
         this.fishHook = fishHook;
@@ -102,15 +102,16 @@ public class HookCheckTimerTask implements Runnable {
         }
         if (fishHook.getLocation().getBlock().getType() == Material.LAVA) {
             // if player can fish in lava
-            if (!initialEffect.canLavaFishing()) {
-                this.destroy();
-                return;
-            }
             if (firstTime) {
                 this.fishingPreparation.setLocation(fishHook.getLocation());
+                this.fishingPreparation.mergeEffect(initialEffect);
+                if (!initialEffect.canLavaFishing()) {
+                    this.destroy();
+                    return;
+                }
                 this.fishingPreparation.insertArg("{lava}", "true");
                 this.fishingPreparation.triggerActions(ActionTrigger.LAND);
-                FishHookLandEvent event = new FishHookLandEvent(fishingPreparation.getPlayer(), FishHookLandEvent.Target.LAVA, fishHook);
+                FishHookLandEvent event = new FishHookLandEvent(fishingPreparation.getPlayer(), FishHookLandEvent.Target.LAVA, fishHook, initialEffect);
                 Bukkit.getPluginManager().callEvent(event);
                 firstTime = false;
                 this.setTempState();
@@ -138,10 +139,11 @@ public class HookCheckTimerTask implements Runnable {
         }
         if (fishHook.isInWater()) {
             this.fishingPreparation.setLocation(fishHook.getLocation());
+            this.fishingPreparation.mergeEffect(initialEffect);
             this.fishingPreparation.insertArg("{lava}", "false");
             this.fishingPreparation.insertArg("{open-water}", String.valueOf(fishHook.isInOpenWater()));
             this.fishingPreparation.triggerActions(ActionTrigger.LAND);
-            FishHookLandEvent event = new FishHookLandEvent(fishingPreparation.getPlayer(), FishHookLandEvent.Target.WATER, fishHook);
+            FishHookLandEvent event = new FishHookLandEvent(fishingPreparation.getPlayer(), FishHookLandEvent.Target.WATER, fishHook, initialEffect);
             Bukkit.getPluginManager().callEvent(event);
             // if the hook is in water
             // then cancel the task
