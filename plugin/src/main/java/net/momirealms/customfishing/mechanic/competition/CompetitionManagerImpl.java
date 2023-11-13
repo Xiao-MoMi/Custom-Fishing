@@ -155,9 +155,7 @@ public class CompetitionManagerImpl implements CompetitionManager {
 
                 CompetitionConfig competitionConfig = builder.build();
                 List<Pair<Integer, Integer>> timePairs = section.getStringList("start-time")
-                        .stream().map(it -> {
-                            return ConfigUtils.splitStringIntegerArgs(it, ":");
-                        }).toList();
+                        .stream().map(it -> ConfigUtils.splitStringIntegerArgs(it, ":")).toList();
                 List<Integer> weekdays = section.getIntegerList("start-weekday");
                 if (weekdays.size() == 0) {
                     weekdays.addAll(List.of(1,2,3,4,5,6,7));

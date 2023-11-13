@@ -304,7 +304,6 @@ public class FishingManagerImpl implements Listener, FishingManager {
             removeTempFishingState(player);
             return;
         }
-        // Merge rod/bait/util effects
         FishingEffect initialEffect = plugin.getEffectManager().getInitialEffect();
         // Merge totem effects
         EffectCarrier totemEffect = plugin.getTotemManager().getTotemEffect(player.getLocation());

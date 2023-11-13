@@ -191,14 +191,11 @@ public class Competition implements FishingCompetition {
                 } else {
                     Action[] actions = rewardsMap.get("participation");
                     if (actions != null) {
-                        iterator.forEachRemaining(playerName -> {
-                            Player player = Bukkit.getPlayer(competitionPlayer.left());
+                        Player player = Bukkit.getPlayer(competitionPlayer.left()); {
                             if (player != null)
                                 for (Action action : actions)
                                     action.trigger(new Condition(player));
-                        });
-                    } else {
-                        break;
+                        }
                     }
                 }
             }
