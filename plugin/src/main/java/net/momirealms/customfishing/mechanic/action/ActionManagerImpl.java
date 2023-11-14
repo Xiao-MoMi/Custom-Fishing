@@ -788,7 +788,9 @@ public class ActionManagerImpl implements ActionManager {
         registerAction("random-title", (args, chance) -> {
             if (args instanceof ConfigurationSection section) {
                 List<String> titles = section.getStringList("titles");
+                if (titles.size() == 0) titles.add("");
                 List<String> subtitles = section.getStringList("subtitles");
+                if (subtitles.size() == 0) subtitles.add("");
                 int fadeIn = section.getInt("fade-in", 20);
                 int stay = section.getInt("stay", 30);
                 int fadeOut = section.getInt("fade-out", 10);

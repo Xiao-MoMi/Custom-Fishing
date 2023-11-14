@@ -322,15 +322,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         // Store fishhook entity and apply the effects
         final FishHook fishHook = event.getHook();
         this.hookCacheMap.put(player.getUniqueId(), fishHook);
-//        fishHook.setMaxWaitTime(Math.max(100, (int) (fishHook.getMaxWaitTime() * initialEffect.getHookTimeModifier())));
-//        fishHook.setMinWaitTime(Math.max(100, (int) (fishHook.getMinWaitTime() * initialEffect.getHookTimeModifier())));
-        if (CFConfig.overrideVanilla) {
-            double initialTime = ThreadLocalRandom.current().nextInt(CFConfig.waterMaxTime - CFConfig.waterMinTime + 1) + CFConfig.waterMinTime;
-            fishHook.setWaitTime(Math.max(1, (int) (initialTime * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
-        } else {
-            fishHook.setMaxWaitTime(Math.max(2, (int) (fishHook.getMaxWaitTime() * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
-            fishHook.setMinWaitTime(Math.max(1, (int) (fishHook.getMinWaitTime() * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
-        }
+
         // Reduce amount & Send animation
         var baitItem = fishingPreparation.getBaitItemStack();
         if (baitItem != null) {

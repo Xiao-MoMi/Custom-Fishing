@@ -113,7 +113,8 @@ public class HookCheckTimerTask implements Runnable {
                 this.fishingPreparation.triggerActions(ActionTrigger.LAND);
                 FishHookLandEvent event = new FishHookLandEvent(fishingPreparation.getPlayer(), FishHookLandEvent.Target.LAVA, fishHook, initialEffect);
                 Bukkit.getPluginManager().callEvent(event);
-                firstTime = false;
+                this.setWaitTime();
+                this.firstTime = false;
                 this.setTempState();
             }
             // simulate fishing mechanic
@@ -148,6 +149,7 @@ public class HookCheckTimerTask implements Runnable {
             // if the hook is in water
             // then cancel the task
             this.destroy();
+            this.setWaitTime();
             this.setTempState();
             return;
         }
@@ -288,5 +290,15 @@ public class HookCheckTimerTask implements Runnable {
      */
     public boolean isFishHooked() {
         return fishHooked;
+    }
+
+    private void setWaitTime() {
+        if (CFConfig.overrideVanilla) {
+            double initialTime = ThreadLocalRandom.current().nextInt(CFConfig.waterMaxTime - CFConfig.waterMinTime + 1) + CFConfig.waterMinTime;
+            fishHook.setWaitTime(Math.max(1, (int) (initialTime * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
+        } else {
+            fishHook.setMaxWaitTime(Math.max(2, (int) (fishHook.getMaxWaitTime() * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
+            fishHook.setMinWaitTime(Math.max(1, (int) (fishHook.getMinWaitTime() * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
+        }
     }
 }
