@@ -182,13 +182,11 @@ public class Competition implements FishingCompetition {
                 Pair<String, Double> competitionPlayer = iterator.next();
                 this.publicPlaceholders.put("{" + i + "_player}", competitionPlayer.left());
                 this.publicPlaceholders.put("{" + i + "_score}", String.format("%.2f", competitionPlayer.right()));
-                i++;
                 if (i < rewardsMap.size()) {
                     Player player = Bukkit.getPlayer(competitionPlayer.left());
                     if (player != null)
                         for (Action action : rewardsMap.get(String.valueOf(i)))
                             action.trigger(new Condition(player));
-
                 } else {
                     Action[] actions = rewardsMap.get("participation");
                     if (actions != null) {
@@ -199,6 +197,7 @@ public class Competition implements FishingCompetition {
                         }
                     }
                 }
+                i++;
             }
         }
 
