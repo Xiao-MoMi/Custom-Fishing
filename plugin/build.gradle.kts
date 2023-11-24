@@ -9,7 +9,7 @@ dependencies {
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
 
     // papi
-    compileOnly("me.clip:placeholderapi:2.11.3")
+    compileOnly("me.clip:placeholderapi:2.11.5")
 
     // config
     compileOnly("dev.dejvokep:boosted-yaml:1.3.1")
@@ -66,7 +66,7 @@ dependencies {
     implementation("net.kyori:adventure-text-serializer-legacy:4.14.0")
 
     // nbt
-    implementation("de.tr7zw:item-nbt-api:2.12.1")
+    implementation("de.tr7zw:item-nbt-api:2.12.3")
 
     // bStats
     implementation("org.bstats:bstats-bukkit:3.0.2")
