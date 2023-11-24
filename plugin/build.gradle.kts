@@ -66,7 +66,7 @@ dependencies {
     implementation("net.kyori:adventure-text-serializer-legacy:4.14.0")
 
     // nbt
-    implementation("de.tr7zw:item-nbt-api:2.12.3")
+    implementation("de.tr7zw:item-nbt-api:2.12.1")
 
     // bStats
     implementation("org.bstats:bstats-bukkit:3.0.2")
