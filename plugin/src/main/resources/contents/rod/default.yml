@@ -9,7 +9,7 @@ FISHING_ROD:
   tag: false
   material: fishing_rod
   effects:
-    time_effect:
+    effect_1:
       type: wait-time-multiplier
       value: 1.5
 
@@ -31,10 +31,10 @@ beginner_rod:
   custom-model-data: 50001
   max-durability: 64
   effects:
-    time_effect:
+    effect_1:
       type: wait-time-multiplier
       value: 1.8
-    difficulty:
+    effect_2:
       type: difficulty
       value: -8
 
@@ -54,7 +54,7 @@ silver_rod:
   custom-model-data: 50002
   max-durability: 96
   effects:
-    group:
+    effect_1:
       type: group-mod
       value:
         - silver_star:+8
@@ -75,7 +75,7 @@ golden_rod:
   custom-model-data: 50003
   max-durability: 80
   effects:
-    group:
+    effect_1:
       type: group-mod
       value:
         - golden_star:+3
@@ -98,7 +98,7 @@ star_rod:
   custom-model-data: 50004
   max-durability: 128
   effects:
-    time_effect:
+    effect_1:
       type: game-time
       value: 15
 
@@ -122,7 +122,7 @@ bone_rod:
   custom-model-data: 50005
   max-durability: 32
   effects:
-    lava:
+    effect_1:
       type: lava-fishing
 
 magical_rod:
@@ -152,7 +152,7 @@ magical_rod:
       type: level
       value: 10
       not-met-actions:
-        action_message:
+        action_1:
           type: message
           value:
             - 'You don''t have enough levels to control the rod.'
@@ -171,11 +171,11 @@ magical_rod:
         type: level
         value: -10
   effects:
-    weight_effect:
+    effect_1:
       type: group-mod-ignore-conditions
       value:
         - enchantments:+10
-    time_effect:
+    effect_2:
       type: wait-time-multiplier
       value: 3
 
@@ -199,13 +199,13 @@ master_rod:
   custom-model-data: 50007
   max-durability: 128
   effects:
-    time_effect:
+    effect_1:
       type: wait-time-multiplier
       value: 0.95
-    difficulty:
+    effect_2:
       type: difficulty
       value: +10
-    group:
+    effect_3:
       type: group-mod
       value:
         - silver_star:+5

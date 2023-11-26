@@ -6,8 +6,8 @@ global-group:
     loots_in_water:
       conditions:
         lava-fishing: false
-        world:
-          - world
+        environment:
+          - normal
         '!rod':
           - magical_rod
       list:
@@ -115,8 +115,8 @@ global-group:
                 - 'sturgeon_fish:+9'
                 - 'sturgeon_fish_silver_star:+3'
                 - 'sturgeon_fish_golden_star:+1'
-        # Skeletons might appear if player holds the skeleton_rod and fish at night
-        curse_rod:
+        # Skeletons might appear if player holds the bone_rod and fish at night
+        skeleton_group:
           conditions:
             rod:
               - bone_rod
@@ -129,10 +129,10 @@ global-group:
         lava-fishing: true
       list: []
       sub-groups:
-        overworld_loots:
+        world_loots:
           conditions:
-            world:
-              - world
+            environment:
+              - normal
           list:
             - 'cobblestone:+50'
             - 'stone:+30'
@@ -141,8 +141,8 @@ global-group:
             - 'flint:+6'
         nether_loots:
           conditions:
-            world:
-              - world_nether
+            environment:
+              - nether
           list:
             - 'netherrack:+20'
             - 'nether_brick:+12'
@@ -154,11 +154,9 @@ global-group:
             - 'salmon_void_fish_silver_star:+3'
             - 'salmon_void_fish_golden_star:+1'
           sub-groups:
-            curse_rod:
+            skeleton_group:
               conditions:
                 rod:
                   - bone_rod
-                time:
-                  - 14000~22000
               list:
                 - 'wither_skeleton:+30'

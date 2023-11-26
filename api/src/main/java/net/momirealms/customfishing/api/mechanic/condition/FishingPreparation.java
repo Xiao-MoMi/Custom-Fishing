@@ -162,6 +162,9 @@ public class FishingPreparation extends Condition {
      * @param effect The FishingEffect to merge into this rod.
      */
     public void mergeEffect(FishingEffect effect) {
+        for (EffectModifier modifier : GlobalSettings.getEffectModifiers()) {
+            modifier.modify(effect, this);
+        }
         for (EffectCarrier effectCarrier : effects) {
             for (EffectModifier modifier : effectCarrier.getEffectModifiers()) {
                 modifier.modify(effect, this);

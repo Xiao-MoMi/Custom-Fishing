@@ -21,6 +21,7 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
+import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.HashMap;
@@ -31,17 +32,18 @@ import java.util.Map;
  */
 public class GlobalSettings {
 
-    public static HashMap<ActionTrigger, Action[]> lootActions = new HashMap<>();
-    public static HashMap<ActionTrigger, Action[]> rodActions = new HashMap<>();
-    public static HashMap<ActionTrigger, Action[]> baitActions = new HashMap<>();
-    public static HashMap<ActionTrigger, Action[]> hookActions = new HashMap<>();
+    private static HashMap<ActionTrigger, Action[]> lootActions = new HashMap<>();
+    private static HashMap<ActionTrigger, Action[]> rodActions = new HashMap<>();
+    private static HashMap<ActionTrigger, Action[]> baitActions = new HashMap<>();
+    private static HashMap<ActionTrigger, Action[]> hookActions = new HashMap<>();
+    private static EffectModifier[] effectModifiers;
 
     /**
      * Loads global settings from a configuration section.
      *
      * @param section The configuration section to load settings from.
      */
-    public static void load(ConfigurationSection section) {
+    public static void loadEvents(ConfigurationSection section) {
         if (section == null) return;
         for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection inner) {
@@ -54,6 +56,14 @@ public class GlobalSettings {
                 }
             }
         }
+    }
+
+    public static EffectModifier[] getEffectModifiers() {
+        return effectModifiers;
+    }
+
+    public static void setEffects(EffectModifier[] modifiers) {
+        effectModifiers = modifiers;
     }
 
     /**

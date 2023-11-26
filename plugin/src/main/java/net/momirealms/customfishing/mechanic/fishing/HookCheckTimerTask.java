@@ -297,8 +297,8 @@ public class HookCheckTimerTask implements Runnable {
             double initialTime = ThreadLocalRandom.current().nextInt(CFConfig.waterMaxTime - CFConfig.waterMinTime + 1) + CFConfig.waterMinTime;
             fishHook.setWaitTime(Math.max(1, (int) (initialTime * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
         } else {
-            fishHook.setMaxWaitTime(Math.max(2, (int) (fishHook.getMaxWaitTime() * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
             fishHook.setMinWaitTime(Math.max(1, (int) (fishHook.getMinWaitTime() * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
+            fishHook.setMaxWaitTime(Math.max(2, (int) (fishHook.getMaxWaitTime() * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
         }
     }
 }

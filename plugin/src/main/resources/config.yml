@@ -1,6 +1,6 @@
 # Developer: @Xiao-MoMi
 # Wiki: https://mo-mi.gitbook.io/xiaomomi-plugins/
-config-version: '29'
+config-version: '30'
 
 # Debug
 debug: false
@@ -25,6 +25,20 @@ mechanics:
       type: '!world'
       value:
         - blacklist_world
+
+  # Configures global effects. This is useful if you want to give all the players certain effects based on certain conditions
+  global-effects:
+    effect_1:
+      type: conditional
+      conditions:
+        competition:
+          ongoing: true
+          id:
+            - weekend_competition
+      effects:
+        effect_1:
+          type: wait-time-multiplier
+          value: 0.85
 
   # Configures global events for hook/bait/rod/loot
   # which would help you reduce duplicated lines

@@ -9,7 +9,7 @@
 minecraft:luck_of_the_sea:1:
   requirements: {}
   effects:
-    group:
+    effect_1:
       type: group-mod
       value:
         - silver_star:+2
@@ -17,7 +17,7 @@ minecraft:luck_of_the_sea:1:
 minecraft:luck_of_the_sea:2:
   requirements: {}
   effects:
-    group:
+    effect_1:
       type: group-mod
       value:
         - silver_star:+4
@@ -25,7 +25,7 @@ minecraft:luck_of_the_sea:2:
 minecraft:luck_of_the_sea:3:
   requirements: {}
   effects:
-    group:
+    effect_1:
       type: group-mod
       value:
         - silver_star:+6

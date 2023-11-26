@@ -198,6 +198,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerHookRequirement();
         this.registerCompetitionRequirement();
         this.registerListRequirement();
+        this.registerEnvironmentRequirement();
     }
 
     public HashMap<String, Double> getLootWithWeight(Condition condition) {
@@ -1012,6 +1013,27 @@ public class RequirementManagerImpl implements RequirementManager {
             return condition -> {
                 String id = condition.getArg("{bait}");
                 if (!baits.contains(id)) return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+    }
+
+    private void registerEnvironmentRequirement() {
+        registerRequirement("environment", (args, actions, advanced) -> {
+            List<String> environments = ConfigUtils.stringListArgs(args);
+            return condition -> {
+                var name = condition.getLocation().getWorld().getEnvironment().name().toLowerCase(Locale.ENGLISH);
+                if (environments.contains(name)) return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+        registerRequirement("!environment", (args, actions, advanced) -> {
+            List<String> environments = ConfigUtils.stringListArgs(args);
+            return condition -> {
+                var name = condition.getLocation().getWorld().getEnvironment().name().toLowerCase(Locale.ENGLISH);
+                if (!environments.contains(name)) return true;
                 if (advanced) triggerActions(actions, condition);
                 return false;
             };

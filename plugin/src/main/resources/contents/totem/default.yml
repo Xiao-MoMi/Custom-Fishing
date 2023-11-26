@@ -13,7 +13,7 @@ double_loot_totem:
       1:
         - 'AIR||GRASS||SNOW                   ANVIL                      AIR||GRASS||SNOW'
   effects:
-    double_loot:
+    effect_1:
       type: multiple-loot
       value: 1.0
   requirements:
@@ -242,7 +242,7 @@ golden_star_totem:
         period: 5
         delay: 0
   effects:
-    golden_weight_increase:
+    effect_1:
       type: group-mod
       value:
         - golden_star:+15

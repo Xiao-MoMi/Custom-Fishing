@@ -40,7 +40,7 @@ import java.util.Objects;
 public class CFConfig {
 
     // config version
-    public static String configVersion = "29";
+    public static String configVersion = "30";
     // Debug mode
     public static boolean debug;
     // language
@@ -114,6 +114,7 @@ public class CFConfig {
                             .setVersioning(new BasicVersioning("config-version"))
                             .addIgnoredRoute(configVersion, "mechanics.mechanic-requirements", '.')
                             .addIgnoredRoute(configVersion, "mechanics.global-events", '.')
+                            .addIgnoredRoute(configVersion, "mechanics.global-effects", '.')
                             .addIgnoredRoute(configVersion, "other-settings.placeholder-register", '.')
                             .build()
             );
@@ -164,7 +165,6 @@ public class CFConfig {
         legacyColorSupport = config.getBoolean("other-settings.legacy-color-code-support", false);
 
         durabilityLore = config.getStringList("other-settings.custom-durability-format").stream().map(it -> "<!i>" + it).toList();
-
 
         OffsetUtils.loadConfig(config.getConfigurationSection("other-settings.offset-characters"));
     }

@@ -21,6 +21,7 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Key;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.manager.EffectManager;
+import net.momirealms.customfishing.api.mechanic.GlobalSettings;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
@@ -101,13 +102,18 @@ public class EffectManagerImpl implements EffectManager {
         return effectMap.get(Key.of(namespace, id));
     }
 
+    public void load() {
+        this.loadFiles();
+        this.loadGlobalEffects();
+    }
+
     /**
      * Loads EffectCarrier configurations from YAML files in different content folders.
      * EffectCarrier configurations are organized by type (rod, bait, enchant, util, totem, hook) in separate folders.
      * Each YAML file within these folders is processed to populate the effectMap.
      */
     @SuppressWarnings("DuplicatedCode")
-    public void load() {
+    private void loadFiles() {
         Deque<File> fileDeque = new ArrayDeque<>();
         for (String type : List.of("rod", "bait", "enchant", "util", "totem", "hook")) {
             File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + type);
@@ -232,6 +238,12 @@ public class EffectManagerImpl implements EffectManager {
             }
         }
         return modifiers.toArray(new EffectModifier[0]);
+    }
+
+    private void loadGlobalEffects() {
+        YamlConfiguration config = plugin.getConfig("config.yml");
+        ConfigurationSection section = config.getConfigurationSection("mechanics.global-effects");
+        GlobalSettings.setEffects(getEffectModifiers(section));
     }
 
     /**

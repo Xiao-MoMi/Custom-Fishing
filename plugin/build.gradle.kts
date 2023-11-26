@@ -34,7 +34,7 @@ dependencies {
     compileOnly("com.h2database:h2:2.2.224")
     compileOnly("org.mongodb:mongodb-driver-sync:4.11.1")
     compileOnly("com.zaxxer:HikariCP:5.0.1")
-    compileOnly("redis.clients:jedis:5.0.2")
+    compileOnly("redis.clients:jedis:5.1.0")
 
     // others
     compileOnly("com.github.LoneDev6:api-itemsadder:3.5.0c-r5")
@@ -80,7 +80,6 @@ tasks {
         relocate ("de.tr7zw.changeme", "net.momirealms.customfishing.libraries")
         relocate ("de.tr7zw.annotations", "net.momirealms.customfishing.libraries.annotations")
         relocate ("net.kyori", "net.momirealms.customfishing.libraries")
-        relocate ("net.wesjd", "net.momirealms.customfishing.libraries")
         relocate ("org.bstats", "net.momirealms.customfishing.libraries.bstats")
         relocate ("net.momirealms.biomeapi", "net.momirealms.customfishing.libraries.biomeapi")
     }

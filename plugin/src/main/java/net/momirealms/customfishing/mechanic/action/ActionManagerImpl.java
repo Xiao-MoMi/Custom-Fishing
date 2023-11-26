@@ -115,7 +115,7 @@ public class ActionManagerImpl implements ActionManager {
     // Method to load global event actions from the plugin's configuration file.
     private void loadGlobalEventActions() {
         YamlConfiguration config = plugin.getConfig("config.yml");
-        GlobalSettings.load(config.getConfigurationSection("mechanics.global-events"));
+        GlobalSettings.loadEvents(config.getConfigurationSection("mechanics.global-events"));
     }
 
     /**

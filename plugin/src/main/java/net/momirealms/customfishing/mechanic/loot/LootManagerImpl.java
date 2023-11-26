@@ -175,7 +175,6 @@ public class LootManagerImpl implements LootManager {
     @Override
     public Map<String, Double> getPossibleLootKeysWithWeight(Effect initialEffect, Condition condition) {
         Map<String, Double> lootWithWeight = ((RequirementManagerImpl) plugin.getRequirementManager()).getLootWithWeight(condition);
-
         Player player = condition.getPlayer();
         for (Pair<String, WeightModifier> pair : initialEffect.getWeightModifier()) {
             Double previous = lootWithWeight.get(pair.left());

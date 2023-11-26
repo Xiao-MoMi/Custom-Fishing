@@ -206,7 +206,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
                 "https://maven.aliyun.com/repository/public/" : "https://repo.maven.apache.org/maven2/";
         LibraryLoader.loadDependencies(
                 "org.apache.commons:commons-pool2:2.12.0", mavenRepo,
-                "redis.clients:jedis:5.0.2", mavenRepo,
+                "redis.clients:jedis:5.1.0", mavenRepo,
                 "dev.dejvokep:boosted-yaml:1.3.1", mavenRepo,
                 "com.zaxxer:HikariCP:5.0.1", mavenRepo,
                 "net.objecthunter:exp4j:0.4.8", mavenRepo,

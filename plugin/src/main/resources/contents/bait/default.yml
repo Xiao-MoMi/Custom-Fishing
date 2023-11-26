@@ -36,7 +36,7 @@ simple_bait:
       - ''
   custom-model-data: 50001
   effects:
-    difficulty:
+    effect_1:
       type: difficulty
       value: -10
 
@@ -59,10 +59,10 @@ magnetic_bait:
       - ''
   custom-model-data: 50002
   effects:
-    hooktime:
+    effect_1:
       type: wait-time-multiplier
       value: 0.9
-    gametime:
+    effect_2:
       type: game-time
       value: 2
 
@@ -84,12 +84,12 @@ wild_bait:
       - ''
   custom-model-data: 50003
   effects:
-    difficulty:
+    effect_1:
       type: difficulty
       value: +20
-    size:
+    effect_2:
       type: size-multiplier
       value: 1.5
-    gametime:
+    effect_3:
       type: game-time
       value: -2
