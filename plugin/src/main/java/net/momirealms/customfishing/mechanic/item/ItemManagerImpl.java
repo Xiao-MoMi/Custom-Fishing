@@ -726,7 +726,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
             if (size == null) return this;
             editors.put("size", (player, nbtItem, placeholders) -> {
                 NBTCompound cfCompound = nbtItem.getOrCreateCompound("CustomFishing");
-                float random = size.left() + size.left() <= size.right() ? 0 : ThreadLocalRandom.current().nextFloat(size.right() - size.left());
+                float random = size.left() + (size.left() >= size.right() ? 0 : ThreadLocalRandom.current().nextFloat(size.right() - size.left()));
                 float bonus = Float.parseFloat(placeholders.getOrDefault("{size-multiplier}", "1.0"));
                 double fixed = Double.parseDouble(placeholders.getOrDefault("{size-fixed}", "0.0"));
                 random *= bonus;

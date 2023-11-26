@@ -55,7 +55,8 @@ public class DebugCommand {
                         getSeasonCommand(),
                         getGroupCommand(),
                         getCategoryCommand(),
-                        getNBTCommand()
+                        getNBTCommand(),
+                        getLocationCommand()
                 );
     }
 
@@ -63,6 +64,13 @@ public class DebugCommand {
         return new CommandAPICommand("biome")
                 .executesPlayer((player, arg) -> {
                     AdventureManagerImpl.getInstance().sendMessage(player, BiomeAPI.getBiome(player.getLocation()));
+                });
+    }
+
+    public CommandAPICommand getLocationCommand() {
+        return new CommandAPICommand("location")
+                .executesPlayer((player, arg) -> {
+                    AdventureManagerImpl.getInstance().sendMessage(player, player.getLocation().toString());
                 });
     }
 
@@ -168,7 +176,7 @@ public class DebugCommand {
     public record LootWithWeight(String key, double weight) {
     }
 
-    public static void quickSort(LootWithWeight[] loot, int low, int high) {
+    private static void quickSort(LootWithWeight[] loot, int low, int high) {
         if (low < high) {
             int pi = partition(loot, low, high);
             quickSort(loot, low, pi - 1);
@@ -176,7 +184,7 @@ public class DebugCommand {
         }
     }
 
-    public static int partition(LootWithWeight[] loot, int low, int high) {
+    private static int partition(LootWithWeight[] loot, int low, int high) {
         double pivot = loot[high].weight();
         int i = low - 1;
         for (int j = low; j <= high - 1; j++) {
@@ -189,7 +197,7 @@ public class DebugCommand {
         return i + 1;
     }
 
-    public static void swap(LootWithWeight[] loot, int i, int j) {
+    private static void swap(LootWithWeight[] loot, int i, int j) {
         LootWithWeight temp = loot[i];
         loot[i] = loot[j];
         loot[j] = temp;
