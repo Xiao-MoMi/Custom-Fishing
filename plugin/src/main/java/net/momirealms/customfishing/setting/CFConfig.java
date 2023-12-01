@@ -40,7 +40,7 @@ import java.util.Objects;
 public class CFConfig {
 
     // config version
-    public static String configVersion = "30";
+    public static String configVersion = "31";
     // Debug mode
     public static boolean debug;
     // language
@@ -87,6 +87,10 @@ public class CFConfig {
     public static int dataSaveInterval;
     // Lock data on join
     public static boolean lockData;
+
+    public static boolean restrictedSizeRange;
+    public static boolean allowSizeStack;
+    public static List<String> sizeStackLore;
 
     // Legacy color code support
     public static boolean legacyColorSupport;
@@ -150,6 +154,10 @@ public class CFConfig {
 
         lavaMinTime = config.getInt("mechanics.lava-fishing.min-wait-time", 100);
         lavaMaxTime = config.getInt("mechanics.lava-fishing.max-wait-time", 600);
+
+        restrictedSizeRange = config.getBoolean("mechanics.size.restricted-size-range", true);
+        allowSizeStack = config.getBoolean("mechanics.size.allow-stack", false);
+        sizeStackLore = config.getStringList("mechanics.size.lore-format").stream().map(it -> "<!i>" + it).toList();
 
         globalShowInFinder = config.getBoolean("mechanics.global-loot-property.show-in-fishfinder", true);
         globalDisableStats = config.getBoolean("mechanics.global-loot-property.disable-stat", false);
