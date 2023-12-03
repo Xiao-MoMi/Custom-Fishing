@@ -241,6 +241,9 @@ public class LootManagerImpl implements LootManager {
                         groupMembers.add(loot.getID());
                     }
                 }
+                if (section.contains("requirements")) {
+
+                }
             }
         }
     }

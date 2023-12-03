@@ -87,6 +87,7 @@ public class CFConfig {
     public static int dataSaveInterval;
     // Lock data on join
     public static boolean lockData;
+    public static boolean logDataSaving;
 
     public static boolean restrictedSizeRange;
     public static boolean allowSizeStack;
@@ -169,6 +170,7 @@ public class CFConfig {
         serverGroup = ConfigUtils.stringListArgs(config.get("mechanics.competition.server-group","default"));
 
         dataSaveInterval = config.getInt("other-settings.data-saving-interval", 600);
+        logDataSaving = config.getBoolean("other-settings.log-data-saving", true);
         lockData = config.getBoolean("other-settings.lock-data", true);
         legacyColorSupport = config.getBoolean("other-settings.legacy-color-code-support", false);
 

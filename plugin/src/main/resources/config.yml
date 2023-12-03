@@ -196,6 +196,9 @@ other-settings:
   # -1 to disable
   data-saving-interval: 600
 
+  # Log the consumption of time on data saving
+  log-data-saving: true
+
   # Lock player's data if a player is playing on a server that connected to database
   # If you can ensure low database link latency and fast processing, you can consider disabling this option to improve performance
   lock-data: true

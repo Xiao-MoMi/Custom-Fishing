@@ -135,7 +135,8 @@ public class StorageManagerImpl implements StorageManager, Listener {
                     () -> {
                         long time1 = System.currentTimeMillis();
                         this.dataSource.updateManyPlayersData(this.onlineUserMap.values(), !CFConfig.lockData);
-                        LogUtils.info("Data Saved for online players. Took " + (System.currentTimeMillis() - time1) + "ms.");
+                        if (CFConfig.logDataSaving)
+                            LogUtils.info("Data Saved for online players. Took " + (System.currentTimeMillis() - time1) + "ms.");
                     },
                     CFConfig.dataSaveInterval,
                     CFConfig.dataSaveInterval,
