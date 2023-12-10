@@ -55,6 +55,7 @@ import net.momirealms.customfishing.version.VersionManagerImpl;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -120,29 +121,29 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
 
     @Override
     public void onDisable() {
-        ((AdventureManagerImpl) this.adventure).close();
-        ((BagManagerImpl) this.bagManager).disable();
-        ((BlockManagerImpl) this.blockManager).disable();
-        ((EffectManagerImpl) this.effectManager).disable();
-        ((FishingManagerImpl) this.fishingManager).disable();
-        ((GameManagerImpl) this.gameManager).disable();
-        ((ItemManagerImpl) this.itemManager).disable();
-        ((LootManagerImpl) this.lootManager).disable();
-        ((MarketManagerImpl) this.marketManager).disable();
-        ((EntityManagerImpl) this.entityManager).disable();
-        ((RequirementManagerImpl) this.requirementManager).disable();
-        ((SchedulerImpl) this.scheduler).shutdown();
-        ((IntegrationManagerImpl) this.integrationManager).disable();
-        ((CompetitionManagerImpl) this.competitionManager).disable();
-        ((StorageManagerImpl) this.storageManager).disable();
-        ((PlaceholderManagerImpl) this.placeholderManager).disable();
-        ((StatisticsManagerImpl) this.statisticsManager).disable();
-        ((ActionManagerImpl) this.actionManager).disable();
-        ((TotemManagerImpl) this.totemManager).disable();
-        ((HookManagerImpl) this.hookManager).disable();
-        this.coolDownManager.disable();
-        this.chatCatcherManager.disable();
-        this.commandManager.unload();
+        if (this.adventure != null) ((AdventureManagerImpl) this.adventure).close();
+        if (this.bagManager != null) ((BagManagerImpl) this.bagManager).disable();
+        if (this.blockManager != null) ((BlockManagerImpl) this.blockManager).disable();
+        if (this.effectManager != null) ((EffectManagerImpl) this.effectManager).disable();
+        if (this.fishingManager != null) ((FishingManagerImpl) this.fishingManager).disable();
+        if (this.gameManager != null) ((GameManagerImpl) this.gameManager).disable();
+        if (this.itemManager != null) ((ItemManagerImpl) this.itemManager).disable();
+        if (this.lootManager != null) ((LootManagerImpl) this.lootManager).disable();
+        if (this.marketManager != null) ((MarketManagerImpl) this.marketManager).disable();
+        if (this.entityManager != null) ((EntityManagerImpl) this.entityManager).disable();
+        if (this.requirementManager != null) ((RequirementManagerImpl) this.requirementManager).disable();
+        if (this.scheduler != null) ((SchedulerImpl) this.scheduler).shutdown();
+        if (this.integrationManager != null) ((IntegrationManagerImpl) this.integrationManager).disable();
+        if (this.competitionManager != null) ((CompetitionManagerImpl) this.competitionManager).disable();
+        if (this.storageManager != null) ((StorageManagerImpl) this.storageManager).disable();
+        if (this.placeholderManager != null) ((PlaceholderManagerImpl) this.placeholderManager).disable();
+        if (this.statisticsManager != null) ((StatisticsManagerImpl) this.statisticsManager).disable();
+        if (this.actionManager != null) ((ActionManagerImpl) this.actionManager).disable();
+        if (this.totemManager != null) ((TotemManagerImpl) this.totemManager).disable();
+        if (this.hookManager != null) ((HookManagerImpl) this.hookManager).disable();
+        if (this.coolDownManager != null) this.coolDownManager.disable();
+        if (this.chatCatcherManager != null) this.chatCatcherManager.disable();
+        if (this.commandManager != null) this.commandManager.unload();
         HandlerList.unregisterAll(this);
     }
 
