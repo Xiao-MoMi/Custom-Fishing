@@ -24,10 +24,10 @@ dependencies {
     compileOnly("com.google.code.gson:gson:2.10.1")
 
     // eco
-    compileOnly("com.willfp:eco:6.66.1")
-    compileOnly("com.willfp:EcoJobs:3.41.0")
+    compileOnly("com.willfp:eco:6.67.2")
+    compileOnly("com.willfp:EcoJobs:3.47.1")
     compileOnly("com.willfp:EcoSkills:3.21.0")
-    compileOnly("com.willfp:libreforge:4.42.0")
+    compileOnly("com.willfp:libreforge:4.48.1")
 
     // database
     compileOnly("org.xerial:sqlite-jdbc:3.43.2.2")
@@ -38,7 +38,7 @@ dependencies {
 
     // others
     compileOnly("com.github.LoneDev6:api-itemsadder:3.5.0c-r5")
-    compileOnly("com.github.oraxen:oraxen:1.162.0")
+    compileOnly("io.th0rgal:oraxen:1.165.0")
     compileOnly("pers.neige.neigeitems:NeigeItems:1.15.95")
     compileOnly("com.github.Zrips:Jobs:4.17.2")
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
