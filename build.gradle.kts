@@ -20,8 +20,8 @@ allprojects {
     }
 
     repositories {
-        maven("https://maven.aliyun.com/repository/public/")
         mavenCentral()
+        maven("https://maven.aliyun.com/repository/public/")
         maven("https://papermc.io/repo/repository/maven-public/")
         maven("https://oss.sonatype.org/content/groups/public/")
         maven("https://repo.dmulloy2.net/repository/public/")
@@ -39,6 +39,7 @@ allprojects {
         maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
         maven("https://repo.minebench.de/")
         maven("https://repo.xenondevs.xyz/releases/")
+        maven("https://repo.oraxen.com/releases")
     }
 }
 

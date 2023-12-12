@@ -28,3 +28,4 @@ softdepend:
 permissions:
   fishingbag.user:
     default: true
+  fishingbag.loot

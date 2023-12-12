@@ -38,7 +38,12 @@ public class FileSelector {
                 if (file.isFile() && file.getName().endsWith(".yml")) {
                     items.addLast(new FileItem(file));
                 } else if (file.isDirectory()) {
-                    items.addFirst(new FolderItem(file));
+                    String path = file.getPath();
+                    String[] split = path.split("\\\\");
+                    String type = split[3];
+                    switch (type) {
+                        case "item", "rod", "bait", "util", "hook" -> items.addFirst(new FolderItem(file));
+                    }
                 }
             }
         }

@@ -16,7 +16,6 @@ lang: english
 
 # Mechanic settings
 mechanics:
-
   # Specifies the conditions required for the plugin mechanics to work.
   # Here, the type is !world, which implies the plugin won't work in
   # the world named 'blacklist_world'.
