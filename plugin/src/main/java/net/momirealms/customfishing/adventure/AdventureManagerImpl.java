@@ -60,6 +60,9 @@ public class AdventureManagerImpl implements AdventureManager {
 
     @Override
     public Component getComponentFromMiniMessage(String text) {
+        if (text == null) {
+            return Component.empty();
+        }
         if (CFConfig.legacyColorSupport) {
             return MiniMessage.miniMessage().deserialize(legacyToMiniMessage(text));
         } else {

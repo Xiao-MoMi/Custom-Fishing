@@ -1,9 +1,27 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing.gui.page.property;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -64,7 +82,7 @@ public class SizeEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Edit Size")
+                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_SIZE_TITLE)
                 ))
                 .addRenameHandler(s -> {
                     if (s == null || s.equals("")) {
@@ -86,7 +104,7 @@ public class SizeEditor {
         @Override
         public ItemProvider getItemProvider() {
             return new ItemBuilder(Material.IRON_INGOT).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "Min"
+                    CFLocale.GUI_SIZE_MIN
             )));
         }
 
@@ -102,7 +120,7 @@ public class SizeEditor {
         @Override
         public ItemProvider getItemProvider() {
             return new ItemBuilder(Material.IRON_BLOCK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "Max"
+                    CFLocale.GUI_SIZE_MAX
             )));
         }
 
@@ -119,7 +137,7 @@ public class SizeEditor {
         public ItemProvider getItemProvider() {
             if (size[0].equals("0") && size[1].equals("0")) {
                 return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                        "<#00CED1>● Delete property"
+                        CFLocale.GUI_DELETE_PROPERTY
                 )));
             } else {
                 try {
@@ -129,25 +147,22 @@ public class SizeEditor {
                     if (min <= max) {
                         return new ItemBuilder(Material.PUFFERFISH)
                                 .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                        "New value: "
+                                        CFLocale.GUI_NEW_VALUE
                                 )))
                                 .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                        "<gray> - min: <white>" + size[0]
+                                        "<gray> - <white>" + size[0] + "~" + size[1]
                                 )))
                                 .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                        "<gray> - max: <white>" + size[1]
-                                )))
-                                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                        "<#00FF7F> -> Click to confirm"
+                                        CFLocale.GUI_CLICK_CONFIRM
                                 )));
                     } else {
                         return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                "<red>● Max must be greater than min"
+                                CFLocale.GUI_SIZE_MAX_NO_LESS
                         )));
                     }
                 } catch (NumberFormatException e) {
                     return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<red>● Invalid number"
+                            CFLocale.GUI_INVALID_NUMBER
                     )));
                 }
             }

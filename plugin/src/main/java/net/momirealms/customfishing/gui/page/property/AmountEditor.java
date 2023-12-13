@@ -1,9 +1,27 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing.gui.page.property;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -54,7 +72,7 @@ public class AmountEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Edit Display Name")
+                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_AMOUNT)
                 ))
                 .addRenameHandler(s -> {
                     amount = s;
@@ -73,7 +91,7 @@ public class AmountEditor {
         public ItemProvider getItemProvider() {
             if (amount == null || amount.isEmpty()) {
                 return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                        "<#00CED1>● Delete property"
+                        CFLocale.GUI_DELETE_PROPERTY
                 )));
             } else {
                 try {
@@ -81,17 +99,17 @@ public class AmountEditor {
                     if (m >= 1) {
                         return new ItemBuilder(Material.IRON_NUGGET)
                                 .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                        "<#00FF7F> -> Click to confirm"
+                                        CFLocale.GUI_CLICK_CONFIRM
                                 )))
                                 .setAmount(m);
                     } else {
                         return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                "<red>● Invalid number"
+                                CFLocale.GUI_INVALID_NUMBER
                         )));
                     }
                 } catch (NumberFormatException e) {
                     return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<red>● Invalid number"
+                            CFLocale.GUI_INVALID_NUMBER
                     )));
                 }
             }

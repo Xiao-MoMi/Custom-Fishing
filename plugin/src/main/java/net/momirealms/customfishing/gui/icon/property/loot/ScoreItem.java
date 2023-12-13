@@ -1,9 +1,27 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing.gui.icon.property.loot;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.page.property.ScoreEditor;
+import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -25,25 +43,23 @@ public class ScoreItem extends AbstractItem {
     public ItemProvider getItemProvider() {
         ItemBuilder itemBuilder = new ItemBuilder(Material.NETHER_STAR)
                 .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                        "<#FF1493>● Score"
+                        CFLocale.GUI_LOOT_SCORE
                 )));
-
         if (itemPage.getSection().contains("score")) {
             itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<gray>Current value: <white>" + itemPage.getSection().getDouble("score")
+                            CFLocale.GUI_CURRENT_VALUE + itemPage.getSection().getDouble("score")
                     )))
                     .addLoreLines("");
             itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "<#00FF7F> -> Left click to edit"
+                    CFLocale.GUI_LEFT_CLICK_EDIT
             ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "<#FF6347> -> Right click to reset"
+                    CFLocale.GUI_RIGHT_CLICK_RESET
             )));
         } else {
             itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "<#00FF7F> -> Left click to set"
+                    CFLocale.GUI_LEFT_CLICK_EDIT
             )));
         }
-
         return itemBuilder;
     }
 

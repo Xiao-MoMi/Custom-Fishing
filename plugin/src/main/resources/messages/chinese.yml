@@ -1,5 +1,5 @@
 # Don't change this
-config-version: '26'
+config-version: '31'
 
 messages:
   prefix: '<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient>'
@@ -29,3 +29,97 @@ messages:
   format-hour: '小时'
   format-minute: '分'
   format-second: '秒'
+
+gui:
+  search: 搜索
+  select-file: 选择文件
+  select-item-to-edit: 选择要编辑的物品
+  dupe-invalid-key: <red>● 重复或无效的键
+  new-value: '新值: '
+  temp-new-key: '新键'
+  set-new-key: '设置新键'
+  edit-key: '修改 {0}'
+  delete-property: <#00CED1>● 删除属性
+  click-confirm: <#00FF7F> -> 点击确认
+  invalid-number: <red>● 无效的数字
+  illegal-format: <red>● 非法的格式
+  scroll-up: <gray>● 向上翻
+  scroll-down: <gray>● 向下翻
+  cannot-scroll-up: <red>你已经到顶了
+  cannot-scroll-down: <red>你不能再往下了
+  next-page: <gray>● 下一页
+  goto-next-page: <gray>前往 <yellow>{0} <gray>/ <yellow>{1}
+  cannot-goto-next-page: <red>没有更多页了
+  previous-page: <gray>● 上一页
+  goto-previous-page: <gray>前往 <yellow>{0} <gray>/ <yellow>{1}
+  cannot-goto-previous-page: <red>已经到达第一页了
+  back-to-parent-page: <#FF8C00>返回上一界面
+  back-to-parent-folder: <#FF8C00>返回父文件夹
+  current-value: '<gray>当前值: <white>'
+  click-to-toggle: <#00FF7F> -> 点击切换
+  left-click-edit: <#00FF7F> -> 左键编辑
+  right-click-reset: <#FF6347> -> 右键重置
+  right-click-delete: <#FF6347> -> 右键删除
+  right-click-cancel: <#00CED1> -> 右键取消
+  loot-show-in-finder: <#5F9EA0>● 在找鱼器中可见
+  loot-score: <#FF1493>● 比赛分数
+  loot-nick: <#00FF00>● 昵称
+  loot-instant-game: <#7B68EE>● 咬钩立即游戏
+  loot-disable-statistics: <#CD853F>● 禁用统计数据
+  loot-disable-game: <#8B4513>● 禁用游戏
+  item-amount: <#1E90FF>● 数量
+  item-custom-model-data: <#FFC0CB>● 自定义模型值
+  item-display-name: <#FAFAD2>● 名称
+  item-custom-durability: <#1E90FF>● 自定义耐久度
+  item-enchantment: <#8A2BE2>● 附魔
+  item-head64: <#2E8B57>● 头颅base64
+  item-item-flag: <#E6E6FA>● 物品标签
+  item-lore: <#FA8072>● 描述
+  item-material: <#FF00FF>● 材质
+  item-nbt: <#FA8072>● NBT
+  item-prevent-grab: <#FF4500>● 防止抢夺
+  item-price: <#FFD700>● 价格
+  item-price-base: '<gray>  - 基础: <white>'
+  item-price-bonus: '<gray>  - 尺寸增益: <white>'
+  item-random-durability: <#FFFF00>● 随机耐久
+  item-size: <#FFF0F5>● 尺寸
+  item-stackable: <#9370DB>● 是否可以堆叠
+  item-stored-enchantment: <#9370DB>● 存储附魔
+  item-tag: <#2E8B57>● 启用CustomFishing标签
+  item-unbreakable: <#C0C0C0>● 不可破坏
+  page-amount-title: 修改数量
+  page-model-data-title: 修改自定义模型值
+  page-display-name-title: 修改名称
+  page-new-display-name: 新名称
+  page-custom-durability-title: 修改自定义耐久度
+  page-stored-enchantment-title: 修改存储附魔
+  page-enchantment-title: 修改附魔
+  page-select-one-enchantment: 选择一个附魔
+  page-add-new-enchantment: <green>[+] <gray>新增一个附魔
+  page-item-flag-title: 修改物品标签
+  page-lore-title: 修改描述
+  page-add-new-lore: <green>[+] <gray>新增一行描述
+  page-select-one-lore: 选择一行描述
+  page-material-title: 修改材质
+  page-nbt-compound-key-title: 修改复合键名
+  page-nbt-list-key-title: 修改列表名
+  page-nbt-key-title: 修改键
+  page-nbt-invalid-key: <red>无效的键
+  page-nbt-add-new-compound: <green>[+] <gray>新增一个复合NBT
+  page-nbt-add-new-list: <green>[+] <gray>新增一个列表
+  page-nbt-add-new-value: <green>[+] <gray>新增一个值
+  page-add-new-key: <green>[+] <gray>新增一个键
+  page-nbt-preview: <green>● NBT 预览
+  page-nbt-back-to-compound: <gray>返回父复合NBT
+  page-nbt-set-value-title: 设置值
+  page-nbt-edit-title: 修改NBT
+  page-nick-title: 修改昵称
+  page-new-nick: 新昵称
+  page-price-title: 修改价格
+  page-base-price: 基础
+  page-base-bonus: 尺寸增益
+  page-score-title: 修改分数
+  page-size-title: 修改尺寸
+  page-size-min: 最小值
+  page-size-max: 最大值
+  page-size-max-no-less-min: <red>● 最大值必须大于最小值

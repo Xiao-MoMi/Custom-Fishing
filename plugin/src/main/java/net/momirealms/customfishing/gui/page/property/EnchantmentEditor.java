@@ -1,9 +1,27 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing.gui.page.property;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -40,7 +58,7 @@ public class EnchantmentEditor {
         this.store = store;
         this.index = 0;
         this.enchantments = new ArrayList<>();
-        this.enchantments.add("Select one enchantment");
+        this.enchantments.add(CFLocale.GUI_SELECT_ONE_ENCHANTMENT);
         ConfigurationSection eSection = section.getConfigurationSection(store ? "stored-enchantments" : "enchantments");
         if (eSection != null)
             for (Map.Entry<String, Object> entry : eSection.getValues(false).entrySet()) {
@@ -53,9 +71,7 @@ public class EnchantmentEditor {
         Item border = new SimpleItem(new ItemBuilder(Material.AIR));
         var confirm  = new ConfirmIcon();
         Gui upperGui = Gui.normal()
-                .setStructure(
-                        "a # b"
-                )
+                .setStructure("a # b")
                 .addIngredient('a', new ItemBuilder(Material.NAME_TAG).setDisplayName(enchantments.get(idx)))
                 .addIngredient('#', border)
                 .addIngredient('b', confirm)
@@ -77,7 +93,7 @@ public class EnchantmentEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Edit" + (store ? " Stored ": " ") + "Enchantment")
+                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(store ? CFLocale.GUI_TITLE_STORED_ENCHANTMENT : CFLocale.GUI_TITLE_ENCHANTMENT)
                 ))
                 .addRenameHandler(s -> {
                     if (index == 0) return;
@@ -107,7 +123,7 @@ public class EnchantmentEditor {
         @Override
         public ItemProvider getItemProvider() {
             return new ItemBuilder(Material.ANVIL).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "<green>[+] <gray>Add a new enchantment"
+                    CFLocale.GUI_ADD_NEW_ENCHANTMENT
             )));
         }
 
@@ -135,9 +151,9 @@ public class EnchantmentEditor {
                     line
             ))).addLoreLines("")
                     .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<#00FF7F> -> Left click to edit"
+                            CFLocale.GUI_LEFT_CLICK_EDIT
                     ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<#FF6347> -> Right click to delete"
+                            CFLocale.GUI_RIGHT_CLICK_DELETE
                     )));
         }
 
@@ -161,18 +177,18 @@ public class EnchantmentEditor {
             List<String> subList = enchantments.subList(1, enchantments.size());
             if (subList.isEmpty()) {
                 return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                        "<#00CED1>● Delete property"
+                        CFLocale.GUI_DELETE_PROPERTY
                 )));
             } else {
                 var builder = new ItemBuilder(Material.NAME_TAG)
                         .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                "<#00FF7F> -> Click to confirm"
+                                CFLocale.GUI_CLICK_CONFIRM
                         )));
                 for (String enchantment : subList) {
                     String[] split = enchantment.split(":");
                     if (split.length != 3) {
                         return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                "<red>● Illegal format"
+                                CFLocale.GUI_ILLEGAL_FORMAT
                         )));
                     }
                     try {
@@ -182,7 +198,7 @@ public class EnchantmentEditor {
                         )));
                     } catch (NumberFormatException e) {
                         return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                "<red>● Illegal format"
+                                CFLocale.GUI_ILLEGAL_FORMAT
                         )));
                     }
                 }

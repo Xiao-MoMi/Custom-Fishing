@@ -1,5 +1,5 @@
 # Don't change this
-config-version: '26'
+config-version: '31'
 
 messages:
   prefix: '<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient>'
@@ -29,3 +29,97 @@ messages:
   format-hour: 'h'
   format-minute: 'm'
   format-second: 's'
+
+gui:
+  search: "Search"
+  select-file: 'Select file'
+  select-item: "Select item"
+  dupe-invalid-key: "<red>● Duplicated or invalid key"
+  new-value: "New value: "
+  temp-new-key: 'New key'
+  set-new-key: "Set new key"
+  edit-key: 'Edit {0}'
+  delete-property: "<#00CED1>● Delete property"
+  click-confirm: "<#00FF7F> -> Click to confirm"
+  invalid-number: "<red>● Invalid number"
+  illegal-format: "<red>● Illegal format"
+  scroll-up: '<gray>● Scroll up'
+  scroll-down: '<gray>● Scroll down'
+  cannot-scroll-up: "<red>You've reached the top"
+  cannot-scroll-down: "<red>You can't scroll further down"
+  next-page: '<gray>● Next Page'
+  goto-next-page: '<gray>Go to page <yellow>{0} <gray>/ <yellow>{1}'
+  cannot-goto-next-page: '<red>There are no more pages'
+  previous-page: '<gray>● Previous page'
+  goto-previous-page: '<gray>Go to page <yellow>{0} <gray>/ <yellow>{1}'
+  cannot-goto-previous-page: "<red>You can't go further back"
+  back-to-parent-page: "<#FF8C00>Back to parent page"
+  back-to-parent-folder: "<#FF8C00>Back to parent folder"
+  current-value: "<gray>Current value: <white>"
+  click-to-toggle: "<#00FF7F> -> Click to toggle"
+  left-click-edit: "<#00FF7F> -> Left click to edit"
+  right-click-reset: "<#FF6347> -> Right click to reset"
+  right-click-delete: "<#FF6347> -> Right click to delete"
+  right-click-cancel: "<#00CED1> -> Right click to cancel"
+  loot-show-in-finder: "<#5F9EA0>● Show In Fish Finder"
+  loot-score: "<#FF1493>● Score"
+  loot-nick: "<#00FF00>● Nick"
+  loot-instant-game: "<#7B68EE>● Instant Game"
+  loot-disable-statistics: "<#CD853F>● Disable Statistics"
+  loot-disable-game: "<#8B4513>● Disable Game"
+  item-amount: "<#1E90FF>● Amount"
+  item-custom-model-data: "<#FFC0CB>● Custom Model Data"
+  item-display-name: "<#FAFAD2>● Display Name"
+  item-custom-durability: "<#1E90FF>● Custom Durability"
+  item-enchantment: "<#8A2BE2>● Enchantment"
+  item-head64: "<#2E8B57>● Head64"
+  item-item-flag: "<#E6E6FA>● Item Flag"
+  item-lore: "<#FA8072>● Lore"
+  item-material: "<#FF00FF>● Material"
+  item-nbt: "<#FA8072>● NBT"
+  item-prevent-grab: "<#FF4500>● Prevent Grabbing"
+  item-price: "<#FFD700>● Price"
+  item-price-base: "<gray>  - base: <white>"
+  item-price-bonus: "<gray>  - bonus: <white>"
+  item-random-durability: "<#FFFF00>● Random Durability"
+  item-size: "<#FFF0F5>● Size"
+  item-stackable: "<#9370DB>● Stackable"
+  item-stored-enchantment: "<#9370DB>● Stored Enchantment"
+  item-tag: "<#2E8B57>● Tag"
+  item-unbreakable: "<#C0C0C0>● Unbreakable"
+  page-amount-title: "Edit Amount"
+  page-model-data-title: "Edit CustomModelData"
+  page-display-name-title: "Edit display name"
+  page-new-display-name: "New name"
+  page-custom-durability-title: "Edit custom durability"
+  page-stored-enchantment-title: "Edit stored enchantment"
+  page-enchantment-title: "Edit enchantment"
+  page-select-one-enchantment: "Select one enchantment"
+  page-add-new-enchantment: "<green>[+] <gray>Add a new enchantment"
+  page-item-flag-title: "Edit item flag"
+  page-lore-title: "Edit lore"
+  page-add-new-lore: "<green>[+] <gray>Add a new line"
+  page-select-one-lore: "Select one line"
+  page-material-title: "Edit Material"
+  page-nbt-compound-key-title: "Edit compound key"
+  page-nbt-list-key-title: "Edit list key"
+  page-nbt-key-title: "Edit key"
+  page-nbt-invalid-key: "<red>Invaild key"
+  page-nbt-add-new-compound: "<green>[+] <gray>Add a new compound"
+  page-nbt-add-new-list: "<green>[+] <gray>Add a new list"
+  page-nbt-add-new-value: "<green>[+] <gray>Add a new value"
+  page-add-new-key: "<green>[+] <gray>Add a new key"
+  page-nbt-preview: "<green>● NBT Preview"
+  page-nbt-back-to-compound: "<gray>Back to parent compound"
+  page-nbt-set-value-title: "Set value"
+  page-nbt-edit-title: "Edit NBT"
+  page-nick-title: "Edit nick"
+  page-new-nick: "New nick"
+  page-price-title: "Edit price"
+  page-base-price: "Base"
+  page-base-bonus: "Bonus"
+  page-score-title: "Edit score"
+  page-size-title: "Edit size"
+  page-size-min: "Minimum"
+  page-size-max: "Maximum"
+  page-size-max-no-less-min: "<red>● Max must be no less than min"

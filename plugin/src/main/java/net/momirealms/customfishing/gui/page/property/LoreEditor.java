@@ -1,9 +1,27 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing.gui.page.property;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -37,7 +55,7 @@ public class LoreEditor {
         this.section = parentPage.getSection();
         this.index = 0;
         this.lore = new ArrayList<>(section.getStringList("display.lore"));
-        this.lore.add(0, "Select one line");
+        this.lore.add(0, CFLocale.GUI_SELECT_ONE_LORE);
         reOpen(0);
     }
 
@@ -45,9 +63,7 @@ public class LoreEditor {
         Item border = new SimpleItem(new ItemBuilder(Material.AIR));
         var confirm  = new ConfirmIcon();
         Gui upperGui = Gui.normal()
-                .setStructure(
-                        "a # b"
-                )
+                .setStructure("a # b")
                 .addIngredient('a', new ItemBuilder(Material.NAME_TAG).setDisplayName(lore.get(idx)))
                 .addIngredient('#', border)
                 .addIngredient('b', confirm)
@@ -69,7 +85,7 @@ public class LoreEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Edit Lore")
+                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_LORE)
                 ))
                 .addRenameHandler(s -> {
                     if (index == 0) return;
@@ -99,7 +115,7 @@ public class LoreEditor {
         @Override
         public ItemProvider getItemProvider() {
             return new ItemBuilder(Material.ANVIL).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "<green>[+] <gray>Add a new line"
+                    CFLocale.GUI_ADD_NEW_LORE
             )));
         }
 
@@ -127,9 +143,9 @@ public class LoreEditor {
                     line
             ))).addLoreLines("")
                     .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<#00FF7F> -> Left click to edit"
+                            CFLocale.GUI_LEFT_CLICK_EDIT
                     ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<#FF6347> -> Right click to delete"
+                            CFLocale.GUI_RIGHT_CLICK_DELETE
                     )));
         }
 
@@ -153,12 +169,12 @@ public class LoreEditor {
             List<String> subList = lore.subList(1, lore.size());
             if (subList.isEmpty()) {
                 return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                        "<#00CED1>● Delete property"
+                        CFLocale.GUI_DELETE_PROPERTY
                 )));
             } else {
                 var builder = new ItemBuilder(Material.NAME_TAG)
                         .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                "<#00FF7F> -> Click to confirm"
+                                CFLocale.GUI_CLICK_CONFIRM
                         )));
                 for (String lore : subList) {
                     builder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(

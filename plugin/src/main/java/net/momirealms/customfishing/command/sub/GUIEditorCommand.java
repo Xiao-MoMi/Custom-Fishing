@@ -11,7 +11,7 @@ public class GUIEditorCommand {
     public static GUIEditorCommand INSTANCE = new GUIEditorCommand();
 
     public CommandAPICommand getEditorCommand() {
-        return new CommandAPICommand("editor")
+        return new CommandAPICommand("browser")
                 .executesPlayer((player, arg) -> {
                     new FileSelector(player, new File(CustomFishingPlugin.get().getDataFolder(), "contents"));
                 });

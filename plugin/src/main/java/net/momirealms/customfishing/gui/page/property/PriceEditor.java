@@ -1,9 +1,27 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing.gui.page.property;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -64,7 +82,7 @@ public class PriceEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Edit Price")
+                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_PRICE_TITLE)
                 ))
                 .addRenameHandler(s -> {
                     if (s == null || s.equals("")) {
@@ -86,7 +104,7 @@ public class PriceEditor {
         @Override
         public ItemProvider getItemProvider() {
             return new ItemBuilder(Material.GOLD_BLOCK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "Base"
+                    CFLocale.GUI_PRICE_BASE
             )));
         }
 
@@ -102,7 +120,7 @@ public class PriceEditor {
         @Override
         public ItemProvider getItemProvider() {
             return new ItemBuilder(Material.GOLD_NUGGET).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "Bonus"
+                    CFLocale.GUI_PRICE_BONUS
             )));
         }
 
@@ -119,7 +137,7 @@ public class PriceEditor {
         public ItemProvider getItemProvider() {
             if (price[0].equals("0") && price[1].equals("0")) {
                 return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                        "<#00CED1>● Delete property"
+                        CFLocale.GUI_DELETE_PROPERTY
                 )));
             } else {
                 try {
@@ -127,20 +145,20 @@ public class PriceEditor {
                     Double.parseDouble(price[1]);
                     return new ItemBuilder(Material.GOLD_INGOT)
                             .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                  "New value: "
+                                  CFLocale.GUI_NEW_VALUE
                             )))
                             .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                    "<gray> - base: <white>" + price[0]
+                                    CFLocale.GUI_ITEM_PRICE_BASE + price[0]
                             )))
                             .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                    "<gray> - bonus: <white>" + price[1]
+                                    CFLocale.GUI_ITEM_PRICE_BONUS + price[1]
                             )))
                             .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                    "<#00FF7F> -> Click to confirm"
+                                    CFLocale.GUI_CLICK_CONFIRM
                             )));
                 } catch (NumberFormatException e) {
                     return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<red>● Invalid number"
+                            CFLocale.GUI_INVALID_NUMBER
                     )));
                 }
             }

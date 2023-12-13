@@ -1,9 +1,27 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customfishing.gui.page.property;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.NBTUtils;
 import org.bukkit.Material;
@@ -90,7 +108,7 @@ public class NBTEditor {
 
         var window = AnvilWindow.split()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Edit NBT")))
+                .setTitle(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_NBT_EDIT_TITLE)))
                 .setUpperGui(upperGui)
                 .setLowerGui(gui)
                 .build();
@@ -125,7 +143,7 @@ public class NBTEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Edit compound key")
+                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_NBT_COMPOUND)
                 ))
                 .addRenameHandler(s -> {
                     value = s;
@@ -165,7 +183,7 @@ public class NBTEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Edit list key")
+                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_NBT_LIST)
                 ))
                 .addRenameHandler(s -> {
                     value = s;
@@ -181,9 +199,7 @@ public class NBTEditor {
     public void reOpenAddValue() {
         var confirm =new ConfirmValueItem();
         Gui upperGui = Gui.normal()
-                .setStructure(
-                        "a b c"
-                )
+                .setStructure("a b c")
                 .addIngredient('a', new ItemBuilder(Material.COMMAND_BLOCK).setDisplayName(""))
                 .addIngredient('b', new ItemStack(Material.AIR))
                 .addIngredient('c', confirm)
@@ -206,7 +222,7 @@ public class NBTEditor {
 
         var window = AnvilWindow.split()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Edit key")))
+                .setTitle(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_NBT_KEY)))
                 .addRenameHandler(s -> {
                     value = s;
                     confirm.notifyWindows();
@@ -245,7 +261,7 @@ public class NBTEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage("Set value")
+                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_NBT_SET_VALUE_TITLE)
                 ))
                 .addRenameHandler(s -> {
                     value = s;
@@ -313,16 +329,16 @@ public class NBTEditor {
         public ItemProvider getItemProvider() {
             if (value == null || value.equals("") || value.contains(".") || currentSection.contains(value)) {
                 return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "<red>Invaild key"
+                    CFLocale.GUI_NBT_INVALID_KEY
                 )));
             }
 
             return new ItemBuilder(Material.COMMAND_BLOCK_MINECART).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "New key: " + value
+                    CFLocale.GUI_NEW_VALUE + value
             ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "<#00FF7F> -> Left click to confirm"
+                    CFLocale.GUI_CLICK_CONFIRM
             ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "<#00CED1> -> Right click to cancel"
+                    CFLocale.GUI_RIGHT_CLICK_CANCEL
             )));
         }
 
@@ -348,16 +364,15 @@ public class NBTEditor {
         public ItemProvider getItemProvider() {
             if (value == null || value.equals("") || value.contains(".") || currentSection.contains(value)) {
                 return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                        "<red>Invaild key"
+                        CFLocale.GUI_NBT_INVALID_KEY
                 )));
             }
-
             return new ItemBuilder(Material.CHAIN_COMMAND_BLOCK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "New key: " + value
+                    CFLocale.GUI_NEW_VALUE + value
             ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "<#00FF7F> -> Left click to confirm"
+                    CFLocale.GUI_CLICK_CONFIRM
             ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "<#00CED1> -> Right click to cancel"
+                    CFLocale.GUI_RIGHT_CLICK_CANCEL
             )));
         }
 
@@ -383,16 +398,16 @@ public class NBTEditor {
         public ItemProvider getItemProvider() {
             if (value == null || value.equals("") || value.contains(".") || currentSection.contains(value)) {
                 return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                        "<red>Invaild key"
+                        CFLocale.GUI_NBT_INVALID_KEY
                 )));
             }
 
             return new ItemBuilder(Material.COMMAND_BLOCK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "New key: " + value
+                    CFLocale.GUI_NEW_VALUE + value
             ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "<#00FF7F> -> Left click to confirm"
+                    CFLocale.GUI_CLICK_CONFIRM
             ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "<#00CED1> -> Right click to cancel"
+                    CFLocale.GUI_RIGHT_CLICK_CANCEL
             )));
         }
 
@@ -417,7 +432,7 @@ public class NBTEditor {
         @Override
         public ItemProvider getItemProvider() {
             return new ItemBuilder(Material.OAK_SIGN).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "Add a new compound"
+                    CFLocale.GUI_NBT_ADD_COMPOUND
             )));
         }
 
@@ -432,7 +447,7 @@ public class NBTEditor {
         @Override
         public ItemProvider getItemProvider() {
             return new ItemBuilder(Material.SPRUCE_SIGN).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "Add a new list"
+                    CFLocale.GUI_NBT_ADD_LIST
             )));
         }
 
@@ -447,7 +462,7 @@ public class NBTEditor {
         @Override
         public ItemProvider getItemProvider() {
             return new ItemBuilder(Material.ACACIA_SIGN).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "Add a new value"
+                    CFLocale.GUI_NBT_ADD_VALUE
             )));
         }
 
@@ -474,9 +489,9 @@ public class NBTEditor {
                             "Compound: " + splits[splits.length -1]
                     ))).addLoreLines("")
                     .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<#00FF7F> -> Left click to edit"
+                            CFLocale.GUI_LEFT_CLICK_EDIT
                     ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<#FF6347> -> Right click to delete"
+                            CFLocale.GUI_RIGHT_CLICK_DELETE
                     )));
         }
 
@@ -510,9 +525,9 @@ public class NBTEditor {
                     )))
                     .addLoreLines("")
                     .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<#00FF7F> -> Left click to edit"
+                            CFLocale.GUI_LEFT_CLICK_EDIT
                     ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<#FF6347> -> Right click to delete"
+                            CFLocale.GUI_RIGHT_CLICK_DELETE
                     )));
         }
 
@@ -544,11 +559,9 @@ public class NBTEditor {
                     )))
                     .addLoreLines("")
                     .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<#00FF7F> -> <st>Left click to edit</st>"
+                            "<st>" + CFLocale.GUI_LEFT_CLICK_EDIT + "</st>"
                     ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<#00FF7F> -> Use text editor instead"
-                    ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<#FF6347> -> Right click to delete"
+                            CFLocale.GUI_RIGHT_CLICK_DELETE
                     )));
         }
 
@@ -577,11 +590,9 @@ public class NBTEditor {
                     )))
                     .addLoreLines("")
                     .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<#00FF7F> -> <st>Left click to edit</st>"
+                            "<st>" + CFLocale.GUI_LEFT_CLICK_EDIT + "</st>"
                     ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<#00FF7F> -> Use text editor instead"
-                    ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                            "<#FF6347> -> Right click to delete"
+                            CFLocale.GUI_RIGHT_CLICK_DELETE
                     )));
         }
 
@@ -609,12 +620,14 @@ public class NBTEditor {
                 return new ItemBuilder(Material.COMMAND_BLOCK)
                         .setDisplayName(value)
                         .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                "<#00FF7F> -> Left click to confirm")))
+                                CFLocale.GUI_CLICK_CONFIRM
+                        )))
                         .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                "<#00CED1> -> Right click to cancel")));
+                                CFLocale.GUI_RIGHT_CLICK_CANCEL
+                        )));
             } catch (IllegalArgumentException e) {
                 return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                        "Invalid format"
+                        CFLocale.GUI_ILLEGAL_FORMAT
                 )));
             }
         }
@@ -642,7 +655,7 @@ public class NBTEditor {
         public ItemProvider getItemProvider() {
             if (nbtSection.getValues(false).size() > 0) {
                 var builder = new ItemBuilder(Material.ACACIA_SIGN).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                        "<green>● NBT Preview"
+                        CFLocale.GUI_NBT_PREVIEW
                 )));
                 for (String line : ConfigUtils.getReadableSection(nbtSection.getValues(false))) {
                     builder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
@@ -652,7 +665,7 @@ public class NBTEditor {
                 return builder;
             } else {
                 return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                        "<#00CED1>● Delete property"
+                        CFLocale.GUI_DELETE_PROPERTY
                 )));
             }
         }
@@ -672,7 +685,7 @@ public class NBTEditor {
         @Override
         public ItemProvider getItemProvider() {
             return new ItemBuilder(Material.MINECART).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                    "Back to parent compound"
+                    CFLocale.GUI_NBT_BACK_TO_COMPOUND
             )));
         }
 
