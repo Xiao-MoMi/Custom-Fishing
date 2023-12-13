@@ -268,4 +268,20 @@ public class MarketGUI {
     public EarningData getEarningData() {
         return earningData;
     }
+
+    public int getSoldAmount() {
+        int amount = 0;
+        MarketGUIElement itemElement = getElement(manager.getItemSlot());
+        if (itemElement == null) {
+            return amount;
+        }
+        for (int slot : itemElement.getSlots()) {
+            ItemStack itemStack = inventory.getItem(slot);
+            double money = manager.getItemPrice(itemStack);
+            if (money > 0 && itemStack != null) {
+                amount += itemStack.getAmount();
+            }
+        }
+        return amount;
+    }
 }

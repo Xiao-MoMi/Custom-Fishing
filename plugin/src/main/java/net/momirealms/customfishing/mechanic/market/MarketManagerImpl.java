@@ -291,10 +291,12 @@ public class MarketManagerImpl implements MarketManager, Listener {
 
             if (element.getSymbol() == functionSlot) {
                 double worth = gui.getTotalWorth();
+                int amount = gui.getSoldAmount();
                 double earningLimit = getEarningLimit(player);
                 Condition condition = new Condition(player, new HashMap<>(Map.of(
                         "{money}", String.format("%.2f", worth)
                         ,"{rest}", String.format("%.2f", (earningLimit - data.earnings))
+                        ,"{sold-item-amount}", String.valueOf(amount)
                 )));
                 if (worth > 0) {
                     if (earningLimit != -1 && (earningLimit - data.earnings) < worth) {
