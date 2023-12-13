@@ -1,5 +1,5 @@
 # Don't change this
-config-version: '26'
+config-version: '30'
 
 messages:
   prefix: '<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient>'
