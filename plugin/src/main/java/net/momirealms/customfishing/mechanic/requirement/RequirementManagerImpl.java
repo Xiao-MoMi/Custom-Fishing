@@ -27,6 +27,7 @@ import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementExpansion;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementFactory;
@@ -83,6 +84,16 @@ public class RequirementManagerImpl implements RequirementManager {
     public void disable() {
         this.requirementBuilderMap.clear();
         this.conditionalLootsMap.clear();
+    }
+
+    @Override
+    public boolean putLegacyLootToMap(String key, Requirement[] requirements, double weight) {
+        if (conditionalLootsMap.containsKey("LEGACY_" + key)) {
+            return false;
+        } else {
+            conditionalLootsMap.put("LEGACY_" + key, new ConditionalElement(requirements, List.of(Pair.of(key, (player, origin) -> weight + origin)), new HashMap<>()));
+            return true;
+        }
     }
 
     /**

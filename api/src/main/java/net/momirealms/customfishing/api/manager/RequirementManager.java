@@ -27,6 +27,16 @@ import org.jetbrains.annotations.Nullable;
 public interface RequirementManager {
 
     /**
+     * Legacy format support
+     * @param key key
+     * @param requirements requirements
+     * @param weight weight
+     * @return success or not
+     */
+    @Deprecated
+    boolean putLegacyLootToMap(String key, Requirement[] requirements, double weight);
+
+    /**
      * Registers a custom requirement type with its corresponding factory.
      *
      * @param type               The type identifier of the requirement.

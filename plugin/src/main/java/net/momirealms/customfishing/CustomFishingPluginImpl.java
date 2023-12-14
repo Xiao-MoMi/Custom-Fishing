@@ -219,7 +219,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
                 "org.mongodb:mongodb-driver-core:4.11.1", mavenRepo,
                 "org.mongodb:bson:4.11.1", mavenRepo,
                 "org.xerial:sqlite-jdbc:3.43.2.2", mavenRepo,
-                "dev.jorel:commandapi-bukkit-shade:9.2.0", mavenRepo,
+                "dev.jorel:commandapi-bukkit-shade:9.3.0", mavenRepo,
                 "xyz.xenondevs.invui:invui-core:1.23", "https://repo.xenondevs.xyz/releases/",
                 "xyz.xenondevs.invui:inventory-access:1.23", "https://repo.xenondevs.xyz/releases/",
                 "xyz.xenondevs.invui:inventory-access-r8:1.23", "https://repo.xenondevs.xyz/releases/",

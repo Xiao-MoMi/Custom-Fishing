@@ -241,8 +241,13 @@ public class LootManagerImpl implements LootManager {
                         groupMembers.add(loot.getID());
                     }
                 }
-                if (section.contains("requirements")) {
-
+                // legacy format support
+                if (section.contains("requirements") && section.contains("weight")) {
+                    plugin.getRequirementManager().putLegacyLootToMap(
+                            loot.getID(),
+                            plugin.getRequirementManager().getRequirements(section.getConfigurationSection("requirements"), false),
+                            section.getDouble("weight", 0)
+                    );
                 }
             }
         }
