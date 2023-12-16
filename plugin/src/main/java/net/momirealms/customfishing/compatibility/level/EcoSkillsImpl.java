@@ -28,7 +28,7 @@ public class EcoSkillsImpl implements LevelInterface {
 
     @Override
     public void addXp(Player player, String target, double amount) {
-        EcoSkillsAPI.giveSkillXP(player, Objects.requireNonNull(Skills.INSTANCE.getByID(target)), amount);
+        EcoSkillsAPI.gainSkillXP(player, Objects.requireNonNull(Skills.INSTANCE.getByID(target)), amount);
     }
 
     @Override
