@@ -454,7 +454,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at || requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
     }
@@ -477,7 +477,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at && requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
     }
@@ -648,7 +648,8 @@ public class RequirementManagerImpl implements RequirementManager {
                     return false;
                 };
             } else {
-                return null;
+                LogUtils.warn("Wrong value format found at cooldown requirement.");
+                return EmptyRequirement.instance;
             }
         });
     }
@@ -720,7 +721,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at >= requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
         registerRequirement(">", (args, actions, advanced) -> {
@@ -736,7 +737,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at > requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
     }
@@ -753,7 +754,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at regex requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
     }
@@ -772,7 +773,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at !startsWith requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
         registerRequirement("!=", (args, actions, advanced) -> {
@@ -788,7 +789,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at !startsWith requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
     }
@@ -808,7 +809,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at < requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
         registerRequirement("<=", (args, actions, advanced) -> {
@@ -824,7 +825,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at <= requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
     }
@@ -843,7 +844,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at startsWith requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
         registerRequirement("!startsWith", (args, actions, advanced) -> {
@@ -859,7 +860,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at !startsWith requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
     }
@@ -878,7 +879,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at endsWith requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
         registerRequirement("!endsWith", (args, actions, advanced) -> {
@@ -894,7 +895,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at !endsWith requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
     }
@@ -913,7 +914,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at contains requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
         registerRequirement("!contains", (args, actions, advanced) -> {
@@ -929,7 +930,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at !contains requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
     }
@@ -948,7 +949,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at equals requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
         registerRequirement("!equals", (args, actions, advanced) -> {
@@ -964,7 +965,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at !equals requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
     }
@@ -1007,7 +1008,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at item-in-hand requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
     }
@@ -1129,7 +1130,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at competition requirement.");
-                return null;
+                return EmptyRequirement.instance;
             }
         });
     }
