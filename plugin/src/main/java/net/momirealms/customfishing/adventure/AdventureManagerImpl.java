@@ -125,11 +125,6 @@ public class AdventureManagerImpl implements AdventureManager {
         } catch (InvocationTargetException | IllegalAccessException e) {
             LogUtils.warn("Error occurred when sending title");
         }
-
-
-        Audience au = adventure.player(player);
-        Title.Times times = Title.Times.times(Duration.ofMillis(in), Duration.ofMillis(duration), Duration.ofMillis(out));
-        au.showTitle(Title.title(title, subtitle, times));
     }
 
     @Override
