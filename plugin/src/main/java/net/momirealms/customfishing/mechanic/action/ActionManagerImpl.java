@@ -741,9 +741,9 @@ public class ActionManagerImpl implements ActionManager {
                             condition.getPlayer(),
                             PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), title, condition.getArgs()),
                             PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), subtitle, condition.getArgs()),
-                            fadeIn * 50,
-                            stay * 50,
-                            fadeOut * 50
+                            fadeIn,
+                            stay,
+                            fadeOut
                     );
                 };
             } else {
@@ -770,9 +770,9 @@ public class ActionManagerImpl implements ActionManager {
                                             condition.getPlayer(),
                                             PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), title, condition.getArgs()),
                                             PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), subtitle, condition.getArgs()),
-                                            fadeIn * 50,
-                                            stay * 50,
-                                            fadeOut * 50
+                                            fadeIn,
+                                            stay,
+                                            fadeOut
                                     );
                                     condition.delArg("{near}");
                                 }
@@ -800,9 +800,9 @@ public class ActionManagerImpl implements ActionManager {
                             condition.getPlayer(),
                             PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), titles.get(ThreadLocalRandom.current().nextInt(titles.size())), condition.getArgs()),
                             PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), subtitles.get(ThreadLocalRandom.current().nextInt(subtitles.size())), condition.getArgs()),
-                            fadeIn * 50,
-                            stay * 50,
-                            fadeOut * 50
+                            fadeIn,
+                            stay,
+                            fadeOut
                     );
                 };
             } else {

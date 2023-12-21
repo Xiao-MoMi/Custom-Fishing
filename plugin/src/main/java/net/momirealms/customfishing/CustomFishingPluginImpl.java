@@ -219,19 +219,26 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
                 "org.mongodb:mongodb-driver-core:4.11.1", mavenRepo,
                 "org.mongodb:bson:4.11.1", mavenRepo,
                 "org.xerial:sqlite-jdbc:3.43.2.2", mavenRepo,
-                "dev.jorel:commandapi-bukkit-shade:9.3.0", mavenRepo,
-                "xyz.xenondevs.invui:invui-core:1.23", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access:1.23", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r8:1.23", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r9:1.23", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r10:1.23", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r11:1.23", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r12:1.23", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r13:1.23", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r14:1.23", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r15:1.23", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r16:1.23", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access-r17:1.23", "https://repo.xenondevs.xyz/releases/"
+                "dev.jorel:commandapi-bukkit-shade:9.3.0", mavenRepo
+        );
+
+        String version = getServer().getClass().getPackage().getName().split("\\.")[3];
+        String artifact = "";
+        switch (version) {
+            case "v1_17_R1" -> artifact = "r9";
+            case "v1_18_R1" -> artifact = "r10";
+            case "v1_18_R2" -> artifact = "r11";
+            case "v1_19_R1" -> artifact = "r12";
+            case "v1_19_R2" -> artifact = "r13";
+            case "v1_19_R3" -> artifact = "r15";
+            case "v1_20_R1" -> artifact = "r16";
+            case "v1_20_R2" -> artifact = "r17";
+            case "v1_20_R3" -> artifact = "r18";
+        }
+        LibraryLoader.loadDependencies(
+                "xyz.xenondevs.invui:invui-core:1.24", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access:1.24", "https://repo.xenondevs.xyz/releases/",
+                String.format("xyz.xenondevs.invui:inventory-access-%s:1.24", artifact), "https://repo.xenondevs.xyz/releases/"
         );
     }
 

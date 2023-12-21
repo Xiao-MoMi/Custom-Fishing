@@ -255,7 +255,7 @@ public class GameManagerImpl implements GameManager {
                                + OffsetUtils.getOffsetChars(pointerOffset + progress)
                                + FontUtils.surroundWithFont(pointerImage, font)
                                + OffsetUtils.getOffsetChars(totalWidth - progress - pointerWidth);
-                    AdventureManagerImpl.getInstance().sendTitle(player, sendTitle, bar,0,500,0);
+                    AdventureManagerImpl.getInstance().sendTitle(player, sendTitle, bar,0,10,0);
                 }
 
                 @Override
@@ -399,7 +399,7 @@ public class GameManagerImpl implements GameManager {
                             tip != null && !played ? tip : title.replace("{progress}", progress[(int) ((hold_time / time_requirement) * progress.length)]),
                             bar,
                             0,
-                            500,
+                            10,
                             0
                     );
                 }
@@ -491,7 +491,7 @@ public class GameManagerImpl implements GameManager {
                             tip != null && !played ? tip : title.replace("{tension}", tension[(int) ((strain / ultimateTension) * tension.length)]),
                             bar,
                             0,
-                            500,
+                            10,
                             0
                     );
                 }
@@ -536,7 +536,7 @@ public class GameManagerImpl implements GameManager {
                             title.replace("{click}", String.valueOf(clickedTimes)),
                             subtitle.replace("{clicks}", String.valueOf(requiredTimes)).replace("{time}", String.format("%.1f", ((double) deadline - System.currentTimeMillis())/1000)),
                             0,
-                            500,
+                            10,
                             0
                     );
                 }
@@ -612,7 +612,7 @@ public class GameManagerImpl implements GameManager {
                             stringBuilder.toString(),
                             subtitle,
                             0,
-                            500,
+                            10,
                             0
                     );
                 }
@@ -688,7 +688,7 @@ public class GameManagerImpl implements GameManager {
                             title,
                             bar,
                             0,
-                            500,
+                            10,
                             0
                     );
                 }
@@ -832,7 +832,7 @@ public class GameManagerImpl implements GameManager {
                             tip != null && !played ? tip : title.replace("{progress}", progress[(int) ((hold_time / time_requirement) * progress.length)]),
                             bar,
                             0,
-                            500,
+                            10,
                             0
                     );
                 }
