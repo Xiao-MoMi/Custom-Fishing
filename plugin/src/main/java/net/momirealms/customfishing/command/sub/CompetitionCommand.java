@@ -35,7 +35,6 @@ public class CompetitionCommand {
 
     public CommandAPICommand getCompetitionCommand() {
         return new CommandAPICommand("competition")
-                .withPermission("customfishing.command.competition")
                 .withSubcommands(
                         getCompetitionStartCommand(),
                         getCompetitionEndCommand(),

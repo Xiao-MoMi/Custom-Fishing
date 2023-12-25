@@ -122,6 +122,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
     }
 
     public void disable() {
+        HandlerList.unregisterAll(this);
         this.buildableItemMap.clear();
         this.itemLibraryMap.clear();
     }
@@ -587,14 +588,14 @@ public class ItemManagerImpl implements ItemManager, Listener {
         @Override
         public ItemBuilder nbt(Map<String, Object> nbt) {
             if (nbt.size() == 0) return this;
-            editors.put("nbt", (player, nbtItem, placeholders) -> NBTUtils.setTagsFromBukkitYAML(nbtItem, nbt));
+            editors.put("nbt", (player, nbtItem, placeholders) -> NBTUtils.setTagsFromBukkitYAML(player, placeholders, nbtItem, nbt));
             return this;
         }
 
         @Override
         public ItemBuilder nbt(ConfigurationSection section) {
             if (section == null) return this;
-            editors.put("nbt", (player, nbtItem, placeholders) -> NBTUtils.setTagsFromBukkitYAML(nbtItem, section.getValues(false)));
+            editors.put("nbt", (player, nbtItem, placeholders) -> NBTUtils.setTagsFromBukkitYAML(player, placeholders, nbtItem, section.getValues(false)));
             return this;
         }
 

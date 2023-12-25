@@ -20,7 +20,10 @@ package net.momirealms.customfishing.util;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTListCompound;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
+import net.momirealms.customfishing.api.util.LogUtils;
+import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import org.bukkit.configuration.MemorySection;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 
@@ -51,7 +54,7 @@ public class NBTUtils {
      * @param map The source map from Bukkit YAML
      */
     @SuppressWarnings("unchecked")
-    public static void setTagsFromBukkitYAML(NBTCompound nbtCompound, Map<String, Object> map) {
+    public static void setTagsFromBukkitYAML(Player player, Map<String, String> placeholders, NBTCompound nbtCompound, Map<String, Object> map) {
 
         Deque<StackElement> stack = new ArrayDeque<>();
         stack.push(new StackElement(map, nbtCompound));
@@ -70,31 +73,31 @@ public class NBTUtils {
                 } else if (value instanceof List<?> list) {
                     for (Object o : list) {
                         if (o instanceof String stringValue) {
-                            setListValue(key, stringValue, currentNbtCompound);
+                            setListValue(player, placeholders, key, stringValue, currentNbtCompound);
                         } else if (o instanceof Map<?, ?> mapValue) {
                             NBTListCompound nbtListCompound = currentNbtCompound.getCompoundList(key).addCompound();
                             stack.push(new StackElement((Map<String, Object>) mapValue, nbtListCompound));
                         }
                     }
                 } else if (value instanceof String stringValue) {
-                    setSingleValue(key, stringValue, currentNbtCompound);
+                    setSingleValue(player, placeholders, key, stringValue, currentNbtCompound);
                 }
             }
         }
     }
 
     // Private helper method
-    private static void setListValue(String key, String value, NBTCompound nbtCompound) {
+    private static void setListValue(Player player, Map<String, String> placeholders, String key, String value, NBTCompound nbtCompound) {
         String[] parts = getTypeAndData(value);
         String type = parts[0];
-        String data = parts[1];
+        String data = getParsedData(player, placeholders, parts[1]);
         switch (type) {
             case "String" -> nbtCompound.getStringList(key).add(data);
             case "UUID" -> nbtCompound.getUUIDList(key).add(UUID.fromString(data));
-            case "Double" -> nbtCompound.getDoubleList(key).add(Double.valueOf(data));
-            case "Long" -> nbtCompound.getLongList(key).add(Long.valueOf(data));
-            case "Float" -> nbtCompound.getFloatList(key).add(Float.valueOf(data));
-            case "Int" -> nbtCompound.getIntegerList(key).add(Integer.valueOf(data));
+            case "Double" -> nbtCompound.getDoubleList(key).add(Double.parseDouble(data));
+            case "Long" -> nbtCompound.getLongList(key).add(Long.parseLong(data));
+            case "Float" -> nbtCompound.getFloatList(key).add(Float.parseFloat(data));
+            case "Int" -> nbtCompound.getIntegerList(key).add(Integer.parseInt(data));
             case "IntArray" -> {
                 String[] split = data.replace("[", "").replace("]", "").replaceAll("\\s", "").split(",");
                 int[] array = Arrays.stream(split).mapToInt(Integer::parseInt).toArray();
@@ -105,20 +108,20 @@ public class NBTUtils {
     }
 
     // Private helper method
-    private static void setSingleValue(String key, String value, NBTCompound nbtCompound) {
+    private static void setSingleValue(Player player, Map<String, String> placeholders, String key, String value, NBTCompound nbtCompound) {
         String[] parts = getTypeAndData(value);
         String type = parts[0];
-        String data = parts[1];
+        String data = getParsedData(player, placeholders, parts[1]);
         switch (type) {
-            case "Int" -> nbtCompound.setInteger(key, Integer.valueOf(data));
+            case "Int" -> nbtCompound.setInteger(key, Integer.parseInt(data));
             case "String" -> nbtCompound.setString(key, data);
-            case "Long" -> nbtCompound.setLong(key, Long.valueOf(data));
-            case "Float" -> nbtCompound.setFloat(key, Float.valueOf(data));
-            case "Double" -> nbtCompound.setDouble(key, Double.valueOf(data));
-            case "Short" -> nbtCompound.setShort(key, Short.valueOf(data));
-            case "Boolean" -> nbtCompound.setBoolean(key, Boolean.valueOf(data));
+            case "Long" -> nbtCompound.setLong(key, Long.parseLong(data));
+            case "Float" -> nbtCompound.setFloat(key, Float.parseFloat(data));
+            case "Double" -> nbtCompound.setDouble(key, Double.parseDouble(data));
+            case "Short" -> nbtCompound.setShort(key, Short.parseShort(data));
+            case "Boolean" -> nbtCompound.setBoolean(key, Boolean.parseBoolean(data));
             case "UUID" -> nbtCompound.setUUID(key, UUID.nameUUIDFromBytes(data.getBytes()));
-            case "Byte" -> nbtCompound.setByte(key, Byte.valueOf(data));
+            case "Byte" -> nbtCompound.setByte(key, Byte.parseByte(data));
             case "ByteArray" -> {
                 String[] split = splitValue(value);
                 byte[] bytes = new byte[split.length];
@@ -134,6 +137,23 @@ public class NBTUtils {
             }
             default -> throw new IllegalArgumentException("Invalid value type: " + type);
         }
+    }
+
+    public static String getParsedData(Player player, Map<String, String> placeholders, String data) {
+        if (data.length() >= 3)
+            switch (data.substring(0,3)) {
+                case "-P:" -> data = PlaceholderManagerImpl.getInstance().parse(player, data.substring(3), placeholders);
+                case "-E:" -> {
+                    data = PlaceholderManagerImpl.getInstance().parse(player, data.substring(3), placeholders);
+                    double value = ConfigUtils.getExpressionValue(player, data, new HashMap<>());
+                    if (value % 1 == 0) {
+                        data = Long.toString((long) value);
+                    } else {
+                        data = Double.toString(value);
+                    }
+                }
+            }
+        return data;
     }
 
     /**

@@ -130,7 +130,7 @@ mechanics:
   # Fishing wait time
   # This section would take effect if you set "override-vanilla" to true
   # That also means vanilla mechanics for example lure enchantment
-  # would not longer take effect, so you have to configurate its effect
+  # would no longer take effect, so you have to configurate its effect
   # in enchantment effects.
   fishing-wait-time:
     # override vanilla mechanic

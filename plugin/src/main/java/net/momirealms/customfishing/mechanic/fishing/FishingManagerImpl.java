@@ -678,7 +678,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
     private void doSuccessActions(Loot loot, Effect effect, FishingPreparation fishingPreparation, Player player) {
         FishingCompetition competition = plugin.getCompetitionManager().getOnGoingCompetition();
         if (competition != null) {
-            String scoreStr = fishingPreparation.getArg("{SCORE}");
+            String scoreStr = fishingPreparation.getArg("{CUSTOM_SCORE}");
             if (scoreStr != null) {
                 competition.refreshData(player, Double.parseDouble(scoreStr));
             } else {
@@ -686,15 +686,18 @@ public class FishingManagerImpl implements Listener, FishingManager {
                     case CATCH_AMOUNT -> {
                         fishingPreparation.insertArg("{score}", "1.00");
                         competition.refreshData(player, 1);
+                        fishingPreparation.insertArg("{SCORE}", "1");
                     }
                     case MAX_SIZE, TOTAL_SIZE -> {
-                        String size = fishingPreparation.getArg("{size}");
+                        String size = fishingPreparation.getArg("{SIZE}");
                         if (size != null) {
                             double score = Double.parseDouble(size);
                             fishingPreparation.insertArg("{score}", String.format("%.2f", score));
                             competition.refreshData(player, score);
+                            fishingPreparation.insertArg("{SCORE}", size);
                         } else {
-                            fishingPreparation.insertArg("{score}", "0.00");
+                            fishingPreparation.insertArg("{score}", String.format("%.2f", 0.00));
+                            fishingPreparation.insertArg("{SCORE}", "0");
                         }
                     }
                     case TOTAL_SCORE -> {
@@ -703,8 +706,10 @@ public class FishingManagerImpl implements Listener, FishingManager {
                             double finalScore = score * effect.getScoreMultiplier() + effect.getScore();
                             fishingPreparation.insertArg("{score}", String.format("%.2f", finalScore));
                             competition.refreshData(player, finalScore);
+                            fishingPreparation.insertArg("{SCORE}", String.valueOf(finalScore));
                         } else {
                             fishingPreparation.insertArg("{score}", "0.00");
+                            fishingPreparation.insertArg("{SCORE}", "0");
                         }
                     }
                 }

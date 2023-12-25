@@ -51,7 +51,6 @@ public class ItemCommand {
 
     public CommandAPICommand getItemCommand() {
         return new CommandAPICommand("items")
-                .withPermission("customfishing.command.items")
                 .withSubcommands(
                     getSubCommand("item"),
                     getSubCommand("util"),

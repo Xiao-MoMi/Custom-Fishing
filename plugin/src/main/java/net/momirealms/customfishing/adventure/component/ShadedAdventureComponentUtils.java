@@ -1,3 +1,9 @@
+/*
+ * This file is part of InvUI, licensed under the MIT License.
+ *
+ * Copyright (c) 2021 NichtStudioCode
+ */
+
 package net.momirealms.customfishing.adventure.component;
 
 import net.kyori.adventure.text.Component;
