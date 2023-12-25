@@ -211,7 +211,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
                 "com.zaxxer:HikariCP:5.0.1", mavenRepo,
                 "net.objecthunter:exp4j:0.4.8", mavenRepo,
                 "org.mariadb.jdbc:mariadb-java-client:3.3.0", mavenRepo,
-                "com.mysql:mysql-connector-j:8.0.33", mavenRepo,
+                "com.mysql:mysql-connector-j:8.2.0", mavenRepo,
                 "commons-io:commons-io:2.14.0", mavenRepo,
                 "com.google.code.gson:gson:2.10.1", mavenRepo,
                 "com.h2database:h2:2.2.224", mavenRepo,
