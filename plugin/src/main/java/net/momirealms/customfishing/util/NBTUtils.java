@@ -144,8 +144,7 @@ public class NBTUtils {
             switch (data.substring(0,3)) {
                 case "-P:" -> data = PlaceholderManagerImpl.getInstance().parse(player, data.substring(3), placeholders);
                 case "-E:" -> {
-                    data = PlaceholderManagerImpl.getInstance().parse(player, data.substring(3), placeholders);
-                    double value = ConfigUtils.getExpressionValue(player, data, new HashMap<>());
+                    double value = ConfigUtils.getExpressionValue(player, data.substring(3), placeholders);
                     if (value % 1 == 0) {
                         data = Long.toString((long) value);
                     } else {

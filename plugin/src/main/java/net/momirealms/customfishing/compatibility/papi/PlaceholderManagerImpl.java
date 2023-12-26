@@ -19,6 +19,8 @@ package net.momirealms.customfishing.compatibility.papi;
 
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.manager.PlaceholderManager;
+import net.momirealms.customfishing.util.ConfigUtils;
+import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -195,5 +197,15 @@ public class PlaceholderManagerImpl implements PlaceholderManager {
 
     public boolean hasPapi() {
         return hasPapi;
+    }
+
+    @Override
+    public double getExpressionValue(Player player, String formula, Map<String, String> vars) {
+        return ConfigUtils.getExpressionValue(player, formula, vars);
+    }
+
+    @Override
+    public double getExpressionValue(String formula) {
+        return new ExpressionBuilder(formula).build().evaluate();
     }
 }

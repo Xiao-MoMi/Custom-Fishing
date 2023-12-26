@@ -706,9 +706,11 @@ public class ItemManagerImpl implements ItemManager, Listener {
             editors.put("price", (player, nbtItem, placeholders) -> {
                 if (base != 0) {
                     placeholders.put("{base}", String.format("%.2f", base));
+                    placeholders.put("{BASE}", String.valueOf(base));
                 }
                 if (bonus != 0) {
                     placeholders.put("{bonus}", String.format("%.2f", bonus));
+                    placeholders.put("{BONUS}", String.valueOf(bonus));
                 }
                 float size = Float.parseFloat(placeholders.getOrDefault("{SIZE}", "0"));
                 double price = CustomFishingPlugin.get().getMarketManager().getFishPrice(

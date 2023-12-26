@@ -703,8 +703,10 @@ public class ActionManagerImpl implements ActionManager {
         registerAction("delay", (args, chance) -> {
             List<Action> actions = new ArrayList<>();
             int delay;
+            boolean async;
             if (args instanceof ConfigurationSection section) {
                 delay = section.getInt("delay", 1);
+                async = section.getBoolean("async", false);
                 ConfigurationSection actionSection = section.getConfigurationSection("actions");
                 if (actionSection != null) {
                     for (Map.Entry<String, Object> entry : actionSection.getValues(false).entrySet()) {
@@ -715,14 +717,23 @@ public class ActionManagerImpl implements ActionManager {
                 }
             } else {
                 delay = 1;
+                async = false;
             }
             return condition -> {
                 if (Math.random() > chance) return;
-                plugin.getScheduler().runTaskSyncLater(() -> {
-                    for (Action action : actions) {
-                        action.trigger(condition);
-                    }
-                }, condition.getLocation(), delay * 50L, TimeUnit.MILLISECONDS);
+                if (async) {
+                    plugin.getScheduler().runTaskSyncLater(() -> {
+                        for (Action action : actions) {
+                            action.trigger(condition);
+                        }
+                    }, condition.getLocation(), delay * 50L, TimeUnit.MILLISECONDS);
+                } else {
+                    plugin.getScheduler().runTaskSyncLater(() -> {
+                        for (Action action : actions) {
+                            action.trigger(condition);
+                        }
+                    }, condition.getLocation(), delay * 50L, TimeUnit.MILLISECONDS);
+                }
             };
         });
     }

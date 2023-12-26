@@ -81,4 +81,20 @@ public interface PlaceholderManager {
      * @return The list of text strings with placeholders replaced by their values.
      */
     List<String> parse(@Nullable OfflinePlayer player, List<String> list, Map<String, String> replacements);
+
+    /**
+     * Get an expression's value
+     * @param player player
+     * @param formula formula
+     * @param vars vars
+     * @return result
+     */
+    double getExpressionValue(Player player, String formula, Map<String, String> vars);
+
+    /**
+     * Get an expression's value
+     * @param formula formula
+     * @return result
+     */
+    double getExpressionValue(String formula);
 }
