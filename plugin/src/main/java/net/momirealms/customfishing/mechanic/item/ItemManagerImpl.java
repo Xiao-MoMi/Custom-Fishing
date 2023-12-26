@@ -329,7 +329,6 @@ public class ItemManagerImpl implements ItemManager, Listener {
             itemCFBuilder = CFBuilder.of("vanilla", material.toUpperCase(Locale.ENGLISH));
         }
         itemCFBuilder
-                .amount(section.getInt("amount", 1))
                 .stackable(section.getBoolean("stackable", true))
                 .size(ConfigUtils.getFloatPair(section.getString("size")))
                 .price((float) section.getDouble("price.base"), (float) section.getDouble("price.bonus"))
@@ -350,6 +349,12 @@ public class ItemManagerImpl implements ItemManager, Listener {
                 .head(section.getString("head64"))
                 .name(section.getString("display.name"))
                 .lore(section.getStringList("display.lore"));
+        if (section.get("amount") instanceof String s) {
+            Pair<Integer, Integer> pair = ConfigUtils.getIntegerPair(s);
+            itemCFBuilder.amount(pair.left(), pair.right());
+        } else {
+            itemCFBuilder.amount(section.getInt("amount", 1));
+        }
         return itemCFBuilder;
     }
 
@@ -498,14 +503,15 @@ public class ItemManagerImpl implements ItemManager, Listener {
 
         private final String library;
         private final String id;
-        private int amount;
+        private int min_amount;
+        private int max_amount;
         private final LinkedHashMap<String, ItemPropertyEditor> editors;
 
         public CFBuilder(String library, String id) {
             this.id = id;
             this.library = library;
             this.editors = new LinkedHashMap<>();
-            this.amount = 1;
+            this.min_amount = (max_amount = 1);
         }
 
         public static CFBuilder of(String library, String id) {
@@ -545,7 +551,15 @@ public class ItemManagerImpl implements ItemManager, Listener {
 
         @Override
         public ItemBuilder amount(int amount) {
-            this.amount = amount;
+            this.min_amount = amount;
+            this.max_amount = amount;
+            return this;
+        }
+
+        @Override
+        public ItemBuilder amount(int min_amount, int max_amount) {
+            this.min_amount = min_amount;
+            this.max_amount = max_amount;
             return this;
         }
 
@@ -745,6 +759,8 @@ public class ItemManagerImpl implements ItemManager, Listener {
                 cfCompound.setFloat("size", random);
                 placeholders.put("{size}", String.format("%.2f", random));
                 placeholders.put("{SIZE}", String.valueOf(random));
+                placeholders.put("{min_size}", String.valueOf(size.left()));
+                placeholders.put("{max_size}", String.valueOf(size.right()));
             });
             return this;
         }
@@ -813,7 +829,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
 
         @Override
         public int getAmount() {
-            return amount;
+            return ThreadLocalRandom.current().nextInt(min_amount, max_amount + 1);
         }
 
         @Override

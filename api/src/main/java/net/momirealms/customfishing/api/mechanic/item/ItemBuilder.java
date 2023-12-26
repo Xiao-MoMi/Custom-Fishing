@@ -38,6 +38,8 @@ public interface ItemBuilder extends BuildableItem {
 
     ItemBuilder amount(int amount);
 
+    ItemBuilder amount(int min_amount, int max_amount);
+
     ItemBuilder tag(boolean tag, String type, String id);
 
     ItemBuilder unbreakable(boolean unbreakable);
