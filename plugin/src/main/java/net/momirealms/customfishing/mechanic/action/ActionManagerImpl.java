@@ -32,6 +32,7 @@ import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
+import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.VaultHook;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
@@ -95,6 +96,7 @@ public class ActionManagerImpl implements ActionManager {
         this.registerItemDurabilityAction();
         this.registerGiveItemAction();
         this.registerMoneyAction();
+        this.registerTimerAction();
     }
 
     // Method to load expansions and global event actions.
@@ -734,6 +736,53 @@ public class ActionManagerImpl implements ActionManager {
                         }
                     }, condition.getLocation(), delay * 50L, TimeUnit.MILLISECONDS);
                 }
+            };
+        });
+    }
+
+    private void registerTimerAction() {
+        registerAction("timer", (args, chance) -> {
+            List<Action> actions = new ArrayList<>();
+            int delay;
+            int duration;
+            int period;
+            boolean async;
+            if (args instanceof ConfigurationSection section) {
+                delay = section.getInt("delay", 2);
+                duration = section.getInt("duration", 20);
+                period = section.getInt("period", 2);
+                async = section.getBoolean("async", false);
+                ConfigurationSection actionSection = section.getConfigurationSection("actions");
+                if (actionSection != null) {
+                    for (Map.Entry<String, Object> entry : actionSection.getValues(false).entrySet()) {
+                        if (entry.getValue() instanceof ConfigurationSection innerSection) {
+                            actions.add(getAction(innerSection));
+                        }
+                    }
+                }
+            } else {
+                delay = 1;
+                async = false;
+                duration = 20;
+                period = 1;
+            }
+            return condition -> {
+                if (Math.random() > chance) return;
+                CancellableTask cancellableTask;
+                if (async) {
+                    cancellableTask = plugin.getScheduler().runTaskAsyncTimer(() -> {
+                        for (Action action : actions) {
+                            action.trigger(condition);
+                        }
+                    }, delay * 50L, period * 50L, TimeUnit.MILLISECONDS);
+                } else {
+                    cancellableTask = plugin.getScheduler().runTaskSyncTimer(() -> {
+                        for (Action action : actions) {
+                            action.trigger(condition);
+                        }
+                    }, condition.getLocation(), delay, period);
+                }
+                plugin.getScheduler().runTaskSyncLater(cancellableTask::cancel, condition.getLocation(), duration);
             };
         });
     }
