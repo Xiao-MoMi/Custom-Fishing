@@ -23,6 +23,7 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Key;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.common.Tuple;
+import net.momirealms.customfishing.api.event.FishingLootSpawnEvent;
 import net.momirealms.customfishing.api.manager.ItemManager;
 import net.momirealms.customfishing.api.manager.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.GlobalSettings;
@@ -424,6 +425,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
 
     /**
      * Drops an item based on the provided loot, applying velocity from a hook location to a player location.
+     * This method would also trigger FishingLootSpawnEvent
      *
      * @param player         The player for whom the item is intended.
      * @param hookLocation   The location where the item will initially drop.
@@ -441,6 +443,13 @@ public class ItemManagerImpl implements ItemManager, Listener {
         if (item.getType() == Material.AIR) {
             return;
         }
+
+        FishingLootSpawnEvent spawnEvent = new FishingLootSpawnEvent(player, hookLocation, item);
+        Bukkit.getPluginManager().callEvent(spawnEvent);
+        if (spawnEvent.isCancelled()) {
+            return;
+        }
+
         Entity itemEntity = hookLocation.getWorld().dropItem(hookLocation, item);
         Vector vector = playerLocation.subtract(hookLocation).toVector().multiply(0.105);
         vector = vector.setY((vector.getY() + 0.22) * 1.18);

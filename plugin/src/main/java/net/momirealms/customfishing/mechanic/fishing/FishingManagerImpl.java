@@ -657,12 +657,8 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 }
                 return;
             }
-            case ENTITY -> {
-                plugin.getEntityManager().summonEntity(hook.getLocation(), player.getLocation(), loot);
-            }
-            case BLOCK -> {
-                plugin.getBlockManager().summonBlock(player, hook.getLocation(), player.getLocation(), loot);
-            }
+            case ENTITY -> plugin.getEntityManager().summonEntity(hook.getLocation(), player.getLocation(), loot);
+            case BLOCK -> plugin.getBlockManager().summonBlock(player, hook.getLocation(), player.getLocation(), loot);
         }
         doSuccessActions(loot, effect, fishingPreparation, player);
     }
