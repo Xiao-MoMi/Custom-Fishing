@@ -156,7 +156,6 @@ public class ActionManagerImpl implements ActionManager {
      * @return An Action object created based on the configuration, or an EmptyAction instance if the action type is invalid.
      */
     @Override
-    @NotNull
     public Action getAction(ConfigurationSection section) {
         ActionFactory factory = getActionFactory(section.getString("type"));
         if (factory == null) {
@@ -223,7 +222,9 @@ public class ActionManagerImpl implements ActionManager {
         // Iterate through all key-value pairs in the ConfigurationSection
         for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection innerSection) {
-                actionList.add(getAction(innerSection));
+                Action action = getAction(innerSection);
+                if (action != null)
+                    actionList.add(action);
             }
         }
         return actionList.toArray(new Action[0]);
@@ -629,7 +630,7 @@ public class ActionManagerImpl implements ActionManager {
                 return condition -> {
                     if (Math.random() > chance) return;
                     Player player = condition.getPlayer();
-                    ItemUtils.giveCertainAmountOfItem(player, CustomFishingPlugin.get().getItemManager().buildAnyPluginItemByID(player, id), amount);
+                    ItemUtils.giveCertainAmountOfItem(player, Objects.requireNonNull(CustomFishingPlugin.get().getItemManager().buildAnyPluginItemByID(player, id)), amount);
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: give-item");
