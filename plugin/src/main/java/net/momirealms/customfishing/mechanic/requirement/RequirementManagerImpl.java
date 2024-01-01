@@ -1032,6 +1032,16 @@ public class RequirementManagerImpl implements RequirementManager {
                 return false;
             };
         });
+        registerRequirement("has-bait", (args, actions, advanced) -> {
+            boolean has = (boolean) args;
+            return condition -> {
+                String id = condition.getArg("{bait}");
+                if (id != null && has) return true;
+                if (id == null && !has) return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
     }
 
     private void registerEnvironmentRequirement() {
@@ -1070,6 +1080,16 @@ public class RequirementManagerImpl implements RequirementManager {
             return condition -> {
                 String id = condition.getArg("{hook}");
                 if (!hooks.contains(id)) return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+        registerRequirement("has-hook", (args, actions, advanced) -> {
+            boolean has = (boolean) args;
+            return condition -> {
+                String id = condition.getArg("{hook}");
+                if (id != null && has) return true;
+                if (id == null && !has) return true;
                 if (advanced) triggerActions(actions, condition);
                 return false;
             };

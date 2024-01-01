@@ -43,7 +43,7 @@ dependencies {
     compileOnly("com.github.Zrips:Jobs:4.17.2")
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
-    compileOnly("org.betonquest:betonquest:2.0.0-SNAPSHOT")
+    compileOnly("org.betonquest:betonquest:2.0.0")
     compileOnly("xyz.xenondevs.invui:invui:1.24")
     compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.3.1.8")
 

@@ -90,8 +90,6 @@ public class CFConfig {
     public static boolean logDataSaving;
 
     public static boolean restrictedSizeRange;
-    public static boolean allowSizeStack;
-    public static List<String> sizeStackLore;
 
     // Legacy color code support
     public static boolean legacyColorSupport;
@@ -157,8 +155,6 @@ public class CFConfig {
         lavaMaxTime = config.getInt("mechanics.lava-fishing.max-wait-time", 600);
 
         restrictedSizeRange = config.getBoolean("mechanics.size.restricted-size-range", true);
-        allowSizeStack = config.getBoolean("mechanics.size.allow-stack", false);
-        sizeStackLore = config.getStringList("mechanics.size.lore-format").stream().map(it -> "<!i>" + it).toList();
 
         globalShowInFinder = config.getBoolean("mechanics.global-loot-property.show-in-fishfinder", true);
         globalDisableStats = config.getBoolean("mechanics.global-loot-property.disable-stat", false);

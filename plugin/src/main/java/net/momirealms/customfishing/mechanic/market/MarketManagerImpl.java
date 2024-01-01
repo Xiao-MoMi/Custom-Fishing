@@ -117,12 +117,12 @@ public class MarketManagerImpl implements MarketManager, Listener {
     private void loadConfig() {
         YamlConfiguration config = plugin.getConfig("market.yml");
         this.enable = config.getBoolean("enable", true);
+        this.formula = config.getString("price-formula", "{base} + {bonus} * {size}");
         if (!this.enable) return;
 
         // Load various configuration settings
         this.layout = config.getStringList("layout").toArray(new String[0]);
         this.title = config.getString("title", "market.title");
-        this.formula = config.getString("price-formula", "{base} + {bonus} * {size}");
         this.itemSlot = config.getString("item-slot.symbol", "I").charAt(0);
         this.functionSlot = config.getString("functional-icons.symbol", "B").charAt(0);
         this.functionIconAllowBuilder = plugin.getItemManager().getItemBuilder(config.getConfigurationSection("functional-icons.allow-icon"), "gui", "allow");
