@@ -432,7 +432,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
             return;
         }
 
-        if (CFConfig.enableFishingBag && plugin.getBagManager().doesBagStoreLoots() && player.hasPermission("fishingbag.collectloot")) {
+        if (CFConfig.enableFishingBag && plugin.getBagManager().doesBagStoreLoots() && RequirementManager.isRequirementMet(condition, plugin.getBagManager().getCollectRequirements())) {
             var bag = plugin.getBagManager().getOnlineBagInventory(player.getUniqueId());
             int cannotPut = ItemUtils.putLootsToBag(bag, item, item.getAmount());
             // some are put into bag

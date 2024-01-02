@@ -25,6 +25,7 @@ import net.momirealms.customfishing.api.manager.BagManager;
 import net.momirealms.customfishing.api.manager.EffectManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
+import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.util.InventoryUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.setting.CFConfig;
@@ -54,6 +55,7 @@ public class BagManagerImpl implements BagManager, Listener {
     private boolean bagStoreLoots;
     private String bagTitle;
     private List<Material> bagWhiteListItems;
+    private Requirement[] collectRequirements;
 
     public BagManagerImpl(CustomFishingPluginImpl plugin) {
         this.plugin = plugin;
@@ -77,6 +79,7 @@ public class BagManagerImpl implements BagManager, Listener {
                 if (bagStoreLoots) {
                     collectLootActions = plugin.getActionManager().getActions(bagSection.getConfigurationSection("collect-actions"));
                     bagFullActions = plugin.getActionManager().getActions(bagSection.getConfigurationSection("full-actions"));
+                    collectRequirements = plugin.getRequirementManager().getRequirements(bagSection.getConfigurationSection("collect-requirements"), false);
                 }
             }
         }
@@ -239,5 +242,10 @@ public class BagManagerImpl implements BagManager, Listener {
     @Override
     public List<Material> getBagWhiteListItems() {
         return bagWhiteListItems;
+    }
+
+    @Override
+    public Requirement[] getCollectRequirements() {
+        return collectRequirements;
     }
 }

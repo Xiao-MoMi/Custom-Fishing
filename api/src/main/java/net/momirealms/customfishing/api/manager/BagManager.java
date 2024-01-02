@@ -19,6 +19,7 @@ package net.momirealms.customfishing.api.manager;
 
 import net.momirealms.customfishing.api.data.user.OfflineUser;
 import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -57,4 +58,6 @@ public interface BagManager {
     String getBagTitle();
 
     List<Material> getBagWhiteListItems();
+
+    Requirement[] getCollectRequirements();
 }

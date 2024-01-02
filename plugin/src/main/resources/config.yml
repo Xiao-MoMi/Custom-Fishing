@@ -154,11 +154,15 @@ mechanics:
     enable: true
     # Fishing bag container title
     bag-title: '<blue>{player}''s Fishing Bag</blue>'
-    # Can fishing bag store fishing loots?
-    can-store-loot: false
     # Other whitelist-items
     whitelist-items:
       - fishing_rod
+
+    # Can fishing bag store fishing loots?
+    can-store-loot: false
+    # Requirements for automatically collecting
+    collect-requirements:
+      permission: fishingbag.collectloot
     # Actions to do if fishing loots are automatically collected into bag
     collect-actions:
       sound_action:
