@@ -125,7 +125,7 @@ public class ItemCommand {
                     int amount = (int) args.getOrDefault("amount", 1);
                     ItemStack item = CustomFishingPlugin.get().getItemManager().build(player, namespace, id, new Condition(player).getArgs());
                     if (item != null) {
-                        int actual = ItemUtils.giveCertainAmountOfItem(player, item, amount);
+                        int actual = ItemUtils.putLootsToBag(player, item, amount);
                         AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, CFLocale.MSG_Get_Item.replace("{item}", id).replace("{amount}", String.valueOf(actual)));
                     } else {
                         AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, CFLocale.MSG_Item_Not_Exists);
@@ -151,7 +151,7 @@ public class ItemCommand {
                         assert players != null;
                         for (Player player : players) {
                             ItemStack item = CustomFishingPlugin.get().getItemManager().build(player, namespace, id, new Condition(player).getArgs());
-                            int actual = ItemUtils.giveCertainAmountOfItem(player, item, amount);
+                            int actual = ItemUtils.putLootsToBag(player, item, amount);
                             AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Give_Item.replace("{item}", id).replace("{amount}", String.valueOf(actual)).replace("{player}", player.getName()));
                         }
                     } else {

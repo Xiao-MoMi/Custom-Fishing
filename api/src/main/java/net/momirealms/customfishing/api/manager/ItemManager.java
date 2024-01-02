@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.manager;
 
 import net.momirealms.customfishing.api.common.Key;
+import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.item.BuildableItem;
 import net.momirealms.customfishing.api.mechanic.item.ItemBuilder;
 import net.momirealms.customfishing.api.mechanic.item.ItemLibrary;
@@ -157,19 +158,10 @@ public interface ItemManager {
      * @param player         The player for whom the item is intended.
      * @param hookLocation   The location where the item will initially drop.
      * @param playerLocation The target location towards which the item's velocity is applied.
-     * @param id             The loot object representing the item to be dropped.
-     * @param args           A map of placeholders for item customization.
+     * @param itemStack      The loot to drop
+     * @param condition      A map of placeholders for item customization.
      */
-    void dropItem(Player player, Location hookLocation, Location playerLocation, String id, Map<String, String> args);
-
-    /**
-     * Drops an item entity at the specified location and applies velocity towards another location.
-     *
-     * @param hookLocation   The location where the item will initially drop.
-     * @param playerLocation The target location towards which the item's velocity is applied.
-     * @param itemStack      The item stack to be dropped as an entity.
-     */
-    void dropItem(Location hookLocation, Location playerLocation, ItemStack itemStack);
+    void dropItem(Player player, Location hookLocation, Location playerLocation, ItemStack itemStack, Condition condition);
 
     /**
      * Checks if the provided ItemStack is a custom fishing item

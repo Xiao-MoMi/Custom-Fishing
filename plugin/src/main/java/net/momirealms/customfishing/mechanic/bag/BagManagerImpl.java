@@ -23,12 +23,15 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.user.OfflineUser;
 import net.momirealms.customfishing.api.manager.BagManager;
 import net.momirealms.customfishing.api.manager.EffectManager;
+import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
 import net.momirealms.customfishing.api.util.InventoryUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.setting.CFConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -40,14 +43,17 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class BagManagerImpl implements BagManager, Listener {
 
     private final CustomFishingPlugin plugin;
     private final HashMap<UUID, OfflineUser> tempEditMap;
+    private Action[] collectLootActions;
+    private Action[] bagFullActions;
+    private boolean bagStoreLoots;
+    private String bagTitle;
+    private List<Material> bagWhiteListItems;
 
     public BagManagerImpl(CustomFishingPluginImpl plugin) {
         this.plugin = plugin;
@@ -61,6 +67,19 @@ public class BagManagerImpl implements BagManager, Listener {
 
     public void load() {
         Bukkit.getPluginManager().registerEvents(this, plugin);
+        if (isEnabled()) {
+            YamlConfiguration config = plugin.getConfig("config.yml");
+            ConfigurationSection bagSection = config.getConfigurationSection("mechanics.fishing-bag");
+            if (bagSection != null) {
+                bagTitle = bagSection.getString("bag-title");
+                bagStoreLoots = bagSection.getBoolean("can-store-loot", false);
+                bagWhiteListItems = bagSection.getStringList("whitelist-items").stream().map(it -> Material.valueOf(it.toUpperCase(Locale.ENGLISH))).toList();
+                if (bagStoreLoots) {
+                    collectLootActions = plugin.getActionManager().getActions(bagSection.getConfigurationSection("collect-actions"));
+                    bagFullActions = plugin.getActionManager().getActions(bagSection.getConfigurationSection("full-actions"));
+                }
+            }
+        }
     }
 
     public void unload() {
@@ -92,7 +111,7 @@ public class BagManagerImpl implements BagManager, Listener {
             Inventory newBag = InventoryUtils.createInventory(onlinePlayer.getHolder(), rows * 9,
                     AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
                             PlaceholderManagerImpl.getInstance().parse(
-                                    player, CFConfig.bagTitle, Map.of("{player}", player.getName())
+                                    player, bagTitle, Map.of("{player}", player.getName())
                             )
                     ));
             onlinePlayer.getHolder().setInventory(newBag);
@@ -165,7 +184,7 @@ public class BagManagerImpl implements BagManager, Listener {
         ItemStack clickedItem = event.getCurrentItem();
         if (clickedItem == null || clickedItem.getType() == Material.AIR)
             return;
-        if (CFConfig.bagWhiteListItems.contains(clickedItem.getType()))
+        if (bagWhiteListItems.contains(clickedItem.getType()))
             return;
         String id = plugin.getItemManager().getAnyPluginItemID(clickedItem);
         EffectManager effectManager = plugin.getEffectManager();
@@ -176,7 +195,7 @@ public class BagManagerImpl implements BagManager, Listener {
         ) {
             return;
         }
-        if (CFConfig.bagStoreLoots && plugin.getLootManager().getLoot(id) != null)
+        if (bagStoreLoots && plugin.getLootManager().getLoot(id) != null)
             return;
         event.setCancelled(true);
     }
@@ -195,5 +214,30 @@ public class BagManagerImpl implements BagManager, Listener {
         if (offlineUser == null)
             return;
         plugin.getStorageManager().saveUserData(offlineUser, true);
+    }
+
+    @Override
+    public Action[] getCollectLootActions() {
+        return collectLootActions;
+    }
+
+    @Override
+    public Action[] getBagFullActions() {
+        return bagFullActions;
+    }
+
+    @Override
+    public boolean doesBagStoreLoots() {
+        return bagStoreLoots;
+    }
+
+    @Override
+    public String getBagTitle() {
+        return bagTitle;
+    }
+
+    @Override
+    public List<Material> getBagWhiteListItems() {
+        return bagWhiteListItems;
     }
 }

@@ -255,7 +255,7 @@ public class MarketGUI {
         for (int slot : itemElement.getSlots()) {
             ItemStack itemStack = inventory.getItem(slot);
             if (itemStack != null && itemStack.getType() != Material.AIR) {
-                ItemUtils.giveCertainAmountOfItem(owner, itemStack, itemStack.getAmount());
+                ItemUtils.putLootsToBag(owner, itemStack, itemStack.getAmount());
                 inventory.setItem(slot, new ItemStack(Material.AIR));
             }
         }

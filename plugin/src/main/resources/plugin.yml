@@ -28,3 +28,7 @@ softdepend:
 permissions:
   fishingbag.user:
     default: true
+  fishingbag.collectloot:
+    default: false
+  customfishing.sellfish:
+    default: true

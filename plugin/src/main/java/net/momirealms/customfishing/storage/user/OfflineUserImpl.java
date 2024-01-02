@@ -66,7 +66,7 @@ public class OfflineUserImpl implements OfflineUser {
         this.holder.setInventory(InventoryUtils.createInventory(this.holder, playerData.getBagData().size,
                 AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
                         PlaceholderManagerImpl.getInstance().parse(
-                                offlinePlayer, CFConfig.bagTitle, Map.of("{player}", Optional.ofNullable(offlinePlayer.getName()).orElse(String.valueOf(uuid)))
+                                offlinePlayer, CustomFishingPlugin.get().getBagManager().getBagTitle(), Map.of("{player}", Optional.ofNullable(offlinePlayer.getName()).orElse(String.valueOf(uuid)))
                         )
                 )));
         this.holder.setItems(InventoryUtils.getInventoryItems(playerData.getBagData().serialized));

@@ -29,7 +29,6 @@ import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionExpansion;
 import net.momirealms.customfishing.api.mechanic.action.ActionFactory;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
-import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
@@ -296,20 +295,6 @@ public class ActionManagerImpl implements ActionManager {
         return actionMap;
     }
 
-    /**
-     * Triggers a list of actions with the given condition.
-     * If the list of actions is not null, each action in the list is triggered.
-     *
-     * @param actions   The list of actions to trigger.
-     * @param condition The condition associated with the actions.
-     */
-    @Override
-    public void triggerActions(List<Action> actions, Condition condition) {
-        if (actions != null)
-            for (Action action : actions)
-                action.trigger(condition);
-    }
-
     private void registerMessageAction() {
         registerAction("message", (args, chance) -> {
             ArrayList<String> msg = ConfigUtils.stringListArgs(args);
@@ -558,22 +543,33 @@ public class ActionManagerImpl implements ActionManager {
                     if (Math.random() > chance) return;
                     Player owner = condition.getPlayer();
                     Location location = position ? condition.getLocation() : owner.getLocation();
-                    plugin.getScheduler().runTaskSync(() -> {
-                            for (Entity player : condition.getLocation().getWorld().getNearbyEntities(condition.getLocation(), range, range, range, entity -> entity instanceof Player)) {
-                                double distance = LocationUtils.getDistance(player.getLocation(), condition.getLocation());
-                                if (distance <= range) {
-                                    ArmorStandUtils.sendHologram(
-                                            (Player) player,
-                                            location.clone().add(x, y, z),
-                                            AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
-                                                    PlaceholderManagerImpl.getInstance().parse(owner, text, condition.getArgs())
-                                            ),
-                                            duration
-                                    );
-                                }
-                            }
-                        }, condition.getLocation()
-                    );
+                    if (range > 0) {
+                        plugin.getScheduler().runTaskSync(() -> {
+                                    for (Entity player : location.getWorld().getNearbyEntities(location, range, range, range, entity -> entity instanceof Player)) {
+                                        double distance = LocationUtils.getDistance(player.getLocation(), location);
+                                        if (distance <= range) {
+                                            ArmorStandUtils.sendHologram(
+                                                    (Player) player,
+                                                    location.clone().add(x, y, z),
+                                                    AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                                                            PlaceholderManagerImpl.getInstance().parse(owner, text, condition.getArgs())
+                                                    ),
+                                                    duration
+                                            );
+                                        }
+                                    }
+                                }, location
+                        );
+                    } else {
+                        ArmorStandUtils.sendHologram(
+                                owner,
+                                location.clone().add(x, y, z),
+                                AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                                        PlaceholderManagerImpl.getInstance().parse(owner, text, condition.getArgs())
+                                ),
+                                duration
+                        );
+                    }
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: hologram");
@@ -630,7 +626,7 @@ public class ActionManagerImpl implements ActionManager {
                 return condition -> {
                     if (Math.random() > chance) return;
                     Player player = condition.getPlayer();
-                    ItemUtils.giveCertainAmountOfItem(player, Objects.requireNonNull(CustomFishingPlugin.get().getItemManager().buildAnyPluginItemByID(player, id)), amount);
+                    ItemUtils.putLootsToBag(player, Objects.requireNonNull(CustomFishingPlugin.get().getItemManager().buildAnyPluginItemByID(player, id)), amount);
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: give-item");
@@ -644,20 +640,56 @@ public class ActionManagerImpl implements ActionManager {
             if (args instanceof ConfigurationSection section) {
                 String[] itemSplit = section.getString("item", "").split(":", 2);
                 int duration = section.getInt("duration", 20);
-                boolean position = section.getString("position", "hook").equals("hook");
-                double x = section.getDouble("x");
-                double y = section.getDouble("y");
-                double z = section.getDouble("z");
+                boolean position = !section.getString("position", "player").equals("player");
+                String x = ConfigUtils.getString(section.get("x", "0"));
+                String y = ConfigUtils.getString(section.get("y", "0"));
+                String z = ConfigUtils.getString(section.get("z", "0"));
+                String yaw = ConfigUtils.getString(section.get("yaw", "0"));
+                int range = section.getInt("range", 0);
+                boolean opposite = section.getBoolean("opposite-yaw", false);
                 return condition -> {
                     if (Math.random() > chance) return;
-                    Player player = condition.getPlayer();
-                    Location location = position ? condition.getLocation() : player.getLocation();
-                    ArmorStandUtils.sendFakeItem(
-                            condition.getPlayer(),
-                            location.clone().add(x, y, z),
-                            plugin.getItemManager().build(player, itemSplit[0], itemSplit[1], condition.getArgs()),
-                            duration
+                    Player owner = condition.getPlayer();
+                    Location location = position ? condition.getLocation() : owner.getLocation();
+                    location = location.clone().add(
+                            plugin.getPlaceholderManager().getExpressionValue(owner, x, condition.getArgs()),
+                            plugin.getPlaceholderManager().getExpressionValue(owner, y, condition.getArgs()),
+                            plugin.getPlaceholderManager().getExpressionValue(owner, z, condition.getArgs())
                     );
+                    Location finalLocation = location;
+                    ItemStack itemStack = plugin.getItemManager().build(
+                            owner, itemSplit[0],
+                            plugin.getPlaceholderManager().parse(owner, itemSplit[1], condition.getArgs()),
+                            condition.getArgs()
+                    );
+                    if (range > 0) {
+                        plugin.getScheduler().runTaskSync(() -> {
+                                for (Entity player : finalLocation.getWorld().getNearbyEntities(finalLocation, range, range, range, entity -> entity instanceof Player)) {
+                                    double distance = LocationUtils.getDistance(player.getLocation(), finalLocation);
+                                    if (distance <= range) {
+                                        Location locationTemp = finalLocation.clone();
+                                        if (opposite) locationTemp.setYaw(-player.getLocation().getYaw());
+                                        else locationTemp.setYaw((float) plugin.getPlaceholderManager().getExpressionValue((Player) player, yaw, condition.getArgs()));
+                                        ArmorStandUtils.sendFakeItem(
+                                                condition.getPlayer(),
+                                                locationTemp,
+                                                itemStack,
+                                                duration
+                                        );
+                                    }
+                                }
+                            }, condition.getLocation()
+                        );
+                    } else {
+                        if (opposite) finalLocation.setYaw(-owner.getLocation().getYaw());
+                        else finalLocation.setYaw((float) plugin.getPlaceholderManager().getExpressionValue(owner, yaw, condition.getArgs()));
+                        ArmorStandUtils.sendFakeItem(
+                                condition.getPlayer(),
+                                finalLocation,
+                                itemStack,
+                                duration
+                        );
+                    }
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: fake-item");
@@ -819,7 +851,7 @@ public class ActionManagerImpl implements ActionManager {
                 int fadeIn = section.getInt("fade-in", 20);
                 int stay = section.getInt("stay", 30);
                 int fadeOut = section.getInt("fade-out", 10);
-                int range = section.getInt("range", 32);
+                int range = section.getInt("range", 0);
                 return condition -> {
                     if (Math.random() > chance) return;
                     plugin.getScheduler().runTaskSync(() -> {

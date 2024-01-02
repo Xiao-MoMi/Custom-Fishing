@@ -1,6 +1,6 @@
 # Developer: @Xiao-MoMi
 # Wiki: https://mo-mi.gitbook.io/xiaomomi-plugins/
-config-version: '31'
+config-version: '32'
 
 # Debug
 debug: false
@@ -130,9 +130,6 @@ mechanics:
                     duration: 35
                     position: hook
                     item: util:lava_effect
-                    y: 0
-                    x: 0
-                    z: 0
             priority_2:
               conditions:
                 lava-fishing: false
@@ -143,9 +140,6 @@ mechanics:
                     duration: 35
                     position: hook
                     item: util:water_effect
-                    y: 0
-                    x: 0
-                    z: 0
 
   # Global properties which would help you reduce duplicated lines
   global-loot-property:
@@ -165,6 +159,37 @@ mechanics:
     # Other whitelist-items
     whitelist-items:
       - fishing_rod
+    # Actions to do if fishing loots are automatically collected into bag
+    collect-actions:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.armor.equip_leather"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      hologram_action:
+        type: hologram
+        value:
+          duration: 40
+          text: '{nick} <#B0E0E6><b>has been stored into bag</#B0E0E6>'
+          position: other
+          y: 1
+    # Actions to do if the fishing bag is full
+    full-actions:
+      conditional_action:
+        type: conditional
+        value:
+          conditions:
+            condition_1:
+              type: cooldown
+              value:
+                key: fishing_bag_full_notice
+                time: 60000
+          actions:
+            message_action:
+              type: message
+              value: "<#EEE8AA>[Fishing Bag]</#EEE8AA> Your fishing bag has been full."
 
   # Fishing wait time
   # This section would take effect if you set "override-vanilla" to true
@@ -198,6 +223,9 @@ mechanics:
     server-group: default
     # Increase this value would allow you to use more placeholders like {4_player} {5_score} in sacrifice of some performance
     placeholder-limit: 3
+
+  # If a player could get multiple loots from fishing, should the loots spawn at the same time or have delays for each (tick)
+  multiple-loot-spawn-delay: 4
 
 # Other settings
 other-settings:
@@ -233,6 +261,8 @@ other-settings:
     '{record}': '%fishingstats_size-record_{loot}%'
     # Requires server expansion
     '{date}': '%server_time_yyyy-MM-dd-HH:mm:ss%'
+    # Requires player expansion
+    '{yaw}': '%player_yaw%'
 
   # CustomFishing supports using items/blocks from other plugins
   # If items share the same id, they would inherit the effects

@@ -73,6 +73,11 @@ public class BukkitSchedulerImpl implements SyncScheduler {
      */
     @Override
     public CancellableTask runTaskSyncLater(Runnable runnable, Location location, long delay) {
+        if (delay == 0) {
+            if (Bukkit.isPrimaryThread()) runnable.run();
+            else Bukkit.getScheduler().runTask(plugin, runnable);
+            return new BukkitCancellableTask(null);
+        }
         return new BukkitCancellableTask(Bukkit.getScheduler().runTaskLater(plugin, runnable, delay));
     }
 
@@ -89,11 +94,13 @@ public class BukkitSchedulerImpl implements SyncScheduler {
 
         @Override
         public void cancel() {
-            this.bukkitTask.cancel();
+            if (this.bukkitTask != null)
+                this.bukkitTask.cancel();
         }
 
         @Override
         public boolean isCancelled() {
+            if (this.bukkitTask == null) return true;
             return this.bukkitTask.isCancelled();
         }
     }

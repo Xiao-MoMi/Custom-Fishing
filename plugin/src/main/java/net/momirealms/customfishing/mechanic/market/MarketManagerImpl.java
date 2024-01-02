@@ -433,7 +433,12 @@ public class MarketManagerImpl implements MarketManager, Listener {
      */
     @Override
     public double getFishPrice(Player player, Map<String, String> vars) {
-        return ConfigUtils.getExpressionValue(player, formula, vars);
+        String temp = PlaceholderManagerImpl.getInstance().parse(player, formula, vars);
+        var placeholders = PlaceholderManagerImpl.getInstance().detectPlaceholders(temp);
+        for (String placeholder : placeholders) {
+            temp = temp.replace(placeholder, "0");
+        }
+        return new ExpressionBuilder(temp).build().evaluate();
     }
 
     /**

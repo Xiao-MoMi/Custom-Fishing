@@ -215,6 +215,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerPotionEffectRequirement();
         this.registerSizeRequirement();
         this.registerHasStatsRequirement();
+        this.registerLootTypeRequirement();
     }
 
     public HashMap<String, Double> getLootWithWeight(Condition condition) {
@@ -1068,6 +1069,33 @@ public class RequirementManagerImpl implements RequirementManager {
                 if (lootInstance != null) {
                     if (!lootInstance.disableStats() && has) return true;
                     if (lootInstance.disableStats() && !has) return true;
+                }
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+    }
+
+    private void registerLootTypeRequirement() {
+        registerRequirement("loot-type", (args, actions, advanced) -> {
+            List<String> types = ConfigUtils.stringListArgs(args);
+            return condition -> {
+                String loot = condition.getArg("{loot}");
+                Loot lootInstance = plugin.getLootManager().getLoot(loot);
+                if (lootInstance != null) {
+                    if (types.contains(lootInstance.getType().name().toLowerCase(Locale.ENGLISH))) return true;
+                }
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+        registerRequirement("!loot-type", (args, actions, advanced) -> {
+            List<String> types = ConfigUtils.stringListArgs(args);
+            return condition -> {
+                String loot = condition.getArg("{loot}");
+                Loot lootInstance = plugin.getLootManager().getLoot(loot);
+                if (lootInstance != null) {
+                    if (!types.contains(lootInstance.getType().name().toLowerCase(Locale.ENGLISH))) return true;
                 }
                 if (advanced) triggerActions(actions, condition);
                 return false;

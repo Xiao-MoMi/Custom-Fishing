@@ -416,12 +416,12 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 // put vanilla loot in map
                 this.vanillaLootMap.put(uuid, Pair.of(item.getItemStack(), event.getExpToDrop()));
             }
-            loot.triggerActions(ActionTrigger.HOOK, temp.getPreparation());
-            temp.getPreparation().triggerActions(ActionTrigger.HOOK);
+            var fishingPreparation = temp.getPreparation();
+            loot.triggerActions(ActionTrigger.HOOK, fishingPreparation);
+            fishingPreparation.triggerActions(ActionTrigger.HOOK);
             if (!loot.disableGame()) {
                 // start the game if the loot has a game
-
-                if (startFishingGame(player, temp.getPreparation(), temp.getEffect())) {
+                if (startFishingGame(player, fishingPreparation, temp.getEffect())) {
                     event.setCancelled(true);
                 }
             } else {
@@ -455,14 +455,16 @@ public class FishingManagerImpl implements Listener, FishingManager {
         TempFishingState temp = getTempFishingState(uuid);
         if (temp != null) {
             var loot = temp.getLoot();
+            var fishingPreparation = temp.getPreparation();
+            fishingPreparation.setLocation(event.getHook().getLocation());
 
-            loot.triggerActions(ActionTrigger.BITE, temp.getPreparation());
-            temp.getPreparation().triggerActions(ActionTrigger.BITE);
+            loot.triggerActions(ActionTrigger.BITE, fishingPreparation);
+            fishingPreparation.triggerActions(ActionTrigger.BITE);
 
             if (loot.instanceGame() && !loot.disableGame()) {
-                loot.triggerActions(ActionTrigger.HOOK, temp.getPreparation());
-                temp.getPreparation().triggerActions(ActionTrigger.HOOK);
-                startFishingGame(player, temp.getPreparation(), temp.getEffect());
+                loot.triggerActions(ActionTrigger.HOOK, fishingPreparation);
+                fishingPreparation.triggerActions(ActionTrigger.HOOK);
+                startFishingGame(player, fishingPreparation, temp.getEffect());
             }
         }
     }
@@ -641,18 +643,27 @@ public class FishingManagerImpl implements Listener, FishingManager {
                     if (pair != null) {
                         fishingPreparation.insertArg("{nick}", "<lang:item.minecraft." + pair.left().getType().toString().toLowerCase() + ">");
                         for (int i = 0; i < amount; i++) {
-                            plugin.getItemManager().dropItem(hook.getLocation(), player.getLocation(), pair.left().clone());
-                            doSuccessActions(loot, effect, fishingPreparation, player);
-                            if (pair.right() > 0) {
-                                player.giveExp(pair.right(), true);
-                                AdventureManagerImpl.getInstance().sendSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
-                            }
+                            plugin.getScheduler().runTaskSyncLater(() -> {
+                                plugin.getItemManager().dropItem(player, hook.getLocation(), player.getLocation(), pair.left().clone(), fishingPreparation);
+                                doSuccessActions(loot, effect, fishingPreparation, player);
+                                if (pair.right() > 0) {
+                                    player.giveExp(pair.right(), true);
+                                    AdventureManagerImpl.getInstance().sendSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
+                                }
+                            }, hook.getLocation(), (long) CFConfig.multipleLootSpawnDelay * i);
                         }
                     }
                 } else {
                     for (int i = 0; i < amount; i++) {
-                        plugin.getItemManager().dropItem(player, hook.getLocation(), player.getLocation(), loot.getID(), fishingPreparation.getArgs());
-                        doSuccessActions(loot, effect, fishingPreparation, player);
+                        plugin.getScheduler().runTaskSyncLater(() -> {
+                            ItemStack item = plugin.getItemManager().build(player, "item", loot.getID(), fishingPreparation.getArgs());
+                            if (item == null) {
+                                LogUtils.warn(String.format("Item %s not exists", loot.getID()));
+                                return;
+                            }
+                            plugin.getItemManager().dropItem(player, hook.getLocation(), player.getLocation(), item, fishingPreparation);
+                            doSuccessActions(loot, effect, fishingPreparation, player);
+                        }, hook.getLocation(), (long) CFConfig.multipleLootSpawnDelay * i);
                     }
                 }
                 return;

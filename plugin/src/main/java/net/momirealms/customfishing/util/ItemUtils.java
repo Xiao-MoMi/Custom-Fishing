@@ -34,6 +34,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.Damageable;
@@ -341,7 +342,7 @@ public class ItemUtils {
      * @param amount     The amount of items to give
      * @return The actual amount of items given
      */
-    public static int giveCertainAmountOfItem(Player player, ItemStack itemStack, int amount) {
+    public static int putLootsToBag(Player player, ItemStack itemStack, int amount) {
         PlayerInventory inventory = player.getInventory();
         ItemMeta meta = itemStack.getItemMeta();
         int maxStackSize = itemStack.getMaxStackSize();
@@ -403,5 +404,60 @@ public class ItemUtils {
         }
 
         return actualAmount;
+    }
+
+    public static ItemStack removeOwner(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR) return itemStack;
+        NBTItem nbtItem = new NBTItem(itemStack);
+        if (nbtItem.hasTag("owner")) {
+            nbtItem.removeKey("owner");
+            return nbtItem.getItem();
+        }
+        return itemStack;
+    }
+
+    /**
+     * @return the amount of items that can't be put in the inventory
+     */
+    public static int putLootsToBag(Inventory inventory, ItemStack itemStack, int amount) {
+        itemStack = removeOwner(itemStack.clone());
+        ItemMeta meta = itemStack.getItemMeta();
+        int maxStackSize = itemStack.getMaxStackSize();
+        for (ItemStack other : inventory.getStorageContents()) {
+            if (other != null) {
+                if (other.getType() == itemStack.getType() && other.getItemMeta().equals(meta)) {
+                    if (other.getAmount() < maxStackSize) {
+                        int delta = maxStackSize - other.getAmount();
+                        if (amount > delta) {
+                            other.setAmount(maxStackSize);
+                            amount -= delta;
+                        } else {
+                            other.setAmount(amount + other.getAmount());
+                            return 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (amount > 0) {
+            for (ItemStack other : inventory.getStorageContents()) {
+                if (other == null) {
+                    if (amount > maxStackSize) {
+                        amount -= maxStackSize;
+                        ItemStack cloned = itemStack.clone();
+                        cloned.setAmount(maxStackSize);
+                        inventory.addItem(cloned);
+                    } else {
+                        ItemStack cloned = itemStack.clone();
+                        cloned.setAmount(amount);
+                        inventory.addItem(cloned);
+                        return 0;
+                    }
+                }
+            }
+        }
+
+        return amount;
     }
 }

@@ -18,9 +18,12 @@
 package net.momirealms.customfishing.api.manager;
 
 import net.momirealms.customfishing.api.data.user.OfflineUser;
+import net.momirealms.customfishing.api.mechanic.action.Action;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface BagManager {
@@ -44,4 +47,14 @@ public interface BagManager {
      * @param userData The OfflineUser data of the player whose bag is being edited.
      */
     void editOfflinePlayerBag(Player admin, OfflineUser userData);
+
+    Action[] getCollectLootActions();
+
+    Action[] getBagFullActions();
+
+    boolean doesBagStoreLoots();
+
+    String getBagTitle();
+
+    List<Material> getBagWhiteListItems();
 }

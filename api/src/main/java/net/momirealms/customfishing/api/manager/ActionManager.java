@@ -121,5 +121,9 @@ public interface ActionManager {
      * @param actions   The list of actions to trigger.
      * @param condition The condition associated with the actions.
      */
-    void triggerActions(List<Action> actions, Condition condition);
+    static void triggerActions(Condition condition, Action... actions) {
+        if (actions != null)
+            for (Action action : actions)
+                action.trigger(condition);
+    }
 }

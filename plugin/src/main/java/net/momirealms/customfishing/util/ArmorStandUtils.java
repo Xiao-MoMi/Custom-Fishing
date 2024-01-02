@@ -67,6 +67,7 @@ public class ArmorStandUtils {
         entityPacket.getDoubles().write(0, location.getX());
         entityPacket.getDoubles().write(1, location.getY());
         entityPacket.getDoubles().write(2, location.getZ());
+        entityPacket.getBytes().write(0, (byte) ((location.getYaw() % 360) * 128 / 180));
         return entityPacket;
     }
 

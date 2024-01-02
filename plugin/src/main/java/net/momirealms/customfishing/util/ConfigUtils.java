@@ -258,6 +258,17 @@ public class ConfigUtils {
         return list;
     }
 
+    public static String getString(Object o) {
+        if (o instanceof String s) {
+            return s;
+        } else if (o instanceof Integer i) {
+            return String.valueOf(i);
+        } else if (o instanceof Double d) {
+            return String.valueOf(d);
+        }
+        throw new IllegalArgumentException("Illegal string format: " + o);
+    }
+
     /**
      * Reads data from a YAML configuration file and creates it if it doesn't exist.
      *
