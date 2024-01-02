@@ -17,7 +17,7 @@ layout:
   - 'AAAABAAAA'
 
 # Price formula (For CustomFishing loots)
-price-formula: '{base} + {bonus} * {size}'
+price-formula: '{BASE} + {BONUS} * {SIZE}'
 
 # Item price (For vanilla items & other plugin items that have CustomModelData)
 item-price:

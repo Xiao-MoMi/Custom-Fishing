@@ -45,7 +45,46 @@ mechanics:
     hook: {}
     bait: {}
     loot:
+      new_size_record:
+        conditional_size_record_action:
+          type: conditional
+          value:
+            conditions:
+              has-stats: true
+            actions:
+              actionbar_action:
+                type: actionbar
+                value: '<#FFD700>[New Record]</#FFD700> <#FFFFF0>You caught a(n) {nick} which is <#FFA500>{size}cm</#FFA500> long!</#FFFFF0>'
+              sound_action:
+                type: sound
+                value:
+                  key: "minecraft:block.note_block.cow_bell"
+                  source: 'player'
+                  volume: 1
+                  pitch: 1
+              delayed_sound:
+                type: delay
+                value:
+                  delay: 2
+                  actions:
+                    sound_action:
+                      type: sound
+                      value:
+                        key: "minecraft:block.note_block.bell"
+                        source: 'player'
+                        volume: 1
+                        pitch: 1
       success:
+        conditional_size_info_action:
+          type: conditional
+          value:
+            conditions:
+              has-size: true
+              has-stats: true
+            actions:
+              actionbar_action:
+                type: actionbar
+                value: '<gray>You caught a(n) {nick} which is <#F5F5F5>{size}cm</#F5F5F5> long!</gray> <#C0C0C0>(Best record: {record}cm)</#C0C0C0>'
         title_action:
           type: random-title
           value:
@@ -53,7 +92,7 @@ mechanics:
               - '<green>GG!</green>'
               - '<green>Good Job!</green>'
             subtitles:
-              - 'You caught a {nick}'
+              - 'You caught a(n) {nick}'
               - 'Whoa! Nice catch!'
               - 'Oh {nick} here we go!'
               - 'Let''s see what it is!'
@@ -191,6 +230,8 @@ other-settings:
 
   # Requires PlaceholderAPI to work
   placeholder-register:
+    '{record}': '%fishingstats_size-record_{loot}%'
+    # Requires server expansion
     '{date}': '%server_time_yyyy-MM-dd-HH:mm:ss%'
 
   # CustomFishing supports using items/blocks from other plugins

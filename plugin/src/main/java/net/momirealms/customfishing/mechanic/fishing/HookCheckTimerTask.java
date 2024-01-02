@@ -188,6 +188,10 @@ public class HookCheckTimerTask implements Runnable {
         fishingPreparation.insertArg("{x}", String.valueOf(fishHook.getLocation().getBlockX()));
         fishingPreparation.insertArg("{y}", String.valueOf(fishHook.getLocation().getBlockY()));
         fishingPreparation.insertArg("{z}", String.valueOf(fishHook.getLocation().getBlockZ()));
+        if (!nextLoot.disableStats()) {
+            fishingPreparation.insertArg("{statistics_size}", nextLoot.getStatisticKey().getSizeKey());
+            fishingPreparation.insertArg("{statistics_amount}", nextLoot.getStatisticKey().getAmountKey());
+        }
         CustomFishingPlugin.get().getScheduler().runTaskAsync(() -> manager.setTempFishingState(fishingPreparation.getPlayer(), new TempFishingState(
                 initialEffect,
                 fishingPreparation,

@@ -678,37 +678,33 @@ public class FishingManagerImpl implements Listener, FishingManager {
             if (scoreStr != null) {
                 competition.refreshData(player, Double.parseDouble(scoreStr));
             } else {
+                double score = 0;
                 switch (competition.getGoal()) {
                     case CATCH_AMOUNT -> {
-                        fishingPreparation.insertArg("{score}", "1.00");
-                        competition.refreshData(player, 1);
-                        fishingPreparation.insertArg("{SCORE}", "1");
+                        score = 1;
+                        competition.refreshData(player, score);
                     }
                     case MAX_SIZE, TOTAL_SIZE -> {
                         String size = fishingPreparation.getArg("{SIZE}");
                         if (size != null) {
-                            double score = Double.parseDouble(size);
-                            fishingPreparation.insertArg("{score}", String.format("%.2f", score));
+                            score = Double.parseDouble(size);
                             competition.refreshData(player, score);
-                            fishingPreparation.insertArg("{SCORE}", size);
                         } else {
-                            fishingPreparation.insertArg("{score}", String.format("%.2f", 0.00));
-                            fishingPreparation.insertArg("{SCORE}", "0");
+                            score = 0;
                         }
                     }
                     case TOTAL_SCORE -> {
-                        double score = loot.getScore();
-                        if (score != 0) {
-                            double finalScore = score * effect.getScoreMultiplier() + effect.getScore();
-                            fishingPreparation.insertArg("{score}", String.format("%.2f", finalScore));
-                            competition.refreshData(player, finalScore);
-                            fishingPreparation.insertArg("{SCORE}", String.valueOf(finalScore));
+                        score = loot.getScore();
+                        if (score > 0) {
+                            score = score * effect.getScoreMultiplier() + effect.getScore();
+                            competition.refreshData(player, score);
                         } else {
-                            fishingPreparation.insertArg("{score}", "0.00");
-                            fishingPreparation.insertArg("{SCORE}", "0");
+                            score = 0;
                         }
                     }
                 }
+                fishingPreparation.insertArg("{score}", String.format("%.2f", score));
+                fishingPreparation.insertArg("{SCORE}", String.valueOf(score));
             }
         }
 
@@ -726,7 +722,15 @@ public class FishingManagerImpl implements Listener, FishingManager {
             Optional.ofNullable(
                     plugin.getStatisticsManager()
                           .getStatistics(player.getUniqueId())
-            ).ifPresent(it -> it.addLootAmount(loot, fishingPreparation, 1));
+            ).ifPresent(it -> {
+                it.addLootAmount(loot, fishingPreparation, 1);
+                String size = fishingPreparation.getArg("{SIZE}");
+                if (size != null)
+                    if (it.setSizeIfHigher(loot.getStatisticKey().getSizeKey(), Float.parseFloat(size))) {
+                        GlobalSettings.triggerLootActions(ActionTrigger.NEW_SIZE_RECORD, fishingPreparation);
+                        loot.triggerActions(ActionTrigger.NEW_SIZE_RECORD, fishingPreparation);
+                    }
+            });
     }
 
     /**

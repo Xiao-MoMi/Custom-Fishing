@@ -20,6 +20,8 @@ package net.momirealms.customfishing.api.manager;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Map;
+
 public interface MarketManager {
 
     /**
@@ -56,12 +58,9 @@ public interface MarketManager {
     /**
      * Calculates the price based on a formula with provided variables.
      *
-     * @param base  The base value for the formula.
-     * @param bonus The bonus value for the formula.
-     * @param size  The size value for the formula.
      * @return The calculated price based on the formula and provided variables.
      */
-    double getFishPrice(float base, float bonus, float size);
+    double getFishPrice(Player player, Map<String, String> vars);
 
     /**
      * Gets the character representing the item slot in the MarketGUI.

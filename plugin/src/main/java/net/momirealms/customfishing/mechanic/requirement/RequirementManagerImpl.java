@@ -213,6 +213,8 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerListRequirement();
         this.registerEnvironmentRequirement();
         this.registerPotionEffectRequirement();
+        this.registerSizeRequirement();
+        this.registerHasStatsRequirement();
     }
 
     public HashMap<String, Double> getLootWithWeight(Condition condition) {
@@ -1038,6 +1040,35 @@ public class RequirementManagerImpl implements RequirementManager {
                 String id = condition.getArg("{bait}");
                 if (id != null && has) return true;
                 if (id == null && !has) return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+    }
+
+    private void registerSizeRequirement() {
+        registerRequirement("has-size", (args, actions, advanced) -> {
+            boolean has = (boolean) args;
+            return condition -> {
+                String size = condition.getArg("{SIZE}");
+                if (size != null && has) return true;
+                if (size == null && !has) return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+    }
+
+    private void registerHasStatsRequirement() {
+        registerRequirement("has-stats", (args, actions, advanced) -> {
+            boolean has = (boolean) args;
+            return condition -> {
+                String loot = condition.getArg("{loot}");
+                Loot lootInstance = plugin.getLootManager().getLoot(loot);
+                if (lootInstance != null) {
+                    if (!lootInstance.disableStats() && has) return true;
+                    if (lootInstance.disableStats() && !has) return true;
+                }
                 if (advanced) triggerActions(actions, condition);
                 return false;
             };

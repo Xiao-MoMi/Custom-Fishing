@@ -32,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Statistics {
 
     private final ConcurrentHashMap<String, Integer> statisticMap;
+    private final ConcurrentHashMap<String, Float> sizeMap;
     private int total;
 
     /**
@@ -40,7 +41,8 @@ public class Statistics {
      * @param statisticData The initial statistic data.
      */
     public Statistics(StatisticData statisticData) {
-        this.statisticMap = new ConcurrentHashMap<>(statisticData.statisticMap);
+        this.statisticMap = new ConcurrentHashMap<>(statisticData.amountMap);
+        this.sizeMap = new ConcurrentHashMap<>(statisticData.sizeMap);
         this.total = statisticMap.values().stream().mapToInt(Integer::intValue).sum();
     }
 
@@ -52,14 +54,17 @@ public class Statistics {
      * @param amount    The amount of loot to add.
      */
     public synchronized void addLootAmount(Loot loot, Condition condition, int amount) {
+        if (amount < 1) {
+            return;
+        }
         if (amount == 1) {
             addSingleLootAmount(loot, condition);
             return;
         }
-        Integer previous = statisticMap.get(loot.getID());
+        Integer previous = statisticMap.get(loot.getStatisticKey().getAmountKey());
         if (previous == null) previous = 0;
         int after = previous + amount;
-        statisticMap.put(loot.getID(), after);
+        statisticMap.put(loot.getStatisticKey().getAmountKey(), after);
         total += amount;
         doSuccessTimesAction(previous, after, condition, loot);
     }
@@ -83,6 +88,13 @@ public class Statistics {
                 }
             }
         }
+    }
+
+    public boolean setSizeIfHigher(String loot, float size) {
+        float previous = sizeMap.getOrDefault(loot, 0f);
+        if (previous >= size) return false;
+        sizeMap.put(loot, size);
+        return true;
     }
 
     /**
@@ -111,8 +123,11 @@ public class Statistics {
      * @return The amount of the specified loot item.
      */
     public int getLootAmount(String key) {
-        Integer amount = statisticMap.get(key);
-        return amount == null ? 0 : amount;
+        return statisticMap.getOrDefault(key, 0);
+    }
+
+    public float getSizeRecord(String key) {
+        return sizeMap.getOrDefault(key, 0f);
     }
 
     /**
@@ -130,6 +145,10 @@ public class Statistics {
      */
     public Map<String, Integer> getStatisticMap() {
         return statisticMap;
+    }
+
+    public ConcurrentHashMap<String, Float> getSizeMap() {
+        return sizeMap;
     }
 
     /**

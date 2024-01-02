@@ -25,14 +25,23 @@ import java.util.Map;
 
 public class StatisticData {
 
-    @SerializedName("map")
-    public Map<String, Integer> statisticMap;
+    @SerializedName(value="amount", alternate={"map"})
+    public Map<String, Integer> amountMap;
 
-    public StatisticData(@NotNull Map<String, Integer> data) {
-        this.statisticMap = data;
+    @SerializedName("size")
+    public Map<String, Float> sizeMap;
+
+    public StatisticData() {
+        this.sizeMap = new HashMap<>();
+        this.amountMap = new HashMap<>();
+    }
+
+    public StatisticData(@NotNull Map<String, Integer> amount, @NotNull Map<String, Float> size) {
+        this.amountMap = amount;
+        this.sizeMap = size;
     }
 
     public static StatisticData empty() {
-        return new StatisticData(new HashMap<>());
+        return new StatisticData();
     }
 }

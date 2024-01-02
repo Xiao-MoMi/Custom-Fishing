@@ -63,12 +63,13 @@ public class YAMLImpl extends AbstractStorage implements LegacyDataStorageInterf
         File dataFile = getPlayerDataFile(uuid);
         if (!dataFile.exists()) {
             if (Bukkit.getPlayer(uuid) != null) {
-                return CompletableFuture.completedFuture(Optional.of(PlayerData.LOCKED));
-            } else {
                 return CompletableFuture.completedFuture(Optional.of(PlayerData.empty()));
+            } else {
+                return CompletableFuture.completedFuture(Optional.empty());
             }
         }
         YamlConfiguration data = ConfigUtils.readData(dataFile);
+
         PlayerData playerData = new PlayerData.Builder()
                 .setBagData(new InventoryData(data.getString("bag", ""), data.getInt("size", 9)))
                 .setEarningData(new EarningData(data.getDouble("earnings"), data.getInt("date")))
@@ -87,8 +88,13 @@ public class YAMLImpl extends AbstractStorage implements LegacyDataStorageInterf
         data.set("date", playerData.getEarningData().date);
         data.set("earnings", playerData.getEarningData().earnings);
         ConfigurationSection section = data.createSection("stats");
-        for (Map.Entry<String, Integer> entry : playerData.getStatistics().statisticMap.entrySet()) {
-            section.set(entry.getKey(), entry.getValue());
+        ConfigurationSection amountSection = section.createSection("amount");
+        ConfigurationSection sizeSection = section.createSection("size");
+        for (Map.Entry<String, Integer> entry : playerData.getStatistics().amountMap.entrySet()) {
+            amountSection.set(entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<String, Float> entry : playerData.getStatistics().sizeMap.entrySet()) {
+            sizeSection.set(entry.getKey(), entry.getValue());
         }
         try {
             data.save(getPlayerDataFile(uuid));
@@ -125,15 +131,24 @@ public class YAMLImpl extends AbstractStorage implements LegacyDataStorageInterf
      * @return The parsed StatisticData object.
      */
     private StatisticData getStatistics(ConfigurationSection section) {
-        if (section == null)
-            return StatisticData.empty();
-        else {
-            HashMap<String, Integer> map = new HashMap<>();
-            for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
-                map.put(entry.getKey(), (Integer) entry.getValue());
-            }
-            return new StatisticData(map);
+        HashMap<String, Integer> amountMap = new HashMap<>();
+        HashMap<String, Float> sizeMap = new HashMap<>();
+        if (section == null) {
+            return new StatisticData(amountMap, sizeMap);
         }
+        ConfigurationSection amountSection = section.getConfigurationSection("amount");
+        if (amountSection != null) {
+            for (Map.Entry<String, Object> entry : amountSection.getValues(false).entrySet()) {
+                amountMap.put(entry.getKey(), (Integer) entry.getValue());
+            }
+        }
+        ConfigurationSection sizeSection = section.getConfigurationSection("size");
+        if (sizeSection != null) {
+            for (Map.Entry<String, Object> entry : sizeSection.getValues(false).entrySet()) {
+                sizeMap.put(entry.getKey(), ((Double) entry.getValue()).floatValue());
+            }
+        }
+        return new StatisticData(amountMap, sizeMap);
     }
 
     @Override
@@ -159,7 +174,7 @@ public class YAMLImpl extends AbstractStorage implements LegacyDataStorageInterf
                     map.put(entry.getKey(), integer);
                 }
             }
-            builder.setStats(new StatisticData(map));
+            builder.setStats(new StatisticData(map, new HashMap<>()));
         } else {
             builder.setStats(StatisticData.empty());
         }

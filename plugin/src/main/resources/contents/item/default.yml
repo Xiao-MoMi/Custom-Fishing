@@ -4,6 +4,8 @@
 # customized configurations based on your own ideas,
 # allowing players to experience the uniqueness of your server.
 
+# https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing/loot/item
+
 # Vanilla loots settings
 vanilla:
   show-in-fishfinder: false
@@ -131,6 +133,7 @@ sharpness_book:
   tag: false
   material: enchanted_book
   group: enchantments
+  nick: "<lang:item.minecraft.enchanted_book>"
   show-in-fishfinder: false
   disable-stat: true
   random-stored-enchantments:
@@ -159,6 +162,7 @@ efficiency_book:
   material: enchanted_book
   group: enchantments
   show-in-fishfinder: false
+  nick: "<lang:item.minecraft.enchanted_book>"
   disable-stat: true
   random-stored-enchantments:
     lv5:
@@ -186,6 +190,7 @@ unbreaking_book:
   material: enchanted_book
   group: enchantments
   show-in-fishfinder: false
+  nick: "<lang:item.minecraft.enchanted_book>"
   disable-stat: true
   random-stored-enchantments:
     lv3:
@@ -205,6 +210,7 @@ protection_book:
   material: enchanted_book
   group: enchantments
   show-in-fishfinder: false
+  nick: "<lang:item.minecraft.enchanted_book>"
   disable-stat: true
   random-stored-enchantments:
     lv4:
@@ -226,7 +232,6 @@ protection_book:
 # Fish
 tuna_fish:
   material: cod
-  nick: <gradient:#F0FFFF:#4682B4:#F0FFFF>Tuna Fish</gradient>
   display:
     name: <gradient:#F0FFFF:#4682B4:#F0FFFF>Tuna Fish</gradient>
     lore:
@@ -292,7 +297,6 @@ tuna_fish_golden_star:
     bonus: 0.7
 pike_fish:
   material: cod
-  nick: <gradient:#F0F8FF:#5F9EA0:#F0F8FF>Pike Fish</gradient>
   display:
     name: <gradient:#F0F8FF:#5F9EA0:#F0F8FF>Pike Fish</gradient>
     lore:
@@ -506,7 +510,6 @@ perch_fish_golden_star:
     bonus: 3
 mullet_fish:
   material: cod
-  nick: <gradient:#D4F2E7:#E1FFFF:#D4F2E7>Mullet Fish</gradient>
   display:
     name: <gradient:#D4F2E7:#E1FFFF:#D4F2E7>Mullet Fish</gradient>
     lore:
@@ -575,7 +578,6 @@ mullet_fish_golden_star:
     bonus: 1.5
 sardine_fish:
   material: cod
-  nick: <gradient:#E1FFFF:#5F9EA0>Sardine Fish</gradient>
   display:
     name: <gradient:#E1FFFF:#5F9EA0>Sardine Fish</gradient>
     lore:
@@ -642,7 +644,6 @@ sardine_fish_golden_star:
     bonus: 3.4
 carp_fish:
   material: cod
-  nick: <gradient:#808000:#556B2F>Carp Fish</gradient>
   display:
     name: <gradient:#808000:#556B2F>Carp Fish</gradient>
     lore:
@@ -772,7 +773,6 @@ cat_fish_golden_star:
     bonus: 2.2
 octopus:
   material: cod
-  nick: <gradient:#D2691E:#FF6347>Octopus</gradient>
   display:
     name: <gradient:#D2691E:#FF6347>Octopus</gradient>
     lore:
@@ -839,9 +839,8 @@ octopus_golden_star:
     bonus: 1.5
 sunfish:
   material: cod
-  nick: <#F5DEB3>Sunfish</#F5DEB3>
   display:
-    name: <#F5DEB3>Sunfish
+    name: <#F5DEB3>Sunfish</#F5DEB3>
     lore:
       - <gray>It only has one huge head
       - '<white>size: {size}cm'
@@ -971,8 +970,6 @@ red_snapper_fish_golden_star:
     bonus: 2.3
 salmon_void_fish:
   material: cod
-  in-lava: true
-  nick: <gradient:#800000:#800080>Void Salmon</gradient>
   display:
     name: <gradient:#800000:#800080>Void Salmon</gradient>
     lore:
@@ -993,10 +990,9 @@ salmon_void_fish:
     bonus: 2.4
 salmon_void_fish_silver_star:
   show-in-fishfinder: false
-  in-lava: true
   material: cod
   display:
-    name: <gradient:#800000:#800080>Void Salmon</gradient><#F5F5F5>(Silver Star)</#F5F5F5>
+    name: <gradient:#800000:#800080>Void Salmon</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>
     lore:
       - <gray>A fish from the hell
       - <gray>It's looking at you...
@@ -1017,7 +1013,6 @@ salmon_void_fish_silver_star:
     bonus: 2.6
 salmon_void_fish_golden_star:
   show-in-fishfinder: false
-  in-lava: true
   material: cod
   display:
     name: <gradient:#800000:#800080>Void Salmon</gradient> <#FFD700>(Golden Star)</#FFD700>
@@ -1041,9 +1036,8 @@ salmon_void_fish_golden_star:
     bonus: 3
 woodskip_fish:
   material: cod
-  nick: <#CD5C5C>Woodskip Fish</#CD5C5C>
   display:
-    name: <#CD5C5C>Woodskip Fish
+    name: <#CD5C5C>Woodskip Fish</#CD5C5C>
     lore:
       - <gray>A very sensitive fish that can only
       - <gray>live in pools deep in the forest
@@ -1064,7 +1058,7 @@ woodskip_fish_silver_star:
   show-in-fishfinder: false
   material: cod
   display:
-    name: <#CD5C5C>Woodskip Fish <#F5F5F5>(Silver Star)</#F5F5F5>
+    name: <#CD5C5C>Woodskip Fish</#CD5C5C> <#F5F5F5>(Silver Star)</#F5F5F5>
     lore:
       - <gray>A very sensitive fish that can only
       - <gray>live in pools deep in the forest
@@ -1087,7 +1081,7 @@ woodskip_fish_golden_star:
   show-in-fishfinder: false
   material: cod
   display:
-    name: <#CD5C5C>Woodskip Fish <#FFD700>(Golden Star)</#FFD700>
+    name: <#CD5C5C>Woodskip Fish</#CD5C5C> <#FFD700>(Golden Star)</#FFD700>
     lore:
       - <gray>A very sensitive fish that can only
       - <gray>live in pools deep in the forest
@@ -1108,9 +1102,8 @@ woodskip_fish_golden_star:
     bonus: 2.8
 sturgeon_fish:
   material: cod
-  nick: <#48D1CC>Sturgeon Fish</#48D1CC>
   display:
-    name: <#48D1CC>Sturgeon Fish
+    name: <#48D1CC>Sturgeon Fish</#48D1CC>
     lore:
       - <gray>An ancient bottom-feeder with a dwindling
       - <gray>population. Females can live up to 150 years
@@ -1131,7 +1124,7 @@ sturgeon_fish_silver_star:
   show-in-fishfinder: false
   material: cod
   display:
-    name: <#48D1CC>Sturgeon Fish <#F5F5F5>(Silver Star)</#F5F5F5>
+    name: <#48D1CC>Sturgeon Fish</#48D1CC> <#F5F5F5>(Silver Star)</#F5F5F5>
     lore:
       - <gray>An ancient bottom-feeder with a dwindling
       - <gray>population. Females can live up to 150 years
@@ -1154,7 +1147,7 @@ sturgeon_fish_golden_star:
   show-in-fishfinder: false
   material: cod
   display:
-    name: <#48D1CC>Sturgeon Fish <#FFD700>(Golden Star)</#FFD700>
+    name: <#48D1CC>Sturgeon Fish</#48D1CC> <#FFD700>(Golden Star)</#FFD700>
     lore:
       - <gray>An ancient bottom-feeder with a dwindling
       - <gray>population. Females can live up to 150 years
@@ -1175,7 +1168,6 @@ sturgeon_fish_golden_star:
     bonus: 10
 blue_jellyfish:
   material: cod
-  nick: <#87CEFA>Jellyfish</#87CEFA>
   display:
     name: <#87CEFA>Jellyfish</#87CEFA>
     lore:
@@ -1196,7 +1188,6 @@ blue_jellyfish:
 blue_jellyfish_silver_star:
   show-in-fishfinder: false
   material: cod
-  nick: <#87CEFA>Jellyfish</#87CEFA>
   display:
     name: <#87CEFA>Jellyfish</#87CEFA>
     lore:
@@ -1219,7 +1210,6 @@ blue_jellyfish_silver_star:
 blue_jellyfish_golden_star:
   show-in-fishfinder: false
   material: cod
-  nick: <#87CEFA>Jellyfish</#87CEFA>
   display:
     name: <#87CEFA>Jellyfish</#87CEFA>
     lore:
@@ -1241,7 +1231,6 @@ blue_jellyfish_golden_star:
     bonus: 8
 pink_jellyfish:
   material: cod
-  nick: <#FFC0CB>Jellyfish</#FFC0CB>
   display:
     name: <#FFC0CB>Jellyfish</#FFC0CB>
     lore:
@@ -1262,7 +1251,6 @@ pink_jellyfish:
 pink_jellyfish_silver_star:
   show-in-fishfinder: false
   material: cod
-  nick: <#FFC0CB>Jellyfish</#FFC0CB>
   display:
     name: <#FFC0CB>Jellyfish</#FFC0CB>
     lore:
@@ -1285,7 +1273,6 @@ pink_jellyfish_silver_star:
 pink_jellyfish_golden_star:
   show-in-fishfinder: false
   material: cod
-  nick: <#FFC0CB>Jellyfish</#FFC0CB>
   display:
     name: <#FFC0CB>Jellyfish</#FFC0CB>
     lore:

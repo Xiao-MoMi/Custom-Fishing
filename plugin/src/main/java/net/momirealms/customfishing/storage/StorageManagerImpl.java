@@ -200,7 +200,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
                 return CompletableFuture.completedFuture(Optional.empty());
             }
             PlayerData data = optionalUser.get();
-            if (data == PlayerData.LOCKED) {
+            if (data.isLocked()) {
                 return CompletableFuture.completedFuture(Optional.of(OfflineUserImpl.LOCKED_USER));
             } else {
                 OfflineUser offlineUser = new OfflineUserImpl(uuid, data.getName(), data);
@@ -343,7 +343,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
             // Data should not be empty
             if (optionalData.isEmpty())
                 return;
-            if (optionalData.get() == PlayerData.LOCKED) {
+            if (optionalData.get().isLocked()) {
                 waitForDataLockRelease(uuid, times + 1);
             } else {
                 putDataInCache(player, optionalData.get());

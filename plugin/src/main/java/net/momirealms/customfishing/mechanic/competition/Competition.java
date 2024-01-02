@@ -79,7 +79,6 @@ public class Competition implements FishingCompetition {
         this.progress = 1;
         this.remainingTime = config.getDurationInSeconds();
         this.startTime = Instant.now().getEpochSecond();
-        this.updatePublicPlaceholders();
 
         this.arrangeTimerTask();
         if (config.getBossBarConfig() != null) {
@@ -98,6 +97,9 @@ public class Competition implements FishingCompetition {
                 action.trigger(condition);
             }
         }
+
+        this.ranking.clear();
+        this.updatePublicPlaceholders();
 
         CompetitionEvent competitionStartEvent = new CompetitionEvent(CompetitionEvent.State.START, this);
         Bukkit.getPluginManager().callEvent(competitionStartEvent);

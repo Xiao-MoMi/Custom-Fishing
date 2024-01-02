@@ -99,4 +99,8 @@ public class PlayerData {
     public String getName() {
         return name;
     }
+
+    public boolean isLocked() {
+        return this == LOCKED;
+    }
 }

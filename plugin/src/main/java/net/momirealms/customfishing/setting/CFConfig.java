@@ -80,7 +80,7 @@ public class CFConfig {
 
     // Competition
     public static boolean redisRanking;
-    public static List<String> serverGroup;
+    public static String serverGroup;
     public static int placeholderLimit;
 
     // Data save interval
@@ -163,7 +163,7 @@ public class CFConfig {
 
         redisRanking = config.getBoolean("mechanics.competition.redis-ranking", false);
         placeholderLimit = config.getInt("mechanics.competition.placeholder-limit", 3);
-        serverGroup = ConfigUtils.stringListArgs(config.get("mechanics.competition.server-group","default"));
+        serverGroup = config.getString("mechanics.competition.server-group","default");
 
         dataSaveInterval = config.getInt("other-settings.data-saving-interval", 600);
         logDataSaving = config.getBoolean("other-settings.log-data-saving", true);

@@ -82,6 +82,9 @@ public class StatisticsPapi extends PlaceholderExpansion {
                 if (split.length == 1) return "Invalid format";
                 return String.valueOf(statistics.getLootAmount(split[1]));
             }
+            case "size-record" -> {
+                return String.format("%.2f", statistics.getSizeRecord(split[1]));
+            }
             case "category" -> {
                 if (split.length == 1) return "Invalid format";
                 String[] categorySplit = split[1].split("_", 2);

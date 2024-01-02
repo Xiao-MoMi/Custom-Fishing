@@ -429,20 +429,11 @@ public class MarketManagerImpl implements MarketManager, Listener {
     /**
      * Calculates the price based on a formula with provided variables.
      *
-     * @param base  The base value for the formula.
-     * @param bonus The bonus value for the formula.
-     * @param size  The size value for the formula.
      * @return The calculated price based on the formula and provided variables.
      */
     @Override
-    public double getFishPrice(float base, float bonus, float size) {
-        Expression expression = new ExpressionBuilder(getFormula())
-                .variables("base", "bonus", "size")
-                .build()
-                .setVariable("base", base)
-                .setVariable("bonus", bonus)
-                .setVariable("size", size);
-        return expression.evaluate();
+    public double getFishPrice(Player player, Map<String, String> vars) {
+        return ConfigUtils.getExpressionValue(player, formula, vars);
     }
 
     /**

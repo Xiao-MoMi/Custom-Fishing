@@ -20,6 +20,7 @@ package net.momirealms.customfishing.mechanic.competition.ranking;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionPlayer;
 import net.momirealms.customfishing.api.mechanic.competition.Ranking;
+import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.storage.method.database.nosql.RedisManager;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.resps.Tuple;
@@ -35,7 +36,7 @@ public class RedisRankingImpl implements Ranking {
     @Override
     public void clear() {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
-            jedis.zremrangeByRank("cf_competition",0,-1);
+            jedis.del("cf_competition_" + CFConfig.serverGroup);
         }
     }
 
@@ -48,7 +49,7 @@ public class RedisRankingImpl implements Ranking {
     @Override
     public CompetitionPlayer getCompetitionPlayer(String player) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
-            Double score = jedis.zscore("cf_competition", player);
+            Double score = jedis.zscore("cf_competition_" + CFConfig.serverGroup, player);
             if (score == null || score == 0) return null;
             return new CompetitionPlayer(player, Float.parseFloat(score.toString()));
         }
@@ -57,7 +58,7 @@ public class RedisRankingImpl implements Ranking {
     @Override
     public CompetitionPlayer getCompetitionPlayer(int rank) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
-            List<Tuple> player = jedis.zrevrangeWithScores("cf_competition", rank - 1, rank -1);
+            List<Tuple> player = jedis.zrevrangeWithScores("cf_competition_" + CFConfig.serverGroup, rank - 1, rank -1);
             if (player == null || player.size() == 0) return null;
             return new CompetitionPlayer(player.get(0).getElement(), player.get(0).getScore());
         }
@@ -66,14 +67,14 @@ public class RedisRankingImpl implements Ranking {
     @Override
     public void addPlayer(CompetitionPlayer competitionPlayer) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
-            jedis.zincrby("cf_competition", competitionPlayer.getScore(), competitionPlayer.getPlayer());
+            jedis.zincrby("cf_competition_" + CFConfig.serverGroup, competitionPlayer.getScore(), competitionPlayer.getPlayer());
         }
     }
 
     @Override
     public void removePlayer(String player) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
-            jedis.del("cf_competition", player);
+            jedis.zrem("cf_competition_" + CFConfig.serverGroup, player);
         }
     }
 
@@ -85,7 +86,7 @@ public class RedisRankingImpl implements Ranking {
     @Override
     public Iterator<Pair<String, Double>> getIterator() {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
-            List<Tuple> players = jedis.zrevrangeWithScores("cf_competition", 0, -1);
+            List<Tuple> players = jedis.zrevrangeWithScores("cf_competition_" + CFConfig.serverGroup, 0, -1);
             return players.stream().map(it -> Pair.of(it.getElement(), it.getScore())).toList().iterator();
         }
     }
@@ -98,7 +99,7 @@ public class RedisRankingImpl implements Ranking {
     @Override
     public int getSize() {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
-            long size = jedis.zcard("cf_competition");
+            long size = jedis.zcard("cf_competition_" + CFConfig.serverGroup);
             return (int) size;
         }
     }
@@ -112,7 +113,7 @@ public class RedisRankingImpl implements Ranking {
     @Override
     public int getPlayerRank(String player) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
-            Long rank = jedis.zrevrank("cf_competition", player);
+            Long rank = jedis.zrevrank("cf_competition_" + CFConfig.serverGroup, player);
             if (rank == null)
                 return -1;
             return (int) (rank + 1);
@@ -128,7 +129,7 @@ public class RedisRankingImpl implements Ranking {
     @Override
     public double getPlayerScore(String player) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
-            Double rank = jedis.zscore("cf_competition", player);
+            Double rank = jedis.zscore("cf_competition_" + CFConfig.serverGroup, player);
             if (rank == null)
                 return 0;
             return rank.floatValue();
@@ -144,7 +145,7 @@ public class RedisRankingImpl implements Ranking {
     @Override
     public void refreshData(String player, double score) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
-            jedis.zincrby("cf_competition", score, player);
+            jedis.zincrby("cf_competition_" + CFConfig.serverGroup, score, player);
         }
     }
 
@@ -157,7 +158,7 @@ public class RedisRankingImpl implements Ranking {
     @Override
     public void setData(String player, double score) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
-            jedis.zadd("cf_competition", score, player);
+            jedis.zadd("cf_competition_" + CFConfig.serverGroup, score, player);
         }
     }
 
@@ -170,7 +171,7 @@ public class RedisRankingImpl implements Ranking {
     @Override
     public String getPlayerAt(int rank) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
-            List<String> player = jedis.zrevrange("cf_competition", rank - 1, rank -1);
+            List<String> player = jedis.zrevrange("cf_competition_" + CFConfig.serverGroup, rank - 1, rank -1);
             if (player == null || player.size() == 0) return null;
             return player.get(0);
         }
@@ -185,7 +186,7 @@ public class RedisRankingImpl implements Ranking {
     @Override
     public double getScoreAt(int rank) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
-            List<Tuple> players = jedis.zrevrangeWithScores("cf_competition", rank - 1, rank -1);
+            List<Tuple> players = jedis.zrevrangeWithScores("cf_competition_" + CFConfig.serverGroup, rank - 1, rank -1);
             if (players == null || players.size() == 0) return 0;
             return players.get(0).getScore();
         }

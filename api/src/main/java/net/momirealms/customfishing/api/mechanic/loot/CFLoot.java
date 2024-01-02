@@ -20,6 +20,7 @@ package net.momirealms.customfishing.api.mechanic.loot;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
+import net.momirealms.customfishing.api.mechanic.statistic.StatisticsKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -38,6 +39,7 @@ public class CFLoot implements Loot {
     private double score;
     private String[] lootGroup;
     private String filePath;
+    private StatisticsKey statisticsKey;
 
     public CFLoot(String id, LootType type) {
         this.id = id;
@@ -150,6 +152,17 @@ public class CFLoot implements Loot {
         }
 
         /**
+         * Set the statistics key for this loot
+         *
+         * @param statisticsKey statistics key
+         * @return The builder.
+         */
+        public Builder statsKey(StatisticsKey statisticsKey) {
+            this.loot.statisticsKey = statisticsKey;
+            return this;
+        }
+
+        /**
          * Add actions triggered by a specific trigger.
          *
          * @param trigger The trigger for the actions.
@@ -243,6 +256,11 @@ public class CFLoot implements Loot {
     @Override
     public @NotNull String getNick() {
         return this.nick;
+    }
+
+    @Override
+    public StatisticsKey getStatisticKey() {
+        return this.statisticsKey;
     }
 
     /**

@@ -26,6 +26,7 @@ import net.momirealms.customfishing.api.mechanic.loot.CFLoot;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
 import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
+import net.momirealms.customfishing.api.mechanic.statistic.StatisticsKey;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.api.util.WeightUtils;
 import net.momirealms.customfishing.mechanic.requirement.RequirementManagerImpl;
@@ -273,6 +274,7 @@ public class LootManagerImpl implements LootManager {
                 .nick(section.getString("nick", section.getString("display.name", key)))
                 .addActions(plugin.getActionManager().getActionMap(section.getConfigurationSection("events")))
                 .addTimesActions(plugin.getActionManager().getTimesActionMap(section.getConfigurationSection("events.success-times")))
+                .statsKey(new StatisticsKey(section.getString("statistics.amount", key), section.getString("statistics.size", key)))
                 .build();
     }
 }

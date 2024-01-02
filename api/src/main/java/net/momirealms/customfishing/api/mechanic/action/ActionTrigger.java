@@ -28,5 +28,6 @@ public enum ActionTrigger {
     LAND,
     ACTIVATE,
     TIMER,
-    INTERACT
+    INTERACT,
+    NEW_SIZE_RECORD
 }

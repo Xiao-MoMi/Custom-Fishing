@@ -119,7 +119,7 @@ public class OfflineUserImpl implements OfflineUser {
         return new PlayerData.Builder()
                 .setBagData(new InventoryData(InventoryUtils.stacksToBase64(holder.getInventory().getStorageContents()), holder.getInventory().getSize()))
                 .setEarningData(earningData)
-                .setStats(new StatisticData(statistics.getStatisticMap()))
+                .setStats(new StatisticData(statistics.getStatisticMap(), statistics.getSizeMap()))
                 .setName(name)
                 .build();
     }

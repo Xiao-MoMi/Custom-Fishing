@@ -184,7 +184,7 @@ public abstract class AbstractHikariDatabase extends AbstractSQLDatabase impleme
                             .map(element -> element.split(":"))
                             .filter(pair -> pair.length == 2)
                             .collect(Collectors.toMap(pair -> pair[0], pair -> Integer.parseInt(pair[1])));
-                    builder.setStats(new StatisticData(amountMap));
+                    builder.setStats(new StatisticData(amountMap, new HashMap<>()));
                 } else {
                     builder.setStats(StatisticData.empty());
                 }
