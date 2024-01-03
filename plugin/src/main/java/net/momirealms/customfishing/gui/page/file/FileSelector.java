@@ -56,7 +56,7 @@ public class FileSelector {
                 if (file.isFile() && file.getName().endsWith(".yml")) {
                     items.addLast(new FileItem(file));
                 } else if (file.isDirectory()) {
-                    String path = file.getPath();
+                    String path = file.getPath().replace("/", "\\");
                     String[] split = path.split("\\\\");
                     String type = split[3];
                     switch (type) {
@@ -117,7 +117,7 @@ public class FileSelector {
 
         @Override
         public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
-            String path = file.getPath();
+            String path = file.getPath().replace("/", "\\");
             String[] split = path.split("\\\\");
             String type = split[3];
             switch (type) {

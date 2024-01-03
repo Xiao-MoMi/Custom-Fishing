@@ -44,7 +44,7 @@ public class BackToFolderItem extends AbstractItem implements Icon {
 
     @Override
     public ItemProvider getItemProvider() {
-        if (file != null && file.getPath().startsWith("plugins\\CustomFishing\\contents")) {
+        if (file != null && (file.getPath().startsWith("plugins\\CustomFishing\\contents") || file.getPath().startsWith("plugins/CustomFishing/contents"))) {
             return new ItemBuilder(Material.ORANGE_STAINED_GLASS_PANE)
                     .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
                             CFLocale.GUI_BACK_TO_PARENT_FOLDER
@@ -59,7 +59,7 @@ public class BackToFolderItem extends AbstractItem implements Icon {
 
     @Override
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
-        if (file != null && file.getPath().startsWith("plugins\\CustomFishing\\contents"))
+        if (file != null && (file.getPath().startsWith("plugins\\CustomFishing\\contents") || file.getPath().startsWith("plugins/CustomFishing/contents")))
             new FileSelector(player, file);
     }
 }
