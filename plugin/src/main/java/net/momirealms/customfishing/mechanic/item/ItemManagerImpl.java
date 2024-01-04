@@ -377,7 +377,6 @@ public class ItemManagerImpl implements ItemManager, Listener {
         }
         int amount = builder.getAmount();
         temp.setAmount(amount);
-        placeholders.put("{amount}", String.valueOf(amount));
         NBTItem nbtItem = new NBTItem(temp);
         for (ItemBuilder.ItemPropertyEditor editor : builder.getEditors()) {
             editor.edit(player, nbtItem, placeholders);
