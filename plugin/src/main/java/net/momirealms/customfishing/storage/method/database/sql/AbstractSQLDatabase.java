@@ -145,7 +145,6 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
                 final byte[] dataByteArray = blob.getBytes(1, (int) blob.length());
                 blob.free();
                 if (lock) lockOrUnlockPlayerData(uuid, true);
-                LogUtils.info(new String(dataByteArray, StandardCharsets.UTF_8));
                 future.complete(Optional.of(plugin.getStorageManager().fromBytes(dataByteArray)));
             } else if (Bukkit.getPlayer(uuid) != null) {
                 var data = PlayerData.empty();

@@ -429,11 +429,10 @@ public class StorageManagerImpl implements StorageManager, Listener {
     @Override
     public PlayerData fromJson(String json) {
         try {
-            LogUtils.info("Try parsing Json");
             return gson.fromJson(json, PlayerData.class);
         } catch (JsonSyntaxException e) {
-            LogUtils.warn("Failed to get PlayerData from bytes");
-            LogUtils.warn("Data: " + json);
+            LogUtils.severe("Failed to parse PlayerData from json");
+            LogUtils.info("Json: " + json);
             throw new RuntimeException(e);
         }
     }
@@ -448,14 +447,5 @@ public class StorageManagerImpl implements StorageManager, Listener {
     @NotNull
     public PlayerData fromBytes(byte[] data) {
         return fromJson(new String(data, StandardCharsets.UTF_8));
-    }
-
-    /**
-     * Custom exception class for data serialization errors.
-     */
-    public static class DataSerializationException extends RuntimeException {
-        protected DataSerializationException(String message, Throwable cause) {
-            super(message, cause);
-        }
     }
 }
