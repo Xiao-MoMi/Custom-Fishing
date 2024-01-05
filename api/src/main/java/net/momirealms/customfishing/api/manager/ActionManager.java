@@ -24,7 +24,6 @@ import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.HashMap;
-import java.util.List;
 
 public interface ActionManager {
 

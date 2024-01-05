@@ -69,18 +69,16 @@ public class BagManagerImpl implements BagManager, Listener {
 
     public void load() {
         Bukkit.getPluginManager().registerEvents(this, plugin);
-        if (isEnabled()) {
-            YamlConfiguration config = plugin.getConfig("config.yml");
-            ConfigurationSection bagSection = config.getConfigurationSection("mechanics.fishing-bag");
-            if (bagSection != null) {
-                bagTitle = bagSection.getString("bag-title");
-                bagStoreLoots = bagSection.getBoolean("can-store-loot", false);
-                bagWhiteListItems = bagSection.getStringList("whitelist-items").stream().map(it -> Material.valueOf(it.toUpperCase(Locale.ENGLISH))).toList();
-                if (bagStoreLoots) {
-                    collectLootActions = plugin.getActionManager().getActions(bagSection.getConfigurationSection("collect-actions"));
-                    bagFullActions = plugin.getActionManager().getActions(bagSection.getConfigurationSection("full-actions"));
-                    collectRequirements = plugin.getRequirementManager().getRequirements(bagSection.getConfigurationSection("collect-requirements"), false);
-                }
+        YamlConfiguration config = plugin.getConfig("config.yml");
+        ConfigurationSection bagSection = config.getConfigurationSection("mechanics.fishing-bag");
+        if (bagSection != null) {
+            bagTitle = bagSection.getString("bag-title");
+            bagStoreLoots = bagSection.getBoolean("can-store-loot", false);
+            bagWhiteListItems = bagSection.getStringList("whitelist-items").stream().map(it -> Material.valueOf(it.toUpperCase(Locale.ENGLISH))).toList();
+            if (bagStoreLoots) {
+                collectLootActions = plugin.getActionManager().getActions(bagSection.getConfigurationSection("collect-actions"));
+                bagFullActions = plugin.getActionManager().getActions(bagSection.getConfigurationSection("full-actions"));
+                collectRequirements = plugin.getRequirementManager().getRequirements(bagSection.getConfigurationSection("collect-requirements"), false);
             }
         }
     }

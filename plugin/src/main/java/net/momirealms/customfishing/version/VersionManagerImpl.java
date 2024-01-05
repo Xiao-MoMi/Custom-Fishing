@@ -20,7 +20,6 @@ package net.momirealms.customfishing.version;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
 import net.momirealms.customfishing.api.manager.VersionManager;
 import net.momirealms.customfishing.api.util.LogUtils;
-import org.bukkit.Bukkit;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

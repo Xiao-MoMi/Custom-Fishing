@@ -27,7 +27,6 @@ import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
-import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementExpansion;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementFactory;

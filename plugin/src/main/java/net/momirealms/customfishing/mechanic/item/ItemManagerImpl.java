@@ -23,6 +23,8 @@ import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Key;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.common.Tuple;
+import net.momirealms.customfishing.api.event.FishingBagPreCollectEvent;
+import net.momirealms.customfishing.api.event.FishingLootPreSpawnEvent;
 import net.momirealms.customfishing.api.event.FishingLootSpawnEvent;
 import net.momirealms.customfishing.api.manager.ActionManager;
 import net.momirealms.customfishing.api.manager.ItemManager;
@@ -53,7 +55,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -433,6 +435,13 @@ public class ItemManagerImpl implements ItemManager, Listener {
 
         if (CFConfig.enableFishingBag && plugin.getBagManager().doesBagStoreLoots() && RequirementManager.isRequirementMet(condition, plugin.getBagManager().getCollectRequirements())) {
             var bag = plugin.getBagManager().getOnlineBagInventory(player.getUniqueId());
+
+            FishingBagPreCollectEvent preCollectEvent = new FishingBagPreCollectEvent(player, item, bag);
+            Bukkit.getPluginManager().callEvent(preCollectEvent);
+            if (preCollectEvent.isCancelled()) {
+                return;
+            }
+
             int cannotPut = ItemUtils.putLootsToBag(bag, item, item.getAmount());
             // some are put into bag
             if (cannotPut != item.getAmount()) {
@@ -447,13 +456,20 @@ public class ItemManagerImpl implements ItemManager, Listener {
             ActionManager.triggerActions(condition, plugin.getBagManager().getBagFullActions());
         }
 
-        FishingLootSpawnEvent spawnEvent = new FishingLootSpawnEvent(player, hookLocation, item);
-        Bukkit.getPluginManager().callEvent(spawnEvent);
-        if (spawnEvent.isCancelled()) {
+        FishingLootPreSpawnEvent preSpawnEvent = new FishingLootPreSpawnEvent(player, hookLocation, item);
+        Bukkit.getPluginManager().callEvent(preSpawnEvent);
+        if (preSpawnEvent.isCancelled()) {
             return;
         }
 
-        Entity itemEntity = hookLocation.getWorld().dropItem(hookLocation, item);
+        Item itemEntity = hookLocation.getWorld().dropItem(hookLocation, item);
+        FishingLootSpawnEvent spawnEvent = new FishingLootSpawnEvent(player, hookLocation, itemEntity);
+        Bukkit.getPluginManager().callEvent(spawnEvent);
+        if (spawnEvent.isCancelled()) {
+            itemEntity.remove();
+            return;
+        }
+
         Vector vector = playerLocation.subtract(hookLocation).toVector().multiply(0.105);
         vector = vector.setY((vector.getY() + 0.22) * 1.18);
         itemEntity.setVelocity(vector);

@@ -20,7 +20,6 @@ package net.momirealms.customfishing.util;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTListCompound;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
-import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;

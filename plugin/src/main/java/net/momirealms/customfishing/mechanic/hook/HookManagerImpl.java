@@ -322,7 +322,7 @@ public class HookManagerImpl implements Listener, HookManager {
             if (cursor.getAmount() == 0) {
                 event.setCursor(previousItemStack);
             } else {
-                ItemUtils.putLootsToBag(player, previousItemStack, 1);
+                ItemUtils.giveItem(player, previousItemStack, 1);
             }
         }
 

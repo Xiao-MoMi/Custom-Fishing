@@ -626,7 +626,7 @@ public class ActionManagerImpl implements ActionManager {
                 return condition -> {
                     if (Math.random() > chance) return;
                     Player player = condition.getPlayer();
-                    ItemUtils.putLootsToBag(player, Objects.requireNonNull(CustomFishingPlugin.get().getItemManager().buildAnyPluginItemByID(player, id)), amount);
+                    ItemUtils.giveItem(player, Objects.requireNonNull(CustomFishingPlugin.get().getItemManager().buildAnyPluginItemByID(player, id)), amount);
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: give-item");

@@ -337,16 +337,27 @@ public class StorageManagerImpl implements StorageManager, Listener {
     public void waitForDataLockRelease(UUID uuid, int times) {
         plugin.getScheduler().runTaskAsyncLater(() -> {
         var player = Bukkit.getPlayer(uuid);
-        if (player == null || !player.isOnline() || times > 3)
+        if (player == null || !player.isOnline())
             return;
+        if (times > 3) {
+            LogUtils.warn("Tried 3 times when getting data for " + uuid + ". Giving up.");
+            return;
+        }
         this.dataSource.getPlayerData(uuid, CFConfig.lockData).thenAccept(optionalData -> {
             // Data should not be empty
-            if (optionalData.isEmpty())
+            if (optionalData.isEmpty()) {
+                LogUtils.severe("Unexpected error: Data is null");
                 return;
+            }
+
             if (optionalData.get().isLocked()) {
                 waitForDataLockRelease(uuid, times + 1);
             } else {
-                putDataInCache(player, optionalData.get());
+                try {
+                    putDataInCache(player, optionalData.get());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         }, 1, TimeUnit.SECONDS);
@@ -417,7 +428,14 @@ public class StorageManagerImpl implements StorageManager, Listener {
     @NotNull
     @Override
     public PlayerData fromJson(String json) {
-        return gson.fromJson(json, PlayerData.class);
+        try {
+            LogUtils.info("Try parsing Json");
+            return gson.fromJson(json, PlayerData.class);
+        } catch (JsonSyntaxException e) {
+            LogUtils.warn("Failed to get PlayerData from bytes");
+            LogUtils.warn("Data: " + json);
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -429,11 +447,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
     @Override
     @NotNull
     public PlayerData fromBytes(byte[] data) {
-        try {
-            return gson.fromJson(new String(data, StandardCharsets.UTF_8), PlayerData.class);
-        } catch (JsonSyntaxException e) {
-            throw new DataSerializationException("Failed to get PlayerData from bytes", e);
-        }
+        return fromJson(new String(data, StandardCharsets.UTF_8));
     }
 
     /**

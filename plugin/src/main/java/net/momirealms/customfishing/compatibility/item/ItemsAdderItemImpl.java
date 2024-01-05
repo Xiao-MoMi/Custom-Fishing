@@ -19,6 +19,7 @@ package net.momirealms.customfishing.compatibility.item;
 
 import dev.lone.itemsadder.api.CustomStack;
 import net.momirealms.customfishing.api.mechanic.item.ItemLibrary;
+import net.momirealms.customfishing.api.util.LogUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -31,7 +32,12 @@ public class ItemsAdderItemImpl implements ItemLibrary {
 
     @Override
     public ItemStack buildItem(Player player, String id) {
-        return CustomStack.getInstance(id).getItemStack();
+        CustomStack stack = CustomStack.getInstance(id);
+        if (stack == null) {
+            LogUtils.severe(id + " doesn't exist in ItemsAdder configs.");
+            return null;
+        }
+        return stack.getItemStack();
     }
 
     @Override

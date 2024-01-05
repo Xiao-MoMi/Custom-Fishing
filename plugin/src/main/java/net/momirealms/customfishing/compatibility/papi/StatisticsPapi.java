@@ -66,14 +66,13 @@ public class StatisticsPapi extends PlaceholderExpansion {
     @Override
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
         OnlineUser onlineUser = plugin.getStorageManager().getOnlineUser(player.getUniqueId());
-        if (onlineUser == null) return "";
+        if (onlineUser == null) return "Data not loaded";
         Statistics statistics = onlineUser.getStatistics();
-        if (params.equals("total")) {
-            return String.valueOf(statistics.getTotalCatchAmount());
-        }
-
         String[] split = params.split("_", 2);
         switch (split[0]) {
+            case "total" -> {
+                return String.valueOf(statistics.getTotalCatchAmount());
+            }
             case "hascaught" -> {
                 if (split.length == 1) return "Invalid format";
                 return String.valueOf(statistics.getLootAmount(split[1]) != 0);

@@ -127,7 +127,9 @@ public class FishingResultEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Gets the amount of loot received
+     * Gets the amount of loot received.
+     * This value is determined by the "multiple-loot" effect.
+     * If you want to get the amount of item spawned, listen to FishingLootSpawnEvent
      *
      * @return The amount of loot received, or 1 if the loot is block or entity
      */

@@ -28,7 +28,6 @@ import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
 import net.momirealms.customfishing.api.mechanic.statistic.Statistics;
 import net.momirealms.customfishing.api.util.InventoryUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
-import net.momirealms.customfishing.setting.CFConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -61,24 +60,22 @@ public class OfflineUserImpl implements OfflineUser {
         this.uuid = uuid;
         this.holder = new FishingBagHolder(uuid);
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-
         // Set up the inventory for the FishingBagHolder
         this.holder.setInventory(InventoryUtils.createInventory(this.holder, playerData.getBagData().size,
                 AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
                         PlaceholderManagerImpl.getInstance().parse(
-                                offlinePlayer, CustomFishingPlugin.get().getBagManager().getBagTitle(), Map.of("{player}", Optional.ofNullable(offlinePlayer.getName()).orElse(String.valueOf(uuid)))
+                                offlinePlayer,
+                                CustomFishingPlugin.get().getBagManager().getBagTitle(),
+                                Map.of("{player}", Optional.ofNullable(offlinePlayer.getName()).orElse(String.valueOf(uuid)))
                         )
                 )));
         this.holder.setItems(InventoryUtils.getInventoryItems(playerData.getBagData().serialized));
-
         this.earningData = playerData.getEarningData();
-
         int date = CustomFishingPlugin.get().getMarketManager().getDate();
         if (earningData.date != date) {
             earningData.date = date;
             earningData.earnings = 0d;
         }
-
         this.statistics = new Statistics(playerData.getStatistics());
     }
 

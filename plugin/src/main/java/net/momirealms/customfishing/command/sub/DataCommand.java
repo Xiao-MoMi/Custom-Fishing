@@ -24,6 +24,7 @@ import com.google.gson.JsonPrimitive;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.StringArgument;
+import dev.jorel.commandapi.arguments.UUIDArgument;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.DataStorageInterface;
@@ -58,12 +59,23 @@ public class DataCommand {
                 .withSubcommands(
                     getExportLegacyCommand(),
                     getExportCommand(),
-                    getImportCommand()
+                    getImportCommand(),
+                    getUnlockCommand()
                 );
     }
 
+    private CommandAPICommand getUnlockCommand() {
+        return new CommandAPICommand("unlock")
+                .withArguments(new UUIDArgument("uuid"))
+                .executes((sender, args) -> {
+                   UUID uuid = (UUID) args.get("uuid");
+                   CustomFishingPlugin.get().getStorageManager().getDataSource().lockOrUnlockPlayerData(uuid, false);
+                   AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "Successfully unlocked.");
+                });
+    }
+
     @SuppressWarnings("DuplicatedCode")
-    public CommandAPICommand getExportLegacyCommand() {
+    private CommandAPICommand getExportLegacyCommand() {
         return new CommandAPICommand("export-legacy")
                 .withArguments(new StringArgument("method")
                 .replaceSuggestions(ArgumentSuggestions.strings("MySQL", "MariaDB", "YAML")))
@@ -137,7 +149,7 @@ public class DataCommand {
     }
 
     @SuppressWarnings("DuplicatedCode")
-    public CommandAPICommand getExportCommand() {
+    private CommandAPICommand getExportCommand() {
         return new CommandAPICommand("export")
                 .executesConsole((sender, args) -> {
                     if (Bukkit.getOnlinePlayers().size() != 0) {
@@ -151,7 +163,7 @@ public class DataCommand {
                         AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "Starting <aqua>export</aqua>.");
                         DataStorageInterface dataStorageInterface = plugin.getStorageManager().getDataSource();
 
-                        Set<UUID> uuids = dataStorageInterface.getUniqueUsers(true);
+                        Set<UUID> uuids = dataStorageInterface.getUniqueUsers(false);
                         Set<CompletableFuture<Void>> futures = new HashSet<>();
                         AtomicInteger userCount = new AtomicInteger(0);
                         Map<UUID, String> out = Collections.synchronizedMap(new TreeMap<>());
@@ -200,7 +212,7 @@ public class DataCommand {
     }
 
     @SuppressWarnings("DuplicatedCode")
-    public CommandAPICommand getImportCommand() {
+    private CommandAPICommand getImportCommand() {
         return new CommandAPICommand("import")
                 .withArguments(new StringArgument("file"))
                 .executesConsole((sender, args) -> {

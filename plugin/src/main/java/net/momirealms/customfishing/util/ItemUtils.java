@@ -342,7 +342,7 @@ public class ItemUtils {
      * @param amount     The amount of items to give
      * @return The actual amount of items given
      */
-    public static int putLootsToBag(Player player, ItemStack itemStack, int amount) {
+    public static int giveItem(Player player, ItemStack itemStack, int amount) {
         PlayerInventory inventory = player.getInventory();
         ItemMeta meta = itemStack.getItemMeta();
         int maxStackSize = itemStack.getMaxStackSize();
