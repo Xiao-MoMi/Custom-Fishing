@@ -425,11 +425,12 @@ public class FishingManagerImpl implements Listener, FishingManager {
                     event.setCancelled(true);
                 }
             } else {
+                var hook = event.getHook();
                 // If the game is disabled, then do success actions
-                success(temp, event.getHook());
+                success(temp, hook);
                 // Cancel the event because loots can be multiple and unique
                 event.setCancelled(true);
-                event.getHook().remove();
+                hook.remove();
             }
             return;
         }
@@ -549,14 +550,6 @@ public class FishingManagerImpl implements Listener, FishingManager {
         gamingPlayerMap.remove(uuid);
         plugin.getScheduler().runTaskSync(() -> {
 
-            if (player.getGameMode() != GameMode.CREATIVE) {
-                ItemStack rod = tempFishingState.getPreparation().getRodItemStack();
-                plugin.getScheduler().runTaskSyncLater(() -> {
-                    ItemUtils.decreaseHookDurability(rod, 1, false);
-                    ItemUtils.decreaseDurability(player, rod, 1, true);
-                }, player.getLocation(), 1);
-            }
-
             if (gamingPlayer.isSuccessful()) {
                 success(tempFishingState, fishHook);
             } else {
@@ -597,7 +590,9 @@ public class FishingManagerImpl implements Listener, FishingManager {
         loot.triggerActions(ActionTrigger.FAILURE, fishingPreparation);
         fishingPreparation.triggerActions(ActionTrigger.FAILURE);
 
-        ItemUtils.decreaseHookDurability(fishingPreparation.getRodItemStack(), 1, true);
+        if (state.getPreparation().getPlayer().getGameMode() != GameMode.CREATIVE) {
+            ItemUtils.decreaseHookDurability(fishingPreparation.getRodItemStack(), 1, true);
+        }
     }
 
     /**
@@ -666,12 +661,17 @@ public class FishingManagerImpl implements Listener, FishingManager {
                         }, hook.getLocation(), (long) CFConfig.multipleLootSpawnDelay * i);
                     }
                 }
-                return;
             }
             case ENTITY -> plugin.getEntityManager().summonEntity(hook.getLocation(), player.getLocation(), loot);
             case BLOCK -> plugin.getBlockManager().summonBlock(player, hook.getLocation(), player.getLocation(), loot);
         }
+
         doSuccessActions(loot, effect, fishingPreparation, player);
+        if (player.getGameMode() != GameMode.CREATIVE) {
+            ItemStack rod = state.getPreparation().getRodItemStack();
+            ItemUtils.decreaseHookDurability(rod, 1, false);
+            ItemUtils.decreaseDurability(player, rod, 1, true);
+        }
     }
 
     /**

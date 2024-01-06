@@ -248,6 +248,7 @@ public class ItemUtils {
                 itemStack.setAmount(0);
             } else {
                 nbtItem.setInteger("Damage", damage);
+                if (updateLore) updateNBTItemLore(nbtItem);
                 itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
             }
         }
