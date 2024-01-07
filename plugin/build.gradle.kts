@@ -45,7 +45,7 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("org.betonquest:betonquest:2.0.0")
     compileOnly("xyz.xenondevs.invui:invui:1.24")
-    compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.3.1.8")
+    compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.3.1.10")
 
     // local jars
     compileOnly(files("libs/AdvancedEnchantments-api.jar"))
