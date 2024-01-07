@@ -21,6 +21,7 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
+import dev.jorel.commandapi.arguments.UUIDArgument;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
@@ -28,10 +29,12 @@ import net.momirealms.customfishing.api.manager.CommandManager;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.command.sub.*;
 import net.momirealms.customfishing.setting.CFLocale;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public class CommandManagerImpl implements CommandManager {
 
@@ -39,7 +42,8 @@ public class CommandManagerImpl implements CommandManager {
 
     public CommandManagerImpl(CustomFishingPluginImpl plugin) {
         this.plugin = plugin;
-        CommandAPI.onLoad(new CommandAPIBukkitConfig(plugin).silentLogs(true));
+        if (!CommandAPI.isLoaded())
+            CommandAPI.onLoad(new CommandAPIBukkitConfig(plugin).silentLogs(true));
     }
 
     @Override
@@ -92,7 +96,7 @@ public class CommandManagerImpl implements CommandManager {
     private CommandAPICommand getMarketCommand() {
         CommandAPICommand command = new CommandAPICommand("open");
         if (plugin.getMarketManager().isEnable()) {
-            command.withSubcommand(
+            command.withSubcommands(
                     new CommandAPICommand("market")
                     .withArguments(new EntitySelectorArgument.ManyPlayers("player"))
                     .executes((sender, args) -> {
@@ -102,10 +106,20 @@ public class CommandManagerImpl implements CommandManager {
                             plugin.getMarketManager().openMarketGUI(player);
                             AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Market_GUI_Open.replace("{player}", player.getName()));
                         }
-                    }));
+                    }),
+                    new CommandAPICommand("market-uuid")
+                            .withArguments(new UUIDArgument("uuid"))
+                            .executes((sender, args) -> {
+                                UUID uuid = (UUID) args.get("uuid");
+                                Player player = Bukkit.getPlayer(uuid);
+                                if (player == null) return;
+                                plugin.getMarketManager().openMarketGUI(player);
+                                AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Market_GUI_Open.replace("{player}", player.getName()));
+                            })
+            );
         }
         if (plugin.getBagManager().isEnabled()) {
-            command.withSubcommand(
+            command.withSubcommands(
                     new CommandAPICommand("bag")
                     .withArguments(new EntitySelectorArgument.ManyPlayers("player"))
                     .executes((sender, args) -> {
@@ -120,7 +134,22 @@ public class CommandManagerImpl implements CommandManager {
                                 LogUtils.warn("Player " + player.getName() + "'s bag data has not been loaded.");
                             }
                         }
-                    }));
+                    }),
+                    new CommandAPICommand("bag-uuid")
+                            .withArguments(new UUIDArgument("uuid"))
+                            .executes((sender, args) -> {
+                                UUID uuid = (UUID) args.get("uuid");
+                                Player player = Bukkit.getPlayer(uuid);
+                                if (player == null) return;
+                                Inventory inventory = plugin.getBagManager().getOnlineBagInventory(uuid);
+                                if (inventory != null) {
+                                    player.openInventory(inventory);
+                                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Fishing_Bag_Open.replace("{player}", player.getName()));
+                                } else {
+                                    LogUtils.warn("Player " + player.getName() + "'s bag data has not been loaded.");
+                                }
+                            })
+            );
         }
         return command;
     }

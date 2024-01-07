@@ -114,7 +114,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
         if (CFConfig.updateChecker)
             this.versionManager.checkUpdate().thenAccept(result -> {
                 if (!result) this.getAdventure().sendConsoleMessage("[CustomFishing] You are using the latest version.");
-                else this.getAdventure().sendConsoleMessage("[CustomFishing] Update is available: <u>https://polymart.org/resource/customfishing.2723<!u>");
+                else this.getAdventure().sendConsoleMessage("[CustomFishing] Update is available: <u>https://polymart.org/resource/2723<!u>");
             });
     }
 

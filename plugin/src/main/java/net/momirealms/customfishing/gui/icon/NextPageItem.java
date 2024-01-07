@@ -42,7 +42,7 @@ public class NextPageItem extends PageItem implements Icon {
                 .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
                         gui.hasNextPage()
                                 ? CFLocale.GUI_GOTO_NEXT_PAGE
-                                .replace("{0}", String.valueOf(gui.getCurrentPage()))
+                                .replace("{0}", String.valueOf(gui.getCurrentPage() + 2))
                                 .replace("{1}", String.valueOf(gui.getPageAmount()))
                                 : CFLocale.GUI_CANNOT_GOTO_NEXT_PAGE
                 )));
