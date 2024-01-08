@@ -61,13 +61,21 @@ public class ArmorStandUtils {
      */
     public static PacketContainer getSpawnPacket(int id, Location location) {
         PacketContainer entityPacket = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
-        entityPacket.getModifier().write(0, id);
-        entityPacket.getModifier().write(1, UUID.randomUUID());
-        entityPacket.getEntityTypeModifier().write(0, EntityType.ARMOR_STAND);
-        entityPacket.getDoubles().write(0, location.getX());
-        entityPacket.getDoubles().write(1, location.getY());
-        entityPacket.getDoubles().write(2, location.getZ());
-        entityPacket.getBytes().write(0, (byte) ((location.getYaw() % 360) * 128 / 180));
+        try {
+            entityPacket.getModifier().write(0, id);
+            entityPacket.getModifier().write(1, UUID.randomUUID());
+            entityPacket.getEntityTypeModifier().write(0, EntityType.ARMOR_STAND);
+            entityPacket.getDoubles().write(0, location.getX());
+            entityPacket.getDoubles().write(1, location.getY());
+            entityPacket.getDoubles().write(2, location.getZ());
+            if (CustomFishingPlugin.get().getVersionManager().isVersionNewerThan1_19()) {
+                entityPacket.getBytes().write(0, (byte) ((location.getYaw() % 360) * 128 / 180));
+            } else {
+                entityPacket.getIntegers().write(5, (int) ((location.getYaw() % 360) * 128 / 180));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return entityPacket;
     }
 

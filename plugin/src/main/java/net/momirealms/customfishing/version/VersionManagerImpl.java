@@ -35,6 +35,7 @@ public class VersionManagerImpl implements VersionManager {
 
     private final boolean isNewerThan1_19_R2;
     private final boolean isNewerThan1_20;
+    private final boolean isNewerThan1_19;
     private final String serverVersion;
     private final CustomFishingPluginImpl plugin;
     private final boolean isSpigot;
@@ -54,12 +55,15 @@ public class VersionManagerImpl implements VersionManager {
         if (main_ver >= 20) {
             isNewerThan1_19_R2 = true;
             isNewerThan1_20 = true;
+            isNewerThan1_19 = true;
         } else if (main_ver == 19) {
             isNewerThan1_19_R2 = Integer.parseInt(split[2].substring(1)) >= 2;
             isNewerThan1_20 = false;
+            isNewerThan1_19 = true;
         } else {
             isNewerThan1_19_R2 = false;
             isNewerThan1_20 = false;
+            isNewerThan1_19 = false;
         }
 
         // Check if the server is Spigot
@@ -77,6 +81,12 @@ public class VersionManagerImpl implements VersionManager {
         // Get the plugin version
         this.pluginVersion = plugin.getDescription().getVersion();
     }
+
+    @Override
+    public boolean isVersionNewerThan1_19() {
+        return isNewerThan1_19;
+    }
+
 
     @Override
     public boolean isVersionNewerThan1_19_R2() {

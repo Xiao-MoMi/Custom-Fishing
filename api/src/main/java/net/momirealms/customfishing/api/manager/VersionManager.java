@@ -21,6 +21,8 @@ import java.util.concurrent.CompletableFuture;
 
 public interface VersionManager {
 
+    boolean isVersionNewerThan1_19();
+
     boolean isVersionNewerThan1_19_R2();
 
     CompletableFuture<Boolean> checkUpdate();
