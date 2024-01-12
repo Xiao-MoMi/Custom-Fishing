@@ -35,6 +35,11 @@ public interface Loot {
     boolean instanceGame();
 
     /**
+     * Check if the loot disables global actions
+     */
+    boolean disableGlobalAction();
+
+    /**
      * Get the unique ID of this loot.
      *
      * @return The unique ID.

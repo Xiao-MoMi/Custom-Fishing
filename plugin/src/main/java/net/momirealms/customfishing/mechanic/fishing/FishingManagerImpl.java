@@ -459,10 +459,14 @@ public class FishingManagerImpl implements Listener, FishingManager {
             var fishingPreparation = temp.getPreparation();
             fishingPreparation.setLocation(event.getHook().getLocation());
 
+            if (!loot.disableGlobalAction())
+                GlobalSettings.triggerLootActions(ActionTrigger.BITE, fishingPreparation);
             loot.triggerActions(ActionTrigger.BITE, fishingPreparation);
             fishingPreparation.triggerActions(ActionTrigger.BITE);
 
             if (loot.instanceGame() && !loot.disableGame()) {
+                if (!loot.disableGlobalAction())
+                    GlobalSettings.triggerLootActions(ActionTrigger.HOOK, fishingPreparation);
                 loot.triggerActions(ActionTrigger.HOOK, fishingPreparation);
                 fishingPreparation.triggerActions(ActionTrigger.HOOK);
                 startFishingGame(player, fishingPreparation, temp.getEffect());
@@ -500,11 +504,14 @@ public class FishingManagerImpl implements Listener, FishingManager {
             var temp = getTempFishingState(uuid);
             if (temp != null ) {
                 Loot loot = temp.getLoot();
-                loot.triggerActions(ActionTrigger.HOOK, temp.getPreparation());
-                temp.getPreparation().triggerActions(ActionTrigger.HOOK);
+                var fishingPreparation = temp.getPreparation();
+                if (!loot.disableGlobalAction())
+                    GlobalSettings.triggerLootActions(ActionTrigger.HOOK, fishingPreparation);
+                loot.triggerActions(ActionTrigger.HOOK, fishingPreparation);
+                fishingPreparation.triggerActions(ActionTrigger.HOOK);
                 if (!loot.disableGame()) {
                     event.setCancelled(true);
-                    startFishingGame(player, temp.getPreparation(), temp.getEffect());
+                    startFishingGame(player, fishingPreparation, temp.getEffect());
                 } else {
                     success(temp, event.getHook());
                 }
@@ -586,7 +593,8 @@ public class FishingManagerImpl implements Listener, FishingManager {
             return;
         }
 
-        GlobalSettings.triggerLootActions(ActionTrigger.FAILURE, fishingPreparation);
+        if (!loot.disableGlobalAction())
+            GlobalSettings.triggerLootActions(ActionTrigger.FAILURE, fishingPreparation);
         loot.triggerActions(ActionTrigger.FAILURE, fishingPreparation);
         fishingPreparation.triggerActions(ActionTrigger.FAILURE);
 
@@ -662,11 +670,16 @@ public class FishingManagerImpl implements Listener, FishingManager {
                     }
                 }
             }
-            case ENTITY -> plugin.getEntityManager().summonEntity(hook.getLocation(), player.getLocation(), loot);
-            case BLOCK -> plugin.getBlockManager().summonBlock(player, hook.getLocation(), player.getLocation(), loot);
+            case ENTITY -> {
+                plugin.getEntityManager().summonEntity(hook.getLocation(), player.getLocation(), loot);
+                doSuccessActions(loot, effect, fishingPreparation, player);
+            }
+            case BLOCK -> {
+                plugin.getBlockManager().summonBlock(player, hook.getLocation(), player.getLocation(), loot);
+                doSuccessActions(loot, effect, fishingPreparation, player);
+            }
         }
 
-        doSuccessActions(loot, effect, fishingPreparation, player);
         if (player.getGameMode() != GameMode.CREATIVE) {
             ItemStack rod = state.getPreparation().getRodItemStack();
             ItemUtils.decreaseHookDurability(rod, 1, false);
@@ -720,7 +733,8 @@ public class FishingManagerImpl implements Listener, FishingManager {
         }
 
         // events and actions
-        GlobalSettings.triggerLootActions(ActionTrigger.SUCCESS, fishingPreparation);
+        if (!loot.disableGlobalAction())
+            GlobalSettings.triggerLootActions(ActionTrigger.SUCCESS, fishingPreparation);
         loot.triggerActions(ActionTrigger.SUCCESS, fishingPreparation);
         fishingPreparation.triggerActions(ActionTrigger.SUCCESS);
 
@@ -738,7 +752,8 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 String size = fishingPreparation.getArg("{SIZE}");
                 if (size != null)
                     if (it.setSizeIfHigher(loot.getStatisticKey().getSizeKey(), Float.parseFloat(size))) {
-                        GlobalSettings.triggerLootActions(ActionTrigger.NEW_SIZE_RECORD, fishingPreparation);
+                        if (!loot.disableGlobalAction())
+                            GlobalSettings.triggerLootActions(ActionTrigger.NEW_SIZE_RECORD, fishingPreparation);
                         loot.triggerActions(ActionTrigger.NEW_SIZE_RECORD, fishingPreparation);
                     }
             });

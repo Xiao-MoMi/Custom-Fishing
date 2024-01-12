@@ -34,6 +34,7 @@ public class CFLoot implements Loot {
     private String nick;
     private boolean showInFinder;
     private boolean disableGame;
+    private boolean disableGlobalAction;
     private boolean disableStats;
     private boolean instanceGame;
     private double score;
@@ -126,6 +127,17 @@ public class CFLoot implements Loot {
          */
         public Builder disableStats(boolean disable) {
             this.loot.disableStats = disable;
+            return this;
+        }
+
+        /**
+         * Set whether global actions are disabled for this loot.
+         *
+         * @param disable True if statistics are disabled, false otherwise.
+         * @return The builder.
+         */
+        public Builder disableGlobalActions(boolean disable) {
+            this.loot.disableGlobalAction = disable;
             return this;
         }
 
@@ -301,6 +313,14 @@ public class CFLoot implements Loot {
     @Override
     public boolean disableStats() {
         return this.disableStats;
+    }
+
+    /**
+     * Check if the loot disables global actions
+     */
+    @Override
+    public boolean disableGlobalAction() {
+        return this.disableGlobalAction;
     }
 
     /**

@@ -905,7 +905,8 @@ public class ItemManagerImpl implements ItemManager, Listener {
         Loot loot = plugin.getLootManager().getLoot(id);
         if (loot != null) {
             Condition condition = new Condition(event.getPlayer());
-            GlobalSettings.triggerLootActions(ActionTrigger.CONSUME, condition);
+            if (!loot.disableGlobalAction())
+                GlobalSettings.triggerLootActions(ActionTrigger.CONSUME, condition);
             loot.triggerActions(ActionTrigger.CONSUME, condition);
         }
     }

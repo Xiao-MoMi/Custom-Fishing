@@ -269,6 +269,7 @@ public class LootManagerImpl implements LootManager {
                 .disableGames(section.getBoolean("disable-game", CFConfig.globalDisableGame))
                 .instantGame(section.getBoolean("instant-game", CFConfig.globalInstantGame))
                 .showInFinder(section.getBoolean("show-in-fishfinder", CFConfig.globalShowInFinder))
+                .disableGlobalActions(section.getBoolean("disable-global-event", false))
                 .score(section.getDouble("score"))
                 .lootGroup(ConfigUtils.stringListArgs(section.get("group")).toArray(new String[0]))
                 .nick(section.getString("nick", section.getString("display.name", key)))
