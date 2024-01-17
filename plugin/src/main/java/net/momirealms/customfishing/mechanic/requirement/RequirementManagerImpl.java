@@ -215,6 +215,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerSizeRequirement();
         this.registerHasStatsRequirement();
         this.registerLootTypeRequirement();
+        this.registerInListRequirement();
     }
 
     public HashMap<String, Double> getLootWithWeight(Condition condition) {
@@ -932,6 +933,39 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at !contains requirement.");
+                return EmptyRequirement.instance;
+            }
+        });
+    }
+
+    private void registerInListRequirement() {
+        registerRequirement("in-list", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String papi = section.getString("papi", "");
+                List<String> values = ConfigUtils.stringListArgs(section.get("values"));
+                return condition -> {
+                    String p1 = papi.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), papi) : papi;
+                    if (values.contains(p1)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at in-list requirement.");
+                return EmptyRequirement.instance;
+            }
+        });
+        registerRequirement("!in-list", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                String papi = section.getString("papi", "");
+                List<String> values = ConfigUtils.stringListArgs(section.get("values"));
+                return condition -> {
+                    String p1 = papi.startsWith("%") ? ParseUtils.setPlaceholders(condition.getPlayer(), papi) : papi;
+                    if (!values.contains(p1)) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at in-list requirement.");
                 return EmptyRequirement.instance;
             }
         });
