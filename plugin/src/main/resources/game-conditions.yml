@@ -1,3 +1,4 @@
+# global group
 global-group:
   conditions: {}
   list: []

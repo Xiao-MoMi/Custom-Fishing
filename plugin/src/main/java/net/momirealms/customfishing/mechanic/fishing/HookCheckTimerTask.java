@@ -180,8 +180,11 @@ public class HookCheckTimerTask implements Runnable {
      */
     private void setTempState() {
         Loot nextLoot = CustomFishingPlugin.get().getLootManager().getNextLoot(initialEffect, fishingPreparation);
-        if (nextLoot == null)
+        if (nextLoot == null) {
+            CustomFishingPlugin.get().debug("No loot available, using vanilla ");
             return;
+        }
+
         this.loot = nextLoot;
         fishingPreparation.insertArg("{nick}", nextLoot.getNick());
         fishingPreparation.insertArg("{loot}", nextLoot.getID());

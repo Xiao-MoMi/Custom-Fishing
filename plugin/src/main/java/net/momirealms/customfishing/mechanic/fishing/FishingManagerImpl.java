@@ -329,6 +329,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
             new BaitAnimationTask(plugin, player, fishHook, cloned);
             baitItem.setAmount(baitItem.getAmount() - 1);
         }
+
         // Arrange hook check task
         this.hookCheckMap.put(player.getUniqueId(), new HookCheckTimerTask(this, fishHook, fishingPreparation, initialEffect));
         // trigger actions
@@ -773,7 +774,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         String random = WeightUtils.getRandom(gameWithWeight);
         Pair<BasicGameConfig, GameInstance> gamePair = plugin.getGameManager().getGameInstance(random);
         if (random == null) {
-            plugin.debug("No game is available for player:" + player.getName() + " location:" + condition.getLocation());
+            LogUtils.warn("No game is available for player:" + player.getName() + " location:" + condition.getLocation());
             return false;
         }
         if (gamePair == null) {

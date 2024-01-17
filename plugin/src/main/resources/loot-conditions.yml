@@ -1,4 +1,4 @@
-# global 条件组
+# global group
 global-group:
   list: []
   conditions: {}

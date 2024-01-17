@@ -128,7 +128,7 @@ mechanics:
                   type: fake-item
                   value:
                     duration: 35
-                    position: hook
+                    position: other
                     item: util:lava_effect
             priority_2:
               conditions:
@@ -138,7 +138,7 @@ mechanics:
                   type: fake-item
                   value:
                     duration: 35
-                    position: hook
+                    position: other
                     item: util:water_effect
 
   # Global properties which would help you reduce duplicated lines
