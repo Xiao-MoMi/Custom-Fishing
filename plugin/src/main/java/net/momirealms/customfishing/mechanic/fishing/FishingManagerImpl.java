@@ -17,11 +17,9 @@
 
 package net.momirealms.customfishing.mechanic.fishing;
 
-import com.comphenix.protocol.events.PacketContainer;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import io.lumine.mythic.lib.api.event.AttackEvent;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
