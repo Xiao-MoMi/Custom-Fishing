@@ -17,9 +17,11 @@
 
 package net.momirealms.customfishing.mechanic.fishing;
 
+import com.comphenix.protocol.events.PacketContainer;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import io.lumine.mythic.lib.api.event.AttackEvent;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
@@ -157,10 +159,11 @@ public class FishingManagerImpl implements Listener, FishingManager {
     }
 
     /**
-     * Known bug: When you fish, both left click air and right click air
+     * Known bug: This is a Minecraft packet limitation
+     * When you fish, both left click air and right click air
      * are triggered. And you can't cancel the left click event.
      */
-    @EventHandler
+    @EventHandler (ignoreCancelled = false)
     public void onLeftClick(PlayerInteractEvent event) {
         if (event.getAction() != Action.LEFT_CLICK_AIR)
             return;
@@ -175,9 +178,8 @@ public class FishingManagerImpl implements Listener, FishingManager {
         }
     }
 
-    @EventHandler
+    @EventHandler (ignoreCancelled = true)
     public void onSwapHand(PlayerSwapHandItemsEvent event) {
-        if (event.isCancelled()) return;
         GamingPlayer gamingPlayer = gamingPlayerMap.get(event.getPlayer().getUniqueId());
         if (gamingPlayer != null) {
             if (gamingPlayer.onSwapHand())

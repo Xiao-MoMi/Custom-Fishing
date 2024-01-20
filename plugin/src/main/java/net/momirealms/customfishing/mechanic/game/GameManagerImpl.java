@@ -504,11 +504,13 @@ public class GameManagerImpl implements GameManager {
 
             var title = section.getString("title","<red>{click}");
             var subtitle = section.getString("subtitle", "<gray>Click <white>{clicks} <gray>times to win. Time left <white>{time}s");
+            var left = section.getBoolean("left-click", true);
 
             return (player, fishHook, settings) -> new AbstractGamingPlayer(player, fishHook, settings) {
 
                 private int clickedTimes;
                 private final int requiredTimes = settings.getDifficulty();
+                private boolean preventFirst = true;
 
                 @Override
                 public void arrangeTask() {
@@ -522,12 +524,34 @@ public class GameManagerImpl implements GameManager {
 
                 @Override
                 public boolean onRightClick() {
+                    if (left) {
+                        setGameResult(false);
+                        endGame();
+                        return true;
+                    }
                     clickedTimes++;
                     if (clickedTimes >= requiredTimes) {
                         setGameResult(true);
                         endGame();
                     }
                     return true;
+                }
+
+                @Override
+                public boolean onLeftClick() {
+                    if (!left) {
+                        return false;
+                    }
+                    if (preventFirst) {
+                        preventFirst = false;
+                        return false;
+                    }
+                    clickedTimes++;
+                    if (clickedTimes >= requiredTimes) {
+                        setGameResult(true);
+                        endGame();
+                    }
+                    return false;
                 }
 
                 public void showUI() {
@@ -722,6 +746,8 @@ public class GameManagerImpl implements GameManager {
             var barImage = section.getString("subtitle.bar");
             var tip = section.getString("tip");
 
+            var left = section.getBoolean("left-click", true);
+
             return (player, fishHook, settings) -> new AbstractGamingPlayer(player, fishHook, settings) {
                 private double hold_time;
                 private double judgement_position;
@@ -731,6 +757,7 @@ public class GameManagerImpl implements GameManager {
                 private int timer;
                 private final int time_requirement = timeRequirements[ThreadLocalRandom.current().nextInt(timeRequirements.length)] * 1000;
                 private boolean played;
+                private boolean preventFirst = true;
 
                 @Override
                 public void arrangeTask() {
@@ -814,9 +841,27 @@ public class GameManagerImpl implements GameManager {
 
                 @Override
                 public boolean onRightClick() {
+                    if (left) {
+                        setGameResult(false);
+                        endGame();
+                        return true;
+                    }
                     played = true;
                     fish_velocity = pullingStrength;
                     return true;
+                }
+
+                @Override
+                public boolean onLeftClick() {
+                    if (preventFirst) {
+                        preventFirst = false;
+                        return false;
+                    }
+                    if (left) {
+                        played = true;
+                        fish_velocity = pullingStrength;
+                    }
+                    return false;
                 }
 
                 public void showUI() {

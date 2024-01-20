@@ -40,6 +40,9 @@ public interface GamingPlayer {
      */
     boolean onSwapHand();
 
+    /**
+     * @return whether to cancel the event
+     */
     boolean onLeftClick();
 
     /**
