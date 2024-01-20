@@ -88,6 +88,11 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     }
 
     @Override
+    public boolean onSneak() {
+        return false;
+    }
+
+    @Override
     public Player getPlayer() {
         return player;
     }

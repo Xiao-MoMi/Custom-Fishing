@@ -55,6 +55,11 @@ public interface GamingPlayer {
      */
     boolean onJump();
 
+    /**
+     * @return whether to cancel the event
+     */
+    boolean onSneak();
+
     Player getPlayer();
 
     /**

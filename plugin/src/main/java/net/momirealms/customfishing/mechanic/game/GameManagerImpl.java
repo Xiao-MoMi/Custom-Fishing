@@ -17,6 +17,8 @@
 
 package net.momirealms.customfishing.mechanic.game;
 
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
@@ -60,6 +62,7 @@ public class GameManagerImpl implements GameManager {
         this.registerHoldV2Game();
         this.registerTensionGame();
         this.registerClickGame();
+        this.registerDanceGame();
         this.registerAccurateClickGame();
         this.registerAccurateClickV2Game();
         this.registerAccurateClickV3Game();
@@ -499,6 +502,289 @@ public class GameManagerImpl implements GameManager {
         }));
     }
 
+    private void registerDanceGame() {
+        this.registerGameType("dance", (section -> {
+
+            var subtitle = section.getString("subtitle", "<gray>Dance to win. Time left <white>{time}s");
+            var leftNot = section.getString("title.left-button");
+            var leftCorrect = section.getString("title.left-button-correct");
+            var leftWrong = section.getString("title.left-button-wrong");
+            var leftCurrent = section.getString("title.left-button-current");
+            var rightNot = section.getString("title.right-button");
+            var rightCorrect = section.getString("title.right-button-correct");
+            var rightWrong = section.getString("title.right-button-wrong");
+            var rightCurrent = section.getString("title.right-button-current");
+
+            var upNot = section.getString("title.up-button");
+            var upCorrect = section.getString("title.up-button-correct");
+            var upWrong = section.getString("title.up-button-wrong");
+            var upCurrent = section.getString("title.up-button-current");
+            var downNot = section.getString("title.down-button");
+            var downCorrect = section.getString("title.down-button-correct");
+            var downWrong = section.getString("title.down-button-wrong");
+            var downCurrent = section.getString("title.down-button-current");
+
+            var maxShown = section.getInt("title.display-amount", 7);
+            var tip = section.getString("tip");
+            var easy = section.getBoolean("easy", false);
+
+            var correctSound = section.getString("sound.correct", "minecraft:block.amethyst_block.hit");
+            var wrongSound = section.getString("sound.wrong", "minecraft:block.anvil.land");
+
+            return (player, fishHook, settings) -> new AbstractGamingPlayer(player, fishHook, settings) {
+
+                private int clickedTimes;
+                private int requiredTimes;
+                private boolean preventFirst = true;
+                // 0 = left / 1 = right / 2 = up / 3 = down
+                private int[] order;
+                boolean fail = false;
+
+                @Override
+                public void arrangeTask() {
+                    requiredTimes = settings.getDifficulty() / 4;
+                    order = new int[requiredTimes];
+                    for (int i = 0; i < requiredTimes; i++) {
+                        order[i] = ThreadLocalRandom.current().nextInt(0, easy ? 2 : 4);
+                    }
+                    this.task = CustomFishingPlugin.get().getScheduler().runTaskAsyncTimer(this, 50, 50, TimeUnit.MILLISECONDS);
+                }
+
+                @Override
+                public void onTick() {
+                    showUI();
+                    if (tip != null) {
+                        AdventureManagerImpl.getInstance().sendActionbar(player, tip);
+                    }
+                }
+
+                @Override
+                public boolean onRightClick() {
+                    preventFirst = true;
+                    if (order[clickedTimes] != 1) {
+                        setGameResult(false);
+                        fail = true;
+                        showUI();
+                        AdventureManagerImpl.getInstance().sendSound(
+                                player,
+                                Sound.Source.PLAYER,
+                                Key.key(wrongSound),
+                                1,
+                                1
+                        );
+                        endGame();
+                        return true;
+                    }
+
+                    AdventureManagerImpl.getInstance().sendSound(
+                            player,
+                            Sound.Source.PLAYER,
+                            Key.key(correctSound),
+                            1,
+                            1
+                    );
+                    clickedTimes++;
+                    if (clickedTimes >= requiredTimes) {
+                        setGameResult(true);
+                        showUI();
+                        endGame();
+                    }
+                    return true;
+                }
+
+                @Override
+                public boolean onJump() {
+                    if (order[clickedTimes] != 2) {
+                        setGameResult(false);
+                        fail = true;
+                        showUI();
+                        AdventureManagerImpl.getInstance().sendSound(
+                                player,
+                                Sound.Source.PLAYER,
+                                Key.key(wrongSound),
+                                1,
+                                1
+                        );
+                        endGame();
+                        return false;
+                    }
+
+                    AdventureManagerImpl.getInstance().sendSound(
+                            player,
+                            Sound.Source.PLAYER,
+                            Key.key(correctSound),
+                            1,
+                            1
+                    );
+                    clickedTimes++;
+                    if (clickedTimes >= requiredTimes) {
+                        setGameResult(true);
+                        showUI();
+                        endGame();
+                    }
+                    return false;
+                }
+
+                @Override
+                public boolean onSneak() {
+                    if (order[clickedTimes] != 3) {
+                        setGameResult(false);
+                        fail = true;
+                        showUI();
+                        AdventureManagerImpl.getInstance().sendSound(
+                                player,
+                                Sound.Source.PLAYER,
+                                Key.key(wrongSound),
+                                1,
+                                1
+                        );
+                        endGame();
+                        return false;
+                    }
+
+                    AdventureManagerImpl.getInstance().sendSound(
+                            player,
+                            Sound.Source.PLAYER,
+                            Key.key(correctSound),
+                            1,
+                            1
+                    );
+                    clickedTimes++;
+                    if (clickedTimes >= requiredTimes) {
+                        setGameResult(true);
+                        showUI();
+                        endGame();
+                    }
+                    return false;
+                }
+
+                @Override
+                public boolean onLeftClick() {
+                    if (preventFirst) {
+                        preventFirst = false;
+                        return false;
+                    }
+
+                    if (order[clickedTimes] != 0) {
+                        setGameResult(false);
+                        fail = true;
+                        showUI();
+                        AdventureManagerImpl.getInstance().sendSound(
+                                player,
+                                Sound.Source.PLAYER,
+                                Key.key(wrongSound),
+                                1,
+                                1
+                        );
+                        endGame();
+                        return true;
+                    }
+
+                    AdventureManagerImpl.getInstance().sendSound(
+                            player,
+                            Sound.Source.PLAYER,
+                            Key.key(correctSound),
+                            1,
+                            1
+                    );
+                    clickedTimes++;
+                    if (clickedTimes >= requiredTimes) {
+                        setGameResult(true);
+                        showUI();
+                        endGame();
+                    }
+                    return false;
+                }
+
+                public void showUI() {
+                    try {
+                        if (requiredTimes <= maxShown) {
+                            StringBuilder sb = new StringBuilder();
+                            for (int x = 0; x < requiredTimes; x++) {
+                                if (x < clickedTimes) {
+                                    switch (order[x]) {
+                                        case 0 -> sb.append(leftCorrect);
+                                        case 1 -> sb.append(rightCorrect);
+                                        case 2 -> sb.append(upCorrect);
+                                        case 3 -> sb.append(downCorrect);
+                                    }
+                                } else if (clickedTimes == x) {
+                                    switch (order[x]) {
+                                        case 0 -> sb.append(fail ? leftWrong : leftCurrent);
+                                        case 1 -> sb.append(fail ? rightWrong : rightCurrent);
+                                        case 2 -> sb.append(fail ? upWrong : upCurrent);
+                                        case 3 -> sb.append(fail ? downWrong : downCurrent);
+                                    }
+                                } else {
+                                    switch (order[x]) {
+                                        case 0 -> sb.append(leftNot);
+                                        case 1 -> sb.append(rightNot);
+                                        case 2 -> sb.append(upNot);
+                                        case 3 -> sb.append(downNot);
+                                    }
+                                }
+                            }
+                            AdventureManagerImpl.getInstance().sendTitle(
+                                    player,
+                                    sb.toString(),
+                                    subtitle.replace("{time}", String.format("%.1f", ((double) deadline - System.currentTimeMillis())/1000)),
+                                    0,
+                                    10,
+                                    0
+                            );
+                        } else {
+                            int half = (maxShown - 1) / 2;
+                            int low = clickedTimes - half;
+                            int high = clickedTimes + half;
+                            if (low < 0) {
+                                high += (-low);
+                                low = 0;
+                            } else if (high >= requiredTimes) {
+                                low -= (high - requiredTimes + 1);
+                                high = requiredTimes - 1;
+                            }
+                            StringBuilder sb = new StringBuilder();
+                            for (int x = low; x < high + 1; x++) {
+                                if (x < clickedTimes) {
+                                    switch (order[x]) {
+                                        case 0 -> sb.append(leftCorrect);
+                                        case 1 -> sb.append(rightCorrect);
+                                        case 2 -> sb.append(upCorrect);
+                                        case 3 -> sb.append(downCorrect);
+                                    }
+                                } else if (clickedTimes == x) {
+                                    switch (order[x]) {
+                                        case 0 -> sb.append(fail ? leftWrong : leftCurrent);
+                                        case 1 -> sb.append(fail ? rightWrong : rightCurrent);
+                                        case 2 -> sb.append(fail ? upWrong : upCurrent);
+                                        case 3 -> sb.append(fail ? downWrong : downCurrent);
+                                    }
+                                } else {
+                                    switch (order[x]) {
+                                        case 0 -> sb.append(leftNot);
+                                        case 1 -> sb.append(rightNot);
+                                        case 2 -> sb.append(upNot);
+                                        case 3 -> sb.append(downNot);
+                                    }
+                                }
+                            }
+                            AdventureManagerImpl.getInstance().sendTitle(
+                                    player,
+                                    sb.toString(),
+                                    subtitle.replace("{time}", String.format("%.1f", ((double) deadline - System.currentTimeMillis())/1000)),
+                                    0,
+                                    10,
+                                    0
+                            );
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+        }));
+    }
+
     private void registerClickGame() {
         this.registerGameType("click", (section -> {
 
@@ -531,6 +817,7 @@ public class GameManagerImpl implements GameManager {
                     }
                     clickedTimes++;
                     if (clickedTimes >= requiredTimes) {
+                        showUI();
                         setGameResult(true);
                         endGame();
                     }
@@ -548,6 +835,7 @@ public class GameManagerImpl implements GameManager {
                     }
                     clickedTimes++;
                     if (clickedTimes >= requiredTimes) {
+                        showUI();
                         setGameResult(true);
                         endGame();
                     }

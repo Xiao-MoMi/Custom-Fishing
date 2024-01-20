@@ -152,8 +152,15 @@ public class FishingManagerImpl implements Listener, FishingManager {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
-        this.removeHook(event.getPlayer().getUniqueId());
+        final UUID uuid = player.getUniqueId();
+        this.removeHook(uuid);
         this.removeTempFishingState(player);
+        this.removeHookCheckTask(player);
+        this.vanillaLootMap.remove(uuid);
+        GamingPlayer gamingPlayer = gamingPlayerMap.remove(player.getUniqueId());
+        if (gamingPlayer != null) {
+            gamingPlayer.cancel();
+        }
     }
 
     /**
@@ -191,6 +198,17 @@ public class FishingManagerImpl implements Listener, FishingManager {
         GamingPlayer gamingPlayer = gamingPlayerMap.get(event.getPlayer().getUniqueId());
         if (gamingPlayer != null) {
             if (gamingPlayer.onJump())
+                event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onSneak(PlayerToggleSneakEvent event) {
+        if (event.isCancelled()) return;
+        if (!event.isSneaking()) return;
+        GamingPlayer gamingPlayer = gamingPlayerMap.get(event.getPlayer().getUniqueId());
+        if (gamingPlayer != null) {
+            if (gamingPlayer.onSneak())
                 event.setCancelled(true);
         }
     }
