@@ -79,7 +79,7 @@ public class CompetitionCommand {
             } else {
                 FishingCompetition competition = CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition();
                 if (competition != null) {
-                    competition.end();
+                    CustomFishingPlugin.get().getScheduler().runTaskAsync(competition::end);
                     AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_End_Competition);
                 } else {
                     AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_No_Competition_Ongoing);
@@ -99,7 +99,7 @@ public class CompetitionCommand {
             } else {
                 FishingCompetition competition = CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition();
                 if (competition != null) {
-                    competition.stop();
+                    CustomFishingPlugin.get().getScheduler().runTaskAsync(competition::stop);
                     AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Stop_Competition);
                 } else {
                     AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_No_Competition_Ongoing);

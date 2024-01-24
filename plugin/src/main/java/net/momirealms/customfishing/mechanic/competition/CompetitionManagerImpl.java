@@ -58,7 +58,13 @@ public class CompetitionManagerImpl implements CompetitionManager {
     public void load() {
         loadConfig();
         this.timerCheckTask = plugin.getScheduler().runTaskAsyncTimer(
-                this::timerCheck,
+                () -> {
+                    try {
+                        timerCheck();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                },
                 1,
                 1,
                 TimeUnit.SECONDS
@@ -295,8 +301,10 @@ public class CompetitionManagerImpl implements CompetitionManager {
             }, 1, TimeUnit.SECONDS);
         } else {
             // start instantly
-            this.currentCompetition = new Competition(config);
-            this.currentCompetition.start();
+            plugin.getScheduler().runTaskAsync(() -> {
+                this.currentCompetition = new Competition(config);
+                this.currentCompetition.start();
+            });
         }
     }
 

@@ -29,6 +29,7 @@ public class CompetitionEvent extends Event {
     private final FishingCompetition competition;
 
     public CompetitionEvent(State state, FishingCompetition competition) {
+        super(true);
         this.state = state;
         this.competition = competition;
     }
