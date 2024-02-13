@@ -210,15 +210,15 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
                 "dev.dejvokep:boosted-yaml:1.3.1", mavenRepo,
                 "com.zaxxer:HikariCP:5.0.1", mavenRepo,
                 "net.objecthunter:exp4j:0.4.8", mavenRepo,
-                "org.mariadb.jdbc:mariadb-java-client:3.3.0", mavenRepo,
-                "com.mysql:mysql-connector-j:8.2.0", mavenRepo,
+                "org.mariadb.jdbc:mariadb-java-client:3.3.2", mavenRepo,
+                "com.mysql:mysql-connector-j:8.3.0", mavenRepo,
                 "commons-io:commons-io:2.14.0", mavenRepo,
                 "com.google.code.gson:gson:2.10.1", mavenRepo,
                 "com.h2database:h2:2.2.224", mavenRepo,
                 "org.mongodb:mongodb-driver-sync:4.11.1", mavenRepo,
                 "org.mongodb:mongodb-driver-core:4.11.1", mavenRepo,
                 "org.mongodb:bson:4.11.1", mavenRepo,
-                "org.xerial:sqlite-jdbc:3.43.2.2", mavenRepo,
+                "org.xerial:sqlite-jdbc:3.45.1.0", mavenRepo,
                 "dev.jorel:commandapi-bukkit-shade:9.3.0", mavenRepo
         );
 
@@ -236,9 +236,9 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
             case "v1_20_R3" -> artifact = "r18";
         }
         LibraryLoader.loadDependencies(
-                "xyz.xenondevs.invui:invui-core:1.24", "https://repo.xenondevs.xyz/releases/",
-                "xyz.xenondevs.invui:inventory-access:1.24", "https://repo.xenondevs.xyz/releases/",
-                String.format("xyz.xenondevs.invui:inventory-access-%s:1.24", artifact), "https://repo.xenondevs.xyz/releases/"
+                "xyz.xenondevs.invui:invui-core:1.25", "https://repo.xenondevs.xyz/releases/",
+                "xyz.xenondevs.invui:inventory-access:1.25", "https://repo.xenondevs.xyz/releases/",
+                String.format("xyz.xenondevs.invui:inventory-access-%s:1.25", artifact), "https://repo.xenondevs.xyz/releases/"
         );
     }
 

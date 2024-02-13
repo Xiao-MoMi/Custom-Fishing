@@ -30,7 +30,7 @@ dependencies {
     compileOnly("com.willfp:libreforge:4.48.1")
 
     // database
-    compileOnly("org.xerial:sqlite-jdbc:3.43.2.2")
+    compileOnly("org.xerial:sqlite-jdbc:3.45.1.0")
     compileOnly("com.h2database:h2:2.2.224")
     compileOnly("org.mongodb:mongodb-driver-sync:4.11.1")
     compileOnly("com.zaxxer:HikariCP:5.0.1")
@@ -39,12 +39,12 @@ dependencies {
     // others
     compileOnly("com.github.LoneDev6:api-itemsadder:3.5.0c-r5")
     compileOnly("io.th0rgal:oraxen:1.165.0")
-    compileOnly("pers.neige.neigeitems:NeigeItems:1.15.95")
+    compileOnly("pers.neige.neigeitems:NeigeItems:1.16.24")
     compileOnly("com.github.Zrips:Jobs:4.17.2")
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("org.betonquest:betonquest:2.0.0")
-    compileOnly("xyz.xenondevs.invui:invui:1.24")
+    compileOnly("xyz.xenondevs.invui:invui:1.25")
     compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.3.1.10")
 
     // local jars

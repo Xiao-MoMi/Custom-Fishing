@@ -67,7 +67,7 @@ MongoDB:
 Redis:
   enable: false
   host: localhost
-  #password: 123456
+  #password: "123456"
   port: 6379
   use-ssl: false
   MaxTotal: 10

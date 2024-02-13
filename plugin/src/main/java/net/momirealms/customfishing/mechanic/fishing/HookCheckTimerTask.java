@@ -92,12 +92,14 @@ public class HookCheckTimerTask implements Runnable {
     public void run() {
         if (
             !fishHook.isValid()
-            || fishHook.isOnGround()
             || (fishHook.getHookedEntity() != null && fishHook.getHookedEntity().getType() != EntityType.ARMOR_STAND)
         ) {
             // This task would be cancelled when hook is not at a proper place
             // or player reels in before it goes into water or lava
             this.destroy();
+            return;
+        }
+        if (fishHook.isOnGround()) {
             return;
         }
         if (fishHook.getLocation().getBlock().getType() == Material.LAVA) {
