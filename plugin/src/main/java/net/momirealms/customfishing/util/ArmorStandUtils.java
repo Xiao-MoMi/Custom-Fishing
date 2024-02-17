@@ -191,9 +191,13 @@ public class ArmorStandUtils {
      */
     public static void sendFakeItem(Player player, Location location, ItemStack itemStack, int seconds) {
         int id = new Random().nextInt(Integer.MAX_VALUE);
-        CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getSpawnPacket(id, location.clone().subtract(0,1,0)));
-        CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getMetaPacket(id));
-        CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getEquipPacket(id, itemStack));
+        if (CustomFishingPlugin.get().getVersionManager().isVersionNewerThan1_19_R3()) {
+            CustomFishingPluginImpl.sendPackets(player, getSpawnPacket(id, location.clone().subtract(0,1,0)), getMetaPacket(id), getEquipPacket(id, itemStack));
+        } else {
+            CustomFishingPluginImpl.sendPacket(player, getSpawnPacket(id, location.clone().subtract(0,1,0)));
+            CustomFishingPluginImpl.sendPacket(player, getMetaPacket(id));
+            CustomFishingPluginImpl.sendPacket(player, getEquipPacket(id, itemStack));
+        }
         CustomFishingPlugin.get().getScheduler().runTaskAsyncLater(() -> CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getDestroyPacket(id)), seconds * 50L, TimeUnit.MILLISECONDS);
     }
 
@@ -207,8 +211,12 @@ public class ArmorStandUtils {
      */
     public static void sendHologram(Player player, Location location, Component component, int seconds) {
         int id = new Random().nextInt(Integer.MAX_VALUE);
-        CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getSpawnPacket(id, location.clone().subtract(0,1,0)));
-        CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getMetaPacket(id, component));
+        if (CustomFishingPlugin.get().getVersionManager().isVersionNewerThan1_19_R3()) {
+            CustomFishingPluginImpl.sendPackets(player, getSpawnPacket(id, location.clone().subtract(0,1,0)), getMetaPacket(id, component));
+        } else {
+            CustomFishingPluginImpl.sendPacket(player, getSpawnPacket(id, location.clone().subtract(0,1,0)));
+            CustomFishingPluginImpl.sendPacket(player, getMetaPacket(id, component));
+        }
         CustomFishingPlugin.get().getScheduler().runTaskAsyncLater(() -> CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getDestroyPacket(id)), seconds * 50L, TimeUnit.MILLISECONDS);
     }
 }

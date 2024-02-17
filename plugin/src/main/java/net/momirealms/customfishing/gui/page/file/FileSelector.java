@@ -19,6 +19,7 @@ package net.momirealms.customfishing.gui.page.file;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
+import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.gui.Icon;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
 import net.momirealms.customfishing.gui.icon.BackToFolderItem;
@@ -90,12 +91,12 @@ public class FileSelector {
                 .setGui(gui)
                 .build();
 
-        gui.playAnimation(new SequentialAnimation(1, true), slotElement -> {
-            if (slotElement instanceof SlotElement.ItemSlotElement itemSlotElement) {
-                return !(itemSlotElement.getItem() instanceof Icon);
-            }
-            return true;
-        });
+//        gui.playAnimation(new SequentialAnimation(1, true), slotElement -> {
+//            if (slotElement instanceof SlotElement.ItemSlotElement itemSlotElement) {
+//                return !(itemSlotElement.getItem() instanceof Icon);
+//            }
+//            return true;
+//        });
 
         window.open();
     }

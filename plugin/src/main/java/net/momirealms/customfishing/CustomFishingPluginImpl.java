@@ -17,8 +17,10 @@
 
 package net.momirealms.customfishing;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
@@ -55,11 +57,15 @@ import net.momirealms.customfishing.version.VersionManagerImpl;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.TimeZone;
 
 public class CustomFishingPluginImpl extends CustomFishingPlugin {
@@ -339,5 +345,16 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
     @NotNull
     public static ProtocolManager getProtocolManager() {
         return protocolManager;
+    }
+
+    public static void sendPacket(Player player, PacketContainer packet) {
+        protocolManager.sendServerPacket(player, packet);
+    }
+
+    public static void sendPackets(Player player, PacketContainer... packets) {
+        List<PacketContainer> bundle = new ArrayList<>(Arrays.asList(packets));
+        PacketContainer bundlePacket = new PacketContainer(PacketType.Play.Server.BUNDLE);
+        bundlePacket.getPacketBundles().write(0, bundle);
+        sendPacket(player, bundlePacket);
     }
 }

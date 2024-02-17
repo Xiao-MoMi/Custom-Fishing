@@ -50,8 +50,12 @@ public class BaitAnimationTask implements Runnable {
         this.player = player;
         this.fishHook = fishHook;
         entityID = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
-        CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, FakeItemUtils.getSpawnPacket(entityID, fishHook.getLocation()));
-        CustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, FakeItemUtils.getMetaPacket(entityID, baitItem));
+        if (plugin.getVersionManager().isVersionNewerThan1_19_R3()) {
+            CustomFishingPluginImpl.sendPackets(player, FakeItemUtils.getSpawnPacket(entityID, fishHook.getLocation()), FakeItemUtils.getMetaPacket(entityID, baitItem));
+        } else {
+            CustomFishingPluginImpl.sendPacket(player, FakeItemUtils.getSpawnPacket(entityID, fishHook.getLocation()));
+            CustomFishingPluginImpl.sendPacket(player, FakeItemUtils.getMetaPacket(entityID, baitItem));
+        }
         this.cancellableTask = plugin.getScheduler().runTaskAsyncTimer(this, 50, 50, TimeUnit.MILLISECONDS);
     }
 
