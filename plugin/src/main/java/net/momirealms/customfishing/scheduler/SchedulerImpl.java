@@ -40,7 +40,7 @@ public class SchedulerImpl implements Scheduler {
 
     public SchedulerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;
-        this.syncScheduler = plugin.getVersionManager().isFolia() ?
+        this.syncScheduler = plugin.getVersionManager().hasRegionScheduler() ?
                 new FoliaSchedulerImpl(plugin) : new BukkitSchedulerImpl(plugin);
         this.schedule = new ScheduledThreadPoolExecutor(1);
         this.schedule.setMaximumPoolSize(1);

@@ -39,7 +39,8 @@ public class VersionManagerImpl implements VersionManager {
     private final String serverVersion;
     private final CustomFishingPluginImpl plugin;
     private final boolean isSpigot;
-    private boolean isFolia;
+    private boolean hasRegionScheduler;
+    private boolean isMojmap;
     private final String pluginVersion;
 
     @SuppressWarnings("deprecation")
@@ -73,7 +74,15 @@ public class VersionManagerImpl implements VersionManager {
         // Check if the server is Folia
         try {
             Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
-            this.isFolia = true;
+            this.hasRegionScheduler = true;
+        } catch (ClassNotFoundException ignored) {
+
+        }
+
+        // Check if the server is Mojmap
+        try {
+            Class.forName("net.minecraft.network.protocol.game.ClientboundBossEventPacket");
+            this.isMojmap = true;
         } catch (ClassNotFoundException ignored) {
 
         }
@@ -109,8 +118,13 @@ public class VersionManagerImpl implements VersionManager {
     }
 
     @Override
-    public boolean isFolia() {
-        return isFolia;
+    public boolean hasRegionScheduler() {
+        return hasRegionScheduler;
+    }
+
+    @Override
+    public boolean isMojmap() {
+        return isMojmap;
     }
 
     @Override

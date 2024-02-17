@@ -42,40 +42,42 @@ public class CommandManagerImpl implements CommandManager {
 
     public CommandManagerImpl(CustomFishingPluginImpl plugin) {
         this.plugin = plugin;
-        if (!CommandAPI.isLoaded())
-            CommandAPI.onLoad(new CommandAPIBukkitConfig(plugin).silentLogs(true));
     }
 
     @Override
     public void load() {
-        new CommandAPICommand("customfishing")
-                .withAliases("cfishing")
-                .withPermission("customfishing.admin")
-                .withSubcommands(
-                        getReloadCommand(),
-                        getMarketCommand(),
-                        getAboutCommand(),
-                        GUIEditorCommand.INSTANCE.getEditorCommand(),
-                        DataCommand.INSTANCE.getDataCommand(),
-                        CompetitionCommand.INSTANCE.getCompetitionCommand(),
-                        ItemCommand.INSTANCE.getItemCommand(),
-                        DebugCommand.INSTANCE.getDebugCommand(),
-                        StatisticsCommand.INSTANCE.getStatisticsCommand()
-                )
-                .register();
-
-        if (plugin.getMarketManager().isEnable()) {
-            new CommandAPICommand("sellfish")
-                    .withPermission("customfishing.sellfish")
-                    .executesPlayer((player, args) -> {
-                        if (plugin.getMarketManager().isEnable())
-                            plugin.getMarketManager().openMarketGUI(player);
-                    })
+        if (!plugin.getVersionManager().isMojmap()) {
+            if (!CommandAPI.isLoaded())
+                CommandAPI.onLoad(new CommandAPIBukkitConfig(plugin).silentLogs(true));
+            new CommandAPICommand("customfishing")
+                    .withAliases("cfishing")
+                    .withPermission("customfishing.admin")
+                    .withSubcommands(
+                            getReloadCommand(),
+                            getMarketCommand(),
+                            getAboutCommand(),
+                            GUIEditorCommand.INSTANCE.getEditorCommand(),
+                            DataCommand.INSTANCE.getDataCommand(),
+                            CompetitionCommand.INSTANCE.getCompetitionCommand(),
+                            ItemCommand.INSTANCE.getItemCommand(),
+                            DebugCommand.INSTANCE.getDebugCommand(),
+                            StatisticsCommand.INSTANCE.getStatisticsCommand()
+                    )
                     .register();
-        }
 
-        if (plugin.getBagManager().isEnabled()) {
-            FishingBagCommand.INSTANCE.getBagCommand().register();
+            if (plugin.getMarketManager().isEnable()) {
+                new CommandAPICommand("sellfish")
+                        .withPermission("customfishing.sellfish")
+                        .executesPlayer((player, args) -> {
+                            if (plugin.getMarketManager().isEnable())
+                                plugin.getMarketManager().openMarketGUI(player);
+                        })
+                        .register();
+            }
+
+            if (plugin.getBagManager().isEnabled()) {
+                FishingBagCommand.INSTANCE.getBagCommand().register();
+            }
         }
     }
 

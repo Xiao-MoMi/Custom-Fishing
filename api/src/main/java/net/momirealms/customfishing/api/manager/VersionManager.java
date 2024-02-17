@@ -31,9 +31,11 @@ public interface VersionManager {
 
     boolean isSpigot();
 
-    public boolean isFolia();
+    public boolean hasRegionScheduler();
 
     String getPluginVersion();
+
+    boolean isMojmap();
 
     String getServerVersion();
 }

@@ -37,6 +37,7 @@ public class ReflectionUtils {
     public static Class<?> bukkitClass;
 
     public static void load() {
+        // spigot map
         try {
             Class<?> bar = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutBoss");
             Field remove = bar.getDeclaredField("f");
@@ -50,9 +51,25 @@ public class ReflectionUtils {
             updateConstructor.setAccessible(true);
             iChatComponentMethod = MinecraftReflection.getChatSerializerClass().getMethod("a", String.class);
             iChatComponentMethod.setAccessible(true);
-        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | NoSuchMethodException exception) {
-            LogUtils.severe("Error occurred when loading reflections", exception);
-            exception.printStackTrace();
+        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | NoSuchMethodException e1) {
+            // mojmap
+            try {
+                Class<?> bar = Class.forName("net.minecraft.network.protocol.game.ClientboundBossEventPacket");
+                Field remove = bar.getDeclaredField("REMOVE_OPERATION");
+                remove.setAccessible(true);
+                removeBossBarPacket = remove.get(null);
+                Class<?> packetBossClassF = Class.forName("net.minecraft.network.protocol.game.ClientboundBossEventPacket$UpdateProgressOperation");
+                progressConstructor = packetBossClassF.getDeclaredConstructor(float.class);
+                progressConstructor.setAccessible(true);
+                Class<?> packetBossClassE = Class.forName("net.minecraft.network.protocol.game.ClientboundBossEventPacket$UpdateNameOperation");
+                updateConstructor = packetBossClassE.getDeclaredConstructor(MinecraftReflection.getIChatBaseComponentClass());
+                updateConstructor.setAccessible(true);
+                iChatComponentMethod = MinecraftReflection.getChatSerializerClass().getMethod("fromJson", String.class);
+                iChatComponentMethod.setAccessible(true);
+            } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | NoSuchMethodException e2) {
+                LogUtils.severe("Error occurred when loading reflections", e2);
+                e2.printStackTrace();
+            }
             return;
         }
         if (CustomFishingPlugin.get().getVersionManager().isSpigot()) return;
