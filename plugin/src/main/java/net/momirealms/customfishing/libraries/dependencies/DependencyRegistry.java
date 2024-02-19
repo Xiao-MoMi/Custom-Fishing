@@ -25,41 +25,20 @@
 
 package net.momirealms.customfishing.libraries.dependencies;
 
-import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.SetMultimap;
 import com.google.gson.JsonElement;
-import net.momirealms.customfishing.api.data.StorageType;
 
 /**
  * Applies LuckPerms specific behaviour for {@link Dependency}s.
  */
 public class DependencyRegistry {
 
-    private static final SetMultimap<StorageType, Dependency> STORAGE_DEPENDENCIES = ImmutableSetMultimap.<StorageType, Dependency>builder()
-            .putAll(StorageType.MongoDB,        Dependency.MONGODB_DRIVER_CORE, Dependency.MONGODB_DRIVER_SYNC, Dependency.MONGODB_DRIVER_BSON)
-            .putAll(StorageType.MariaDB,        Dependency.SLF4J_API, Dependency.SLF4J_SIMPLE, Dependency.HIKARI, Dependency.MARIADB_DRIVER)
-            .putAll(StorageType.MySQL,          Dependency.SLF4J_API, Dependency.SLF4J_SIMPLE, Dependency.HIKARI, Dependency.MYSQL_DRIVER)
-            .putAll(StorageType.SQLite,         Dependency.SQLITE_DRIVER)
-            .putAll(StorageType.H2,             Dependency.H2_DRIVER)
-            .build();
-
-    public DependencyRegistry() {
-
-    }
-
     public boolean shouldAutoLoad(Dependency dependency) {
-        switch (dependency) {
+        return switch (dependency) {
             // all used within 'isolated' classloaders, and are therefore not
             // relocated.
-            case ASM:
-            case ASM_COMMONS:
-            case JAR_RELOCATOR:
-            case H2_DRIVER:
-            case SQLITE_DRIVER:
-                return false;
-            default:
-                return true;
-        }
+            case ASM, ASM_COMMONS, JAR_RELOCATOR, H2_DRIVER, SQLITE_DRIVER -> false;
+            default -> true;
+        };
     }
 
     @SuppressWarnings("ConstantConditions")
