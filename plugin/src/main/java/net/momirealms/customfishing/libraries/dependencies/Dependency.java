@@ -26,7 +26,9 @@
 package net.momirealms.customfishing.libraries.dependencies;
 
 import com.google.common.collect.ImmutableList;
+import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.libraries.dependencies.relocation.Relocation;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
 import java.security.MessageDigest;
@@ -43,25 +45,29 @@ public enum Dependency {
             "org.ow2.asm",
             "asm",
             "9.1",
-            null
+            null,
+            "asm"
     ),
     ASM_COMMONS(
             "org.ow2.asm",
             "asm-commons",
             "9.1",
-            null
+            null,
+            "asm-commons"
     ),
     JAR_RELOCATOR(
             "me.lucko",
             "jar-relocator",
             "1.7",
-            null
+            null,
+            "jar-relocator"
     ),
     KYORI_OPTION(
             "net{}kyori",
             "option",
             "1.0.0",
             null,
+            "kyori-option",
             Relocation.of("option", "net{}kyori{}option")
     ),
     ADVENTURE_API(
@@ -69,6 +75,7 @@ public enum Dependency {
             "adventure-api",
             "4.15.0",
             null,
+            "adventure-api",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     ADVENTURE_KEY(
@@ -76,6 +83,7 @@ public enum Dependency {
             "adventure-key",
             "4.15.0",
             null,
+            "adventure-key",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     ADVENTURE_NBT(
@@ -83,6 +91,7 @@ public enum Dependency {
             "adventure-nbt",
             "4.15.0",
             null,
+            "adventure-nbt",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     ADVENTURE_LEGACY_SERIALIZER(
@@ -90,6 +99,7 @@ public enum Dependency {
             "adventure-text-serializer-legacy",
             "4.15.0",
             null,
+            "adventure-text-serializer-legacy",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     ADVENTURE_TEXT_LOGGER(
@@ -97,6 +107,7 @@ public enum Dependency {
             "adventure-text-logger-slf4j",
             "4.15.0",
             null,
+            "adventure-text-logger-slf4j",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     ADVENTURE_GSON(
@@ -104,6 +115,7 @@ public enum Dependency {
             "adventure-text-serializer-gson",
             "4.15.0",
             null,
+            "adventure-text-serializer-gson",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     ADVENTURE_GSON_LEGACY(
@@ -111,6 +123,7 @@ public enum Dependency {
             "adventure-text-serializer-gson-legacy-impl",
             "4.15.0",
             null,
+            "adventure-text-serializer-gson-legacy-impl",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     ADVENTURE_PLATFORM(
@@ -118,6 +131,7 @@ public enum Dependency {
             "adventure-platform-api",
             "4.3.2",
             null,
+            "adventure-platform-api",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     ADVENTURE_PLATFORM_BUKKIT(
@@ -125,6 +139,7 @@ public enum Dependency {
             "adventure-platform-bukkit",
             "4.3.2",
             null,
+            "adventure-platform-bukkit",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     ADVENTURE_PLATFORM_FACET(
@@ -132,6 +147,7 @@ public enum Dependency {
             "adventure-platform-facet",
             "4.3.2",
             null,
+            "adventure-platform-facet",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     ADVENTURE_TEXT_MINIMESSAGE(
@@ -139,6 +155,7 @@ public enum Dependency {
             "adventure-text-minimessage",
             "4.15.0",
             null,
+            "adventure-text-minimessage",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     COMMAND_API(
@@ -146,6 +163,7 @@ public enum Dependency {
             "commandapi-bukkit-shade",
             "9.3.0",
             null,
+            "commandapi-bukkit",
             Relocation.of("commandapi", "dev{}jorel{}commandapi")
     ),
     MARIADB_DRIVER(
@@ -153,6 +171,7 @@ public enum Dependency {
             "mariadb-java-client",
             "3.3.2",
             null,
+            "mariadb-java-client",
             Relocation.of("mariadb", "org{}mariadb")
     ),
     BOOSTED_YAML(
@@ -160,6 +179,7 @@ public enum Dependency {
             "boosted-yaml",
             "1.3.2",
             null,
+            "boosted-yaml",
             Relocation.of("boostedyaml", "dev{}dejvokep{}boostedyaml")
     ),
     NBT_API(
@@ -167,6 +187,7 @@ public enum Dependency {
             "item-nbt-api",
             "2.12.2",
             "codemc",
+            "item-nbt-api",
             Relocation.of("changeme", "de{}tr7zw{}changeme")
     ),
     EXP4J(
@@ -174,6 +195,7 @@ public enum Dependency {
             "exp4j",
             "0.4.8",
             null,
+            "exp4j",
             Relocation.of("exp4j", "net{}objecthunter{}exp4j")
     ),
     MYSQL_DRIVER(
@@ -181,44 +203,51 @@ public enum Dependency {
             "mysql-connector-j",
             "8.3.0",
             null,
+            "mysql-connector-j",
             Relocation.of("mysql", "com{}mysql")
     ),
     H2_DRIVER(
             "com.h2database",
             "h2",
             "2.2.224",
-            null
+            null,
+            "h2database"
     ),
     SQLITE_DRIVER(
             "org.xerial",
             "sqlite-jdbc",
             "3.45.1.0",
-            null
+            null,
+            "sqlite-jdbc"
     ),
     HIKARI(
             "com{}zaxxer",
             "HikariCP",
             "5.0.1",
             null,
+            "HikariCP",
             Relocation.of("hikari", "com{}zaxxer{}hikari")
     ),
     SLF4J_SIMPLE(
             "org.slf4j",
             "slf4j-simple",
             "2.0.12",
-            null
+            null,
+            "slf4j-simple"
     ),
     SLF4J_API(
             "org.slf4j",
             "slf4j-api",
             "2.0.12",
-            null
+            null,
+            "slf4j-api"
     ),
     MONGODB_DRIVER_CORE(
             "org{}mongodb",
             "mongodb-driver-core",
             "4.11.1",
             null,
+            "mongodb-driver-core",
             Relocation.of("mongodb", "com{}mongodb"),
             Relocation.of("bson", "org{}bson")
     ),
@@ -227,6 +256,7 @@ public enum Dependency {
             "mongodb-driver-sync",
             "4.11.1",
             null,
+            "mongodb-driver-sync",
             Relocation.of("mongodb", "com{}mongodb"),
             Relocation.of("bson", "org{}bson")
     ),
@@ -235,6 +265,7 @@ public enum Dependency {
             "bson",
             "4.11.1",
             null,
+            "mongodb-bson",
             Relocation.of("mongodb", "com{}mongodb"),
             Relocation.of("bson", "org{}bson")
     ),
@@ -243,6 +274,7 @@ public enum Dependency {
             "jedis",
             "5.1.0",
             null,
+            "jedis",
             Relocation.of("jedis", "redis{}clients{}jedis"),
             Relocation.of("commonspool2", "org{}apache{}commons{}pool2")
     ),
@@ -251,6 +283,7 @@ public enum Dependency {
             "bstats-base",
             "3.0.2",
             null,
+            "bstats-base",
             Relocation.of("bstats", "org{}bstats")
     ),
     BSTATS_BUKKIT(
@@ -258,34 +291,59 @@ public enum Dependency {
             "bstats-bukkit",
             "3.0.2",
             null,
+            "bstats-bukkit",
             Relocation.of("bstats", "org{}bstats")
     ),
     COMMONS_POOL_2(
-            "org.apache.commons",
+            "org{}apache{}commons",
             "commons-pool2",
             "2.11.0",
             null,
+            "commons-pool2",
             Relocation.of("commonspool2", "org{}apache{}commons{}pool2")
+    ),
+    INV_UI(
+            "xyz{}xenondevs{}invui",
+            "invui-core",
+            "1.25",
+            "xenondevs",
+            "invui-core"
+    ),
+    INV_UI_ACCESS(
+            "xyz{}xenondevs{}invui",
+            "inventory-access",
+            "1.25",
+            "xenondevs",
+            "inventory-access"
+    ),
+    INV_UI_NMS(
+            "xyz{}xenondevs{}invui",
+            getInvUINms(),
+            "1.25",
+            "xenondevs",
+            getInvUINms()
     ),
     GSON(
             "com.google.code.gson",
             "gson",
             "2.10.1",
-            null
+            null,
+            "gson"
     ),;
 
     private final String mavenRepoPath;
     private final String version;
     private final List<Relocation> relocations;
     private final String repo;
+    private final String artifact;
 
     private static final String MAVEN_FORMAT = "%s/%s/%s/%s-%s.jar";
 
-    Dependency(String groupId, String artifactId, String version, String repo) {
-        this(groupId, artifactId, version, repo, new Relocation[0]);
+    Dependency(String groupId, String artifactId, String version, String repo, String artifact) {
+        this(groupId, artifactId, version, repo, artifact, new Relocation[0]);
     }
 
-    Dependency(String groupId, String artifactId, String version, String repo, Relocation... relocations) {
+    Dependency(String groupId, String artifactId, String version, String repo, String artifact, Relocation... relocations) {
         this.mavenRepoPath = String.format(MAVEN_FORMAT,
                 rewriteEscaping(groupId).replace(".", "/"),
                 rewriteEscaping(artifactId),
@@ -296,6 +354,7 @@ public enum Dependency {
         this.version = version;
         this.relocations = ImmutableList.copyOf(relocations);
         this.repo = repo;
+        this.artifact = artifact;
     }
 
     private static String rewriteEscaping(String s) {
@@ -303,7 +362,7 @@ public enum Dependency {
     }
 
     public String getFileName(String classifier) {
-        String name = name().toLowerCase(Locale.ROOT).replace('_', '-');
+        String name = artifact.toLowerCase(Locale.ROOT).replace('_', '-');
         String extra = classifier == null || classifier.isEmpty()
                 ? ""
                 : "-" + classifier;
@@ -336,5 +395,23 @@ public enum Dependency {
     @Nullable
     public String getRepo() {
         return repo;
+    }
+
+    private static String getInvUINms() {
+        String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        String artifact;
+        switch (version) {
+            case "v1_17_R1" -> artifact = "r9";
+            case "v1_18_R1" -> artifact = "r10";
+            case "v1_18_R2" -> artifact = "r11";
+            case "v1_19_R1" -> artifact = "r12";
+            case "v1_19_R2" -> artifact = "r13";
+            case "v1_19_R3" -> artifact = "r15";
+            case "v1_20_R1" -> artifact = "r16";
+            case "v1_20_R2" -> artifact = "r17";
+            case "v1_20_R3" -> artifact = "r18";
+            default -> artifact = "r18";
+        }
+        return String.format("inventory-access-%s", artifact);
     }
 }
