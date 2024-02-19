@@ -1,5 +1,5 @@
 /*
- * This file is part of helper, licensed under the MIT License.
+ * This file is part of LuckPerms, licensed under the MIT License.
  *
  *  Copyright (c) lucko (Luck) <luck@lucko.me>
  *  Copyright (c) contributors
@@ -23,23 +23,31 @@
  *  SOFTWARE.
  */
 
-package net.momirealms.customfishing.libraries.libraryloader;
+package net.momirealms.customfishing.libraries.dependencies;
 
-import java.lang.annotation.*;
+import java.util.Collection;
+import java.util.Set;
 
 /**
- * Represents a maven repository.
+ * Loads and manages runtime dependencies for the plugin.
  */
-@Documented
-@Target(ElementType.LOCAL_VARIABLE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Repository {
+public interface DependencyManager extends AutoCloseable {
 
     /**
-     * Gets the base url of the repository.
+     * Loads dependencies.
      *
-     * @return the base url of the repository
+     * @param dependencies the dependencies to load
      */
-    String url();
+    void loadDependencies(Collection<Dependency> dependencies);
 
+    /**
+     * Obtains an isolated classloader containing the given dependencies.
+     *
+     * @param dependencies the dependencies
+     * @return the classloader
+     */
+    ClassLoader obtainClassLoaderWith(Set<Dependency> dependencies);
+
+    @Override
+    void close();
 }

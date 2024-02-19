@@ -1,5 +1,5 @@
 /*
- * This file is part of helper, licensed under the MIT License.
+ * This file is part of LuckPerms, licensed under the MIT License.
  *
  *  Copyright (c) lucko (Luck) <luck@lucko.me>
  *  Copyright (c) contributors
@@ -23,21 +23,19 @@
  *  SOFTWARE.
  */
 
-package net.momirealms.customfishing.libraries.libraryloader;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.lang.annotation.*;
+package net.momirealms.customfishing.libraries.loader;
 
 /**
- * Annotation to indicate the required libraries for a class.
+ * Runtime exception used if there is a problem during loading
  */
-@Documented
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface MavenLibraries {
+public class LoadingException extends RuntimeException {
 
-    @NotNull
-    MavenLibrary[] value() default {};
+    public LoadingException(String message) {
+        super(message);
+    }
+
+    public LoadingException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

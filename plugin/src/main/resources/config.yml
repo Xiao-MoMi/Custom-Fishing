@@ -234,7 +234,8 @@ mechanics:
 # Other settings
 other-settings:
   # It's recommended to use MiniMessage format. If you insist on using legacy color code "&", enable the support below.
-  legacy-color-code-support: false
+  # Disable this would improve performance
+  legacy-color-code-support: true
 
   # Thread pool settings
   thread-pool-settings:

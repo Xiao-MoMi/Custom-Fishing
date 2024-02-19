@@ -19,7 +19,6 @@ package net.momirealms.customfishing.storage.method.database.sql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.*;
 import net.momirealms.customfishing.api.util.LogUtils;

@@ -2,17 +2,23 @@ dependencies {
     // server
     compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
 
+    // packet
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
+
     // command
     compileOnly("dev.jorel:commandapi-bukkit-core:9.3.0")
 
-    // packet
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
+    // nbt
+    compileOnly("de.tr7zw:item-nbt-api:2.12.2")
+
+    // bStats
+    compileOnly("org.bstats:bstats-bukkit:3.0.2")
 
     // papi
     compileOnly("me.clip:placeholderapi:2.11.5")
 
     // config
-    compileOnly("dev.dejvokep:boosted-yaml:1.3.1")
+    compileOnly("dev.dejvokep:boosted-yaml:1.3.2")
 
     // mythic
     compileOnly("io.lumine:Mythic-Dist:5.3.5")
@@ -57,19 +63,13 @@ dependencies {
     compileOnly(files("libs/zaphkiel-2.0.24.jar"))
 
     // api module
-    implementation(project(":api"))
+    implementation(project(":api")) {
+        exclude("de.tr7zw")
+    }
 
     // adventure
     implementation("net.kyori:adventure-api:4.15.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.1")
-    implementation("net.kyori:adventure-text-minimessage:4.15.0")
-    implementation("net.kyori:adventure-text-serializer-legacy:4.15.0")
-
-    // nbt
-    implementation("de.tr7zw:item-nbt-api:2.12.2")
-
-    // bStats
-    implementation("org.bstats:bstats-bukkit:3.0.2")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.2")
 
     // local lib
     implementation(files("libs/BiomeAPI.jar"))
@@ -77,9 +77,18 @@ dependencies {
 
 tasks {
     shadowJar {
-        relocate ("de.tr7zw.changeme", "net.momirealms.customfishing.libraries")
-        relocate ("de.tr7zw.annotations", "net.momirealms.customfishing.libraries.annotations")
+        relocate ("org.apache.commons.pool2", "net.momirealms.customfishing.libraries.commonspool2")
+        relocate ("com.mysql", "net.momirealms.customfishing.libraries.mysql")
+        relocate ("org.mariadb", "net.momirealms.customfishing.libraries.mariadb")
+        relocate ("com.zaxxer.hikari", "net.momirealms.customfishing.libraries.hikari")
+        relocate ("redis.clients.jedis", "net.momirealms.customfishing.libraries.jedis")
+        relocate ("com.mongodb", "net.momirealms.customfishing.libraries.mongodb")
+        relocate ("org.bson", "net.momirealms.customfishing.libraries.bson")
+        relocate ("net.objecthunter.exp4j", "net.momirealms.customfishing.libraries.exp4j")
+        relocate ("de.tr7zw.changeme", "net.momirealms.customfishing.libraries.changeme")
         relocate ("net.kyori", "net.momirealms.customfishing.libraries")
+        relocate ("dev.jorel.commandapi", "net.momirealms.customfishing.libraries.commandapi")
+        relocate ("dev.dejvokep.boostedyaml", "net.momirealms.customfishing.libraries.boostedyaml")
         relocate ("org.bstats", "net.momirealms.customfishing.libraries.bstats")
         relocate ("net.momirealms.biomeapi", "net.momirealms.customfishing.libraries.biomeapi")
     }

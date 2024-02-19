@@ -64,7 +64,6 @@ public class CommandManagerImpl implements CommandManager {
                             StatisticsCommand.INSTANCE.getStatisticsCommand()
                     )
                     .register();
-
             if (plugin.getMarketManager().isEnable()) {
                 new CommandAPICommand("sellfish")
                         .withPermission("customfishing.sellfish")
@@ -74,7 +73,6 @@ public class CommandManagerImpl implements CommandManager {
                         })
                         .register();
             }
-
             if (plugin.getBagManager().isEnabled()) {
                 FishingBagCommand.INSTANCE.getBagCommand().register();
             }

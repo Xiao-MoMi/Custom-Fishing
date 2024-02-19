@@ -207,11 +207,11 @@ public class RedisManager extends AbstractStorage {
                 }
                 case "end" -> {
                     if (CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition() != null)
-                        CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition().end();
+                        CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition().end(true);
                 }
                 case "stop" -> {
                     if (CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition() != null)
-                        CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition().stop();
+                        CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition().stop(true);
                 }
             }
         }, new Location(Bukkit.getWorlds().get(0),0,0,0));

@@ -34,12 +34,12 @@ public interface FishingCompetition {
     /**
      * Stop the fishing competition
      */
-    void stop();
+    void stop(boolean triggerEvent);
 
     /**
      * End the fishing competition
      */
-    void end();
+    void end(boolean triggerEvent);
 
     /**
      * Check if the fishing competition is ongoing.

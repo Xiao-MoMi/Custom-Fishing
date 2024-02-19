@@ -113,7 +113,7 @@ public class Competition implements FishingCompetition {
     private void arrangeTimerTask() {
         this.competitionTimerTask = CustomFishingPlugin.get().getScheduler().runTaskAsyncTimer(() -> {
             if (decreaseTime()) {
-                end();
+                end(true);
                 return;
             }
             updatePublicPlaceholders();
@@ -149,15 +149,17 @@ public class Competition implements FishingCompetition {
      * and sets the remaining time to zero.
      */
     @Override
-    public void stop() {
+    public void stop(boolean triggerEvent) {
         if (!competitionTimerTask.isCancelled()) this.competitionTimerTask.cancel();
         if (this.bossBarManager != null) this.bossBarManager.unload();
         if (this.actionBarManager != null) this.actionBarManager.unload();
         this.ranking.clear();
         this.remainingTime = 0;
 
-        CompetitionEvent competitionEvent = new CompetitionEvent(CompetitionEvent.State.STOP, this);
-        Bukkit.getPluginManager().callEvent(competitionEvent);
+        if (triggerEvent) {
+            CompetitionEvent competitionEvent = new CompetitionEvent(CompetitionEvent.State.STOP, this);
+            Bukkit.getPluginManager().callEvent(competitionEvent);
+        }
     }
 
     /**
@@ -166,7 +168,7 @@ public class Competition implements FishingCompetition {
      * gives prizes to top participants and participation rewards, performs end actions, and clears the ranking.
      */
     @Override
-    public void end() {
+    public void end(boolean triggerEvent) {
         // mark it as ended
         this.remainingTime = 0;
 
@@ -213,8 +215,10 @@ public class Competition implements FishingCompetition {
         }
 
         // call event
-        CompetitionEvent competitionEndEvent = new CompetitionEvent(CompetitionEvent.State.END, this);
-        Bukkit.getPluginManager().callEvent(competitionEndEvent);
+        if (triggerEvent) {
+            CompetitionEvent competitionEndEvent = new CompetitionEvent(CompetitionEvent.State.END, this);
+            Bukkit.getPluginManager().callEvent(competitionEndEvent);
+        }
 
         // 1 seconds delay for other servers to read the redis data
         CustomFishingPlugin.get().getScheduler().runTaskAsyncLater(this.ranking::clear, 1, TimeUnit.SECONDS);
