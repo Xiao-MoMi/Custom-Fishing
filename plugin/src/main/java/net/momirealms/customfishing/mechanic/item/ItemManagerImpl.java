@@ -85,12 +85,14 @@ public class ItemManagerImpl implements ItemManager, Listener {
     private final CustomFishingPlugin plugin;
     private final HashMap<Key, BuildableItem> buildableItemMap;
     private final HashMap<String, ItemLibrary> itemLibraryMap;
+    private final List<ItemLibrary> itemDetectionList;
 
     public ItemManagerImpl(CustomFishingPlugin plugin) {
         instance = this;
         this.plugin = plugin;
         this.itemLibraryMap = new LinkedHashMap<>();
         this.buildableItemMap = new HashMap<>();
+        this.itemDetectionList = new ArrayList<>();
         this.registerItemLibrary(new CustomFishingItemImpl());
         this.registerItemLibrary(new VanillaItemImpl());
     }
@@ -98,12 +100,19 @@ public class ItemManagerImpl implements ItemManager, Listener {
     public void load() {
         this.loadItemsFromPluginFolder();
         Bukkit.getPluginManager().registerEvents(this, plugin);
+        for (String plugin : CFConfig.itemDetectOrder) {
+            ItemLibrary library = itemLibraryMap.get(plugin);
+            if (library != null) {
+                itemDetectionList.add(library);
+            }
+        }
     }
 
     public void unload() {
         HandlerList.unregisterAll(this);
         HashMap<Key, BuildableItem> tempMap = new HashMap<>(this.buildableItemMap);
         this.buildableItemMap.clear();
+        this.itemDetectionList.clear();
         for (Map.Entry<Key, BuildableItem> entry : tempMap.entrySet()) {
             if (entry.getValue().persist()) {
                 tempMap.put(entry.getKey(), entry.getValue());
@@ -249,13 +258,10 @@ public class ItemManagerImpl implements ItemManager, Listener {
     public String getAnyPluginItemID(ItemStack itemStack) {
         if (itemStack == null || itemStack.getType() == Material.AIR)
             return "AIR";
-        for (String plugin : CFConfig.itemDetectOrder) {
-            ItemLibrary itemLibrary = itemLibraryMap.get(plugin);
-            if (itemLibrary != null) {
-                String id = itemLibrary.getItemID(itemStack);
-                if (id != null) {
-                    return id;
-                }
+        for (ItemLibrary library : itemDetectionList) {
+            String id = library.getItemID(itemStack);
+            if (id != null) {
+                return id;
             }
         }
         // should not reach this because vanilla library would always work
