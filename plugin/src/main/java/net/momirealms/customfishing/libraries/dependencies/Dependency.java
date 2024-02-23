@@ -26,7 +26,6 @@
 package net.momirealms.customfishing.libraries.dependencies;
 
 import com.google.common.collect.ImmutableList;
-import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.libraries.dependencies.relocation.Relocation;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;

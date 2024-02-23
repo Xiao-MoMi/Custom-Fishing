@@ -61,6 +61,7 @@ public class BlockManagerImpl implements BlockManager, Listener {
 
     private final CustomFishingPlugin plugin;
     private final HashMap<String, BlockLibrary> blockLibraryMap;
+    private BlockLibrary[] blockDetectionArray;
     private final HashMap<String, BlockConfig> blockConfigMap;
     private final HashMap<String, BlockDataModifierBuilder> dataBuilderMap;
     private final HashMap<String, BlockStateModifierBuilder> stateBuilderMap;
@@ -73,6 +74,38 @@ public class BlockManagerImpl implements BlockManager, Listener {
         this.stateBuilderMap = new HashMap<>();
         this.registerBlockLibrary(new VanillaBlockImpl());
         this.registerInbuiltProperties();
+    }
+
+    public void load() {
+        this.loadConfig();
+        Bukkit.getPluginManager().registerEvents(this, plugin);
+        this.resetBlockDetectionOrder();
+    }
+
+    public void unload() {
+        HandlerList.unregisterAll(this);
+        HashMap<String, BlockConfig> tempMap = new HashMap<>(this.blockConfigMap);
+        this.blockConfigMap.clear();
+        for (Map.Entry<String, BlockConfig> entry : tempMap.entrySet()) {
+            if (entry.getValue().isPersist()) {
+                tempMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+    public void disable() {
+        this.blockLibraryMap.clear();
+    }
+
+    private void resetBlockDetectionOrder() {
+        ArrayList<BlockLibrary> list = new ArrayList<>();
+        for (String plugin : CFConfig.itemDetectOrder) {
+            BlockLibrary library = blockLibraryMap.get(plugin);
+            if (library != null) {
+                list.add(library);
+            }
+        }
+        this.blockDetectionArray = list.toArray(new BlockLibrary[0]);
     }
 
     /**
@@ -129,6 +162,7 @@ public class BlockManagerImpl implements BlockManager, Listener {
     public boolean registerBlockLibrary(BlockLibrary blockLibrary) {
         if (this.blockLibraryMap.containsKey(blockLibrary.identification())) return false;
         this.blockLibraryMap.put(blockLibrary.identification(), blockLibrary);
+        this.resetBlockDetectionOrder();
         return true;
     }
 
@@ -141,7 +175,10 @@ public class BlockManagerImpl implements BlockManager, Listener {
      */
     @Override
     public boolean unregisterBlockLibrary(String identification) {
-        return blockLibraryMap.remove(identification) != null;
+        boolean success = blockLibraryMap.remove(identification) != null;
+        if (success)
+            this.resetBlockDetectionOrder();
+        return success;
     }
 
     /**
@@ -196,11 +233,6 @@ public class BlockManagerImpl implements BlockManager, Listener {
         return stateBuilderMap.remove(type) != null;
     }
 
-    public void load() {
-        this.loadConfig();
-        Bukkit.getPluginManager().registerEvents(this, plugin);
-    }
-
     private void registerInbuiltProperties() {
         this.registerDirectional();
         this.registerStorage();
@@ -210,21 +242,6 @@ public class BlockManagerImpl implements BlockManager, Listener {
         this.registerNoteBlock();
         this.registerCampfire();
         this.registerAge();
-    }
-
-    public void unload() {
-        HandlerList.unregisterAll(this);
-        HashMap<String, BlockConfig> tempMap = new HashMap<>(this.blockConfigMap);
-        this.blockConfigMap.clear();
-        for (Map.Entry<String, BlockConfig> entry : tempMap.entrySet()) {
-            if (entry.getValue().isPersist()) {
-                tempMap.put(entry.getKey(), entry.getValue());
-            }
-        }
-    }
-
-    public void disable() {
-        this.blockLibraryMap.clear();
     }
 
     /**
@@ -353,13 +370,10 @@ public class BlockManagerImpl implements BlockManager, Listener {
     @Override
     @NotNull
     public String getAnyPluginBlockID(Block block) {
-        for (String plugin : CFConfig.blockDetectOrder) {
-            BlockLibrary blockLibrary = blockLibraryMap.get(plugin);
-            if (blockLibrary != null) {
-                String id = blockLibrary.getBlockID(block);
-                if (id != null) {
-                    return id;
-                }
+        for (BlockLibrary blockLibrary : blockDetectionArray) {
+            String id = blockLibrary.getBlockID(block);
+            if (id != null) {
+                return id;
             }
         }
         // Should not reach this because vanilla library would always work
