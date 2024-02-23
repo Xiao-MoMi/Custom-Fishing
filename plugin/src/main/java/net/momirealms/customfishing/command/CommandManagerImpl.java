@@ -21,6 +21,7 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
+import dev.jorel.commandapi.arguments.StringArgument;
 import dev.jorel.commandapi.arguments.UUIDArgument;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
@@ -54,7 +55,7 @@ public class CommandManagerImpl implements CommandManager {
                     .withPermission("customfishing.admin")
                     .withSubcommands(
                             getReloadCommand(),
-                            getMarketCommand(),
+                            getOpenCommand(),
                             getAboutCommand(),
                             GUIEditorCommand.INSTANCE.getEditorCommand(),
                             DataCommand.INSTANCE.getDataCommand(),
@@ -93,28 +94,32 @@ public class CommandManagerImpl implements CommandManager {
     }
 
     @SuppressWarnings("unchecked")
-    private CommandAPICommand getMarketCommand() {
+    private CommandAPICommand getOpenCommand() {
         CommandAPICommand command = new CommandAPICommand("open");
         if (plugin.getMarketManager().isEnable()) {
             command.withSubcommands(
                     new CommandAPICommand("market")
                     .withArguments(new EntitySelectorArgument.ManyPlayers("player"))
+                    .withOptionalArguments(new StringArgument("-s"))
                     .executes((sender, args) -> {
                         Collection<Player> players = (Collection<Player>) args.get("player");
                         assert players != null;
+                        boolean silence = args.getOrDefault("-s","").equals("-s");
                         for (Player player : players) {
                             plugin.getMarketManager().openMarketGUI(player);
-                            AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Market_GUI_Open.replace("{player}", player.getName()));
+                            if (!silence) AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Market_GUI_Open.replace("{player}", player.getName()));
                         }
                     }),
                     new CommandAPICommand("market-uuid")
                             .withArguments(new UUIDArgument("uuid"))
+                            .withOptionalArguments(new StringArgument("-s"))
                             .executes((sender, args) -> {
                                 UUID uuid = (UUID) args.get("uuid");
                                 Player player = Bukkit.getPlayer(uuid);
+                                boolean silence = args.getOrDefault("-s","").equals("-s");
                                 if (player == null) return;
                                 plugin.getMarketManager().openMarketGUI(player);
-                                AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Market_GUI_Open.replace("{player}", player.getName()));
+                                if (!silence) AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Market_GUI_Open.replace("{player}", player.getName()));
                             })
             );
         }
@@ -122,14 +127,16 @@ public class CommandManagerImpl implements CommandManager {
             command.withSubcommands(
                     new CommandAPICommand("bag")
                     .withArguments(new EntitySelectorArgument.ManyPlayers("player"))
+                    .withOptionalArguments(new StringArgument("-s"))
                     .executes((sender, args) -> {
                         Collection<Player> players = (Collection<Player>) args.get("player");
                         assert players != null;
+                        boolean silence = args.getOrDefault("-s","").equals("-s");
                         for (Player player : players) {
                             Inventory inventory = plugin.getBagManager().getOnlineBagInventory(player.getUniqueId());
                             if (inventory != null) {
                                 player.openInventory(inventory);
-                                AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Fishing_Bag_Open.replace("{player}", player.getName()));
+                                if (!silence) AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Fishing_Bag_Open.replace("{player}", player.getName()));
                             } else {
                                 LogUtils.warn("Player " + player.getName() + "'s bag data has not been loaded.");
                             }
@@ -137,14 +144,16 @@ public class CommandManagerImpl implements CommandManager {
                     }),
                     new CommandAPICommand("bag-uuid")
                             .withArguments(new UUIDArgument("uuid"))
+                            .withOptionalArguments(new StringArgument("-s"))
                             .executes((sender, args) -> {
                                 UUID uuid = (UUID) args.get("uuid");
                                 Player player = Bukkit.getPlayer(uuid);
+                                boolean silence = args.getOrDefault("-s","").equals("-s");
                                 if (player == null) return;
                                 Inventory inventory = plugin.getBagManager().getOnlineBagInventory(uuid);
                                 if (inventory != null) {
                                     player.openInventory(inventory);
-                                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Fishing_Bag_Open.replace("{player}", player.getName()));
+                                    if (!silence) AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Fishing_Bag_Open.replace("{player}", player.getName()));
                                 } else {
                                     LogUtils.warn("Player " + player.getName() + "'s bag data has not been loaded.");
                                 }

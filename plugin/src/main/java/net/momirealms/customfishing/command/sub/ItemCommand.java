@@ -142,9 +142,11 @@ public class ItemCommand {
                                 info -> completionMap.get(namespace)
                         )))
                 .withOptionalArguments(new IntegerArgument("amount", 1))
+                .withOptionalArguments(new StringArgument("-s"))
                 .executes((sender, args) -> {
                     Collection<Player> players = (Collection<Player>) args.get("player");
                     String id = (String) args.get("id");
+                    boolean silence = args.getOrDefault("-s", "").equals("-s");
                     int amount = (int) args.getOrDefault("amount", 1);
                     BuildableItem buildableItem = CustomFishingPlugin.get().getItemManager().getBuildableItem(namespace, id);
                     if (buildableItem != null) {
@@ -152,7 +154,7 @@ public class ItemCommand {
                         for (Player player : players) {
                             ItemStack item = CustomFishingPlugin.get().getItemManager().build(player, namespace, id, new Condition(player).getArgs());
                             int actual = ItemUtils.giveItem(player, item, amount);
-                            AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Give_Item.replace("{item}", id).replace("{amount}", String.valueOf(actual)).replace("{player}", player.getName()));
+                            if (!silence) AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Give_Item.replace("{item}", id).replace("{amount}", String.valueOf(actual)).replace("{player}", player.getName()));
                         }
                     } else {
                         AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Item_Not_Exists);
