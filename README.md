@@ -5,7 +5,7 @@
 ![bStats Players](https://img.shields.io/bstats/players/16648)
 ![GitHub](https://img.shields.io/github/license/Xiao-MoMi/Custom-Fishing)
 [![](https://jitpack.io/v/Xiao-MoMi/Custom-Fishing.svg)](https://jitpack.io/#Xiao-MoMi/Custom-Fishing)
-<a href="https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing-2.0-beta" alt="GitBook">
+<a href="https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing" alt="GitBook">
 <img src="https://img.shields.io/badge/docs-gitbook-brightgreen" alt="Gitbook"/>
 </a>
 
