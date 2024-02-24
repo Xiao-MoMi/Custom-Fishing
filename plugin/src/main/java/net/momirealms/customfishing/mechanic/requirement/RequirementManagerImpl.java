@@ -35,6 +35,7 @@ import net.momirealms.customfishing.compatibility.VaultHook;
 import net.momirealms.customfishing.compatibility.papi.ParseUtils;
 import net.momirealms.customfishing.util.ClassUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
+import net.momirealms.customfishing.util.MoonPhase;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -182,6 +183,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerEndWithRequirement();
         this.registerEqualsRequirement();
         this.registerBiomeRequirement();
+        this.registerMoonPhaseRequirement();
         this.registerDateRequirement();
         this.registerPluginLevelRequirement();
         this.registerPermissionRequirement();
@@ -592,6 +594,29 @@ public class RequirementManagerImpl implements RequirementManager {
             return condition -> {
                 String currentBiome = BiomeAPI.getBiome(condition.getLocation());
                 if (!biomes.contains(currentBiome))
+                    return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+    }
+
+    private void registerMoonPhaseRequirement() {
+        registerRequirement("moon-phase", (args, actions, advanced) -> {
+            HashSet<String> moonPhases = new HashSet<>(ConfigUtils.stringListArgs(args));
+            return condition -> {
+                long days = condition.getLocation().getWorld().getFullTime() / 24_000;
+                if (moonPhases.contains(MoonPhase.getPhase(days).name().toLowerCase(Locale.ENGLISH)))
+                    return true;
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+        registerRequirement("!moon-phase", (args, actions, advanced) -> {
+            HashSet<String> moonPhases = new HashSet<>(ConfigUtils.stringListArgs(args));
+            return condition -> {
+                long days = condition.getLocation().getWorld().getFullTime() / 24_000;
+                if (!moonPhases.contains(MoonPhase.getPhase(days).name().toLowerCase(Locale.ENGLISH)))
                     return true;
                 if (advanced) triggerActions(actions, condition);
                 return false;
