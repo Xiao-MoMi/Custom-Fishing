@@ -73,7 +73,6 @@ public class BlockManagerImpl implements BlockManager, Listener {
         this.dataBuilderMap = new HashMap<>();
         this.stateBuilderMap = new HashMap<>();
         this.registerBlockLibrary(new VanillaBlockImpl());
-        this.registerInbuiltProperties();
     }
 
     public void load() {

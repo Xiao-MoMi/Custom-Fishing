@@ -31,6 +31,7 @@ import org.bukkit.event.EventPriority;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -59,8 +60,8 @@ public class CFConfig {
     public static int keepAliveTime;
 
     // detection order for item id
-    public static List<String> itemDetectOrder;
-    public static List<String> blockDetectOrder;
+    public static List<String> itemDetectOrder = new ArrayList<>();
+    public static List<String> blockDetectOrder = new ArrayList<>();
 
     // fishing bag
     public static boolean enableFishingBag;
