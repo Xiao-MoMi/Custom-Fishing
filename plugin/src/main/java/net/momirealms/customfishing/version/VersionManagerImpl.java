@@ -53,7 +53,6 @@ public class VersionManagerImpl implements VersionManager {
         String[] split = serverVersion.split("_");
         int main_ver = Integer.parseInt(split[1]);
 
-        // Determine if the server version is newer than 1_19_R2 and 1_20_R1
         if (main_ver >= 20) {
             isNewerThan1_19_R2 = true;
             isNewerThan1_19_R3 = true;
