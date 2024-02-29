@@ -31,13 +31,9 @@ public class JobsRebornImpl implements LevelInterface {
     @Override
     public void addXp(Player player, String target, double amount) {
         JobsPlayer jobsPlayer = Jobs.getPlayerManager().getJobsPlayer(player);
-        if (jobsPlayer != null) {
-            List<JobProgression> jobs = jobsPlayer.getJobProgression();
-            Job job = Jobs.getJob(target);
-            for (JobProgression progression : jobs)
-                if (progression.getJob().equals(job))
-                    progression.addExperience(amount);
-        }
+        Job job = Jobs.getJob(target);
+        if (jobsPlayer != null && jobsPlayer.isInJob(job))
+            Jobs.getPlayerManager().addExperience(jobsPlayer, job, amount);
     }
 
     @Override
