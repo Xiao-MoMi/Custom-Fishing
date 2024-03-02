@@ -48,6 +48,7 @@ dependencies {
     compileOnly("pers.neige.neigeitems:NeigeItems:1.16.24")
     compileOnly("com.github.Zrips:Jobs:4.17.2")
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
+    compileOnly("dev.aurelium:auraskills-api-bukkit:2.0.0-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("org.betonquest:betonquest:2.0.0")
     compileOnly("xyz.xenondevs.invui:invui:1.25")

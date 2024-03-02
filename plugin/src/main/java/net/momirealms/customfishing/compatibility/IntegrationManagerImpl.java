@@ -119,6 +119,10 @@ public class IntegrationManagerImpl implements IntegrationManager {
             registerLevelPlugin("AureliumSkills", new AureliumSkillsImpl());
             hookMessage("AureliumSkills");
         }
+        if (plugin.isHookedPluginEnabled("AuraSkills")) {
+            registerLevelPlugin("AuraSkills", new AuraSkillsImpl());
+            hookMessage("AuraSkills");
+        }
         if (plugin.isHookedPluginEnabled("EcoEnchants")) {
             this.enchantmentPluginMap.put("EcoEnchants", new VanillaEnchantmentsImpl());
             hookMessage("EcoEnchants");

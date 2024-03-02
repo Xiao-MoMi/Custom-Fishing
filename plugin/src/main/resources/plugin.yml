@@ -16,6 +16,7 @@ softdepend:
   - MMOItems
   - mcMMO
   - AureliumSkills
+  - AuraSkills
   - CustomCrops
   - MMOCore
   - EcoSkills
