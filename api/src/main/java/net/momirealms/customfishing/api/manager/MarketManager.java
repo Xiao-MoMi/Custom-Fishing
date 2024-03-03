@@ -38,6 +38,11 @@ public interface MarketManager {
      */
     int getCachedDate();
 
+    /**
+     * Retrieves the current date as an integer in the format MMDD (e.g., September 21 as 0921).
+     *
+     * @return An integer representing the current date.
+     */
     int getDate();
 
     /**

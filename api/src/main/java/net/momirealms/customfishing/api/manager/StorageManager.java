@@ -46,6 +46,11 @@ public interface StorageManager {
      */
     @Nullable OnlineUser getOnlineUser(UUID uuid);
 
+    /**
+     * Get all the online users
+     *
+     * @return online users
+     */
     Collection<OnlineUser> getOnlineUsers();
 
     /**

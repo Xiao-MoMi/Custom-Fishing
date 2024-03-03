@@ -63,6 +63,14 @@ public interface RequirementManager {
     @Nullable Requirement[] getRequirements(ConfigurationSection section, boolean advanced);
 
     /**
+     * If a requirement type exists
+     *
+     * @param type type
+     * @return exists or not
+     */
+    boolean hasRequirement(String type);
+
+    /**
      * Retrieves a Requirement object based on a configuration section and advanced flag.
      * <p>
      * requirement_1:  <- section

@@ -134,6 +134,13 @@ public interface ItemManager {
     @Nullable
     BuildableItem getBuildableItem(String namespace, String value);
 
+    /**
+     * Get an itemStack's appearance (material + custom model data)
+     *
+     * @param player player
+     * @param material id
+     * @return appearance
+     */
     ItemStack getItemStackAppearance(Player player, String material);
 
     /**

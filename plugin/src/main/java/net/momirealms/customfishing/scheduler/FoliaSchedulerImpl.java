@@ -20,11 +20,8 @@ package net.momirealms.customfishing.scheduler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
-import net.momirealms.customfishing.util.LocationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-
-import java.util.Optional;
 
 /**
  * A scheduler implementation for "synchronous" tasks using Folia's RegionScheduler.
@@ -45,7 +42,11 @@ public class FoliaSchedulerImpl implements SyncScheduler {
      */
     @Override
     public void runSyncTask(Runnable runnable, Location location) {
-        Bukkit.getRegionScheduler().execute(plugin, Optional.ofNullable(location).orElse(LocationUtils.getAnyLocationInstance()), runnable);
+        if (location == null) {
+            Bukkit.getGlobalRegionScheduler().execute(plugin, runnable);
+        } else {
+            Bukkit.getRegionScheduler().execute(plugin, location, runnable);
+        }
     }
 
     /**
@@ -59,6 +60,9 @@ public class FoliaSchedulerImpl implements SyncScheduler {
      */
     @Override
     public CancellableTask runTaskSyncTimer(Runnable runnable, Location location, long delay, long period) {
+        if (location == null) {
+            return new FoliaCancellableTask(Bukkit.getGlobalRegionScheduler().runAtFixedRate(plugin, (scheduledTask -> runnable.run()), delay, period));
+        }
         return new FoliaCancellableTask(Bukkit.getRegionScheduler().runAtFixedRate(plugin, location, (scheduledTask -> runnable.run()), delay, period));
     }
 
@@ -73,7 +77,13 @@ public class FoliaSchedulerImpl implements SyncScheduler {
     @Override
     public CancellableTask runTaskSyncLater(Runnable runnable, Location location, long delay) {
         if (delay == 0) {
-            return new FoliaSchedulerImpl.FoliaCancellableTask(Bukkit.getRegionScheduler().run(plugin, location, (scheduledTask -> runnable.run())));
+            if (location == null) {
+                return new FoliaCancellableTask(Bukkit.getGlobalRegionScheduler().run(plugin, (scheduledTask -> runnable.run())));
+            }
+            return new FoliaCancellableTask(Bukkit.getRegionScheduler().run(plugin, location, (scheduledTask -> runnable.run())));
+        }
+        if (location == null) {
+            return new FoliaCancellableTask(Bukkit.getGlobalRegionScheduler().runDelayed(plugin, (scheduledTask -> runnable.run()), delay));
         }
         return new FoliaCancellableTask(Bukkit.getRegionScheduler().runDelayed(plugin, location, (scheduledTask -> runnable.run()), delay));
     }

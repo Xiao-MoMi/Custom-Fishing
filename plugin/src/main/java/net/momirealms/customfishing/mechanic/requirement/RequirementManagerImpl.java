@@ -280,6 +280,7 @@ public class RequirementManagerImpl implements RequirementManager {
         return requirements.toArray(new Requirement[0]);
     }
 
+    @Override
     public boolean hasRequirement(String type) {
         return requirementBuilderMap.containsKey(type);
     }
@@ -1361,7 +1362,6 @@ public class RequirementManagerImpl implements RequirementManager {
      * Loads requirement expansions from external JAR files located in the expansion folder.
      * Each expansion JAR should contain classes that extends the RequirementExpansion class.
      * Expansions are registered and used to create custom requirements.
-     * If an error occurs while loading or initializing an expansion, a warning message is logged.
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void loadExpansions() {

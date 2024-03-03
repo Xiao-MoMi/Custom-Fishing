@@ -29,6 +29,11 @@ import java.util.UUID;
 
 public interface BagManager {
 
+    /**
+     * Is bag enabled
+     *
+     * @return enabled or not
+     */
     boolean isEnabled();
 
     /**
@@ -39,6 +44,12 @@ public interface BagManager {
      */
     Inventory getOnlineBagInventory(UUID uuid);
 
+    /**
+     * Get the rows of a player's fishing bag
+     *
+     * @param player player who owns the bag
+     * @return rows
+     */
     int getBagInventoryRows(Player player);
 
     /**
@@ -49,15 +60,45 @@ public interface BagManager {
      */
     void editOfflinePlayerBag(Player admin, OfflineUser userData);
 
+    /**
+     * Get the actions to perform when loot is automatically collected
+     *
+     * @return actions
+     */
     Action[] getCollectLootActions();
 
+    /**
+     * Get the actions to perform when bag is full
+     *
+     * @return actions
+     */
     Action[] getBagFullActions();
 
+    /**
+     * If bag can store fishing loots
+     *
+     * @return can store or not
+     */
     boolean doesBagStoreLoots();
 
+    /**
+     * Get the fishing bag's title
+     *
+     * @return title
+     */
     String getBagTitle();
 
+    /**
+     * Get a list of allowed items in bag
+     *
+     * @return whitelisted items
+     */
     List<Material> getBagWhiteListItems();
 
+    /**
+     * Get the requirements for automatically collecting loots
+     *
+     * @return requirements
+     */
     Requirement[] getCollectRequirements();
 }

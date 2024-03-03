@@ -39,6 +39,12 @@ public interface AdventureManager {
      */
     void sendMessage(CommandSender sender, String msg);
 
+    /**
+     * Send a message with prefix
+     *
+     * @param sender command sender
+     * @param s message
+     */
     void sendMessageWithPrefix(CommandSender sender, String s);
 
     /**
