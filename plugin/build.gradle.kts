@@ -51,7 +51,7 @@ dependencies {
     compileOnly("dev.aurelium:auraskills-api-bukkit:2.0.0-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("org.betonquest:betonquest:2.0.0")
-    compileOnly("xyz.xenondevs.invui:invui:1.25")
+    compileOnly("xyz.xenondevs.invui:invui:1.26")
     compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.3.1.10")
 
     // local jars
