@@ -63,7 +63,7 @@ public class DebugCommand {
     public CommandAPICommand getBiomeCommand() {
         return new CommandAPICommand("biome")
                 .executesPlayer((player, arg) -> {
-                    AdventureManagerImpl.getInstance().sendMessage(player, BiomeAPI.getBiome(player.getLocation()));
+                    AdventureManagerImpl.getInstance().sendMessage(player, BiomeAPI.getBiomeAt(player.getLocation()));
                 });
     }
 

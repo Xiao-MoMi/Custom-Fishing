@@ -583,7 +583,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("biome", (args, actions, advanced) -> {
             HashSet<String> biomes = new HashSet<>(ConfigUtils.stringListArgs(args));
             return condition -> {
-                String currentBiome = BiomeAPI.getBiome(condition.getLocation());
+                String currentBiome = BiomeAPI.getBiomeAt(condition.getLocation());
                     if (biomes.contains(currentBiome))
                         return true;
                 if (advanced) triggerActions(actions, condition);
@@ -593,7 +593,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("!biome", (args, actions, advanced) -> {
             HashSet<String> biomes = new HashSet<>(ConfigUtils.stringListArgs(args));
             return condition -> {
-                String currentBiome = BiomeAPI.getBiome(condition.getLocation());
+                String currentBiome = BiomeAPI.getBiomeAt(condition.getLocation());
                 if (!biomes.contains(currentBiome))
                     return true;
                 if (advanced) triggerActions(actions, condition);

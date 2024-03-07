@@ -322,13 +322,21 @@ public enum Dependency {
             "xenondevs",
             getInvUINms()
     ),
+    BIOME_API(
+            "com{}github{}Xiao-MoMi",
+            "BiomeAPI",
+            "0.2",
+            "jitpack",
+            "biome-api",
+            Relocation.of("biomeapi", "net{}momirealms{}biomeapi")
+    ),
     GSON(
             "com.google.code.gson",
             "gson",
             "2.10.1",
             null,
             "gson"
-    ),;
+    );
 
     private final String mavenRepoPath;
     private final String version;

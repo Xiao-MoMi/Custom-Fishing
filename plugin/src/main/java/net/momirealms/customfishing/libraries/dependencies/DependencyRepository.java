@@ -61,7 +61,11 @@ public enum DependencyRepository {
     /**
      * xenondevs
      */
-    XENONDEVS("xenondevs", "https://repo.xenondevs.xyz/releases/");
+    XENONDEVS("xenondevs", "https://repo.xenondevs.xyz/releases/"),
+    /**
+     * Jitpack
+     */
+    JITPACK("jitpack", "https://jitpack.io/");
 
     private final String url;
     private final String id;
