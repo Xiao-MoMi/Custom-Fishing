@@ -317,7 +317,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
         if (!RequirementManager.isRequirementMet(
             fishingPreparation, RequirementManagerImpl.mechanicRequirements
         )) {
-            removeTempFishingState(player);
+            this.removeTempFishingState(player);
             return;
         }
         FishingEffect initialEffect = plugin.getEffectManager().getInitialEffect();
@@ -444,6 +444,8 @@ public class FishingManagerImpl implements Listener, FishingManager {
                     event.setCancelled(true);
                 }
             } else {
+                // remove temp state if fishing game not exists
+                removeTempFishingState(player);
                 var hook = event.getHook();
                 // If the game is disabled, then do success actions
                 success(temp, hook);

@@ -652,7 +652,8 @@ public class RequirementManagerImpl implements RequirementManager {
             return condition -> {
                 String currentWeather;
                 World world = condition.getLocation().getWorld();
-                if (world.isThundering()) currentWeather = "thunder";
+                if (world.hasStorm()) currentWeather = "rainstorm";
+                else if (world.isThundering()) currentWeather = "thunder";
                 else if (world.isClearWeather()) currentWeather = "clear";
                 else currentWeather = "rain";
                 for (String weather : weathers)
