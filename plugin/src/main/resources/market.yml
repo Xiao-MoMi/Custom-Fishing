@@ -60,6 +60,10 @@ sell-all-icons:
       command_action:
         type: command
         value: 'money give {player} {money}'
+# Require the economy plugin to hook into Vault
+#      money_action:
+#        type: give-money
+#        value: '{money}'
   deny-icon:
     material: REDSTONE_BLOCK
     display:
@@ -112,6 +116,10 @@ sell-icons:
       command_action:
         type: command
         value: 'money give {player} {money}'
+# Require the economy plugin to hook into Vault
+#      money_action:
+#        type: give-money
+#        value: '{money}'
   deny-icon:
     material: REDSTONE_BLOCK
     display:

@@ -260,7 +260,7 @@ tuna_fish_silver_star:
       - '<white>size: {size}cm'
   custom-model-data: 50002
   group:
-    - sliver_star
+    - silver_star
     - ocean
   events:
     success:
@@ -331,7 +331,7 @@ pike_fish_silver_star:
       - '<white>size: {size}cm'
   custom-model-data: 50005
   group:
-    - sliver_star
+    - silver_star
     - ocean
   events:
     success:
@@ -407,7 +407,7 @@ gold_fish_silver_star:
   size: 3~4
   custom-model-data: 50008
   group:
-    - sliver_star
+    - silver_star
     - river
   events:
     success:

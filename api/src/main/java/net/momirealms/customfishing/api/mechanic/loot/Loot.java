@@ -20,8 +20,10 @@ package net.momirealms.customfishing.api.mechanic.loot;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
+import net.momirealms.customfishing.api.mechanic.effect.BaseEffect;
 import net.momirealms.customfishing.api.mechanic.statistic.StatisticsKey;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
@@ -104,6 +106,7 @@ public interface Loot {
      * @param actionTrigger The action trigger.
      * @return The actions triggered by the given trigger.
      */
+    @Nullable
     Action[] getActions(ActionTrigger actionTrigger);
 
     /**
@@ -113,6 +116,13 @@ public interface Loot {
      * @param condition     The condition under which the actions are triggered.
      */
     void triggerActions(ActionTrigger actionTrigger, Condition condition);
+
+    /**
+     * Get effects that bond to this loot
+     *
+     * @return effects
+     */
+    BaseEffect getBaseEffect();
 
     /**
      * Get the actions triggered by a specific number of successes.

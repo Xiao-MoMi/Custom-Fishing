@@ -367,10 +367,9 @@ public class RequirementManagerImpl implements RequirementManager {
         });
     }
 
-    @SuppressWarnings("all")
     private void registerGroupRequirement() {
         registerRequirement("group", (args, actions, advanced) -> {
-            List<String> arg = (List<String>) args;
+            HashSet<String> arg = new HashSet<>(ConfigUtils.stringListArgs(args));
             return condition -> {
                 String lootID = condition.getArg("{loot}");
                 Loot loot = plugin.getLootManager().getLoot(lootID);
@@ -387,7 +386,7 @@ public class RequirementManagerImpl implements RequirementManager {
             };
         });
         registerRequirement("!group", (args, actions, advanced) -> {
-            List<String> arg = (List<String>) args;
+            HashSet<String> arg = new HashSet<>(ConfigUtils.stringListArgs(args));
             return condition -> {
                 String lootID = condition.getArg("{loot}");
                 Loot loot = plugin.getLootManager().getLoot(lootID);
@@ -409,10 +408,9 @@ public class RequirementManagerImpl implements RequirementManager {
         });
     }
 
-    @SuppressWarnings("unchecked")
     private void registerLootRequirement() {
         registerRequirement("loot", (args, actions, advanced) -> {
-            List<String> arg = (List<String>) args;
+            HashSet<String> arg = new HashSet<>(ConfigUtils.stringListArgs(args));
             return condition -> {
                 String lootID = condition.getArg("{loot}");
                 if (arg.contains(lootID)) return true;
@@ -421,7 +419,7 @@ public class RequirementManagerImpl implements RequirementManager {
             };
         });
         registerRequirement("!loot", (args, actions, advanced) -> {
-            List<String> arg = (List<String>) args;
+            HashSet<String> arg = new HashSet<>(ConfigUtils.stringListArgs(args));
             return condition -> {
                 String lootID = condition.getArg("{loot}");
                 if (!arg.contains(lootID)) return true;

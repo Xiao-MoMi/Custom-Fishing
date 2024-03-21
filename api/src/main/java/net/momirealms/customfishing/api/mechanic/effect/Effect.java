@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.api.mechanic.effect;
 
 import net.momirealms.customfishing.api.common.Pair;
-import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
+import net.momirealms.customfishing.api.mechanic.misc.WeightModifier;
 
 import java.util.List;
 

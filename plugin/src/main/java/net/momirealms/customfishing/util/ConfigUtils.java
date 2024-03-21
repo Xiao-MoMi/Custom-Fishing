@@ -19,8 +19,8 @@ package net.momirealms.customfishing.util;
 
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.common.Tuple;
-import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
 import net.momirealms.customfishing.api.mechanic.misc.Value;
+import net.momirealms.customfishing.api.mechanic.misc.WeightModifier;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.mechanic.misc.value.ExpressionValue;

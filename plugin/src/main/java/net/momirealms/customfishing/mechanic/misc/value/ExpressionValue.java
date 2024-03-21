@@ -21,7 +21,7 @@ import net.momirealms.customfishing.api.mechanic.misc.Value;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class ExpressionValue implements Value {
 
@@ -32,7 +32,7 @@ public class ExpressionValue implements Value {
     }
 
     @Override
-    public double get(Player player) {
-        return ConfigUtils.getExpressionValue(player, expression, new HashMap<>(0));
+    public double get(Player player, Map<String, String> values) {
+        return ConfigUtils.getExpressionValue(player, expression, values);
     }
 }

@@ -59,7 +59,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
-import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -309,7 +308,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
      */
     public void onCastRod(PlayerFishEvent event) {
         var player = event.getPlayer();
-        var fishingPreparation = new FishingPreparation(player, plugin);
+        var fishingPreparation = new FishingPreparationImpl(player, plugin);
         if (!fishingPreparation.canFish()) {
             event.setCancelled(true);
             return;
@@ -446,7 +445,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 }
             } else {
                 // remove temp state if fishing game not exists
-                removeTempFishingState(player);
+                this.removeTempFishingState(player);
                 var hook = event.getHook();
                 // If the game is disabled, then do success actions
                 success(temp, hook);
@@ -791,7 +790,6 @@ public class FishingManagerImpl implements Listener, FishingManager {
     @Override
     public boolean startFishingGame(Player player, Condition condition, Effect effect) {
         Map<String, Double> gameWithWeight = plugin.getGameManager().getGameWithWeight(condition);
-        plugin.debug(gameWithWeight.toString());
         String random = WeightUtils.getRandom(gameWithWeight);
         Pair<BasicGameConfig, GameInstance> gamePair = plugin.getGameManager().getGameInstance(random);
         if (random == null) {

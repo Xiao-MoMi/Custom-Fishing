@@ -33,6 +33,7 @@ import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
+import net.momirealms.customfishing.mechanic.fishing.FishingPreparationImpl;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.NBTUtils;
 import org.bukkit.Material;
@@ -143,7 +144,7 @@ public class DebugCommand {
                         return;
                     }
                     FishingEffect initialEffect = CustomFishingPlugin.get().getEffectManager().getInitialEffect();
-                    FishingPreparation fishingPreparation = new FishingPreparation(player, CustomFishingPlugin.get());
+                    FishingPreparation fishingPreparation = new FishingPreparationImpl(player, CustomFishingPlugin.get());
                     boolean inLava = (boolean) arg.getOrDefault("lava fishing", false);
                     fishingPreparation.insertArg("{lava}", String.valueOf(inLava));
                     fishingPreparation.mergeEffect(initialEffect);

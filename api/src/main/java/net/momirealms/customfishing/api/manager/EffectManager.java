@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.manager;
 
 import net.momirealms.customfishing.api.common.Key;
+import net.momirealms.customfishing.api.mechanic.effect.BaseEffect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
@@ -96,6 +97,8 @@ public interface EffectManager {
      * @return An array of EffectModifiers based on the values found in the section.
      */
     @NotNull EffectModifier[] getEffectModifiers(ConfigurationSection section);
+
+    BaseEffect getBaseEffect(ConfigurationSection section);
 
     /**
      * Parses a ConfigurationSection to create an EffectModifier based on the specified type and configuration.

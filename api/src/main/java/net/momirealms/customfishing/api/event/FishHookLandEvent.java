@@ -33,6 +33,7 @@ public class FishHookLandEvent extends PlayerEvent {
     private final Target target;
     private final FishHook fishHook;
     private final Effect effect;
+    private boolean isFirst;
 
     /**
      * Constructs a new FishHookLandEvent.
@@ -42,11 +43,12 @@ public class FishHookLandEvent extends PlayerEvent {
      * @param hook          The fishing hook entity.
      * @param initialEffect The initial effect
      */
-    public FishHookLandEvent(@NotNull Player who, Target target, FishHook hook, Effect initialEffect) {
+    public FishHookLandEvent(@NotNull Player who, Target target, FishHook hook, boolean isFirst, Effect initialEffect) {
         super(who);
         this.target = target;
         this.fishHook = hook;
         this.effect = initialEffect;
+        this.isFirst = isFirst;
     }
 
     /**
@@ -72,7 +74,17 @@ public class FishHookLandEvent extends PlayerEvent {
     }
 
     /**
+     * Is the first try of one fishing catch
+     *
+     * @return is first try
+     */
+    public boolean isFirst() {
+        return isFirst;
+    }
+
+    /**
      * Get the fishing effect
+     * It's not advised to modify this value without checking "isFirst()" since this event can be trigger multiple times in one fishing catch
      *
      * @return fishing effect
      */

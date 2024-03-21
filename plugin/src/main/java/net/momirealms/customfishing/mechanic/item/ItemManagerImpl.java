@@ -690,8 +690,9 @@ public class ItemManagerImpl implements ItemManager, Listener {
             if (enchantments.size() == 0 || amountPairs.size() == 0) return this;
             editors.put("enchantment-pool", (player, nbtItem, placeholders) -> {
                 List<Pair<Integer, Double>> parsedAmountPair = new ArrayList<>(amountPairs.size());
+                Map<String, String> map = new HashMap<>();
                 for (Pair<Integer, Value> rawValue : amountPairs) {
-                    parsedAmountPair.add(Pair.of(rawValue.left(), rawValue.right().get(player)));
+                    parsedAmountPair.add(Pair.of(rawValue.left(), rawValue.right().get(player, map)));
                 }
 
                 int amount = WeightUtils.getRandom(parsedAmountPair);
@@ -702,7 +703,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
 
                 List<Pair<Pair<String, Short>, Double>> cloned = new ArrayList<>(enchantments.size());
                 for (Pair<Pair<String, Short>, Value> rawValue : enchantments) {
-                    cloned.add(Pair.of(rawValue.left(), rawValue.right().get(player)));
+                    cloned.add(Pair.of(rawValue.left(), rawValue.right().get(player, map)));
                 }
 
                 int i = 0;

@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.api.mechanic.effect;
 
 import net.momirealms.customfishing.api.common.Pair;
-import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
+import net.momirealms.customfishing.api.mechanic.misc.WeightModifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +40,18 @@ public class FishingEffect implements Effect {
 
     private final List<Pair<String, WeightModifier>> weightModifier = new ArrayList<>();
     private final List<Pair<String, WeightModifier>> weightModifierIgnored = new ArrayList<>();
+
+    public FishingEffect(double waitTime, double waitTimeMultiplier, double difficulty, double difficultyMultiplier, double gameTime, double gameTimeMultiplier) {
+        this.waitTime = waitTime;
+        this.waitTimeMultiplier = waitTimeMultiplier;
+        this.difficulty = difficulty;
+        this.difficultyMultiplier = difficultyMultiplier;
+        this.gameTime = gameTime;
+        this.gameTimeMultiplier = gameTimeMultiplier;
+    }
+
+    public FishingEffect() {
+    }
 
     /**
      * Sets whether lava fishing is enabled.

@@ -25,7 +25,7 @@ import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.loot.CFLoot;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
-import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
+import net.momirealms.customfishing.api.mechanic.misc.WeightModifier;
 import net.momirealms.customfishing.api.mechanic.statistic.StatisticsKey;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.api.util.WeightUtils;
@@ -270,6 +270,7 @@ public class LootManagerImpl implements LootManager {
                 .showInFinder(section.getBoolean("show-in-fishfinder", CFConfig.globalShowInFinder))
                 .disableGlobalActions(section.getBoolean("disable-global-event", false))
                 .score(section.getDouble("score"))
+                .baseEffect(plugin.getEffectManager().getBaseEffect(section.getConfigurationSection("effects")))
                 .lootGroup(ConfigUtils.stringListArgs(section.get("group")).toArray(new String[0]))
                 .nick(section.getString("nick", section.getString("display.name", key)))
                 .addActions(plugin.getActionManager().getActionMap(section.getConfigurationSection("events")))

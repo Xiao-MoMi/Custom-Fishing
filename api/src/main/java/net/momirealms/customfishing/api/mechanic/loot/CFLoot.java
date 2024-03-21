@@ -20,6 +20,7 @@ package net.momirealms.customfishing.api.mechanic.loot;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
+import net.momirealms.customfishing.api.mechanic.effect.BaseEffect;
 import net.momirealms.customfishing.api.mechanic.statistic.StatisticsKey;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,8 +40,8 @@ public class CFLoot implements Loot {
     private boolean instanceGame;
     private double score;
     private String[] lootGroup;
-    private String filePath;
     private StatisticsKey statisticsKey;
+    private BaseEffect effect;
 
     public CFLoot(String id, LootType type) {
         this.id = id;
@@ -71,7 +72,6 @@ public class CFLoot implements Loot {
          * @return The builder.
          */
         public Builder filePath(String path) {
-            this.loot.filePath = path;
             return this;
         }
 
@@ -175,6 +175,17 @@ public class CFLoot implements Loot {
         }
 
         /**
+         * Set the effects for the loot
+         *
+         * @param effect effect
+         * @return The builder.
+         */
+        public Builder baseEffect(BaseEffect effect) {
+            this.loot.effect = effect;
+            return this;
+        }
+
+        /**
          * Add actions triggered by a specific trigger.
          *
          * @param trigger The trigger for the actions.
@@ -230,41 +241,21 @@ public class CFLoot implements Loot {
         }
     }
 
-    /**
-     * Check if this loot has an instance game.
-     *
-     * @return True if it's an instance game, false otherwise.
-     */
     @Override
     public boolean instanceGame() {
         return this.instanceGame;
     }
 
-    /**
-     * Get the unique ID of this loot.
-     *
-     * @return The unique ID.
-     */
     @Override
     public String getID() {
         return this.id;
     }
 
-    /**
-     * Get the type of this loot.
-     *
-     * @return The loot type.
-     */
     @Override
     public LootType getType() {
         return this.type;
     }
 
-    /**
-     * Get the nickname of this loot.
-     *
-     * @return The nickname.
-     */
     @Override
     public @NotNull String getNick() {
         return this.nick;
@@ -275,81 +266,41 @@ public class CFLoot implements Loot {
         return this.statisticsKey;
     }
 
-    /**
-     * Check if this loot should be shown in the finder.
-     *
-     * @return True if it should be shown, false otherwise.
-     */
     @Override
     public boolean showInFinder() {
         return this.showInFinder;
     }
 
-    /**
-     * Get the score of this loot.
-     *
-     * @return The score.
-     */
     @Override
     public double getScore() {
         return this.score;
     }
 
-    /**
-     * Check if games are disabled for this loot.
-     *
-     * @return True if games are disabled, false otherwise.
-     */
     @Override
     public boolean disableGame() {
         return this.disableGame;
     }
 
-    /**
-     * Check if statistics are disabled for this loot.
-     *
-     * @return True if statistics are disabled, false otherwise.
-     */
     @Override
     public boolean disableStats() {
         return this.disableStats;
     }
 
-    /**
-     * Check if the loot disables global actions
-     */
     @Override
     public boolean disableGlobalAction() {
         return this.disableGlobalAction;
     }
 
-    /**
-     * Get the loot group of this loot.
-     *
-     * @return The loot group.
-     */
     @Override
     public String[] getLootGroup() {
         return lootGroup;
     }
 
-    /**
-     * Get the actions triggered by a specific action trigger.
-     *
-     * @param actionTrigger The action trigger.
-     * @return The actions triggered by the given trigger.
-     */
     @Override
     public Action[] getActions(ActionTrigger actionTrigger) {
         return actionMap.get(actionTrigger);
     }
 
-    /**
-     * Trigger actions associated with a specific action trigger.
-     *
-     * @param actionTrigger The action trigger.
-     * @param condition     The condition under which the actions are triggered.
-     */
     @Override
     public void triggerActions(ActionTrigger actionTrigger, Condition condition) {
         Action[] actions = getActions(actionTrigger);
@@ -360,30 +311,16 @@ public class CFLoot implements Loot {
         }
     }
 
-    /**
-     * Get the file path of the loot registered by CustomFishing
-     * @return file path
-     */
-    public String getFilePath() {
-        return filePath;
+    @Override
+    public BaseEffect getBaseEffect() {
+        return effect;
     }
 
-    /**
-     * Get the actions triggered by a specific number of successes.
-     *
-     * @param times The number of successes.
-     * @return The actions triggered by the specified number of successes.
-     */
     @Override
     public Action[] getSuccessTimesActions(int times) {
         return successTimesActionMap.get(times);
     }
 
-    /**
-     * Get a map of actions triggered by different numbers of successes.
-     *
-     * @return A map of actions triggered by success times.
-     */
     @Override
     public HashMap<Integer, Action[]> getSuccessTimesActionMap() {
         return successTimesActionMap;

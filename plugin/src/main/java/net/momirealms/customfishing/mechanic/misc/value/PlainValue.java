@@ -20,6 +20,8 @@ package net.momirealms.customfishing.mechanic.misc.value;
 import net.momirealms.customfishing.api.mechanic.misc.Value;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
+
 public class PlainValue implements Value {
 
     private final double value;
@@ -29,7 +31,7 @@ public class PlainValue implements Value {
     }
 
     @Override
-    public double get(Player player) {
+    public double get(Player player, Map<String, String> values) {
         return value;
     }
 }

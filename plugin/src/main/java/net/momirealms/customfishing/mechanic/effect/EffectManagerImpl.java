@@ -22,12 +22,15 @@ import net.momirealms.customfishing.api.common.Key;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.manager.EffectManager;
 import net.momirealms.customfishing.api.mechanic.GlobalSettings;
+import net.momirealms.customfishing.api.mechanic.effect.BaseEffect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
-import net.momirealms.customfishing.api.mechanic.loot.WeightModifier;
+import net.momirealms.customfishing.api.mechanic.misc.Value;
+import net.momirealms.customfishing.api.mechanic.misc.WeightModifier;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.util.LogUtils;
+import net.momirealms.customfishing.mechanic.misc.value.PlainValue;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -240,6 +243,26 @@ public class EffectManagerImpl implements EffectManager {
         return modifiers.toArray(new EffectModifier[0]);
     }
 
+    @Override
+    public BaseEffect getBaseEffect(ConfigurationSection section) {
+        if (section == null) return new BaseEffect(
+                new PlainValue(0), new PlainValue(1d),
+                new PlainValue(0), new PlainValue(1d),
+                new PlainValue(0), new PlainValue(1d)
+        );
+        Value waitTime = section.contains("wait-time") ? ConfigUtils.getValue(section.get("wait-time")) : new PlainValue(0);
+        Value difficulty = section.contains("difficulty") ? ConfigUtils.getValue(section.get("difficulty")) : new PlainValue(0);
+        Value gameTime = section.contains("game-time") ? ConfigUtils.getValue(section.get("game-time")) : new PlainValue(0);
+        Value waitTimeMultiplier = section.contains("wait-time-multiplier") ? ConfigUtils.getValue(section.get("wait-time-multiplier")) : new PlainValue(1);
+        Value difficultyMultiplier = section.contains("difficulty-multiplier") ? ConfigUtils.getValue(section.get("difficulty-multiplier")) : new PlainValue(1);
+        Value gameTimeMultiplier = section.contains("game-time-multiplier") ? ConfigUtils.getValue(section.get("game-time-multiplier")) : new PlainValue(1);
+        return new BaseEffect(
+                waitTime, waitTimeMultiplier,
+                difficulty, difficultyMultiplier,
+                gameTime, gameTimeMultiplier
+        );
+    }
+
     private void loadGlobalEffects() {
         YamlConfiguration config = plugin.getConfig("config.yml");
         ConfigurationSection section = config.getConfigurationSection("mechanics.global-effects");
@@ -285,67 +308,67 @@ public class EffectManagerImpl implements EffectManager {
             case "wait-time" -> {
                 var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setWaitTime(effect.getWaitTime() + value.get(condition.getPlayer()));
+                    effect.setWaitTime(effect.getWaitTime() + value.get(condition.getPlayer(), condition.getArgs()));
                 });
             }
             case "hook-time", "wait-time-multiplier" -> {
                 var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setWaitTimeMultiplier(effect.getWaitTimeMultiplier() + value.get(condition.getPlayer()) - 1);
+                    effect.setWaitTimeMultiplier(effect.getWaitTimeMultiplier() + value.get(condition.getPlayer(), condition.getArgs()) - 1);
                 });
             }
             case "difficulty" -> {
                 var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setDifficulty(effect.getDifficulty() + value.get(condition.getPlayer()));
+                    effect.setDifficulty(effect.getDifficulty() + value.get(condition.getPlayer(), condition.getArgs()));
                 });
             }
             case "difficulty-multiplier", "difficulty-bonus" -> {
                 var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setDifficultyMultiplier(effect.getDifficultyMultiplier() + value.get(condition.getPlayer()) - 1);
+                    effect.setDifficultyMultiplier(effect.getDifficultyMultiplier() + value.get(condition.getPlayer(), condition.getArgs()) - 1);
                 });
             }
             case "multiple-loot" -> {
                 var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setMultipleLootChance(effect.getMultipleLootChance() + value.get(condition.getPlayer()));
+                    effect.setMultipleLootChance(effect.getMultipleLootChance() + value.get(condition.getPlayer(), condition.getArgs()));
                 });
             }
             case "score" -> {
                 var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setScore(effect.getScore() + value.get(condition.getPlayer()));
+                    effect.setScore(effect.getScore() + value.get(condition.getPlayer(), condition.getArgs()));
                 });
             }
             case "score-bonus", "score-multiplier" -> {
                 var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setScoreMultiplier(effect.getScoreMultiplier() + value.get(condition.getPlayer()) - 1);
+                    effect.setScoreMultiplier(effect.getScoreMultiplier() + value.get(condition.getPlayer(), condition.getArgs()) - 1);
                 });
             }
             case "size" -> {
                 var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setSize(effect.getSize() + value.get(condition.getPlayer()));
+                    effect.setSize(effect.getSize() + value.get(condition.getPlayer(), condition.getArgs()));
                 });
             }
             case "size-bonus", "size-multiplier" -> {
                 var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setSizeMultiplier(effect.getSizeMultiplier() + value.get(condition.getPlayer()) - 1);
+                    effect.setSizeMultiplier(effect.getSizeMultiplier() + value.get(condition.getPlayer(), condition.getArgs()) - 1);
                 });
             }
             case "game-time" -> {
                 var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setGameTime(effect.getGameTime() + value.get(condition.getPlayer()));
+                    effect.setGameTime(effect.getGameTime() + value.get(condition.getPlayer(), condition.getArgs()));
                 });
             }
             case "game-time-bonus", "game-time-multiplier" -> {
                 var value = ConfigUtils.getValue(section.get("value"));
                 return ((effect, condition) -> {
-                    effect.setGameTimeMultiplier(effect.getGameTimeMultiplier() + value.get(condition.getPlayer()) - 1);
+                    effect.setGameTimeMultiplier(effect.getGameTimeMultiplier() + value.get(condition.getPlayer(), condition.getArgs()) - 1);
                 });
             }
             case "lava-fishing" -> {

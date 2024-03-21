@@ -19,7 +19,6 @@ package net.momirealms.customfishing.mechanic.fishing;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.event.FishHookLandEvent;
@@ -27,10 +26,10 @@ import net.momirealms.customfishing.api.event.LavaFishingEvent;
 import net.momirealms.customfishing.api.mechanic.TempFishingState;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
+import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
-import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.setting.CFConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -39,7 +38,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
@@ -59,6 +57,7 @@ public class HookCheckTimerTask implements Runnable {
     private final FishHook fishHook;
     private final FishingPreparation fishingPreparation;
     private final FishingEffect initialEffect;
+    private Effect tempEffect;
     private final int lureLevel;
     private boolean firstTime;
     private boolean fishHooked;
@@ -90,76 +89,117 @@ public class HookCheckTimerTask implements Runnable {
         this.hookMovementTask = CustomFishingPlugin.get().getScheduler().runTaskSyncTimer(this, fishHook.getLocation(), 1, 1);
         this.lureLevel = fishingPreparation.getRodItemStack().getEnchantmentLevel(Enchantment.LURE);
         this.firstTime = true;
+        this.tempEffect = new FishingEffect();
     }
+
 
     @Override
     public void run() {
         if (
-            !fishHook.isValid()
+            !this.fishHook.isValid()
             //|| (fishHook.getHookedEntity() != null && fishHook.getHookedEntity().getType() != EntityType.ARMOR_STAND)
         ) {
             // This task would be cancelled when hook is removed
             this.destroy();
             return;
         }
-        if (fishHook.isOnGround()) {
-            inWater = false;
+        if (this.fishHook.isOnGround()) {
+            this.inWater = false;
             return;
         }
-        if (fishHook.getLocation().getBlock().getType() == Material.LAVA) {
-            inWater = false;
+        if (this.fishHook.getLocation().getBlock().getType() == Material.LAVA) {
+            this.inWater = false;
             // if player can fish in lava
             if (firstTime) {
-                this.fishingPreparation.setLocation(fishHook.getLocation());
-                this.fishingPreparation.mergeEffect(initialEffect);
+                this.firstTime = false;
+
+                this.fishingPreparation.setLocation(this.fishHook.getLocation());
+                this.fishingPreparation.mergeEffect(this.initialEffect);
                 if (!initialEffect.canLavaFishing()) {
                     this.destroy();
                     return;
                 }
+
+                FishHookLandEvent event = new FishHookLandEvent(this.fishingPreparation.getPlayer(), FishHookLandEvent.Target.LAVA, this.fishHook, true, this.initialEffect);
+                Bukkit.getPluginManager().callEvent(event);
+
                 this.fishingPreparation.insertArg("{lava}", "true");
                 this.fishingPreparation.triggerActions(ActionTrigger.LAND);
-                FishHookLandEvent event = new FishHookLandEvent(fishingPreparation.getPlayer(), FishHookLandEvent.Target.LAVA, fishHook, initialEffect);
-                Bukkit.getPluginManager().callEvent(event);
-                this.firstTime = false;
-                this.setTempState();
             }
+
             // simulate fishing mechanic
-            if (fishHooked) {
-                jumpTimer++;
-                if (jumpTimer < 4)
+            if (this.fishHooked) {
+                this.jumpTimer++;
+                if (this.jumpTimer < 4)
                     return;
-                jumpTimer = 0;
-                fishHook.setVelocity(new Vector(0,0.24,0));
+                this.jumpTimer = 0;
+                this.fishHook.setVelocity(new Vector(0,0.24,0));
                 return;
             }
-            if (!reserve) {
-                if (jumpTimer < 5) {
-                    jumpTimer++;
-                    fishHook.setVelocity(new Vector(0,0.2 - jumpTimer * 0.02,0));
+
+            if (!this.reserve) {
+                // jump
+                if (this.jumpTimer < 5) {
+                    this.jumpTimer++;
+                    this.fishHook.setVelocity(new Vector(0,0.2 - this.jumpTimer * 0.02,0));
                     return;
                 }
-                reserve = true;
-                if (this.loot != null)
+
+                this.reserve = true;
+
+                this.setNextLoot();
+                if (this.loot != null) {
+                    this.tempEffect = this.loot.getBaseEffect().build(fishingPreparation.getPlayer(), fishingPreparation.getArgs());
+                    this.tempEffect.merge(this.initialEffect);
+                    this.setTempState();
                     this.startLavaFishingMechanic();
-                this.makeHookStatic(fishHook.getLocation());
+                } else {
+                    this.tempEffect = new FishingEffect();
+                    this.tempEffect.merge(this.initialEffect);
+                    this.manager.removeTempFishingState(fishingPreparation.getPlayer());
+                    CustomFishingPlugin.get().debug("No loot available for " + fishingPreparation.getPlayer().getName() + " at " + fishingPreparation.getLocation());
+                }
+
+                this.makeHookStatic(this.fishHook.getLocation());
             }
             return;
         }
-        if (!inWater && fishHook.isInWater()) {
-            inWater = true;
-            this.fishingPreparation.setLocation(fishHook.getLocation());
-            this.fishingPreparation.mergeEffect(initialEffect);
+        if (!this.inWater && this.fishHook.isInWater()) {
+            this.inWater = true;
+
+            this.fishingPreparation.setLocation(this.fishHook.getLocation());
             this.fishingPreparation.insertArg("{lava}", "false");
-            this.fishingPreparation.insertArg("{open-water}", String.valueOf(fishHook.isInOpenWater()));
-            this.fishingPreparation.triggerActions(ActionTrigger.LAND);
-            FishHookLandEvent event = new FishHookLandEvent(fishingPreparation.getPlayer(), FishHookLandEvent.Target.WATER, fishHook, initialEffect);
-            Bukkit.getPluginManager().callEvent(event);
-            this.setTempState();
-            if (this.loot == null) {
-                fishHook.setWaitTime(Integer.MAX_VALUE);
+            this.fishingPreparation.insertArg("{open-water}", String.valueOf(this.fishHook.isInOpenWater()));
+
+            if (this.firstTime) {
+                this.firstTime = false;
+                this.fishingPreparation.mergeEffect(this.initialEffect);
+
+                FishHookLandEvent event = new FishHookLandEvent(this.fishingPreparation.getPlayer(), FishHookLandEvent.Target.WATER, this.fishHook, false, this.initialEffect);
+                Bukkit.getPluginManager().callEvent(event);
+
+                this.fishingPreparation.triggerActions(ActionTrigger.LAND);
+
             } else {
-                this.setWaitTime();
+                FishHookLandEvent event = new FishHookLandEvent(this.fishingPreparation.getPlayer(), FishHookLandEvent.Target.WATER, this.fishHook, true, this.initialEffect);
+                Bukkit.getPluginManager().callEvent(event);
             }
+
+            this.setNextLoot();
+            if (this.loot == null) {
+                // prevent players from getting vanilla loots
+                this.fishHook.setWaitTime(Integer.MAX_VALUE);
+                this.tempEffect = new FishingEffect();
+                this.tempEffect.merge(this.initialEffect);
+                this.manager.removeTempFishingState(fishingPreparation.getPlayer());
+                CustomFishingPlugin.get().debug("No loot available for " + fishingPreparation.getPlayer().getName() + " at " + fishingPreparation.getLocation());
+            } else {
+                this.tempEffect = this.loot.getBaseEffect().build(fishingPreparation.getPlayer(), fishingPreparation.getArgs());
+                this.tempEffect.merge(this.initialEffect);
+                this.setWaitTime();
+                this.setTempState();
+            }
+
             return;
         }
     }
@@ -184,11 +224,8 @@ public class HookCheckTimerTask implements Runnable {
         }
     }
 
-    /**
-     * Sets temporary state and prepares for the next loot.
-     */
-    private void setTempState() {
-        Loot nextLoot = CustomFishingPlugin.get().getLootManager().getNextLoot(initialEffect, fishingPreparation);
+    private void setNextLoot() {
+        Loot nextLoot = CustomFishingPlugin.get().getLootManager().getNextLoot(tempEffect, fishingPreparation);
         if (nextLoot == null) {
             this.loot = null;
             CustomFishingPlugin.get().debug("No loot available at " + fishingPreparation.getLocation());
@@ -196,16 +233,22 @@ public class HookCheckTimerTask implements Runnable {
         }
 
         this.loot = nextLoot;
-        fishingPreparation.insertArg("{nick}", nextLoot.getNick());
-        fishingPreparation.insertArg("{loot}", nextLoot.getID());
-        if (!nextLoot.disableStats()) {
-            fishingPreparation.insertArg("{statistics_size}", nextLoot.getStatisticKey().getSizeKey());
-            fishingPreparation.insertArg("{statistics_amount}", nextLoot.getStatisticKey().getAmountKey());
+    }
+
+    /**
+     * Sets temporary state and prepares for the next loot.
+     */
+    private void setTempState() {
+        fishingPreparation.insertArg("{nick}", loot.getNick());
+        fishingPreparation.insertArg("{loot}", loot.getID());
+        if (!loot.disableStats()) {
+            fishingPreparation.insertArg("{statistics_size}", loot.getStatisticKey().getSizeKey());
+            fishingPreparation.insertArg("{statistics_amount}", loot.getStatisticKey().getAmountKey());
         }
         manager.setTempFishingState(fishingPreparation.getPlayer(), new TempFishingState(
-                initialEffect,
+                tempEffect,
                 fishingPreparation,
-                nextLoot
+                loot
         ));
     }
 
@@ -225,15 +268,15 @@ public class HookCheckTimerTask implements Runnable {
         int random;
         if (CFConfig.overrideVanilla) {
             random = ThreadLocalRandom.current().nextInt(CFConfig.lavaMinTime, CFConfig.lavaMaxTime);
-            random *= initialEffect.getWaitTimeMultiplier();
-            random += initialEffect.getWaitTime();
+            random *= tempEffect.getWaitTimeMultiplier();
+            random += tempEffect.getWaitTime();
             random = Math.max(1, random);
         } else {
             random = ThreadLocalRandom.current().nextInt(CFConfig.lavaMinTime, CFConfig.lavaMaxTime);
             random -= lureLevel * 100;
             random = Math.max(CFConfig.lavaMinTime, random);
-            random *= initialEffect.getWaitTimeMultiplier();
-            random += initialEffect.getWaitTime();
+            random *= tempEffect.getWaitTimeMultiplier();
+            random += tempEffect.getWaitTime();
             random = Math.max(1, random);
         }
 
@@ -309,10 +352,10 @@ public class HookCheckTimerTask implements Runnable {
     private void setWaitTime() {
         if (CFConfig.overrideVanilla) {
             double initialTime = ThreadLocalRandom.current().nextInt(CFConfig.waterMaxTime - CFConfig.waterMinTime + 1) + CFConfig.waterMinTime;
-            fishHook.setWaitTime(Math.max(1, (int) (initialTime * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
+            fishHook.setWaitTime(Math.max(1, (int) (initialTime * tempEffect.getWaitTimeMultiplier() + tempEffect.getWaitTime())));
         } else {
-            fishHook.setMinWaitTime(Math.max(1, (int) (fishHook.getMinWaitTime() * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
-            fishHook.setMaxWaitTime(Math.max(2, (int) (fishHook.getMaxWaitTime() * initialEffect.getWaitTimeMultiplier() + initialEffect.getWaitTime())));
+            fishHook.setMinWaitTime(Math.max(1, (int) (fishHook.getMinWaitTime() * tempEffect.getWaitTimeMultiplier() + tempEffect.getWaitTime())));
+            fishHook.setMaxWaitTime(Math.max(2, (int) (fishHook.getMaxWaitTime() * tempEffect.getWaitTimeMultiplier() + tempEffect.getWaitTime())));
         }
     }
 }
