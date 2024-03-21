@@ -34,6 +34,10 @@ public class EffectCarrier {
     private Map<ActionTrigger, Action[]> actionMap;
     private boolean persist;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static class Builder {
 
         private final EffectCarrier item;

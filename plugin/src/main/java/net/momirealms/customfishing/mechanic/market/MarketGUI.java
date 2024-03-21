@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.mechanic.market;
 
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.EarningData;
 import net.momirealms.customfishing.api.mechanic.market.MarketGUIHolder;
 import net.momirealms.customfishing.api.util.InventoryUtils;
@@ -146,36 +147,86 @@ public class MarketGUI {
      * @return The MarketGUI instance.
      */
     public MarketGUI refresh() {
-        double totalWorth = getTotalWorth();
-        MarketDynamicGUIElement functionElement = (MarketDynamicGUIElement) getElement(manager.getFunctionSlot());
-        if (functionElement == null) {
-            return this;
-        }
         double earningLimit = manager.getEarningLimit(owner);
-        if (totalWorth <= 0) {
-            functionElement.setItemStack(
-                    manager.getFunctionIconDenyBuilder().build(owner,
-                            Map.of("{money}", String.format("%.2f", totalWorth)
-                                    ,"{player}", owner.getName()
-                                    ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings))
-                    )
-            );
-        } else if (earningLimit != -1 && (earningLimit - earningData.earnings < totalWorth)) {
-            functionElement.setItemStack(
-                    manager.getFunctionIconLimitBuilder().build(owner,
-                            Map.of("{money}", String.format("%.2f", totalWorth)
-                                    ,"{player}", owner.getName()
-                                    ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings))
-                    )
-            );
-        } else {
-            functionElement.setItemStack(
-                    manager.getFunctionIconAllowBuilder().build(owner,
-                            Map.of("{money}", String.format("%.2f", totalWorth)
-                                    ,"{player}", owner.getName()
-                                    ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings))
-                    )
-            );
+        MarketDynamicGUIElement sellElement = (MarketDynamicGUIElement) getElement(manager.getSellSlot());
+        if (sellElement != null && sellElement.getSlots().size() > 0) {
+            double totalWorth = getTotalWorthInMarketGUI();
+            int soldAmount = getSoldAmount();
+            if (totalWorth <= 0) {
+                sellElement.setItemStack(
+                        manager.getSellIconDenyBuilder().build(owner,
+                                Map.of("{money}", String.format("%.2f", totalWorth)
+                                        ,"{player}", owner.getName()
+                                        ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings)
+                                        ,"{sold-item-amount}", String.valueOf(soldAmount)
+                                )
+                        )
+                );
+            } else if (earningLimit != -1 && (earningLimit - earningData.earnings < totalWorth)) {
+                sellElement.setItemStack(
+                        manager.getSellIconLimitBuilder().build(owner,
+                                Map.of("{money}", String.format("%.2f", totalWorth)
+                                        ,"{player}", owner.getName()
+                                        ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings)
+                                        ,"{sold-item-amount}", String.valueOf(soldAmount)
+                                )
+                        )
+                );
+            } else {
+                sellElement.setItemStack(
+                        manager.getSellIconAllowBuilder().build(owner,
+                                Map.of("{money}", String.format("%.2f", totalWorth)
+                                        ,"{player}", owner.getName()
+                                        ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings)
+                                        ,"{sold-item-amount}", String.valueOf(soldAmount)
+                                )
+                        )
+                );
+            }
+        }
+
+        MarketDynamicGUIElement sellAllElement = (MarketDynamicGUIElement) getElement(manager.getSellAllSlot());
+        if (sellAllElement != null && sellAllElement.getSlots().size() > 0) {
+            double totalWorth = manager.getInventoryTotalWorth(owner.getInventory());
+            int sellAmount = manager.getInventorySellAmount(owner.getInventory());
+            if (manager.sellFishingBag() && CustomFishingPlugin.get().getBagManager().isEnabled()) {
+                Inventory bag = CustomFishingPlugin.get().getBagManager().getOnlineBagInventory(owner.getUniqueId());
+                if (bag != null) {
+                    totalWorth += manager.getInventoryTotalWorth(bag);
+                    sellAmount += manager.getInventorySellAmount(bag);
+                }
+            }
+            if (totalWorth <= 0) {
+                sellAllElement.setItemStack(
+                        manager.getSellAllIconDenyBuilder().build(owner,
+                                Map.of("{money}", String.format("%.2f", totalWorth)
+                                        ,"{player}", owner.getName()
+                                        ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings)
+                                        ,"{sold-item-amount}", String.valueOf(sellAmount)
+                                )
+                        )
+                );
+            } else if (earningLimit != -1 && (earningLimit - earningData.earnings < totalWorth)) {
+                sellAllElement.setItemStack(
+                        manager.getSellAllIconLimitBuilder().build(owner,
+                                Map.of("{money}", String.format("%.2f", totalWorth)
+                                        ,"{player}", owner.getName()
+                                        ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings)
+                                        ,"{sold-item-amount}", String.valueOf(sellAmount)
+                                )
+                        )
+                );
+            } else {
+                sellAllElement.setItemStack(
+                        manager.getSellAllIconAllowBuilder().build(owner,
+                                Map.of("{money}", String.format("%.2f", totalWorth)
+                                        ,"{player}", owner.getName()
+                                        ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings)
+                                        ,"{sold-item-amount}", String.valueOf(sellAmount)
+                                )
+                        )
+                );
+            }
         }
         for (Map.Entry<Integer, MarketGUIElement> entry : itemsSlotMap.entrySet()) {
             if (entry.getValue() instanceof MarketDynamicGUIElement dynamicGUIElement) {
@@ -189,7 +240,7 @@ public class MarketGUI {
      * Calculate and return the total worth of items in the inventory.
      * @return The total worth of items.
      */
-    public double getTotalWorth() {
+    public double getTotalWorthInMarketGUI() {
         double money = 0d;
         MarketGUIElement itemElement = getElement(manager.getItemSlot());
         if (itemElement == null) {

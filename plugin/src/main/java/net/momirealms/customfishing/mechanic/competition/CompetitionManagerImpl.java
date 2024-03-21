@@ -130,6 +130,8 @@ public class CompetitionManagerImpl implements CompetitionManager {
                         .minPlayers(section.getInt("min-players", 0))
                         .duration(section.getInt("duration", 300))
                         .rewards(getPrizeActions(section.getConfigurationSection("rewards")))
+                        .requirements(plugin.getRequirementManager().getRequirements(section.getConfigurationSection("participate-requirements"), false))
+                        .joinActions(plugin.getActionManager().getActions(section.getConfigurationSection("participate-actions")))
                         .startActions(plugin.getActionManager().getActions(section.getConfigurationSection("start-actions")))
                         .endActions(plugin.getActionManager().getActions(section.getConfigurationSection("end-actions")))
                         .skipActions(plugin.getActionManager().getActions(section.getConfigurationSection("skip-actions")));

@@ -188,7 +188,8 @@ public class HookCheckTimerTask implements Runnable {
     private void setTempState() {
         Loot nextLoot = CustomFishingPlugin.get().getLootManager().getNextLoot(initialEffect, fishingPreparation);
         if (nextLoot == null) {
-            CustomFishingPlugin.get().debug("No loot available, using vanilla ");
+            fishHook.setWaitTime(Integer.MAX_VALUE);
+            CustomFishingPlugin.get().debug("No loot available at " + fishingPreparation.getLocation());
             return;
         }
 

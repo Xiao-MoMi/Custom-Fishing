@@ -18,6 +18,8 @@
 package net.momirealms.customfishing.api.mechanic.competition;
 
 import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -33,6 +35,7 @@ public class CompetitionConfig {
     private Action[] startActions;
     private Action[] endActions;
     private Action[] joinActions;
+    private Requirement[] requirements;
     private CompetitionGoal goal;
     private HashMap<String, Action[]> rewards;
 
@@ -52,10 +55,12 @@ public class CompetitionConfig {
         return minPlayers;
     }
 
+    @Nullable
     public Action[] getStartActions() {
         return startActions;
     }
 
+    @Nullable
     public Action[] getEndActions() {
         return endActions;
     }
@@ -65,6 +70,7 @@ public class CompetitionConfig {
      *
      * @return actions
      */
+    @Nullable
     public Action[] getJoinActions() {
         return joinActions;
     }
@@ -74,10 +80,22 @@ public class CompetitionConfig {
      *
      * @return actions
      */
+    @Nullable
     public Action[] getSkipActions() {
         return skipActions;
     }
 
+    /**
+     * Get the requirements for participating the competition
+     *
+     * @return requirements
+     */
+    @Nullable
+    public Requirement[] getRequirements() {
+        return requirements;
+    }
+
+    @NotNull
     public CompetitionGoal getGoal() {
         return goal;
     }
@@ -152,6 +170,11 @@ public class CompetitionConfig {
         @SuppressWarnings("UnusedReturnValue")
         public Builder bossbar(BossBarConfig bossBarConfig) {
             config.bossBarConfig = bossBarConfig;
+            return this;
+        }
+
+        public Builder requirements(Requirement[] requirements) {
+            config.requirements = requirements;
             return this;
         }
 

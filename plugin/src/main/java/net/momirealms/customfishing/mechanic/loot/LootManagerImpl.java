@@ -201,7 +201,6 @@ public class LootManagerImpl implements LootManager {
     public Loot getNextLoot(Effect initialEffect, Condition condition) {
         String key = WeightUtils.getRandom(getPossibleLootKeysWithWeight(initialEffect, condition));
         if (key == null) {
-            LogUtils.warn("No loot available at " + condition.getLocation() + " for player: " + condition.getPlayer().getName());
             return null;
         }
         Loot loot = getLoot(key);

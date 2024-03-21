@@ -61,12 +61,12 @@ import java.util.concurrent.TimeUnit;
 public class ActionManagerImpl implements ActionManager {
 
     private final CustomFishingPlugin plugin;
-    private final HashMap<String, ActionFactory> actionBuilderMap;
+    private final HashMap<String, ActionFactory> actionFactoryMap;
     private final String EXPANSION_FOLDER = "expansions/action";
 
     public ActionManagerImpl(CustomFishingPlugin plugin) {
         this.plugin = plugin;
-        this.actionBuilderMap = new HashMap<>();
+        this.actionFactoryMap = new HashMap<>();
         this.registerInbuiltActions();
     }
 
@@ -110,7 +110,7 @@ public class ActionManagerImpl implements ActionManager {
 
     public void disable() {
         unload();
-        this.actionBuilderMap.clear();
+        this.actionFactoryMap.clear();
     }
 
     // Method to load global event actions from the plugin's configuration file.
@@ -129,8 +129,8 @@ public class ActionManagerImpl implements ActionManager {
      */
     @Override
     public boolean registerAction(String type, ActionFactory actionFactory) {
-        if (this.actionBuilderMap.containsKey(type)) return false;
-        this.actionBuilderMap.put(type, actionFactory);
+        if (this.actionFactoryMap.containsKey(type)) return false;
+        this.actionFactoryMap.put(type, actionFactory);
         return true;
     }
 
@@ -143,7 +143,7 @@ public class ActionManagerImpl implements ActionManager {
      */
     @Override
     public boolean unregisterAction(String type) {
-        return this.actionBuilderMap.remove(type) != null;
+        return this.actionFactoryMap.remove(type) != null;
     }
 
     /**
@@ -238,7 +238,7 @@ public class ActionManagerImpl implements ActionManager {
     @Nullable
     @Override
     public ActionFactory getActionFactory(String type) {
-        return actionBuilderMap.get(type);
+        return actionFactoryMap.get(type);
     }
 
     /**

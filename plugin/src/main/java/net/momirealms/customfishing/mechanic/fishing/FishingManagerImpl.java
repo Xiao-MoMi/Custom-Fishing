@@ -59,6 +59,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
+import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -718,7 +719,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
      */
     private void doSuccessActions(Loot loot, Effect effect, FishingPreparation fishingPreparation, Player player) {
         FishingCompetition competition = plugin.getCompetitionManager().getOnGoingCompetition();
-        if (competition != null) {
+        if (competition != null && RequirementManager.isRequirementMet(fishingPreparation, competition.getConfig().getRequirements())) {
             String scoreStr = fishingPreparation.getArg("{CUSTOM_SCORE}");
             if (scoreStr != null) {
                 competition.refreshData(player, Double.parseDouble(scoreStr));

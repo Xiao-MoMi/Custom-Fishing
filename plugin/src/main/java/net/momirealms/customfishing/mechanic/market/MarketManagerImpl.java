@@ -60,15 +60,23 @@ public class MarketManagerImpl implements MarketManager, Listener {
     private String formula;
     private final HashMap<Character, BuildableItem> decorativeIcons;
     private char itemSlot;
-    private char functionSlot;
-    private BuildableItem functionIconAllowBuilder;
-    private BuildableItem functionIconDenyBuilder;
-    private BuildableItem functionIconLimitBuilder;
-    private Action[] denyActions;
-    private Action[] allowActions;
-    private Action[] limitActions;
+    private char sellSlot;
+    private char sellAllSlot;
+    private BuildableItem sellIconAllowBuilder;
+    private BuildableItem sellIconDenyBuilder;
+    private BuildableItem sellIconLimitBuilder;
+    private BuildableItem sellAllIconAllowBuilder;
+    private BuildableItem sellAllIconDenyBuilder;
+    private BuildableItem sellAllIconLimitBuilder;
+    private Action[] sellDenyActions;
+    private Action[] sellAllowActions;
+    private Action[] sellLimitActions;
+    private Action[] sellAllDenyActions;
+    private Action[] sellAllAllowActions;
+    private Action[] sellAllLimitActions;
     private String earningLimitExpression;
     private boolean allowItemWithNoPrice;
+    private boolean sellFishingBag;
     private final ConcurrentHashMap<UUID, MarketGUI> marketGUIMap;
     private boolean enable;
     private CancellableTask resetEarningsTask;
@@ -123,15 +131,40 @@ public class MarketManagerImpl implements MarketManager, Listener {
         this.layout = config.getStringList("layout").toArray(new String[0]);
         this.title = config.getString("title", "market.title");
         this.itemSlot = config.getString("item-slot.symbol", "I").charAt(0);
-        this.functionSlot = config.getString("functional-icons.symbol", "B").charAt(0);
-        this.functionIconAllowBuilder = plugin.getItemManager().getItemBuilder(config.getConfigurationSection("functional-icons.allow-icon"), "gui", "allow");
-        this.functionIconDenyBuilder = plugin.getItemManager().getItemBuilder(config.getConfigurationSection("functional-icons.deny-icon"), "gui", "deny");
-        this.functionIconLimitBuilder = plugin.getItemManager().getItemBuilder(config.getConfigurationSection("functional-icons.limit-icon"), "gui", "limit");
-        this.allowActions = plugin.getActionManager().getActions(config.getConfigurationSection("functional-icons.allow-icon.action"));
-        this.denyActions = plugin.getActionManager().getActions(config.getConfigurationSection("functional-icons.deny-icon.action"));
-        this.limitActions = plugin.getActionManager().getActions(config.getConfigurationSection("functional-icons.limit-icon.action"));
-        this.earningLimitExpression = config.getBoolean("limitation.enable", true) ? config.getString("limitation.earnings", "10000") : "-1";
         this.allowItemWithNoPrice = config.getBoolean("item-slot.allow-items-with-no-price", true);
+
+        ConfigurationSection sellAllSection = config.getConfigurationSection("sell-all-icons");
+        if (sellAllSection != null) {
+            this.sellAllSlot = sellAllSection.getString("symbol", "S").charAt(0);
+            this.sellFishingBag = sellAllSection.getBoolean("fishingbag", true);
+
+            this.sellAllIconAllowBuilder = plugin.getItemManager().getItemBuilder(sellAllSection.getConfigurationSection("allow-icon"), "gui", "sell-all");
+            this.sellAllIconDenyBuilder = plugin.getItemManager().getItemBuilder(sellAllSection.getConfigurationSection("deny-icon"), "gui", "sell-all");
+            this.sellAllIconLimitBuilder = plugin.getItemManager().getItemBuilder(sellAllSection.getConfigurationSection("limit-icon"), "gui", "sell-all");
+
+            this.sellAllAllowActions = plugin.getActionManager().getActions(sellAllSection.getConfigurationSection("allow-icon.action"));
+            this.sellAllDenyActions = plugin.getActionManager().getActions(sellAllSection.getConfigurationSection("deny-icon.action"));
+            this.sellAllLimitActions = plugin.getActionManager().getActions(sellAllSection.getConfigurationSection("limit-icon.action"));
+        }
+
+        ConfigurationSection sellSection = config.getConfigurationSection("sell-icons");
+        if (sellSection == null) {
+            // for old config compatibility
+            sellSection = config.getConfigurationSection("functional-icons");
+        }
+        if (sellSection != null) {
+            this.sellSlot = sellSection.getString("symbol", "B").charAt(0);
+
+            this.sellIconAllowBuilder = plugin.getItemManager().getItemBuilder(sellSection.getConfigurationSection("allow-icon"), "gui", "allow");
+            this.sellIconDenyBuilder = plugin.getItemManager().getItemBuilder(sellSection.getConfigurationSection("deny-icon"), "gui", "deny");
+            this.sellIconLimitBuilder = plugin.getItemManager().getItemBuilder(sellSection.getConfigurationSection("limit-icon"), "gui", "limit");
+
+            this.sellAllowActions = plugin.getActionManager().getActions(sellSection.getConfigurationSection("allow-icon.action"));
+            this.sellDenyActions = plugin.getActionManager().getActions(sellSection.getConfigurationSection("deny-icon.action"));
+            this.sellLimitActions = plugin.getActionManager().getActions(sellSection.getConfigurationSection("limit-icon.action"));
+        }
+
+        this.earningLimitExpression = config.getBoolean("limitation.enable", true) ? config.getString("limitation.earnings", "10000") : "-1";
 
         // Load item prices from the configuration
         ConfigurationSection priceSection = config.getConfigurationSection("item-price");
@@ -170,7 +203,8 @@ public class MarketManagerImpl implements MarketManager, Listener {
 
         MarketGUI gui = new MarketGUI(this, player, user.getEarningData());
         gui.addElement(new MarketGUIElement(getItemSlot(), new ItemStack(Material.AIR)));
-        gui.addElement(new MarketDynamicGUIElement(getFunctionSlot(), new ItemStack(Material.AIR)));
+        gui.addElement(new MarketDynamicGUIElement(getSellSlot(), new ItemStack(Material.AIR)));
+        gui.addElement(new MarketDynamicGUIElement(getSellAllSlot(), new ItemStack(Material.AIR)));
         for (Map.Entry<Character, BuildableItem> entry : decorativeIcons.entrySet()) {
             gui.addElement(new MarketGUIElement(entry.getKey(), entry.getValue().build(player)));
         }
@@ -288,8 +322,8 @@ public class MarketManagerImpl implements MarketManager, Listener {
                 event.setCancelled(true);
             }
 
-            if (element.getSymbol() == functionSlot) {
-                double worth = gui.getTotalWorth();
+            if (element.getSymbol() == sellSlot) {
+                double worth = gui.getTotalWorthInMarketGUI();
                 int amount = gui.getSoldAmount();
                 double earningLimit = getEarningLimit(player);
                 Condition condition = new Condition(player, new HashMap<>(Map.of(
@@ -300,8 +334,8 @@ public class MarketManagerImpl implements MarketManager, Listener {
                 if (worth > 0) {
                     if (earningLimit != -1 && (earningLimit - data.earnings) < worth) {
                         // Can't earn more money
-                        if (limitActions != null) {
-                            for (Action action : limitActions) {
+                        if (getSellLimitActions() != null) {
+                            for (Action action : getSellLimitActions()) {
                                 action.trigger(condition);
                             }
                         }
@@ -310,16 +344,65 @@ public class MarketManagerImpl implements MarketManager, Listener {
                         gui.clearWorthyItems();
                         data.earnings += worth;
                         condition.insertArg("{rest}", String.format("%.2f", (earningLimit - data.earnings)));
-                        if (allowActions != null) {
-                            for (Action action : allowActions) {
+                        if (getSellAllowActions() != null) {
+                            for (Action action : getSellAllowActions()) {
                                 action.trigger(condition);
                             }
                         }
                     }
                 } else {
                     // Nothing to sell
-                    if (denyActions != null) {
-                        for (Action action : denyActions) {
+                    if (getSellDenyActions() != null) {
+                        for (Action action : getSellDenyActions()) {
+                            action.trigger(condition);
+                        }
+                    }
+                }
+            } else if (element.getSymbol() == sellAllSlot) {
+                double worth = getInventoryTotalWorth(player.getInventory());
+                int amount = getInventorySellAmount(player.getInventory());
+                double earningLimit = getEarningLimit(player);
+                if (sellFishingBag() && CustomFishingPlugin.get().getBagManager().isEnabled()) {
+                    Inventory bag = CustomFishingPlugin.get().getBagManager().getOnlineBagInventory(player.getUniqueId());
+                    if (bag != null) {
+                        worth += getInventoryTotalWorth(bag);
+                        amount += getInventorySellAmount(bag);
+                    }
+                }
+                Condition condition = new Condition(player, new HashMap<>(Map.of(
+                        "{money}", String.format("%.2f", worth)
+                        ,"{rest}", String.format("%.2f", (earningLimit - data.earnings))
+                        ,"{sold-item-amount}", String.valueOf(amount)
+                )));
+                if (worth > 0) {
+                    if (earningLimit != -1 && (earningLimit - data.earnings) < worth) {
+                        // Can't earn more money
+                        if (getSellAllLimitActions() != null) {
+                            for (Action action : getSellAllLimitActions()) {
+                                action.trigger(condition);
+                            }
+                        }
+                    } else {
+                        // Clear items and update earnings
+                        clearWorthyItems(player.getInventory());
+                        if (sellFishingBag() && CustomFishingPlugin.get().getBagManager().isEnabled()) {
+                            Inventory bag = CustomFishingPlugin.get().getBagManager().getOnlineBagInventory(player.getUniqueId());
+                            if (bag != null) {
+                                clearWorthyItems(bag);
+                            }
+                        }
+                        data.earnings += worth;
+                        condition.insertArg("{rest}", String.format("%.2f", (earningLimit - data.earnings)));
+                        if (getSellAllAllowActions() != null) {
+                            for (Action action : getSellAllAllowActions()) {
+                                action.trigger(condition);
+                            }
+                        }
+                    }
+                } else {
+                    // Nothing to sell
+                    if (getSellAllDenyActions() != null) {
+                        for (Action action : getSellAllDenyActions()) {
                             action.trigger(condition);
                         }
                     }
@@ -371,11 +454,6 @@ public class MarketManagerImpl implements MarketManager, Listener {
         plugin.getScheduler().runTaskSyncLater(gui::refresh, player.getLocation(), 50, TimeUnit.MILLISECONDS);
     }
 
-    /**
-     * Retrieves the current date as an integer in the format MMDD (e.g., September 21 as 0921).
-     *
-     * @return An integer representing the current date.
-     */
     @Override
     public int getCachedDate() {
         return date;
@@ -387,12 +465,6 @@ public class MarketManagerImpl implements MarketManager, Listener {
         return (calendar.get(Calendar.MONTH) +1) * 100 + calendar.get(Calendar.DATE);
     }
 
-    /**
-     * Calculates the price of an ItemStack based on custom data or a predefined price map.
-     *
-     * @param itemStack The ItemStack for which the price is calculated.
-     * @return The calculated price of the ItemStack.
-     */
     @Override
     public double getItemPrice(ItemStack itemStack) {
         if (itemStack == null || itemStack.getType() == Material.AIR)
@@ -415,21 +487,11 @@ public class MarketManagerImpl implements MarketManager, Listener {
         return priceMap.getOrDefault(itemID, 0d) * itemStack.getAmount();
     }
 
-    /**
-     * Retrieves the formula used for calculating prices.
-     *
-     * @return The pricing formula as a string.
-     */
     @Override
     public String getFormula() {
         return formula;
     }
 
-    /**
-     * Calculates the price based on a formula with provided variables.
-     *
-     * @return The calculated price based on the formula and provided variables.
-     */
     @Override
     public double getFishPrice(Player player, Map<String, String> vars) {
         String temp = PlaceholderManagerImpl.getInstance().parse(player, formula, vars);
@@ -440,51 +502,31 @@ public class MarketManagerImpl implements MarketManager, Listener {
         return new ExpressionBuilder(temp).build().evaluate();
     }
 
-    /**
-     * Gets the character representing the item slot in the MarketGUI.
-     *
-     * @return The item slot character.
-     */
     @Override
     public char getItemSlot() {
         return itemSlot;
     }
 
-    /**
-     * Gets the character representing the function slot in the MarketGUI.
-     *
-     * @return The function slot character.
-     */
     @Override
-    public char getFunctionSlot() {
-        return functionSlot;
+    public char getSellSlot() {
+        return sellSlot;
     }
 
-    /**
-     * Gets the layout of the MarketGUI as an array of strings.
-     *
-     * @return The layout of the MarketGUI.
-     */
+    @Override
+    public char getSellAllSlot() {
+        return sellAllSlot;
+    }
+
     @Override
     public String[] getLayout() {
         return layout;
     }
 
-    /**
-     * Gets the title of the MarketGUI.
-     *
-     * @return The title of the MarketGUI.
-    */
     @Override
     public String getTitle() {
         return title;
     }
 
-    /**
-     * Gets the earning limit
-     *
-     * @return The earning limit
-     */
     @Override
     public double getEarningLimit(Player player) {
         return new ExpressionBuilder(
@@ -497,40 +539,92 @@ public class MarketManagerImpl implements MarketManager, Listener {
                 .evaluate();
     }
 
-    /**
-     * Gets the builder for the function icon representing the limit in the MarketGUI.
-     *
-     * @return The function icon builder for the limit.
-     */
-    public BuildableItem getFunctionIconLimitBuilder() {
-        return functionIconLimitBuilder;
+    public BuildableItem getSellIconLimitBuilder() {
+        return sellIconLimitBuilder;
     }
 
-    /**
-     * Gets the builder for the function icon representing allow actions in the MarketGUI.
-     *
-     * @return The function icon builder for allow actions.
-     */
-    public BuildableItem getFunctionIconAllowBuilder() {
-        return functionIconAllowBuilder;
+    public BuildableItem getSellIconAllowBuilder() {
+        return sellIconAllowBuilder;
     }
 
-    /**
-     * Gets the builder for the function icon representing deny actions in the MarketGUI.
-     *
-     * @return The function icon builder for deny actions.
-     */
-    public BuildableItem getFunctionIconDenyBuilder() {
-        return functionIconDenyBuilder;
+    public BuildableItem getSellIconDenyBuilder() {
+        return sellIconDenyBuilder;
     }
 
-    /**
-     * Is market enabled
-     *
-     * @return enable or not
-     */
+    public BuildableItem getSellAllIconAllowBuilder() {
+        return sellAllIconAllowBuilder;
+    }
+
+    public BuildableItem getSellAllIconDenyBuilder() {
+        return sellAllIconDenyBuilder;
+    }
+
+    public BuildableItem getSellAllIconLimitBuilder() {
+        return sellAllIconLimitBuilder;
+    }
+
+    public Action[] getSellDenyActions() {
+        return sellDenyActions;
+    }
+
+    public Action[] getSellAllowActions() {
+        return sellAllowActions;
+    }
+
+    public Action[] getSellLimitActions() {
+        return sellLimitActions;
+    }
+
+    public Action[] getSellAllDenyActions() {
+        return sellAllDenyActions;
+    }
+
+    public Action[] getSellAllAllowActions() {
+        return sellAllAllowActions;
+    }
+
+    public Action[] getSellAllLimitActions() {
+        return sellAllLimitActions;
+    }
+
     @Override
     public boolean isEnable() {
         return enable;
+    }
+
+    @Override
+    public boolean sellFishingBag() {
+        return sellFishingBag;
+    }
+
+    @Override
+    public double getInventoryTotalWorth(Inventory inventory) {
+        double total = 0d;
+        for (ItemStack itemStack : inventory.getStorageContents()) {
+            double price = getItemPrice(itemStack);
+            total += price;
+        }
+        return total;
+    }
+
+    @Override
+    public int getInventorySellAmount(Inventory inventory) {
+        int amount = 0;
+        for (ItemStack itemStack : inventory.getStorageContents()) {
+            double price = getItemPrice(itemStack);
+            if (price > 0 && itemStack != null) {
+                amount += itemStack.getAmount();
+            }
+        }
+        return amount;
+    }
+
+    public void clearWorthyItems(Inventory inventory) {
+        for (ItemStack itemStack : inventory.getStorageContents()) {
+            double price = getItemPrice(itemStack);
+            if (price > 0 && itemStack != null) {
+                itemStack.setAmount(0);
+            }
+        }
     }
 }

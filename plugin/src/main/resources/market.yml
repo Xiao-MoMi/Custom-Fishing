@@ -34,8 +34,63 @@ item-slot:
   symbol: 'I'
   allow-items-with-no-price: true
 
-# Functional icon
-functional-icons:
+# This is an icon that allows players to sell all the fish from their inventory and fishingbag
+# You can enable it by putting the symbol into layout
+sell-all-icons:
+  symbol: 'S'
+  # Should the fish in fishing bag be sold
+  fishingbag: true
+  allow-icon:
+    material: IRON_BLOCK
+    display:
+      name: '<#00CED1><b>● <!b>Ship the fish'
+      lore:
+        - '<font:uniform><gradient:#E6E6FA:#48D1CC:#E6E6FA>You will get <green>{money}$</green> by selling the fish from inventory and bag</gradient></font>'
+    action:
+      sound_action:
+        type: sound
+        value:
+          key: 'minecraft:block.amethyst_block.place'
+          source: 'player'
+          volume: 1
+          pitch: 1
+      message_action:
+        type: message
+        value: 'You earned {money}$ by selling the fish! You can still get {rest}$ from market today'
+      command_action:
+        type: command
+        value: 'money give {player} {money}'
+  deny-icon:
+    material: REDSTONE_BLOCK
+    display:
+      name: '<red><b>● <!b>Denied trade'
+      lore:
+        - '<font:uniform><gradient:#E6E6FA:red:#E6E6FA>Nothing to sell!</gradient></font>'
+    action:
+      sound_action:
+        type: sound
+        value:
+          key: 'minecraft:entity.villager.no'
+          source: 'player'
+          volume: 1
+          pitch: 1
+  limit-icon:
+    material: REDSTONE_BLOCK
+    display:
+      name: '<red><b>● <!b>Denied trade'
+      lore:
+        - '<font:uniform><gradient:#E6E6FA:red:#E6E6FA>The worth of items exceeds the money that can be earned for the rest of today!</gradient></font>'
+    action:
+      sound_action:
+        type: sound
+        value:
+          key: 'minecraft:block.anvil.land'
+          source: 'player'
+          volume: 1
+          pitch: 1
+
+# Sell icon
+sell-icons:
   symbol: 'B'
   allow-icon:
     material: IRON_BLOCK

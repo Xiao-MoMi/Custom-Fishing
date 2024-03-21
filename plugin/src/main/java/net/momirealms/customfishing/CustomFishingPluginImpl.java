@@ -109,8 +109,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
                         Dependency.BSTATS_BUKKIT,
                         Dependency.INV_UI,
                         Dependency.INV_UI_ACCESS,
-                        Dependency.INV_UI_NMS,
-                        Dependency.BIOME_API
+                        Dependency.INV_UI_NMS
                 )
         ));
     }

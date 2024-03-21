@@ -90,6 +90,10 @@ weekend_competition:
       value:
         - 'You have joined the competition. Good luck!'
 
+  # Requirements for participating the competition
+  participate-requirements: {}
+
+  # Rewards
   rewards:
     1:
       command_action:
