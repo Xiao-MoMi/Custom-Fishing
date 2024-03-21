@@ -120,7 +120,6 @@ public class HookCheckTimerTask implements Runnable {
                 this.fishingPreparation.triggerActions(ActionTrigger.LAND);
                 FishHookLandEvent event = new FishHookLandEvent(fishingPreparation.getPlayer(), FishHookLandEvent.Target.LAVA, fishHook, initialEffect);
                 Bukkit.getPluginManager().callEvent(event);
-                this.setWaitTime();
                 this.firstTime = false;
                 this.setTempState();
             }
@@ -140,7 +139,8 @@ public class HookCheckTimerTask implements Runnable {
                     return;
                 }
                 reserve = true;
-                this.startLavaFishingMechanic();
+                if (this.loot != null)
+                    this.startLavaFishingMechanic();
                 this.makeHookStatic(fishHook.getLocation());
             }
             return;
@@ -154,10 +154,12 @@ public class HookCheckTimerTask implements Runnable {
             this.fishingPreparation.triggerActions(ActionTrigger.LAND);
             FishHookLandEvent event = new FishHookLandEvent(fishingPreparation.getPlayer(), FishHookLandEvent.Target.WATER, fishHook, initialEffect);
             Bukkit.getPluginManager().callEvent(event);
-            // if the hook is in water
-            // then cancel the task
-            this.setWaitTime();
             this.setTempState();
+            if (this.loot == null) {
+                fishHook.setWaitTime(Integer.MAX_VALUE);
+            } else {
+                this.setWaitTime();
+            }
             return;
         }
     }
@@ -188,7 +190,7 @@ public class HookCheckTimerTask implements Runnable {
     private void setTempState() {
         Loot nextLoot = CustomFishingPlugin.get().getLootManager().getNextLoot(initialEffect, fishingPreparation);
         if (nextLoot == null) {
-            fishHook.setWaitTime(Integer.MAX_VALUE);
+            this.loot = null;
             CustomFishingPlugin.get().debug("No loot available at " + fishingPreparation.getLocation());
             return;
         }
@@ -200,11 +202,11 @@ public class HookCheckTimerTask implements Runnable {
             fishingPreparation.insertArg("{statistics_size}", nextLoot.getStatisticKey().getSizeKey());
             fishingPreparation.insertArg("{statistics_amount}", nextLoot.getStatisticKey().getAmountKey());
         }
-        CustomFishingPlugin.get().getScheduler().runTaskAsync(() -> manager.setTempFishingState(fishingPreparation.getPlayer(), new TempFishingState(
+        manager.setTempFishingState(fishingPreparation.getPlayer(), new TempFishingState(
                 initialEffect,
                 fishingPreparation,
                 nextLoot
-        )));
+        ));
     }
 
     /**
