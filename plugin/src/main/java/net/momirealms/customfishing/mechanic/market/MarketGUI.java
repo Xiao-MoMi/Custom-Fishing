@@ -24,12 +24,14 @@ import net.momirealms.customfishing.api.mechanic.market.MarketGUIHolder;
 import net.momirealms.customfishing.api.util.InventoryUtils;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.util.ItemUtils;
+import net.momirealms.customfishing.util.NumberUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -155,9 +157,11 @@ public class MarketGUI {
             if (totalWorth <= 0) {
                 sellElement.setItemStack(
                         manager.getSellIconDenyBuilder().build(owner,
-                                Map.of("{money}", String.format("%.2f", totalWorth)
+                                Map.of("{money}", NumberUtils.money(totalWorth)
+                                        ,"{money_formatted}", String.format("%.2f", totalWorth)
                                         ,"{player}", owner.getName()
-                                        ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings)
+                                        ,"{rest}", NumberUtils.money(earningLimit - earningData.earnings)
+                                        ,"{rest_formatted}", String.format("%.2f", (earningLimit - earningData.earnings))
                                         ,"{sold-item-amount}", String.valueOf(soldAmount)
                                 )
                         )
@@ -165,9 +169,11 @@ public class MarketGUI {
             } else if (earningLimit != -1 && (earningLimit - earningData.earnings < totalWorth)) {
                 sellElement.setItemStack(
                         manager.getSellIconLimitBuilder().build(owner,
-                                Map.of("{money}", String.format("%.2f", totalWorth)
+                                Map.of("{money}", NumberUtils.money(totalWorth)
+                                        ,"{money_formatted}", String.format("%.2f", totalWorth)
                                         ,"{player}", owner.getName()
-                                        ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings)
+                                        ,"{rest}", NumberUtils.money(earningLimit - earningData.earnings)
+                                        ,"{rest_formatted}", String.format("%.2f", (earningLimit - earningData.earnings))
                                         ,"{sold-item-amount}", String.valueOf(soldAmount)
                                 )
                         )
@@ -175,9 +181,11 @@ public class MarketGUI {
             } else {
                 sellElement.setItemStack(
                         manager.getSellIconAllowBuilder().build(owner,
-                                Map.of("{money}", String.format("%.2f", totalWorth)
+                                Map.of("{money}", NumberUtils.money(totalWorth)
+                                        ,"{money_formatted}", String.format("%.2f", totalWorth)
                                         ,"{player}", owner.getName()
-                                        ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings)
+                                        ,"{rest}", NumberUtils.money(earningLimit - earningData.earnings)
+                                        ,"{rest_formatted}", String.format("%.2f", (earningLimit - earningData.earnings))
                                         ,"{sold-item-amount}", String.valueOf(soldAmount)
                                 )
                         )
@@ -199,9 +207,11 @@ public class MarketGUI {
             if (totalWorth <= 0) {
                 sellAllElement.setItemStack(
                         manager.getSellAllIconDenyBuilder().build(owner,
-                                Map.of("{money}", String.format("%.2f", totalWorth)
+                                Map.of("{money}", NumberUtils.money(totalWorth)
+                                        ,"{money_formatted}", String.format("%.2f", totalWorth)
                                         ,"{player}", owner.getName()
-                                        ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings)
+                                        ,"{rest}", NumberUtils.money(earningLimit - earningData.earnings)
+                                        ,"{rest_formatted}", String.format("%.2f", (earningLimit - earningData.earnings))
                                         ,"{sold-item-amount}", String.valueOf(sellAmount)
                                 )
                         )
@@ -209,9 +219,11 @@ public class MarketGUI {
             } else if (earningLimit != -1 && (earningLimit - earningData.earnings < totalWorth)) {
                 sellAllElement.setItemStack(
                         manager.getSellAllIconLimitBuilder().build(owner,
-                                Map.of("{money}", String.format("%.2f", totalWorth)
+                                Map.of("{money}", NumberUtils.money(totalWorth)
+                                        ,"{money_formatted}", String.format("%.2f", totalWorth)
                                         ,"{player}", owner.getName()
-                                        ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings)
+                                        ,"{rest}", NumberUtils.money(earningLimit - earningData.earnings)
+                                        ,"{rest_formatted}", String.format("%.2f", (earningLimit - earningData.earnings))
                                         ,"{sold-item-amount}", String.valueOf(sellAmount)
                                 )
                         )
@@ -219,9 +231,11 @@ public class MarketGUI {
             } else {
                 sellAllElement.setItemStack(
                         manager.getSellAllIconAllowBuilder().build(owner,
-                                Map.of("{money}", String.format("%.2f", totalWorth)
+                                Map.of("{money}", NumberUtils.money(totalWorth)
+                                        ,"{money_formatted}", String.format("%.2f", totalWorth)
                                         ,"{player}", owner.getName()
-                                        ,"{rest}", String.format("%.2f", earningLimit - earningData.earnings)
+                                        ,"{rest}", NumberUtils.money(earningLimit - earningData.earnings)
+                                        ,"{rest_formatted}", String.format("%.2f", (earningLimit - earningData.earnings))
                                         ,"{sold-item-amount}", String.valueOf(sellAmount)
                                 )
                         )

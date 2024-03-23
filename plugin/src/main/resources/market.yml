@@ -45,7 +45,7 @@ sell-all-icons:
     display:
       name: '<#00CED1><b>● <!b>Ship the fish'
       lore:
-        - '<font:uniform><gradient:#E6E6FA:#48D1CC:#E6E6FA>You will get <green>{money}$</green> by selling the fish from inventory and bag</gradient></font>'
+        - '<font:uniform><gradient:#E6E6FA:#48D1CC:#E6E6FA>You will get <green>{money_formatted}$</green> by selling the fish from inventory and bag</gradient></font>'
     action:
       sound_action:
         type: sound
@@ -56,7 +56,7 @@ sell-all-icons:
           pitch: 1
       message_action:
         type: message
-        value: 'You earned {money}$ by selling the fish! You can still get {rest}$ from market today'
+        value: 'You earned {money_formatted}$ by selling the fish! You can still get {rest_formatted}$ from market today'
       command_action:
         type: command
         value: 'money give {player} {money}'
@@ -101,7 +101,7 @@ sell-icons:
     display:
       name: '<#00CED1><b>● <!b>Ship the fish'
       lore:
-        - '<font:uniform><gradient:#E6E6FA:#48D1CC:#E6E6FA>You will get <green>{money}$</green> by selling the fish</gradient></font>'
+        - '<font:uniform><gradient:#E6E6FA:#48D1CC:#E6E6FA>You will get <green>{money_formatted}$</green> by selling the fish</gradient></font>'
     action:
       sound_action:
         type: sound
@@ -112,7 +112,7 @@ sell-icons:
           pitch: 1
       message_action:
         type: message
-        value: 'You earned {money}$ by selling the fish! You can still get {rest}$ from market today'
+        value: 'You earned {money_formatted}$ by selling the fish! You can still get {rest_formatted}$ from market today'
       command_action:
         type: command
         value: 'money give {player} {money}'

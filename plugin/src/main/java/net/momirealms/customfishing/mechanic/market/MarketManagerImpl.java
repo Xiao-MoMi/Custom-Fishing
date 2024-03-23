@@ -30,6 +30,7 @@ import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.api.util.LogUtils;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.util.ConfigUtils;
+import net.momirealms.customfishing.util.NumberUtils;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -47,6 +48,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -327,8 +329,10 @@ public class MarketManagerImpl implements MarketManager, Listener {
                 int amount = gui.getSoldAmount();
                 double earningLimit = getEarningLimit(player);
                 Condition condition = new Condition(player, new HashMap<>(Map.of(
-                        "{money}", String.format("%.2f", worth)
-                        ,"{rest}", String.format("%.2f", (earningLimit - data.earnings))
+                        "{money}", NumberUtils.money(worth),
+                        "{rest}", NumberUtils.money(earningLimit - data.earnings),
+                        "{money_formatted}", String.format("%.2f", worth)
+                        ,"{rest_formatted}", String.format("%.2f", (earningLimit - data.earnings))
                         ,"{sold-item-amount}", String.valueOf(amount)
                 )));
                 if (worth > 0) {
@@ -343,7 +347,8 @@ public class MarketManagerImpl implements MarketManager, Listener {
                         // Clear items and update earnings
                         gui.clearWorthyItems();
                         data.earnings += worth;
-                        condition.insertArg("{rest}", String.format("%.2f", (earningLimit - data.earnings)));
+                        condition.insertArg("{rest}", NumberUtils.money(earningLimit - data.earnings));
+                        condition.insertArg("{rest_formatted}", String.format("%.2f", (earningLimit - data.earnings)));
                         if (getSellAllowActions() != null) {
                             for (Action action : getSellAllowActions()) {
                                 action.trigger(condition);
@@ -370,8 +375,10 @@ public class MarketManagerImpl implements MarketManager, Listener {
                     }
                 }
                 Condition condition = new Condition(player, new HashMap<>(Map.of(
-                        "{money}", String.format("%.2f", worth)
-                        ,"{rest}", String.format("%.2f", (earningLimit - data.earnings))
+                        "{money}", NumberUtils.money(worth),
+                        "{rest}", NumberUtils.money(earningLimit - data.earnings),
+                        "{money_formatted}", String.format("%.2f", worth)
+                        ,"{rest_formatted}", String.format("%.2f", (earningLimit - data.earnings))
                         ,"{sold-item-amount}", String.valueOf(amount)
                 )));
                 if (worth > 0) {
@@ -392,7 +399,8 @@ public class MarketManagerImpl implements MarketManager, Listener {
                             }
                         }
                         data.earnings += worth;
-                        condition.insertArg("{rest}", String.format("%.2f", (earningLimit - data.earnings)));
+                        condition.insertArg("{rest}", NumberUtils.money(earningLimit - data.earnings));
+                        condition.insertArg("{rest_formatted}", String.format("%.2f", (earningLimit - data.earnings)));
                         if (getSellAllAllowActions() != null) {
                             for (Action action : getSellAllAllowActions()) {
                                 action.trigger(condition);
