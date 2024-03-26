@@ -78,6 +78,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 public class ItemManagerImpl implements ItemManager, Listener {
 
@@ -483,6 +484,13 @@ public class ItemManagerImpl implements ItemManager, Listener {
             itemEntity.remove();
             return;
         }
+
+        itemEntity.setInvulnerable(true);
+        plugin.getScheduler().runTaskAsyncLater(() -> {
+            if (itemEntity.isValid()) {
+                itemEntity.setInvulnerable(false);
+            }
+        }, 1, TimeUnit.SECONDS);
 
         Vector vector = playerLocation.subtract(hookLocation).toVector().multiply(0.105);
         vector = vector.setY((vector.getY() + 0.22) * 1.18);
@@ -968,7 +976,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
      * @param event The PlayerInteractEvent.
      */
     @EventHandler
-    public void onInteractWithUtils(PlayerInteractEvent event) {
+    public void onInteractWithItems(PlayerInteractEvent event) {
         if (event.useItemInHand() == Event.Result.DENY)
             return;
         if (event.getHand() != EquipmentSlot.HAND)
@@ -979,16 +987,27 @@ public class ItemManagerImpl implements ItemManager, Listener {
         if (event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_AIR && event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK)
             return;
         String id = getAnyPluginItemID(itemStack);
-        EffectCarrier carrier = plugin.getEffectManager().getEffectCarrier("util", id);
-        if (carrier == null)
-            return;
         Condition condition = new Condition(event.getPlayer());
-        if (!RequirementManager.isRequirementMet(condition, carrier.getRequirements()))
+
+        Loot loot = plugin.getLootManager().getLoot(id);
+        if (loot != null) {
+            loot.triggerActions(ActionTrigger.INTERACT, condition);
             return;
-        Action[] actions = carrier.getActions(ActionTrigger.INTERACT);
-        if (actions != null)
-            for (Action action : actions) {
-                action.trigger(condition);
+        }
+
+        // because the id can be from other plugins, so we can't infer the type of the item
+        for (String type : List.of("util", "bait", "rod", "hook")) {
+            EffectCarrier carrier = plugin.getEffectManager().getEffectCarrier(type, id);
+            if (carrier != null) {
+                if (!RequirementManager.isRequirementMet(condition, carrier.getRequirements()))
+                    return;
+                Action[] actions = carrier.getActions(ActionTrigger.INTERACT);
+                if (actions != null)
+                    for (Action action : actions) {
+                        action.trigger(condition);
+                    }
+                break;
             }
+        }
     }
 }
