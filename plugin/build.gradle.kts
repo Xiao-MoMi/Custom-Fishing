@@ -9,7 +9,7 @@ dependencies {
     compileOnly("dev.jorel:commandapi-bukkit-core:9.3.0")
 
     // nbt
-    compileOnly("de.tr7zw:item-nbt-api:2.12.2")
+    compileOnly("de.tr7zw:item-nbt-api:2.12.3")
 
     // bStats
     compileOnly("org.bstats:bstats-bukkit:3.0.2")
