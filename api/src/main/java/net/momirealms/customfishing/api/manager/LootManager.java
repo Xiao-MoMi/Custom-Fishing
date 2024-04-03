@@ -88,9 +88,9 @@ public interface LootManager {
     /**
      * Get the next loot item based on fishing effect and condition.
      *
-     * @param initialEffect The effect to apply weight modifiers.
+     * @param effect The effect to apply weight modifiers.
      * @param condition     The condition to determine possible loot.
      * @return The next loot item, or null if it doesn't exist.
      */
-    @Nullable Loot getNextLoot(Effect initialEffect, Condition condition);
+    @Nullable Loot getNextLoot(Effect effect, Condition condition);
 }

@@ -168,21 +168,21 @@ public class LootManagerImpl implements LootManager {
     /**
      * Get a map of possible loot keys with their corresponding weights, considering fishing effect and condition.
      *
-     * @param initialEffect The effect to apply weight modifiers.
+     * @param effect The effect to apply weight modifiers.
      * @param condition     The condition to determine possible loot.
      * @return A map of loot keys and their weights.
      */
     @NotNull
     @Override
-    public Map<String, Double> getPossibleLootKeysWithWeight(Effect initialEffect, Condition condition) {
+    public Map<String, Double> getPossibleLootKeysWithWeight(Effect effect, Condition condition) {
         Map<String, Double> lootWithWeight = ((RequirementManagerImpl) plugin.getRequirementManager()).getLootWithWeight(condition);
         Player player = condition.getPlayer();
-        for (Pair<String, WeightModifier> pair : initialEffect.getWeightModifier()) {
+        for (Pair<String, WeightModifier> pair : effect.getWeightModifier()) {
             Double previous = lootWithWeight.get(pair.left());
             if (previous != null)
                 lootWithWeight.put(pair.left(), pair.right().modify(player, previous));
         }
-        for (Pair<String, WeightModifier> pair : initialEffect.getWeightModifierIgnored()) {
+        for (Pair<String, WeightModifier> pair : effect.getWeightModifierIgnored()) {
             double previous = lootWithWeight.getOrDefault(pair.left(), 0d);
             lootWithWeight.put(pair.left(), pair.right().modify(player, previous));
         }
@@ -192,14 +192,14 @@ public class LootManagerImpl implements LootManager {
     /**
      * Get the next loot item based on fishing effect and condition.
      *
-     * @param initialEffect The effect to apply weight modifiers.
+     * @param effect The effect to apply weight modifiers.
      * @param condition     The condition to determine possible loot.
      * @return The next loot item, or null if it doesn't exist.
      */
     @Override
     @Nullable
-    public Loot getNextLoot(Effect initialEffect, Condition condition) {
-        String key = WeightUtils.getRandom(getPossibleLootKeysWithWeight(initialEffect, condition));
+    public Loot getNextLoot(Effect effect, Condition condition) {
+        String key = WeightUtils.getRandom(getPossibleLootKeysWithWeight(effect, condition));
         if (key == null) {
             return null;
         }

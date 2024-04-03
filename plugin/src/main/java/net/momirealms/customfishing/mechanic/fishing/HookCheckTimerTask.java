@@ -92,7 +92,6 @@ public class HookCheckTimerTask implements Runnable {
         this.tempEffect = new FishingEffect();
     }
 
-
     @Override
     public void run() {
         if (
@@ -225,13 +224,11 @@ public class HookCheckTimerTask implements Runnable {
     }
 
     private void setNextLoot() {
-        Loot nextLoot = CustomFishingPlugin.get().getLootManager().getNextLoot(tempEffect, fishingPreparation);
+        Loot nextLoot = CustomFishingPlugin.get().getLootManager().getNextLoot(initialEffect, fishingPreparation);
         if (nextLoot == null) {
             this.loot = null;
-            CustomFishingPlugin.get().debug("No loot available at " + fishingPreparation.getLocation());
             return;
         }
-
         this.loot = nextLoot;
     }
 

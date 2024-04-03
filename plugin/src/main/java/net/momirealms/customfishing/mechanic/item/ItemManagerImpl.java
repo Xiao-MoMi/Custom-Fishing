@@ -996,11 +996,9 @@ public class ItemManagerImpl implements ItemManager, Listener {
         }
 
         // because the id can be from other plugins, so we can't infer the type of the item
-        for (String type : List.of("util", "bait", "rod", "hook")) {
+        for (String type : List.of("util", "bait", "hook")) {
             EffectCarrier carrier = plugin.getEffectManager().getEffectCarrier(type, id);
             if (carrier != null) {
-                if (!RequirementManager.isRequirementMet(condition, carrier.getRequirements()))
-                    return;
                 Action[] actions = carrier.getActions(ActionTrigger.INTERACT);
                 if (actions != null)
                     for (Action action : actions) {
