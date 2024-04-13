@@ -304,21 +304,21 @@ public enum Dependency {
     INV_UI(
             "xyz{}xenondevs{}invui",
             "invui-core",
-            "1.26",
+            "1.27",
             "xenondevs",
             "invui-core"
     ),
     INV_UI_ACCESS(
             "xyz{}xenondevs{}invui",
             "inventory-access",
-            "1.26",
+            "1.27",
             "xenondevs",
             "inventory-access"
     ),
     INV_UI_NMS(
             "xyz{}xenondevs{}invui",
             getInvUINms(),
-            "1.26",
+            "1.27",
             "xenondevs",
             getInvUINms()
     ),

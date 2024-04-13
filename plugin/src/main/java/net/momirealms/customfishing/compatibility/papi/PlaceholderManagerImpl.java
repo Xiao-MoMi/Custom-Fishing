@@ -82,9 +82,18 @@ public class PlaceholderManagerImpl implements PlaceholderManager {
         ConfigurationSection section = config.getConfigurationSection("other-settings.placeholder-register");
         if (section != null) {
             for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
-                this.customPlaceholderMap.put(entry.getKey(), (String) entry.getValue());
+                registerCustomPlaceholder(entry.getKey(), (String) entry.getValue());
             }
         }
+    }
+
+    @Override
+    public boolean registerCustomPlaceholder(String placeholder, String original) {
+        if (this.customPlaceholderMap.containsKey(placeholder)) {
+            return false;
+        }
+        this.customPlaceholderMap.put(placeholder, original);
+        return true;
     }
 
     /**

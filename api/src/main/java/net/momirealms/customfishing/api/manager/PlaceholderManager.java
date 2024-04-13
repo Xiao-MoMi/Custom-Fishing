@@ -27,6 +27,15 @@ import java.util.Map;
 public interface PlaceholderManager {
 
     /**
+     * Register a custom placeholder
+     *
+     * @param placeholder for instance {level}
+     * @param original for instance %player_level%
+     * @return success or not, it would fail if the placeholder has been registered
+     */
+    boolean registerCustomPlaceholder(String placeholder, String original);
+
+    /**
      * Set placeholders in a text string for a player.
      *
      * @param player The player for whom the placeholders should be set.

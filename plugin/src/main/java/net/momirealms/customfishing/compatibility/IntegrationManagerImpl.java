@@ -63,17 +63,17 @@ public class IntegrationManagerImpl implements IntegrationManager {
     }
 
     public void load() {
-        if (plugin.isHookedPluginEnabled("ItemsAdder")) {
+        if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
             plugin.getItemManager().registerItemLibrary(new ItemsAdderItemImpl());
             plugin.getBlockManager().registerBlockLibrary(new ItemsAdderBlockImpl());
             plugin.getEntityManager().registerEntityLibrary(new ItemsAdderEntityImpl());
             hookMessage("ItemsAdder");
         }
-        if (plugin.isHookedPluginEnabled("MMOItems")) {
+        if (Bukkit.getPluginManager().getPlugin("MMOItems") != null) {
             plugin.getItemManager().registerItemLibrary(new MMOItemsItemImpl());
             hookMessage("MMOItems");
         }
-        if (plugin.isHookedPluginEnabled("Oraxen")) {
+        if (Bukkit.getPluginManager().getPlugin("Oraxen") != null) {
             plugin.getItemManager().registerItemLibrary(new OraxenItemImpl());
             hookMessage("Oraxen");
         }
@@ -85,7 +85,7 @@ public class IntegrationManagerImpl implements IntegrationManager {
             plugin.getItemManager().registerItemLibrary(new NeigeItemsItemImpl());
             hookMessage("NeigeItems");
         }
-        if (plugin.isHookedPluginEnabled("MythicMobs")) {
+        if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
             plugin.getItemManager().registerItemLibrary(new MythicMobsItemImpl());
             plugin.getEntityManager().registerEntityLibrary(new MythicEntityImpl());
             hookMessage("MythicMobs");
