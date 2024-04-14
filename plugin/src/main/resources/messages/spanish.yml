@@ -1,0 +1,125 @@
+# Don't change this
+config-version: '31'
+
+messages:
+  prefix: '<gradient:#0070B3:#A0EACF>[CustomFishing] </gradient>'
+  reload: '<white>Recargado! Tardó <green>{time}ms.'
+  item-not-exist: 'Item no encontrado.'
+  give-item: 'Se ha entregado {amount}x {item} al jugador {player}.'
+  get-item: 'Se ha recibido {amount}x {item}.'
+  possible-loots: 'Posibles recompensas: '
+  split-char: ', '
+  competition-not-exist: 'La Competición {id} no existe.'
+  no-competition-ongoing: "No hay una competencia activa."
+  stop-competition: 'Se ha detenido la competición.'
+  end-competition: 'Ha finalizado la competición.'
+  no-score: 'Sin puntaje'
+  no-player: 'Sin jugador'
+  no-rank: 'Sin rango'
+  goal-catch-amount: 'Peces atrapados'
+  goal-max-size: 'Pez más grande capturado'
+  goal-total-size: 'Longitud total de peces capturados'
+  goal-total-score: 'Puntaje acumulado por peces capturados'
+  unsafe-modification: "No se puede modificar la bolsa de pesca de un jugador si sigue activo en otro servidor vinculado."
+  never-played: "Este jugador nunca se ha unido al servidor. No puedes modificar la bolsa de pesca de un jugador inexistente."
+  data-not-loaded: "<red>No se pudo cargar la información. Por favor, vuelve a ingresar al servidor. Si el problema persiste, contacta a un administrador."
+  open-market-gui: "Se ha abierto la interfaz para {player}"
+  open-fishing-bag: "Se ha abierto la bolsa de pesca de {player}"
+  format-day: 'd'
+  format-hour: 'h'
+  format-minute: 'm'
+  format-second: 's'
+
+gui:
+  search: "Buscar"
+  select-file: 'Seleccionar archivo'
+  select-item: "Seleccionar item"
+  dupe-invalid-key: "<red>● ID inválida o duplicada"
+  new-value: "Nuevo valor: "
+  temp-new-key: 'Nueva ID'
+  set-new-key: "Definir nueva ID"
+  edit-key: 'Editar {0}'
+  delete-property: "<#00CED1>● Eliminar propiedad"
+  click-confirm: "<#00FF7F> -> Click para confirmar"
+  invalid-number: "<red>● Número inválido"
+  illegal-format: "<red>● Formato inválido"
+  scroll-up: '<gray>● Arriba'
+  scroll-down: '<gray>● Abajo'
+  cannot-scroll-up: "<red>Estás en el límite superior"
+  cannot-scroll-down: "<red>Estás en el límite inferior"
+  next-page: '<gray>● Siguiente Página'
+  goto-next-page: '<gray>Ir a la página <yellow>{0} <gray>/ <yellow>{1}'
+  cannot-goto-next-page: '<red>No hay más páginas'
+  previous-page: '<gray>● Página anterior'
+  goto-previous-page: '<gray>Ir a la página <yellow>{0} <gray>/ <yellow>{1}'
+  cannot-goto-previous-page: "<red>No hay más páginas atrás"
+  back-to-parent-page: "<#FF8C00>Volver al menú anterior"
+  back-to-parent-folder: "<#FF8C00>Volver a la carpeta anterior"
+  current-value: "<gray>Valor actual: <white>"
+  click-to-toggle: "<#00FF7F> -> Click para cambiar"
+  left-click-edit: "<#00FF7F> -> Click izquierdo para editar"
+  right-click-reset: "<#FF6347> -> Click derecho para restablecer"
+  right-click-delete: "<#FF6347> -> Click derecho para eliminar"
+  right-click-cancel: "<#00CED1> -> Click derecho para cancelar"
+  loot-show-in-finder: "<#5F9EA0>● Mostar en el rastreador de peces"
+  loot-score: "<#FF1493>● Puntaje"
+  loot-nick: "<#00FF00>● Apodo"
+  loot-instant-game: "<#7B68EE>● Juego Instantáneo"
+  loot-disable-statistics: "<#CD853F>● Deshabilitar Estadísticas"
+  loot-disable-game: "<#8B4513>● Deshabilitar Juego"
+  item-amount: "<#1E90FF>● Cantidad"
+  item-custom-model-data: "<#FFC0CB>● Custom Model Data"
+  item-display-name: "<#FAFAD2>● Nombre a mostrar"
+  item-custom-durability: "<#1E90FF>● Durabilidad"
+  item-enchantment: "<#8A2BE2>● Encantamiento"
+  item-head64: "<#2E8B57>● Head64"
+  item-item-flag: "<#E6E6FA>● Item Flag"
+  item-lore: "<#FA8072>● Descripción"
+  item-material: "<#FF00FF>● Material"
+  item-nbt: "<#FA8072>● NBT"
+  item-prevent-grab: "<#FF4500>● Evitar recoger item"
+  item-price: "<#FFD700>● Precio"
+  item-price-base: "<gray>  - base: <white>"
+  item-price-bonus: "<gray>  - bonus: <white>"
+  item-random-durability: "<#FFFF00>● Durabilidad Aleatoria"
+  item-size: "<#FFF0F5>● Tamaño"
+  item-stackable: "<#9370DB>● Acumulable"
+  item-stored-enchantment: "<#9370DB>● Encantamiento Almacenado"
+  item-tag: "<#2E8B57>● Etiqueta"
+  item-unbreakable: "<#C0C0C0>● Irrompible"
+  page-amount-title: "Editar Cantidad"
+  page-model-data-title: "Editar CustomModelData"
+  page-display-name-title: "Editar nombre a mostrar"
+  page-new-display-name: "Nuevo nombre"
+  page-custom-durability-title: "Edit durabilidad"
+  page-stored-enchantment-title: "Edit encantamiento almacenado"
+  page-enchantment-title: "Editar enchantmentamiento"
+  page-select-one-enchantment: "Seleccionar un encantamiento"
+  page-add-new-enchantment: "<green>[+] <gray>Añadir un encantamiento"
+  page-item-flag-title: "Editar item flag"
+  page-lore-title: "Editar descripción"
+  page-add-new-lore: "<green>[+] <gray>Añadir nueva línea"
+  page-select-one-lore: "Seleccionar una línea"
+  page-material-title: "Editar Material"
+  page-nbt-compound-key-title: "Editar ID de NBT compuesta"
+  page-nbt-list-key-title: "Editar lista de IDs"
+  page-nbt-key-title: "Editar ID"
+  page-nbt-invalid-key: "<red>ID inválida"
+  page-nbt-add-new-compound: "<green>[+] <gray>Añadir nueva NBT compuesta"
+  page-nbt-add-new-list: "<green>[+] <gray>Añadir nueva lista"
+  page-nbt-add-new-value: "<green>[+] <gray>Añadir nuevo valor"
+  page-add-new-key: "<green>[+] <gray>Añadir nueva ID"
+  page-nbt-preview: "<green>● Vista previa de NBT"
+  page-nbt-back-to-compound: "<gray>Volver al compuesto padre"
+  page-nbt-set-value-title: "Definir nuevo valor"
+  page-nbt-edit-title: "Editar NBT"
+  page-nick-title: "Editar apodo"
+  page-new-nick: "Nuevo apodo"
+  page-price-title: "Editar precio"
+  page-base-price: "Base"
+  page-base-bonus: "Bonus"
+  page-score-title: "Editar puntuación"
+  page-size-title: "Editar tamaño"
+  page-size-min: "Mínimo"
+  page-size-max: "Máximo"
+  page-size-max-no-less-min: "<red>● El valor máximo no puede ser inferior al mínimo"
