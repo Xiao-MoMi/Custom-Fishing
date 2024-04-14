@@ -11,8 +11,9 @@ metrics: true
 # Check updates
 update-checker: true
 
-# Available locales: english / chinese / french / hungarian
-lang: english
+# Language
+# https://github.com/Xiao-MoMi/Custom-Fishing/tree/main/plugin/src/main/resources/messages
+lang: en
 
 # Mechanic settings
 mechanics:
