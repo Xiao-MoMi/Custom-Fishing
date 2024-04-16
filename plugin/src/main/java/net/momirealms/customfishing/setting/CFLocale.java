@@ -30,7 +30,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
+import java.io.InputStream;
 
 public class CFLocale {
     public static String MSG_Total_Size;
@@ -154,23 +154,27 @@ public class CFLocale {
     public static String GUI_EDIT_KEY;
 
     public static void load() {
-        try {
-            YamlDocument.create(
-                    new File(CustomFishingPlugin.getInstance().getDataFolder(), "messages/" + CFConfig.language + ".yml"),
-                    Objects.requireNonNull(CustomFishingPlugin.getInstance().getResource("messages/" + CFConfig.language + ".yml")),
-                    GeneralSettings.DEFAULT,
-                    LoaderSettings
-                            .builder()
-                            .setAutoUpdate(true)
-                            .build(),
-                    DumperSettings.DEFAULT,
-                    UpdaterSettings
-                            .builder()
-                            .setVersioning(new BasicVersioning("config-version"))
-                            .build()
-            );
-        } catch (IOException e) {
-            LogUtils.warn(e.getMessage());
+        InputStream inputStream = CustomFishingPlugin.getInstance().getResource("messages/" + CFConfig.language + ".yml");
+        if (inputStream != null) {
+            try {
+                YamlDocument.create(
+                        new File(CustomFishingPlugin.getInstance().getDataFolder(), "messages/" + CFConfig.language + ".yml"),
+                        inputStream,
+                        GeneralSettings.DEFAULT,
+                        LoaderSettings
+                                .builder()
+                                .setAutoUpdate(true)
+                                .build(),
+                        DumperSettings.DEFAULT,
+                        UpdaterSettings
+                                .builder()
+                                .setVersioning(new BasicVersioning("config-version"))
+                                .build()
+                );
+                inputStream.close();
+            } catch (IOException e) {
+                LogUtils.warn(e.getMessage());
+            }
         }
         loadSettings(CustomFishingPlugin.get().getConfig("messages/" + CFConfig.language + ".yml"));
     }

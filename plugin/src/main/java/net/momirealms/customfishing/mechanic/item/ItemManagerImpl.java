@@ -87,12 +87,14 @@ public class ItemManagerImpl implements ItemManager, Listener {
     private final HashMap<Key, BuildableItem> buildableItemMap;
     private final HashMap<String, ItemLibrary> itemLibraryMap;
     private ItemLibrary[] itemDetectionArray;
+    private NamespacedKey blockKey;
 
     public ItemManagerImpl(CustomFishingPlugin plugin) {
         instance = this;
         this.plugin = plugin;
         this.itemLibraryMap = new LinkedHashMap<>();
         this.buildableItemMap = new HashMap<>();
+        this.blockKey = NamespacedKey.fromString("block", plugin);
         this.registerItemLibrary(new CustomFishingItemImpl());
         this.registerItemLibrary(new VanillaItemImpl());
     }
@@ -886,9 +888,8 @@ public class ItemManagerImpl implements ItemManager, Listener {
      *
      * @param event The PlayerAttemptPickupItemEvent.
      */
-    @EventHandler
+    @EventHandler (ignoreCancelled = true)
     public void onPickUp(PlayerAttemptPickupItemEvent event) {
-        if (event.isCancelled()) return;
         ItemStack itemStack = event.getItem().getItemStack();
         NBTItem nbtItem = new NBTItem(itemStack);
         if (!nbtItem.hasTag("owner")) return;
@@ -905,9 +906,8 @@ public class ItemManagerImpl implements ItemManager, Listener {
      *
      * @param event The InventoryPickupItemEvent.
      */
-    @EventHandler
-    public void onMove(InventoryPickupItemEvent event) {
-        if (event.isCancelled()) return;
+    @EventHandler (ignoreCancelled = true)
+    public void onInvPickItem(InventoryPickupItemEvent event) {
         ItemStack itemStack = event.getItem().getItemStack();
         NBTItem nbtItem = new NBTItem(itemStack);
         if (!nbtItem.hasTag("owner")) return;
@@ -920,9 +920,8 @@ public class ItemManagerImpl implements ItemManager, Listener {
      *
      * @param event The PlayerItemConsumeEvent.
      */
-    @EventHandler
+    @EventHandler (ignoreCancelled = true)
     public void onConsumeItem(PlayerItemConsumeEvent event) {
-        if (event.isCancelled()) return;
         ItemStack itemStack = event.getItem();
         String id = getAnyPluginItemID(itemStack);
         Loot loot = plugin.getLootManager().getLoot(id);
@@ -939,7 +938,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
      *
      * @param event The PrepareAnvilEvent.
      */
-    @EventHandler
+    @EventHandler (ignoreCancelled = true)
     public void onRepairItem(PrepareAnvilEvent event) {
         ItemStack result = event.getInventory().getResult();
         if (result == null || result.getType() == Material.AIR) return;
@@ -959,9 +958,8 @@ public class ItemManagerImpl implements ItemManager, Listener {
      *
      * @param event The PlayerItemMendEvent.
      */
-    @EventHandler
+    @EventHandler (ignoreCancelled = true)
     public void onMending(PlayerItemMendEvent event) {
-        if (event.isCancelled()) return;
         ItemStack itemStack = event.getItem();
         NBTItem nbtItem = new NBTItem(itemStack);
         NBTCompound compound = nbtItem.getCompound("CustomFishing");

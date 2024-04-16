@@ -39,6 +39,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * Utility class for various item-related operations.
@@ -405,6 +412,40 @@ public class ItemUtils {
         }
 
         return actualAmount;
+    }
+
+    public static String toBase64(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR)
+            return "";
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try (BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
+            dataOutput.writeObject(itemStack);
+            byte[] byteArr = outputStream.toByteArray();
+            dataOutput.close();
+            outputStream.close();
+            return Base64Coder.encodeLines(byteArr);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    public static ItemStack fromBase64(String base64) {
+        if (base64 == null || base64.equals(""))
+            return new ItemStack(Material.AIR);
+        ByteArrayInputStream inputStream;
+        try {
+            inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(base64));
+        } catch (IllegalArgumentException e) {
+            return new ItemStack(Material.AIR);
+        }
+        ItemStack stack = null;
+        try (BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream)) {
+            stack = (ItemStack) dataInput.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return stack;
     }
 
     public static ItemStack removeOwner(ItemStack itemStack) {
