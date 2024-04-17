@@ -9,8 +9,8 @@ messages:
   get-item: 'A obtenu avec succès {amount}x {item}.'
   possible-loots: 'Butins possibles ici : '
   split-char: ', '
-  competition-not-exist: 'La compétition {id} n'existe pas.'
-  no-competition-ongoing: "Aucune compétition en cours."
+  competition-not-exist: "La compétition {id} n'existe pas."
+  no-competition-ongoing: 'Aucune compétition en cours.'
   stop-competition: 'Compétition actuelle arrêtée.'
   end-competition: 'Compétition actuelle terminée.'
   no-score: 'Pas de score'
