@@ -72,7 +72,7 @@ public enum Dependency {
     ADVENTURE_API(
             "net{}kyori",
             "adventure-api",
-            "4.15.0",
+            "4.16.0",
             null,
             "adventure-api",
             Relocation.of("adventure", "net{}kyori{}adventure")
@@ -80,7 +80,7 @@ public enum Dependency {
     ADVENTURE_KEY(
             "net{}kyori",
             "adventure-key",
-            "4.15.0",
+            "4.16.0",
             null,
             "adventure-key",
             Relocation.of("adventure", "net{}kyori{}adventure")
@@ -88,7 +88,7 @@ public enum Dependency {
     ADVENTURE_NBT(
             "net{}kyori",
             "adventure-nbt",
-            "4.15.0",
+            "4.16.0",
             null,
             "adventure-nbt",
             Relocation.of("adventure", "net{}kyori{}adventure")
@@ -96,7 +96,7 @@ public enum Dependency {
     ADVENTURE_LEGACY_SERIALIZER(
             "net{}kyori",
             "adventure-text-serializer-legacy",
-            "4.15.0",
+            "4.16.0",
             null,
             "adventure-text-serializer-legacy",
             Relocation.of("adventure", "net{}kyori{}adventure")
@@ -104,7 +104,7 @@ public enum Dependency {
     ADVENTURE_TEXT_LOGGER(
             "net{}kyori",
             "adventure-text-logger-slf4j",
-            "4.15.0",
+            "4.16.0",
             null,
             "adventure-text-logger-slf4j",
             Relocation.of("adventure", "net{}kyori{}adventure")
@@ -112,7 +112,7 @@ public enum Dependency {
     ADVENTURE_GSON(
             "net{}kyori",
             "adventure-text-serializer-gson",
-            "4.15.0",
+            "4.16.0",
             null,
             "adventure-text-serializer-gson",
             Relocation.of("adventure", "net{}kyori{}adventure")
@@ -120,7 +120,7 @@ public enum Dependency {
     ADVENTURE_GSON_LEGACY(
             "net{}kyori",
             "adventure-text-serializer-gson-legacy-impl",
-            "4.15.0",
+            "4.16.0",
             null,
             "adventure-text-serializer-gson-legacy-impl",
             Relocation.of("adventure", "net{}kyori{}adventure")
@@ -152,7 +152,7 @@ public enum Dependency {
     ADVENTURE_TEXT_MINIMESSAGE(
             "net{}kyori",
             "adventure-text-minimessage",
-            "4.15.0",
+            "4.16.0",
             null,
             "adventure-text-minimessage",
             Relocation.of("adventure", "net{}kyori{}adventure")
