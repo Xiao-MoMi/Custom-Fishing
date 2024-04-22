@@ -28,7 +28,7 @@ package net.momirealms.customfishing.libraries.dependencies;
 import com.google.gson.JsonElement;
 
 /**
- * Applies LuckPerms specific behaviour for {@link Dependency}s.
+ * Applies CustomFishing specific behaviour for {@link Dependency}s.
  */
 public class DependencyRegistry {
 

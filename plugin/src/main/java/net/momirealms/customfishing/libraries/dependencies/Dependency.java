@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * The dependencies used by LuckPerms.
+ * The dependencies used by CustomFishing.
  */
 public enum Dependency {
 
@@ -215,7 +215,7 @@ public enum Dependency {
     SQLITE_DRIVER(
             "org.xerial",
             "sqlite-jdbc",
-            "3.45.1.0",
+            "3.45.3.0",
             null,
             "sqlite-jdbc"
     ),
@@ -244,7 +244,7 @@ public enum Dependency {
     MONGODB_DRIVER_CORE(
             "org{}mongodb",
             "mongodb-driver-core",
-            "4.11.1",
+            "5.0.1",
             null,
             "mongodb-driver-core",
             Relocation.of("mongodb", "com{}mongodb"),
@@ -253,7 +253,7 @@ public enum Dependency {
     MONGODB_DRIVER_SYNC(
             "org{}mongodb",
             "mongodb-driver-sync",
-            "4.11.1",
+            "5.0.1",
             null,
             "mongodb-driver-sync",
             Relocation.of("mongodb", "com{}mongodb"),
@@ -262,7 +262,7 @@ public enum Dependency {
     MONGODB_DRIVER_BSON(
             "org{}mongodb",
             "bson",
-            "4.11.1",
+            "5.0.1",
             null,
             "mongodb-bson",
             Relocation.of("mongodb", "com{}mongodb"),
@@ -271,7 +271,7 @@ public enum Dependency {
     JEDIS(
             "redis{}clients",
             "jedis",
-            "5.1.0",
+            "5.1.2",
             null,
             "jedis",
             Relocation.of("jedis", "redis{}clients{}jedis"),
