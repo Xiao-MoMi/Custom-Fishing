@@ -53,7 +53,7 @@ dependencies {
     compileOnly("org.betonquest:betonquest:2.0.0")
     compileOnly("xyz.xenondevs.invui:invui:1.27")
     compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.4.4.1")
-    implementation("com.github.Xiao-MoMi:BiomeAPI:0.3")
+    compileOnly("com.github.Xiao-MoMi:BiomeAPI:0.3")
 
     // local jars
     compileOnly(files("libs/AdvancedEnchantments-api.jar"))
@@ -70,8 +70,7 @@ dependencies {
     }
 
     // adventure
-    implementation("net.kyori:adventure-api:4.16.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.2")
+    compileOnly("net.kyori:adventure-api:4.16.0")
 }
 
 tasks {

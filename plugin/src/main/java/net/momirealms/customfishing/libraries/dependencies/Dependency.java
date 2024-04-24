@@ -304,21 +304,21 @@ public enum Dependency {
     INV_UI(
             "xyz{}xenondevs{}invui",
             "invui-core",
-            "1.27",
+            "1.28",
             "xenondevs",
             "invui-core"
     ),
     INV_UI_ACCESS(
             "xyz{}xenondevs{}invui",
             "inventory-access",
-            "1.27",
+            "1.28",
             "xenondevs",
             "inventory-access"
     ),
     INV_UI_NMS(
             "xyz{}xenondevs{}invui",
             getInvUINms(),
-            "1.27",
+            "1.28",
             "xenondevs",
             getInvUINms()
     ),
@@ -336,6 +336,16 @@ public enum Dependency {
             "2.10.1",
             null,
             "gson"
+    ),
+    ADVENTURE_BUNDLE(
+            "com.github.Xiao-MoMi",
+            "Adventure-Bundle",
+            "4.16.0",
+            "jitpack",
+            "adventure-bundle",
+            Relocation.of("adventure", "net{}kyori{}adventure"),
+            Relocation.of("option", "net{}kyori{}option"),
+            Relocation.of("examination", "net{}kyori{}examination")
     );
 
     private final String mavenRepoPath;
