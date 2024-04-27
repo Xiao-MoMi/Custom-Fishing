@@ -47,11 +47,14 @@ import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.ItemUtils;
+import net.momirealms.customfishing.util.LocationUtils;
 import net.momirealms.customfishing.util.NBTUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
+import org.bukkit.block.Skull;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -61,6 +64,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.*;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
@@ -71,6 +76,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -363,6 +370,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
                 .randomDamage(section.getBoolean("random-durability", false))
                 .unbreakable(section.getBoolean("unbreakable", false))
                 .preventGrabbing(section.getBoolean("prevent-grabbing", true))
+                .placeable(section.getBoolean("placeable", false))
                 .head(section.getString("head64"))
                 .name(section.getString("display.name"))
                 .lore(section.getStringList("display.lore"));
@@ -616,6 +624,16 @@ public class ItemManagerImpl implements ItemManager, Listener {
             editors.put("unbreakable", (player, nbtItem, placeholders) -> {
                 if (!unbreakable) return;
                 nbtItem.setByte("Unbreakable", (byte) 1);
+            });
+            return this;
+        }
+
+        @Override
+        public ItemBuilder placeable(boolean placeable) {
+            editors.put("placeable", (player, nbtItem, placeholders) -> {
+                if (!placeable) return;
+                NBTCompound cfCompound = nbtItem.getOrCreateCompound("CustomFishing");
+                cfCompound.setByte("placeable", (byte) 1);
             });
             return this;
         }
@@ -1005,5 +1023,102 @@ public class ItemManagerImpl implements ItemManager, Listener {
                 break;
             }
         }
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onPlaceBlock(BlockPlaceEvent event) {
+        ItemStack itemStack = event.getItemInHand();
+        if (itemStack.getType() == Material.AIR || itemStack.getAmount() == 0 || !itemStack.hasItemMeta()) {
+            return;
+        }
+
+        NBTItem nbtItem = new NBTItem(itemStack);
+        NBTCompound compound = nbtItem.getCompound("CustomFishing");
+        if (compound != null) {
+
+            if (!compound.hasTag("placeable") || compound.getByte("placeable") != 1) {
+                event.setCancelled(true);
+                return;
+            }
+
+            Block block = event.getBlock();
+            if (block.getState() instanceof Skull) {
+                PersistentDataContainer pdc = block.getChunk().getPersistentDataContainer();
+                ItemStack cloned = itemStack.clone();
+                cloned.setAmount(1);
+                pdc.set(new NamespacedKey(plugin, LocationUtils.toChunkPosString(block.getLocation())), PersistentDataType.STRING, ItemUtils.toBase64(cloned));
+            } else {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onBreakBlock(BlockBreakEvent event) {
+        final Block block = event.getBlock();
+        if (block.getState() instanceof Skull) {
+            PersistentDataContainer pdc = block.getChunk().getPersistentDataContainer();
+            String base64 = pdc.get(new NamespacedKey(plugin, LocationUtils.toChunkPosString(block.getLocation())), PersistentDataType.STRING);
+            if (base64 != null) {
+                ItemStack itemStack = ItemUtils.fromBase64(base64);
+                event.setDropItems(false);
+                block.getLocation().getWorld().dropItemNaturally(block.getLocation(), itemStack);
+            }
+        }
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onPiston(BlockPistonExtendEvent event) {
+        for (Block block : event.getBlocks()) {
+            if (block.getState() instanceof Skull) {
+                PersistentDataContainer pdc = block.getChunk().getPersistentDataContainer();
+                if (pdc.has(new NamespacedKey(plugin, LocationUtils.toChunkPosString(block.getLocation())), PersistentDataType.STRING)) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onPiston(BlockPistonRetractEvent event) {
+        for (Block block : event.getBlocks()) {
+            if (block.getState() instanceof Skull) {
+                PersistentDataContainer pdc = block.getChunk().getPersistentDataContainer();
+                if (pdc.has(new NamespacedKey(plugin, LocationUtils.toChunkPosString(block.getLocation())), PersistentDataType.STRING)) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onExplosion(BlockExplodeEvent event) {
+        handleExplode(event.blockList());
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onExplosion(EntityExplodeEvent event) {
+        handleExplode(event.blockList());
+    }
+
+    private void handleExplode(List<Block> blocks) {
+        ArrayList<Block> blockToRemove = new ArrayList<>();
+        for (Block block : blocks) {
+            if (block.getState() instanceof Skull) {
+                PersistentDataContainer pdc = block.getChunk().getPersistentDataContainer();
+                var nk = new NamespacedKey(plugin, LocationUtils.toChunkPosString(block.getLocation()));
+                String base64 = pdc.get(nk, PersistentDataType.STRING);
+                if (base64 != null) {
+                    ItemStack itemStack = ItemUtils.fromBase64(base64);
+                    block.getLocation().getWorld().dropItemNaturally(block.getLocation(), itemStack);
+                    blockToRemove.add(block);
+                    block.setType(Material.AIR);
+                    pdc.remove(nk);
+                }
+            }
+        }
+        blocks.removeAll(blockToRemove);
     }
 }

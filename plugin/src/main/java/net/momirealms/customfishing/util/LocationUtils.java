@@ -41,4 +41,8 @@ public class LocationUtils {
     public static Location getAnyLocationInstance() {
         return new Location(Bukkit.getWorlds().get(0), 0, 64, 0);
     }
+
+    public static String toChunkPosString(Location location) {
+        return (location.getBlockX() % 16) + "_" + location.getBlockY() + "_" + (location.getBlockZ() % 16);
+    }
 }

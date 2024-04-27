@@ -18,7 +18,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.5")
 
     // config
-    compileOnly("dev.dejvokep:boosted-yaml:1.3.2")
+    compileOnly("dev.dejvokep:boosted-yaml:1.3.4")
 
     // mythic
     compileOnly("io.lumine:Mythic-Dist:5.3.5")
@@ -89,5 +89,6 @@ tasks {
         relocate ("dev.dejvokep.boostedyaml", "net.momirealms.customfishing.libraries.boostedyaml")
         relocate ("org.bstats", "net.momirealms.customfishing.libraries.bstats")
         relocate ("net.momirealms.biomeapi", "net.momirealms.customfishing.libraries.biomeapi")
+        relocate ("xyz.xenondevs", "net.momirealms.customfishing.libraries")
     }
 }

@@ -44,6 +44,8 @@ public interface ItemBuilder extends BuildableItem {
 
     ItemBuilder unbreakable(boolean unbreakable);
 
+    ItemBuilder placeable(boolean placeable);
+
     ItemBuilder lore(List<String> lore);
 
     ItemBuilder nbt(Map<String, Object> nbt);

@@ -26,6 +26,7 @@
 package net.momirealms.customfishing.libraries.dependencies;
 
 import com.google.common.collect.ImmutableList;
+import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customfishing.libraries.dependencies.relocation.Relocation;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
@@ -61,102 +62,6 @@ public enum Dependency {
             null,
             "jar-relocator"
     ),
-    KYORI_OPTION(
-            "net{}kyori",
-            "option",
-            "1.0.0",
-            null,
-            "kyori-option",
-            Relocation.of("option", "net{}kyori{}option")
-    ),
-    ADVENTURE_API(
-            "net{}kyori",
-            "adventure-api",
-            "4.16.0",
-            null,
-            "adventure-api",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_KEY(
-            "net{}kyori",
-            "adventure-key",
-            "4.16.0",
-            null,
-            "adventure-key",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_NBT(
-            "net{}kyori",
-            "adventure-nbt",
-            "4.16.0",
-            null,
-            "adventure-nbt",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_LEGACY_SERIALIZER(
-            "net{}kyori",
-            "adventure-text-serializer-legacy",
-            "4.16.0",
-            null,
-            "adventure-text-serializer-legacy",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_TEXT_LOGGER(
-            "net{}kyori",
-            "adventure-text-logger-slf4j",
-            "4.16.0",
-            null,
-            "adventure-text-logger-slf4j",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_GSON(
-            "net{}kyori",
-            "adventure-text-serializer-gson",
-            "4.16.0",
-            null,
-            "adventure-text-serializer-gson",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_GSON_LEGACY(
-            "net{}kyori",
-            "adventure-text-serializer-gson-legacy-impl",
-            "4.16.0",
-            null,
-            "adventure-text-serializer-gson-legacy-impl",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_PLATFORM(
-            "net{}kyori",
-            "adventure-platform-api",
-            "4.3.2",
-            null,
-            "adventure-platform-api",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_PLATFORM_BUKKIT(
-            "net{}kyori",
-            "adventure-platform-bukkit",
-            "4.3.2",
-            null,
-            "adventure-platform-bukkit",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_PLATFORM_FACET(
-            "net{}kyori",
-            "adventure-platform-facet",
-            "4.3.2",
-            null,
-            "adventure-platform-facet",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_TEXT_MINIMESSAGE(
-            "net{}kyori",
-            "adventure-text-minimessage",
-            "4.16.0",
-            null,
-            "adventure-text-minimessage",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
     COMMAND_API(
             "dev{}jorel",
             "commandapi-bukkit-shade",
@@ -176,7 +81,7 @@ public enum Dependency {
     BOOSTED_YAML(
             "dev{}dejvokep",
             "boosted-yaml",
-            "1.3.2",
+            "1.3.4",
             null,
             "boosted-yaml",
             Relocation.of("boostedyaml", "dev{}dejvokep{}boostedyaml")
@@ -304,23 +209,27 @@ public enum Dependency {
     INV_UI(
             "xyz{}xenondevs{}invui",
             "invui-core",
-            "1.28",
+            "1.29",
             "xenondevs",
-            "invui-core"
+            "invui-core",
+            Relocation.of("invui", "xyz{}xenondevs{}invui"),
+            Relocation.of("inventoryaccess", "xyz{}xenondevs{}inventoryaccess")
     ),
     INV_UI_ACCESS(
             "xyz{}xenondevs{}invui",
             "inventory-access",
-            "1.28",
+            "1.29",
             "xenondevs",
-            "inventory-access"
+            "inventory-access",
+            Relocation.of("inventoryaccess", "xyz{}xenondevs{}inventoryaccess")
     ),
     INV_UI_NMS(
             "xyz{}xenondevs{}invui",
             getInvUINms(),
-            "1.28",
+            "1.29",
             "xenondevs",
-            getInvUINms()
+            getInvUINms(),
+            Relocation.of("inventoryaccess", "xyz{}xenondevs{}inventoryaccess")
     ),
     BIOME_API(
             "com{}github{}Xiao-MoMi",
@@ -415,19 +324,20 @@ public enum Dependency {
     }
 
     private static String getInvUINms() {
-        String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        String version = Bukkit.getServer().getBukkitVersion().split("-")[0];
         String artifact;
         switch (version) {
-            case "v1_17_R1" -> artifact = "r9";
-            case "v1_18_R1" -> artifact = "r10";
-            case "v1_18_R2" -> artifact = "r11";
-            case "v1_19_R1" -> artifact = "r12";
-            case "v1_19_R2" -> artifact = "r13";
-            case "v1_19_R3" -> artifact = "r15";
-            case "v1_20_R1" -> artifact = "r16";
-            case "v1_20_R2" -> artifact = "r17";
-            case "v1_20_R3" -> artifact = "r18";
-            default -> artifact = "r18";
+            case "1.17.1" -> artifact = "r9";
+            case "1.18.1" -> artifact = "r10";
+            case "1.18.2" -> artifact = "r11";
+            case "1.19.1", "1.19.2" -> artifact = "r13";
+            case "1.19.3" -> artifact = "r14";
+            case "1.19.4" -> artifact = "r15";
+            case "1.20.1" -> artifact = "r16";
+            case "1.20.2" -> artifact = "r17";
+            case "1.20.3", "1.20.4" -> artifact = "r18";
+            case "1.20.5" -> artifact = "r19";
+            default -> throw new RuntimeException("Unsupported version: " + version);
         }
         return String.format("inventory-access-%s", artifact);
     }
