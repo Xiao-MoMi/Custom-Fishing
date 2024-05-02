@@ -44,14 +44,14 @@ public enum Dependency {
     ASM(
             "org.ow2.asm",
             "asm",
-            "9.1",
+            "9.7",
             null,
             "asm"
     ),
     ASM_COMMONS(
             "org.ow2.asm",
             "asm-commons",
-            "9.1",
+            "9.7",
             null,
             "asm-commons"
     ),
@@ -65,7 +65,7 @@ public enum Dependency {
     COMMAND_API(
             "dev{}jorel",
             "commandapi-bukkit-shade",
-            "9.3.0",
+            "9.4.0",
             null,
             "commandapi-bukkit",
             Relocation.of("commandapi", "dev{}jorel{}commandapi")
@@ -89,7 +89,7 @@ public enum Dependency {
     NBT_API(
             "de{}tr7zw",
             "item-nbt-api",
-            "2.12.3",
+            "2.12.4",
             "codemc",
             "item-nbt-api",
             Relocation.of("changeme", "de{}tr7zw{}changeme")
@@ -209,7 +209,7 @@ public enum Dependency {
     INV_UI(
             "xyz{}xenondevs{}invui",
             "invui-core",
-            "1.29",
+            "1.30",
             "xenondevs",
             "invui-core",
             Relocation.of("invui", "xyz{}xenondevs{}invui"),
@@ -218,7 +218,7 @@ public enum Dependency {
     INV_UI_ACCESS(
             "xyz{}xenondevs{}invui",
             "inventory-access",
-            "1.29",
+            "1.30",
             "xenondevs",
             "inventory-access",
             Relocation.of("inventoryaccess", "xyz{}xenondevs{}inventoryaccess")
@@ -226,7 +226,7 @@ public enum Dependency {
     INV_UI_NMS(
             "xyz{}xenondevs{}invui",
             getInvUINms(),
-            "1.29",
+            "1.30",
             "xenondevs",
             getInvUINms(),
             Relocation.of("inventoryaccess", "xyz{}xenondevs{}inventoryaccess")
@@ -336,7 +336,7 @@ public enum Dependency {
             case "1.20.1" -> artifact = "r16";
             case "1.20.2" -> artifact = "r17";
             case "1.20.3", "1.20.4" -> artifact = "r18";
-            case "1.20.5" -> artifact = "r19";
+            case "1.20.5", "1.20.6" -> artifact = "r19";
             default -> throw new RuntimeException("Unsupported version: " + version);
         }
         return String.format("inventory-access-%s", artifact);

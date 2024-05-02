@@ -199,7 +199,7 @@ public class RedisManager extends AbstractStorage {
             return;
         }
         String action = split[1];
-        CustomFishingPlugin.get().getScheduler().runTaskSync(() -> {
+        CustomFishingPlugin.get().getScheduler().runTaskAsync(() -> {
             switch (action) {
                 case "start" -> {
                     // start competition for all the servers that connected to redis
@@ -214,7 +214,7 @@ public class RedisManager extends AbstractStorage {
                         CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition().stop(true);
                 }
             }
-        }, new Location(Bukkit.getWorlds().get(0),0,0,0));
+        });
     }
 
     @Override

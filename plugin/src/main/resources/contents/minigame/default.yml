@@ -167,7 +167,7 @@ accurate_click_bar_1_easy:
 accurate_click_bar_1_normal:
   game-type: accurate_click
   difficulty: 30~60
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -195,7 +195,7 @@ accurate_click_bar_1_normal:
 accurate_click_bar_1_hard:
   game-type: accurate_click
   difficulty: 60~90
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -223,7 +223,7 @@ accurate_click_bar_1_hard:
 accurate_click_bar_2_easy:
   game-type: accurate_click
   difficulty: 15~30
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -251,7 +251,7 @@ accurate_click_bar_2_easy:
 accurate_click_bar_2_normal:
   game-type: accurate_click
   difficulty: 30~60
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -279,7 +279,7 @@ accurate_click_bar_2_normal:
 accurate_click_bar_2_hard:
   game-type: accurate_click
   difficulty: 60~90
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -307,7 +307,7 @@ accurate_click_bar_2_hard:
 accurate_click_bar_3_easy:
   game-type: accurate_click
   difficulty: 15~30
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -335,7 +335,7 @@ accurate_click_bar_3_easy:
 accurate_click_bar_3_normal:
   game-type: accurate_click
   difficulty: 30~60
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -363,7 +363,7 @@ accurate_click_bar_3_normal:
 accurate_click_bar_3_hard:
   game-type: accurate_click
   difficulty: 60~90
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -391,7 +391,7 @@ accurate_click_bar_3_hard:
 accurate_click_bar_4_easy:
   game-type: accurate_click
   difficulty: 10~25
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -430,7 +430,7 @@ accurate_click_bar_4_easy:
 accurate_click_bar_4_normal:
   game-type: accurate_click
   difficulty: 25~40
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -469,7 +469,7 @@ accurate_click_bar_4_normal:
 accurate_click_bar_4_hard:
   game-type: accurate_click
   difficulty: 40~60
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -508,7 +508,7 @@ accurate_click_bar_4_hard:
 accurate_click_bar_5_easy:
   game-type: accurate_click
   difficulty: 10~25
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -547,7 +547,7 @@ accurate_click_bar_5_easy:
 accurate_click_bar_5_normal:
   game-type: accurate_click
   difficulty: 25~40
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -586,7 +586,7 @@ accurate_click_bar_5_normal:
 accurate_click_bar_5_hard:
   game-type: accurate_click
   difficulty: 40~60
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -625,7 +625,7 @@ accurate_click_bar_5_hard:
 accurate_click_bar_6_easy:
   game-type: accurate_click
   difficulty: 10~25
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -664,7 +664,7 @@ accurate_click_bar_6_easy:
 accurate_click_bar_6_normal:
   game-type: accurate_click
   difficulty: 25~40
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -703,7 +703,7 @@ accurate_click_bar_6_normal:
 accurate_click_bar_6_hard:
   game-type: accurate_click
   difficulty: 40~60
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -742,7 +742,7 @@ accurate_click_bar_6_hard:
 accurate_click_bar_7_easy:
   game-type: accurate_click
   difficulty: 10~20
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -803,7 +803,7 @@ accurate_click_bar_7_easy:
 accurate_click_bar_7_normal:
   game-type: accurate_click
   difficulty: 20~30
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -864,7 +864,7 @@ accurate_click_bar_7_normal:
 accurate_click_bar_7_hard:
   game-type: accurate_click
   difficulty: 30~40
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -925,7 +925,7 @@ accurate_click_bar_7_hard:
 accurate_click_bar_8_easy:
   game-type: accurate_click
   difficulty: 10~20
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -986,7 +986,7 @@ accurate_click_bar_8_easy:
 accurate_click_bar_8_normal:
   game-type: accurate_click
   difficulty: 20~30
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -1047,7 +1047,7 @@ accurate_click_bar_8_normal:
 accurate_click_bar_8_hard:
   game-type: accurate_click
   difficulty: 30~40
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -1108,7 +1108,7 @@ accurate_click_bar_8_hard:
 accurate_click_bar_9_easy:
   game-type: accurate_click
   difficulty: 10~20
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -1169,7 +1169,7 @@ accurate_click_bar_9_easy:
 accurate_click_bar_9_normal:
   game-type: accurate_click
   difficulty: 20~30
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -1230,7 +1230,7 @@ accurate_click_bar_9_normal:
 accurate_click_bar_9_hard:
   game-type: accurate_click
   difficulty: 30~40
-  time: 15
+  time: 30
   title:
     - 'So close, stay cool!'
     - 'The fish is hooked, focus on it!'
@@ -1297,7 +1297,7 @@ accurate_click_bar_9_hard:
 hold_game_easy:
   game-type: hold
   difficulty: 15~35
-  time: 15
+  time: 30
   title: '{progress}'
   # Tip would show on the title to guide the player how to play
   tip: '<gray>Press <red><key:key.sneak> <gray>to start'
@@ -1333,7 +1333,7 @@ hold_game_easy:
 hold_game_normal:
   game-type: hold
   difficulty: 35~60
-  time: 15
+  time: 30
   title: '{progress}'
   # Tip would show on the title to guide the player how to play
   tip: '<gray>Press <red><key:key.sneak> <gray>to start'
@@ -1371,7 +1371,7 @@ hold_game_normal:
 hold_game_hard:
   game-type: hold
   difficulty: 60~90
-  time: 15
+  time: 30
   title: '{progress}'
   # Tip would show on the title to guide the player how to play
   tip: '<gray>Press <red><key:key.sneak> <gray>to start'
@@ -1416,7 +1416,7 @@ hold_game_hard:
 tension_game_easy:
   game-type: tension
   difficulty: 20~35
-  time: 15
+  time: 30
   title: '{tension}'
   # Tip would show on the title to guide the player how to play
   tip: '<gray>Press <red><key:key.sneak> <gray>to start'
@@ -1453,7 +1453,7 @@ tension_game_easy:
 tension_game_normal:
   game-type: tension
   difficulty: 35~50
-  time: 15
+  time: 30
   title: '{tension}'
   # Tip would show on the title to guide the player how to play
   tip: '<gray>Press <red><key:key.sneak> <gray>to start'
@@ -1490,7 +1490,7 @@ tension_game_normal:
 tension_game_hard:
   game-type: tension
   difficulty: 50~65
-  time: 15
+  time: 30
   title: '{tension}'
   # Tip would show on the title to guide the player how to play
   tip: '<gray>Press <red><key:key.sneak> <gray>to start'

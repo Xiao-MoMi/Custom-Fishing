@@ -6,7 +6,7 @@ dependencies {
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
 
     // command
-    compileOnly("dev.jorel:commandapi-bukkit-core:9.3.0")
+    compileOnly("dev.jorel:commandapi-bukkit-core:9.4.0")
 
     // nbt
     compileOnly("de.tr7zw:item-nbt-api:2.12.3")
@@ -51,7 +51,7 @@ dependencies {
     compileOnly("dev.aurelium:auraskills-api-bukkit:2.0.0-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("org.betonquest:betonquest:2.0.0")
-    compileOnly("xyz.xenondevs.invui:invui:1.27")
+    compileOnly("xyz.xenondevs.invui:invui:1.30")
     compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.4.4.1")
     compileOnly("com.github.Xiao-MoMi:BiomeAPI:0.3")
 
