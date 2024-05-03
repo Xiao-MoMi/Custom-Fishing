@@ -73,7 +73,7 @@ public enum Dependency {
     MARIADB_DRIVER(
             "org{}mariadb{}jdbc",
             "mariadb-java-client",
-            "3.3.2",
+            "3.3.3",
             null,
             "mariadb-java-client",
             Relocation.of("mariadb", "org{}mariadb")
@@ -105,7 +105,7 @@ public enum Dependency {
     MYSQL_DRIVER(
             "com{}mysql",
             "mysql-connector-j",
-            "8.3.0",
+            "8.4.0",
             null,
             "mysql-connector-j",
             Relocation.of("mysql", "com{}mysql")
@@ -127,7 +127,7 @@ public enum Dependency {
     HIKARI(
             "com{}zaxxer",
             "HikariCP",
-            "5.0.1",
+            "5.1.0",
             null,
             "HikariCP",
             Relocation.of("hikari", "com{}zaxxer{}hikari")
@@ -149,7 +149,7 @@ public enum Dependency {
     MONGODB_DRIVER_CORE(
             "org{}mongodb",
             "mongodb-driver-core",
-            "5.0.1",
+            "5.1.0",
             null,
             "mongodb-driver-core",
             Relocation.of("mongodb", "com{}mongodb"),
@@ -158,7 +158,7 @@ public enum Dependency {
     MONGODB_DRIVER_SYNC(
             "org{}mongodb",
             "mongodb-driver-sync",
-            "5.0.1",
+            "5.1.0",
             null,
             "mongodb-driver-sync",
             Relocation.of("mongodb", "com{}mongodb"),
@@ -167,7 +167,7 @@ public enum Dependency {
     MONGODB_DRIVER_BSON(
             "org{}mongodb",
             "bson",
-            "5.0.1",
+            "5.1.0",
             null,
             "mongodb-bson",
             Relocation.of("mongodb", "com{}mongodb"),

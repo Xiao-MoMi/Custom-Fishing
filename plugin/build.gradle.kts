@@ -53,7 +53,7 @@ dependencies {
     compileOnly("org.betonquest:betonquest:2.0.0")
     compileOnly("xyz.xenondevs.invui:invui:1.30")
     compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.4.4.1")
-    compileOnly("com.github.Xiao-MoMi:BiomeAPI:0.3")
+    compileOnly("com.github.Xiao-MoMi:BiomeAPI:0.6")
 
     // local jars
     compileOnly(files("libs/AdvancedEnchantments-api.jar"))
