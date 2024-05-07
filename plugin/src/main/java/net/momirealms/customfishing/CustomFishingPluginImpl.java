@@ -56,6 +56,7 @@ import net.momirealms.customfishing.scheduler.SchedulerImpl;
 import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.storage.StorageManagerImpl;
+import net.momirealms.customfishing.util.NBTUtils;
 import net.momirealms.customfishing.version.VersionManagerImpl;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -66,9 +67,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class CustomFishingPluginImpl extends CustomFishingPlugin {
 
@@ -102,6 +101,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
                         Dependency.MONGODB_DRIVER_BSON,
                         Dependency.JEDIS,
                         Dependency.COMMONS_POOL_2,
+                        Dependency.COMMONS_LANG_3,
                         Dependency.H2_DRIVER,
                         Dependency.SQLITE_DRIVER,
                         Dependency.BSTATS_BASE,
@@ -118,7 +118,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
     public void onEnable() {
         protocolManager = ProtocolLibrary.getProtocolManager();
         this.versionManager = new VersionManagerImpl(this);
-        this.disableNBTAPILogs();
+        NBTUtils.disableNBTAPILogs();
         ReflectionUtils.load();
 
         this.actionManager = new ActionManagerImpl(this);
@@ -233,42 +233,6 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
 
         CustomFishingReloadEvent event = new CustomFishingReloadEvent(this);
         Bukkit.getPluginManager().callEvent(event);
-    }
-
-    /**
-     * Disable NBT API logs
-     */
-    private void disableNBTAPILogs() {
-        MinecraftVersion.disableBStats();
-        MinecraftVersion.disableUpdateCheck();
-        VersionChecker.hideOk = true;
-        try {
-            Field field = MinecraftVersion.class.getDeclaredField("version");
-            field.setAccessible(true);
-            MinecraftVersion minecraftVersion;
-            try {
-                minecraftVersion = MinecraftVersion.valueOf(getVersionManager().getServerVersion().replace("v", "MC"));
-            } catch (IllegalArgumentException ex) {
-                minecraftVersion = MinecraftVersion.UNKNOWN;
-            }
-            field.set(MinecraftVersion.class, minecraftVersion);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        boolean hasGsonSupport;
-        try {
-            Class.forName("com.google.gson.Gson");
-            hasGsonSupport = true;
-        } catch (Exception ex) {
-            hasGsonSupport = false;
-        }
-        try {
-            Field field= MinecraftVersion.class.getDeclaredField("hasGsonSupport");
-            field.setAccessible(true);
-            field.set(Boolean.class, hasGsonSupport);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**

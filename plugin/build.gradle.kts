@@ -9,7 +9,7 @@ dependencies {
     compileOnly("dev.jorel:commandapi-bukkit-core:9.4.0")
 
     // nbt
-    compileOnly("de.tr7zw:item-nbt-api:2.12.3")
+    compileOnly("de.tr7zw:item-nbt-api:2.12.4")
 
     // bStats
     compileOnly("org.bstats:bstats-bukkit:3.0.2")
@@ -54,6 +54,7 @@ dependencies {
     compileOnly("xyz.xenondevs.invui:invui:1.30")
     compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.4.4.1")
     compileOnly("com.github.Xiao-MoMi:BiomeAPI:0.6")
+    compileOnly("org.apache.commons:commons-lang3:3.14.0")
 
     // local jars
     compileOnly(files("libs/AdvancedEnchantments-api.jar"))
@@ -76,6 +77,7 @@ dependencies {
 tasks {
     shadowJar {
         relocate ("org.apache.commons.pool2", "net.momirealms.customfishing.libraries.commonspool2")
+        relocate ("org.apache.commons.lang3", "net.momirealms.customfishing.libraries.lang3")
         relocate ("com.mysql", "net.momirealms.customfishing.libraries.mysql")
         relocate ("org.mariadb", "net.momirealms.customfishing.libraries.mariadb")
         relocate ("com.zaxxer.hikari", "net.momirealms.customfishing.libraries.hikari")

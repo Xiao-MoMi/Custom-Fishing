@@ -26,7 +26,6 @@
 package net.momirealms.customfishing.libraries.dependencies;
 
 import com.google.common.collect.ImmutableList;
-import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customfishing.libraries.dependencies.relocation.Relocation;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
@@ -234,7 +233,7 @@ public enum Dependency {
     BIOME_API(
             "com{}github{}Xiao-MoMi",
             "BiomeAPI",
-            "0.3",
+            "0.6",
             "jitpack",
             "biome-api",
             Relocation.of("biomeapi", "net{}momirealms{}biomeapi")
@@ -255,6 +254,14 @@ public enum Dependency {
             Relocation.of("adventure", "net{}kyori{}adventure"),
             Relocation.of("option", "net{}kyori{}option"),
             Relocation.of("examination", "net{}kyori{}examination")
+    ),
+    COMMONS_LANG_3(
+            "org{}apache{}commons",
+            "commons-lang3",
+            "3.14.0",
+            null,
+            "commons-lang3",
+            Relocation.of("lang3", "org{}apache{}commons{}lang3")
     );
 
     private final String mavenRepoPath;
