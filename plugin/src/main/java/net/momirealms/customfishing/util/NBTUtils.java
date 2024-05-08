@@ -22,7 +22,7 @@ import de.tr7zw.changeme.nbtapi.NBTListCompound;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
-import net.momirealms.customcrops.api.CustomCropsPlugin;
+import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.MemorySection;
@@ -47,7 +47,7 @@ public class NBTUtils {
             field.setAccessible(true);
             MinecraftVersion minecraftVersion;
             try {
-                minecraftVersion = MinecraftVersion.valueOf(CustomCropsPlugin.get().getVersionManager().getServerVersion().replace("v", "MC"));
+                minecraftVersion = MinecraftVersion.valueOf(CustomFishingPlugin.get().getVersionManager().getServerVersion().replace("v", "MC"));
             } catch (Exception ex) {
                 minecraftVersion = VERSION_TO_REVISION.getOrDefault(Bukkit.getServer().getBukkitVersion().split("-")[0],
                         MinecraftVersion.UNKNOWN);

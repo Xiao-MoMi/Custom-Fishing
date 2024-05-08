@@ -60,7 +60,7 @@ sell-all-icons:
       command_action:
         type: command
         value: 'money give {player} {money}'
-# Require the economy plugin to hook into Vault
+# Requires Vault and any economy plugin
 #      money_action:
 #        type: give-money
 #        value: '{money}'
@@ -116,7 +116,7 @@ sell-icons:
       command_action:
         type: command
         value: 'money give {player} {money}'
-# Require the economy plugin to hook into Vault
+# Requires Vault and any economy plugin
 #      money_action:
 #        type: give-money
 #        value: '{money}'

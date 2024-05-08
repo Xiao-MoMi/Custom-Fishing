@@ -21,8 +21,6 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
-import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
-import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
 import net.momirealms.customfishing.adventure.AdventureManagerImpl;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.event.CustomFishingReloadEvent;
