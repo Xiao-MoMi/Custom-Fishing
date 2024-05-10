@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.mechanic.market;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.EarningData;
 import net.momirealms.customfishing.api.mechanic.market.MarketGUIHolder;
@@ -62,7 +62,7 @@ public class MarketGUI {
         this.inventory = InventoryUtils.createInventory(
                 holder,
                 manager.getLayout().length * 9,
-                AdventureManagerImpl.getInstance().getComponentFromMiniMessage(manager.getTitle())
+                AdventureHelper.getInstance().getComponentFromMiniMessage(manager.getTitle())
         );
         holder.setInventory(this.inventory);
     }

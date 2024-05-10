@@ -20,7 +20,7 @@ package net.momirealms.customfishing.command.sub;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.StringArgument;
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import net.momirealms.customfishing.setting.CFConfig;
@@ -56,7 +56,7 @@ public class CompetitionCommand {
             String id = (String) args.get(0);
             assert id != null;
             if (!allCompetitions.contains(id)) {
-                AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Competition_Not_Exist.replace("{id}", id));
+                AdventureHelper.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Competition_Not_Exist.replace("{id}", id));
                 return;
             }
             Object server = args.get("server-group");
@@ -80,9 +80,9 @@ public class CompetitionCommand {
                 FishingCompetition competition = CustomFishingPlugin.get().getCompetitionManager().getOnGoingCompetition();
                 if (competition != null) {
                     CustomFishingPlugin.get().getScheduler().runTaskAsync(() -> competition.end(true));
-                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_End_Competition);
+                    AdventureHelper.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_End_Competition);
                 } else {
-                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_No_Competition_Ongoing);
+                    AdventureHelper.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_No_Competition_Ongoing);
                 }
             }
         });
@@ -102,9 +102,9 @@ public class CompetitionCommand {
                     CustomFishingPlugin.get().getScheduler().runTaskAsync(() -> {
                         competition.stop(true);
                     });
-                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Stop_Competition);
+                    AdventureHelper.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Stop_Competition);
                 } else {
-                    AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_No_Competition_Ongoing);
+                    AdventureHelper.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_No_Competition_Ongoing);
                 }
             }
         });

@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.gui.page.property;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.gui.SectionPage;
@@ -84,7 +84,7 @@ public class CustomModelDataEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_MODEL_DATA)
+                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_MODEL_DATA)
                 ))
                 .addRenameHandler(s -> {
                     cmd = s;
@@ -102,7 +102,7 @@ public class CustomModelDataEditor {
         @Override
         public ItemProvider getItemProvider() {
             if (cmd == null || cmd.isEmpty()) {
-                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         CFLocale.GUI_DELETE_PROPERTY
                 )));
             } else {
@@ -116,16 +116,16 @@ public class CustomModelDataEditor {
                         )
                                 .setCustomModelData(value)
                                 .setDisplayName(CFLocale.GUI_NEW_VALUE + value)
-                                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                                         CFLocale.GUI_CLICK_CONFIRM
                                 )));
                     } else {
-                        return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                        return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                                 CFLocale.GUI_INVALID_NUMBER
                         )));
                     }
                 } catch (NumberFormatException e) {
-                    return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                    return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                             CFLocale.GUI_INVALID_NUMBER
                     )));
                 }

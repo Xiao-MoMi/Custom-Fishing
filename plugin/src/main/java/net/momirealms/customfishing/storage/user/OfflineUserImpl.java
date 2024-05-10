@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.storage.user;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.EarningData;
 import net.momirealms.customfishing.api.data.InventoryData;
@@ -62,7 +62,7 @@ public class OfflineUserImpl implements OfflineUser {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
         // Set up the inventory for the FishingBagHolder
         this.holder.setInventory(InventoryUtils.createInventory(this.holder, playerData.getBagData().size,
-                AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                AdventureHelper.getInstance().getComponentFromMiniMessage(
                         PlaceholderManagerImpl.getInstance().parse(
                                 offlinePlayer,
                                 CustomFishingPlugin.get().getBagManager().getBagTitle(),

@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.gui.icon.property.item;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.setting.CFLocale;
@@ -41,14 +41,14 @@ public class TagItem extends AbstractItem {
     @Override
     public ItemProvider getItemProvider() {
         ItemBuilder itemBuilder = new ItemBuilder(Material.TOTEM_OF_UNDYING)
-                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         CFLocale.GUI_ITEM_TAG
                 )));
-        itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+        itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         CFLocale.GUI_CURRENT_VALUE + itemPage.getSection().getBoolean("tag", true)
                 )))
                 .addLoreLines("")
-                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                     CFLocale.GUI_CLICK_TO_TOGGLE
                 )));
         return itemBuilder;

@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.gui.page.property;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
@@ -85,7 +85,7 @@ public class LoreEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_LORE)
+                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_LORE)
                 ))
                 .addRenameHandler(s -> {
                     if (index == 0) return;
@@ -114,7 +114,7 @@ public class LoreEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.ANVIL).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            return new ItemBuilder(Material.ANVIL).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                     CFLocale.GUI_ADD_NEW_LORE
             )));
         }
@@ -139,12 +139,12 @@ public class LoreEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.PAPER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            return new ItemBuilder(Material.PAPER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                     line
             ))).addLoreLines("")
-                    .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                    .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                             CFLocale.GUI_LEFT_CLICK_EDIT
-                    ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                    ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                             CFLocale.GUI_RIGHT_CLICK_DELETE
                     )));
         }
@@ -168,16 +168,16 @@ public class LoreEditor {
         public ItemProvider getItemProvider() {
             List<String> subList = lore.subList(1, lore.size());
             if (subList.isEmpty()) {
-                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         CFLocale.GUI_DELETE_PROPERTY
                 )));
             } else {
                 var builder = new ItemBuilder(Material.NAME_TAG)
-                        .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                        .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                                 CFLocale.GUI_CLICK_CONFIRM
                         )));
                 for (String lore : subList) {
-                    builder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                    builder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                             " <gray>-</gray> " + lore
                     )));
                 }

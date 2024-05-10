@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.gui.icon.property.item;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.page.property.ItemFlagEditor;
@@ -42,26 +42,26 @@ public class ItemFlagItem extends AbstractItem {
     @Override
     public ItemProvider getItemProvider() {
         ItemBuilder itemBuilder = new ItemBuilder(Material.CYAN_BANNER)
-                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         CFLocale.GUI_ITEM_FLAG
                 )));
         if (itemPage.getSection().contains("item-flags")) {
-            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                     CFLocale.GUI_CURRENT_VALUE
             )));
             for (String lore : itemPage.getSection().getStringList("item-flags")) {
-                itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         " <gray>-</gray> " + lore
                 )));
             }
             itemBuilder.addLoreLines("");
-            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                     CFLocale.GUI_LEFT_CLICK_EDIT
-            ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                     CFLocale.GUI_RIGHT_CLICK_RESET
             )));
         } else {
-            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                     CFLocale.GUI_LEFT_CLICK_EDIT
             )));
         }

@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.gui.page.item;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.util.LogUtils;
@@ -103,7 +103,7 @@ public class ItemSelector implements YamlPage {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                        AdventureHelper.getInstance().getComponentFromMiniMessage(
                                 CFLocale.GUI_SELECT_ITEM
                         )))
                 .addRenameHandler(s -> {
@@ -150,7 +150,7 @@ public class ItemSelector implements YamlPage {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_SET_NEW_KEY)
+                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_SET_NEW_KEY)
                 ))
                 .addRenameHandler(s -> {
                     long current = System.currentTimeMillis();
@@ -219,12 +219,12 @@ public class ItemSelector implements YamlPage {
 
         public ItemInList(String key, ItemBuilder itemBuilder, ItemSelector itemSelector) {
             this.key = key;
-            this.itemBuilder = itemBuilder.setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            this.itemBuilder = itemBuilder.setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                             key
                     ))).addLoreLines("")
-                    .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                    .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                             CFLocale.GUI_LEFT_CLICK_EDIT
-                    ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                    ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                             CFLocale.GUI_RIGHT_CLICK_DELETE
                     )));
             this.itemSelector = itemSelector;
@@ -251,7 +251,7 @@ public class ItemSelector implements YamlPage {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.ANVIL).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            return new ItemBuilder(Material.ANVIL).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                     CFLocale.GUI_ADD_NEW_KEY
             )));
         }
@@ -268,18 +268,18 @@ public class ItemSelector implements YamlPage {
         public ItemProvider getItemProvider() {
             if (prefix != null && !yaml.contains(prefix) && prefix.matches("^[a-zA-Z0-9_]+$")) {
                 var builder = new ItemBuilder(Material.NAME_TAG)
-                        .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                        .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                                 prefix
                         )));
-                builder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                builder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         CFLocale.GUI_CLICK_CONFIRM
-                ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         CFLocale.GUI_RIGHT_CLICK_CANCEL
                 )));
                 return builder;
             } else {
                 return new ItemBuilder(Material.BARRIER)
-                        .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                        .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                             CFLocale.GUI_DUPE_INVALID_KEY
                         )));
             }

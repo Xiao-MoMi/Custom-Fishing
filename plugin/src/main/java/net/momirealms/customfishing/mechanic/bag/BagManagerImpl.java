@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.mechanic.bag;
 
 import net.momirealms.customfishing.CustomFishingPluginImpl;
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.user.OfflineUser;
 import net.momirealms.customfishing.api.manager.BagManager;
@@ -110,7 +110,7 @@ public class BagManagerImpl implements BagManager, Listener {
         Inventory bag = onlinePlayer.getHolder().getInventory();
         if (bag.getSize() != rows * 9) {
             Inventory newBag = InventoryUtils.createInventory(onlinePlayer.getHolder(), rows * 9,
-                    AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                    AdventureHelper.getInstance().getComponentFromMiniMessage(
                             PlaceholderManagerImpl.getInstance().parse(
                                     player, bagTitle, Map.of("{player}", player.getName())
                             )

@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  */
 public enum DependencyRepository {
 
-    MAVEN_CENTRAL("maven", "https://repo1.maven.org/maven2/") {
+    MAVEN_CENTRAL("https://repo1.maven.org/maven2/") {
         @Override
         protected URLConnection openConnection(Dependency dependency) throws IOException {
             URLConnection connection = super.openConnection(dependency);
@@ -53,39 +53,16 @@ public enum DependencyRepository {
     /**
      * Maven Central
      */
-    MAVEN_CENTRAL_MIRROR("aliyun", "https://maven.aliyun.com/repository/public/"),
-    /**
-     * Code MC
-     */
-    CODE_MC("codemc", "https://repo.codemc.io/repository/maven-public/"),
-    /**
-     * xenondevs
-     */
-    XENONDEVS("xenondevs", "https://repo.xenondevs.xyz/releases/"),
-    /**
-     * Jitpack
-     */
-    JITPACK("jitpack", "https://jitpack.io/");
+    MAVEN_CENTRAL_MIRROR("https://maven.aliyun.com/repository/public/");
 
     private final String url;
-    private final String id;
 
-    DependencyRepository(String id, String url) {
+    DependencyRepository(String url) {
         this.url = url;
-        this.id = id;
     }
 
     public String getUrl() {
         return url;
-    }
-
-    public static DependencyRepository getByID(String id) {
-        for (DependencyRepository repository : values()) {
-            if (id.equals(repository.id)) {
-                return repository;
-            }
-        }
-        return null;
     }
 
     /**
@@ -145,9 +122,5 @@ public enum DependencyRepository {
         } catch (IOException e) {
             throw new DependencyDownloadException(e);
         }
-    }
-
-    public String getId() {
-        return id;
     }
 }

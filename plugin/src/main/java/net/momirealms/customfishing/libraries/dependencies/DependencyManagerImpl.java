@@ -153,33 +153,16 @@ public class DependencyManagerImpl implements DependencyManager {
         DependencyDownloadException lastError = null;
 
         String fileName = dependency.getFileName(null);
-        String forceRepo = dependency.getRepo();
-        if (forceRepo == null) {
-            // attempt to download the dependency from each repo in order.
-            for (DependencyRepository repo : DependencyRepository.values()) {
-                if (repo.getId().equals("maven") && TimeZone.getDefault().getID().startsWith("Asia")) {
-                    continue;
-                }
-                try {
-                    LogUtils.info("Downloading dependency(" + fileName + ") from " + repo.getUrl() + dependency.getMavenRepoPath());
-                    repo.download(dependency, file);
-                    LogUtils.info("Successfully downloaded " + fileName);
-                    return file;
-                } catch (DependencyDownloadException e) {
-                    lastError = e;
-                }
-            }
-        } else {
-            DependencyRepository repository = DependencyRepository.getByID(forceRepo);
-            if (repository != null) {
-                try {
-                    LogUtils.info("Downloading dependency(" + fileName + ") from " + repository.getUrl() + dependency.getMavenRepoPath());
-                    repository.download(dependency, file);
-                    LogUtils.info("Successfully downloaded " + fileName);
-                    return file;
-                } catch (DependencyDownloadException e) {
-                    lastError = e;
-                }
+
+        // attempt to download the dependency from each repo in order.
+        for (DependencyRepository repo : DependencyRepository.values()) {
+            try {
+                LogUtils.info("Downloading dependency(" + fileName + ") from " + repo.getUrl() + dependency.getMavenRepoPath());
+                repo.download(dependency, file);
+                LogUtils.info("Successfully downloaded " + fileName);
+                return file;
+            } catch (DependencyDownloadException e) {
+                lastError = e;
             }
         }
         throw Objects.requireNonNull(lastError);

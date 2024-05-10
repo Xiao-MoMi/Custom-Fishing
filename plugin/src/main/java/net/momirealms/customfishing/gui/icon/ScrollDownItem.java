@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.gui.icon;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.Icon;
 import net.momirealms.customfishing.setting.CFLocale;
@@ -36,11 +36,11 @@ public class ScrollDownItem extends ScrollItem implements Icon {
     @Override
     public ItemProvider getItemProvider(ScrollGui<?> gui) {
         ItemBuilder builder = new ItemBuilder(Material.GREEN_STAINED_GLASS_PANE);
-        builder.setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+        builder.setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                 CFLocale.GUI_SCROLL_DOWN
         )));
         if (!gui.canScroll(1))
-            builder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            builder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                     CFLocale.GUI_CANNOT_SCROLL_DOWN
             )));
         return builder;

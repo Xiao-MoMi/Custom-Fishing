@@ -227,7 +227,7 @@ public class NBTUtils {
                 case NBTTagIntArray -> map.put(key, "(IntArray) " + Arrays.toString(nbtCompound.getIntArray(key)));
                 case NBTTagCompound -> {
                     Map<String, Object> map1 = compoundToMap(Objects.requireNonNull(nbtCompound.getCompound(key)));
-                    if (map1.size() != 0) map.put(key, map1);
+                    if (!map1.isEmpty()) map.put(key, map1);
                 }
                 case NBTTagList -> {
                     List<Object> list = new ArrayList<>();
@@ -240,7 +240,7 @@ public class NBTUtils {
                         case NBTTagLong -> nbtCompound.getLongList(key).forEach(a -> list.add("(Long) " + a));
                         case NBTTagIntArray -> nbtCompound.getIntArrayList(key).forEach(a -> list.add("(IntArray) " + Arrays.toString(a)));
                     }
-                    if (list.size() != 0) map.put(key, list);
+                    if (!list.isEmpty()) map.put(key, list);
                 }
             }
         }

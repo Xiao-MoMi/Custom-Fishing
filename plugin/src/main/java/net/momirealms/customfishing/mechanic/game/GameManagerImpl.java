@@ -19,7 +19,7 @@ package net.momirealms.customfishing.mechanic.game;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.manager.GameManager;
@@ -258,7 +258,7 @@ public class GameManagerImpl implements GameManager {
                                + OffsetUtils.getOffsetChars(pointerOffset + progress)
                                + FontUtils.surroundWithFont(pointerImage, font)
                                + OffsetUtils.getOffsetChars(totalWidth - progress - pointerWidth);
-                    AdventureManagerImpl.getInstance().sendTitle(player, sendTitle, bar,0,10,0);
+                    AdventureHelper.getInstance().sendTitle(player, sendTitle, bar,0,10,0);
                 }
 
                 @Override
@@ -397,7 +397,7 @@ public class GameManagerImpl implements GameManager {
                             + OffsetUtils.getOffsetChars((int) (-barEffectiveWidth - 1 + fish_position))
                             + FontUtils.surroundWithFont(pointerImage, font)
                             + OffsetUtils.getOffsetChars((int) (barEffectiveWidth - fish_position - pointerIconWidth + 1));
-                    AdventureManagerImpl.getInstance().sendTitle(
+                    AdventureHelper.getInstance().sendTitle(
                             player,
                             tip != null && !played ? tip : title.replace("{progress}", progress[(int) ((hold_time / time_requirement) * progress.length)]),
                             bar,
@@ -489,7 +489,7 @@ public class GameManagerImpl implements GameManager {
                             + FontUtils.surroundWithFont((struggling_time > 0 ? strugglingFishImage[struggling_time % strugglingFishImage.length] : fishImage), font)
                             + OffsetUtils.getOffsetChars(barEffectiveWidth - fish_position - fishIconWidth);
                     strain = Math.max(0, Math.min(strain, ultimateTension));
-                    AdventureManagerImpl.getInstance().sendTitle(
+                    AdventureHelper.getInstance().sendTitle(
                             player,
                             tip != null && !played ? tip : title.replace("{tension}", tension[(int) ((strain / ultimateTension) * tension.length)]),
                             bar,
@@ -554,7 +554,7 @@ public class GameManagerImpl implements GameManager {
                 public void onTick() {
                     showUI();
                     if (tip != null) {
-                        AdventureManagerImpl.getInstance().sendActionbar(player, tip);
+                        AdventureHelper.getInstance().sendActionbar(player, tip);
                     }
                 }
 
@@ -565,7 +565,7 @@ public class GameManagerImpl implements GameManager {
                         setGameResult(false);
                         fail = true;
                         showUI();
-                        AdventureManagerImpl.getInstance().sendSound(
+                        AdventureHelper.getInstance().sendSound(
                                 player,
                                 Sound.Source.PLAYER,
                                 Key.key(wrongSound),
@@ -576,7 +576,7 @@ public class GameManagerImpl implements GameManager {
                         return true;
                     }
 
-                    AdventureManagerImpl.getInstance().sendSound(
+                    AdventureHelper.getInstance().sendSound(
                             player,
                             Sound.Source.PLAYER,
                             Key.key(correctSound),
@@ -598,7 +598,7 @@ public class GameManagerImpl implements GameManager {
                         setGameResult(false);
                         fail = true;
                         showUI();
-                        AdventureManagerImpl.getInstance().sendSound(
+                        AdventureHelper.getInstance().sendSound(
                                 player,
                                 Sound.Source.PLAYER,
                                 Key.key(wrongSound),
@@ -609,7 +609,7 @@ public class GameManagerImpl implements GameManager {
                         return false;
                     }
 
-                    AdventureManagerImpl.getInstance().sendSound(
+                    AdventureHelper.getInstance().sendSound(
                             player,
                             Sound.Source.PLAYER,
                             Key.key(correctSound),
@@ -631,7 +631,7 @@ public class GameManagerImpl implements GameManager {
                         setGameResult(false);
                         fail = true;
                         showUI();
-                        AdventureManagerImpl.getInstance().sendSound(
+                        AdventureHelper.getInstance().sendSound(
                                 player,
                                 Sound.Source.PLAYER,
                                 Key.key(wrongSound),
@@ -642,7 +642,7 @@ public class GameManagerImpl implements GameManager {
                         return false;
                     }
 
-                    AdventureManagerImpl.getInstance().sendSound(
+                    AdventureHelper.getInstance().sendSound(
                             player,
                             Sound.Source.PLAYER,
                             Key.key(correctSound),
@@ -669,7 +669,7 @@ public class GameManagerImpl implements GameManager {
                         setGameResult(false);
                         fail = true;
                         showUI();
-                        AdventureManagerImpl.getInstance().sendSound(
+                        AdventureHelper.getInstance().sendSound(
                                 player,
                                 Sound.Source.PLAYER,
                                 Key.key(wrongSound),
@@ -680,7 +680,7 @@ public class GameManagerImpl implements GameManager {
                         return true;
                     }
 
-                    AdventureManagerImpl.getInstance().sendSound(
+                    AdventureHelper.getInstance().sendSound(
                             player,
                             Sound.Source.PLAYER,
                             Key.key(correctSound),
@@ -724,7 +724,7 @@ public class GameManagerImpl implements GameManager {
                                     }
                                 }
                             }
-                            AdventureManagerImpl.getInstance().sendTitle(
+                            AdventureHelper.getInstance().sendTitle(
                                     player,
                                     sb.toString(),
                                     subtitle.replace("{time}", String.format("%.1f", ((double) deadline - System.currentTimeMillis())/1000)),
@@ -768,7 +768,7 @@ public class GameManagerImpl implements GameManager {
                                     }
                                 }
                             }
-                            AdventureManagerImpl.getInstance().sendTitle(
+                            AdventureHelper.getInstance().sendTitle(
                                     player,
                                     sb.toString(),
                                     subtitle.replace("{time}", String.format("%.1f", ((double) deadline - System.currentTimeMillis())/1000)),
@@ -843,7 +843,7 @@ public class GameManagerImpl implements GameManager {
                 }
 
                 public void showUI() {
-                    AdventureManagerImpl.getInstance().sendTitle(
+                    AdventureHelper.getInstance().sendTitle(
                             player,
                             title.replace("{click}", String.valueOf(clickedTimes)),
                             subtitle.replace("{clicks}", String.valueOf(requiredTimes)).replace("{time}", String.format("%.1f", ((double) deadline - System.currentTimeMillis())/1000)),
@@ -919,7 +919,7 @@ public class GameManagerImpl implements GameManager {
                         stringBuilder.append(barBody);
                     }
 
-                    AdventureManagerImpl.getInstance().sendTitle(
+                    AdventureHelper.getInstance().sendTitle(
                             player,
                             stringBuilder.toString(),
                             subtitle,
@@ -995,7 +995,7 @@ public class GameManagerImpl implements GameManager {
                             + OffsetUtils.getOffsetChars(progress + pointerOffset)
                             + FontUtils.surroundWithFont(pointerImage, font)
                             + OffsetUtils.getOffsetChars(barEffectiveWidth - progress - pointerIconWidth + 1);
-                    AdventureManagerImpl.getInstance().sendTitle(
+                    AdventureHelper.getInstance().sendTitle(
                             player,
                             title,
                             bar,
@@ -1160,7 +1160,7 @@ public class GameManagerImpl implements GameManager {
                             + OffsetUtils.getOffsetChars((int) (-barEffectiveWidth - 1 + fish_position))
                             + FontUtils.surroundWithFont(pointerImage, font)
                             + OffsetUtils.getOffsetChars((int) (barEffectiveWidth - fish_position - pointerIconWidth + 1));
-                    AdventureManagerImpl.getInstance().sendTitle(
+                    AdventureHelper.getInstance().sendTitle(
                             player,
                             tip != null && !played ? tip : title.replace("{progress}", progress[(int) ((hold_time / time_requirement) * progress.length)]),
                             bar,

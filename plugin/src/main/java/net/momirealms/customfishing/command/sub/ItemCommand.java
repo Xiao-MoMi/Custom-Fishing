@@ -23,7 +23,7 @@ import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Key;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
@@ -102,7 +102,7 @@ public class ItemCommand {
                         }
                         try {
                             config.save(file);
-                            AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, "Imported! Saved to " + file.getAbsolutePath());
+                            AdventureHelper.getInstance().sendMessageWithPrefix(player, "Imported! Saved to " + file.getAbsolutePath());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -126,9 +126,9 @@ public class ItemCommand {
                     ItemStack item = CustomFishingPlugin.get().getItemManager().build(player, namespace, id, new Condition(player).getArgs());
                     if (item != null) {
                         int actual = ItemUtils.giveItem(player, item, amount);
-                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, CFLocale.MSG_Get_Item.replace("{item}", id).replace("{amount}", String.valueOf(actual)));
+                        AdventureHelper.getInstance().sendMessageWithPrefix(player, CFLocale.MSG_Get_Item.replace("{item}", id).replace("{amount}", String.valueOf(actual)));
                     } else {
-                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, CFLocale.MSG_Item_Not_Exists);
+                        AdventureHelper.getInstance().sendMessageWithPrefix(player, CFLocale.MSG_Item_Not_Exists);
                     }
                 });
     }
@@ -154,10 +154,10 @@ public class ItemCommand {
                         for (Player player : players) {
                             ItemStack item = CustomFishingPlugin.get().getItemManager().build(player, namespace, id, new Condition(player).getArgs());
                             int actual = ItemUtils.giveItem(player, item, amount);
-                            if (!silence) AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Give_Item.replace("{item}", id).replace("{amount}", String.valueOf(actual)).replace("{player}", player.getName()));
+                            if (!silence) AdventureHelper.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Give_Item.replace("{item}", id).replace("{amount}", String.valueOf(actual)).replace("{player}", player.getName()));
                         }
                     } else {
-                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Item_Not_Exists);
+                        AdventureHelper.getInstance().sendMessageWithPrefix(sender, CFLocale.MSG_Item_Not_Exists);
                     }
                 });
     }

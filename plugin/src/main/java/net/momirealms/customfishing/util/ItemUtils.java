@@ -23,7 +23,7 @@ import de.tr7zw.changeme.nbtapi.NBTList;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ScoreComponent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.mechanic.hook.HookSetting;
@@ -79,7 +79,7 @@ public class ItemUtils {
             } else {
                 for (String newLore : setting.getLore()) {
                     ScoreComponent.Builder builder = Component.score().name("cf").objective("hook");
-                    builder.append(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                    builder.append(AdventureHelper.getInstance().getComponentFromMiniMessage(
                             newLore.replace("{dur}", String.valueOf(cfCompound.getInteger("hook_dur")))
                                     .replace("{max}", String.valueOf(setting.getMaxDurability()))
                     ));
@@ -93,7 +93,7 @@ public class ItemUtils {
             int current = cfCompound.getInteger("cur_dur");
             for (String newLore : CFConfig.durabilityLore) {
                 ScoreComponent.Builder builder = Component.score().name("cf").objective("durability");
-                builder.append(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                builder.append(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         newLore.replace("{dur}", String.valueOf(current))
                                 .replace("{max}", String.valueOf(max))
                 ));

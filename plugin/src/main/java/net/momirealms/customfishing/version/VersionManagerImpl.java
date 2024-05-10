@@ -20,6 +20,7 @@ package net.momirealms.customfishing.version;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
 import net.momirealms.customfishing.api.manager.VersionManager;
 import net.momirealms.customfishing.api.util.LogUtils;
+import org.bukkit.Bukkit;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -49,27 +50,22 @@ public class VersionManagerImpl implements VersionManager {
         this.plugin = plugin;
 
         // Get the server version
-        serverVersion = plugin.getServer().getClass().getPackage().getName().split("\\.")[3];
-        String[] split = serverVersion.split("_");
-        int main_ver = Integer.parseInt(split[1]);
-
+        serverVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
+        String[] split = serverVersion.split("\\.");
+        int main_ver = Integer.parseInt(split[0]);
+        // Determine if the server version is newer than 1_19_R2 and 1_20_R1
         if (main_ver >= 20) {
-            isNewerThan1_19_R2 = true;
-            isNewerThan1_19_R3 = true;
+            isNewerThan1_19_R2 = isNewerThan1_19_R3 = true;
             isNewerThan1_20 = true;
             isNewerThan1_19 = true;
         } else if (main_ver == 19) {
-            isNewerThan1_19_R2 = Integer.parseInt(split[2].substring(1)) >= 2;
-            isNewerThan1_19_R3 = Integer.parseInt(split[2].substring(1)) >= 3;
             isNewerThan1_20 = false;
+            isNewerThan1_19_R2 = Integer.parseInt(split[1]) >= 2;
+            isNewerThan1_19_R3 = Integer.parseInt(split[1]) >= 3;
             isNewerThan1_19 = true;
         } else {
-            isNewerThan1_19_R2 = false;
-            isNewerThan1_19_R3 = false;
-            isNewerThan1_20 = false;
-            isNewerThan1_19 = false;
+            isNewerThan1_20 = isNewerThan1_19 = isNewerThan1_19_R2 = isNewerThan1_19_R3 = false;
         }
-
         // Check if the server is Spigot
         String server_name = plugin.getServer().getName();
         this.isSpigot = server_name.equals("CraftBukkit");

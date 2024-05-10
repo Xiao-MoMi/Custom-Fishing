@@ -25,7 +25,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.StringArgument;
 import dev.jorel.commandapi.arguments.UUIDArgument;
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.data.DataStorageInterface;
 import net.momirealms.customfishing.api.data.LegacyDataStorageInterface;
@@ -70,7 +70,7 @@ public class DataCommand {
                 .executes((sender, args) -> {
                    UUID uuid = (UUID) args.get("uuid");
                    CustomFishingPlugin.get().getStorageManager().getDataSource().lockOrUnlockPlayerData(uuid, false);
-                   AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "Successfully unlocked.");
+                   AdventureHelper.getInstance().sendMessageWithPrefix(sender, "Successfully unlocked.");
                 });
     }
 
@@ -85,7 +85,7 @@ public class DataCommand {
                     CustomFishingPlugin plugin = CustomFishingPlugin.get();
                     plugin.getScheduler().runTaskAsync(() -> {
 
-                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "Starting <aqua>export</aqua>.");
+                        AdventureHelper.getInstance().sendMessageWithPrefix(sender, "Starting <aqua>export</aqua>.");
 
                         LegacyDataStorageInterface dataStorageInterface;
                         switch (arg) {
@@ -93,7 +93,7 @@ public class DataCommand {
                             case "MariaDB" -> dataStorageInterface = new MariaDBImpl(plugin);
                             case "YAML" -> dataStorageInterface = new YAMLImpl(plugin);
                             default -> {
-                                AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "No such legacy storage method.");
+                                AdventureHelper.getInstance().sendMessageWithPrefix(sender, "No such legacy storage method.");
                                 return;
                             }
                         }
@@ -143,7 +143,7 @@ public class DataCommand {
 
                         dataStorageInterface.disable();
 
-                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "Completed.");
+                        AdventureHelper.getInstance().sendMessageWithPrefix(sender, "Completed.");
                     });
                 });
     }
@@ -153,14 +153,14 @@ public class DataCommand {
         return new CommandAPICommand("export")
                 .executesConsole((sender, args) -> {
                     if (Bukkit.getOnlinePlayers().size() != 0) {
-                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "Please kick all the players before exporting. Otherwise the cache will be inconsistent with data, resulting in the backup file not being up to date.");
+                        AdventureHelper.getInstance().sendMessageWithPrefix(sender, "Please kick all the players before exporting. Otherwise the cache will be inconsistent with data, resulting in the backup file not being up to date.");
                         return;
                     }
 
                     CustomFishingPlugin plugin = CustomFishingPlugin.get();
                     plugin.getScheduler().runTaskAsync(() -> {
 
-                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "Starting <aqua>export</aqua>.");
+                        AdventureHelper.getInstance().sendMessageWithPrefix(sender, "Starting <aqua>export</aqua>.");
                         DataStorageInterface dataStorageInterface = plugin.getStorageManager().getDataSource();
 
                         Set<UUID> uuids = dataStorageInterface.getUniqueUsers(false);
@@ -206,7 +206,7 @@ public class DataCommand {
                             e.printStackTrace();
                         }
 
-                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "Completed.");
+                        AdventureHelper.getInstance().sendMessageWithPrefix(sender, "Completed.");
                     });
                 });
     }
@@ -217,7 +217,7 @@ public class DataCommand {
                 .withArguments(new StringArgument("file"))
                 .executesConsole((sender, args) -> {
                     if (Bukkit.getOnlinePlayers().size() != 0) {
-                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "Please kick all the players before importing. Otherwise the cache will be inconsistent with data.");
+                        AdventureHelper.getInstance().sendMessageWithPrefix(sender, "Please kick all the players before importing. Otherwise the cache will be inconsistent with data.");
                         return;
                     }
 
@@ -227,23 +227,23 @@ public class DataCommand {
 
                     File file = new File(plugin.getDataFolder(), fileName);
                     if (!file.exists()) {
-                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "File not exists.");
+                        AdventureHelper.getInstance().sendMessageWithPrefix(sender, "File not exists.");
                         return;
                     }
                     if (!file.getName().endsWith(".json.gz")) {
-                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "Invalid file.");
+                        AdventureHelper.getInstance().sendMessageWithPrefix(sender, "Invalid file.");
                         return;
                     }
 
                     plugin.getScheduler().runTaskAsync(() -> {
 
-                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "Starting <aqua>import</aqua>.");
+                        AdventureHelper.getInstance().sendMessageWithPrefix(sender, "Starting <aqua>import</aqua>.");
 
                         JsonObject data;
                         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(Files.newInputStream(file.toPath())), StandardCharsets.UTF_8))) {
                             data = new GsonBuilder().disableHtmlEscaping().create().fromJson(reader, JsonObject.class);
                         } catch (IOException e) {
-                            AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "Error occurred when reading the backup file.");
+                            AdventureHelper.getInstance().sendMessageWithPrefix(sender, "Error occurred when reading the backup file.");
                             e.printStackTrace();
                             return;
                         }
@@ -277,7 +277,7 @@ public class DataCommand {
                             break;
                         }
 
-                        AdventureManagerImpl.getInstance().sendMessageWithPrefix(sender, "Completed.");
+                        AdventureHelper.getInstance().sendMessageWithPrefix(sender, "Completed.");
                     });
                 });
     }

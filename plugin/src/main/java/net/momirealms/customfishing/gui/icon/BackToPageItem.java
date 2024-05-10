@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.gui.icon;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.ParentPage;
 import net.momirealms.customfishing.setting.CFLocale;
@@ -41,7 +41,7 @@ public class BackToPageItem extends AbstractItem {
     @Override
     public ItemProvider getItemProvider() {
         return new ItemBuilder(Material.ORANGE_STAINED_GLASS_PANE)
-                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         CFLocale.GUI_BACK_TO_PARENT_PAGE
                 )));
     }

@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.mechanic.item;
 
 import de.tr7zw.changeme.nbtapi.*;
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Key;
 import net.momirealms.customfishing.api.common.Pair;
@@ -585,8 +585,8 @@ public class ItemManagerImpl implements ItemManager, Listener {
             if (name == null) return this;
             editors.put("name", (player, nbtItem, placeholders) -> {
                 NBTCompound displayCompound = nbtItem.getOrCreateCompound("display");
-                displayCompound.setString("Name", AdventureManagerImpl.getInstance().componentToJson(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                displayCompound.setString("Name", AdventureHelper.getInstance().componentToJson(
+                        AdventureHelper.getInstance().getComponentFromMiniMessage(
                                 "<!i>" + PlaceholderManagerImpl.getInstance().parse(player, name, placeholders)
                         )
                 ));
@@ -645,8 +645,8 @@ public class ItemManagerImpl implements ItemManager, Listener {
                 NBTCompound displayCompound = nbtItem.getOrCreateCompound("display");
                 NBTList<String> list = displayCompound.getStringList("Lore");
                 list.clear();
-                list.addAll(lore.stream().map(s -> AdventureManagerImpl.getInstance().componentToJson(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                list.addAll(lore.stream().map(s -> AdventureHelper.getInstance().componentToJson(
+                        AdventureHelper.getInstance().getComponentFromMiniMessage(
                                 "<!i>" + PlaceholderManagerImpl.getInstance().parse(player, s, placeholders)
                         )
                 )).toList());

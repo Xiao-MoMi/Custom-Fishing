@@ -41,12 +41,12 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class AdventureManagerImpl implements AdventureManager {
+public class AdventureHelper implements AdventureManager {
 
     private final BukkitAudiences adventure;
     private static AdventureManager instance;
 
-    public AdventureManagerImpl(CustomFishingPlugin plugin) {
+    public AdventureHelper(CustomFishingPlugin plugin) {
         this.adventure = BukkitAudiences.create(plugin);
         instance = this;
     }

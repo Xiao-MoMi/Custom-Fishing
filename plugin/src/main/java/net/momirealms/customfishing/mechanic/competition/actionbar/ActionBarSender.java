@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.mechanic.competition.actionbar;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.competition.ActionBarConfig;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
@@ -98,7 +98,7 @@ public class ActionBarSender {
                 DynamicText text = texts[counter % (texts.length)];
                 updatePrivatePlaceholders();
                 text.update(privatePlaceholders);
-                AdventureManagerImpl.getInstance().sendActionbar(
+                AdventureHelper.getInstance().sendActionbar(
                         player,
                         text.getLatestValue()
                 );

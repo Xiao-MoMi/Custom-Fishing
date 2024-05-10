@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.gui.page.file;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
 import net.momirealms.customfishing.gui.icon.BackToFolderItem;
@@ -81,7 +81,7 @@ public class FileSelector {
 
         Window window = Window.single()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                .setTitle(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         CFLocale.GUI_SELECT_FILE
                 )))
                 .setGui(gui)
@@ -107,7 +107,7 @@ public class FileSelector {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.PAPER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            return new ItemBuilder(Material.PAPER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                     "<#FDF5E6>" + file.getName()
             )));
         }
@@ -135,7 +135,7 @@ public class FileSelector {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.BOOK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            return new ItemBuilder(Material.BOOK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                     "<#D2B48C><b>" + file.getName()
             )));
         }

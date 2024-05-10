@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.gui.page.item;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.gui.SectionPage;
@@ -93,7 +93,7 @@ public abstract class AbstractSectionEditor implements SectionPage {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_EDIT_KEY.replace("{0}", key))
+                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_EDIT_KEY.replace("{0}", key))
                 ))
                 .setUpperGui(upperGui)
                 .setLowerGui(gui)

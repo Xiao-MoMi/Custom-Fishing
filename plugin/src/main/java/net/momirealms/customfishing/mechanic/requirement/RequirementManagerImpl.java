@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.mechanic.requirement;
 
-import net.momirealms.biomeapi.BiomeAPI;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.integration.LevelInterface;
@@ -36,6 +35,7 @@ import net.momirealms.customfishing.compatibility.papi.ParseUtils;
 import net.momirealms.customfishing.util.ClassUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.MoonPhase;
+import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -581,7 +581,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("biome", (args, actions, advanced) -> {
             HashSet<String> biomes = new HashSet<>(ConfigUtils.stringListArgs(args));
             return condition -> {
-                String currentBiome = BiomeAPI.getBiomeAt(condition.getLocation());
+                String currentBiome = SparrowHeart.getInstance().getBiomeResourceLocation(condition.getLocation());
                     if (biomes.contains(currentBiome))
                         return true;
                 if (advanced) triggerActions(actions, condition);
@@ -591,7 +591,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("!biome", (args, actions, advanced) -> {
             HashSet<String> biomes = new HashSet<>(ConfigUtils.stringListArgs(args));
             return condition -> {
-                String currentBiome = BiomeAPI.getBiomeAt(condition.getLocation());
+                String currentBiome = SparrowHeart.getInstance().getBiomeResourceLocation(condition.getLocation());
                 if (!biomes.contains(currentBiome))
                     return true;
                 if (advanced) triggerActions(actions, condition);

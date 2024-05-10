@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.gui.icon;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.Icon;
 import net.momirealms.customfishing.setting.CFLocale;
@@ -36,10 +36,10 @@ public class PreviousPageItem extends PageItem implements Icon {
     @Override
     public ItemProvider getItemProvider(PagedGui<?> gui) {
         ItemBuilder builder = new ItemBuilder(Material.RED_STAINED_GLASS_PANE);
-        builder.setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+        builder.setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         CFLocale.GUI_PREVIOUS_PAGE
                 )))
-                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         gui.hasPreviousPage()
                                 ? CFLocale.GUI_GOTO_PREVIOUS_PAGE
                                 .replace("{0}", String.valueOf(gui.getCurrentPage()))

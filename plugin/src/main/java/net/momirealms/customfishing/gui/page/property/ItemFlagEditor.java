@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.gui.page.property;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.gui.SectionPage;
@@ -83,7 +83,7 @@ public class ItemFlagEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_ITEM_FLAG)
+                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_ITEM_FLAG)
                 ))
                 .setUpperGui(upperGui)
                 .setLowerGui(gui)
@@ -111,11 +111,11 @@ public class ItemFlagEditor {
         @Override
         public ItemProvider getItemProvider() {
             if (flags.contains(flag)) {
-                return new ItemBuilder(Material.GREEN_BANNER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                return new ItemBuilder(Material.GREEN_BANNER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         "<green>" + flag
                 )));
             } else {
-                return new ItemBuilder(Material.RED_BANNER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                return new ItemBuilder(Material.RED_BANNER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         "<red>" + flag
                 )));
             }

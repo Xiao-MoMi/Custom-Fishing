@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.gui.icon.property.item;
 
 import net.momirealms.customfishing.CustomFishingPluginImpl;
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.gui.SectionPage;
@@ -45,11 +45,11 @@ public class Head64Item extends AbstractItem {
     @Override
     public ItemProvider getItemProvider() {
         ItemBuilder itemBuilder = new ItemBuilder(Material.PLAYER_HEAD)
-                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         CFLocale.GUI_ITEM_HEAD64
                 )));
         if (itemPage.getSection().contains("head64")) {
-            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                             CFLocale.GUI_CURRENT_VALUE
                     )));
             String head64 = itemPage.getSection().getString("head64", "");
@@ -62,17 +62,17 @@ public class Head64Item extends AbstractItem {
                 }
             }
             for (String line : list) {
-                itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         "<white>"+ line
                 )));
             }
-            itemBuilder.addLoreLines("").addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            itemBuilder.addLoreLines("").addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                     CFLocale.GUI_LEFT_CLICK_EDIT
-            ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                     CFLocale.GUI_RIGHT_CLICK_RESET
             )));
         } else {
-            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                     CFLocale.GUI_LEFT_CLICK_EDIT
             )));
         }
@@ -83,7 +83,7 @@ public class Head64Item extends AbstractItem {
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
         if (clickType.isLeftClick()) {
             player.closeInventory();
-            AdventureManagerImpl.getInstance().sendMessageWithPrefix(player, "Input the head64 value in chat");
+            AdventureHelper.getInstance().sendMessageWithPrefix(player, "Input the head64 value in chat");
             ((CustomFishingPluginImpl) CustomFishingPlugin.get()).getChatCatcherManager().catchMessage(player, "head64", itemPage);
         } else if (clickType.isRightClick()) {
             itemPage.getSection().set("head64", null);

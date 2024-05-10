@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.gui.page.property;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
@@ -72,7 +72,7 @@ public class DurabilityEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_CUSTOM_DURABILITY)
+                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_CUSTOM_DURABILITY)
                 ))
                 .addRenameHandler(s -> {
                     dur = s;
@@ -90,7 +90,7 @@ public class DurabilityEditor {
         @Override
         public ItemProvider getItemProvider() {
             if (dur == null || dur.isEmpty()) {
-                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         CFLocale.GUI_DELETE_PROPERTY
                 )));
             } else {
@@ -98,20 +98,20 @@ public class DurabilityEditor {
                     int m = Integer.parseInt(dur);
                     if (m >= 1) {
                         return new ItemBuilder(Material.NETHERITE_PICKAXE)
-                                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                                       CFLocale.GUI_NEW_VALUE + dur
                                 )))
-                                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                                         CFLocale.GUI_CLICK_CONFIRM
                                 )))
                                 .setDamage(Math.max(0, Material.NETHERITE_PICKAXE.getMaxDurability() - m));
                     } else {
-                        return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                        return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                                 CFLocale.GUI_INVALID_NUMBER
                         )));
                     }
                 } catch (NumberFormatException e) {
-                    return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                    return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                             CFLocale.GUI_INVALID_NUMBER
                     )));
                 }

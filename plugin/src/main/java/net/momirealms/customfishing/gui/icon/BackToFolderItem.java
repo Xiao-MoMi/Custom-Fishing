@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.gui.icon;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.Icon;
 import net.momirealms.customfishing.gui.page.file.FileSelector;
@@ -46,10 +46,10 @@ public class BackToFolderItem extends AbstractItem implements Icon {
     public ItemProvider getItemProvider() {
         if (file != null && (file.getPath().startsWith("plugins\\CustomFishing\\contents") || file.getPath().startsWith("plugins/CustomFishing/contents"))) {
             return new ItemBuilder(Material.ORANGE_STAINED_GLASS_PANE)
-                    .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                    .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                             CFLocale.GUI_BACK_TO_PARENT_FOLDER
                     )))
-                    .setLore(List.of(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                    .setLore(List.of(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                             "<#FFA500>-> " + file.getName()
                     ))));
         } else {

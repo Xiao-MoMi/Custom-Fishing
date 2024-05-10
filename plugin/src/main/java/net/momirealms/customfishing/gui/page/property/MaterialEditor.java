@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.gui.page.property;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.gui.SectionPage;
@@ -90,7 +90,7 @@ public class MaterialEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_MATERIAL)
+                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_MATERIAL)
                 ))
                 .addRenameHandler(s -> {
                     material = s;
@@ -121,7 +121,7 @@ public class MaterialEditor {
         @Override
         public ItemProvider getItemProvider() {
             if (material == null || material.isEmpty()) {
-                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         CFLocale.GUI_DELETE_PROPERTY
                 )));
             } else {
@@ -130,7 +130,7 @@ public class MaterialEditor {
                                 .getItemManager()
                                 .getItemStackAppearance(player, material)
                 ).setDisplayName(CFLocale.GUI_NEW_VALUE + material)
-                        .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                        .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                                 CFLocale.GUI_CLICK_CONFIRM
                         )));
                 if (section.contains("custom-model-data"))

@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.gui.page.property;
 
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.adventure.component.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
@@ -82,7 +82,7 @@ public class PriceEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureManagerImpl.getInstance().getComponentFromMiniMessage(CFLocale.GUI_PRICE_TITLE)
+                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_PRICE_TITLE)
                 ))
                 .addRenameHandler(s -> {
                     if (s == null || s.equals("")) {
@@ -103,7 +103,7 @@ public class PriceEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.GOLD_BLOCK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            return new ItemBuilder(Material.GOLD_BLOCK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                     CFLocale.GUI_PRICE_BASE
             )));
         }
@@ -119,7 +119,7 @@ public class PriceEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.GOLD_NUGGET).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            return new ItemBuilder(Material.GOLD_NUGGET).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                     CFLocale.GUI_PRICE_BONUS
             )));
         }
@@ -136,7 +136,7 @@ public class PriceEditor {
         @Override
         public ItemProvider getItemProvider() {
             if (price[0].equals("0") && price[1].equals("0")) {
-                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                         CFLocale.GUI_DELETE_PROPERTY
                 )));
             } else {
@@ -144,20 +144,20 @@ public class PriceEditor {
                     Double.parseDouble(price[0]);
                     Double.parseDouble(price[1]);
                     return new ItemBuilder(Material.GOLD_INGOT)
-                            .setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                            .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                                   CFLocale.GUI_NEW_VALUE
                             )))
-                            .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                            .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                                     CFLocale.GUI_ITEM_PRICE_BASE + price[0]
                             )))
-                            .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                            .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                                     CFLocale.GUI_ITEM_PRICE_BONUS + price[1]
                             )))
-                            .addLoreLines(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                            .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                                     CFLocale.GUI_CLICK_CONFIRM
                             )));
                 } catch (NumberFormatException e) {
-                    return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                    return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
                             CFLocale.GUI_INVALID_NUMBER
                     )));
                 }

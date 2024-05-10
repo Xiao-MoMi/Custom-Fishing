@@ -23,7 +23,7 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.event.FishingResultEvent;
 import net.momirealms.customfishing.api.event.LavaFishingEvent;
@@ -672,7 +672,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
                                 doSuccessActions(loot, effect, fishingPreparation, player);
                                 if (pair.right() > 0) {
                                     player.giveExp(pair.right(), true);
-                                    AdventureManagerImpl.getInstance().sendSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
+                                    AdventureHelper.getInstance().sendSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
                                 }
                             }, hook.getLocation(), (long) CFConfig.multipleLootSpawnDelay * i);
                         }

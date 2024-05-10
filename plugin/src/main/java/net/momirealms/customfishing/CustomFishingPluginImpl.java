@@ -21,7 +21,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.event.CustomFishingReloadEvent;
 import net.momirealms.customfishing.api.util.LogUtils;
@@ -64,8 +64,9 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class CustomFishingPluginImpl extends CustomFishingPlugin {
 
@@ -80,17 +81,14 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
 
     @Override
     public void onLoad() {
+        this.versionManager = new VersionManagerImpl(this);
         this.dependencyManager = new DependencyManagerImpl(this, new ReflectionClassPathAppender(this.getClassLoader()));
         this.dependencyManager.loadDependencies(new ArrayList<>(
                 List.of(
                         Dependency.GSON,
                         Dependency.SLF4J_API,
                         Dependency.SLF4J_SIMPLE,
-                        Dependency.COMMAND_API,
                         Dependency.BOOSTED_YAML,
-                        Dependency.ADVENTURE_BUNDLE,
-                        Dependency.BIOME_API,
-                        Dependency.NBT_API,
                         Dependency.EXP4J,
                         Dependency.MYSQL_DRIVER,
                         Dependency.MARIADB_DRIVER,
@@ -105,9 +103,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
                         Dependency.BSTATS_BASE,
                         Dependency.HIKARI,
                         Dependency.BSTATS_BUKKIT,
-                        Dependency.INV_UI,
-                        Dependency.INV_UI_ACCESS,
-                        Dependency.INV_UI_NMS
+                        versionManager.isMojmap() ? Dependency.COMMAND_API_MOJMAP : Dependency.COMMAND_API
                 )
         ));
     }
@@ -115,12 +111,12 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
     @Override
     public void onEnable() {
         protocolManager = ProtocolLibrary.getProtocolManager();
-        this.versionManager = new VersionManagerImpl(this);
+
         NBTUtils.disableNBTAPILogs();
         ReflectionUtils.load();
 
         this.actionManager = new ActionManagerImpl(this);
-        this.adventure = new AdventureManagerImpl(this);
+        this.adventure = new AdventureHelper(this);
         this.bagManager = new BagManagerImpl(this);
         this.blockManager = new BlockManagerImpl(this);
         this.commandManager = new CommandManagerImpl(this);
@@ -155,7 +151,7 @@ public class CustomFishingPluginImpl extends CustomFishingPlugin {
 
     @Override
     public void onDisable() {
-        if (this.adventure != null) ((AdventureManagerImpl) this.adventure).close();
+        if (this.adventure != null) ((AdventureHelper) this.adventure).close();
         if (this.bagManager != null) ((BagManagerImpl) this.bagManager).disable();
         if (this.blockManager != null) ((BlockManagerImpl) this.blockManager).disable();
         if (this.effectManager != null) ((EffectManagerImpl) this.effectManager).disable();

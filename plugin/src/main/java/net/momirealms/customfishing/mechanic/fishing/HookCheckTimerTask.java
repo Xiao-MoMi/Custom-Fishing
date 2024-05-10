@@ -19,7 +19,7 @@ package net.momirealms.customfishing.mechanic.fishing;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.event.FishHookLandEvent;
 import net.momirealms.customfishing.api.event.LavaFishingEvent;
@@ -302,7 +302,7 @@ public class HookCheckTimerTask implements Runnable {
         this.fishHooked = true;
         this.removeTempEntity();
 
-        AdventureManagerImpl.getInstance().sendSound(
+        AdventureHelper.getInstance().sendSound(
                 fishingPreparation.getPlayer(),
                 Sound.Source.NEUTRAL,
                 Key.key("minecraft:block.pointed_dripstone.drip_lava_into_cauldron"),

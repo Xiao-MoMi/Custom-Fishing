@@ -19,7 +19,7 @@ package net.momirealms.customfishing.mechanic.action;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.manager.ActionManager;
@@ -306,7 +306,7 @@ public class ActionManagerImpl implements ActionManager {
                         condition.getArgs()
                 );
                 for (String text : replaced) {
-                    AdventureManagerImpl.getInstance().sendPlayerMessage(condition.getPlayer(), text);
+                    AdventureHelper.getInstance().sendPlayerMessage(condition.getPlayer(), text);
                 }
             };
         });
@@ -321,7 +321,7 @@ public class ActionManagerImpl implements ActionManager {
                 );
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     for (String text : replaced) {
-                        AdventureManagerImpl.getInstance().sendPlayerMessage(player, text);
+                        AdventureHelper.getInstance().sendPlayerMessage(player, text);
                     }
                 }
             };
@@ -344,7 +344,7 @@ public class ActionManagerImpl implements ActionManager {
                                         condition.getArgs()
                                 );
                                 for (String text : replaced) {
-                                    AdventureManagerImpl.getInstance().sendPlayerMessage((Player) player, text);
+                                    AdventureHelper.getInstance().sendPlayerMessage((Player) player, text);
                                 }
                                 condition.delArg("{near}");
                             }
@@ -362,7 +362,7 @@ public class ActionManagerImpl implements ActionManager {
                 if (Math.random() > chance) return;
                 String random = msg.get(ThreadLocalRandom.current().nextInt(msg.size()));
                 random = PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), random, condition.getArgs());
-                AdventureManagerImpl.getInstance().sendPlayerMessage(condition.getPlayer(), random);
+                AdventureHelper.getInstance().sendPlayerMessage(condition.getPlayer(), random);
             };
         });
     }
@@ -441,7 +441,7 @@ public class ActionManagerImpl implements ActionManager {
             return condition -> {
                 if (Math.random() > chance) return;
                 String parsed = PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), text, condition.getArgs());
-                AdventureManagerImpl.getInstance().sendActionbar(condition.getPlayer(), parsed);
+                AdventureHelper.getInstance().sendActionbar(condition.getPlayer(), parsed);
             };
         });
         registerAction("random-actionbar", (args, chance) -> {
@@ -450,7 +450,7 @@ public class ActionManagerImpl implements ActionManager {
                 if (Math.random() > chance) return;
                 String random = texts.get(ThreadLocalRandom.current().nextInt(texts.size()));
                 random = PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), random, condition.getArgs());
-                AdventureManagerImpl.getInstance().sendActionbar(condition.getPlayer(), random);
+                AdventureHelper.getInstance().sendActionbar(condition.getPlayer(), random);
             };
         });
         registerAction("actionbar-nearby", (args, chance) -> {
@@ -470,7 +470,7 @@ public class ActionManagerImpl implements ActionManager {
                                         actionbar,
                                         condition.getArgs()
                                 );
-                                AdventureManagerImpl.getInstance().sendActionbar((Player) player, replaced);
+                                AdventureHelper.getInstance().sendActionbar((Player) player, replaced);
                                 condition.delArg("{near}");
                             }
                         }
@@ -493,7 +493,7 @@ public class ActionManagerImpl implements ActionManager {
                     condition.getPlayer().getLocation().getWorld().spawn(condition.getPlayer().getLocation(), ExperienceOrb.class, e -> e.setExperience((int) value.get(condition.getPlayer(), condition.getArgs())));
                 } else {
                     condition.getPlayer().giveExp((int) value.get(condition.getPlayer(), condition.getArgs()), true);
-                    AdventureManagerImpl.getInstance().sendSound(condition.getPlayer(), Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
+                    AdventureHelper.getInstance().sendSound(condition.getPlayer(), Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
                 }
             };
         });
@@ -524,7 +524,7 @@ public class ActionManagerImpl implements ActionManager {
             return condition -> {
                 if (Math.random() > chance) return;
                 condition.getPlayer().giveExp((int) value.get(condition.getPlayer(), condition.getArgs()));
-                AdventureManagerImpl.getInstance().sendSound(condition.getPlayer(), Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
+                AdventureHelper.getInstance().sendSound(condition.getPlayer(), Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
             };
         });
     }
@@ -551,7 +551,7 @@ public class ActionManagerImpl implements ActionManager {
                                             ArmorStandUtils.sendHologram(
                                                     (Player) player,
                                                     location.clone().add(x, y, z),
-                                                    AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                                                    AdventureHelper.getInstance().getComponentFromMiniMessage(
                                                             PlaceholderManagerImpl.getInstance().parse(owner, text, condition.getArgs())
                                                     ),
                                                     duration
@@ -564,7 +564,7 @@ public class ActionManagerImpl implements ActionManager {
                         ArmorStandUtils.sendHologram(
                                 owner,
                                 location.clone().add(x, y, z),
-                                AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+                                AdventureHelper.getInstance().getComponentFromMiniMessage(
                                         PlaceholderManagerImpl.getInstance().parse(owner, text, condition.getArgs())
                                 ),
                                 duration
@@ -830,7 +830,7 @@ public class ActionManagerImpl implements ActionManager {
                 int fadeOut = section.getInt("fade-out", 10);
                 return condition -> {
                     if (Math.random() > chance) return;
-                    AdventureManagerImpl.getInstance().sendTitle(
+                    AdventureHelper.getInstance().sendTitle(
                             condition.getPlayer(),
                             PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), title, condition.getArgs()),
                             PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), subtitle, condition.getArgs()),
@@ -859,7 +859,7 @@ public class ActionManagerImpl implements ActionManager {
                                 double distance = LocationUtils.getDistance(player.getLocation(), condition.getLocation());
                                 if (distance <= range) {
                                     condition.insertArg("{near}", player.getName());
-                                    AdventureManagerImpl.getInstance().sendTitle(
+                                    AdventureHelper.getInstance().sendTitle(
                                             condition.getPlayer(),
                                             PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), title, condition.getArgs()),
                                             PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), subtitle, condition.getArgs()),
@@ -889,7 +889,7 @@ public class ActionManagerImpl implements ActionManager {
                 int fadeOut = section.getInt("fade-out", 10);
                 return condition -> {
                     if (Math.random() > chance) return;
-                    AdventureManagerImpl.getInstance().sendTitle(
+                    AdventureHelper.getInstance().sendTitle(
                             condition.getPlayer(),
                             PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), titles.get(ThreadLocalRandom.current().nextInt(titles.size())), condition.getArgs()),
                             PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), subtitles.get(ThreadLocalRandom.current().nextInt(subtitles.size())), condition.getArgs()),
@@ -947,7 +947,7 @@ public class ActionManagerImpl implements ActionManager {
                 );
                 return condition -> {
                     if (Math.random() > chance) return;
-                    AdventureManagerImpl.getInstance().sendSound(condition.getPlayer(), sound);
+                    AdventureHelper.getInstance().sendSound(condition.getPlayer(), sound);
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: sound");
@@ -1047,7 +1047,7 @@ public class ActionManagerImpl implements ActionManager {
                     stringJoiner.add(loot);
                 }
                 condition.delArg("{lava}");
-                AdventureManagerImpl.getInstance().sendMessageWithPrefix(condition.getPlayer(), CFLocale.MSG_Possible_Loots + stringJoiner);
+                AdventureHelper.getInstance().sendMessageWithPrefix(condition.getPlayer(), CFLocale.MSG_Possible_Loots + stringJoiner);
             };
         });
     }

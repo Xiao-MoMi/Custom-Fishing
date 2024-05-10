@@ -24,7 +24,7 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.CustomFishingPluginImpl;
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.competition.BossBarConfig;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
@@ -152,7 +152,7 @@ public class BossBarSender {
         try {
             Object chatComponent = ReflectionUtils.iChatComponentMethod.invoke(null,
             GsonComponentSerializer.gson().serialize(
-            AdventureManagerImpl.getInstance().getComponentFromMiniMessage(
+            AdventureHelper.getInstance().getComponentFromMiniMessage(
             text.getLatestValue()
             )));
             Object updatePacket = ReflectionUtils.updateConstructor.newInstance(chatComponent);

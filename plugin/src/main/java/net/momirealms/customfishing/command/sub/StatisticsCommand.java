@@ -19,7 +19,7 @@ package net.momirealms.customfishing.command.sub;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.*;
-import net.momirealms.customfishing.adventure.AdventureManagerImpl;
+import net.momirealms.customfishing.adventure.AdventureHelper;
 import net.momirealms.customfishing.api.CustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
@@ -126,7 +126,7 @@ public class StatisticsCommand {
                     assert player != null;
                     Statistics statistics = CustomFishingPlugin.get().getStatisticsManager().getStatistics(player.getUniqueId());
                     if (statistics != null) {
-                        var adventure = AdventureManagerImpl.getInstance();
+                        var adventure = AdventureHelper.getInstance();
                         for (Map.Entry<String, Integer> entry : statistics.getStatisticMap().entrySet()) {
                             adventure.sendMessage(sender, entry.getKey() + ": " + entry.getValue());
                         }
