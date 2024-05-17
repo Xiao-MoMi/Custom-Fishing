@@ -33,7 +33,7 @@ public class FishHookLandEvent extends PlayerEvent {
     private final Target target;
     private final FishHook fishHook;
     private final Effect effect;
-    private boolean isFirst;
+    private final boolean isFirst;
 
     /**
      * Constructs a new FishHookLandEvent.

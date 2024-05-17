@@ -22,19 +22,21 @@ import net.momirealms.customfishing.api.mechanic.action.Action;
 import java.util.List;
 
 /**
- * An interface for a requirement factory that builds requirements.
+ * Interface representing a factory for creating requirements.
+ *
+ * @param <T> the type of object that the requirement will operate on
  */
-public interface RequirementFactory {
+public interface RequirementFactory<T> {
 
     /**
-     * Build a requirement with the given arguments, not met actions, and check action flag.
+     * Build a requirement with the given arguments, not satisfied actions, and check run actions flag.
      *
-     * @param args          The arguments used to build the requirement.
-     * @param notMetActions Actions to be triggered when the requirement is not met (can be null).
-     * @param advanced      Flag indicating whether to check the action when building the requirement.
+     * @param args                The arguments used to build the requirement.
+     * @param notSatisfiedActions Actions to be triggered when the requirement is not met (can be null).
+     * @param runActions          Flag indicating whether to run the action if the requirement is not met.
      * @return The built requirement.
      */
-    Requirement build(Object args, List<Action> notMetActions, boolean advanced);
+    Requirement<T> process(Object args, List<Action<T>> notSatisfiedActions, boolean runActions);
 
     /**
      * Build a requirement with the given arguments.
@@ -42,7 +44,7 @@ public interface RequirementFactory {
      * @param args The arguments used to build the requirement.
      * @return The built requirement.
      */
-    default Requirement build(Object args) {
-        return build(args, null, false);
+    default Requirement<T> process(Object args) {
+        return process(args, List.of(), false);
     }
 }

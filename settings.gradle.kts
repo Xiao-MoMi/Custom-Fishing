@@ -1,3 +1,7 @@
 rootProject.name = "CustomFishing"
 include("api")
-include("plugin")
+include("common")
+include("core")
+include("compatibility")
+include("paper-loader")
+include("bukkit-loader")

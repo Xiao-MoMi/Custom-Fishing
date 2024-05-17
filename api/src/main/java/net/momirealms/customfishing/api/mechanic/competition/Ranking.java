@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.api.mechanic.competition;
 
-import net.momirealms.customfishing.api.common.Pair;
+import net.momirealms.customfishing.common.util.Pair;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;

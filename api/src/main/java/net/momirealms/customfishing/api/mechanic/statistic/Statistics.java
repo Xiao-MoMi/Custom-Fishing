@@ -19,8 +19,9 @@ package net.momirealms.customfishing.api.mechanic.statistic;
 
 import net.momirealms.customfishing.api.data.StatisticData;
 import net.momirealms.customfishing.api.mechanic.action.Action;
-import net.momirealms.customfishing.api.mechanic.condition.Condition;
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,23 +51,23 @@ public class Statistics {
      * Adds an amount of loot to the statistics.
      *
      * @param loot      The loot item.
-     * @param condition The condition associated with the loot.
+     * @param playerContext The condition associated with the loot.
      * @param amount    The amount of loot to add.
      */
-    public synchronized void addLootAmount(Loot loot, Condition condition, int amount) {
+    public synchronized void addLootAmount(Loot loot, Context<Player> playerContext, int amount) {
         if (amount < 1) {
             return;
         }
         if (amount == 1) {
-            addSingleLootAmount(loot, condition);
+            addSingleLootAmount(loot, playerContext);
             return;
         }
-        Integer previous = statisticMap.get(loot.getStatisticKey().getAmountKey());
+        Integer previous = statisticMap.get(loot.getStatisticKey().amountKey());
         if (previous == null) previous = 0;
         int after = previous + amount;
-        statisticMap.put(loot.getStatisticKey().getAmountKey(), after);
+        statisticMap.put(loot.getStatisticKey().amountKey(), after);
         total += amount;
-        doSuccessTimesAction(previous, after, condition, loot);
+        doSuccessTimesAction(previous, after, playerContext, loot);
     }
 
     /**
@@ -74,16 +75,16 @@ public class Statistics {
      *
      * @param previous  The previous success times.
      * @param after     The updated success times.
-     * @param condition The condition associated with the loot.
+     * @param playerContext The condition associated with the loot.
      * @param loot      The loot item.
      */
-    private void doSuccessTimesAction(Integer previous, int after, Condition condition, Loot loot) {
-        HashMap<Integer, Action[]> actionMap = loot.getSuccessTimesActionMap();
+    private void doSuccessTimesAction(Integer previous, int after, Context<Player> playerContext, Loot loot) {
+        HashMap<Integer, Action<Player>[]> actionMap = loot.getRecordActionMap();
         if (actionMap != null) {
-            for (Map.Entry<Integer, Action[]> entry : actionMap.entrySet()) {
+            for (Map.Entry<Integer, Action<Player>[]> entry : actionMap.entrySet()) {
                 if (entry.getKey() > previous && entry.getKey() <= after) {
-                    for (Action action : entry.getValue()) {
-                        action.trigger(condition);
+                    for (Action<Player> action : entry.getValue()) {
+                        action.trigger(playerContext);
                     }
                 }
             }
@@ -101,18 +102,18 @@ public class Statistics {
      * Adds a single loot amount to the statistics.
      *
      * @param loot      The loot item.
-     * @param condition The condition associated with the loot.
+     * @param playerContext The condition associated with the loot.
      */
-    private void addSingleLootAmount(Loot loot, Condition condition) {
+    private void addSingleLootAmount(Loot loot, Context<Player> playerContext) {
         Integer previous = statisticMap.get(loot.getID());
         if (previous == null) previous = 0;
         int after = previous + 1;
         statisticMap.put(loot.getID(), after);
         total += 1;
-        Action[] actions = loot.getSuccessTimesActionMap().get(after);
+        Action<Player>[] actions = loot.getRecordActionMap().get(after);
         if (actions != null)
-            for (Action action : actions) {
-                action.trigger(condition);
+            for (Action<Player> action : actions) {
+                action.trigger(playerContext);
             }
     }
 

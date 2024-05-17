@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.api.mechanic;
 
-import net.momirealms.customfishing.api.mechanic.condition.FishingPreparation;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 

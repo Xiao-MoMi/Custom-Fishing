@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.api.event;
 
-import net.momirealms.customfishing.api.CustomFishingPlugin;
+import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -25,9 +25,9 @@ import org.jetbrains.annotations.NotNull;
 public class CustomFishingReloadEvent extends Event {
 
     private static final HandlerList handlerList = new HandlerList();
-    private final CustomFishingPlugin plugin;
+    private final BukkitCustomFishingPlugin plugin;
 
-    public CustomFishingReloadEvent(CustomFishingPlugin plugin) {
+    public CustomFishingReloadEvent(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -41,7 +41,7 @@ public class CustomFishingReloadEvent extends Event {
         return getHandlerList();
     }
 
-    public CustomFishingPlugin getPluginInstance() {
+    public BukkitCustomFishingPlugin getPluginInstance() {
         return plugin;
     }
 }

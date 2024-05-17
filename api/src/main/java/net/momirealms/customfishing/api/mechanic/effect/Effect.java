@@ -17,40 +17,45 @@
 
 package net.momirealms.customfishing.api.mechanic.effect;
 
-import net.momirealms.customfishing.api.common.Pair;
-import net.momirealms.customfishing.api.mechanic.misc.WeightModifier;
+import net.momirealms.customfishing.common.util.Pair;
+import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 public interface Effect {
 
-    boolean canLavaFishing();
+    boolean allowLavaFishing();
 
-    double getMultipleLootChance();
+    double multipleLootChance();
 
-    double getSize();
+    double sizeAdder();
 
-    double getSizeMultiplier();
+    double sizeMultiplier();
 
-    double getScore();
+    double scoreAdder();
 
-    double getScoreMultiplier();
+    double scoreMultiplier();
 
-    double getWaitTime();
+    double waitTimeAdder();
 
     double getWaitTimeMultiplier();
 
-    double getGameTime();
+    double gameTimeAdder();
 
-    double getGameTimeMultiplier();
+    double gameTimeMultiplier();
 
-    double getDifficulty();
+    double difficultyAdder();
 
-    double getDifficultyMultiplier();
+    double difficultyMultiplier();
 
-    List<Pair<String, WeightModifier>> getWeightModifier();
+    List<Pair<String, BiFunction<Player, Double, Double>>> weightModifier();
 
-    List<Pair<String, WeightModifier>> getWeightModifierIgnored();
+    List<Pair<String, BiFunction<Player, Double, Double>>> weightModifierIgnored();
 
     void merge(Effect effect);
+
+    interface Builder {
+
+    }
 }

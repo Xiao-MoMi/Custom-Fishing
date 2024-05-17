@@ -17,76 +17,104 @@
 
 package net.momirealms.customfishing.api.mechanic.entity;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
 import java.util.Map;
 
-public class EntityConfig implements EntitySettings {
+/**
+ * The EntityConfig interface defines the configuration for an entity used in custom fishing mechanics.
+ * It includes methods to retrieve various properties of the entity such as vectors and an ID, as well
+ * as a nested Builder interface for constructing instances of EntityConfig.
+ */
+public interface EntityConfig {
 
-    private String entity;
-    private double horizontalVector;
-    private double verticalVector;
-    private Map<String, Object> propertyMap;
-    private boolean persist;
+    double DEFAULT_HORIZONTAL_VECTOR = 1;
+    double DEFAULT_VERTICAL_VECTOR = 1;
+    String DEFAULT_ENTITY_ID = "";
+    Map<String, Object> DEFAULT_PROPERTY_MAP = Map.of();
 
-    @Override
-    public boolean isPersist() {
-        return persist;
+    /**
+     * Retrieves the horizontal vector value for the entity.
+     *
+     * @return the horizontal vector value as a double
+     */
+    double getHorizontalVector();
+
+    /**
+     * Retrieves the vertical vector value for the entity.
+     *
+     * @return the vertical vector value as a double
+     */
+    double getVerticalVector();
+
+    /**
+     * Retrieves the unique identifier for the entity.
+     *
+     * @return the entity ID as a non-null String
+     */
+    @NotNull
+    String getEntityID();
+
+    /**
+     * Retrieves a map of properties associated with the entity.
+     *
+     * @return a non-null map where keys are property names and values are property values
+     */
+    @NotNull
+    Map<String, Object> getPropertyMap();
+
+    /**
+     * Creates a new Builder instance for constructing an EntityConfig.
+     *
+     * @return a new Builder instance
+     */
+    static Builder builder() {
+        return new EntityConfigImpl.BuilderImpl();
     }
 
-    @Override
-    public double getHorizontalVector() {
-        return horizontalVector;
-    }
+    /**
+     * Builder interface for constructing instances of EntityConfig.
+     */
+    interface Builder {
 
-    @Override
-    public double getVerticalVector() {
-        return verticalVector;
-    }
+        /**
+         * Sets the entity ID for the EntityConfig being built.
+         *
+         * @param value the entity ID as a String
+         * @return the current Builder instance
+         */
+        Builder entityID(String value);
 
-    @Override
-    public String getEntityID() {
-        return entity;
-    }
+        /**
+         * Sets the vertical vector value for the EntityConfig being built.
+         *
+         * @param value the vertical vector value as a double
+         * @return the current Builder instance
+         */
+        Builder verticalVector(double value);
 
-    @Override
-    public Map<String, Object> getPropertyMap() {
-        return propertyMap;
-    }
+        /**
+         * Sets the horizontal vector value for the EntityConfig being built.
+         *
+         * @param value the horizontal vector value as a double
+         * @return the current Builder instance
+         */
+        Builder horizontalVector(double value);
 
-    public static class Builder {
+        /**
+         * Sets the property map for the EntityConfig being built.
+         *
+         * @param value a map of properties where keys are property names and values are property values
+         * @return the current Builder instance
+         */
+        Builder propertyMap(Map<String, Object> value);
 
-        private final EntityConfig config;
-
-        public Builder() {
-            this.config = new EntityConfig();
-        }
-
-        public Builder entityID(String value) {
-            this.config.entity = value;
-            return this;
-        }
-
-        public Builder persist(boolean value) {
-            this.config.persist = value;
-            return this;
-        }
-
-        public Builder verticalVector(double value) {
-            this.config.verticalVector = value;
-            return this;
-        }
-
-        public Builder horizontalVector(double value) {
-            this.config.horizontalVector = value;
-            return this;
-        }
-
-        public Builder propertyMap(Map<String, Object> value) {
-            this.config.propertyMap = value;
-            return this;
-        }
-
-        public EntityConfig build() {
-            return config;
-        }
+        /**
+         * Builds and returns the EntityConfig instance based on the current state of the Builder.
+         *
+         * @return a new EntityConfig instance
+         */
+        EntityConfig build();
     }
 }

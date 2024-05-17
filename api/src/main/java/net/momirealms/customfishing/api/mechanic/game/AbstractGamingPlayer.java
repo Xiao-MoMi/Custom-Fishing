@@ -17,8 +17,8 @@
 
 package net.momirealms.customfishing.api.mechanic.game;
 
-import net.momirealms.customfishing.api.CustomFishingPlugin;
-import net.momirealms.customfishing.api.manager.FishingManager;
+import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.fishing.FishingManager;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import org.bukkit.Material;
@@ -41,13 +41,13 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
         this.player = player;
         this.fishHook = hook;
         this.settings = settings;
-        this.manager = CustomFishingPlugin.get().getFishingManager();
+        this.manager = BukkitCustomFishingPlugin.get().getFishingManager();
         this.deadline = (long) (System.currentTimeMillis() + settings.getTime() * 1000L);
         this.arrangeTask();
     }
 
     public void arrangeTask() {
-        this.task = CustomFishingPlugin.get().getScheduler().runTaskSyncTimer(this, fishHook.getLocation(), 1, 1);
+        this.task = BukkitCustomFishingPlugin.get().getScheduler().runTaskSyncTimer(this, fishHook.getLocation(), 1, 1);
     }
 
     @Override

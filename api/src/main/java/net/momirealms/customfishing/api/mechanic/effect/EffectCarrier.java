@@ -17,10 +17,9 @@
 
 package net.momirealms.customfishing.api.mechanic.effect;
 
-import net.momirealms.customfishing.api.common.Key;
+import net.kyori.adventure.key.Key;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
-import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import org.jetbrains.annotations.Nullable;
 
@@ -102,10 +101,10 @@ public class EffectCarrier {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean isConditionMet(Condition condition) {
+    public boolean isConditionMet(PlayerContext playerContext) {
         if (requirements == null) return true;
         for (Requirement requirement : requirements) {
-            if (!requirement.isConditionMet(condition)) {
+            if (!requirement.check(playerContext)) {
                 return false;
             }
         }

@@ -29,7 +29,7 @@ public interface FishingCompetition {
     /**
      * Start the fishing competition
      */
-    void start();
+    void start(boolean triggerEvent);
 
     /**
      * Stop the fishing competition

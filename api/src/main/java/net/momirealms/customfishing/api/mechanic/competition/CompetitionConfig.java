@@ -18,6 +18,8 @@
 package net.momirealms.customfishing.api.mechanic.competition;
 
 import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.competition.info.ActionBarConfigImpl;
+import net.momirealms.customfishing.api.mechanic.competition.info.BossBarConfigImpl;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,8 +31,8 @@ public class CompetitionConfig {
     private final String key;
     private int duration;
     private int minPlayers;
-    private BossBarConfig bossBarConfig;
-    private ActionBarConfig actionBarConfig;
+    private BossBarConfigImpl bossBarConfigImpl;
+    private ActionBarConfigImpl actionBarConfigImpl;
     private Action[] skipActions;
     private Action[] startActions;
     private Action[] endActions;
@@ -110,13 +112,13 @@ public class CompetitionConfig {
     }
 
     @Nullable
-    public BossBarConfig getBossBarConfig() {
-        return bossBarConfig;
+    public BossBarConfigImpl getBossBarConfig() {
+        return bossBarConfigImpl;
     }
 
     @Nullable
-    public ActionBarConfig getActionBarConfig() {
-        return actionBarConfig;
+    public ActionBarConfigImpl getActionBarConfig() {
+        return actionBarConfigImpl;
     }
 
     public static Builder builder(String key) {
@@ -162,14 +164,14 @@ public class CompetitionConfig {
         }
 
         @SuppressWarnings("UnusedReturnValue")
-        public Builder actionbar(ActionBarConfig actionBarConfig) {
-            config.actionBarConfig = actionBarConfig;
+        public Builder actionbar(ActionBarConfigImpl actionBarConfigImpl) {
+            config.actionBarConfigImpl = actionBarConfigImpl;
             return this;
         }
 
         @SuppressWarnings("UnusedReturnValue")
-        public Builder bossbar(BossBarConfig bossBarConfig) {
-            config.bossBarConfig = bossBarConfig;
+        public Builder bossbar(BossBarConfigImpl bossBarConfigImpl) {
+            config.bossBarConfigImpl = bossBarConfigImpl;
             return this;
         }
 

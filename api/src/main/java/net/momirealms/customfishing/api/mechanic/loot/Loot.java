@@ -19,9 +19,9 @@ package net.momirealms.customfishing.api.mechanic.loot;
 
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
-import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.effect.BaseEffect;
-import net.momirealms.customfishing.api.mechanic.statistic.StatisticsKey;
+import net.momirealms.customfishing.api.mechanic.statistic.StatisticsKeys;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,7 +63,7 @@ public interface Loot {
     @NotNull
     String getNick();
 
-    StatisticsKey getStatisticKey();
+    StatisticsKeys getStatisticKey();
 
     /**
      * Check if this loot should be shown in the finder.
@@ -113,9 +113,9 @@ public interface Loot {
      * Trigger actions associated with a specific action trigger.
      *
      * @param actionTrigger The action trigger.
-     * @param condition     The condition under which the actions are triggered.
+     * @param playerContext     The condition under which the actions are triggered.
      */
-    void triggerActions(ActionTrigger actionTrigger, Condition condition);
+    void triggerActions(ActionTrigger actionTrigger, PlayerContext playerContext);
 
     /**
      * Get effects that bond to this loot
@@ -130,12 +130,12 @@ public interface Loot {
      * @param times The number of successes.
      * @return The actions triggered by the specified number of successes.
      */
-    Action[] getSuccessTimesActions(int times);
+    Action<Player>[] getRecordActions(int times);
 
     /**
      * Get a map of actions triggered by different numbers of successes.
      *
      * @return A map of actions triggered by success times.
      */
-    HashMap<Integer, Action[]> getSuccessTimesActionMap();
+    HashMap<Integer, Action<Player>[]> getRecordActionMap();
 }

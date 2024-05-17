@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.api.mechanic.effect;
 
 import net.momirealms.customfishing.api.common.Pair;
-import net.momirealms.customfishing.api.mechanic.misc.WeightModifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -214,7 +213,7 @@ public class FishingEffect implements Effect {
      * @return True if lava fishing is enabled, false otherwise.
      */
     @Override
-    public boolean canLavaFishing() {
+    public boolean allowLavaFishing() {
         return lavaFishing;
     }
 
@@ -224,7 +223,7 @@ public class FishingEffect implements Effect {
      * @return The multiple loot chance value.
      */
     @Override
-    public double getMultipleLootChance() {
+    public double multipleLootChance() {
         return multipleLootChance;
     }
 
@@ -234,7 +233,7 @@ public class FishingEffect implements Effect {
      * @return The size multiplier value.
      */
     @Override
-    public double getSizeMultiplier() {
+    public double sizeMultiplier() {
         return sizeMultiplier;
     }
 
@@ -244,7 +243,7 @@ public class FishingEffect implements Effect {
      * @return The size value.
      */
     @Override
-    public double getSize() {
+    public double sizeAdder() {
         return size;
     }
 
@@ -254,7 +253,7 @@ public class FishingEffect implements Effect {
      * @return The score multiplier value.
      */
     @Override
-    public double getScoreMultiplier() {
+    public double scoreMultiplier() {
         return scoreMultiplier;
     }
 
@@ -274,7 +273,7 @@ public class FishingEffect implements Effect {
      * @return The wait time .
      */
     @Override
-    public double getWaitTime() {
+    public double waitTimeAdder() {
         return waitTime;
     }
 
@@ -284,7 +283,7 @@ public class FishingEffect implements Effect {
      * @return The game time value.
      */
     @Override
-    public double getGameTime() {
+    public double gameTimeAdder() {
         return gameTime;
     }
 
@@ -294,7 +293,7 @@ public class FishingEffect implements Effect {
      * @return The game time value multiplier.
      */
     @Override
-    public double getGameTimeMultiplier() {
+    public double gameTimeMultiplier() {
         return gameTimeMultiplier;
     }
 
@@ -304,7 +303,7 @@ public class FishingEffect implements Effect {
      * @return The score value.
      */
     @Override
-    public double getScore() {
+    public double scoreAdder() {
         return score;
     }
 
@@ -314,7 +313,7 @@ public class FishingEffect implements Effect {
      * @return The difficulty value.
      */
     @Override
-    public double getDifficulty() {
+    public double difficultyAdder() {
         return difficulty;
     }
 
@@ -324,7 +323,7 @@ public class FishingEffect implements Effect {
      * @return The difficulty multiplier value.
      */
     @Override
-    public double getDifficultyMultiplier() {
+    public double difficultyMultiplier() {
         return difficultyMultiplier;
     }
 
@@ -334,7 +333,7 @@ public class FishingEffect implements Effect {
      * @return The list of weight modifiers.
      */
     @Override
-    public List<Pair<String, WeightModifier>> getWeightModifier() {
+    public List<Pair<String, WeightModifier>> weightModifier() {
         return weightModifier;
     }
 
@@ -344,7 +343,7 @@ public class FishingEffect implements Effect {
      * @return The list of weight modifiers ignoring conditions.
      */
     @Override
-    public List<Pair<String, WeightModifier>> getWeightModifierIgnored() {
+    public List<Pair<String, WeightModifier>> weightModifierIgnored() {
         return weightModifierIgnored;
     }
 
@@ -356,18 +355,18 @@ public class FishingEffect implements Effect {
     @Override
     public void merge(Effect another) {
         if (another == null) return;
-        if (another.canLavaFishing()) this.lavaFishing = true;
-        this.scoreMultiplier += (another.getScoreMultiplier() -1);
-        this.score += another.getScore();
-        this.sizeMultiplier += (another.getSizeMultiplier() -1);
-        this.size += another.getSize();
-        this.difficultyMultiplier += (another.getDifficultyMultiplier() -1);
-        this.difficulty += another.getDifficulty();
-        this.gameTimeMultiplier += (another.getGameTimeMultiplier() - 1);
-        this.gameTime += another.getGameTime();
+        if (another.allowLavaFishing()) this.lavaFishing = true;
+        this.scoreMultiplier += (another.scoreMultiplier() -1);
+        this.score += another.scoreAdder();
+        this.sizeMultiplier += (another.sizeMultiplier() -1);
+        this.size += another.sizeAdder();
+        this.difficultyMultiplier += (another.difficultyMultiplier() -1);
+        this.difficulty += another.difficultyAdder();
+        this.gameTimeMultiplier += (another.gameTimeMultiplier() - 1);
+        this.gameTime += another.gameTimeAdder();
         this.waitTimeMultiplier += (another.getWaitTimeMultiplier() -1);
-        this.multipleLootChance += another.getMultipleLootChance();
-        this.weightModifierIgnored.addAll(another.getWeightModifierIgnored());
-        this.weightModifier.addAll(another.getWeightModifier());
+        this.multipleLootChance += another.multipleLootChance();
+        this.weightModifierIgnored.addAll(another.weightModifierIgnored());
+        this.weightModifier.addAll(another.weightModifier());
     }
 }

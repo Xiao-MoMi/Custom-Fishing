@@ -17,9 +17,10 @@
 
 package net.momirealms.customfishing.api.mechanic.effect;
 
-import net.momirealms.customfishing.api.mechanic.condition.Condition;
+import net.momirealms.customfishing.api.mechanic.context.Context;
+import org.bukkit.entity.Player;
 
 public interface EffectModifier {
 
-    void modify(FishingEffect effect, Condition condition);
+    void modify(FishingEffect effect, Context<Player> playerContext);
 }

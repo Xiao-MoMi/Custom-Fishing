@@ -1,20 +1,20 @@
 package net.momirealms.customfishing.api.mechanic.effect;
 
-import net.momirealms.customfishing.api.mechanic.misc.Value;
+import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
 
 public class BaseEffect {
 
-    private final Value waitTime;
-    private final Value waitTimeMultiplier;
-    private final Value difficulty;
-    private final Value difficultyMultiplier;
-    private final Value gameTime;
-    private final Value gameTimeMultiplier;
+    private final MathValue<Player> waitTime;
+    private final MathValue<Player> waitTimeMultiplier;
+    private final MathValue<Player> difficulty;
+    private final MathValue<Player> difficultyMultiplier;
+    private final MathValue<Player> gameTime;
+    private final MathValue<Player> gameTimeMultiplier;
 
-    public BaseEffect(Value waitTime, Value waitTimeMultiplier, Value difficulty, Value difficultyMultiplier, Value gameTime, Value gameTimeMultiplier) {
+    public BaseEffect(MathValue<Player> waitTime, MathValue<Player> waitTimeMultiplier, MathValue<Player> difficulty, MathValue difficultyMultiplier, MathValue gameTime, MathValue gameTimeMultiplier) {
         this.waitTime = waitTime;
         this.waitTimeMultiplier = waitTimeMultiplier;
         this.difficulty = difficulty;

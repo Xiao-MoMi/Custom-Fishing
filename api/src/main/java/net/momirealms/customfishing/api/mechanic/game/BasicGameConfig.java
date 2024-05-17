@@ -79,8 +79,8 @@ public class BasicGameConfig {
     @Nullable
     public GameSettings getGameSetting(Effect effect) {
         return new GameSettings(
-                ThreadLocalRandom.current().nextInt(minTime, maxTime + 1) * effect.getGameTimeMultiplier() + effect.getGameTime(),
-                (int) Math.min(100, Math.max(1, ThreadLocalRandom.current().nextInt(minDifficulty, maxDifficulty + 1) * effect.getDifficultyMultiplier() + effect.getDifficulty()))
+                ThreadLocalRandom.current().nextInt(minTime, maxTime + 1) * effect.gameTimeMultiplier() + effect.gameTimeAdder(),
+                (int) Math.min(100, Math.max(1, ThreadLocalRandom.current().nextInt(minDifficulty, maxDifficulty + 1) * effect.difficultyMultiplier() + effect.difficultyAdder()))
         );
     }
 }

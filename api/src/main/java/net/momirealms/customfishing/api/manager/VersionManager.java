@@ -23,13 +23,15 @@ public interface VersionManager {
 
     boolean isVersionNewerThan1_19();
 
-    boolean isVersionNewerThan1_19_R3();
+    boolean isVersionNewerThan1_19_4();
 
-    boolean isVersionNewerThan1_19_R2();
+    boolean isVersionNewerThan1_19_3();
 
     CompletableFuture<Boolean> checkUpdate();
 
     boolean isVersionNewerThan1_20();
+
+    boolean isNewerThan1_20_5();
 
     boolean isSpigot();
 

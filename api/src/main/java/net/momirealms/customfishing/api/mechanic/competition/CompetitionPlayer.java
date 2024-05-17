@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CompetitionPlayer implements Comparable<CompetitionPlayer>{
 
-    public static CompetitionPlayer empty = new CompetitionPlayer("", 0);
+    private static CompetitionPlayer empty = new CompetitionPlayer("", 0);
     private long time;
     private final String player;
     private double score;
@@ -32,12 +32,13 @@ public class CompetitionPlayer implements Comparable<CompetitionPlayer>{
         this.time = System.currentTimeMillis();
     }
 
-    public void addScore(double score){
+    public void addScore(double score) {
         this.score += score;
+        if (score <= 0) return;
         this.time = System.currentTimeMillis();
     }
 
-    public void setScore(double score){
+    public void setScore(double score) {
         this.score = score;
         this.time = System.currentTimeMillis();
     }

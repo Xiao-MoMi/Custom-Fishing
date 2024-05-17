@@ -17,10 +17,9 @@
 
 package net.momirealms.customfishing.api.mechanic;
 
-import net.momirealms.customfishing.api.CustomFishingPlugin;
+import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
-import net.momirealms.customfishing.api.mechanic.condition.Condition;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -47,7 +46,7 @@ public class GlobalSettings {
         if (section == null) return;
         for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection inner) {
-                HashMap<ActionTrigger, Action[]> map = CustomFishingPlugin.get().getActionManager().getActionMap(inner);
+                HashMap<ActionTrigger, Action[]> map = BukkitCustomFishingPlugin.get().getActionManager().getActionMap(inner);
                 switch (entry.getKey()) {
                     case "loot" -> lootActions = map;
                     case "rod" -> rodActions = map;
@@ -79,13 +78,13 @@ public class GlobalSettings {
      * Triggers loot-related actions for a specific trigger and condition.
      *
      * @param trigger   The trigger to activate actions for.
-     * @param condition The condition that triggered the actions.
+     * @param playerContext The condition that triggered the actions.
      */
-    public static void triggerLootActions(ActionTrigger trigger, Condition condition) {
+    public static void triggerLootActions(ActionTrigger trigger, PlayerContext playerContext) {
         Action[] actions = lootActions.get(trigger);
         if (actions != null) {
             for (Action action : actions) {
-                action.trigger(condition);
+                action.trigger(playerContext);
             }
         }
     }
@@ -94,13 +93,13 @@ public class GlobalSettings {
      * Triggers rod-related actions for a specific trigger and condition.
      *
      * @param trigger   The trigger to activate actions for.
-     * @param condition The condition that triggered the actions.
+     * @param playerContext The condition that triggered the actions.
      */
-    public static void triggerRodActions(ActionTrigger trigger, Condition condition) {
+    public static void triggerRodActions(ActionTrigger trigger, PlayerContext playerContext) {
         Action[] actions = rodActions.get(trigger);
         if (actions != null) {
             for (Action action : actions) {
-                action.trigger(condition);
+                action.trigger(playerContext);
             }
         }
     }
@@ -109,13 +108,13 @@ public class GlobalSettings {
      * Triggers bait-related actions for a specific trigger and condition.
      *
      * @param trigger   The trigger to activate actions for.
-     * @param condition The condition that triggered the actions.
+     * @param playerContext The condition that triggered the actions.
      */
-    public static void triggerBaitActions(ActionTrigger trigger, Condition condition) {
+    public static void triggerBaitActions(ActionTrigger trigger, PlayerContext playerContext) {
         Action[] actions = baitActions.get(trigger);
         if (actions != null) {
             for (Action action : actions) {
-                action.trigger(condition);
+                action.trigger(playerContext);
             }
         }
     }
@@ -124,13 +123,13 @@ public class GlobalSettings {
      * Triggers hook-related actions for a specific trigger and condition.
      *
      * @param trigger   The trigger to activate actions for.
-     * @param condition The condition that triggered the actions.
+     * @param playerContext The condition that triggered the actions.
      */
-    public static void triggerHookActions(ActionTrigger trigger, Condition condition) {
+    public static void triggerHookActions(ActionTrigger trigger, PlayerContext playerContext) {
         Action[] actions = hookActions.get(trigger);
         if (actions != null) {
             for (Action action : actions) {
-                action.trigger(condition);
+                action.trigger(playerContext);
             }
         }
     }
