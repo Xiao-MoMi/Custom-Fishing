@@ -19,7 +19,7 @@ package net.momirealms.customfishing.api.mechanic.context;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,8 +39,9 @@ public final class PlayerContextImpl implements Context<Player> {
      *
      * @param player the player to be associated with this context.
      */
-    public PlayerContextImpl(@NotNull Player player) {
+    public PlayerContextImpl(@Nullable Player player) {
         this.player = player;
+        if (player == null) return;
         final Location location = player.getLocation();
         arg(ContextKeys.LOCATION, location)
         .arg(ContextKeys.X, location.getBlockX())
@@ -49,47 +50,32 @@ public final class PlayerContextImpl implements Context<Player> {
         .arg(ContextKeys.WORLD, location.getWorld().getName());
     }
 
-    /**
-     * Retrieves the map of arguments associated with this context.
-     *
-     * @return a map where the keys are argument names and the values are argument values.
-     */
     @Override
     public Map<ContextKeys<?>, Object> args() {
         return args;
     }
 
-    /**
-     * Adds an argument to the context and returns the context itself
-     * to allow for method chaining.
-     *
-     * @param key the name of the argument to add.
-     * @param value the value of the argument to add.
-     * @return the PlayerContextImpl instance to allow for method chaining.
-     */
+    @Override
+    public Map<String, String> toPlaceholderMap() {
+        HashMap<String, String> placeholders = new HashMap<>();
+        for (Map.Entry<ContextKeys<?>, Object> entry : args.entrySet()) {
+            placeholders.put(entry.getKey().toString(), entry.getValue().toString());
+        }
+        return placeholders;
+    }
+
     @Override
     public <C> PlayerContextImpl arg(ContextKeys<C> key, C value) {
         args.put(key, value);
         return this;
     }
 
-    /**
-     * Retrieves the value of a specific argument from the context.
-     *
-     * @param key the name of the argument to retrieve.
-     * @return the value of the argument, or null if no argument with the given key exists.
-     */
     @Override
     @SuppressWarnings("unchecked")
     public <C> C arg(ContextKeys<C> key) {
         return (C) args.get(key);
     }
 
-    /**
-     * Gets the player associated with this context.
-     *
-     * @return the player object associated with this context.
-     */
     @Override
     public Player getHolder() {
         return player;

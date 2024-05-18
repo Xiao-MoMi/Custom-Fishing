@@ -19,8 +19,8 @@ package net.momirealms.customfishing.api.mechanic.competition.info;
 
 public class ActionBarConfigImpl extends AbstractCompetitionInfo implements ActionBarConfig {
 
-    public ActionBarConfigImpl(int refreshRate, int switchInterval, boolean showToAll, String[] texts) {
-        super(refreshRate, switchInterval, showToAll, texts);
+    public ActionBarConfigImpl(boolean enable, int refreshRate, int switchInterval, boolean showToAll, String[] texts) {
+        super(enable, refreshRate, switchInterval, showToAll, texts);
     }
 
     public static class BuilderImpl implements Builder {
@@ -28,29 +28,35 @@ public class ActionBarConfigImpl extends AbstractCompetitionInfo implements Acti
         private int switchInterval = DEFAULT_SWITCH_INTERVAL;
         private boolean showToAll = DEFAULT_VISIBILITY;
         private String[] texts = DEFAULT_TEXTS;
+        private boolean enable = true;
         @Override
-        public BuilderImpl showToAll(boolean showToAll) {
+        public Builder showToAll(boolean showToAll) {
             this.showToAll = showToAll;
             return this;
         }
         @Override
-        public BuilderImpl refreshRate(int rate) {
+        public Builder refreshRate(int rate) {
             this.refreshRate = rate;
             return this;
         }
         @Override
-        public BuilderImpl switchInterval(int interval) {
+        public Builder switchInterval(int interval) {
             this.switchInterval = interval;
             return this;
         }
         @Override
-        public BuilderImpl text(String[] texts) {
+        public Builder text(String[] texts) {
             this.texts = texts;
             return this;
         }
         @Override
-        public ActionBarConfigImpl build() {
-            return new ActionBarConfigImpl(refreshRate, switchInterval, showToAll, texts);
+        public Builder enable(boolean enable) {
+            this.enable = enable;
+            return this;
+        }
+        @Override
+        public ActionBarConfig build() {
+            return new ActionBarConfigImpl(enable, refreshRate, switchInterval, showToAll, texts);
         }
     }
 }

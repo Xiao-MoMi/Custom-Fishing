@@ -30,5 +30,5 @@ public interface ActionFactory<T> {
      * @param args the args containing the arguments needed to build the action
      * @return the constructed action
      */
-    Action<T> process(Object args);
+    Action<T> process(Object args, double chance);
 }

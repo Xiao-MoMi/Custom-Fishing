@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.api.mechanic.context;
 
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -39,6 +38,13 @@ public interface Context<T> {
      * @return a map where the keys are argument names and the values are argument values.
      */
     Map<ContextKeys<?>, Object> args();
+
+    /**
+     * Converts the context to a map of placeholders
+     *
+     * @return a map of placeholders
+     */
+    Map<String, String> toPlaceholderMap();
 
     /**
      * Adds or updates an argument in the context.
@@ -75,7 +81,7 @@ public interface Context<T> {
      * @param player the player to be used as the holder of the context.
      * @return a new Context instance with the specified player as the holder.
      */
-    static Context<Player> player(@NotNull Player player) {
+    static Context<Player> player(@Nullable Player player) {
         return new PlayerContextImpl(player);
     }
 }

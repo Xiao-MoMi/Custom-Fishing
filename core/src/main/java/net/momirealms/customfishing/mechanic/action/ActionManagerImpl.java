@@ -30,8 +30,9 @@ import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
+import net.momirealms.customfishing.api.mechanic.action.EmptyAction;
 import net.momirealms.customfishing.bukkit.compatibility.VaultHook;
-import net.momirealms.customfishing.bukkit.compatibility.papi.PlaceholderManagerImpl;
+import net.momirealms.customfishing.bukkit.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.common.util.ClassUtils;
 import net.momirealms.customfishing.util.*;
 import org.bukkit.Bukkit;
@@ -157,9 +158,9 @@ public class ActionManagerImpl implements ActionManager {
         if (factory == null) {
             LogUtils.warn("Action type: " + section.getString("type") + " doesn't exist.");
             // to prevent NPE
-            return EmptyAction.instance;
+            return EmptyAction.INSTANCE;
         }
-        return factory.build(
+        return factory.process(
                         section.get("value"),
                         section.getDouble("chance", 1d)
                 );
@@ -297,7 +298,7 @@ public class ActionManagerImpl implements ActionManager {
             ArrayList<String> msg = ConfigUtils.stringListArgs(args);
             return condition -> {
                 if (Math.random() > chance) return;
-                List<String> replaced = PlaceholderManagerImpl.getInstance().parse(
+                List<String> replaced = BukkitPlaceholderManager.getInstance().parse(
                         condition.getPlayer(),
                         msg,
                         condition.getArgs()
@@ -311,7 +312,7 @@ public class ActionManagerImpl implements ActionManager {
             ArrayList<String> msg = ConfigUtils.stringListArgs(args);
             return condition -> {
                 if (Math.random() > chance) return;
-                List<String> replaced = PlaceholderManagerImpl.getInstance().parse(
+                List<String> replaced = BukkitPlaceholderManager.getInstance().parse(
                         condition.getPlayer(),
                         msg,
                         condition.getArgs()
@@ -335,7 +336,7 @@ public class ActionManagerImpl implements ActionManager {
                             double distance = LocationUtils.getDistance(player.getLocation(), condition.getLocation());
                             if (distance <= range) {
                                 condition.insertArg("{near}", player.getName());
-                                List<String> replaced = PlaceholderManagerImpl.getInstance().parse(
+                                List<String> replaced = BukkitPlaceholderManager.getInstance().parse(
                                         owner,
                                         msg,
                                         condition.getArgs()
@@ -350,7 +351,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: message-nearby");
-                return EmptyAction.instance;
+                return EmptyAction.INSTANCE;
             }
         });
         registerAction("random-message", (args, chance) -> {
@@ -358,7 +359,7 @@ public class ActionManagerImpl implements ActionManager {
             return condition -> {
                 if (Math.random() > chance) return;
                 String random = msg.get(ThreadLocalRandom.current().nextInt(msg.size()));
-                random = PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), random, condition.getArgs());
+                random = BukkitPlaceholderManager.getInstance().parse(condition.getPlayer(), random, condition.getArgs());
                 AdventureHelper.getInstance().sendPlayerMessage(condition.getPlayer(), random);
             };
         });
@@ -369,7 +370,7 @@ public class ActionManagerImpl implements ActionManager {
             ArrayList<String> cmd = ConfigUtils.stringListArgs(args);
             return condition -> {
                 if (Math.random() > chance) return;
-                List<String> replaced = PlaceholderManagerImpl.getInstance().parse(
+                List<String> replaced = BukkitPlaceholderManager.getInstance().parse(
                         condition.getPlayer(),
                         cmd,
                         condition.getArgs()
@@ -386,7 +387,7 @@ public class ActionManagerImpl implements ActionManager {
             return condition -> {
                 if (Math.random() > chance) return;
                 String random = cmd.get(ThreadLocalRandom.current().nextInt(cmd.size()));
-                random = PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), random, condition.getArgs());
+                random = BukkitPlaceholderManager.getInstance().parse(condition.getPlayer(), random, condition.getArgs());
                 String finalRandom = random;
                 plugin.getScheduler().runTaskSync(() -> {
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), finalRandom);
@@ -405,7 +406,7 @@ public class ActionManagerImpl implements ActionManager {
                             double distance = LocationUtils.getDistance(player.getLocation(), condition.getLocation());
                             if (distance <= range) {
                                 condition.insertArg("{near}", player.getName());
-                                List<String> replaced = PlaceholderManagerImpl.getInstance().parse(
+                                List<String> replaced = BukkitPlaceholderManager.getInstance().parse(
                                         owner,
                                         cmd,
                                         condition.getArgs()
@@ -420,7 +421,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: command-nearby");
-                return EmptyAction.instance;
+                return EmptyAction.INSTANCE;
             }
         });
     }
@@ -442,7 +443,7 @@ public class ActionManagerImpl implements ActionManager {
             return condition -> {
                 if (Math.random() > chance) return;
                 String random = texts.get(ThreadLocalRandom.current().nextInt(texts.size()));
-                random = PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), random, condition.getArgs());
+                random = BukkitPlaceholderManager.getInstance().parse(condition.getPlayer(), random, condition.getArgs());
                 AdventureHelper.getInstance().sendActionbar(condition.getPlayer(), random);
             };
         });
@@ -458,7 +459,7 @@ public class ActionManagerImpl implements ActionManager {
                             double distance = LocationUtils.getDistance(player.getLocation(), condition.getLocation());
                             if (distance <= range) {
                                 condition.insertArg("{near}", player.getName());
-                                String replaced = PlaceholderManagerImpl.getInstance().parse(
+                                String replaced = BukkitPlaceholderManager.getInstance().parse(
                                         owner,
                                         actionbar,
                                         condition.getArgs()
@@ -472,7 +473,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: command-nearby");
-                return EmptyAction.instance;
+                return EmptyAction.INSTANCE;
             }
         });
     }
@@ -545,7 +546,7 @@ public class ActionManagerImpl implements ActionManager {
                                                     (Player) player,
                                                     location.clone().add(x, y, z),
                                                     AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                                            PlaceholderManagerImpl.getInstance().parse(owner, text, condition.getArgs())
+                                                            BukkitPlaceholderManager.getInstance().parse(owner, text, condition.getArgs())
                                                     ),
                                                     duration
                                             );
@@ -558,7 +559,7 @@ public class ActionManagerImpl implements ActionManager {
                                 owner,
                                 location.clone().add(x, y, z),
                                 AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                        PlaceholderManagerImpl.getInstance().parse(owner, text, condition.getArgs())
+                                        BukkitPlaceholderManager.getInstance().parse(owner, text, condition.getArgs())
                                 ),
                                 duration
                         );
@@ -566,7 +567,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: hologram");
-                return EmptyAction.instance;
+                return EmptyAction.INSTANCE;
             }
         });
     }
@@ -584,7 +585,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: item-amount");
-                return EmptyAction.instance;
+                return EmptyAction.INSTANCE;
             }
         });
     }
@@ -606,7 +607,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: durability");
-                return EmptyAction.instance;
+                return EmptyAction.INSTANCE;
             }
         });
     }
@@ -623,7 +624,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: give-item");
-                return EmptyAction.instance;
+                return EmptyAction.INSTANCE;
             }
         });
     }
@@ -686,7 +687,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: fake-item");
-                return EmptyAction.instance;
+                return EmptyAction.INSTANCE;
             }
         });
     }
@@ -825,8 +826,8 @@ public class ActionManagerImpl implements ActionManager {
                     if (Math.random() > chance) return;
                     AdventureHelper.getInstance().sendTitle(
                             condition.getPlayer(),
-                            PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), title, condition.getArgs()),
-                            PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), subtitle, condition.getArgs()),
+                            BukkitPlaceholderManager.getInstance().parse(condition.getPlayer(), title, condition.getArgs()),
+                            BukkitPlaceholderManager.getInstance().parse(condition.getPlayer(), subtitle, condition.getArgs()),
                             fadeIn,
                             stay,
                             fadeOut
@@ -834,7 +835,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: title");
-                return EmptyAction.instance;
+                return EmptyAction.INSTANCE;
             }
         });
         registerAction("title-nearby", (args, chance) -> {
@@ -854,8 +855,8 @@ public class ActionManagerImpl implements ActionManager {
                                     condition.insertArg("{near}", player.getName());
                                     AdventureHelper.getInstance().sendTitle(
                                             condition.getPlayer(),
-                                            PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), title, condition.getArgs()),
-                                            PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), subtitle, condition.getArgs()),
+                                            BukkitPlaceholderManager.getInstance().parse(condition.getPlayer(), title, condition.getArgs()),
+                                            BukkitPlaceholderManager.getInstance().parse(condition.getPlayer(), subtitle, condition.getArgs()),
                                             fadeIn,
                                             stay,
                                             fadeOut
@@ -868,7 +869,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: title-nearby");
-                return EmptyAction.instance;
+                return EmptyAction.INSTANCE;
             }
         });
         registerAction("random-title", (args, chance) -> {
@@ -884,8 +885,8 @@ public class ActionManagerImpl implements ActionManager {
                     if (Math.random() > chance) return;
                     AdventureHelper.getInstance().sendTitle(
                             condition.getPlayer(),
-                            PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), titles.get(ThreadLocalRandom.current().nextInt(titles.size())), condition.getArgs()),
-                            PlaceholderManagerImpl.getInstance().parse(condition.getPlayer(), subtitles.get(ThreadLocalRandom.current().nextInt(subtitles.size())), condition.getArgs()),
+                            BukkitPlaceholderManager.getInstance().parse(condition.getPlayer(), titles.get(ThreadLocalRandom.current().nextInt(titles.size())), condition.getArgs()),
+                            BukkitPlaceholderManager.getInstance().parse(condition.getPlayer(), subtitles.get(ThreadLocalRandom.current().nextInt(subtitles.size())), condition.getArgs()),
                             fadeIn,
                             stay,
                             fadeOut
@@ -893,7 +894,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: random-title");
-                return EmptyAction.instance;
+                return EmptyAction.INSTANCE;
             }
         });
     }
@@ -912,7 +913,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: potion-effect");
-                return EmptyAction.instance;
+                return EmptyAction.INSTANCE;
             }
         });
     }
@@ -944,7 +945,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: sound");
-                return EmptyAction.instance;
+                return EmptyAction.INSTANCE;
             }
         });
     }
@@ -953,7 +954,7 @@ public class ActionManagerImpl implements ActionManager {
         registerAction("conditional", (args, chance) -> {
             if (args instanceof ConfigurationSection section) {
                 Action[] actions = getActions(section.getConfigurationSection("actions"));
-                Requirement[] requirements = plugin.getRequirementManager().getRequirements(section.getConfigurationSection("conditions"), true);
+                Requirement[] requirements = plugin.getRequirementManager().parseRequirements(section.getConfigurationSection("conditions"), true);
                 return condition -> {
                     if (Math.random() > chance) return;
                     if (requirements != null)
@@ -968,7 +969,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: conditional");
-                return EmptyAction.instance;
+                return EmptyAction.INSTANCE;
             }
         });
     }
@@ -980,7 +981,7 @@ public class ActionManagerImpl implements ActionManager {
                 for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
                     if (entry.getValue() instanceof ConfigurationSection inner) {
                         Action[] actions = getActions(inner.getConfigurationSection("actions"));
-                        Requirement[] requirements = plugin.getRequirementManager().getRequirements(inner.getConfigurationSection("conditions"), false);
+                        Requirement[] requirements = plugin.getRequirementManager().parseRequirements(inner.getConfigurationSection("conditions"), false);
                         conditionActionPairList.add(Pair.of(requirements, actions));
                     }
                 }
@@ -1003,7 +1004,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: priority");
-                return EmptyAction.instance;
+                return EmptyAction.INSTANCE;
             }
         });
     }
@@ -1022,7 +1023,7 @@ public class ActionManagerImpl implements ActionManager {
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: plugin-exp");
-                return EmptyAction.instance;
+                return EmptyAction.INSTANCE;
             }
         });
     }

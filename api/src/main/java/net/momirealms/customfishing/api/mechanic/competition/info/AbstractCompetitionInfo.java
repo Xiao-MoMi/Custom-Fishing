@@ -27,12 +27,14 @@ public abstract class AbstractCompetitionInfo {
     protected int switchInterval;
     protected boolean showToAll;
     protected String[] texts;
+    protected boolean enabled;
 
-    protected AbstractCompetitionInfo(int refreshRate, int switchInterval, boolean showToAll, String[] texts) {
+    protected AbstractCompetitionInfo(boolean enabled, int refreshRate, int switchInterval, boolean showToAll, String[] texts) {
         this.refreshRate = refreshRate;
         this.switchInterval = switchInterval;
         this.showToAll = showToAll;
         this.texts = texts;
+        this.enabled = enabled;
     }
 
     /**
@@ -69,5 +71,14 @@ public abstract class AbstractCompetitionInfo {
      */
     public String[] texts() {
         return texts;
+    }
+
+    /**
+     * If the feature is enabled.
+     *
+     * @return enabled or not.
+     */
+    public boolean enabled() {
+        return enabled;
     }
 }

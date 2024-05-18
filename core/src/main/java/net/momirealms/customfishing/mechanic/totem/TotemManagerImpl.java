@@ -220,7 +220,7 @@ public class TotemManagerImpl implements TotemManager, Listener {
                 TotemConfig totemConfig = new TotemConfig.Builder(entry.getKey())
                         .setTotemModels(getTotemModels(section.getConfigurationSection("pattern")))
                         .setParticleSettings(getParticleSettings(section.getConfigurationSection("particles")))
-                        .setRequirements(plugin.getRequirementManager().getRequirements(section.getConfigurationSection("requirements"), true))
+                        .setRequirements(plugin.getRequirementManager().parseRequirements(section.getConfigurationSection("requirements"), true))
                         .setRadius(section.getDouble("radius", 8))
                         .setDuration(section.getInt("duration", 300))
                         .build();

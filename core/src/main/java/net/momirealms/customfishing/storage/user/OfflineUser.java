@@ -23,7 +23,7 @@ import net.momirealms.customfishing.api.storage.data.InventoryData;
 import net.momirealms.customfishing.api.storage.data.PlayerData;
 import net.momirealms.customfishing.api.storage.data.StatisticData;
 import net.momirealms.customfishing.api.storage.user.UserData;
-import net.momirealms.customfishing.bukkit.compatibility.papi.PlaceholderManagerImpl;
+import net.momirealms.customfishing.bukkit.misc.placeholder.BukkitPlaceholderManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -59,7 +59,7 @@ public class OfflineUser implements UserData<OfflinePlayer> {
         // Set up the inventory for the FishingBagHolder
         this.holder.setInventory(InventoryUtils.createInventory(this.holder, playerData.getBagData().size,
                 AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        PlaceholderManagerImpl.getInstance().parse(
+                        BukkitPlaceholderManager.getInstance().parse(
                                 offlinePlayer,
                                 BukkitCustomFishingPlugin.get().getBagManager().getBagTitle(),
                                 Map.of("{player}", Optional.ofNullable(offlinePlayer.getName()).orElse(String.valueOf(uuid)))

@@ -64,7 +64,7 @@ public interface CompetitionManager {
      * @param serverGroup Whether the competition should start across all servers that connected to Redis
      * @return True if the competition was started successfully, false otherwise.
      */
-    boolean startCompetition(CompetitionConfig config, boolean force, @Nullable String serverGroup);
+    boolean startCompetition(CompetitionConfigImpl config, boolean force, @Nullable String serverGroup);
 
     /**
      * Gets the number of seconds until the next competition.
@@ -77,7 +77,8 @@ public interface CompetitionManager {
      * Retrieves the configuration for a competition based on its key.
      *
      * @param key The key of the competition configuration to retrieve.
-     * @return The {@link CompetitionConfig} for the specified key, or {@code null} if no configuration exists with that key.
+     * @return The {@link CompetitionConfigImpl} for the specified key, or {@code null} if no configuration exists with that key.
      */
-    @Nullable CompetitionConfig getConfig(String key);
+    @Nullable
+    CompetitionConfigImpl getConfig(String key);
 }

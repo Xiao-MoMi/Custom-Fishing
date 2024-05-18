@@ -1,0 +1,20 @@
+#
+# Don't change this
+#
+config-version: "${config_version}"
+
+#
+# For safety reasons, editing this file requires a restart to apply
+#
+reload:
+  enable: true
+  permission: customfishing.reload
+  usage:
+    - /customfishing reload
+    - /cfishing reload
+
+sellfish:
+  enable: true
+  permission: customfishing.sellfish
+  usage:
+    - /sellfish

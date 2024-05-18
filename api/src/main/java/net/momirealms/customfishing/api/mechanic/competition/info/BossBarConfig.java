@@ -54,6 +54,13 @@ public interface BossBarConfig {
     BossBar.Overlay overlay();
 
     /**
+     * Is boss bar enabled
+     *
+     * @return enabled or not
+     */
+    boolean enabled();
+
+    /**
      * Creates a new builder instance for constructing {@code BossBarConfig} objects.
      *
      * @return A new {@code Builder} instance.
@@ -114,6 +121,8 @@ public interface BossBarConfig {
          * @return The current {@code Builder} instance.
          */
         Builder overlay(BossBar.Overlay overlay);
+
+        Builder enable(boolean enable);
 
         /**
          * Builds the {@code BossBarConfig} object with the configured settings.

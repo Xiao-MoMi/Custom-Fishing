@@ -165,7 +165,7 @@ public class EffectManagerImpl implements EffectManager {
         if (section == null) return null;
         return new EffectCarrier.Builder()
                 .key(key)
-                .requirements(plugin.getRequirementManager().getRequirements(section.getConfigurationSection("requirements"), true))
+                .requirements(plugin.getRequirementManager().parseRequirements(section.getConfigurationSection("requirements"), true))
                 .effect(getEffectModifiers(section.getConfigurationSection("effects")))
                 .actionMap(plugin.getActionManager().getActionMap(section.getConfigurationSection("events")))
                 .build();
@@ -368,7 +368,7 @@ public class EffectManagerImpl implements EffectManager {
                 return ((effect, condition) -> effect.setLavaFishing(true));
             }
             case "conditional" -> {
-                Requirement[] requirements = plugin.getRequirementManager().getRequirements(section.getConfigurationSection("conditions"), true);
+                Requirement[] requirements = plugin.getRequirementManager().parseRequirements(section.getConfigurationSection("conditions"), true);
                 EffectModifier[] modifiers = getEffectModifiers(section.getConfigurationSection("effects"));
                 return ((effect, condition) -> {
                     for (Requirement requirement : requirements)

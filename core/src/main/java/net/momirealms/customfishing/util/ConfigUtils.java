@@ -20,7 +20,7 @@ package net.momirealms.customfishing.util;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.common.Tuple;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
-import net.momirealms.customfishing.bukkit.compatibility.papi.PlaceholderManagerImpl;
+import net.momirealms.customfishing.bukkit.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.mechanic.misc.value.ExpressionMathValue;
 import net.momirealms.customfishing.mechanic.misc.value.PlainMathValue;
 import net.objecthunter.exp4j.ExpressionBuilder;
@@ -328,7 +328,7 @@ public class ConfigUtils {
     }
 
     public static double getExpressionValue(Player player, String formula, Map<String, String> vars) {
-        formula = PlaceholderManagerImpl.getInstance().parse(player, formula, vars);
+        formula = BukkitPlaceholderManager.getInstance().parse(player, formula, vars);
         return new ExpressionBuilder(formula).build().evaluate();
     }
 

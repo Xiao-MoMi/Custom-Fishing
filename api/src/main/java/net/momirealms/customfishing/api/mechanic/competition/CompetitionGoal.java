@@ -19,6 +19,7 @@ package net.momirealms.customfishing.api.mechanic.competition;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.util.Index;
+import net.momirealms.customfishing.common.util.RandomUtils;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -60,7 +61,7 @@ public final class CompetitionGoal {
      * @return A randomly selected competition goal.
      */
     public static CompetitionGoal getRandom() {
-        return CompetitionGoal.values()[ThreadLocalRandom.current().nextInt(CompetitionGoal.values().length - 1)];
+        return CompetitionGoal.values()[RandomUtils.generateRandomInt(0, values.length - 1)];
     }
 
     private final Key key;

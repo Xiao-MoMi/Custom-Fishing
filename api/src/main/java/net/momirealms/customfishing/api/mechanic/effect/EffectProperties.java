@@ -23,6 +23,8 @@ public class EffectProperties<T> {
 
     public static final EffectProperties<Boolean> LAVA_FISHING = of("lava", Boolean.class);
     public static final EffectProperties<Boolean> VOID_FISHING = of("void", Boolean.class);
+    // It's not actually used because it's a vanilla mechanic
+    public static final EffectProperties<Boolean> WATER_FISHING = of("water", Boolean.class);
 
     private final String key;
     private final Class<T> type;

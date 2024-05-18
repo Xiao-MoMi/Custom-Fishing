@@ -38,7 +38,7 @@ import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.bukkit.compatibility.item.CustomFishingItemImpl;
 import net.momirealms.customfishing.bukkit.compatibility.item.VanillaItemImpl;
-import net.momirealms.customfishing.bukkit.compatibility.papi.PlaceholderManagerImpl;
+import net.momirealms.customfishing.bukkit.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.ItemUtils;
 import net.momirealms.customfishing.util.LocationUtils;
@@ -580,7 +580,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
             editors.put("name", (player, nbtItem, placeholders) -> {
                 nbtItem.set(AdventureHelper.getInstance().componentToJson(
                         AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                "<!i>" + PlaceholderManagerImpl.getInstance().parse(player, name, placeholders)
+                                "<!i>" + BukkitPlaceholderManager.getInstance().parse(player, name, placeholders)
                         )
                 ), "display", "Name");
             });
@@ -635,7 +635,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
             editors.put("lore", (player, nbtItem, placeholders) -> {
                 List<String> list = new ArrayList<>(lore.stream().map(s -> AdventureHelper.getInstance().componentToJson(
                         AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                "<!i>" + PlaceholderManagerImpl.getInstance().parse(player, s, placeholders)
+                                "<!i>" + BukkitPlaceholderManager.getInstance().parse(player, s, placeholders)
                         )
                 )).toList());
                 nbtItem.set(list, "display", "Lore");

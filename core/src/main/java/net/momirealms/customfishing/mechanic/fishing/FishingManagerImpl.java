@@ -708,7 +708,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
      */
     private void doSuccessActions(Loot loot, Effect effect, FishingPreparation fishingPreparation, Player player) {
         FishingCompetition competition = plugin.getCompetitionManager().getOnGoingCompetition();
-        if (competition != null && RequirementManager.isRequirementMet(fishingPreparation, competition.getConfig().getRequirements())) {
+        if (competition != null && RequirementManager.isRequirementMet(fishingPreparation, competition.getConfig().getJoinRequirements())) {
             String scoreStr = fishingPreparation.getArg("{CUSTOM_SCORE}");
             if (scoreStr != null) {
                 competition.refreshData(player, Double.parseDouble(scoreStr));

@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.mechanic.misc;
 
-import net.momirealms.customfishing.bukkit.compatibility.papi.PlaceholderManagerImpl;
+import net.momirealms.customfishing.bukkit.misc.placeholder.BukkitPlaceholderManager;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class DynamicText {
     private void analyze(String value) {
         // Analyze the provided text to find and replace placeholders with '%s'.
         // Store the original value, placeholders, and the initial latest value.
-        List<String> placeholdersOwner = new ArrayList<>(PlaceholderManagerImpl.getInstance().detectPlaceholders(value));
+        List<String> placeholdersOwner = new ArrayList<>(BukkitPlaceholderManager.getInstance().resolvePlaceholders(value));
         String origin = value;
         for (String placeholder : placeholdersOwner) {
             origin = origin.replace(placeholder, "%s");
@@ -57,13 +57,13 @@ public class DynamicText {
         // Update the dynamic text by replacing placeholders with actual values.
         String string = originalValue;
         if (this.placeholders.length != 0) {
-            PlaceholderManagerImpl placeholderManagerImpl = PlaceholderManagerImpl.getInstance();
+            BukkitPlaceholderManager bukkitPlaceholderManager = BukkitPlaceholderManager.getInstance();
             if ("%s".equals(originalValue)) {
-                string = placeholderManagerImpl.getSingleValue(owner, this.placeholders[0], placeholders);
+                string = bukkitPlaceholderManager.getSingleValue(owner, this.placeholders[0], placeholders);
             } else {
                 Object[] values = new String[this.placeholders.length];
                 for (int i = 0; i < this.placeholders.length; i++) {
-                    values[i] = placeholderManagerImpl.getSingleValue(owner, this.placeholders[i], placeholders);
+                    values[i] = bukkitPlaceholderManager.getSingleValue(owner, this.placeholders[i], placeholders);
                 }
                 string = String.format(originalValue, values);
             }

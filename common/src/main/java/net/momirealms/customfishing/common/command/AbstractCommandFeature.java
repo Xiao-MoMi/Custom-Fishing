@@ -9,11 +9,11 @@ import org.incendo.cloud.context.CommandContext;
 
 public abstract class AbstractCommandFeature<C> implements CommandFeature<C> {
 
-    protected final CustomFishingCommandManager<C> customFishingCommandManager;
+    protected final CustomFishingCommandManager<C> commandManager;
     protected CommandConfig<C> commandConfig;
 
-    public AbstractCommandFeature(CustomFishingCommandManager<C> customFishingCommandManager) {
-        this.customFishingCommandManager = customFishingCommandManager;
+    public AbstractCommandFeature(CustomFishingCommandManager<C> commandManager) {
+        this.commandManager = commandManager;
     }
 
     protected abstract SenderFactory<?, C> getSenderFactory();
@@ -44,17 +44,17 @@ public abstract class AbstractCommandFeature<C> implements CommandFeature<C> {
         if (context.flags().hasFlag("silent")) {
             return;
         }
-        customFishingCommandManager.handleCommandFeedback((C) context.sender(), key, args);
+        commandManager.handleCommandFeedback((C) context.sender(), key, args);
     }
 
     @Override
     public void handleFeedback(C sender, TranslatableComponent.Builder key, Component... args) {
-        customFishingCommandManager.handleCommandFeedback(sender, key, args);
+        commandManager.handleCommandFeedback(sender, key, args);
     }
 
     @Override
     public CustomFishingCommandManager<C> getCustomFishingCommandManager() {
-        return customFishingCommandManager;
+        return commandManager;
     }
 
     @Override

@@ -91,7 +91,8 @@ public interface FishingCompetition {
      *
      * @return The configuration of the fishing competition.
      */
-    @NotNull CompetitionConfig getConfig();
+    @NotNull
+    CompetitionConfigImpl getConfig();
 
     /**
      * Gets the goal of the fishing competition.
@@ -105,7 +106,8 @@ public interface FishingCompetition {
      *
      * @return The ranking data for the fishing competition.
      */
-    @NotNull Ranking getRanking();
+    @NotNull
+    RankingProvider getRanking();
 
     /**
      * Gets the cached placeholders for the fishing competition.

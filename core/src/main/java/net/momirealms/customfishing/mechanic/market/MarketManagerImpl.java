@@ -24,7 +24,7 @@ import net.momirealms.customfishing.api.mechanic.market.MarketManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.market.MarketGUIHolder;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
-import net.momirealms.customfishing.bukkit.compatibility.papi.PlaceholderManagerImpl;
+import net.momirealms.customfishing.bukkit.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.NumberUtils;
 import net.objecthunter.exp4j.ExpressionBuilder;
@@ -497,8 +497,8 @@ public class MarketManagerImpl implements MarketManager, Listener {
 
     @Override
     public double getFishPrice(Player player, Map<String, String> vars) {
-        String temp = PlaceholderManagerImpl.getInstance().parse(player, formula, vars);
-        var placeholders = PlaceholderManagerImpl.getInstance().detectPlaceholders(temp);
+        String temp = BukkitPlaceholderManager.getInstance().parse(player, formula, vars);
+        var placeholders = BukkitPlaceholderManager.getInstance().resolvePlaceholders(temp);
         for (String placeholder : placeholders) {
             temp = temp.replace(placeholder, "0");
         }
@@ -533,7 +533,7 @@ public class MarketManagerImpl implements MarketManager, Listener {
     @Override
     public double getEarningLimit(Player player) {
         return new ExpressionBuilder(
-                PlaceholderManagerImpl.getInstance().parse(
+                BukkitPlaceholderManager.getInstance().parse(
                         player,
                         earningLimitExpression,
                         new HashMap<>()

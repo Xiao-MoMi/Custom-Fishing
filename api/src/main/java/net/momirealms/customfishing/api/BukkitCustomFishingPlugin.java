@@ -17,16 +17,33 @@
 
 package net.momirealms.customfishing.api;
 
+import net.momirealms.customfishing.api.mechanic.action.ActionManager;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.event.EventManager;
+import net.momirealms.customfishing.api.mechanic.misc.placeholder.PlaceholderManager;
+import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
+import net.momirealms.customfishing.common.sender.SenderFactory;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
+
+import static java.util.Objects.requireNonNull;
 
 public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
 
     private static BukkitCustomFishingPlugin instance;
+    private final Plugin boostrap = requireNonNull(Bukkit.getPluginManager().getPlugin("CustomFishing"));
 
     protected EventManager eventManager;
     protected ConfigManager configManager;
+    protected RequirementManager<Player> requirementManager;
+    protected ActionManager<Player> actionManager;
+    protected SenderFactory<BukkitCustomFishingPlugin, CommandSender> senderFactory;
+    protected PlaceholderManager placeholderManager;
 
     public BukkitCustomFishingPlugin() {
         instance = this;
@@ -46,5 +63,29 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
     @Override
     public ConfigManager getConfigManager() {
         return configManager;
+    }
+
+    public RequirementManager<Player> getRequirementManager() {
+        return requirementManager;
+    }
+
+    public ActionManager<Player> getActionManager() {
+        return actionManager;
+    }
+
+    public SenderFactory<BukkitCustomFishingPlugin, CommandSender> getSenderFactory() {
+        return senderFactory;
+    }
+
+    public File getDataFolder() {
+        return boostrap.getDataFolder();
+    }
+
+    public PlaceholderManager getPlaceholderManager() {
+        return placeholderManager;
+    }
+
+    public Plugin getBoostrap() {
+        return boostrap;
     }
 }

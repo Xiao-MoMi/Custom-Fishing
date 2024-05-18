@@ -22,106 +22,81 @@ import net.momirealms.customfishing.api.mechanic.context.Context;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 
+/**
+ * The ActionManager interface manages custom action types and provides methods for handling actions.
+ *
+ * @param <T> the type of the context in which the actions are triggered.
+ */
 public interface ActionManager<T> {
 
     /**
-     * Registers an ActionFactory for a specific action type.
-     * This method allows you to associate an ActionFactory with a custom action type.
+     * Registers a custom action type with its corresponding factory.
      *
-     * @param type           The custom action type to register.
-     * @param actionFactory  The ActionFactory responsible for creating actions of the specified type.
-     * @return True if the registration was successful (the action type was not already registered), false otherwise.
+     * @param type           The type identifier of the action.
+     * @param actionFactory  The factory responsible for creating instances of the action.
+     * @return True if registration was successful, false if the type is already registered.
      */
     boolean registerAction(String type, ActionFactory<T> actionFactory);
 
     /**
-     * Unregisters an ActionFactory for a specific action type.
-     * This method allows you to remove the association between an action type and its ActionFactory.
+     * Unregisters a custom action type.
      *
-     * @param type The custom action type to unregister.
-     * @return True if the action type was successfully unregistered, false if it was not found.
+     * @param type The type identifier of the action to unregister.
+     * @return True if unregistration was successful, false if the type is not registered.
      */
     boolean unregisterAction(String type);
 
     /**
-     * Retrieves an Action object based on the configuration provided in a ConfigurationSection.
-     * This method reads the type of action from the section, obtains the corresponding ActionFactory,
-     * and builds an Action object using the specified values and chance.
-     * <p>
-     * events:
-     *   success:
-     *     action_1:  <- section
-     *       ...
+     * Checks if an action type is registered.
      *
-     * @param section The ConfigurationSection containing the action configuration.
-     * @return An Action object created based on the configuration, or an EmptyAction instance if the action type is invalid.
+     * @param type The type identifier of the action.
+     * @return True if the action type is registered, otherwise false.
      */
-    Action<T> getAction(Section section);
+    boolean hasAction(@NotNull String type);
 
     /**
-     * Retrieves a mapping of ActionTriggers to arrays of Actions from a ConfigurationSection.
-     * This method iterates through the provided ConfigurationSection to extract action triggers
-     * and their associated arrays of Actions.
-     * <p>
-     * events:  <- section
-     *   success:
-     *     action_1:
-     *       ...
+     * Retrieves the action factory for the specified action type.
      *
-     * @param section The ConfigurationSection containing action mappings.
-     * @return A HashMap where keys are ActionTriggers and values are arrays of Action objects.
-     */
-    HashMap<ActionTrigger, Action<T>[]> getActionMap(Section section);
-
-    /**
-     * Retrieves an array of Action objects from a ConfigurationSection.
-     * This method iterates through the provided ConfigurationSection to extract Action configurations
-     * and build an array of Action objects.
-     * <p>
-     * events:
-     *   success:  <- section
-     *     action_1:
-     *       ...
-     *
-     * @param section The ConfigurationSection containing action configurations.
-     * @return An array of Action objects created based on the configurations in the section.
-     */
-    @NotNull
-    Action<T>[] getActions(@NotNull Section section);
-
-    /**
-     * Retrieves an ActionFactory associated with a specific action type.
-     *
-     * @param type The action type for which to retrieve the ActionFactory.
-     * @return The ActionFactory associated with the specified action type, or null if not found.
+     * @param type The type identifier of the action.
+     * @return The action factory for the specified type, or null if no factory is found.
      */
     @Nullable
     ActionFactory<T> getActionFactory(@NotNull String type);
 
     /**
-     * Retrieves a mapping of success times to corresponding arrays of actions from a ConfigurationSection.
-     * <p>
-     * events:
-     *   success-times:  <- section
-     *     1:
-     *       action_1:
-     *         ...
+     * Parses an action from a configuration section.
      *
-     * @param section The ConfigurationSection containing success times actions.
-     * @return A HashMap where success times associated with actions.
+     * @param section The configuration section containing the action definition.
+     * @return The parsed action.
      */
-    @NotNull
-    HashMap<Integer, Action<T>[]> getTimesActionMap(@NotNull Section section);
+    Action<T> parseAction(Section section);
 
     /**
-     * Triggers a list of actions with the given condition.
+     * Parses an array of actions from a configuration section.
+     *
+     * @param section The configuration section containing the action definitions.
+     * @return An array of parsed actions.
+     */
+    @NotNull
+    Action<T>[] parseActions(@NotNull Section section);
+
+    /**
+     * Parses an action from the given type and arguments.
+     *
+     * @param type  The type identifier of the action.
+     * @param args  The arguments for the action.
+     * @return The parsed action.
+     */
+    Action<T> parseAction(@NotNull String type, @NotNull Object args);
+
+    /**
+     * Triggers a list of actions with the given context.
      * If the list of actions is not null, each action in the list is triggered.
      *
-     * @param actions   The list of actions to trigger.
      * @param context The context associated with the actions.
+     * @param actions The list of actions to trigger.
      */
     static <T> void trigger(@NotNull Context<T> context, @Nullable List<Action<T>> actions) {
         if (actions != null)
@@ -129,6 +104,13 @@ public interface ActionManager<T> {
                 action.trigger(context);
     }
 
+    /**
+     * Triggers an array of actions with the given context.
+     * If the array of actions is not null, each action in the array is triggered.
+     *
+     * @param context The context associated with the actions.
+     * @param actions The array of actions to trigger.
+     */
     static <T> void trigger(@NotNull Context<T> context, @Nullable Action<T>[] actions) {
         if (actions != null)
             for (Action<T> action : actions)

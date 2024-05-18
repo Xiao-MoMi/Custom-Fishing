@@ -24,8 +24,8 @@ public class BossBarConfigImpl extends AbstractCompetitionInfo implements BossBa
     private final BossBar.Color color;
     private final BossBar.Overlay overlay;
 
-    public BossBarConfigImpl(int refreshRate, int switchInterval, boolean showToAll, String[] texts, BossBar.Color color, BossBar.Overlay overlay) {
-        super(refreshRate, switchInterval, showToAll, texts);
+    public BossBarConfigImpl(boolean enable, int refreshRate, int switchInterval, boolean showToAll, String[] texts, BossBar.Color color, BossBar.Overlay overlay) {
+        super(enable, refreshRate, switchInterval, showToAll, texts);
         this.color = color;
         this.overlay = overlay;
     }
@@ -46,40 +46,46 @@ public class BossBarConfigImpl extends AbstractCompetitionInfo implements BossBa
         private boolean showToAll = DEFAULT_VISIBILITY;
         private String[] texts = DEFAULT_TEXTS;
         private BossBar.Overlay overlay = DEFAULT_OVERLAY;
-        public BossBar.Color color = DEFAULT_COLOR;
+        private BossBar.Color color = DEFAULT_COLOR;
+        private boolean enable = true;
         @Override
-        public BuilderImpl showToAll(boolean showToAll) {
+        public Builder showToAll(boolean showToAll) {
             this.showToAll = showToAll;
             return this;
         }
         @Override
-        public BuilderImpl refreshRate(int rate) {
+        public Builder refreshRate(int rate) {
             this.refreshRate = rate;
             return this;
         }
         @Override
-        public BuilderImpl switchInterval(int interval) {
+        public Builder switchInterval(int interval) {
             this.switchInterval = interval;
             return this;
         }
         @Override
-        public BuilderImpl text(String[] texts) {
+        public Builder text(String[] texts) {
             this.texts = texts;
             return this;
         }
         @Override
-        public BuilderImpl color(BossBar.Color color) {
+        public Builder color(BossBar.Color color) {
             this.color = color;
             return this;
         }
         @Override
-        public BuilderImpl overlay(BossBar.Overlay overlay) {
+        public Builder overlay(BossBar.Overlay overlay) {
             this.overlay = overlay;
             return this;
         }
         @Override
-        public BossBarConfigImpl build() {
-            return new BossBarConfigImpl(refreshRate, switchInterval, showToAll, texts, color, overlay);
+        public Builder enable(boolean enable) {
+            this.enable = enable;
+            return this;
+        }
+        @Override
+        public BossBarConfig build() {
+            return new BossBarConfigImpl(enable, refreshRate, switchInterval, showToAll, texts, color, overlay);
         }
     }
 }

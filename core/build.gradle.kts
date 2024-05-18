@@ -5,6 +5,7 @@ plugins {
 dependencies {
     implementation(project(":common"))
     implementation(project(":api"))
+    implementation(project(":compatibility"))
     // adventure
     implementation("net.kyori:adventure-api:4.17.0")
     implementation("net.kyori:adventure-text-minimessage:4.17.0")
@@ -25,8 +26,7 @@ dependencies {
     compileOnly("dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT")
     // bStats
     compileOnly("org.bstats:bstats-bukkit:3.0.2")
-    // papi
-    compileOnly("me.clip:placeholderapi:2.11.5")
+
     // config
     compileOnly("dev.dejvokep:boosted-yaml:1.3.4")
     // Gson
@@ -37,14 +37,10 @@ dependencies {
     compileOnly("org.mongodb:mongodb-driver-sync:5.0.1")
     compileOnly("com.zaxxer:HikariCP:5.0.1")
     compileOnly("redis.clients:jedis:5.1.2")
-    // local jars
-    compileOnly(files("libs/AdvancedEnchantments-api.jar"))
-    compileOnly(files("libs/BattlePass-4.0.6-api.jar"))
-    compileOnly(files("libs/RealisticSeasons-api.jar"))
-    compileOnly(files("libs/mcMMO-api.jar"))
-    compileOnly(files("libs/ClueScrolls-4.8.7-api.jar"))
-    compileOnly(files("libs/notquests-5.17.1.jar"))
-    compileOnly(files("libs/zaphkiel-2.0.24.jar"))
+
+    compileOnly("org.incendo:cloud-core:${rootProject.properties["cloud_core_version"]}")
+    compileOnly("org.incendo:cloud-minecraft-extras:${rootProject.properties["cloud_minecraft_extras_version"]}")
+    compileOnly("org.incendo:cloud-paper:${rootProject.properties["cloud_paper_version"]}")
 }
 
 tasks {

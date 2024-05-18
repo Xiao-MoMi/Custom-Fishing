@@ -23,7 +23,7 @@ import net.momirealms.customfishing.api.storage.user.UserData;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.util.InventoryUtils;
-import net.momirealms.customfishing.bukkit.compatibility.papi.PlaceholderManagerImpl;
+import net.momirealms.customfishing.bukkit.misc.placeholder.BukkitPlaceholderManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -73,7 +73,7 @@ public class BagManagerImpl implements BagManager, Listener {
             if (bagStoreLoots) {
                 collectLootActions = plugin.getActionManager().getActions(bagSection.getConfigurationSection("collect-actions"));
                 bagFullActions = plugin.getActionManager().getActions(bagSection.getConfigurationSection("full-actions"));
-                collectRequirements = plugin.getRequirementManager().getRequirements(bagSection.getConfigurationSection("collect-requirements"), false);
+                collectRequirements = plugin.getRequirementManager().parseRequirements(bagSection.getConfigurationSection("collect-requirements"), false);
             }
         }
     }
@@ -106,7 +106,7 @@ public class BagManagerImpl implements BagManager, Listener {
         if (bag.getSize() != rows * 9) {
             Inventory newBag = InventoryUtils.createInventory(onlinePlayer.getHolder(), rows * 9,
                     AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            PlaceholderManagerImpl.getInstance().parse(
+                            BukkitPlaceholderManager.getInstance().parse(
                                     player, bagTitle, Map.of("{player}", player.getName())
                             )
                     ));

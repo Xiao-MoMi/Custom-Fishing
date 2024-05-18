@@ -36,6 +36,13 @@ public interface ActionBarConfig {
     String[] texts();
 
     /**
+     * Is action bar enabled
+     *
+     * @return enabled or not
+     */
+    boolean enabled();
+
+    /**
      * Creates a new builder instance for constructing {@code ActionBarConfig} objects.
      *
      * @return A new {@code Builder} instance.
@@ -80,6 +87,8 @@ public interface ActionBarConfig {
          * @return The current {@code Builder} instance.
          */
         Builder text(String[] texts);
+
+        Builder enable(boolean enable);
 
         /**
          * Builds the {@code ActionBarConfig} object with the configured settings.
