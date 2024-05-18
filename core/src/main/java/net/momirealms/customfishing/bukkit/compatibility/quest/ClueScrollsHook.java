@@ -61,8 +61,8 @@ public class ClueScrollsHook implements Listener {
             );
         }
 
-        if (loot != null && loot.getLootGroup() != null) {
-            for (String group : event.getLoot().getLootGroup()) {
+        if (loot != null && loot.lootGroup() != null) {
+            for (String group : event.getLoot().lootGroup()) {
                 groupClue.handle(
                         player,
                         event.getAmount(),

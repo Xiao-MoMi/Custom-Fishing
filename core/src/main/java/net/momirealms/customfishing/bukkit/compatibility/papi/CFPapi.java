@@ -19,7 +19,6 @@ package net.momirealms.customfishing.bukkit.compatibility.papi;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.data.user.OnlineUser;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -87,7 +86,7 @@ public class CFPapi extends PlaceholderExpansion {
                         }
                     }
                     case "earnings" -> {
-                        OnlineUser user;
+                        OnlineUserData user;
                         if (split.length < 3) {
                             user = plugin.getStorageManager().getOnlineUser(player.getUniqueId());
                         } else {
@@ -103,7 +102,7 @@ public class CFPapi extends PlaceholderExpansion {
                     }
                     case "canearn" -> {
                         if (split.length < 3) {
-                            OnlineUser user = plugin.getStorageManager().getOnlineUser(player.getUniqueId());
+                            OnlineUserData user = plugin.getStorageManager().getOnlineUser(player.getUniqueId());
                             if (user == null)
                                 return "";
                             return String.format("%.2f", plugin.getMarketManager().getEarningLimit(player) - user.getEarningData().earnings);
@@ -113,7 +112,7 @@ public class CFPapi extends PlaceholderExpansion {
                                 return "";
                             }
 
-                            OnlineUser user = plugin.getStorageManager().getOnlineUser(another.getUniqueId());
+                            OnlineUserData user = plugin.getStorageManager().getOnlineUser(another.getUniqueId());
                             if (user == null)
                                 return "";
                             return String.format("%.2f", plugin.getMarketManager().getEarningLimit(another) - user.getEarningData().earnings);

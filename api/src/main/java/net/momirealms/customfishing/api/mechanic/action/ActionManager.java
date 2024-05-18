@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 
 public interface ActionManager<T> {
 
@@ -122,7 +123,13 @@ public interface ActionManager<T> {
      * @param actions   The list of actions to trigger.
      * @param context The context associated with the actions.
      */
-    static <T> void trigger(@NotNull Context<T> context, @Nullable Action<T>... actions) {
+    static <T> void trigger(@NotNull Context<T> context, @Nullable List<Action<T>> actions) {
+        if (actions != null)
+            for (Action<T> action : actions)
+                action.trigger(context);
+    }
+
+    static <T> void trigger(@NotNull Context<T> context, @Nullable Action<T>[] actions) {
         if (actions != null)
             for (Action<T> action : actions)
                 action.trigger(context);

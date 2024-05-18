@@ -25,7 +25,6 @@ import net.momirealms.customfishing.api.mechanic.block.BlockManager;
 import net.momirealms.customfishing.api.mechanic.block.*;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.bukkit.compatibility.block.VanillaBlockImpl;
-import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.*;
 import org.bukkit.block.*;

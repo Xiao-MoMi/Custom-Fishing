@@ -29,14 +29,9 @@ import net.momirealms.customfishing.api.event.LavaFishingEvent;
 import net.momirealms.customfishing.api.event.RodCastEvent;
 import net.momirealms.customfishing.api.mechanic.fishing.FishingManager;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
-import net.momirealms.customfishing.api.mechanic.GlobalSettings;
-import net.momirealms.customfishing.api.mechanic.TempFishingState;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
-import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
-import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
-import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
 import net.momirealms.customfishing.api.mechanic.game.BasicGameConfig;
 import net.momirealms.customfishing.api.mechanic.game.GameInstance;
 import net.momirealms.customfishing.api.mechanic.game.GameSettings;
@@ -45,7 +40,6 @@ import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
 import net.momirealms.customfishing.api.util.WeightUtils;
 import net.momirealms.customfishing.mechanic.requirement.RequirementManagerImpl;
-import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.util.ItemUtils;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -481,7 +475,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
             loot.triggerActions(ActionTrigger.BITE, fishingPreparation);
             fishingPreparation.triggerActions(ActionTrigger.BITE);
 
-            if (loot.instanceGame() && !loot.disableGame()) {
+            if (loot.instantGame() && !loot.disableGame()) {
                 if (!loot.disableGlobalAction())
                     GlobalSettings.triggerLootActions(ActionTrigger.HOOK, fishingPreparation);
                 loot.triggerActions(ActionTrigger.HOOK, fishingPreparation);

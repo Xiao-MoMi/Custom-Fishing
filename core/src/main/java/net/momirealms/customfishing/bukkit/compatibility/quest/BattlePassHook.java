@@ -65,7 +65,7 @@ public class BattlePassHook implements Listener {
                         .buildAndExecute();
 
             // Group Fish Quest
-            String[] lootGroup = event.getLoot().getLootGroup();
+            String[] lootGroup = event.getLoot().lootGroup();
             if (event.getLoot() != null && lootGroup != null)
                 for (String group : lootGroup) {
                     this.executionBuilder("group")

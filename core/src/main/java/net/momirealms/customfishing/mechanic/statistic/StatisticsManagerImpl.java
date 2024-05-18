@@ -18,9 +18,7 @@
 package net.momirealms.customfishing.mechanic.statistic;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.data.user.OnlineUser;
 import net.momirealms.customfishing.api.mechanic.statistic.StatisticsManager;
-import net.momirealms.customfishing.api.mechanic.statistic.Statistics;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,7 +56,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
     @Override
     @Nullable
     public Statistics getStatistics(UUID uuid) {
-        OnlineUser onlineUser = plugin.getStorageManager().getOnlineUser(uuid);
+        OnlineUserData onlineUser = plugin.getStorageManager().getOnlineUser(uuid);
         if (onlineUser == null) return null;
         return onlineUser.getStatistics();
     }

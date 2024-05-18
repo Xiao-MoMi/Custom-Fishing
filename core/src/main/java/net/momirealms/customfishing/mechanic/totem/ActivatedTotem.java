@@ -20,7 +20,6 @@ package net.momirealms.customfishing.mechanic.totem;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
-import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import net.momirealms.customfishing.api.mechanic.totem.TotemParticle;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;

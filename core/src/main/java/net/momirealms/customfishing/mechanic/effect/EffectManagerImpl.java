@@ -20,12 +20,7 @@ package net.momirealms.customfishing.mechanic.effect;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Key;
 import net.momirealms.customfishing.api.common.Pair;
-import net.momirealms.customfishing.api.mechanic.effect.EffectManager;
-import net.momirealms.customfishing.api.mechanic.GlobalSettings;
-import net.momirealms.customfishing.api.mechanic.effect.BaseEffect;
-import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
-import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
-import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
+import net.momirealms.customfishing.api.mechanic.effect.LootBaseEffectImpl;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.mechanic.misc.value.PlainMathValue;
@@ -208,7 +203,7 @@ public class EffectManagerImpl implements EffectManager {
         for (String group : modList) {
             String[] split = group.split(":",2);
             String key = split[0];
-            List<String> members = plugin.getLootManager().getLootGroup(key);
+            List<String> members = plugin.getLootManager().getGroupMembers(key);
             if (members == null) {
                 LogUtils.warn("Group " + key + " doesn't contain any loot. The effect would not take effect.");
                 return result;
@@ -242,8 +237,8 @@ public class EffectManagerImpl implements EffectManager {
     }
 
     @Override
-    public BaseEffect getBaseEffect(ConfigurationSection section) {
-        if (section == null) return new BaseEffect(
+    public LootBaseEffectImpl getBaseEffect(ConfigurationSection section) {
+        if (section == null) return new LootBaseEffectImpl(
                 new PlainMathValue(0), new PlainMathValue(1d),
                 new PlainMathValue(0), new PlainMathValue(1d),
                 new PlainMathValue(0), new PlainMathValue(1d)
@@ -254,7 +249,7 @@ public class EffectManagerImpl implements EffectManager {
         MathValue waitTimeMultiplier = section.contains("wait-time-multiplier") ? ConfigUtils.getValue(section.get("wait-time-multiplier")) : new PlainMathValue(1);
         MathValue difficultyMultiplier = section.contains("difficulty-multiplier") ? ConfigUtils.getValue(section.get("difficulty-multiplier")) : new PlainMathValue(1);
         MathValue gameTimeMultiplier = section.contains("game-time-multiplier") ? ConfigUtils.getValue(section.get("game-time-multiplier")) : new PlainMathValue(1);
-        return new BaseEffect(
+        return new LootBaseEffectImpl(
                 waitTime, waitTimeMultiplier,
                 difficulty, difficultyMultiplier,
                 gameTime, gameTimeMultiplier

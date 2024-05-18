@@ -26,7 +26,6 @@ import net.momirealms.customfishing.api.mechanic.loot.LootType;
 import net.momirealms.customfishing.api.mechanic.statistic.StatisticsKeys;
 import net.momirealms.customfishing.api.util.WeightUtils;
 import net.momirealms.customfishing.mechanic.requirement.RequirementManagerImpl;
-import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -101,9 +100,9 @@ public class LootManagerImpl implements LootManager {
      * @param key The key of the loot group.
      * @return A list of loot IDs belonging to the specified loot group, or null if not found.
      */
-    @Nullable
+    @NotNull
     @Override
-    public List<String> getLootGroup(String key) {
+    public List<String> getGroupMembers(String key) {
         return lootGroupMap.get(key);
     }
 
@@ -113,7 +112,7 @@ public class LootManagerImpl implements LootManager {
      * @param key The key of the loot configuration.
      * @return The Loot object associated with the specified loot key, or null if not found.
      */
-    @Nullable
+    @NotNull
     @Override
     public Loot getLoot(String key) {
         return lootMap.get(key);
@@ -173,12 +172,12 @@ public class LootManagerImpl implements LootManager {
     public Map<String, Double> getPossibleLootKeysWithWeight(Effect effect, PlayerContext playerContext) {
         Map<String, Double> lootWithWeight = ((RequirementManagerImpl) plugin.getRequirementManager()).getLootWithWeight(playerContext);
         Player player = playerContext.getPlayer();
-        for (Pair<String, WeightModifier> pair : effect.weightModifier()) {
+        for (Pair<String, WeightModifier> pair : effect.weightOperations()) {
             Double previous = lootWithWeight.get(pair.left());
             if (previous != null)
                 lootWithWeight.put(pair.left(), pair.right().modify(player, previous));
         }
-        for (Pair<String, WeightModifier> pair : effect.weightModifierIgnored()) {
+        for (Pair<String, WeightModifier> pair : effect.weightOperationsIgnored()) {
             double previous = lootWithWeight.getOrDefault(pair.left(), 0d);
             lootWithWeight.put(pair.left(), pair.right().modify(player, previous));
         }

@@ -20,7 +20,6 @@ package net.momirealms.customfishing.gui.page.property;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.SectionPage;
 import net.momirealms.customfishing.gui.icon.BackGroundItem;
-import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;

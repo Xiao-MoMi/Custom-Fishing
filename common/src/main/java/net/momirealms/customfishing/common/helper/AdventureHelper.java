@@ -18,7 +18,7 @@ public class AdventureHelper {
     private final MiniMessage miniMessage;
     private final MiniMessage miniMessageStrict;
     private final GsonComponentSerializer gsonComponentSerializer;
-    private final Cache<String, String> miniMessageToJsonCache = Caffeine.newBuilder().expireAfterWrite(5, TimeUnit.MINUTES)
+    private final Cache<String, String> miniMessageToJsonCache = Caffeine.newBuilder().expireAfterWrite(5, TimeUnit.MINUTES).build();
 
     private AdventureHelper() {
         this.miniMessage = MiniMessage.builder().build();

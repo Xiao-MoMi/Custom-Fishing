@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.mechanic.market;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.data.EarningData;
+import net.momirealms.customfishing.api.storage.data.EarningData;
 import net.momirealms.customfishing.api.mechanic.market.MarketGUIHolder;
 import net.momirealms.customfishing.api.util.InventoryUtils;
 import net.momirealms.customfishing.util.ItemUtils;

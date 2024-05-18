@@ -30,7 +30,6 @@ import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.api.util.ReflectionUtils;
 import net.momirealms.customfishing.mechanic.competition.Competition;
 import net.momirealms.customfishing.mechanic.misc.DynamicText;
-import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.boss.BarColor;
 import org.bukkit.entity.Player;
 

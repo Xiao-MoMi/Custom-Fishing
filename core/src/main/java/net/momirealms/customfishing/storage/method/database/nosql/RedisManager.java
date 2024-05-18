@@ -18,9 +18,8 @@
 package net.momirealms.customfishing.storage.method.database.nosql;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.data.PlayerData;
-import net.momirealms.customfishing.api.data.StorageType;
-import net.momirealms.customfishing.setting.CFConfig;
+import net.momirealms.customfishing.api.storage.data.PlayerData;
+import net.momirealms.customfishing.api.storage.StorageType;
 import net.momirealms.customfishing.storage.method.AbstractStorage;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;

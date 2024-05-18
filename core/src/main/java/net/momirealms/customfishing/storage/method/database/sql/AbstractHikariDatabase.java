@@ -20,7 +20,11 @@ package net.momirealms.customfishing.storage.method.database.sql;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.data.*;
+import net.momirealms.customfishing.api.storage.*;
+import net.momirealms.customfishing.api.storage.data.EarningData;
+import net.momirealms.customfishing.api.storage.data.InventoryData;
+import net.momirealms.customfishing.api.storage.data.PlayerData;
+import net.momirealms.customfishing.api.storage.data.StatisticData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -150,16 +154,16 @@ public abstract class AbstractHikariDatabase extends AbstractSQLDatabase impleme
             try (
                 Connection connection = getConnection()
             ) {
-                var builder = new PlayerData.Builder().setName("");
+                var builder = new PlayerData.Builder().name("");
                 PreparedStatement statementOne = connection.prepareStatement(String.format(SqlConstants.SQL_SELECT_BY_UUID, getTableName("fishingbag")));
                 statementOne.setString(1, uuid.toString());
                 ResultSet rsOne = statementOne.executeQuery();
                 if (rsOne.next()) {
                     int size = rsOne.getInt("size");
                     String contents = rsOne.getString("contents");
-                    builder.setBagData(new InventoryData(contents, size));
+                    builder.bag(new InventoryData(contents, size));
                 } else {
-                    builder.setBagData(InventoryData.empty());
+                    builder.bag(InventoryData.empty());
                 }
 
                 PreparedStatement statementTwo = connection.prepareStatement(String.format(SqlConstants.SQL_SELECT_BY_UUID, getTableName("selldata")));
@@ -168,9 +172,9 @@ public abstract class AbstractHikariDatabase extends AbstractSQLDatabase impleme
                 if (rsTwo.next()) {
                     int date = rsTwo.getInt("date");
                     double money = rsTwo.getInt("money");
-                    builder.setEarningData(new EarningData(money, date));
+                    builder.earnings(new EarningData(money, date));
                 } else {
-                    builder.setEarningData(EarningData.empty());
+                    builder.earnings(EarningData.empty());
                 }
 
                 PreparedStatement statementThree = connection.prepareStatement(String.format(SqlConstants.SQL_SELECT_BY_UUID, getTableName("statistics")));
@@ -182,9 +186,9 @@ public abstract class AbstractHikariDatabase extends AbstractSQLDatabase impleme
                             .map(element -> element.split(":"))
                             .filter(pair -> pair.length == 2)
                             .collect(Collectors.toMap(pair -> pair[0], pair -> Integer.parseInt(pair[1])));
-                    builder.setStats(new StatisticData(amountMap, new HashMap<>()));
+                    builder.stats(new StatisticData(amountMap, new HashMap<>()));
                 } else {
-                    builder.setStats(StatisticData.empty());
+                    builder.stats(StatisticData.empty());
                 }
                 future.complete(Optional.of(builder.build()));
             } catch (SQLException e) {

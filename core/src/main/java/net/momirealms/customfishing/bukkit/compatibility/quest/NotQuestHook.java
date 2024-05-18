@@ -55,7 +55,7 @@ public class NotQuestHook implements Listener {
                     for (final ActiveObjective activeObjective : activeQuest.getActiveObjectives()) {
                         if (activeObjective.getObjective() instanceof GroupObjective groupObjective) {
                             if (activeObjective.isUnlocked()) {
-                                final String[] groups = loot.getLootGroup();
+                                final String[] groups = loot.lootGroup();
                                 if (groups != null)
                                     for (String group : groups) {
                                         if (group.equals(groupObjective.getGroupToFish())) {

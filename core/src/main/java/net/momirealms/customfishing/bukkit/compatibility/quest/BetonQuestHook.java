@@ -148,7 +148,7 @@ public class BetonQuestHook {
                 if (isInvalidLocation(event, onlineProfile)) {
                     return;
                 }
-                String[] groups = event.getLoot().getLootGroup();
+                String[] groups = event.getLoot().lootGroup();
                 if (groups != null)
                     for (String group : groups) {
                         if (this.loot_groups.contains(group) && this.checkConditions(onlineProfile)) {

@@ -21,6 +21,5 @@ public enum LootType {
 
     ITEM,
     ENTITY,
-    BLOCK,
-    GLOBAL
+    BLOCK
 }

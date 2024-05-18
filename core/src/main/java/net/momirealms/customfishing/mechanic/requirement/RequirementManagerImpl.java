@@ -372,7 +372,7 @@ public class RequirementManagerImpl implements RequirementManager {
             return condition -> {
                 String lootID = condition.getArg("{loot}");
                 Loot loot = plugin.getLootManager().getLoot(lootID);
-                String[] groups = loot.getLootGroup();
+                String[] groups = loot.lootGroup();
                 if (groups != null) {
                     for (String g : groups) {
                         if (arg.contains(g)) {
@@ -389,7 +389,7 @@ public class RequirementManagerImpl implements RequirementManager {
             return condition -> {
                 String lootID = condition.getArg("{loot}");
                 Loot loot = plugin.getLootManager().getLoot(lootID);
-                String[] groups = loot.getLootGroup();
+                String[] groups = loot.lootGroup();
                 if (groups == null) {
                     return true;
                 }

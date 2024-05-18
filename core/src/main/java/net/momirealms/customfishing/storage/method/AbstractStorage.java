@@ -18,9 +18,9 @@
 package net.momirealms.customfishing.storage.method;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.data.DataStorageInterface;
-import net.momirealms.customfishing.api.data.PlayerData;
-import net.momirealms.customfishing.api.data.user.OfflineUser;
+import net.momirealms.customfishing.api.storage.DataStorageProvider;
+import net.momirealms.customfishing.api.storage.data.PlayerData;
+import net.momirealms.customfishing.api.storage.user.UserData;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -30,7 +30,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * An abstract class that implements the DataStorageInterface and provides common functionality for data storage.
  */
-public abstract class AbstractStorage implements DataStorageInterface {
+public abstract class AbstractStorage implements DataStorageProvider {
 
     protected BukkitCustomFishingPlugin plugin;
 
@@ -58,9 +58,9 @@ public abstract class AbstractStorage implements DataStorageInterface {
     }
 
     @Override
-    public void updateManyPlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
+    public void updateManyPlayersData(Collection<? extends UserData> users, boolean unlock) {
         // Update data for multiple players by iterating through the collection of OfflineUser objects.
-        for (OfflineUser user : users) {
+        for (UserData user : users) {
             this.updatePlayerData(user.getUUID(), user.getPlayerData(), unlock);
         }
     }

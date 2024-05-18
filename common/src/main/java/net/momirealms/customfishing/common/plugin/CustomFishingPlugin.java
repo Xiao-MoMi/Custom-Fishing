@@ -1,6 +1,6 @@
 package net.momirealms.customfishing.common.plugin;
 
-import net.momirealms.customfishing.common.config.ConfigManager;
+import net.momirealms.customfishing.common.config.ConfigLoader;
 import net.momirealms.customfishing.common.dependency.DependencyManager;
 import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.plugin.classpath.ClassPathAppender;
@@ -30,7 +30,7 @@ public interface CustomFishingPlugin {
 
     TranslationManager getTranslationManager();
 
-    ConfigManager getConfigManager();
+    ConfigLoader getConfigManager();
 
     String getServerVersion();
 

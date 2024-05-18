@@ -23,7 +23,6 @@ import net.momirealms.customfishing.gui.icon.BackToFolderItem;
 import net.momirealms.customfishing.gui.icon.ScrollDownItem;
 import net.momirealms.customfishing.gui.icon.ScrollUpItem;
 import net.momirealms.customfishing.gui.page.item.ItemSelector;
-import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;

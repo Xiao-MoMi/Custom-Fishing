@@ -32,4 +32,9 @@ public class Node<T> {
     public Node<T> getChild(String node) {
         return childTree.get(node);
     }
+
+    @Nullable
+    public Node<T> removeChild(String node) {
+        return childTree.remove(node);
+    }
 }

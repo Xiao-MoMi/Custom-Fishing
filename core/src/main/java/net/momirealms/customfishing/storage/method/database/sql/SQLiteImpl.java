@@ -19,11 +19,10 @@ package net.momirealms.customfishing.storage.method.database.sql;
 
 import net.momirealms.customfishing.BukkitCustomFishingPluginImpl;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.data.PlayerData;
-import net.momirealms.customfishing.api.data.StorageType;
-import net.momirealms.customfishing.api.data.user.OfflineUser;
+import net.momirealms.customfishing.api.storage.data.PlayerData;
+import net.momirealms.customfishing.api.storage.StorageType;
+import net.momirealms.customfishing.api.storage.user.UserData;
 import net.momirealms.customfishing.libraries.dependencies.Dependency;
-import net.momirealms.customfishing.setting.CFConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -191,12 +190,12 @@ public class SQLiteImpl extends AbstractSQLDatabase {
      * @param unlock Flag indicating whether to unlock the data.
      */
     @Override
-    public void updateManyPlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
+    public void updateManyPlayersData(Collection<? extends UserData> users, boolean unlock) {
         String sql = String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data"));
         try (Connection connection = getConnection()) {
             connection.setAutoCommit(false);
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                for (OfflineUser user : users) {
+                for (UserData user : users) {
                     statement.setInt(1, unlock ? 0 : getCurrentSeconds());
                     statement.setBytes(2, plugin.getStorageManager().toBytes(user.getPlayerData()));
                     statement.setString(3, user.getUUID().toString());

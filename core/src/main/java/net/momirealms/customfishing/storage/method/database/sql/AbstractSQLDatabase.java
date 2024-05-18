@@ -18,9 +18,8 @@
 package net.momirealms.customfishing.storage.method.database.sql;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.data.PlayerData;
-import net.momirealms.customfishing.api.data.user.OfflineUser;
-import net.momirealms.customfishing.setting.CFConfig;
+import net.momirealms.customfishing.api.storage.data.PlayerData;
+import net.momirealms.customfishing.api.storage.user.UserData;
 import net.momirealms.customfishing.storage.method.AbstractStorage;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -197,12 +196,12 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
      * @param unlock Whether to unlock the player data after updating.
      */
     @Override
-    public void updateManyPlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
+    public void updateManyPlayersData(Collection<? extends UserData> users, boolean unlock) {
         String sql = String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data"));
         try (Connection connection = getConnection()) {
             connection.setAutoCommit(false);
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                for (OfflineUser user : users) {
+                for (UserData user : users) {
                     statement.setInt(1, unlock ? 0 : getCurrentSeconds());
                     statement.setBlob(2, new ByteArrayInputStream(plugin.getStorageManager().toBytes(user.getPlayerData())));
                     statement.setString(3, user.getUUID().toString());

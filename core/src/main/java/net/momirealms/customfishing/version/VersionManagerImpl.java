@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.version;
 
 import net.momirealms.customfishing.BukkitCustomFishingPluginImpl;
-import net.momirealms.customfishing.api.manager.VersionManager;
 import org.bukkit.Bukkit;
 
 import java.io.BufferedReader;

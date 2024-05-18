@@ -22,10 +22,9 @@ import com.mongodb.client.*;
 import com.mongodb.client.model.*;
 import com.mongodb.client.result.UpdateResult;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.data.PlayerData;
-import net.momirealms.customfishing.api.data.StorageType;
-import net.momirealms.customfishing.api.data.user.OfflineUser;
-import net.momirealms.customfishing.setting.CFConfig;
+import net.momirealms.customfishing.api.storage.data.PlayerData;
+import net.momirealms.customfishing.api.storage.StorageType;
+import net.momirealms.customfishing.api.storage.user.UserData;
 import net.momirealms.customfishing.storage.method.AbstractStorage;
 import org.bson.Document;
 import org.bson.UuidRepresentation;
@@ -190,7 +189,7 @@ public class MongoDBImpl extends AbstractStorage {
      * @param unlock Flag indicating whether to unlock the data.
      */
     @Override
-    public void updateManyPlayersData(Collection<? extends OfflineUser> users, boolean unlock) {
+    public void updateManyPlayersData(Collection<? extends UserData> users, boolean unlock) {
         MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
         try {
             int lock = unlock ? 0 : getCurrentSeconds();

@@ -30,8 +30,6 @@ import net.momirealms.customfishing.mechanic.competition.actionbar.ActionBarMana
 import net.momirealms.customfishing.mechanic.competition.bossbar.BossBarManager;
 import net.momirealms.customfishing.mechanic.competition.ranking.LocalRankingImpl;
 import net.momirealms.customfishing.mechanic.competition.ranking.RedisRankingImpl;
-import net.momirealms.customfishing.setting.CFConfig;
-import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

@@ -22,14 +22,12 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import net.momirealms.customfishing.BukkitCustomFishingPluginImpl;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.data.DataStorageInterface;
-import net.momirealms.customfishing.api.data.PlayerData;
-import net.momirealms.customfishing.api.data.StorageType;
-import net.momirealms.customfishing.api.data.user.OfflineUser;
-import net.momirealms.customfishing.api.data.user.OnlineUser;
-import net.momirealms.customfishing.api.manager.StorageManager;
+import net.momirealms.customfishing.api.storage.DataStorageProvider;
+import net.momirealms.customfishing.api.storage.data.PlayerData;
+import net.momirealms.customfishing.api.storage.StorageType;
+import net.momirealms.customfishing.api.storage.user.UserData;
+import net.momirealms.customfishing.api.storage.StorageManager;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
-import net.momirealms.customfishing.setting.CFConfig;
 import net.momirealms.customfishing.storage.method.database.nosql.MongoDBImpl;
 import net.momirealms.customfishing.storage.method.database.nosql.RedisManager;
 import net.momirealms.customfishing.storage.method.database.sql.H2Impl;
@@ -38,8 +36,7 @@ import net.momirealms.customfishing.storage.method.database.sql.MySQLImpl;
 import net.momirealms.customfishing.storage.method.database.sql.SQLiteImpl;
 import net.momirealms.customfishing.storage.method.file.JsonImpl;
 import net.momirealms.customfishing.storage.method.file.YAMLImpl;
-import net.momirealms.customfishing.storage.user.OfflineUserImpl;
-import net.momirealms.customfishing.storage.user.OnlineUserImpl;
+import net.momirealms.customfishing.storage.user.OfflineUser;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -67,9 +64,9 @@ import java.util.concurrent.TimeUnit;
 public class StorageManagerImpl implements StorageManager, Listener {
 
     private final BukkitCustomFishingPlugin plugin;
-    private DataStorageInterface dataSource;
+    private DataStorageProvider dataSource;
     private StorageType previousType;
-    private final ConcurrentHashMap<UUID, OnlineUser> onlineUserMap;
+    private final ConcurrentHashMap<UUID, OnlineUserData> onlineUserMap;
     private final HashSet<UUID> locked;
     private boolean hasRedis;
     private RedisManager redisManager;
@@ -174,12 +171,12 @@ public class StorageManagerImpl implements StorageManager, Listener {
      * @return An OnlineUser instance if the player is online, or null if not.
      */
     @Override
-    public OnlineUser getOnlineUser(UUID uuid) {
+    public OnlineUserData getOnlineUser(UUID uuid) {
         return onlineUserMap.get(uuid);
     }
 
     @Override
-    public Collection<OnlineUser> getOnlineUsers() {
+    public Collection<OnlineUserData> getOnlineUsers() {
         return onlineUserMap.values();
     }
 
@@ -191,7 +188,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
      * @return A CompletableFuture that resolves to an Optional containing the OfflineUser instance if found, or empty if not found or locked.
      */
     @Override
-    public CompletableFuture<Optional<OfflineUser>> getOfflineUser(UUID uuid, boolean lock) {
+    public CompletableFuture<Optional<UserData>> getOfflineUser(UUID uuid, boolean lock) {
         var optionalDataFuture = dataSource.getPlayerData(uuid, lock);
         return optionalDataFuture.thenCompose(optionalUser -> {
             if (optionalUser.isEmpty()) {
@@ -200,29 +197,29 @@ public class StorageManagerImpl implements StorageManager, Listener {
             }
             PlayerData data = optionalUser.get();
             if (data.isLocked()) {
-                return CompletableFuture.completedFuture(Optional.of(OfflineUserImpl.LOCKED_USER));
+                return CompletableFuture.completedFuture(Optional.of(OfflineUser.LOCKED_USER));
             } else {
-                OfflineUser offlineUser = new OfflineUserImpl(uuid, data.getName(), data);
-                return CompletableFuture.completedFuture(Optional.of(offlineUser));
+                UserData userData = new OfflineUser(uuid, data.getName(), data);
+                return CompletableFuture.completedFuture(Optional.of(userData));
             }
         });
     }
 
     @Override
-    public boolean isLockedData(OfflineUser offlineUser) {
-        return OfflineUserImpl.LOCKED_USER == offlineUser;
+    public boolean isLockedData(UserData userData) {
+        return OfflineUser.LOCKED_USER == userData;
     }
 
     /**
      * Asynchronously saves user data for an OfflineUser.
      *
-     * @param offlineUser The OfflineUser whose data needs to be saved.
+     * @param userData The OfflineUser whose data needs to be saved.
      * @param unlock Whether to unlock the data after saving.
      * @return A CompletableFuture that resolves to a boolean indicating the success of the data saving operation.
      */
     @Override
-    public CompletableFuture<Boolean> saveUserData(OfflineUser offlineUser, boolean unlock) {
-        return dataSource.updatePlayerData(offlineUser.getUUID(), offlineUser.getPlayerData(), unlock);
+    public CompletableFuture<Boolean> saveUserData(UserData userData, boolean unlock) {
+        return dataSource.updatePlayerData(userData.getUUID(), userData.getPlayerData(), unlock);
     }
 
     /**
@@ -231,7 +228,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
      * @return The data source.
      */
     @Override
-    public DataStorageInterface getDataSource() {
+    public DataStorageProvider getDataSource() {
         return dataSource;
     }
 
@@ -270,7 +267,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
         if (locked.contains(uuid))
             return;
 
-        OnlineUser onlineUser = onlineUserMap.remove(uuid);
+        OnlineUserData onlineUser = onlineUserMap.remove(uuid);
         if (onlineUser == null) return;
         PlayerData data = onlineUser.getPlayerData();
 
@@ -370,7 +367,7 @@ public class StorageManagerImpl implements StorageManager, Listener {
      */
     public void putDataInCache(Player player, PlayerData playerData) {
         locked.remove(player.getUniqueId());
-        OnlineUserImpl bukkitUser = new OnlineUserImpl(player, playerData);
+        OnlineUserDataImpl bukkitUser = new OnlineUserDataImpl(player, playerData);
         onlineUserMap.put(player.getUniqueId(), bukkitUser);
     }
 

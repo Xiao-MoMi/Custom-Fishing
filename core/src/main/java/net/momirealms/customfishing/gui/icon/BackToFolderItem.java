@@ -20,7 +20,6 @@ package net.momirealms.customfishing.gui.icon;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.gui.Icon;
 import net.momirealms.customfishing.gui.page.file.FileSelector;
-import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;

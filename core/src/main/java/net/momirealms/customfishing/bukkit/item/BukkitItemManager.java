@@ -7,11 +7,6 @@ import net.momirealms.customfishing.api.integration.ItemProvider;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.item.CustomFishingItem;
 import net.momirealms.customfishing.api.mechanic.item.ItemManager;
-import net.momirealms.customfishing.api.mechanic.misc.function.FormatFunction;
-import net.momirealms.customfishing.api.mechanic.misc.function.ItemPropertyFunction;
-import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
-import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
-import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.item.Item;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -21,10 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 

@@ -19,6 +19,7 @@ package net.momirealms.customfishing.api.mechanic.context;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -39,8 +40,26 @@ public interface Context<T> {
      */
     Map<ContextKeys<?>, Object> args();
 
+    /**
+     * Adds or updates an argument in the context.
+     * This method allows adding a new argument or updating the value of an existing argument.
+     *
+     * @param <C>   the type of the value being added to the context.
+     * @param key   the ContextKeys key representing the argument to be added or updated.
+     * @param value the value to be associated with the specified key.
+     * @return the current context instance, allowing for method chaining.
+     */
     <C> Context<T> arg(ContextKeys<C> key, C value);
 
+    /**
+     * Retrieves the value of a specific argument from the context.
+     * This method fetches the value associated with the specified ContextKeys key.
+     *
+     * @param <C> the type of the value being retrieved.
+     * @param key the ContextKeys key representing the argument to be retrieved.
+     * @return the value associated with the specified key, or null if the key does not exist.
+     */
+    @Nullable
     <C> C arg(ContextKeys<C> key);
 
     /**

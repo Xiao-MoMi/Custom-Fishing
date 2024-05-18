@@ -19,15 +19,11 @@ package net.momirealms.customfishing.mechanic.bag;
 
 import net.momirealms.customfishing.BukkitCustomFishingPluginImpl;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.data.user.OfflineUser;
-import net.momirealms.customfishing.api.mechanic.bag.BagManager;
-import net.momirealms.customfishing.api.mechanic.effect.EffectManager;
+import net.momirealms.customfishing.api.storage.user.UserData;
 import net.momirealms.customfishing.api.mechanic.action.Action;
-import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.util.InventoryUtils;
 import net.momirealms.customfishing.bukkit.compatibility.papi.PlaceholderManagerImpl;
-import net.momirealms.customfishing.setting.CFConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -48,7 +44,7 @@ import java.util.*;
 public class BagManagerImpl implements BagManager, Listener {
 
     private final BukkitCustomFishingPlugin plugin;
-    private final HashMap<UUID, OfflineUser> tempEditMap;
+    private final HashMap<UUID, UserData> tempEditMap;
     private Action[] collectLootActions;
     private Action[] bagFullActions;
     private boolean bagStoreLoots;
@@ -145,7 +141,7 @@ public class BagManagerImpl implements BagManager, Listener {
      * @param userData The OfflineUser data of the player whose bag is being edited.
      */
     @Override
-    public void editOfflinePlayerBag(Player admin, OfflineUser userData) {
+    public void editOfflinePlayerBag(Player admin, UserData userData) {
         this.tempEditMap.put(admin.getUniqueId(), userData);
         admin.openInventory(userData.getHolder().getInventory());
     }
@@ -160,10 +156,10 @@ public class BagManagerImpl implements BagManager, Listener {
         if (!(event.getInventory().getHolder() instanceof FishingBagHolder))
             return;
         final Player viewer = (Player) event.getPlayer();
-        OfflineUser offlineUser = tempEditMap.remove(viewer.getUniqueId());
-        if (offlineUser == null)
+        UserData userData = tempEditMap.remove(viewer.getUniqueId());
+        if (userData == null)
             return;
-        plugin.getStorageManager().saveUserData(offlineUser, true);
+        plugin.getStorageManager().saveUserData(userData, true);
     }
 
     /**
@@ -210,10 +206,10 @@ public class BagManagerImpl implements BagManager, Listener {
      */
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        OfflineUser offlineUser = tempEditMap.remove(event.getPlayer().getUniqueId());
-        if (offlineUser == null)
+        UserData userData = tempEditMap.remove(event.getPlayer().getUniqueId());
+        if (userData == null)
             return;
-        plugin.getStorageManager().saveUserData(offlineUser, true);
+        plugin.getStorageManager().saveUserData(userData, true);
     }
 
     @Override

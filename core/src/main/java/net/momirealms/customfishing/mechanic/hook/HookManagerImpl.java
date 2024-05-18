@@ -17,12 +17,9 @@
 
 package net.momirealms.customfishing.mechanic.hook;
 
-import de.tr7zw.changeme.nbtapi.NBTCompound;
-import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.hook.HookManager;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
-import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.hook.HookSetting;
 import net.momirealms.customfishing.mechanic.item.ItemManagerImpl;
 import net.momirealms.customfishing.util.ItemUtils;

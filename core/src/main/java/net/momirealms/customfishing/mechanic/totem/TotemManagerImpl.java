@@ -24,7 +24,6 @@ import net.momirealms.customfishing.api.event.TotemActivateEvent;
 import net.momirealms.customfishing.api.mechanic.totem.TotemManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
-import net.momirealms.customfishing.api.mechanic.effect.EffectCarrier;
 import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import net.momirealms.customfishing.api.mechanic.totem.TotemModel;
 import net.momirealms.customfishing.api.mechanic.totem.block.TotemBlock;

@@ -22,13 +22,10 @@ import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.FishHookLandEvent;
 import net.momirealms.customfishing.api.event.LavaFishingEvent;
-import net.momirealms.customfishing.api.mechanic.TempFishingState;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
-import net.momirealms.customfishing.api.mechanic.effect.FishingEffect;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
-import net.momirealms.customfishing.setting.CFConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -146,7 +143,7 @@ public class HookCheckTimerTask implements Runnable {
 
                 this.setNextLoot();
                 if (this.loot != null) {
-                    this.tempEffect = this.loot.getBaseEffect().build(fishingPreparation.getPlayer(), fishingPreparation.getArgs());
+                    this.tempEffect = this.loot.baseEffect().build(fishingPreparation.getPlayer(), fishingPreparation.getArgs());
                     this.tempEffect.merge(this.initialEffect);
                     this.setTempState();
                     this.startLavaFishingMechanic();
@@ -191,7 +188,7 @@ public class HookCheckTimerTask implements Runnable {
                 this.manager.removeTempFishingState(fishingPreparation.getPlayer());
                 BukkitCustomFishingPlugin.get().debug("No loot available for " + fishingPreparation.getPlayer().getName() + " at " + fishingPreparation.getLocation());
             } else {
-                this.tempEffect = this.loot.getBaseEffect().build(fishingPreparation.getPlayer(), fishingPreparation.getArgs());
+                this.tempEffect = this.loot.baseEffect().build(fishingPreparation.getPlayer(), fishingPreparation.getArgs());
                 this.tempEffect.merge(this.initialEffect);
                 this.setWaitTime();
                 this.setTempState();
@@ -263,14 +260,14 @@ public class HookCheckTimerTask implements Runnable {
         int random;
         if (CFConfig.overrideVanilla) {
             random = ThreadLocalRandom.current().nextInt(CFConfig.lavaMinTime, CFConfig.lavaMaxTime);
-            random *= tempEffect.getWaitTimeMultiplier();
+            random *= tempEffect.waitTimeMultiplier();
             random += tempEffect.waitTimeAdder();
             random = Math.max(1, random);
         } else {
             random = ThreadLocalRandom.current().nextInt(CFConfig.lavaMinTime, CFConfig.lavaMaxTime);
             random -= lureLevel * 100;
             random = Math.max(CFConfig.lavaMinTime, random);
-            random *= tempEffect.getWaitTimeMultiplier();
+            random *= tempEffect.waitTimeMultiplier();
             random += tempEffect.waitTimeAdder();
             random = Math.max(1, random);
         }
@@ -347,10 +344,10 @@ public class HookCheckTimerTask implements Runnable {
     private void setWaitTime() {
         if (CFConfig.overrideVanilla) {
             double initialTime = ThreadLocalRandom.current().nextInt(CFConfig.waterMaxTime - CFConfig.waterMinTime + 1) + CFConfig.waterMinTime;
-            fishHook.setWaitTime(Math.max(1, (int) (initialTime * tempEffect.getWaitTimeMultiplier() + tempEffect.waitTimeAdder())));
+            fishHook.setWaitTime(Math.max(1, (int) (initialTime * tempEffect.waitTimeMultiplier() + tempEffect.waitTimeAdder())));
         } else {
-            fishHook.setMinWaitTime(Math.max(1, (int) (fishHook.getMinWaitTime() * tempEffect.getWaitTimeMultiplier() + tempEffect.waitTimeAdder())));
-            fishHook.setMaxWaitTime(Math.max(2, (int) (fishHook.getMaxWaitTime() * tempEffect.getWaitTimeMultiplier() + tempEffect.waitTimeAdder())));
+            fishHook.setMinWaitTime(Math.max(1, (int) (fishHook.getMinWaitTime() * tempEffect.waitTimeMultiplier() + tempEffect.waitTimeAdder())));
+            fishHook.setMaxWaitTime(Math.max(2, (int) (fishHook.getMaxWaitTime() * tempEffect.waitTimeMultiplier() + tempEffect.waitTimeAdder())));
         }
     }
 }

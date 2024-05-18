@@ -18,7 +18,11 @@
 package net.momirealms.customfishing.storage.method.file;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.data.*;
+import net.momirealms.customfishing.api.storage.*;
+import net.momirealms.customfishing.api.storage.data.EarningData;
+import net.momirealms.customfishing.api.storage.data.InventoryData;
+import net.momirealms.customfishing.api.storage.data.PlayerData;
+import net.momirealms.customfishing.api.storage.data.StatisticData;
 import net.momirealms.customfishing.storage.method.AbstractStorage;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.Bukkit;
@@ -70,10 +74,10 @@ public class YAMLImpl extends AbstractStorage implements LegacyDataStorageInterf
         YamlConfiguration data = ConfigUtils.readData(dataFile);
 
         PlayerData playerData = new PlayerData.Builder()
-                .setBagData(new InventoryData(data.getString("bag", ""), data.getInt("size", 9)))
-                .setEarningData(new EarningData(data.getDouble("earnings"), data.getInt("date")))
-                .setStats(getStatistics(data.getConfigurationSection("stats")))
-                .setName(data.getString("name"))
+                .bag(new InventoryData(data.getString("bag", ""), data.getInt("size", 9)))
+                .earnings(new EarningData(data.getDouble("earnings"), data.getInt("date")))
+                .stats(getStatistics(data.getConfigurationSection("stats")))
+                .name(data.getString("name"))
                 .build();
         return CompletableFuture.completedFuture(Optional.of(playerData));
     }
@@ -153,15 +157,15 @@ public class YAMLImpl extends AbstractStorage implements LegacyDataStorageInterf
     @Override
     public CompletableFuture<Optional<PlayerData>> getLegacyPlayerData(UUID uuid) {
         // Retrieve legacy player data (YAML format) for a given UUID.
-        var builder = new PlayerData.Builder().setName("");
+        var builder = new PlayerData.Builder().name("");
         File bagFile = new File(plugin.getDataFolder(), "data/fishingbag/" + uuid + ".yml");
         if (bagFile.exists()) {
             YamlConfiguration yaml = YamlConfiguration.loadConfiguration(bagFile);
             String contents = yaml.getString("contents", "");
             int size = yaml.getInt("size", 9);
-            builder.setBagData(new InventoryData(contents, size));
+            builder.bag(new InventoryData(contents, size));
         } else {
-            builder.setBagData(InventoryData.empty());
+            builder.bag(InventoryData.empty());
         }
 
         File statFile = new File(plugin.getDataFolder(), "data/statistics/" + uuid + ".yml");
@@ -173,17 +177,17 @@ public class YAMLImpl extends AbstractStorage implements LegacyDataStorageInterf
                     map.put(entry.getKey(), integer);
                 }
             }
-            builder.setStats(new StatisticData(map, new HashMap<>()));
+            builder.stats(new StatisticData(map, new HashMap<>()));
         } else {
-            builder.setStats(StatisticData.empty());
+            builder.stats(StatisticData.empty());
         }
 
         File sellFile = new File(plugin.getDataFolder(), "data/sell/" + uuid + ".yml");
         if (sellFile.exists()) {
             YamlConfiguration yaml = YamlConfiguration.loadConfiguration(sellFile);
-            builder.setEarningData(new EarningData(yaml.getDouble("earnings"), yaml.getInt("date")));
+            builder.earnings(new EarningData(yaml.getDouble("earnings"), yaml.getInt("date")));
         } else {
-            builder.setEarningData(EarningData.empty());
+            builder.earnings(EarningData.empty());
         }
 
         return CompletableFuture.completedFuture(Optional.of(builder.build()));

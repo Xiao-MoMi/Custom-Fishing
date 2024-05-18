@@ -19,7 +19,6 @@ package net.momirealms.customfishing.api.mechanic.entity;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**

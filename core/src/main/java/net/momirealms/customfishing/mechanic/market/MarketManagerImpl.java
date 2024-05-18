@@ -19,8 +19,7 @@ package net.momirealms.customfishing.mechanic.market;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.data.EarningData;
-import net.momirealms.customfishing.api.data.user.OnlineUser;
+import net.momirealms.customfishing.api.storage.data.EarningData;
 import net.momirealms.customfishing.api.mechanic.market.MarketManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.market.MarketGUIHolder;
@@ -96,7 +95,7 @@ public class MarketManagerImpl implements MarketManager, Listener {
             int now = getRealTimeDate();
             if (this.date != now) {
                 this.date = now;
-                for (OnlineUser onlineUser : plugin.getStorageManager().getOnlineUsers()) {
+                for (OnlineUserData onlineUser : plugin.getStorageManager().getOnlineUsers()) {
                     onlineUser.getEarningData().date = now;
                     onlineUser.getEarningData().earnings = 0d;
                 }
@@ -193,7 +192,7 @@ public class MarketManagerImpl implements MarketManager, Listener {
     @Override
     public void openMarketGUI(Player player) {
         if (!isEnable()) return;
-        OnlineUser user = plugin.getStorageManager().getOnlineUser(player.getUniqueId());
+        OnlineUserData user = plugin.getStorageManager().getOnlineUser(player.getUniqueId());
         if (user == null) {
             LogUtils.warn("Player " + player.getName() + "'s market data is not loaded yet.");
             return;

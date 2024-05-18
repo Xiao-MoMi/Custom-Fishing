@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.TreeSet;
 import java.util.function.BiConsumer;
 
 public interface CustomFishingItem {

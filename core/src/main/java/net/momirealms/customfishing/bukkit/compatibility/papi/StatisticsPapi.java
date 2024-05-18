@@ -19,8 +19,6 @@ package net.momirealms.customfishing.bukkit.compatibility.papi;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.data.user.OnlineUser;
-import net.momirealms.customfishing.api.mechanic.statistic.Statistics;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,7 +63,7 @@ public class StatisticsPapi extends PlaceholderExpansion {
 
     @Override
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
-        OnlineUser onlineUser = plugin.getStorageManager().getOnlineUser(player.getUniqueId());
+        OnlineUserData onlineUser = plugin.getStorageManager().getOnlineUser(player.getUniqueId());
         if (onlineUser == null) return "Data not loaded";
         Statistics statistics = onlineUser.getStatistics();
         String[] split = params.split("_", 2);

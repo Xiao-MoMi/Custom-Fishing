@@ -21,7 +21,6 @@ import net.momirealms.customfishing.BukkitCustomFishingPluginImpl;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.gui.SectionPage;
-import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;

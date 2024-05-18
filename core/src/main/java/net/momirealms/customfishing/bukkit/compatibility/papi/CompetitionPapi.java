@@ -20,7 +20,6 @@ package net.momirealms.customfishing.bukkit.compatibility.papi;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
-import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

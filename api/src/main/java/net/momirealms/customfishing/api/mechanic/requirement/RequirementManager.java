@@ -97,7 +97,7 @@ public interface RequirementManager<T> {
     @Nullable
     RequirementFactory<T> getRequirementFactory(@NotNull String type);
 
-    static <T> boolean isSatisfied(Context<T> context, @Nullable Requirement<T>... requirements) {
+    static <T> boolean isSatisfied(Context<T> context, @Nullable Requirement<T>[] requirements) {
         if (requirements == null) return true;
         for (Requirement<T> requirement : requirements) {
             if (!requirement.isSatisfied(context)) {

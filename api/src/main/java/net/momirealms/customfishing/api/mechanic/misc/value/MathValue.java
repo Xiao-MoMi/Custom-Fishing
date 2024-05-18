@@ -70,7 +70,11 @@ public interface MathValue<T> {
      */
     static <T> MathValue<T> auto(Object o) {
         if (o instanceof String s) {
-            return expression(s);
+            try {
+                return plain(Double.parseDouble(s));
+            } catch (NumberFormatException e) {
+                return expression(s);
+            }
         } else if (o instanceof Number n) {
             return plain(n.doubleValue());
         }

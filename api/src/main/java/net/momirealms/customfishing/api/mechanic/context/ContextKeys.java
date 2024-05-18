@@ -30,6 +30,8 @@ public class ContextKeys<T> {
     public static final ContextKeys<String> WORLD = of("world", String.class);
     public static final ContextKeys<String> ID = of("id", String.class);
     public static final ContextKeys<String> TYPE = of("type", String.class);
+    public static final ContextKeys<Float> SIZE = of("size", Float.class);
+    public static final ContextKeys<Double> PRICE = of("price", Double.class);
 
     private final String key;
     private final Class<T> type;

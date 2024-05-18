@@ -25,7 +25,6 @@ import net.momirealms.customfishing.gui.icon.BackGroundItem;
 import net.momirealms.customfishing.gui.icon.BackToFolderItem;
 import net.momirealms.customfishing.gui.icon.NextPageItem;
 import net.momirealms.customfishing.gui.icon.PreviousPageItem;
-import net.momirealms.customfishing.setting.CFLocale;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;

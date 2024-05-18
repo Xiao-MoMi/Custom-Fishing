@@ -38,8 +38,6 @@ import net.momirealms.customfishing.mechanic.misc.CoolDownManager;
 import net.momirealms.customfishing.mechanic.requirement.RequirementManagerImpl;
 import net.momirealms.customfishing.mechanic.statistic.StatisticsManagerImpl;
 import net.momirealms.customfishing.mechanic.totem.TotemManagerImpl;
-import net.momirealms.customfishing.setting.CFConfig;
-import net.momirealms.customfishing.setting.CFLocale;
 import net.momirealms.customfishing.storage.StorageManagerImpl;
 import net.momirealms.customfishing.version.VersionManagerImpl;
 import org.bstats.bukkit.Metrics;
