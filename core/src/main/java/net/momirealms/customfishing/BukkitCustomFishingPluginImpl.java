@@ -19,12 +19,12 @@ package net.momirealms.customfishing;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.CustomFishingReloadEvent;
+import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.bukkit.compatibility.IntegrationManagerImpl;
-import net.momirealms.customfishing.bukkit.misc.placeholder.BukkitPlaceholderManager;
+import net.momirealms.customfishing.bukkit.competition.CompetitionManagerImpl;
 import net.momirealms.customfishing.mechanic.action.ActionManagerImpl;
 import net.momirealms.customfishing.mechanic.bag.BagManagerImpl;
 import net.momirealms.customfishing.mechanic.block.BlockManagerImpl;
-import net.momirealms.customfishing.bukkit.competition.CompetitionManagerImpl;
 import net.momirealms.customfishing.mechanic.effect.EffectManagerImpl;
 import net.momirealms.customfishing.mechanic.entity.EntityManagerImpl;
 import net.momirealms.customfishing.mechanic.fishing.FishingManagerImpl;

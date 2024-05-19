@@ -28,17 +28,16 @@ import net.momirealms.customfishing.api.common.Tuple;
 import net.momirealms.customfishing.api.event.FishingBagPreCollectEvent;
 import net.momirealms.customfishing.api.event.FishingLootPreSpawnEvent;
 import net.momirealms.customfishing.api.event.FishingLootSpawnEvent;
-import net.momirealms.customfishing.api.mechanic.action.ActionManager;
-import net.momirealms.customfishing.api.mechanic.item.ItemManager;
-import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
-import net.momirealms.customfishing.api.mechanic.action.Action;
-import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.integration.ItemProvider;
+import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.action.ActionManager;
+import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
+import net.momirealms.customfishing.api.mechanic.item.ItemManager;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
-import net.momirealms.customfishing.bukkit.compatibility.item.CustomFishingItemImpl;
-import net.momirealms.customfishing.bukkit.compatibility.item.VanillaItemImpl;
-import net.momirealms.customfishing.bukkit.misc.placeholder.BukkitPlaceholderManager;
+import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
+import net.momirealms.customfishing.bukkit.compatibility.item.CustomFishingItemProvider;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.ItemUtils;
 import net.momirealms.customfishing.util.LocationUtils;
@@ -94,7 +93,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
         this.itemLibraryMap = new LinkedHashMap<>();
         this.buildableItemMap = new HashMap<>();
         this.blockKey = NamespacedKey.fromString("block", plugin);
-        this.registerItemLibrary(new CustomFishingItemImpl());
+        this.registerItemLibrary(new CustomFishingItemProvider());
         this.registerItemLibrary(new VanillaItemImpl());
     }
 
@@ -559,7 +558,7 @@ public class ItemManagerImpl implements ItemManager, Listener {
 
         @Override
         public ItemStack build(Player player, Map<String, String> placeholders) {
-            return ItemManagerImpl.instance.build(player, this, placeholders);
+            return ItemManagerImpl.instance.buildInternal(player, this, placeholders);
         }
 
         @Override

@@ -33,6 +33,7 @@ public final class PlayerContextImpl implements Context<Player> {
 
     private final Player player;
     private final HashMap<ContextKeys<?>, Object> args = new HashMap<>();
+    private final Map<String, String> placeholderMap = new HashMap<>();
 
     /**
      * Constructs a new PlayerContextImpl with the specified player.
@@ -57,16 +58,13 @@ public final class PlayerContextImpl implements Context<Player> {
 
     @Override
     public Map<String, String> toPlaceholderMap() {
-        HashMap<String, String> placeholders = new HashMap<>();
-        for (Map.Entry<ContextKeys<?>, Object> entry : args.entrySet()) {
-            placeholders.put(entry.getKey().toString(), entry.getValue().toString());
-        }
-        return placeholders;
+        return placeholderMap;
     }
 
     @Override
     public <C> PlayerContextImpl arg(ContextKeys<C> key, C value) {
-        args.put(key, value);
+        this.args.put(key, value);
+        this.placeholderMap.put("{" + key.key() + "}", value.toString());
         return this;
     }
 

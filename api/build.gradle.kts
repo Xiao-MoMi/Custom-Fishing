@@ -3,8 +3,9 @@ plugins {
 }
 
 repositories {
-    maven("https://repo.codemc.io/repository/maven-public/")
-    maven("https://jitpack.io/")
+    maven("https://jitpack.io/") // rtag
+    maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // papi
 }
 
 dependencies {
@@ -15,10 +16,11 @@ dependencies {
         exclude(module = "checker-qual")
         exclude(module = "annotations")
     }
-    implementation("com.saicone.rtag:rtag:1.5.3")
-    implementation("com.saicone.rtag:rtag-item:1.5.3")
+    implementation("com.saicone.rtag:rtag:${rootProject.properties["rtag_version"]}")
+    implementation("com.saicone.rtag:rtag-item:${rootProject.properties["rtag_version"]}")
     compileOnly("dev.folia:folia-api:${rootProject.properties["paper_version"]}-R0.1-SNAPSHOT")
     compileOnly("com.google.code.gson:gson:${rootProject.properties["gson_version"]}")
+    compileOnly("me.clip:placeholderapi:${rootProject.properties["placeholder_api_version"]}")
 }
 
 java {
@@ -35,10 +37,10 @@ tasks.withType<JavaCompile> {
     dependsOn(tasks.clean)
 }
 
-
 tasks {
     shadowJar {
         relocate("net.kyori", "net.momirealms.customfishing.libraries")
         relocate("dev.dejvokep", "net.momirealms.customfishing.libraries")
+        relocate ("com.saicone.rtag", "net.momirealms.customfishing.libraries.rtag")
     }
 }

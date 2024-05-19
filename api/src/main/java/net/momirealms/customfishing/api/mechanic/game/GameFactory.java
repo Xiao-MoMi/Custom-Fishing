@@ -17,10 +17,9 @@
 
 package net.momirealms.customfishing.api.mechanic.game;
 
-import org.bukkit.configuration.ConfigurationSection;
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 
 public interface GameFactory {
 
-    GameInstance setArgs(ConfigurationSection section);
-
+    GameInstance setArgs(Section section);
 }

@@ -62,11 +62,11 @@ public interface SchedulerAdapter<T> {
      * @param task the task
      */
     default void executeSync(Runnable task, T location) {
-        sync().execute(task, location);
+        sync().run(task, location);
     }
 
     default void executeSync(Runnable task) {
-        sync().execute(task, null);
+        sync().run(task, null);
     }
 
     /**
@@ -87,12 +87,12 @@ public interface SchedulerAdapter<T> {
      * @param unit the unit of interval
      * @return the resultant task instance
      */
-    SchedulerTask asyncRepeating(Runnable task, long interval, TimeUnit unit);
+    SchedulerTask asyncRepeating(Runnable task, long delay, long interval, TimeUnit unit);
 
     /**
      * Shuts down the scheduler instance.
      *
-     * <p>{@link #asyncLater(Runnable, long, TimeUnit)} and {@link #asyncRepeating(Runnable, long, TimeUnit)}.</p>
+     * <p>{@link #asyncLater(Runnable, long, TimeUnit)} and {@link #asyncRepeating(Runnable, long, long, TimeUnit)}.</p>
      */
     void shutdownScheduler();
 

@@ -1,19 +1,61 @@
+repositories {
+    maven("https://jitpack.io/") // itemsadder
+    maven("https://mvn.lumine.io/repository/maven-public/") // mythicmobs
+    maven("https://nexus.phoenixdevt.fr/repository/maven-public/") // mmoitems
+    maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // papi
+    maven("https://r.irepo.space/maven/") // neigeitems
+    maven("https://repo.oraxen.com/releases/") // oraxen
+    maven("https://repo.auxilor.io/repository/maven-public/") // eco
+    maven("https://nexus.betonquest.org/repository/betonquest/") // betonquest
+}
+
 dependencies {
     compileOnly(project(":common"))
     compileOnly(project(":api"))
+    compileOnly("net.kyori:adventure-api:${rootProject.properties["adventure_bundle_version"]}") {
+        exclude(module = "adventure-bom")
+        exclude(module = "checker-qual")
+        exclude(module = "annotations")
+    }
+    compileOnly("org.jetbrains:annotations:${rootProject.properties["jetbrains_annotations_version"]}")
     // papi
-    compileOnly("me.clip:placeholderapi:2.11.5")
+    compileOnly("me.clip:placeholderapi:${rootProject.properties["placeholder_api_version"]}")
     // server
-    compileOnly("dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT")
-
-    // local jars
-    compileOnly(files("libs/AdvancedEnchantments-api.jar"))
-    compileOnly(files("libs/BattlePass-4.0.6-api.jar"))
+    compileOnly("dev.folia:folia-api:${rootProject.properties["paper_version"]}-R0.1-SNAPSHOT")
+    // vault
+    compileOnly("com.github.MilkBowl:VaultAPI:${rootProject.properties["vault_version"]}")
+    // season
+    compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.4.8")
     compileOnly(files("libs/RealisticSeasons-api.jar"))
+    compileOnly(files("libs/AdvancedSeasons-API.jar"))
+    // enchantment
+    compileOnly(files("libs/AdvancedEnchantments-api.jar"))
+    // leveler
     compileOnly(files("libs/mcMMO-api.jar"))
+    compileOnly("net.Indyuce:MMOCore-API:1.12.1-SNAPSHOT")
+    compileOnly("dev.aurelium:auraskills-api-bukkit:2.0.7")
+    compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
+    compileOnly("com.github.Zrips:Jobs:4.17.2")
+    // quest
+    compileOnly(files("libs/BattlePass-4.0.6-api.jar"))
     compileOnly(files("libs/ClueScrolls-4.8.7-api.jar"))
     compileOnly(files("libs/notquests-5.17.1.jar"))
+    compileOnly("org.betonquest:betonquest:2.0.1")
+    // item
     compileOnly(files("libs/zaphkiel-2.0.24.jar"))
+    compileOnly("com.github.LoneDev6:API-ItemsAdder:3.6.1")
+    compileOnly("net.Indyuce:MMOItems-API:6.10-SNAPSHOT")
+    compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")
+    compileOnly("pers.neige.neigeitems:NeigeItems:1.17.13")
+    compileOnly("io.th0rgal:oraxen:1.175.0")
+    // entity
+    compileOnly("io.lumine:Mythic-Dist:5.6.2")
+    // eco
+    compileOnly("com.willfp:eco:6.70.1")
+    compileOnly("com.willfp:EcoJobs:3.56.1")
+    compileOnly("com.willfp:EcoSkills:3.46.1")
+    compileOnly("com.willfp:libreforge:4.58.1")
 }
 
 java {

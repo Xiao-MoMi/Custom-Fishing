@@ -20,7 +20,7 @@ package net.momirealms.customfishing.api.mechanic.game;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.fishing.FishingManager;
-import net.momirealms.customfishing.api.scheduler.CancellableTask;
+import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import org.bukkit.Material;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -31,7 +31,7 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     private final FishingManager manager;
     protected long deadline;
     protected boolean success;
-    protected CancellableTask task;
+    protected SchedulerTask task;
     protected Player player;
     protected GameSettings settings;
     protected FishHook fishHook;
@@ -52,8 +52,9 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
 
     @Override
     public void cancel() {
-        if (task != null && !task.isCancelled())
+        if (task != null) {
             task.cancel();
+        }
     }
 
     @Override

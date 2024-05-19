@@ -33,6 +33,7 @@ public class ContextKeys<T> {
     public static final ContextKeys<Float> SIZE = of("size", Float.class);
     public static final ContextKeys<Double> PRICE = of("price", Double.class);
     public static final ContextKeys<String> SURROUNDING = of("surrounding", String.class);
+    public static final ContextKeys<String> TEMP_NEAR_PLAYER = of("near", String.class);
 
     private final String key;
     private final Class<T> type;

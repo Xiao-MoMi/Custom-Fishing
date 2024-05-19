@@ -27,17 +27,17 @@ import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.event.FishingResultEvent;
 import net.momirealms.customfishing.api.event.LavaFishingEvent;
 import net.momirealms.customfishing.api.event.RodCastEvent;
-import net.momirealms.customfishing.api.mechanic.fishing.FishingManager;
-import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
+import net.momirealms.customfishing.api.mechanic.fishing.FishingManager;
 import net.momirealms.customfishing.api.mechanic.game.BasicGameConfig;
 import net.momirealms.customfishing.api.mechanic.game.GameInstance;
 import net.momirealms.customfishing.api.mechanic.game.GameSettings;
 import net.momirealms.customfishing.api.mechanic.game.GamingPlayer;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
+import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.util.WeightUtils;
 import net.momirealms.customfishing.mechanic.requirement.RequirementManagerImpl;
 import net.momirealms.customfishing.util.ItemUtils;
@@ -670,7 +670,7 @@ public class FishingManagerImpl implements Listener, FishingManager {
                 } else {
                     for (int i = 0; i < amount; i++) {
                         plugin.getScheduler().runTaskSyncLater(() -> {
-                            ItemStack item = plugin.getItemManager().build(player, "item", loot.getID(), fishingPreparation.getArgs());
+                            ItemStack item = plugin.getItemManager().buildInternal(player, "item", loot.getID(), fishingPreparation.getArgs());
                             if (item == null) {
                                 LogUtils.warn(String.format("Item %s not exists", loot.getID()));
                                 return;

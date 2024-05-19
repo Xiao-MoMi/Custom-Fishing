@@ -26,5 +26,9 @@ import org.jetbrains.annotations.Nullable;
 public interface ItemManager {
 
     @Nullable
-    ItemStack build(Context<Player> context, Key key);
+    ItemStack buildInternal(Context<Player> context, Key key);
+
+    ItemStack buildAny(Context<Player> context, String item);
+
+    String getCustomFishingItemID(ItemStack itemStack);
 }

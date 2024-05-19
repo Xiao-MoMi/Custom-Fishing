@@ -17,14 +17,18 @@
 
 package net.momirealms.customfishing.api;
 
+import net.momirealms.customfishing.api.integration.IntegrationManager;
 import net.momirealms.customfishing.api.mechanic.action.ActionManager;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.event.EventManager;
+import net.momirealms.customfishing.api.mechanic.item.ItemManager;
 import net.momirealms.customfishing.api.mechanic.misc.placeholder.PlaceholderManager;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
+import net.momirealms.customfishing.common.plugin.scheduler.AbstractJavaScheduler;
 import net.momirealms.customfishing.common.sender.SenderFactory;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -44,6 +48,9 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
     protected ActionManager<Player> actionManager;
     protected SenderFactory<BukkitCustomFishingPlugin, CommandSender> senderFactory;
     protected PlaceholderManager placeholderManager;
+    protected AbstractJavaScheduler<Location> scheduler;
+    protected ItemManager itemManager;
+    protected IntegrationManager integrationManager;
 
     public BukkitCustomFishingPlugin() {
         instance = this;
@@ -85,7 +92,24 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
         return placeholderManager;
     }
 
+    public ItemManager getItemManager() {
+        return itemManager;
+    }
+
+    public IntegrationManager getIntegrationManager() {
+        return integrationManager;
+    }
+
+    @Override
+    public AbstractJavaScheduler<Location> getScheduler() {
+        return scheduler;
+    }
+
     public Plugin getBoostrap() {
         return boostrap;
+    }
+
+    public void reload() {
+
     }
 }

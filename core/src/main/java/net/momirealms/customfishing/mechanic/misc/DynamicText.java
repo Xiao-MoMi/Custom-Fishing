@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.mechanic.misc;
 
-import net.momirealms.customfishing.bukkit.misc.placeholder.BukkitPlaceholderManager;
+import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

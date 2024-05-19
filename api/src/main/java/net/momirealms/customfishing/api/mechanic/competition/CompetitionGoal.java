@@ -21,8 +21,6 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.util.Index;
 import net.momirealms.customfishing.common.util.RandomUtils;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 public final class CompetitionGoal {
 
     public static final CompetitionGoal CATCH_AMOUNT = new CompetitionGoal(Key.key("customfishing", "catch_amount"));

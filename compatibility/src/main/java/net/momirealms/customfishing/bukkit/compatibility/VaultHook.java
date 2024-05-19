@@ -18,7 +18,8 @@
 package net.momirealms.customfishing.bukkit.compatibility;
 
 import net.milkbowl.vault.economy.Economy;
-import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class VaultHook {
@@ -26,7 +27,7 @@ public class VaultHook {
     private static Economy economy;
 
     public static boolean initialize() {
-        RegisteredServiceProvider<Economy> rsp = BukkitCustomFishingPlugin.getInstance().getServer().getServicesManager().getRegistration(Economy.class);
+        RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
             return false;
         }
@@ -36,5 +37,17 @@ public class VaultHook {
 
     public static Economy getEconomy() {
         return economy;
+    }
+
+    public static void deposit(OfflinePlayer player, double amount) {
+        economy.depositPlayer(player, amount);
+    }
+
+    public static void withdraw(OfflinePlayer player, double amount) {
+        economy.withdrawPlayer(player, amount);
+    }
+
+    public static double getBalance(OfflinePlayer player) {
+        return economy.getBalance(player);
     }
 }

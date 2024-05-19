@@ -30,5 +30,5 @@ public interface SeasonProvider extends ExternalProvider {
      * @return spring, summer, autumn, winter or disabled
      */
     @NotNull
-    Season getSeason(World world);
+    Season getSeason(@NotNull World world);
 }

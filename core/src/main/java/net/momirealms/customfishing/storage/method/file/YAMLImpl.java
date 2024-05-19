@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.storage.method.file;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.storage.*;
+import net.momirealms.customfishing.api.storage.StorageType;
 import net.momirealms.customfishing.api.storage.data.EarningData;
 import net.momirealms.customfishing.api.storage.data.InventoryData;
 import net.momirealms.customfishing.api.storage.data.PlayerData;

@@ -17,7 +17,9 @@
 
 package net.momirealms.customfishing.api.mechanic.game;
 
-import net.momirealms.customfishing.api.common.Pair;
+import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.common.util.Pair;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -56,7 +58,8 @@ public interface GameManager {
      * @return An {@code Optional} containing a {@code Pair} of the basic game configuration and the game instance
      *         if found, or an empty {@code Optional} if not found.
      */
-    @Nullable Pair<BasicGameConfig, GameInstance> getGameInstance(String key);
+    @Nullable
+    Pair<BasicGameConfig, GameInstance> getGameInstance(String key);
 
     /**
      * Retrieves a map of game names and their associated weights based on the specified conditions.
@@ -64,5 +67,5 @@ public interface GameManager {
      * @param playerContext The condition to evaluate game weights.
      * @return A {@code HashMap} containing game names as keys and their associated weights as values.
      */
-    HashMap<String, Double> getGameWithWeight(PlayerContext playerContext);
+    HashMap<String, Double> getGameWithWeight(Context<Player> playerContext);
 }

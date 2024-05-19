@@ -18,11 +18,11 @@
 package net.momirealms.customfishing.mechanic.entity;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.mechanic.entity.EntityManager;
-import net.momirealms.customfishing.api.mechanic.entity.EntityConfigImpl;
 import net.momirealms.customfishing.api.integration.EntityProvider;
+import net.momirealms.customfishing.api.mechanic.entity.EntityConfigImpl;
+import net.momirealms.customfishing.api.mechanic.entity.EntityManager;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
-import net.momirealms.customfishing.bukkit.compatibility.entity.VanillaEntityImpl;
+import net.momirealms.customfishing.bukkit.compatibility.entity.VanillaEntityProvider;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -42,7 +42,7 @@ public class EntityManagerImpl implements EntityManager {
         this.plugin = plugin;
         this.entityLibraryMap = new HashMap<>();
         this.entityConfigMap = new HashMap<>();
-        this.registerEntityProvider(new VanillaEntityImpl());
+        this.registerEntityProvider(new VanillaEntityProvider());
     }
 
     public void load() {

@@ -25,6 +25,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class ZaphkielItemImpl implements ItemProvider {
 
     private final ZapAPI zapAPI;
@@ -34,14 +36,14 @@ public class ZaphkielItemImpl implements ItemProvider {
     }
 
     @Override
-    public String identification() {
+    public String identifier() {
         return "Zaphkiel";
     }
 
     @NotNull
     @Override
     public ItemStack buildItem(Player player, String id) {
-        return zapAPI.getItemManager().generateItemStack(id, player);
+        return Objects.requireNonNull(zapAPI.getItemManager().generateItemStack(id, player));
     }
 
     @Override

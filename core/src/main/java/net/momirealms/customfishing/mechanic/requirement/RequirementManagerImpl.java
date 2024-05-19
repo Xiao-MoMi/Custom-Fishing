@@ -21,14 +21,13 @@ import net.momirealms.customfishing.BukkitCustomFishingPluginImpl;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.integration.LevelerProvider;
 import net.momirealms.customfishing.api.integration.SeasonProvider;
-import net.momirealms.customfishing.api.mechanic.requirement.*;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import net.momirealms.customfishing.api.mechanic.requirement.*;
 import net.momirealms.customfishing.bukkit.compatibility.VaultHook;
 import net.momirealms.customfishing.bukkit.misc.placeholder.papi.ParseUtils;
 import net.momirealms.customfishing.common.util.ClassUtils;
-import net.momirealms.customfishing.util.ClassUtils;
 import net.momirealms.customfishing.util.ConfigUtils;
 import net.momirealms.customfishing.util.MoonPhase;
 import net.momirealms.sparrow.heart.SparrowHeart;
@@ -552,7 +551,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("money", (args, actions, advanced) -> {
             double money = ConfigUtils.getDoubleValue(args);
             return condition -> {
-                double current = VaultHook.getEconomy().getBalance(condition.getPlayer());
+                double current = VaultHook.getBalance(condition.getPlayer());
                 if (current >= money)
                     return true;
                 if (advanced) triggerActions(actions, condition);

@@ -21,20 +21,18 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
-import net.momirealms.customfishing.api.mechanic.action.ActionManager;
-import net.momirealms.customfishing.api.mechanic.loot.LootManager;
-import net.momirealms.customfishing.api.mechanic.action.Action;
-import net.momirealms.customfishing.api.mechanic.action.ActionExpansion;
-import net.momirealms.customfishing.api.mechanic.action.ActionFactory;
-import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
+import net.momirealms.customfishing.api.mechanic.action.*;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import net.momirealms.customfishing.api.mechanic.loot.LootManager;
+import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
-import net.momirealms.customfishing.api.mechanic.action.EmptyAction;
 import net.momirealms.customfishing.bukkit.compatibility.VaultHook;
-import net.momirealms.customfishing.bukkit.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.common.util.ClassUtils;
-import net.momirealms.customfishing.util.*;
+import net.momirealms.customfishing.util.ArmorStandUtils;
+import net.momirealms.customfishing.util.ConfigUtils;
+import net.momirealms.customfishing.util.ItemUtils;
+import net.momirealms.customfishing.util.LocationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -651,7 +649,7 @@ public class ActionManagerImpl implements ActionManager {
                             plugin.getPlaceholderManager().getExpressionValue(owner, z, condition.getArgs())
                     );
                     Location finalLocation = location;
-                    ItemStack itemStack = plugin.getItemManager().build(
+                    ItemStack itemStack = plugin.getItemManager().buildInternal(
                             owner, itemSplit[0],
                             plugin.getPlaceholderManager().parse(owner, itemSplit[1], condition.getArgs()),
                             condition.getArgs()

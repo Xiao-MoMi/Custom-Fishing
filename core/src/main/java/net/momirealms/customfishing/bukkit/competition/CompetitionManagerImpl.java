@@ -19,9 +19,11 @@ package net.momirealms.customfishing.bukkit.competition;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
-import net.momirealms.customfishing.api.mechanic.competition.CompetitionManager;
 import net.momirealms.customfishing.api.mechanic.action.Action;
-import net.momirealms.customfishing.api.mechanic.competition.*;
+import net.momirealms.customfishing.api.mechanic.competition.CompetitionConfigImpl;
+import net.momirealms.customfishing.api.mechanic.competition.CompetitionGoal;
+import net.momirealms.customfishing.api.mechanic.competition.CompetitionManager;
+import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import net.momirealms.customfishing.api.mechanic.competition.info.ActionBarConfigImpl;
 import net.momirealms.customfishing.api.mechanic.competition.info.BossBarConfigImpl;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;

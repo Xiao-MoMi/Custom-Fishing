@@ -32,14 +32,6 @@ public interface CompetitionManager {
     @NotNull Set<String> getAllCompetitionKeys();
 
     /**
-     * Retrieves the localization key for a given competition goal.
-     *
-     * @param goal The competition goal to retrieve the localization key for.
-     * @return The localization key for the specified competition goal.
-     */
-    @NotNull String getCompetitionGoalLocale(CompetitionGoal goal);
-
-    /**
      * Starts a competition with the specified name, allowing for the option to force start it or apply it to the entire server.
      *
      * @param competition The name of the competition to start.
@@ -64,7 +56,7 @@ public interface CompetitionManager {
      * @param serverGroup Whether the competition should start across all servers that connected to Redis
      * @return True if the competition was started successfully, false otherwise.
      */
-    boolean startCompetition(CompetitionConfigImpl config, boolean force, @Nullable String serverGroup);
+    boolean startCompetition(CompetitionConfig config, boolean force, @Nullable String serverGroup);
 
     /**
      * Gets the number of seconds until the next competition.
@@ -77,8 +69,8 @@ public interface CompetitionManager {
      * Retrieves the configuration for a competition based on its key.
      *
      * @param key The key of the competition configuration to retrieve.
-     * @return The {@link CompetitionConfigImpl} for the specified key, or {@code null} if no configuration exists with that key.
+     * @return The {@link CompetitionConfig} for the specified key, or {@code null} if no configuration exists with that key.
      */
     @Nullable
-    CompetitionConfigImpl getConfig(String key);
+    CompetitionConfig getConfig(String key);
 }

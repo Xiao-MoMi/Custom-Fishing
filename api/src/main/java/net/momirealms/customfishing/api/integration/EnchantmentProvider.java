@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.api.integration;
 
-import net.kyori.adventure.key.Key;
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.inventory.ItemStack;
 
@@ -31,5 +30,5 @@ public interface EnchantmentProvider extends ExternalProvider {
      * @param itemStack itemStack
      * @return enchantment list
      */
-    List<Pair<Key, Short>> getEnchants(ItemStack itemStack);
+    List<Pair<String, Short>> getEnchants(ItemStack itemStack);
 }

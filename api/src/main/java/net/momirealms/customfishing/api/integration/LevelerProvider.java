@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.integration;
 
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public interface LevelerProvider extends ExternalProvider {
 
@@ -28,7 +29,7 @@ public interface LevelerProvider extends ExternalProvider {
      * @param target the skill or job, for instance "Fishing" "fisherman"
      * @param amount the exp amount
      */
-    void addXp(Player player, String target, double amount);
+    void addXp(@NotNull Player player, @NotNull String target, double amount);
 
     /**
      * Get a player's skill or job's level
@@ -37,5 +38,5 @@ public interface LevelerProvider extends ExternalProvider {
      * @param target the skill or job, for instance "Fishing" "fisherman"
      * @return level
      */
-    int getLevel(Player player, String target);
+    int getLevel(@NotNull Player player, @NotNull String target);
 }

@@ -21,10 +21,10 @@ import net.momirealms.customfishing.BukkitCustomFishingPluginImpl;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.common.Tuple;
-import net.momirealms.customfishing.api.mechanic.block.BlockManager;
+import net.momirealms.customfishing.api.integration.BlockProvider;
 import net.momirealms.customfishing.api.mechanic.block.*;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
-import net.momirealms.customfishing.bukkit.compatibility.block.VanillaBlockImpl;
+import net.momirealms.customfishing.bukkit.compatibility.block.VanillaBlockProvider;
 import net.momirealms.customfishing.util.ConfigUtils;
 import org.bukkit.*;
 import org.bukkit.block.*;
@@ -58,11 +58,11 @@ import java.util.concurrent.TimeUnit;
 public class BlockManagerImpl implements BlockManager, Listener {
 
     private final BukkitCustomFishingPlugin plugin;
-    private final HashMap<String, BlockLibrary> blockLibraryMap;
-    private BlockLibrary[] blockDetectionArray;
-    private final HashMap<String, BlockConfig> blockConfigMap;
-    private final HashMap<String, BlockDataModifierBuilder> dataBuilderMap;
-    private final HashMap<String, BlockStateModifierBuilder> stateBuilderMap;
+    private final HashMap<String, BlockProvider> blockLibraryMap;
+    private BlockProvider[] blockDetectionArray;
+    private final HashMap<String, BlockConfigImpl> blockConfigMap;
+    private final HashMap<String, BlockDataModifierFactory> dataBuilderMap;
+    private final HashMap<String, BlockStateModifierFactory> stateBuilderMap;
 
     public BlockManagerImpl(BukkitCustomFishingPluginImpl plugin) {
         this.plugin = plugin;
@@ -71,7 +71,7 @@ public class BlockManagerImpl implements BlockManager, Listener {
         this.dataBuilderMap = new HashMap<>();
         this.stateBuilderMap = new HashMap<>();
         this.registerInbuiltProperties();
-        this.registerBlockLibrary(new VanillaBlockImpl());
+        this.registerBlockLibrary(new VanillaBlockProvider());
     }
 
     public void load() {
@@ -82,9 +82,9 @@ public class BlockManagerImpl implements BlockManager, Listener {
 
     public void unload() {
         HandlerList.unregisterAll(this);
-        HashMap<String, BlockConfig> tempMap = new HashMap<>(this.blockConfigMap);
+        HashMap<String, BlockConfigImpl> tempMap = new HashMap<>(this.blockConfigMap);
         this.blockConfigMap.clear();
-        for (Map.Entry<String, BlockConfig> entry : tempMap.entrySet()) {
+        for (Map.Entry<String, BlockConfigImpl> entry : tempMap.entrySet()) {
             if (entry.getValue().isPersist()) {
                 tempMap.put(entry.getKey(), entry.getValue());
             }
@@ -96,14 +96,14 @@ public class BlockManagerImpl implements BlockManager, Listener {
     }
 
     private void resetBlockDetectionOrder() {
-        ArrayList<BlockLibrary> list = new ArrayList<>();
+        ArrayList<BlockProvider> list = new ArrayList<>();
         for (String plugin : CFConfig.itemDetectOrder) {
-            BlockLibrary library = blockLibraryMap.get(plugin);
+            BlockProvider library = blockLibraryMap.get(plugin);
             if (library != null) {
                 list.add(library);
             }
         }
-        this.blockDetectionArray = list.toArray(new BlockLibrary[0]);
+        this.blockDetectionArray = list.toArray(new BlockProvider[0]);
     }
 
     /**
@@ -128,8 +128,8 @@ public class BlockManagerImpl implements BlockManager, Listener {
         String[] split = temp.split(";");
 
         // If no BlockConfig is found for the specified key, return without further action.
-        BlockConfig blockConfig = blockConfigMap.get(split[0]);
-        if (blockConfig == null) return;
+        BlockConfigImpl blockConfigImpl = blockConfigMap.get(split[0]);
+        if (blockConfigImpl == null) return;
 
         // If the player is not online or not found, remove the entity and set the block to air
         Player player = Bukkit.getPlayer(split[1]);
@@ -143,7 +143,7 @@ public class BlockManagerImpl implements BlockManager, Listener {
         // Apply block state modifiers from the BlockConfig to the block 1 tick later.
         plugin.getScheduler().runTaskSyncLater(() -> {
             BlockState state = location.getBlock().getState();
-            for (BlockStateModifier modifier : blockConfig.getStateModifierList()) {
+            for (BlockStateModifier modifier : blockConfigImpl.stateModifiers()) {
                 modifier.apply(player, state);
             }
         }, location, 50, TimeUnit.MILLISECONDS);
@@ -153,13 +153,13 @@ public class BlockManagerImpl implements BlockManager, Listener {
      * Registers a BlockLibrary instance.
      * This method associates a BlockLibrary with its unique identification and adds it to the registry.
      *
-     * @param blockLibrary The BlockLibrary instance to register.
+     * @param blockProvider The BlockLibrary instance to register.
      * @return True if the registration was successful (the identification is not already registered), false otherwise.
      */
     @Override
-    public boolean registerBlockLibrary(BlockLibrary blockLibrary) {
-        if (this.blockLibraryMap.containsKey(blockLibrary.identification())) return false;
-        this.blockLibraryMap.put(blockLibrary.identification(), blockLibrary);
+    public boolean registerBlockLibrary(BlockProvider blockProvider) {
+        if (this.blockLibraryMap.containsKey(blockProvider.identification())) return false;
+        this.blockLibraryMap.put(blockProvider.identification(), blockProvider);
         this.resetBlockDetectionOrder();
         return true;
     }
@@ -188,7 +188,7 @@ public class BlockManagerImpl implements BlockManager, Listener {
      * @return True if the registration was successful (the type is not already registered), false otherwise.
      */
     @Override
-    public boolean registerBlockDataModifierBuilder(String type, BlockDataModifierBuilder builder) {
+    public boolean registerBlockDataModifierBuilder(String type, BlockDataModifierFactory builder) {
         if (dataBuilderMap.containsKey(type)) return false;
         dataBuilderMap.put(type, builder);
         return true;
@@ -203,7 +203,7 @@ public class BlockManagerImpl implements BlockManager, Listener {
      * @return True if the registration was successful (the type is not already registered), false otherwise.
      */
     @Override
-    public boolean registerBlockStateModifierBuilder(String type, BlockStateModifierBuilder builder) {
+    public boolean registerBlockStateModifierBuilder(String type, BlockStateModifierFactory builder) {
         if (stateBuilderMap.containsKey(type)) return false;
         stateBuilderMap.put(type, builder);
         return true;
@@ -294,12 +294,12 @@ public class BlockManagerImpl implements BlockManager, Listener {
                 ConfigurationSection property = section.getConfigurationSection("properties");
                 if (property != null) {
                     for (Map.Entry<String, Object> innerEntry : property.getValues(false).entrySet()) {
-                        BlockDataModifierBuilder dataBuilder = dataBuilderMap.get(innerEntry.getKey());
+                        BlockDataModifierFactory dataBuilder = dataBuilderMap.get(innerEntry.getKey());
                         if (dataBuilder != null) {
                             dataModifiers.add(dataBuilder.build(innerEntry.getValue()));
                             continue;
                         }
-                        BlockStateModifierBuilder stateBuilder = stateBuilderMap.get(innerEntry.getKey());
+                        BlockStateModifierFactory stateBuilder = stateBuilderMap.get(innerEntry.getKey());
                         if (stateBuilder != null) {
                             stateModifiers.add(stateBuilder.build(innerEntry.getValue()));
                         }
@@ -307,7 +307,7 @@ public class BlockManagerImpl implements BlockManager, Listener {
                 }
 
                 // Create a BlockConfig instance with the processed data and add it to the blockConfigMap.
-                BlockConfig blockConfig = new BlockConfig.Builder()
+                BlockConfigImpl blockConfigImpl = new BlockConfigImpl.Builder()
                         .blockID(blockID)
                         .persist(false)
                         .horizontalVector(section.getDouble("velocity.horizontal", 1.1))
@@ -315,7 +315,7 @@ public class BlockManagerImpl implements BlockManager, Listener {
                         .dataModifiers(dataModifiers)
                         .stateModifiers(stateModifiers)
                         .build();
-                blockConfigMap.put(entry.getKey(), blockConfig);
+                blockConfigMap.put(entry.getKey(), blockConfigImpl);
             }
         }
     }
@@ -331,20 +331,20 @@ public class BlockManagerImpl implements BlockManager, Listener {
      */
     @Override
     public void summonBlock(Player player, Location hookLocation, Location playerLocation, Loot loot) {
-        BlockConfig config = blockConfigMap.get(loot.getID());
+        BlockConfigImpl config = blockConfigMap.get(loot.getID());
         if (config == null) {
             LogUtils.warn("Block: " + loot.getID() + " doesn't exist.");
             return;
         }
-        String blockID = config.getBlockID();
+        String blockID = config.blockID();
         BlockData blockData;
         if (blockID.contains(":")) {
             String[] split = blockID.split(":", 2);
             String lib = split[0];
             String id = split[1];
-            blockData = blockLibraryMap.get(lib).getBlockData(player, id, config.getDataModifier());
+            blockData = blockLibraryMap.get(lib).blockData(player, id, config.dataModifier());
         } else {
-            blockData = blockLibraryMap.get("vanilla").getBlockData(player, blockID, config.getDataModifier());
+            blockData = blockLibraryMap.get("vanilla").blockData(player, blockID, config.dataModifier());
         }
         FallingBlock fallingBlock = hookLocation.getWorld().spawnFallingBlock(hookLocation, blockData);
         fallingBlock.getPersistentDataContainer().set(
@@ -352,8 +352,8 @@ public class BlockManagerImpl implements BlockManager, Listener {
                 PersistentDataType.STRING,
                 loot.getID() + ";" + player.getName()
         );
-        Vector vector = playerLocation.subtract(hookLocation).toVector().multiply((config.getHorizontalVector()) - 1);
-        vector = vector.setY((vector.getY() + 0.2) * config.getVerticalVector());
+        Vector vector = playerLocation.subtract(hookLocation).toVector().multiply((config.horizontalVector()) - 1);
+        vector = vector.setY((vector.getY() + 0.2) * config.verticalVector());
         fallingBlock.setVelocity(vector);
     }
 
@@ -368,8 +368,8 @@ public class BlockManagerImpl implements BlockManager, Listener {
     @Override
     @NotNull
     public String getAnyPluginBlockID(Block block) {
-        for (BlockLibrary blockLibrary : blockDetectionArray) {
-            String id = blockLibrary.getBlockID(block);
+        for (BlockProvider blockProvider : blockDetectionArray) {
+            String id = blockProvider.blockID(block);
             if (id != null) {
                 return id;
             }

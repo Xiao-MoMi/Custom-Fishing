@@ -1,6 +1,5 @@
 repositories {
-    maven("https://repo.codemc.io/repository/maven-public/")
-    maven("https://jitpack.io/")
+    maven("https://jitpack.io/") // rtag
 }
 
 dependencies {
@@ -20,6 +19,7 @@ dependencies {
     compileOnly("com.google.code.gson:gson:${rootProject.properties["gson_version"]}")
     compileOnly("com.github.ben-manes.caffeine:caffeine:${rootProject.properties["caffeine_version"]}")
     compileOnly("com.saicone.rtag:rtag:${rootProject.properties["rtag_version"]}")
+    compileOnly("net.objecthunter:exp4j:${rootProject.properties["exp4j_version"]}")
 }
 
 java {

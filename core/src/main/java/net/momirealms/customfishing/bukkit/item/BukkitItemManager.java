@@ -1,6 +1,5 @@
 package net.momirealms.customfishing.bukkit.item;
 
-import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.kyori.adventure.key.Key;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.integration.ItemProvider;
@@ -54,7 +53,7 @@ public class BukkitItemManager implements ItemManager {
 
     @Nullable
     @Override
-    public ItemStack build(Context<Player> context, Key key) {
+    public ItemStack buildInternal(Context<Player> context, Key key) {
         CustomFishingItem item = requireNonNull(itemMap.get(key), () -> "No item found for " + key);
         ItemStack itemStack = getOriginalStack(context.getHolder(), item.material());
         Item<ItemStack> wrappedItemStack = factory.wrap(itemStack);

@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.api.integration;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -29,10 +30,10 @@ public interface IntegrationManager {
     /**
      * Registers a LevelerProvider.
      *
-     * @param level the LevelerProvider to register
+     * @param levelerProvider the LevelerProvider to register
      * @return true if registration is successful, false otherwise
      */
-    boolean registerLevelerProvider(LevelerProvider level);
+    boolean registerLevelerProvider(@NotNull LevelerProvider levelerProvider);
 
     /**
      * Unregisters a LevelerProvider by its ID.
@@ -40,15 +41,15 @@ public interface IntegrationManager {
      * @param id the ID of the LevelerProvider to unregister
      * @return true if unregistration is successful, false otherwise
      */
-    boolean unregisterLevelerProvider(String id);
+    boolean unregisterLevelerProvider(@NotNull String id);
 
     /**
      * Registers an EnchantmentProvider.
      *
-     * @param enchantment the EnchantmentProvider to register
+     * @param enchantmentProvider the EnchantmentProvider to register
      * @return true if registration is successful, false otherwise
      */
-    boolean registerEnchantmentProvider(EnchantmentProvider enchantment);
+    boolean registerEnchantmentProvider(@NotNull EnchantmentProvider enchantmentProvider);
 
     /**
      * Unregisters an EnchantmentProvider by its ID.
@@ -56,15 +57,15 @@ public interface IntegrationManager {
      * @param id the ID of the EnchantmentProvider to unregister
      * @return true if unregistration is successful, false otherwise
      */
-    boolean unregisterEnchantmentProvider(String id);
+    boolean unregisterEnchantmentProvider(@NotNull String id);
 
     /**
      * Registers a SeasonProvider.
      *
-     * @param season the SeasonProvider to register
+     * @param seasonProvider the SeasonProvider to register
      * @return true if registration is successful, false otherwise
      */
-    boolean registerSeasonProvider(SeasonProvider season);
+    boolean registerSeasonProvider(@NotNull SeasonProvider seasonProvider);
 
     /**
      * Unregisters a SeasonProvider by its ID.
@@ -72,11 +73,11 @@ public interface IntegrationManager {
      * @param id the ID of the SeasonProvider to unregister
      * @return true if unregistration is successful, false otherwise
      */
-    boolean unregisterSeasonProvider(String id);
+    boolean unregisterSeasonProvider(@NotNull String id);
 
-    boolean registerEntityProvider(EntityProvider entity);
+    boolean registerEntityProvider(@NotNull EntityProvider entityProvider);
 
-    boolean unregisterEntityProvider(String identifier);
+    boolean unregisterEntityProvider(@NotNull String id);
 
     /**
      * Retrieves a registered LevelerProvider by its ID.

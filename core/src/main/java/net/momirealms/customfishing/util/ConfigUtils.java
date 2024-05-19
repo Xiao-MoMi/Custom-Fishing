@@ -17,23 +17,16 @@
 
 package net.momirealms.customfishing.util;
 
-import net.momirealms.customfishing.api.common.Pair;
-import net.momirealms.customfishing.api.common.Tuple;
+import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
-import net.momirealms.customfishing.bukkit.misc.placeholder.BukkitPlaceholderManager;
-import net.momirealms.customfishing.mechanic.misc.value.ExpressionMathValue;
-import net.momirealms.customfishing.mechanic.misc.value.PlainMathValue;
-import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -44,24 +37,6 @@ public class ConfigUtils {
 
     private ConfigUtils() {}
 
-    /**
-     * Converts an object into an ArrayList of strings.
-     *
-     * @param object The input object
-     * @return An ArrayList of strings
-     */
-    @SuppressWarnings("unchecked")
-    public static ArrayList<String> stringListArgs(Object object) {
-        ArrayList<String> list = new ArrayList<>();
-        if (object instanceof String member) {
-            list.add(member);
-        } else if (object instanceof List<?> members) {
-            list.addAll((Collection<? extends String>) members);
-        } else if (object instanceof String[] strings) {
-            list.addAll(List.of(strings));
-        }
-        return list;
-    }
 
     /**
      * Splits a string into a pair of integers using the "~" delimiter.
@@ -90,104 +65,7 @@ public class ConfigUtils {
         return result;
     }
 
-    /**
-     * Converts an object into a double value.
-     *
-     * @param arg The input object
-     * @return A double value
-     */
-    public static double getDoubleValue(Object arg) {
-        if (arg instanceof Double d) {
-            return d;
-        } else if (arg instanceof Integer i) {
-            return Double.valueOf(i);
-        }
-        return 0;
-    }
 
-    /**
-     * Converts an object into an integer value.
-     *
-     * @param arg The input object
-     * @return An integer value
-     */
-    public static int getIntegerValue(Object arg) {
-        if (arg instanceof Integer i) {
-            return i;
-        } else if (arg instanceof Double d) {
-            return d.intValue();
-        }
-        return 0;
-    }
-
-    /**
-     * Converts an object into a "value".
-     *
-     * @param arg int / double / expression
-     * @return Value
-     */
-    public static MathValue getValue(Object arg) {
-        if (arg instanceof Integer i) {
-            return new PlainMathValue(i);
-        } else if (arg instanceof Double d) {
-            return new PlainMathValue(d);
-        } else if (arg instanceof String s) {
-            return new ExpressionMathValue(s);
-        }
-        throw new IllegalArgumentException("Illegal value type");
-    }
-
-    /**
-     * Parses a string representing a size range and returns a pair of floats.
-     *
-     * @param string The size string in the format "min~max".
-     * @return A pair of floats representing the minimum and maximum size.
-     */
-    @Nullable
-    public static Pair<Float, Float> getFloatPair(String string) {
-        if (string == null) return null;
-        String[] split = string.split("~", 2);
-        if (split.length != 2) {
-            LogUtils.warn("Illegal size argument: " + string);
-            LogUtils.warn("Correct usage example: 10.5~25.6");
-            throw new IllegalArgumentException("Illegal float range");
-        }
-        return Pair.of(Float.parseFloat(split[0]), Float.parseFloat(split[1]));
-    }
-
-    /**
-     * Parses a string representing a size range and returns a pair of ints.
-     *
-     * @param string The size string in the format "min~max".
-     * @return A pair of ints representing the minimum and maximum size.
-     */
-    @Nullable
-    public static Pair<Integer, Integer> getIntegerPair(String string) {
-        if (string == null) return null;
-        String[] split = string.split("~", 2);
-        if (split.length != 2) {
-            LogUtils.warn("Illegal size argument: " + string);
-            LogUtils.warn("Correct usage example: 10~20");
-            throw new IllegalArgumentException("Illegal int range");
-        }
-        return Pair.of(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-    }
-
-    /**
-     * Converts a list of strings in the format "key:value" into a list of Pairs with keys and WeightModifiers.
-     *
-     * @param modList The input list of strings
-     * @return A list of Pairs containing keys and WeightModifiers
-     */
-    public static List<Pair<String, WeightModifier>> getModifiers(List<String> modList) {
-        List<Pair<String, WeightModifier>> result = new ArrayList<>(modList.size());
-        for (String member : modList) {
-            String[] split = member.split(":",2);
-            String key = split[0];
-            result.add(Pair.of(key, getModifier(split[1])));
-        }
-        return result;
-    }
 
     /**
      * Retrieves a list of enchantment pairs from a configuration section.

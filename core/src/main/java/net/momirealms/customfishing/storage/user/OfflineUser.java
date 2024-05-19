@@ -18,12 +18,12 @@
 package net.momirealms.customfishing.storage.user;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.api.storage.data.EarningData;
 import net.momirealms.customfishing.api.storage.data.InventoryData;
 import net.momirealms.customfishing.api.storage.data.PlayerData;
 import net.momirealms.customfishing.api.storage.data.StatisticData;
 import net.momirealms.customfishing.api.storage.user.UserData;
-import net.momirealms.customfishing.bukkit.misc.placeholder.BukkitPlaceholderManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

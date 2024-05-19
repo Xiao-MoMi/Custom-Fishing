@@ -250,6 +250,13 @@ public enum Dependency {
             "jedis",
             Relocation.of("jedis", "redis{}clients{}jedis"),
             Relocation.of("commonspool2", "org{}apache{}commons{}pool2")
+    ),
+    EXP4J(
+            "net{}objecthunter",
+            "exp4j",
+            "maven",
+            "exp4j",
+            Relocation.of("exp4j", "net{}objecthunter{}exp4j")
     );
 
     private final List<Relocation> relocations;
