@@ -17,87 +17,72 @@
 
 package net.momirealms.customfishing.bukkit.competition.bossbar;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.InternalStructure;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.momirealms.customfishing.BukkitCustomFishingPluginImpl;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.bossbar.BossBar;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.mechanic.competition.info.BossBarConfigImpl;
-import net.momirealms.customfishing.api.scheduler.CancellableTask;
-import net.momirealms.customfishing.api.util.ReflectionUtils;
+import net.momirealms.customfishing.api.mechanic.competition.info.BossBarConfig;
+import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
+import net.momirealms.customfishing.api.mechanic.misc.value.DynamicText;
 import net.momirealms.customfishing.bukkit.competition.Competition;
-import net.momirealms.customfishing.mechanic.misc.DynamicText;
-import org.bukkit.boss.BarColor;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.locale.StandardLocales;
+import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Manages and updates boss bars for a specific player in a competition context.
- */
 public class BossBarSender {
 
     private final Player player;
+    private final Audience audience;
     private int refreshTimer;
     private int switchTimer;
     private int counter;
     private final DynamicText[] texts;
-    private CancellableTask senderTask;
-    private final UUID uuid;
-    private final BossBarConfigImpl config;
+    private SchedulerTask senderTask;
+    private final BossBar bossBar;
+    private final BossBarConfig config;
     private boolean isShown;
     private final Competition competition;
-    private final HashMap<String, String> privatePlaceholders;
+    private final Context<Player> privateContext;
 
-    /**
-     * Creates a new BossBarSender instance for a player.
-     *
-     * @param player      The player to manage the boss bar for.
-     * @param config      The configuration for the boss bar.
-     * @param competition The competition associated with this boss bar.
-     */
-    public BossBarSender(Player player, BossBarConfigImpl config, Competition competition) {
+    public BossBarSender(Player player, BossBarConfig config, Competition competition) {
         this.player = player;
-        this.uuid = UUID.randomUUID();
+        this.audience = BukkitCustomFishingPlugin.getInstance().getSenderFactory().getAudience(player);
         this.config = config;
         this.isShown = false;
         this.competition = competition;
-        this.privatePlaceholders = new HashMap<>();
-        this.privatePlaceholders.put("{player}", player.getName());
+        this.privateContext = Context.player(player);
         this.updatePrivatePlaceholders();
-
         String[] str = config.texts();
         texts = new DynamicText[str.length];
         for (int i = 0; i < str.length; i++) {
             texts[i] = new DynamicText(player, str[i]);
-            texts[i].update(privatePlaceholders);
+            texts[i].update(privateContext.placeholderMap());
         }
+        bossBar = BossBar.bossBar(
+                AdventureHelper.miniMessage().deserialize(texts[0].getLatestValue()),
+                competition.getProgress(),
+                config.color(),
+                config.overlay(),
+                Set.of()
+        );
     }
 
-    /**
-     * Updates private placeholders used in boss bar messages.
-     */
     @SuppressWarnings("DuplicatedCode")
     private void updatePrivatePlaceholders() {
-        this.privatePlaceholders.put("{score}", String.format("%.2f", competition.getRanking().getPlayerScore(player.getName())));
+        this.privateContext.arg(ContextKeys.SCORE, String.format("%.2f", competition.getRanking().getPlayerScore(player.getName())));
         int rank = competition.getRanking().getPlayerRank(player.getName());
-        this.privatePlaceholders.put("{rank}", rank != -1 ? String.valueOf(rank) : CFLocale.MSG_No_Rank);
-        this.privatePlaceholders.putAll(competition.getCachedPlaceholders());
+        this.privateContext.arg(ContextKeys.RANK, rank != -1 ? String.valueOf(rank) : StandardLocales.COMPETITION_NO_RANK);
+        this.privateContext.combine(competition.getPublicContext());
     }
 
-    /**
-     * Shows the boss bar to the player.
-     */
     public void show() {
         this.isShown = true;
-        BukkitCustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getCreatePacket());
-        senderTask = BukkitCustomFishingPlugin.get().getScheduler().runTaskAsyncTimer(() -> {
+        this.bossBar.addViewer(audience);
+        this.senderTask = BukkitCustomFishingPlugin.getInstance().getScheduler().asyncRepeating(() -> {
             switchTimer++;
             if (switchTimer > config.switchInterval()) {
                 switchTimer = 0;
@@ -109,88 +94,25 @@ public class BossBarSender {
                 refreshTimer = 0;
                 DynamicText text = texts[counter % (texts.length)];
                 updatePrivatePlaceholders();
-                if (text.update(privatePlaceholders)) {
-                    BukkitCustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getUpdatePacket(text));
+                if (text.update(privateContext.placeholderMap())) {
+                    bossBar.name(AdventureHelper.miniMessage().deserialize(text.getLatestValue()));
                 }
-                BukkitCustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getProgressPacket());
+                bossBar.progress(competition.getProgress());
             }
         }, 50, 50, TimeUnit.MILLISECONDS);
     }
 
-    /**
-     * Checks if the boss bar is currently visible to the player.
-     *
-     * @return True if the boss bar is visible, false otherwise.
-     */
     public boolean isVisible() {
         return this.isShown;
     }
 
-    /**
-     * Gets the boss bar configuration.
-     *
-     * @return The boss bar configuration.
-     */
-    public BossBarConfigImpl getConfig() {
+    public BossBarConfig getConfig() {
         return config;
     }
 
-    /**
-     * Hides the boss bar from the player.
-     */
     public void hide() {
-        BukkitCustomFishingPluginImpl.getProtocolManager().sendServerPacket(player, getRemovePacket());
-        if (senderTask != null && !senderTask.isCancelled()) senderTask.cancel();
+        this.bossBar.removeViewer(audience);
+        if (senderTask != null) senderTask.cancel();
         this.isShown = false;
-    }
-
-    private PacketContainer getUpdatePacket(DynamicText text) {
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.BOSS);
-        packet.getModifier().write(0, uuid);
-        try {
-            Object chatComponent = ReflectionUtils.iChatComponentMethod.invoke(null,
-            GsonComponentSerializer.gson().serialize(
-            AdventureHelper.getInstance().getComponentFromMiniMessage(
-            text.getLatestValue()
-            )));
-            Object updatePacket = ReflectionUtils.updateConstructor.newInstance(chatComponent);
-            packet.getModifier().write(1, updatePacket);
-        } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
-            throw new RuntimeException(e);
-        }
-        return packet;
-    }
-
-    private PacketContainer getProgressPacket() {
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.BOSS);
-        packet.getModifier().write(0, uuid);
-        try {
-            Object updatePacket = ReflectionUtils.progressConstructor.newInstance(competition.getProgress());
-            packet.getModifier().write(1, updatePacket);
-        } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
-            throw new RuntimeException(e);
-        }
-        return packet;
-    }
-
-    private PacketContainer getCreatePacket() {
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.BOSS);
-        packet.getModifier().write(0, uuid);
-        InternalStructure internalStructure = packet.getStructures().read(1);
-        internalStructure.getChatComponents().write(0, WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize(texts[0].getLatestValue()))));
-        internalStructure.getFloat().write(0, competition.getProgress());
-        internalStructure.getEnumModifier(BarColor.class, 2).write(0, config.getColor());
-        internalStructure.getEnumModifier(BossBarConfigImpl.Overlay.class, 3).write(0, config.getOverlay());
-        internalStructure.getModifier().write(4, false);
-        internalStructure.getModifier().write(5, false);
-        internalStructure.getModifier().write(6, false);
-        return packet;
-    }
-
-    private PacketContainer getRemovePacket() {
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.BOSS);
-        packet.getModifier().write(0, uuid);
-        packet.getModifier().write(1, ReflectionUtils.removeBossBarPacket);
-        return packet;
     }
 }

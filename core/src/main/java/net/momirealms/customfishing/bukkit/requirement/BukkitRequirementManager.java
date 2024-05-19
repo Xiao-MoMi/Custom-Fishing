@@ -2,16 +2,32 @@ package net.momirealms.customfishing.bukkit.requirement;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.integration.LevelerProvider;
+import net.momirealms.customfishing.api.integration.SeasonProvider;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionManager;
+import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.EffectProperties;
+import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import net.momirealms.customfishing.api.mechanic.misc.season.Season;
+import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
+import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.mechanic.requirement.*;
+import net.momirealms.customfishing.api.util.MoonPhase;
+import net.momirealms.customfishing.bukkit.compatibility.VaultHook;
 import net.momirealms.customfishing.common.util.ClassUtils;
 import net.momirealms.customfishing.common.util.ListUtils;
 import net.momirealms.customfishing.common.util.Pair;
+import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -112,6 +128,100 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         this.registerInLavaRequirement();
         this.registerAndRequirement();
         this.registerOrRequirement();
+        this.registerGroupRequirement();
+        this.registerRodRequirement();
+        this.registerPAPIRequirement();
+        this.registerSeasonRequirement();
+        this.registerPermissionRequirement();
+        this.registerMoonPhaseRequirement();
+        this.registerCoolDownRequirement();
+        this.registerDateRequirement();
+        this.registerWeatherRequirement();
+        this.registerBiomeRequirement();
+        this.registerWorldRequirement();
+        this.registerMoneyRequirement();
+        this.registerLevelRequirement();
+        this.registerRandomRequirement();
+        this.registerIceFishingRequirement();
+        this.registerOpenWaterRequirement();
+        this.registerBaitRequirement();
+        this.registerLootRequirement();
+        this.registerSizeRequirement();
+        this.registerLootTypeRequirement();
+        this.registerHasStatsRequirement();
+        this.registerHookRequirement();
+        this.registerEnvironmentRequirement();
+        this.registerListRequirement();
+        this.registerInBagRequirement();
+        this.registerCompetitionRequirement();
+        this.registerPluginLevelRequirement();
+    }
+
+    private void registerCompetitionRequirement() {
+        registerRequirement("competition", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                boolean onCompetition = section.getBoolean("ongoing", true);
+                List<String> ids = ListUtils.toList(section.get("id"));
+                return context -> {
+                    if (ids.isEmpty()) {
+                        if (plugin.getCompetitionManager().getOnGoingCompetition() != null == onCompetition) {
+                            return true;
+                        }
+                    } else {
+                        FishingCompetition competition = plugin.getCompetitionManager().getOnGoingCompetition();
+                        if (onCompetition) {
+                            if (competition != null)
+                                if (ids.contains(competition.getConfig().key()))
+                                    return true;
+                        } else {
+                            if (competition == null)
+                                return true;
+                        }
+                    }
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at competition requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+    }
+
+    private void registerInBagRequirement() {
+        registerRequirement("in-fishingbag", (args, actions, advanced) -> {
+            boolean arg = (boolean) args;
+            return context -> {
+                boolean inBag = Optional.ofNullable(context.arg(ContextKeys.IN_BAG)).orElse(false);
+                if (inBag == arg) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerPluginLevelRequirement() {
+        registerRequirement("plugin-level", (args, actions, advanced) -> {
+            if (args instanceof Section section) {
+                String pluginName = section.getString("plugin");
+                int level = section.getInt("level");
+                String target = section.getString("target");
+                return context -> {
+                    LevelerProvider levelerProvider = plugin.getIntegrationManager().getLevelerProvider(pluginName);
+                    if (levelerProvider == null) {
+                        plugin.getPluginLogger().warn("Plugin (" + pluginName + "'s) level is not compatible. Please double check if it's a problem caused by pronunciation.");
+                        return true;
+                    }
+                    if (levelerProvider.getLevel(context.getHolder(), target) >= level)
+                        return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at plugin-level requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
     }
 
     private void registerTimeRequirement() {
@@ -233,6 +343,752 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             return context -> {
                 boolean in_lava = Optional.ofNullable(context.arg(ContextKeys.SURROUNDING)).orElse("").equals(EffectProperties.LAVA_FISHING.key());
                 if (in_lava == inLava) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerRodRequirement() {
+        registerRequirement("rod", (args, actions, advanced) -> {
+            HashSet<String> rods = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                String id = context.arg(ContextKeys.ROD);
+                if (rods.contains(id)) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+        registerRequirement("!rod", (args, actions, advanced) -> {
+            HashSet<String> rods = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                String id = context.arg(ContextKeys.ROD);
+                if (!rods.contains(id)) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerGroupRequirement() {
+        registerRequirement("group", (args, actions, advanced) -> {
+            HashSet<String> groups = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                String lootID = context.arg(ContextKeys.ID);
+                Optional<Loot> loot = plugin.getLootManager().getLoot(lootID);
+                if (loot.isEmpty()) return false;
+                String[] group = loot.get().lootGroup();
+                if (group != null)
+                    for (String x : group)
+                        if (groups.contains(x))
+                            return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+        registerRequirement("!group", (args, actions, advanced) -> {
+            HashSet<String> groups = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                String lootID = context.arg(ContextKeys.ID);
+                Optional<Loot> loot = plugin.getLootManager().getLoot(lootID);
+                if (loot.isEmpty()) return false;
+                String[] group = loot.get().lootGroup();
+                if (group == null)
+                    return true;
+                outer: {
+                    for (String x : group)
+                        if (groups.contains(x))
+                            break outer;
+                    return true;
+                }
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerLootRequirement() {
+        registerRequirement("loot", (args, actions, advanced) -> {
+            HashSet<String> arg = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                String lootID = context.arg(ContextKeys.ID);
+                if (arg.contains(lootID)) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+        registerRequirement("!loot", (args, actions, advanced) -> {
+            HashSet<String> arg = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                String lootID = context.arg(ContextKeys.ID);
+                if (!arg.contains(lootID)) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerHookRequirement() {
+        registerRequirement("hook", (args, actions, advanced) -> {
+            HashSet<String> hooks = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                String id = context.arg(ContextKeys.HOOK);
+                if (hooks.contains(id)) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+        registerRequirement("!hook", (args, actions, advanced) -> {
+            HashSet<String> hooks = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                String id = context.arg(ContextKeys.HOOK);
+                if (!hooks.contains(id)) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+        registerRequirement("has-hook", (args, actions, advanced) -> {
+            boolean has = (boolean) args;
+            return context -> {
+                String id = context.arg(ContextKeys.HOOK);
+                if (id != null && has) return true;
+                if (id == null && !has) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerBaitRequirement() {
+        registerRequirement("bait", (args, actions, advanced) -> {
+            HashSet<String> arg = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                String id = context.arg(ContextKeys.BAIT);
+                if (arg.contains(id)) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+        registerRequirement("!bait", (args, actions, advanced) -> {
+            HashSet<String> arg = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                String id = context.arg(ContextKeys.BAIT);
+                if (!arg.contains(id)) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+        registerRequirement("has-bait", (args, actions, advanced) -> {
+            boolean has = (boolean) args;
+            return context -> {
+                String id = context.arg(ContextKeys.BAIT);
+                if (id != null && has) return true;
+                if (id == null && !has) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerSizeRequirement() {
+        registerRequirement("has-size", (args, actions, advanced) -> {
+            boolean has = (boolean) args;
+            return context -> {
+                float size = Optional.ofNullable(context.arg(ContextKeys.SIZE)).orElse(-1f);
+                if (size != -1 && has) return true;
+                if (size == -1 && !has) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerOpenWaterRequirement() {
+        registerRequirement("open-water", (args, actions, advanced) -> {
+            boolean openWater = (boolean) args;
+            return context -> {
+                boolean current = Optional.ofNullable(context.arg(ContextKeys.OPEN_WATER)).orElse(false);
+                if (openWater == current)
+                    return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerHasStatsRequirement() {
+        registerRequirement("has-stats", (args, actions, advanced) -> {
+            boolean has = (boolean) args;
+            return context -> {
+                String loot = context.arg(ContextKeys.ID);
+                Optional<Loot> lootInstance = plugin.getLootManager().getLoot(loot);
+                if (lootInstance.isPresent()) {
+                    if (!lootInstance.get().disableStats() && has) return true;
+                    if (lootInstance.get().disableStats() && !has) return true;
+                }
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerLootTypeRequirement() {
+        registerRequirement("loot-type", (args, actions, advanced) -> {
+            List<String> types = ListUtils.toList(args);
+            return context -> {
+                String loot = context.arg(ContextKeys.ID);
+                Optional<Loot> lootInstance = plugin.getLootManager().getLoot(loot);
+                if (lootInstance.isPresent()) {
+                    if (types.contains(lootInstance.get().getType().name().toLowerCase(Locale.ENGLISH)))
+                        return true;
+                }
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+        registerRequirement("!loot-type", (args, actions, advanced) -> {
+            List<String> types = ListUtils.toList(args);
+            return context -> {
+                String loot = context.arg(ContextKeys.ID);
+                Optional<Loot> lootInstance = plugin.getLootManager().getLoot(loot);
+                if (lootInstance.isPresent()) {
+                    if (!types.contains(lootInstance.get().getType().name().toLowerCase(Locale.ENGLISH)))
+                        return true;
+                }
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerListRequirement() {
+        registerRequirement("list", (args, actions, advanced) -> {
+            plugin.getPluginLogger().severe("It seems that you made a mistake where you put \"list\" into \"conditions\" section.");
+            plugin.getPluginLogger().warn("list:");
+            for (String e : ListUtils.toList(args)) {
+                plugin.getPluginLogger().warn(" - " + e);
+            }
+            return EmptyRequirement.INSTANCE;
+        });
+    }
+
+    private void registerEnvironmentRequirement() {
+        registerRequirement("environment", (args, actions, advanced) -> {
+            List<String> environments = ListUtils.toList(args);
+            return context -> {
+                Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
+                var name = location.getWorld().getEnvironment().name().toLowerCase(Locale.ENGLISH);
+                if (environments.contains(name)) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+        registerRequirement("!environment", (args, actions, advanced) -> {
+            List<String> environments = ListUtils.toList(args);
+            return context -> {
+                Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
+                var name = location.getWorld().getEnvironment().name().toLowerCase(Locale.ENGLISH);
+                if (!environments.contains(name)) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerIceFishingRequirement() {
+        registerRequirement("ice-fishing", (args, actions, advanced) -> {
+            boolean iceFishing = (boolean) args;
+            return context -> {
+                Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
+                int water = 0, ice = 0;
+                for (int i = -2; i <= 2; i++)
+                    for (int j = -1; j <= 2; j++)
+                        for (int k = -2; k <= 2; k++) {
+                            Block block = location.clone().add(i, j, k).getBlock();
+                            Material material = block.getType();
+                            switch (material) {
+                                case ICE -> ice++;
+                                case WATER -> water++;
+                            }
+                        }
+                if ((ice >= 16 && water >= 25) == iceFishing)
+                    return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerLevelRequirement() {
+        registerRequirement("level", (args, actions, advanced) -> {
+            MathValue<Player> value = MathValue.auto(args);
+            return context -> {
+                int current = context.getHolder().getLevel();
+                if (current >= value.evaluate(context))
+                    return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerMoneyRequirement() {
+        registerRequirement("money", (args, actions, advanced) -> {
+            MathValue<Player> value = MathValue.auto(args);
+            return context -> {
+                double current = VaultHook.getBalance(context.getHolder());
+                if (current >= value.evaluate(context))
+                    return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerRandomRequirement() {
+        registerRequirement("random", (args, actions, advanced) -> {
+            MathValue<Player> value = MathValue.auto(args);
+            return context -> {
+                if (Math.random() < value.evaluate(context))
+                    return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerBiomeRequirement() {
+        registerRequirement("biome", (args, actions, advanced) -> {
+            HashSet<String> biomes = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
+                String currentBiome = SparrowHeart.getInstance().getBiomeResourceLocation(location);
+                if (biomes.contains(currentBiome))
+                    return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+        registerRequirement("!biome", (args, actions, advanced) -> {
+            HashSet<String> biomes = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
+                String currentBiome = SparrowHeart.getInstance().getBiomeResourceLocation(location);
+                if (!biomes.contains(currentBiome))
+                    return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerMoonPhaseRequirement() {
+        registerRequirement("moon-phase", (args, actions, advanced) -> {
+            HashSet<String> moonPhases = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
+                long days = location.getWorld().getFullTime() / 24_000;
+                if (moonPhases.contains(MoonPhase.getPhase(days).name().toLowerCase(Locale.ENGLISH)))
+                    return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+        registerRequirement("!moon-phase", (args, actions, advanced) -> {
+            HashSet<String> moonPhases = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
+                long days = location.getWorld().getFullTime() / 24_000;
+                if (!moonPhases.contains(MoonPhase.getPhase(days).name().toLowerCase(Locale.ENGLISH)))
+                    return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerWorldRequirement() {
+        registerRequirement("world", (args, actions, advanced) -> {
+            HashSet<String> worlds = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
+                if (worlds.contains(location.getWorld().getName()))
+                    return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+        registerRequirement("!world", (args, actions, advanced) -> {
+            HashSet<String> worlds = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
+                if (!worlds.contains(location.getWorld().getName()))
+                    return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerWeatherRequirement() {
+        registerRequirement("weather", (args, actions, advanced) -> {
+            HashSet<String> weathers = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                String currentWeather;
+                Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
+                World world = location.getWorld();
+                if (world.isClearWeather()) currentWeather = "clear";
+                else if (world.isThundering()) currentWeather = "thunder";
+                else currentWeather = "rain";
+                if (weathers.contains(currentWeather)) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerCoolDownRequirement() {
+        registerRequirement("cooldown", (args, actions, advanced) -> {
+            return null;
+        });
+    }
+
+    private void registerDateRequirement() {
+        registerRequirement("date", (args, actions, advanced) -> {
+            HashSet<String> dates = new HashSet<>(ListUtils.toList(args));
+            return context -> {
+                Calendar calendar = Calendar.getInstance();
+                String current = (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DATE);
+                if (dates.contains(current))
+                    return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerPermissionRequirement() {
+        registerRequirement("permission", (args, actions, advanced) -> {
+            List<String> perms = ListUtils.toList(args);
+            return context -> {
+                for (String perm : perms)
+                    if (context.getHolder().hasPermission(perm))
+                        return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+        registerRequirement("!permission", (args, actions, advanced) -> {
+            List<String> perms = ListUtils.toList(args);
+            return context -> {
+                for (String perm : perms)
+                    if (context.getHolder().hasPermission(perm)) {
+                        if (advanced) ActionManager.trigger(context, actions);
+                        return false;
+                    }
+                return true;
+            };
+        });
+    }
+
+    private void registerSeasonRequirement() {
+        registerRequirement("season", (args, actions, advanced) -> {
+            List<String> seasons = ListUtils.toList(args);
+            return context -> {
+                SeasonProvider seasonProvider = plugin.getIntegrationManager().getSeasonProvider();
+                if (seasonProvider == null) return true;
+                Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
+                World world = location.getWorld();
+                Season season = seasonProvider.getSeason(world);
+                if (seasons.contains(season.name().toLowerCase(Locale.ENGLISH))) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        });
+    }
+
+    private void registerPAPIRequirement() {
+        registerRequirement("<", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                MathValue<Player> v1 = MathValue.auto(section.get("value1"));
+                MathValue<Player> v2 = MathValue.auto(section.get("value2"));
+                return context -> {
+                    if (v1.evaluate(context) < v2.evaluate(context)) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at < requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+        registerRequirement("<=", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                MathValue<Player> v1 = MathValue.auto(section.get("value1"));
+                MathValue<Player> v2 = MathValue.auto(section.get("value2"));
+                return context -> {
+                    if (v1.evaluate(context) <= v2.evaluate(context)) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at <= requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+        registerRequirement("!=", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                MathValue<Player> v1 = MathValue.auto(section.get("value1"));
+                MathValue<Player> v2 = MathValue.auto(section.get("value2"));
+                return context -> {
+                    if (v1.evaluate(context) != v2.evaluate(context)) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at != requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+        registerRequirement("==", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                MathValue<Player> v1 = MathValue.auto(section.get("value1"));
+                MathValue<Player> v2 = MathValue.auto(section.get("value2"));
+                return context -> {
+                    if (v1.evaluate(context) == v2.evaluate(context)) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at == requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+        registerRequirement(">=", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                MathValue<Player> v1 = MathValue.auto(section.get("value1"));
+                MathValue<Player> v2 = MathValue.auto(section.get("value2"));
+                return context -> {
+                    if (v1.evaluate(context) >= v2.evaluate(context)) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at >= requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+        registerRequirement(">", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                MathValue<Player> v1 = MathValue.auto(section.get("value1"));
+                MathValue<Player> v2 = MathValue.auto(section.get("value2"));
+                return context -> {
+                    if (v1.evaluate(context) > v2.evaluate(context)) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at > requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+        registerRequirement("regex", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                TextValue<Player> v1 = TextValue.auto(section.getString("papi", ""));
+                String v2 = section.getString("regex", "");
+                return context -> {
+                    if (v1.render(context).matches(v2)) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at regex requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+        registerRequirement("startsWith", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
+                TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
+                return context -> {
+                    if (v1.render(context).startsWith(v2.render(context))) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at startsWith requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+        registerRequirement("!startsWith", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
+                TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
+                return context -> {
+                    if (!v1.render(context).startsWith(v2.render(context))) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at !startsWith requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+        registerRequirement("endsWith", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
+                TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
+                return context -> {
+                    if (v1.render(context).endsWith(v2.render(context))) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at endsWith requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+        registerRequirement("!endsWith", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
+                TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
+                return context -> {
+                    if (!v1.render(context).endsWith(v2.render(context))) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at !endsWith requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+        registerRequirement("contains", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
+                TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
+                return context -> {
+                    if (v1.render(context).contains(v2.render(context))) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at contains requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+        registerRequirement("!contains", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
+                TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
+                return context -> {
+                    if (!v1.render(context).contains(v2.render(context))) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at !contains requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+        registerRequirement("in-list", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                TextValue<Player> papi = TextValue.auto(section.getString("papi", ""));
+                List<String> values = ListUtils.toList(section.get("values"));
+                return context -> {
+                    if (values.contains(papi.render(context))) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at in-list requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+        registerRequirement("!in-list", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                TextValue<Player> papi = TextValue.auto(section.getString("papi", ""));
+                List<String> values = ListUtils.toList(section.get("values"));
+                return context -> {
+                    if (!values.contains(papi.render(context))) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at !in-list requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+        registerRequirement("equals", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
+                TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
+                return context -> {
+                    if (v1.render(context).equals(v2.render(context))) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at equals requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+        registerRequirement("!equals", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
+                TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
+                return context -> {
+                    if (!v1.render(context).equals(v2.render(context))) return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at !equals requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
+        });
+    }
+
+    private void registerPotionEffectRequirement() {
+        registerRequirement("potion-effect", (args, actions, advanced) -> {
+            String potions = (String) args;
+            String[] split = potions.split("(<=|>=|<|>|==)", 2);
+            PotionEffectType type = PotionEffectType.getByName(split[0]);
+            if (type == null) {
+                plugin.getPluginLogger().warn("Potion effect doesn't exist: " + split[0]);
+                return EmptyRequirement.INSTANCE;
+            }
+            int required = Integer.parseInt(split[1]);
+            String operator = potions.substring(split[0].length(), potions.length() - split[1].length());
+            return context -> {
+                int level = -1;
+                PotionEffect potionEffect = context.getHolder().getPotionEffect(type);
+                if (potionEffect != null) {
+                    level = potionEffect.getAmplifier();
+                }
+                boolean result = false;
+                switch (operator) {
+                    case ">=" -> {
+                        if (level >= required) result = true;
+                    }
+                    case ">" -> {
+                        if (level > required) result = true;
+                    }
+                    case "==" -> {
+                        if (level == required) result = true;
+                    }
+                    case "!=" -> {
+                        if (level != required) result = true;
+                    }
+                    case "<=" -> {
+                        if (level <= required) result = true;
+                    }
+                    case "<" -> {
+                        if (level < required) result = true;
+                    }
+                }
+                if (result) {
+                    return true;
+                }
                 if (advanced) ActionManager.trigger(context, actions);
                 return false;
             };

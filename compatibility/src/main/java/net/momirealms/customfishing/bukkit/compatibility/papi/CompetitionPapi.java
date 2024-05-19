@@ -69,23 +69,23 @@ public class CompetitionPapi extends PlaceholderExpansion {
                 return String.valueOf(plugin.getCompetitionManager().getOnGoingCompetition() != null);
             }
             case "nextseconds" -> {
-                return String.valueOf(plugin.getCompetitionManager().getNextCompetitionSeconds());
+                return String.valueOf(plugin.getCompetitionManager().getNextCompetitionInSeconds());
             }
             case "nextsecond" -> {
-                return plugin.getCompetitionManager().getNextCompetitionSeconds() % 60 + CFLocale.FORMAT_Second;
+                return plugin.getCompetitionManager().getNextCompetitionInSeconds() % 60 + CFLocale.FORMAT_Second;
             }
             case "nextminute" -> {
-                int sec = plugin.getCompetitionManager().getNextCompetitionSeconds();
+                int sec = plugin.getCompetitionManager().getNextCompetitionInSeconds();
                 int min = (sec % 3600) / 60;
                 return sec < 60 ? "" : min + CFLocale.FORMAT_Minute;
             }
             case "nexthour" -> {
-                int sec = plugin.getCompetitionManager().getNextCompetitionSeconds();
+                int sec = plugin.getCompetitionManager().getNextCompetitionInSeconds();
                 int h = (sec % (3600 * 24)) / 3600;
                 return sec < 3600 ? "" : h + CFLocale.FORMAT_Hour;
             }
             case "nextday" -> {
-                int sec = plugin.getCompetitionManager().getNextCompetitionSeconds();
+                int sec = plugin.getCompetitionManager().getNextCompetitionInSeconds();
                 int day = sec / (3600 * 24);
                 return day == 0 ? "" : day + CFLocale.FORMAT_Day;
             }

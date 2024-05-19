@@ -18,18 +18,23 @@
 package net.momirealms.customfishing.bukkit.competition;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.event.CompetitionEvent;
 import net.momirealms.customfishing.api.mechanic.action.Action;
-import net.momirealms.customfishing.api.mechanic.competition.CompetitionConfigImpl;
+import net.momirealms.customfishing.api.mechanic.action.ActionManager;
+import net.momirealms.customfishing.api.mechanic.competition.CompetitionConfig;
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionGoal;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import net.momirealms.customfishing.api.mechanic.competition.RankingProvider;
-import net.momirealms.customfishing.api.scheduler.CancellableTask;
+import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
+import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.bukkit.competition.actionbar.ActionBarManager;
 import net.momirealms.customfishing.bukkit.competition.bossbar.BossBarManager;
 import net.momirealms.customfishing.bukkit.competition.ranking.LocalRankingProvider;
 import net.momirealms.customfishing.bukkit.competition.ranking.RedisRankingProvider;
+import net.momirealms.customfishing.common.locale.StandardLocales;
+import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
+import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -38,77 +43,139 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class Competition implements FishingCompetition {
 
-    private final CompetitionConfigImpl config;
-    private CancellableTask competitionTimerTask;
+    private final BukkitCustomFishingPlugin plugin;
+    private final CompetitionConfig config;
+    private SchedulerTask competitionTimerTask;
     private final CompetitionGoal goal;
-    private final ConcurrentHashMap<String, String> publicPlaceholders;
+    private final Context<Player> publicContext;
     private final RankingProvider rankingProvider;
     private float progress;
-    private long remainingTime;
+    private int remainingTime;
     private long startTime;
     private BossBarManager bossBarManager;
     private ActionBarManager actionBarManager;
 
-    public Competition(CompetitionConfigImpl config) {
+    public Competition(BukkitCustomFishingPlugin plugin, CompetitionConfig config) {
         this.config = config;
-        this.goal = config.getGoal() == CompetitionGoal.RANDOM ? CompetitionGoal.getRandom() : config.getGoal();
-        if (CFConfig.redisRanking) this.rankingProvider = new RedisRankingProvider();
-                            else this.rankingProvider = new LocalRankingProvider();
-        this.publicPlaceholders = new ConcurrentHashMap<>();
-        this.publicPlaceholders.put("{goal}", BukkitCustomFishingPlugin.get().getCompetitionManager().getCompetitionGoalLocale(goal));
+        this.plugin = plugin;
+        this.goal = config.goal() == CompetitionGoal.RANDOM ? CompetitionGoal.getRandom() : config.goal();
+        if (ConfigManager.redisRanking()) this.rankingProvider = new RedisRankingProvider();
+                              else this.rankingProvider = new LocalRankingProvider();
+        this.publicContext = Context.player(null, true);
+        this.publicContext.arg(
+                ContextKeys.GOAL,
+                goal
+        );
     }
 
-    /**
-     * Starts the fishing competition, initializing its settings and actions.
-     * This method sets the initial progress, remaining time, start time, and updates public placeholders.
-     * It also arranges timer tasks for competition timing and initializes boss bar and action bar managers if configured.
-     * Additionally, it triggers the start actions defined in the competition's configuration.
-     */
     @Override
-    public void start() {
+    public void start(boolean triggerEvent) {
         this.progress = 1;
-        this.remainingTime = config.getDurationInSeconds();
+        this.remainingTime = this.config.durationInSeconds();
         this.startTime = Instant.now().getEpochSecond();
 
         this.arrangeTimerTask();
-        if (config.getBossBarConfig() != null) {
-            this.bossBarManager = new BossBarManager(config.getBossBarConfig(), this);
+        if (this.config.bossBarConfig() != null && this.config.bossBarConfig().enabled()) {
+            this.bossBarManager = new BossBarManager(this.config.bossBarConfig(), this);
             this.bossBarManager.load();
         }
-        if (config.getActionBarConfig() != null) {
-            this.actionBarManager = new ActionBarManager(config.getActionBarConfig(), this);
+        if (this.config.actionBarConfig() != null && this.config.actionBarConfig().enabled()) {
+            this.actionBarManager = new ActionBarManager(this.config.actionBarConfig(), this);
             this.actionBarManager.load();
         }
 
-        Action[] actions = config.startActions();
-        if (actions != null) {
-            PlayerContext playerContext = new PlayerContext(null, null, this.publicPlaceholders);
-            for (Action action : actions) {
-                action.trigger(playerContext);
+        this.updatePublicPlaceholders();
+        ActionManager.trigger(this.publicContext, this.config.startActions());
+        this.rankingProvider.clear();
+        if (triggerEvent) {
+            this.plugin.getScheduler().async().execute(() -> {
+                CompetitionEvent competitionStartEvent = new CompetitionEvent(CompetitionEvent.State.START, this);
+                Bukkit.getPluginManager().callEvent(competitionStartEvent);
+            });
+        }
+    }
+
+    @Override
+    public void stop(boolean triggerEvent) {
+        if (this.competitionTimerTask != null)
+            this.competitionTimerTask.cancel();
+        if (this.bossBarManager != null)
+            this.bossBarManager.unload();
+        if (this.actionBarManager != null)
+            this.actionBarManager.unload();
+        this.rankingProvider.clear();
+        this.remainingTime = 0;
+        if (triggerEvent) {
+            plugin.getScheduler().async().execute(() -> {
+                CompetitionEvent competitionEvent = new CompetitionEvent(CompetitionEvent.State.STOP, this);
+                Bukkit.getPluginManager().callEvent(competitionEvent);
+            });
+        }
+    }
+
+    @Override
+    public void end(boolean triggerEvent) {
+        // mark it as ended
+        this.remainingTime = 0;
+
+        // cancel some sub tasks
+        if (competitionTimerTask != null)
+            this.competitionTimerTask.cancel();
+        if (this.bossBarManager != null)
+            this.bossBarManager.unload();
+        if (this.actionBarManager != null)
+            this.actionBarManager.unload();
+
+        // give prizes
+        HashMap<String, Action<Player>[]> rewardsMap = config.rewards();
+        if (rankingProvider.getSize() != 0 && rewardsMap != null) {
+            Iterator<Pair<String, Double>> iterator = rankingProvider.getIterator();
+            int i = 1;
+            while (iterator.hasNext()) {
+                Pair<String, Double> competitionPlayer = iterator.next();
+                this.publicContext.arg(ContextKeys.of(i + "_player", String.class), competitionPlayer.left());
+                this.publicContext.arg(ContextKeys.of(i + "_score", String.class), String.format("%.2f", competitionPlayer.right()));
+                if (i < rewardsMap.size()) {
+                    Player player = Bukkit.getPlayer(competitionPlayer.left());
+                    if (player != null) {
+                        ActionManager.trigger(Context.player(player).combine(this.publicContext), rewardsMap.get(String.valueOf(i)));
+                    }
+                } else {
+                    Action<Player>[] actions = rewardsMap.get("participation");
+                    if (actions != null) {
+                        Player player = Bukkit.getPlayer(competitionPlayer.left()); {
+                            if (player != null) {
+                                ActionManager.trigger(Context.player(player).combine(this.publicContext), actions);
+                            }
+                        }
+                    }
+                }
+                i++;
             }
         }
 
-        this.rankingProvider.clear();
-        this.updatePublicPlaceholders();
+        // end actions
+        ActionManager.trigger(publicContext, config.endActions());
 
-        CompetitionEvent competitionStartEvent = new CompetitionEvent(CompetitionEvent.State.START, this);
-        Bukkit.getPluginManager().callEvent(competitionStartEvent);
+        // call event
+        if (triggerEvent) {
+            plugin.getScheduler().async().execute(() -> {
+                CompetitionEvent competitionEndEvent = new CompetitionEvent(CompetitionEvent.State.END, this);
+                Bukkit.getPluginManager().callEvent(competitionEndEvent);
+            });
+        }
+
+        // 1 seconds delay for other servers to read the redis data
+        plugin.getScheduler().asyncLater(this.rankingProvider::clear, 1, TimeUnit.SECONDS);
     }
 
-    /**
-     * Arranges the timer task for the fishing competition.
-     * This method schedules a recurring task that updates the competition's remaining time and public placeholders.
-     * If the remaining time reaches zero, the competition is ended.
-     */
     private void arrangeTimerTask() {
-        this.competitionTimerTask = BukkitCustomFishingPlugin.get().getScheduler().runTaskAsyncTimer(() -> {
+        this.competitionTimerTask = this.plugin.getScheduler().asyncRepeating(() -> {
             if (decreaseTime()) {
                 end(true);
                 return;
@@ -117,115 +184,23 @@ public class Competition implements FishingCompetition {
         }, 1, 1, TimeUnit.SECONDS);
     }
 
-    /**
-     * Update public placeholders for the fishing competition.
-     * This method updates placeholders representing player rankings, remaining time, and score in public messages.
-     * Placeholders for player rankings include {1_player}, {1_score}, {2_player}, {2_score}, and so on.
-     * The placeholders for time include {hour}, {minute}, {second}, and {seconds}.
-     */
     private void updatePublicPlaceholders() {
-        for (int i = 1; i < CFConfig.placeholderLimit + 1; i++) {
-            int finalI = i;
-            Optional.ofNullable(rankingProvider.getPlayerAt(i)).ifPresentOrElse(player -> {
-                publicPlaceholders.put("{" + finalI + "_player}", player);
-                publicPlaceholders.put("{" + finalI + "_score}", String.format("%.2f", rankingProvider.getScoreAt(finalI)));
-            }, () -> {
-                publicPlaceholders.put("{" + finalI + "_player}", CFLocale.MSG_No_Player);
-                publicPlaceholders.put("{" + finalI + "_score}", CFLocale.MSG_No_Score);
-            });
-        }
-        publicPlaceholders.put("{hour}", remainingTime < 3600 ? "" : (remainingTime / 3600) + CFLocale.FORMAT_Hour);
-        publicPlaceholders.put("{minute}", remainingTime < 60 ? "" : (remainingTime % 3600) / 60 + CFLocale.FORMAT_Minute);
-        publicPlaceholders.put("{second}", remainingTime == 0 ? "" : remainingTime % 60 + CFLocale.FORMAT_Second);
-        publicPlaceholders.put("{seconds}", String.valueOf(remainingTime));
-    }
-
-    /**
-     * Stop the fishing competition.
-     * This method cancels the competition timer task, unloads boss bars and action bars, clears the ranking,
-     * and sets the remaining time to zero.
-     */
-    @Override
-    public void stop(boolean triggerEvent) {
-        if (!competitionTimerTask.isCancelled()) this.competitionTimerTask.cancel();
-        if (this.bossBarManager != null) this.bossBarManager.unload();
-        if (this.actionBarManager != null) this.actionBarManager.unload();
-        this.rankingProvider.clear();
-        this.remainingTime = 0;
-
-        if (triggerEvent) {
-            CompetitionEvent competitionEvent = new CompetitionEvent(CompetitionEvent.State.STOP, this);
-            Bukkit.getPluginManager().callEvent(competitionEvent);
-        }
-    }
-
-    /**
-     * End the fishing competition.
-     * This method marks the competition as ended, cancels sub-tasks such as timers and bar management,
-     * gives prizes to top participants and participation rewards, performs end actions, and clears the ranking.
-     */
-    @Override
-    public void end(boolean triggerEvent) {
-        // mark it as ended
-        this.remainingTime = 0;
-
-        // cancel some sub tasks
-        if (!competitionTimerTask.isCancelled()) this.competitionTimerTask.cancel();
-        if (this.bossBarManager != null) this.bossBarManager.unload();
-        if (this.actionBarManager != null) this.actionBarManager.unload();
-
-        // give prizes
-        HashMap<String, Action[]> rewardsMap = config.getRewards();
-        if (rankingProvider.getSize() != 0 && rewardsMap != null) {
-            Iterator<Pair<String, Double>> iterator = rankingProvider.getIterator();
-            int i = 1;
-            while (iterator.hasNext()) {
-                Pair<String, Double> competitionPlayer = iterator.next();
-                this.publicPlaceholders.put("{" + i + "_player}", competitionPlayer.left());
-                this.publicPlaceholders.put("{" + i + "_score}", String.format("%.2f", competitionPlayer.right()));
-                if (i < rewardsMap.size()) {
-                    Player player = Bukkit.getPlayer(competitionPlayer.left());
-                    if (player != null)
-                        for (Action action : rewardsMap.get(String.valueOf(i)))
-                            action.trigger(new PlayerContext(player, this.publicPlaceholders));
-                } else {
-                    Action[] actions = rewardsMap.get("participation");
-                    if (actions != null) {
-                        Player player = Bukkit.getPlayer(competitionPlayer.left()); {
-                            if (player != null)
-                                for (Action action : actions)
-                                    action.trigger(new PlayerContext(player, this.publicPlaceholders));
-                        }
-                    }
-                }
-                i++;
+        for (int i = 1; i < ConfigManager.placeholderLimit() + 1; i++) {
+            Optional<String> player = Optional.ofNullable(this.rankingProvider.getPlayerAt(i));
+            if (player.isPresent()) {
+                this.publicContext.arg(ContextKeys.of(i + "_player", String.class), player.get());
+                this.publicContext.arg(ContextKeys.of(i + "_score", String.class), String.format("%.2f", this.rankingProvider.getScoreAt(i)));
+            } else {
+                this.publicContext.arg(ContextKeys.of(i + "_player", String.class), StandardLocales.COMPETITION_NO_PLAYER);
+                this.publicContext.arg(ContextKeys.of(i + "_score", String.class), StandardLocales.COMPETITION_NO_SCORE);
             }
         }
-
-        // do end actions
-        Action[] actions = config.getEndActions();
-        if (actions != null) {
-            PlayerContext playerContext = new PlayerContext(null, null, new HashMap<>(publicPlaceholders));
-            for (Action action : actions) {
-                action.trigger(playerContext);
-            }
-        }
-
-        // call event
-        if (triggerEvent) {
-            CompetitionEvent competitionEndEvent = new CompetitionEvent(CompetitionEvent.State.END, this);
-            Bukkit.getPluginManager().callEvent(competitionEndEvent);
-        }
-
-        // 1 seconds delay for other servers to read the redis data
-        BukkitCustomFishingPlugin.get().getScheduler().runTaskAsyncLater(this.rankingProvider::clear, 1, TimeUnit.SECONDS);
+        this.publicContext.arg(ContextKeys.HOUR, remainingTime < 3600 ? "" : (remainingTime / 3600) + StandardLocales.FORMAT_HOUR);
+        this.publicContext.arg(ContextKeys.MINUTE, remainingTime < 60 ? "" : (remainingTime % 3600) / 60 + StandardLocales.FORMAT_MINUTE);
+        this.publicContext.arg(ContextKeys.SECOND, remainingTime == 0 ? "" : remainingTime % 60 + StandardLocales.FORMAT_SECOND);
+        this.publicContext.arg(ContextKeys.SECONDS, remainingTime);
     }
 
-    /**
-     * Check if the fishing competition is ongoing.
-     *
-     * @return {@code true} if the competition is still ongoing, {@code false} if it has ended.
-     */
     @Override
     public boolean isOnGoing() {
         return remainingTime > 0;
@@ -238,141 +213,69 @@ public class Competition implements FishingCompetition {
      */
     private boolean decreaseTime() {
         long current = Instant.now().getEpochSecond();
-        int duration = config.getDurationInSeconds();
-        remainingTime = duration - (current - startTime);
+        int duration = config.durationInSeconds();
+        remainingTime = (int) (duration - (current - startTime));
         progress = (float) remainingTime / duration;
         return remainingTime <= 0;
     }
 
-    /**
-     * Refreshes the data for a player in the fishing competition, including updating their score and triggering
-     * actions if it's their first time joining the competition.
-     *
-     * @param player The player whose data needs to be refreshed.
-     * @param score The player's current score in the competition.
-     */
     @Override
     public void refreshData(Player player, double score) {
         // if player join for the first time, trigger join actions
         if (!hasPlayerJoined(player)) {
-            Action[] actions = config.getJoinActions();
-            if (actions != null) {
-                PlayerContext playerContext = new PlayerContext(player);
-                for (Action action : actions) {
-                    action.trigger(playerContext);
-                }
-            }
+            ActionManager.trigger(Context.player(player).combine(publicContext), config.joinActions());
         }
 
         // show competition info
-        if (this.bossBarManager != null) this.bossBarManager.showBossBarTo(player);
-        if (this.actionBarManager != null) this.actionBarManager.showActionBarTo(player);
+        if (this.bossBarManager != null)
+            this.bossBarManager.showBossBarTo(player);
+        if (this.actionBarManager != null)
+            this.actionBarManager.showActionBarTo(player);
 
         // refresh data
-        switch (this.goal) {
-            case CATCH_AMOUNT -> rankingProvider.refreshData(player.getName(), 1);
-            case TOTAL_SIZE, TOTAL_SCORE -> rankingProvider.refreshData(player.getName(), score);
-            case MAX_SIZE -> {
-                if (score > rankingProvider.getPlayerScore(player.getName())) {
-                    rankingProvider.setData(player.getName(), score);
-                }
-            }
-        }
+        this.goal.refreshScore(rankingProvider, player, score);
     }
 
-    /**
-     * Checks if a player has joined the fishing competition based on their name.
-     *
-     * @param player The player to check for participation.
-     * @return {@code true} if the player has joined the competition; {@code false} otherwise.
-     */
     @Override
     public boolean hasPlayerJoined(OfflinePlayer player) {
         return rankingProvider.getPlayerRank(player.getName()) != -1;
     }
 
-    /**
-     * Gets the progress of the fishing competition as a float value (0~1).
-     *
-     * @return The progress of the fishing competition as a float.
-     */
     @Override
     public float getProgress() {
         return progress;
     }
 
-    /**
-     * Gets the remaining time in seconds for the fishing competition.
-     *
-     * @return The remaining time in seconds.
-     */
     @Override
     public long getRemainingTime() {
         return remainingTime;
     }
 
-    /**
-     * Gets the start time of the fishing competition.
-     *
-     * @return The start time of the fishing competition.
-     */
     @Override
     public long getStartTime() {
         return startTime;
     }
 
-    /**
-     * Gets the configuration of the fishing competition.
-     *
-     * @return The configuration of the fishing competition.
-     */
     @NotNull
     @Override
-    public CompetitionConfigImpl getConfig() {
+    public CompetitionConfig getConfig() {
         return config;
     }
 
-    /**
-     * Gets the goal of the fishing competition.
-     *
-     * @return The goal of the fishing competition.
-     */
     @NotNull
     @Override
     public CompetitionGoal getGoal() {
         return goal;
     }
 
-    /**
-     * Gets the ranking data for the fishing competition.
-     *
-     * @return The ranking data for the fishing competition.
-     */
     @NotNull
     @Override
     public RankingProvider getRanking() {
         return rankingProvider;
     }
 
-    /**
-     * Gets the cached placeholders for the fishing competition.
-     *
-     * @return A ConcurrentHashMap containing cached placeholders.
-     */
-    @NotNull
     @Override
-    public Map<String, String> getCachedPlaceholders() {
-        return publicPlaceholders;
-    }
-
-    /**
-     * Gets a specific cached placeholder value by its key.
-     *
-     * @param papi The key of the cached placeholder.
-     * @return The cached placeholder value as a string, or null if not found.
-     */
-    @Override
-    public String getCachedPlaceholder(String papi) {
-        return publicPlaceholders.get(papi);
+    public Context<Player> getPublicContext() {
+        return publicContext;
     }
 }

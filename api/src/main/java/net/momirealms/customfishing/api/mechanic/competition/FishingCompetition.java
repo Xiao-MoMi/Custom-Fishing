@@ -17,12 +17,10 @@
 
 package net.momirealms.customfishing.api.mechanic.competition;
 
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 public interface FishingCompetition {
 
@@ -92,14 +90,15 @@ public interface FishingCompetition {
      * @return The configuration of the fishing competition.
      */
     @NotNull
-    CompetitionConfigImpl getConfig();
+    CompetitionConfig getConfig();
 
     /**
      * Gets the goal of the fishing competition.
      *
      * @return The goal of the fishing competition.
      */
-    @NotNull CompetitionGoal getGoal();
+    @NotNull
+    CompetitionGoal getGoal();
 
     /**
      * Gets the ranking data for the fishing competition.
@@ -110,17 +109,9 @@ public interface FishingCompetition {
     RankingProvider getRanking();
 
     /**
-     * Gets the cached placeholders for the fishing competition.
+     * Get the public context
      *
-     * @return A ConcurrentHashMap containing cached placeholders.
+     * @return public context
      */
-    @NotNull Map<String, String> getCachedPlaceholders();
-
-    /**
-     * Gets a specific cached placeholder value by its key.
-     *
-     * @param papi The key of the cached placeholder.
-     * @return The cached placeholder value as a string, or null if not found.
-     */
-    @Nullable String getCachedPlaceholder(String papi);
+    Context<Player> getPublicContext();
 }

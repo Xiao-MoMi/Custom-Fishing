@@ -26,6 +26,8 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 
+import java.util.concurrent.TimeUnit;
+
 public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
 
     private final FishingManager manager;
@@ -41,13 +43,13 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
         this.player = player;
         this.fishHook = hook;
         this.settings = settings;
-        this.manager = BukkitCustomFishingPlugin.get().getFishingManager();
-        this.deadline = (long) (System.currentTimeMillis() + settings.getTime() * 1000L);
+        this.manager = BukkitCustomFishingPlugin.getFishingManager();
+        this.deadline = (long) (System.currentTimeMillis() + settings.time() * 1000L);
         this.arrangeTask();
     }
 
     public void arrangeTask() {
-        this.task = BukkitCustomFishingPlugin.get().getScheduler().runTaskSyncTimer(this, fishHook.getLocation(), 1, 1);
+        this.task = BukkitCustomFishingPlugin.getInstance().getScheduler().asyncRepeating(this, 50, 50, TimeUnit.MILLISECONDS);
     }
 
     @Override

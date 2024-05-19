@@ -20,6 +20,7 @@ dependencies {
     compileOnly("com.github.ben-manes.caffeine:caffeine:${rootProject.properties["caffeine_version"]}")
     compileOnly("com.saicone.rtag:rtag:${rootProject.properties["rtag_version"]}")
     compileOnly("net.objecthunter:exp4j:${rootProject.properties["exp4j_version"]}")
+    compileOnly("com.google.guava:guava:${rootProject.properties["guava_version"]}")
 }
 
 java {

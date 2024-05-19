@@ -36,12 +36,12 @@ public class BukkitItemManager implements ItemManager {
         this.itemProviders.put("vanilla", new ItemProvider() {
             @NotNull
             @Override
-            public ItemStack buildItem(Player player, String id) {
+            public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
                 return new ItemStack(Material.valueOf(id.toUpperCase(Locale.ENGLISH)));
             }
             @NotNull
             @Override
-            public String itemID(ItemStack itemStack) {
+            public String itemID(@NotNull ItemStack itemStack) {
                 return itemStack.getType().name();
             }
             @Override

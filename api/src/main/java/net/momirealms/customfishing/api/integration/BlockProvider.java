@@ -21,14 +21,33 @@ import net.momirealms.customfishing.api.mechanic.block.BlockDataModifier;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+/**
+ * Interface for providing custom block data and retrieving block IDs within the CustomFishing plugin.
+ * Extends the ExternalProvider interface.
+ */
 public interface BlockProvider extends ExternalProvider {
 
-    BlockData blockData(Player player, String id, List<BlockDataModifier> modifiers);
+    /**
+     * Generates BlockData for a given player based on a block ID and a list of modifiers.
+     *
+     * @param player The player for whom the block data is generated.
+     * @param id The unique identifier for the block.
+     * @param modifiers A list of {@link BlockDataModifier} objects to apply to the block data.
+     * @return The generated {@link BlockData} for the specified block ID and modifiers.
+     */
+    BlockData blockData(@NotNull Player player, @NotNull String id, List<BlockDataModifier> modifiers);
 
+    /**
+     * Retrieves the unique block ID associated with a given block.
+     *
+     * @param block The block for which the ID is to be retrieved.
+     * @return The unique block ID as a string, or null if no ID is associated with the block.
+     */
     @Nullable
-    String blockID(Block block);
+    String blockID(@NotNull Block block);
 }

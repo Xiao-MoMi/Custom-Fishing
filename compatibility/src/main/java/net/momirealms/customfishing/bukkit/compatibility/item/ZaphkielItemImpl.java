@@ -42,12 +42,12 @@ public class ZaphkielItemImpl implements ItemProvider {
 
     @NotNull
     @Override
-    public ItemStack buildItem(Player player, String id) {
+    public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
         return Objects.requireNonNull(zapAPI.getItemManager().generateItemStack(id, player));
     }
 
     @Override
-    public String itemID(ItemStack itemStack) {
+    public String itemID(@NotNull ItemStack itemStack) {
         if (itemStack == null || itemStack.getType() == Material.AIR) return null;
         return zapAPI.getItemHandler().getItemId(itemStack);
     }

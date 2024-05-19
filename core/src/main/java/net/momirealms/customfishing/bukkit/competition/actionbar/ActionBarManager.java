@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.bukkit.competition.actionbar;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.mechanic.competition.info.ActionBarConfigImpl;
+import net.momirealms.customfishing.api.mechanic.competition.info.ActionBarConfig;
 import net.momirealms.customfishing.bukkit.competition.Competition;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -35,11 +35,11 @@ import java.util.concurrent.TimeUnit;
 public class ActionBarManager implements Listener {
 
     private static final ConcurrentHashMap<UUID, ActionBarSender> senderMap = new ConcurrentHashMap<>();
-    private final ActionBarConfigImpl actionBarConfigImpl;
+    private final ActionBarConfig actionBarConfig;
     private final Competition competition;
 
-    public ActionBarManager(ActionBarConfigImpl actionBarConfigImpl, Competition competition) {
-        this.actionBarConfigImpl = actionBarConfigImpl;
+    public ActionBarManager(ActionBarConfig actionBarConfig, Competition competition) {
+        this.actionBarConfig = actionBarConfig;
         this.competition = competition;
     }
 
@@ -47,10 +47,10 @@ public class ActionBarManager implements Listener {
      * Loads the ActionBar manager, registering events and showing ActionBar messages to online players.
      */
     public void load() {
-        Bukkit.getPluginManager().registerEvents(this, BukkitCustomFishingPlugin.getInstance());
-        if (actionBarConfigImpl.showToAll()) {
+        Bukkit.getPluginManager().registerEvents(this, BukkitCustomFishingPlugin.getInstance().getBoostrap());
+        if (actionBarConfig.showToAll()) {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                ActionBarSender sender = new ActionBarSender(player, actionBarConfigImpl, competition);
+                ActionBarSender sender = new ActionBarSender(player, actionBarConfig, competition);
                 if (!sender.isVisible()) {
                     sender.show();
                 }
@@ -93,11 +93,11 @@ public class ActionBarManager implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        BukkitCustomFishingPlugin.getInstance().getScheduler().runTaskAsyncLater(() -> {
+        BukkitCustomFishingPlugin.getInstance().getScheduler().asyncLater(() -> {
             boolean hasJoined = competition.hasPlayerJoined(player);
-            if ((hasJoined || actionBarConfigImpl.showToAll())
+            if ((hasJoined || actionBarConfig.showToAll())
                     && !senderMap.containsKey(player.getUniqueId())) {
-                ActionBarSender sender = new ActionBarSender(player, actionBarConfigImpl, competition);
+                ActionBarSender sender = new ActionBarSender(player, actionBarConfig, competition);
                 if (!sender.isVisible()) {
                     sender.show();
                 }
@@ -114,11 +114,10 @@ public class ActionBarManager implements Listener {
     public void showActionBarTo(Player player) {
         ActionBarSender sender = senderMap.get(player.getUniqueId());
         if (sender == null) {
-            sender = new ActionBarSender(player, actionBarConfigImpl, competition);
+            sender = new ActionBarSender(player, actionBarConfig, competition);
             senderMap.put(player.getUniqueId(), sender);
         }
-        if (!sender.isVisible()) {
+        if (!sender.isVisible())
             sender.show();
-        }
     }
 }

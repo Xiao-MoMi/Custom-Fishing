@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The PlayerContextImpl class implements the Context interface specifically
@@ -32,19 +33,22 @@ import java.util.Map;
 public final class PlayerContextImpl implements Context<Player> {
 
     private final Player player;
-    private final HashMap<ContextKeys<?>, Object> args = new HashMap<>();
-    private final Map<String, String> placeholderMap = new HashMap<>();
+    private final Map<ContextKeys<?>, Object> args;
+    private final Map<String, String> placeholderMap;
 
     /**
      * Constructs a new PlayerContextImpl with the specified player.
      *
      * @param player the player to be associated with this context.
      */
-    public PlayerContextImpl(@Nullable Player player) {
+    public PlayerContextImpl(@Nullable Player player, boolean sync) {
         this.player = player;
+        this.args = sync ? new ConcurrentHashMap<>() : new HashMap<>();
+        this.placeholderMap = sync ? new ConcurrentHashMap<>() : new HashMap<>();
         if (player == null) return;
         final Location location = player.getLocation();
-        arg(ContextKeys.LOCATION, location)
+        arg(ContextKeys.PLAYER, player.getName())
+        .arg(ContextKeys.LOCATION, location)
         .arg(ContextKeys.X, location.getBlockX())
         .arg(ContextKeys.Y, location.getBlockY())
         .arg(ContextKeys.Z, location.getBlockZ())
@@ -57,7 +61,7 @@ public final class PlayerContextImpl implements Context<Player> {
     }
 
     @Override
-    public Map<String, String> toPlaceholderMap() {
+    public Map<String, String> placeholderMap() {
         return placeholderMap;
     }
 
@@ -65,6 +69,14 @@ public final class PlayerContextImpl implements Context<Player> {
     public <C> PlayerContextImpl arg(ContextKeys<C> key, C value) {
         this.args.put(key, value);
         this.placeholderMap.put("{" + key.key() + "}", value.toString());
+        return this;
+    }
+
+    @Override
+    public Context<Player> combine(Context<Player> other) {
+        final PlayerContextImpl otherContext = (PlayerContextImpl) other;
+        this.args.putAll(otherContext.args);
+        this.placeholderMap.putAll(otherContext.placeholderMap);
         return this;
     }
 

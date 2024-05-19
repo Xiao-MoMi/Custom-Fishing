@@ -40,7 +40,7 @@ public class MMOItemsItemProvider implements ItemProvider {
 
     @NotNull
     @Override
-    public ItemStack buildItem(@NotNull Player player, String id) {
+    public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
         String[] split = id.split(":");
         MMOItem mmoItem = MMOItems.plugin.getMMOItem(Type.get(split[0]), split[1].toUpperCase(Locale.ENGLISH));
         return mmoItem == null ? new ItemStack(Material.AIR) : requireNonNull(mmoItem.newBuilder().build());

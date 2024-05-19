@@ -19,6 +19,7 @@ package net.momirealms.customfishing.bukkit.competition.ranking;
 
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionPlayer;
 import net.momirealms.customfishing.api.mechanic.competition.RankingProvider;
+import net.momirealms.customfishing.common.util.Pair;
 
 import java.util.*;
 

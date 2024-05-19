@@ -23,6 +23,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class VanillaBlockProvider implements BlockProvider {
     }
 
     @Override
-    public BlockData blockData(Player player, String id, List<BlockDataModifier> modifiers) {
+    public BlockData blockData(@NotNull Player player, @NotNull String id, List<BlockDataModifier> modifiers) {
         BlockData blockData = Material.valueOf(id.toUpperCase(Locale.ENGLISH)).createBlockData();
         for (BlockDataModifier modifier : modifiers) {
             modifier.apply(player, blockData);
@@ -45,7 +46,7 @@ public class VanillaBlockProvider implements BlockProvider {
     }
 
     @Override
-    public @Nullable String blockID(Block block) {
+    public @Nullable String blockID(@NotNull Block block) {
         return block.getType().name();
     }
 }

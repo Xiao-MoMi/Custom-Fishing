@@ -21,6 +21,7 @@ import net.advancedplugins.ae.api.AEAPI;
 import net.momirealms.customfishing.api.integration.EnchantmentProvider;
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class AdvancedEnchantmentsProvider implements EnchantmentProvider {
     }
 
     @Override
-    public List<Pair<String, Short>> getEnchants(ItemStack itemStack) {
+    public List<Pair<String, Short>> getEnchants(@NotNull ItemStack itemStack) {
         List<Pair<String, Short>> enchants = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : AEAPI.getEnchantmentsOnItem(itemStack).entrySet()) {
             enchants.add(Pair.of("AE:" + entry.getKey(), entry.getValue().shortValue()));

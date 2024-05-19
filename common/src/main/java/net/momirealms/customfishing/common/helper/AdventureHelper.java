@@ -19,6 +19,7 @@ public class AdventureHelper {
     private final MiniMessage miniMessageStrict;
     private final GsonComponentSerializer gsonComponentSerializer;
     private final Cache<String, String> miniMessageToJsonCache = Caffeine.newBuilder().expireAfterWrite(5, TimeUnit.MINUTES).build();
+    public static boolean legacySupport = false;
 
     private AdventureHelper() {
         this.miniMessage = MiniMessage.builder().build();
@@ -34,12 +35,16 @@ public class AdventureHelper {
         return SingletonHolder.INSTANCE;
     }
 
-    public static MiniMessage getMiniMessage() {
-        return getInstance().miniMessage;
+    public static Component miniMessage(String text) {
+        if (legacySupport) {
+            return getMiniMessage().deserialize(legacyToMiniMessage(text));
+        } else {
+            return getMiniMessage().deserialize(text);
+        }
     }
 
-    public static MiniMessage getStrictMiniMessage() {
-        return getInstance().miniMessageStrict;
+    public static MiniMessage getMiniMessage() {
+        return getInstance().miniMessage;
     }
 
     public static GsonComponentSerializer getGson() {
@@ -48,7 +53,7 @@ public class AdventureHelper {
 
     public static String miniMessageToJson(String miniMessage) {
         AdventureHelper instance = getInstance();
-        return instance.miniMessageToJsonCache.get(miniMessage, (text) -> instance.gsonComponentSerializer.serialize(instance.miniMessage.deserialize(text)));
+        return instance.miniMessageToJsonCache.get(miniMessage, (text) -> instance.gsonComponentSerializer.serialize(miniMessage(text)));
     }
 
     public static void sendTitle(Audience audience, Component title, Component subtitle, int fadeIn, int stay, int fadeOut) {

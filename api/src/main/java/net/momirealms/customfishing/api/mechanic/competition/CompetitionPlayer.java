@@ -68,7 +68,7 @@ public class CompetitionPlayer implements Comparable<CompetitionPlayer> {
      * @return the last update time in milliseconds.
      */
     public long getTime() {
-        return time;
+        return this.time;
     }
 
     /**

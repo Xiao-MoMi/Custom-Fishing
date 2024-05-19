@@ -6,5 +6,4 @@ import net.kyori.adventure.text.TranslatableComponent;
 public interface MessageConstants {
 
     TranslatableComponent.Builder COMMAND_RELOAD = Component.translatable().key("argument.entity.notfound.player");
-
 }

@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.api.mechanic.context;
 
+import net.momirealms.customfishing.api.mechanic.competition.CompetitionGoal;
 import org.bukkit.Location;
 
 import java.util.Objects;
@@ -29,16 +30,29 @@ public class ContextKeys<T> {
     public static final ContextKeys<Integer> Z = of("z", Integer.class);
     public static final ContextKeys<String> WORLD = of("world", String.class);
     public static final ContextKeys<String> ID = of("id", String.class);
+    public static final ContextKeys<Boolean> OPEN_WATER = of("open_water", Boolean.class);
     public static final ContextKeys<String> TYPE = of("type", String.class);
     public static final ContextKeys<Float> SIZE = of("size", Float.class);
     public static final ContextKeys<Double> PRICE = of("price", Double.class);
     public static final ContextKeys<String> SURROUNDING = of("surrounding", String.class);
     public static final ContextKeys<String> TEMP_NEAR_PLAYER = of("near", String.class);
+    public static final ContextKeys<String> ROD = of("rod", String.class);
+    public static final ContextKeys<String> BAIT = of("bait", String.class);
+    public static final ContextKeys<String> HOOK = of("hook", String.class);
+    public static final ContextKeys<Boolean> IN_BAG = of("in_bag", Boolean.class);
+    public static final ContextKeys<CompetitionGoal> GOAL = of("goal", CompetitionGoal.class);
+    public static final ContextKeys<String> HOUR = of("hour", String.class);
+    public static final ContextKeys<String> MINUTE = of("minute", String.class);
+    public static final ContextKeys<String> SECOND = of("second", String.class);
+    public static final ContextKeys<Integer> SECONDS = of("seconds", Integer.class);
+    public static final ContextKeys<String> PLAYER = of("player", String.class);
+    public static final ContextKeys<String> SCORE = of("score", String.class);
+    public static final ContextKeys<String> RANK = of("rank", String.class);
 
     private final String key;
     private final Class<T> type;
 
-    private ContextKeys(String key, Class<T> type) {
+    protected ContextKeys(String key, Class<T> type) {
         this.key = key;
         this.type = type;
     }

@@ -19,11 +19,16 @@ package net.momirealms.customfishing.api;
 
 import net.momirealms.customfishing.api.integration.IntegrationManager;
 import net.momirealms.customfishing.api.mechanic.action.ActionManager;
+import net.momirealms.customfishing.api.mechanic.competition.CompetitionManager;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.event.EventManager;
 import net.momirealms.customfishing.api.mechanic.item.ItemManager;
+import net.momirealms.customfishing.api.mechanic.loot.LootManager;
+import net.momirealms.customfishing.api.mechanic.market.MarketManager;
+import net.momirealms.customfishing.api.mechanic.misc.cooldown.CoolDownManager;
 import net.momirealms.customfishing.api.mechanic.misc.placeholder.PlaceholderManager;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
+import net.momirealms.customfishing.api.storage.StorageManager;
 import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
 import net.momirealms.customfishing.common.plugin.scheduler.AbstractJavaScheduler;
 import net.momirealms.customfishing.common.sender.SenderFactory;
@@ -51,6 +56,11 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
     protected AbstractJavaScheduler<Location> scheduler;
     protected ItemManager itemManager;
     protected IntegrationManager integrationManager;
+    protected CompetitionManager competitionManager;
+    protected MarketManager marketManager;
+    protected StorageManager storageManager;
+    protected LootManager lootManager;
+    protected CoolDownManager coolDownManager;
 
     public BukkitCustomFishingPlugin() {
         instance = this;
@@ -103,6 +113,26 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
     @Override
     public AbstractJavaScheduler<Location> getScheduler() {
         return scheduler;
+    }
+
+    public CompetitionManager getCompetitionManager() {
+        return competitionManager;
+    }
+
+    public MarketManager getMarketManager() {
+        return marketManager;
+    }
+
+    public StorageManager getStorageManager() {
+        return storageManager;
+    }
+
+    public LootManager getLootManager() {
+        return lootManager;
+    }
+
+    public CoolDownManager getCoolDownManager() {
+        return coolDownManager;
     }
 
     public Plugin getBoostrap() {

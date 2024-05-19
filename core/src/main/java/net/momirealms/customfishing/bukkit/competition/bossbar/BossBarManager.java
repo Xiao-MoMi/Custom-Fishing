@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.bukkit.competition.bossbar;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.mechanic.competition.info.BossBarConfigImpl;
+import net.momirealms.customfishing.api.mechanic.competition.info.BossBarConfig;
 import net.momirealms.customfishing.bukkit.competition.Competition;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -35,11 +35,11 @@ import java.util.concurrent.TimeUnit;
 public class BossBarManager implements Listener {
 
     private static final ConcurrentHashMap<UUID, BossBarSender> senderMap = new ConcurrentHashMap<>();
-    private final BossBarConfigImpl bossBarConfigImpl;
+    private final BossBarConfig bossBarConfig;
     private final Competition competition;
 
-    public BossBarManager(BossBarConfigImpl bossBarConfigImpl, Competition competition) {
-        this.bossBarConfigImpl = bossBarConfigImpl;
+    public BossBarManager(BossBarConfig bossBarConfig, Competition competition) {
+        this.bossBarConfig = bossBarConfig;
         this.competition = competition;
     }
 
@@ -47,10 +47,10 @@ public class BossBarManager implements Listener {
      * Loads the boss bar manager, registering events and showing boss bars to online players.
      */
     public void load() {
-        Bukkit.getPluginManager().registerEvents(this, BukkitCustomFishingPlugin.getInstance());
-        if (bossBarConfigImpl.showToAll()) {
+        Bukkit.getPluginManager().registerEvents(this, BukkitCustomFishingPlugin.getInstance().getBoostrap());
+        if (bossBarConfig.showToAll()) {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                BossBarSender sender = new BossBarSender(player, bossBarConfigImpl, competition);
+                BossBarSender sender = new BossBarSender(player, bossBarConfig, competition);
                 if (!sender.isVisible()) {
                     sender.show();
                 }
@@ -93,11 +93,11 @@ public class BossBarManager implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        BukkitCustomFishingPlugin.getInstance().getScheduler().runTaskAsyncLater(() -> {
+        BukkitCustomFishingPlugin.getInstance().getScheduler().asyncLater(() -> {
             boolean hasJoined = competition.hasPlayerJoined(player);
-            if ((hasJoined || bossBarConfigImpl.showToAll())
+            if ((hasJoined || bossBarConfig.showToAll())
                     && !senderMap.containsKey(player.getUniqueId())) {
-                BossBarSender sender = new BossBarSender(player, bossBarConfigImpl, competition);
+                BossBarSender sender = new BossBarSender(player, bossBarConfig, competition);
                 if (!sender.isVisible()) {
                     sender.show();
                 }
@@ -114,11 +114,10 @@ public class BossBarManager implements Listener {
     public void showBossBarTo(Player player) {
         BossBarSender sender = senderMap.get(player.getUniqueId());
         if (sender == null) {
-            sender = new BossBarSender(player, bossBarConfigImpl, competition);
+            sender = new BossBarSender(player, bossBarConfig, competition);
             senderMap.put(player.getUniqueId(), sender);
         }
-        if (!sender.isVisible()) {
+        if (!sender.isVisible())
             sender.show();
-        }
     }
 }

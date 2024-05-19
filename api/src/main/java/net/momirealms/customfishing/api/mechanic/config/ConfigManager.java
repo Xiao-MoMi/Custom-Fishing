@@ -39,6 +39,18 @@ public abstract class ConfigManager implements ConfigLoader {
         this.plugin = plugin;
     }
 
+    public static int placeholderLimit() {
+        return 0;
+    }
+
+    public static boolean redisRanking() {
+        return false;
+    }
+
+    public static String serverGroup() {
+        return null;
+    }
+
     public void registerLootParser(Function<Object, Consumer<Loot.Builder>> function, String... nodes) {
         registerNodeFunction(nodes, new LootParserFunction(function));
     }

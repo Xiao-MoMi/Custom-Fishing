@@ -19,6 +19,7 @@ package net.momirealms.customfishing.api.integration;
 
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -30,5 +31,5 @@ public interface EnchantmentProvider extends ExternalProvider {
      * @param itemStack itemStack
      * @return enchantment list
      */
-    List<Pair<String, Short>> getEnchants(ItemStack itemStack);
+    List<Pair<String, Short>> getEnchants(@NotNull ItemStack itemStack);
 }

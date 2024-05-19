@@ -60,10 +60,16 @@ public interface GamingPlayer {
      */
     boolean onSneak();
 
+    /**
+     * Get the player
+     *
+     * @return the player
+     */
     Player getPlayer();
 
     /**
      * @return effect reward based on game results
      */
-    @Nullable Effect getEffectReward();
+    @Nullable
+    Effect getEffectReward();
 }

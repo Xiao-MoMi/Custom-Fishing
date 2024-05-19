@@ -17,23 +17,43 @@
 
 package net.momirealms.customfishing.api.mechanic.competition;
 
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.util.Index;
 import net.momirealms.customfishing.common.util.RandomUtils;
+import org.apache.logging.log4j.util.TriConsumer;
+import org.bukkit.entity.Player;
 
 public final class CompetitionGoal {
 
-    public static final CompetitionGoal CATCH_AMOUNT = new CompetitionGoal(Key.key("customfishing", "catch_amount"));
-    public static final CompetitionGoal TOTAL_SCORE = new CompetitionGoal(Key.key("customfishing", "total_score"));
-    public static final CompetitionGoal MAX_SIZE = new CompetitionGoal(Key.key("customfishing", "max_size"));
-    public static final CompetitionGoal TOTAL_SIZE = new CompetitionGoal(Key.key("customfishing", "total_size"));
-    public static final CompetitionGoal RANDOM = new CompetitionGoal(Key.key("customfishing", "random"));
+    public static final CompetitionGoal CATCH_AMOUNT = new CompetitionGoal(
+            "catch_amount",
+            ((rankingProvider, player, score) -> rankingProvider.refreshData(player, 1))
+    );
+    public static final CompetitionGoal TOTAL_SCORE = new CompetitionGoal(
+          "total_score",
+            (RankingProvider::refreshData)
+    );
+    public static final CompetitionGoal MAX_SIZE = new CompetitionGoal(
+            "max_size",
+            ((rankingProvider, player, score) -> {
+                if (rankingProvider.getPlayerScore(player) < score) {
+                    rankingProvider.setData(player, score);
+                }
+            })
+    );
+    public static final CompetitionGoal TOTAL_SIZE = new CompetitionGoal(
+           "total_size",
+            (RankingProvider::refreshData)
+    );
+    public static final CompetitionGoal RANDOM = new CompetitionGoal(
+           "random",
+            (rankingProvider, player, score) -> {}
+    );
 
     private static final CompetitionGoal[] values = new CompetitionGoal[] {
         CATCH_AMOUNT, TOTAL_SCORE, MAX_SIZE, TOTAL_SIZE, RANDOM
     };
 
-    private static final Index<Key, CompetitionGoal> index = Index.create(CompetitionGoal::key, values());
+    private static final Index<String, CompetitionGoal> index = Index.create(CompetitionGoal::key, values());
 
     /**
      * Gets an array containing all defined competition goals.
@@ -49,7 +69,7 @@ public final class CompetitionGoal {
      *
      * @return An index mapping keys to competition goals.
      */
-    public static Index<Key, CompetitionGoal> index() {
+    public static Index<String, CompetitionGoal> index() {
         return index;
     }
 
@@ -62,10 +82,12 @@ public final class CompetitionGoal {
         return CompetitionGoal.values()[RandomUtils.generateRandomInt(0, values.length - 1)];
     }
 
-    private final Key key;
+    private final String key;
+    private final TriConsumer<RankingProvider, String, Double> scoreConsumer;
 
-    private CompetitionGoal(Key key) {
+    private CompetitionGoal(String key, TriConsumer<RankingProvider, String, Double> scoreConsumer) {
         this.key = key;
+        this.scoreConsumer = scoreConsumer;
     }
 
     /**
@@ -73,7 +95,16 @@ public final class CompetitionGoal {
      *
      * @return The key of the competition goal.
      */
-    public Key key() {
+    public String key() {
         return key;
+    }
+
+    public void refreshScore(RankingProvider ranking, Player player, Double score) {
+        scoreConsumer.accept(ranking, player.getName(), score);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }

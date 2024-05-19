@@ -52,7 +52,7 @@ public class McMMOTreasureProvider implements ItemProvider {
 
     @NotNull
     @Override
-    public ItemStack buildItem(@NotNull Player player, String id) {
+    public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
         if (!id.equals("treasure")) return new ItemStack(Material.AIR);
         ItemStack itemStack = null;
         int times = 0;

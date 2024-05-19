@@ -23,6 +23,7 @@ import net.momirealms.customfishing.api.mechanic.block.BlockDataModifier;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class ItemsAdderBlockProvider implements BlockProvider {
     }
 
     @Override
-    public BlockData blockData(Player player, String id, List<BlockDataModifier> modifiers) {
+    public BlockData blockData(@NotNull Player player, @NotNull String id, List<BlockDataModifier> modifiers) {
         BlockData blockData = CustomBlock.getBaseBlockData(id);
         for (BlockDataModifier modifier : modifiers) {
             modifier.apply(player, blockData);
@@ -43,7 +44,7 @@ public class ItemsAdderBlockProvider implements BlockProvider {
     }
 
     @Override
-    public String blockID(Block block) {
+    public String blockID(@NotNull Block block) {
         CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);
         return customBlock == null ? null : customBlock.getId();
     }

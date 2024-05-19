@@ -21,6 +21,7 @@ import net.momirealms.customfishing.api.integration.EnchantmentProvider;
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class VanillaEnchantmentsProvider implements EnchantmentProvider {
     }
 
     @Override
-    public List<Pair<String, Short>> getEnchants(ItemStack itemStack) {
+    public List<Pair<String, Short>> getEnchants(@NotNull ItemStack itemStack) {
         Map<Enchantment, Integer> enchantments = itemStack.getEnchantments();
         List<Pair<String, Short>> enchants = new ArrayList<>(enchantments.size());
         for (Map.Entry<Enchantment, Integer> en : enchantments.entrySet()) {

@@ -21,6 +21,7 @@ import dev.aurelium.auraskills.api.AuraSkillsApi;
 import dev.aurelium.auraskills.api.registry.NamespacedId;
 import net.momirealms.customfishing.api.integration.LevelerProvider;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class AuraSkillsLevelerProvider implements LevelerProvider {
 
@@ -30,13 +31,13 @@ public class AuraSkillsLevelerProvider implements LevelerProvider {
     }
 
     @Override
-    public void addXp(Player player, String target, double amount) {
+    public void addXp(@NotNull Player player, @NotNull String target, double amount) {
         AuraSkillsApi.get().getUser(player.getUniqueId())
                 .addSkillXp(AuraSkillsApi.get().getGlobalRegistry().getSkill(NamespacedId.fromDefault(target)), amount);
     }
 
     @Override
-    public int getLevel(Player player, String target) {
+    public int getLevel(@NotNull Player player, @NotNull String target) {
         return AuraSkillsApi.get().getUser(player.getUniqueId()).getSkillLevel(
                 AuraSkillsApi.get().getGlobalRegistry().getSkill(NamespacedId.fromDefault(target))
         );

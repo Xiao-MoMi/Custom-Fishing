@@ -44,7 +44,7 @@ public interface Context<T> {
      *
      * @return a map of placeholders
      */
-    Map<String, String> toPlaceholderMap();
+    Map<String, String> placeholderMap();
 
     /**
      * Adds or updates an argument in the context.
@@ -56,6 +56,14 @@ public interface Context<T> {
      * @return the current context instance, allowing for method chaining.
      */
     <C> Context<T> arg(ContextKeys<C> key, C value);
+
+    /**
+     * Combines one context with another
+     *
+     * @param other other
+     * @return this context
+     */
+    Context<T> combine(Context<T> other);
 
     /**
      * Retrieves the value of a specific argument from the context.
@@ -82,6 +90,10 @@ public interface Context<T> {
      * @return a new Context instance with the specified player as the holder.
      */
     static Context<Player> player(@Nullable Player player) {
-        return new PlayerContextImpl(player);
+        return new PlayerContextImpl(player, false);
+    }
+
+    static Context<Player> player(@Nullable Player player, boolean threadSafe) {
+        return new PlayerContextImpl(player, threadSafe);
     }
 }

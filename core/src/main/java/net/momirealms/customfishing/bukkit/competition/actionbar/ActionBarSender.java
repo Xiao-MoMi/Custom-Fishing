@@ -17,73 +17,61 @@
 
 package net.momirealms.customfishing.bukkit.competition.actionbar;
 
+import net.kyori.adventure.audience.Audience;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.mechanic.competition.info.ActionBarConfigImpl;
-import net.momirealms.customfishing.api.scheduler.CancellableTask;
+import net.momirealms.customfishing.api.mechanic.competition.info.ActionBarConfig;
+import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
+import net.momirealms.customfishing.api.mechanic.misc.value.DynamicText;
 import net.momirealms.customfishing.bukkit.competition.Competition;
-import net.momirealms.customfishing.mechanic.misc.DynamicText;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.locale.StandardLocales;
+import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Manages and updates ActionBar messages for a specific player in a competition context.
- */
 public class ActionBarSender {
 
     private final Player player;
+    private final Audience audience;
     private int refreshTimer;
     private int switchTimer;
     private int counter;
     private final DynamicText[] texts;
-    private CancellableTask senderTask;
-    private final ActionBarConfigImpl config;
+    private SchedulerTask senderTask;
+    private final ActionBarConfig config;
     private boolean isShown;
     private final Competition competition;
-    private final HashMap<String, String> privatePlaceholders;
+    private final Context<Player> privateContext;
 
-    /**
-     * Creates a new ActionBarSender instance for a player.
-     *
-     * @param player      The player to manage ActionBar messages for.
-     * @param config      The configuration for ActionBar messages.
-     * @param competition The competition associated with this ActionBarSender.
-     */
-    public ActionBarSender(Player player, ActionBarConfigImpl config, Competition competition) {
+    public ActionBarSender(Player player, ActionBarConfig config, Competition competition) {
         this.player = player;
+        this.audience = BukkitCustomFishingPlugin.getInstance().getSenderFactory().getAudience(player);
         this.config = config;
+        this.privateContext = Context.player(player);
         this.isShown = false;
         this.competition = competition;
-        this.privatePlaceholders = new HashMap<>();
-        this.privatePlaceholders.put("{player}", player.getName());
         this.updatePrivatePlaceholders();
-
         String[] str = config.texts();
         texts = new DynamicText[str.length];
         for (int i = 0; i < str.length; i++) {
             texts[i] = new DynamicText(player, str[i]);
-            texts[i].update(privatePlaceholders);
+            texts[i].update(privateContext.placeholderMap());
         }
     }
 
-    /**
-     * Updates private placeholders used in ActionBar messages.
-     */
     @SuppressWarnings("DuplicatedCode")
     private void updatePrivatePlaceholders() {
-        this.privatePlaceholders.put("{score}", String.format("%.2f", competition.getRanking().getPlayerScore(player.getName())));
+        this.privateContext.arg(ContextKeys.SCORE, String.format("%.2f", competition.getRanking().getPlayerScore(player.getName())));
         int rank = competition.getRanking().getPlayerRank(player.getName());
-        this.privatePlaceholders.put("{rank}", rank != -1 ? String.valueOf(rank) : CFLocale.MSG_No_Rank);
-        this.privatePlaceholders.putAll(competition.getCachedPlaceholders());
+        this.privateContext.arg(ContextKeys.RANK, rank != -1 ? String.valueOf(rank) : StandardLocales.COMPETITION_NO_RANK);
+        this.privateContext.combine(competition.getPublicContext());
     }
 
-    /**
-     * Shows the ActionBar message to the player.
-     */
     public void show() {
         this.isShown = true;
-        senderTask = BukkitCustomFishingPlugin.get().getScheduler().runTaskAsyncTimer(() -> {
+        senderTask = BukkitCustomFishingPlugin.getInstance().getScheduler().asyncRepeating(() -> {
             switchTimer++;
             if (switchTimer > config.switchInterval()) {
                 switchTimer = 0;
@@ -95,39 +83,23 @@ public class ActionBarSender {
                 refreshTimer = 0;
                 DynamicText text = texts[counter % (texts.length)];
                 updatePrivatePlaceholders();
-                text.update(privatePlaceholders);
-                AdventureHelper.getInstance().sendActionbar(
-                        player,
-                        text.getLatestValue()
-                );
+                text.update(this.privateContext.placeholderMap());
+                audience.sendActionBar(AdventureHelper.miniMessage().deserialize(text.getLatestValue()));
             }
         }, 50, 50, TimeUnit.MILLISECONDS);
     }
 
-    /**
-     * Hides the ActionBar message from the player.
-     */
     public void hide() {
-        if (senderTask != null && !senderTask.isCancelled())
+        if (senderTask != null)
             senderTask.cancel();
         this.isShown = false;
     }
 
-    /**
-     * Checks if the ActionBar message is currently visible to the player.
-     *
-     * @return True if the ActionBar message is visible, false otherwise.
-     */
     public boolean isVisible() {
         return this.isShown;
     }
 
-    /**
-     * Gets the ActionBar configuration.
-     *
-     * @return The ActionBar configuration.
-     */
-    public ActionBarConfigImpl getConfig() {
+    public ActionBarConfig getConfig() {
         return config;
     }
 }

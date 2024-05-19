@@ -100,9 +100,8 @@ public interface IntegrationManager {
     /**
      * Retrieves a registered SeasonProvider by its ID.
      *
-     * @param id the ID of the SeasonProvider to retrieve
      * @return the SeasonProvider if found, or null if not found
      */
     @Nullable
-    SeasonProvider getSeasonProvider(String id);
+    SeasonProvider getSeasonProvider();
 }
