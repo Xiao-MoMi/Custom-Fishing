@@ -17,9 +17,6 @@
 
 package net.momirealms.customfishing.common.helper;
 
-import net.momirealms.customfishing.bukkit.BukkitCustomFishingPluginImpl;
-import org.bukkit.Bukkit;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;

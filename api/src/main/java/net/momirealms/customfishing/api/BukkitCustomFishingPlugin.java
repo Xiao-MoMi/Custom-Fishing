@@ -19,8 +19,10 @@ package net.momirealms.customfishing.api;
 
 import net.momirealms.customfishing.api.integration.IntegrationManager;
 import net.momirealms.customfishing.api.mechanic.action.ActionManager;
+import net.momirealms.customfishing.api.mechanic.block.BlockManager;
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionManager;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
+import net.momirealms.customfishing.api.mechanic.entity.EntityManager;
 import net.momirealms.customfishing.api.mechanic.event.EventManager;
 import net.momirealms.customfishing.api.mechanic.item.ItemManager;
 import net.momirealms.customfishing.api.mechanic.loot.LootManager;
@@ -28,6 +30,7 @@ import net.momirealms.customfishing.api.mechanic.market.MarketManager;
 import net.momirealms.customfishing.api.mechanic.misc.cooldown.CoolDownManager;
 import net.momirealms.customfishing.api.mechanic.misc.placeholder.PlaceholderManager;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
+import net.momirealms.customfishing.api.mechanic.statistic.StatisticsManager;
 import net.momirealms.customfishing.api.storage.StorageManager;
 import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
 import net.momirealms.customfishing.common.plugin.scheduler.AbstractJavaScheduler;
@@ -61,6 +64,9 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
     protected StorageManager storageManager;
     protected LootManager lootManager;
     protected CoolDownManager coolDownManager;
+    protected EntityManager entityManager;
+    protected BlockManager blockManager;
+    protected StatisticsManager statisticsManager;
 
     public BukkitCustomFishingPlugin() {
         instance = this;
@@ -131,8 +137,20 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
         return lootManager;
     }
 
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+
+    public BlockManager getBlockManager() {
+        return blockManager;
+    }
+
     public CoolDownManager getCoolDownManager() {
         return coolDownManager;
+    }
+
+    public StatisticsManager getStatisticsManager() {
+        return statisticsManager;
     }
 
     public Plugin getBoostrap() {

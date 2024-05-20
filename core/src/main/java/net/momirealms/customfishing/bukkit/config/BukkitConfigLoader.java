@@ -88,27 +88,27 @@ public class BukkitConfigLoader extends ConfigManager {
         this.registerBaseEffectParser(object -> {
             MathValue<Player> mathValue = MathValue.auto(object);
             return builder -> builder.difficultyAdder(mathValue);
-        }, "base-difficulty-adder");
+        }, "base-effects", "difficulty-adder");
         this.registerBaseEffectParser(object -> {
             MathValue<Player> mathValue = MathValue.auto(object);
             return builder -> builder.difficultyMultiplier(mathValue);
-        }, "base-difficulty-multiplier");
+        }, "base-effects", "difficulty-multiplier");
         this.registerBaseEffectParser(object -> {
             MathValue<Player> mathValue = MathValue.auto(object);
             return builder -> builder.gameTimeAdder(mathValue);
-        }, "base-game-time-adder");
+        }, "base-effects", "game-time-adder");
         this.registerBaseEffectParser(object -> {
             MathValue<Player> mathValue = MathValue.auto(object);
             return builder -> builder.gameTimeMultiplier(mathValue);
-        }, "base-game-time-multiplier");
+        }, "base-effects", "game-time-multiplier");
         this.registerBaseEffectParser(object -> {
             MathValue<Player> mathValue = MathValue.auto(object);
             return builder -> builder.waitTimeAdder(mathValue);
-        }, "base-wait-time-adder");
+        }, "base-effects", "wait-time-adder");
         this.registerBaseEffectParser(object -> {
             MathValue<Player> mathValue = MathValue.auto(object);
             return builder -> builder.waitTimeMultiplier(mathValue);
-        }, "base-wait-time-multiplier");
+        }, "base-effects", "wait-time-multiplier");
     }
 
     private void registerBuiltInLootParser() {

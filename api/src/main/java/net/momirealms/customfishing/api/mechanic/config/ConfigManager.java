@@ -51,6 +51,14 @@ public abstract class ConfigManager implements ConfigLoader {
         return null;
     }
 
+    public static String[] itemDetectOrder() {
+        return new String[0];
+    }
+
+    public static String[] blockDetectOrder() {
+        return new String[0];
+    }
+
     public void registerLootParser(Function<Object, Consumer<Loot.Builder>> function, String... nodes) {
         registerNodeFunction(nodes, new LootParserFunction(function));
     }

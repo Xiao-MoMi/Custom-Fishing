@@ -17,12 +17,13 @@
 
 package net.momirealms.customfishing.api.storage.user;
 
+import net.momirealms.customfishing.api.mechanic.statistic.FishingStatistics;
 import net.momirealms.customfishing.api.storage.data.EarningData;
 import net.momirealms.customfishing.api.storage.data.PlayerData;
 
 import java.util.UUID;
 
-public interface UserData<O> {
+public interface UserData {
 
     /**
      * Get the username
@@ -57,7 +58,7 @@ public interface UserData<O> {
      *
      * @return statistics
      */
-    Statistics getStatistics();
+    FishingStatistics getStatistics();
 
     /**
      * If the user is online on current server

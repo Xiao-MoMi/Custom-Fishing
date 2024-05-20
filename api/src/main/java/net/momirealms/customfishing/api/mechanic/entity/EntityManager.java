@@ -17,17 +17,29 @@
 
 package net.momirealms.customfishing.api.mechanic.entity;
 
-import net.momirealms.customfishing.api.mechanic.loot.Loot;
-import org.bukkit.Location;
+import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.common.plugin.feature.Reloadable;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
-public interface EntityManager {
+import java.util.Optional;
+
+/**
+ * EntityManager interface for managing custom entities in the fishing plugin.
+ */
+public interface EntityManager extends Reloadable {
 
     /**
-     * Summons an entity based on the given loot configuration to a specified location.
+     * Retrieves the configuration for a custom entity by its identifier.
      *
-     * @param hookLocation   The location where the entity will be summoned, typically where the fishing hook is.
-     * @param playerLocation The location of the player who triggered the entity summoning.
-     * @param loot           The loot configuration that defines the entity to be summoned.
+     * @param id The unique identifier of the entity configuration.
+     * @return An Optional containing the EntityConfig if found, or an empty Optional if not found.
      */
-    void summonEntity(Location hookLocation, Location playerLocation, Loot loot);
+    Optional<EntityConfig> getEntity(String id);
+
+    boolean registerEntity(String id, EntityConfig entity);
+
+    @Nullable
+    Entity summonEntityLoot(Context<Player> context);
 }

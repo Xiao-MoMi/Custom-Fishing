@@ -48,6 +48,10 @@ public class ContextKeys<T> {
     public static final ContextKeys<String> PLAYER = of("player", String.class);
     public static final ContextKeys<String> SCORE = of("score", String.class);
     public static final ContextKeys<String> RANK = of("rank", String.class);
+    public static final ContextKeys<Location> HOOK_LOCATION = of("hook_location", Location.class);
+    public static final ContextKeys<Integer> HOOK_X = of("hook_x", Integer.class);
+    public static final ContextKeys<Integer> HOOK_Y = of("hook_y", Integer.class);
+    public static final ContextKeys<Integer> HOOK_Z = of("hook_z", Integer.class);
 
     private final String key;
     private final Class<T> type;

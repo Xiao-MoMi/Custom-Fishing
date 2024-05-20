@@ -84,7 +84,7 @@ public class ActionBarSender {
                 DynamicText text = texts[counter % (texts.length)];
                 updatePrivatePlaceholders();
                 text.update(this.privateContext.placeholderMap());
-                audience.sendActionBar(AdventureHelper.miniMessage().deserialize(text.getLatestValue()));
+                audience.sendActionBar(AdventureHelper.miniMessage(text.getLatestValue()));
             }
         }, 50, 50, TimeUnit.MILLISECONDS);
     }

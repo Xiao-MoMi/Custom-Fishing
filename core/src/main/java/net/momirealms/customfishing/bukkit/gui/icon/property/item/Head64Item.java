@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.bukkit.gui.icon.property.item;
 
-import net.momirealms.customfishing.bukkit.BukkitCustomFishingPluginImpl;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;

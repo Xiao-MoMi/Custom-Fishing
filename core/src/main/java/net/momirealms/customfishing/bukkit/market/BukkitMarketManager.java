@@ -20,13 +20,17 @@ package net.momirealms.customfishing.bukkit.market;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.market.MarketGUIHolder;
 import net.momirealms.customfishing.api.mechanic.market.MarketManager;
 import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
+import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.scheduler.CancellableTask;
 import net.momirealms.customfishing.api.storage.data.EarningData;
 import net.momirealms.customfishing.bukkit.util.ConfigUtils;
 import net.momirealms.customfishing.bukkit.util.NumberUtils;
+import net.momirealms.customfishing.common.helper.ExpressionHelper;
+import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -76,7 +80,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
     private boolean sellFishingBag;
     private final ConcurrentHashMap<UUID, MarketGUI> marketGUIMap;
     private boolean enable;
-    private CancellableTask resetEarningsTask;
+    private SchedulerTask resetEarningsTask;
     private int date;
 
     public BukkitMarketManager(BukkitCustomFishingPlugin plugin) {
@@ -91,7 +95,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
         this.loadConfig();
         Bukkit.getPluginManager().registerEvents(this, plugin);
         if (!enable) return;
-        this.resetEarningsTask = plugin.getScheduler().runTaskAsyncTimer(() -> {
+        this.resetEarningsTask = plugin.getScheduler().asyncRepeating(() -> {
             int now = getRealTimeDate();
             if (this.date != now) {
                 this.date = now;
@@ -491,18 +495,19 @@ public class BukkitMarketManager implements MarketManager, Listener {
     }
 
     @Override
-    public String getFormula() {
+    public TextValue<Player> getFormula() {
         return formula;
     }
 
     @Override
-    public double getFishPrice(Player player, Map<String, String> vars) {
-        String temp = BukkitPlaceholderManager.getInstance().parse(player, formula, vars);
+    public double getFishPrice(Context<Player> context) {
+        formula.
+        String temp = plugin.getPlaceholderManager().parse(player, formula, vars);
         var placeholders = BukkitPlaceholderManager.getInstance().resolvePlaceholders(temp);
         for (String placeholder : placeholders) {
             temp = temp.replace(placeholder, "0");
         }
-        return new ExpressionBuilder(temp).build().evaluate();
+        return ExpressionHelper.evaluate(temp);
     }
 
     @Override

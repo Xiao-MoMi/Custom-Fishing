@@ -23,7 +23,6 @@ import com.comphenix.protocol.wrappers.*;
 import com.google.common.collect.Lists;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.momirealms.customfishing.bukkit.BukkitCustomFishingPluginImpl;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;

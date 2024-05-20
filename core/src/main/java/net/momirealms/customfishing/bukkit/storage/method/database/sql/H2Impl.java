@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.bukkit.storage.method.database.sql;
 
-import net.momirealms.customfishing.bukkit.BukkitCustomFishingPluginImpl;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.storage.StorageType;
 import net.momirealms.customfishing.libraries.dependencies.Dependency;

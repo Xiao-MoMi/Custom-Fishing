@@ -116,7 +116,6 @@ public class BukkitCompetitionManager implements CompetitionManager {
         YamlDocument document = plugin.getConfigManager().loadData(file);
         for (Map.Entry<String, Object> entry : document.getStringRouteMappedValues(false).entrySet()) {
             if (entry.getValue() instanceof Section section) {
-
                 CompetitionConfig.Builder builder = CompetitionConfig.builder()
                         .key(entry.getKey())
                         .goal(CompetitionGoal.index().value(section.getString("goal", "TOTAL_SCORE").toLowerCase(Locale.ENGLISH)))
@@ -128,7 +127,6 @@ public class BukkitCompetitionManager implements CompetitionManager {
                         .startActions(plugin.getActionManager().parseActions(section.getSection("start-actions")))
                         .endActions(plugin.getActionManager().parseActions(section.getSection("end-actions")))
                         .skipActions(plugin.getActionManager().parseActions(section.getSection("skip-actions")));;
-
                 if (section.getBoolean("bossbar.enable", false)) {
                     builder.bossBarConfig(
                             BossBarConfig.builder()
@@ -142,7 +140,6 @@ public class BukkitCompetitionManager implements CompetitionManager {
                                 .build()
                     );
                 }
-
                 if (section.getBoolean("actionbar.enable", false)) {
                     builder.actionBarConfig(
                             ActionBarConfig.builder()
@@ -154,7 +151,6 @@ public class BukkitCompetitionManager implements CompetitionManager {
                                 .build()
                     );
                 }
-
                 CompetitionConfig competitionConfig = builder.build();
                 List<Pair<Integer, Integer>> timePairs = section.getStringList("start-time")
                         .stream().map(it -> {

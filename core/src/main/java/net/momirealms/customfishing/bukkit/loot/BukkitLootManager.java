@@ -11,8 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static java.util.Objects.requireNonNull;
-
 public class BukkitLootManager implements LootManager {
 
     private final BukkitCustomFishingPlugin plugin;
@@ -23,13 +21,8 @@ public class BukkitLootManager implements LootManager {
         this.plugin = plugin;
     }
 
-    private void loadConfig() {
-
-    }
-
     @Override
-    public void registerLoot(@NotNull final Loot loot) {
-        requireNonNull(loot, "loot cannot be null");
+    public void registerLoot(@NotNull Loot loot) {
         this.lootMap.put(loot.getID(), loot);
         for (String group : loot.lootGroup()) {
             addGroupMember(group, loot.getID());

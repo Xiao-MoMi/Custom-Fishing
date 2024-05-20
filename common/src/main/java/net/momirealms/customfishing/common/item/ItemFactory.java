@@ -23,6 +23,10 @@ public abstract class ItemFactory<P extends CustomFishingPlugin, R, I> {
 
     protected abstract void setTag(R item, Object value, Object... path);
 
+    protected abstract boolean hasTag(R item, Object... path);
+
+    protected abstract boolean removeTag(R item, Object... path);
+
     protected abstract void update(R item);
 
     protected abstract I load(R item);

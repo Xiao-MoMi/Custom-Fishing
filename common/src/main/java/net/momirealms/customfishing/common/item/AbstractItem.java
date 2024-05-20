@@ -68,6 +68,16 @@ public class AbstractItem<R, I> implements Item<I> {
     }
 
     @Override
+    public boolean hasTag(Object... path) {
+        return factory.hasTag(item, path);
+    }
+
+    @Override
+    public boolean removeTag(Object... path) {
+        return factory.removeTag(item, path);
+    }
+
+    @Override
     public I getItem() {
         return factory.getItem(item);
     }

@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.bukkit.bag;
 
-import net.momirealms.customfishing.bukkit.BukkitCustomFishingPluginImpl;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
@@ -45,12 +44,12 @@ public class BukkitBagManager implements BagManager, Listener {
 
     private final BukkitCustomFishingPlugin plugin;
     private final HashMap<UUID, UserData> tempEditMap;
-    private Action[] collectLootActions;
-    private Action[] bagFullActions;
+    private Action<Player>[] collectLootActions;
+    private Action<Player>[] bagFullActions;
     private boolean bagStoreLoots;
     private String bagTitle;
     private List<Material> bagWhiteListItems;
-    private Requirement[] collectRequirements;
+    private Requirement<Player>[] collectRequirements;
 
     public BukkitBagManager(BukkitCustomFishingPluginImpl plugin) {
         this.plugin = plugin;

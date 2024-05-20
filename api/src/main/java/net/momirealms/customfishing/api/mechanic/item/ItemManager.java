@@ -19,16 +19,29 @@ package net.momirealms.customfishing.api.mechanic.item;
 
 import net.kyori.adventure.key.Key;
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.common.plugin.feature.Reloadable;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface ItemManager {
+public interface ItemManager extends Reloadable {
+
+    boolean registerItem(@NotNull Key key, @NotNull CustomFishingItem item);
 
     @Nullable
-    ItemStack buildInternal(Context<Player> context, Key key);
+    ItemStack buildInternal(@NotNull Context<Player> context, @NotNull Key key);
 
-    ItemStack buildAny(Context<Player> context, String item);
+    @Nullable
+    ItemStack buildAny(@NotNull Context<Player> context, @NotNull String item);
 
-    String getCustomFishingItemID(ItemStack itemStack);
+    @NotNull
+    String getItemID(@NotNull ItemStack itemStack);
+
+    @Nullable
+    String getCustomFishingItemID(@NotNull ItemStack itemStack);
+
+    @Nullable
+    Item dropItemLoot(@NotNull Context<Player> context);
 }

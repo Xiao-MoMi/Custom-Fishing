@@ -24,7 +24,7 @@ public interface CustomFishingItem {
      * Returns a list of tag consumers which are functions that take an item and context as parameters
      * and perform some operation on them.
      *
-     * @return a set of BiConsumer instances.
+     * @return a list of BiConsumer instances.
      */
     List<BiConsumer<Item<ItemStack>, Context<Player>>> tagConsumers();
 

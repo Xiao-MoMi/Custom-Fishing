@@ -49,6 +49,16 @@ public abstract class BukkitItemFactory extends ItemFactory<CustomFishingPlugin,
     }
 
     @Override
+    protected boolean hasTag(RtagItem item, Object... path) {
+        return item.hasTag(path);
+    }
+
+    @Override
+    protected boolean removeTag(RtagItem item, Object... path) {
+        return item.remove(path);
+    }
+
+    @Override
     protected void update(RtagItem item) {
         item.update();
     }

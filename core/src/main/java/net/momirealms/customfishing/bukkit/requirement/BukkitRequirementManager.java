@@ -15,7 +15,7 @@ import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.mechanic.requirement.*;
 import net.momirealms.customfishing.api.util.MoonPhase;
-import net.momirealms.customfishing.bukkit.compatibility.VaultHook;
+import net.momirealms.customfishing.bukkit.integration.VaultHook;
 import net.momirealms.customfishing.common.util.ClassUtils;
 import net.momirealms.customfishing.common.util.ListUtils;
 import net.momirealms.customfishing.common.util.Pair;
@@ -599,7 +599,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         registerRequirement("ice-fishing", (args, actions, advanced) -> {
             boolean iceFishing = (boolean) args;
             return context -> {
-                Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
+                Location location = requireNonNull(context.arg(ContextKeys.HOOK_LOCATION));
                 int water = 0, ice = 0;
                 for (int i = -2; i <= 2; i++)
                     for (int j = -1; j <= 2; j++)
@@ -661,7 +661,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         registerRequirement("biome", (args, actions, advanced) -> {
             HashSet<String> biomes = new HashSet<>(ListUtils.toList(args));
             return context -> {
-                Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
+                Location location = requireNonNull(Optional.ofNullable(context.arg(ContextKeys.HOOK_LOCATION)).orElse(context.arg(ContextKeys.LOCATION)));
                 String currentBiome = SparrowHeart.getInstance().getBiomeResourceLocation(location);
                 if (biomes.contains(currentBiome))
                     return true;
@@ -672,7 +672,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         registerRequirement("!biome", (args, actions, advanced) -> {
             HashSet<String> biomes = new HashSet<>(ListUtils.toList(args));
             return context -> {
-                Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
+                Location location = requireNonNull(Optional.ofNullable(context.arg(ContextKeys.HOOK_LOCATION)).orElse(context.arg(ContextKeys.LOCATION)));
                 String currentBiome = SparrowHeart.getInstance().getBiomeResourceLocation(location);
                 if (!biomes.contains(currentBiome))
                     return true;
@@ -749,7 +749,19 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
 
     private void registerCoolDownRequirement() {
         registerRequirement("cooldown", (args, actions, advanced) -> {
-            return null;
+            if (args instanceof Section section) {
+                String key = section.getString("key");
+                int time = section.getInt("time");
+                return context -> {
+                    if (!plugin.getCoolDownManager().isCoolDown(context.getHolder().getUniqueId(), key, time))
+                        return true;
+                    if (advanced) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at cooldown requirement which should be Section");
+                return EmptyRequirement.INSTANCE;
+            }
         });
     }
 

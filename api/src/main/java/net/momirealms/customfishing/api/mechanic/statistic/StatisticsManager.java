@@ -17,18 +17,13 @@
 
 package net.momirealms.customfishing.api.mechanic.statistic;
 
-import org.jetbrains.annotations.Nullable;
+import net.momirealms.customfishing.common.plugin.feature.Reloadable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface StatisticsManager {
+public interface StatisticsManager extends Reloadable {
 
-    /**
-     * Get a list of strings associated with a specific key in a category map.
-     *
-     * @param key The key to look up in the category map.
-     * @return A list of strings associated with the key or null if the key is not found.
-     */
-    @Nullable
+    @NotNull
     List<String> getCategoryMembers(String key);
 }

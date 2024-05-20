@@ -20,6 +20,7 @@ package net.momirealms.customfishing.bukkit.statistic;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.statistic.StatisticsManager;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -28,39 +29,22 @@ import java.util.*;
 public class BukkitStatisticsManager implements StatisticsManager {
 
     private final BukkitCustomFishingPlugin plugin;
-    private final HashMap<String, List<String>> categoryMap;
+    private final Map<String, List<String>> categoryMap = new HashMap<>();
 
     public BukkitStatisticsManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
-        this.categoryMap = new HashMap<>();
     }
 
+    @Override
     public void load() {
         this.loadCategoriesFromPluginFolder();
     }
 
+    @Override
     public void unload() {
         this.categoryMap.clear();
     }
-
-    public void disable() {
-        unload();
-    }
-
-    /**
-     * Get the statistics for a player with the given UUID.
-     *
-     * @param uuid The UUID of the player for whom statistics are retrieved.
-     * @return The player's statistics or null if the player is not found.
-     */
-    @Override
-    @Nullable
-    public Statistics getStatistics(UUID uuid) {
-        OnlineUserData onlineUser = plugin.getStorageManager().getOnlineUser(uuid);
-        if (onlineUser == null) return null;
-        return onlineUser.getStatistics();
-    }
-
+    
     @SuppressWarnings("DuplicatedCode")
     public void loadCategoriesFromPluginFolder() {
         Deque<File> fileDeque = new ArrayDeque<>();
@@ -68,7 +52,7 @@ public class BukkitStatisticsManager implements StatisticsManager {
             File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + type);
             if (!typeFolder.exists()) {
                 if (!typeFolder.mkdirs()) return;
-                plugin.saveResource("contents" + File.separator + type + File.separator + "default.yml", false);
+                plugin.getBoostrap().saveResource("contents" + File.separator + type + File.separator + "default.yml", false);
             }
             fileDeque.push(typeFolder);
             while (!fileDeque.isEmpty()) {
@@ -93,15 +77,9 @@ public class BukkitStatisticsManager implements StatisticsManager {
         }
     }
 
-    /**
-     * Get a list of strings associated with a specific key in a category map.
-     *
-     * @param key The key to look up in the category map.
-     * @return A list of strings associated with the key or null if the key is not found.
-     */
+    @NotNull
     @Override
-    @Nullable
-    public List<String> getCategory(String key) {
-        return categoryMap.get(key);
+    public List<String> getCategoryMembers(String key) {
+        return categoryMap.getOrDefault(key, List.of());
     }
 }

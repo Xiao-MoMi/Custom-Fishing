@@ -23,6 +23,10 @@ public interface Item<I> {
 
     Item<I> setTag(Object value, Object... path);
 
+    boolean hasTag(Object... path);
+
+    boolean removeTag(Object... path);
+
     I getItem();
 
     I load();

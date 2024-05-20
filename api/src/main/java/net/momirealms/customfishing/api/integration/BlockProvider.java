@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.integration;
 
 import net.momirealms.customfishing.api.mechanic.block.BlockDataModifier;
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
@@ -35,12 +36,12 @@ public interface BlockProvider extends ExternalProvider {
     /**
      * Generates BlockData for a given player based on a block ID and a list of modifiers.
      *
-     * @param player The player for whom the block data is generated.
+     * @param context The player for whom the block data is generated.
      * @param id The unique identifier for the block.
      * @param modifiers A list of {@link BlockDataModifier} objects to apply to the block data.
      * @return The generated {@link BlockData} for the specified block ID and modifiers.
      */
-    BlockData blockData(@NotNull Player player, @NotNull String id, List<BlockDataModifier> modifiers);
+    BlockData blockData(@NotNull Context<Player> context, @NotNull String id, List<BlockDataModifier> modifiers);
 
     /**
      * Retrieves the unique block ID associated with a given block.

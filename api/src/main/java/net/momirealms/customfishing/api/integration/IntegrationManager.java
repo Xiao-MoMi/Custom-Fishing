@@ -17,8 +17,12 @@
 
 package net.momirealms.customfishing.api.integration;
 
+import net.momirealms.customfishing.common.util.Pair;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Interface for managing integration providers in the custom fishing API.
@@ -68,12 +72,11 @@ public interface IntegrationManager {
     boolean registerSeasonProvider(@NotNull SeasonProvider seasonProvider);
 
     /**
-     * Unregisters a SeasonProvider by its ID.
+     * Unregisters the SeasonProvider.
      *
-     * @param id the ID of the SeasonProvider to unregister
      * @return true if unregistration is successful, false otherwise
      */
-    boolean unregisterSeasonProvider(@NotNull String id);
+    boolean unregisterSeasonProvider();
 
     boolean registerEntityProvider(@NotNull EntityProvider entityProvider);
 
@@ -104,4 +107,14 @@ public interface IntegrationManager {
      */
     @Nullable
     SeasonProvider getSeasonProvider();
+
+    List<Pair<String, Short>> getEnchantments(ItemStack itemStack);
+
+    boolean registerItemProvider(@NotNull ItemProvider itemProvider);
+
+    boolean unregisterItemProvider(@NotNull String id);
+
+    boolean registerBlockProvider(@NotNull BlockProvider block);
+
+    boolean unregisterBlockProvider(@NotNull String id);
 }

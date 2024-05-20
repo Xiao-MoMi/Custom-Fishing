@@ -63,7 +63,7 @@ public class BossBarSender {
             texts[i].update(privateContext.placeholderMap());
         }
         bossBar = BossBar.bossBar(
-                AdventureHelper.miniMessage().deserialize(texts[0].getLatestValue()),
+                AdventureHelper.miniMessage(texts[0].getLatestValue()),
                 competition.getProgress(),
                 config.color(),
                 config.overlay(),
@@ -95,7 +95,7 @@ public class BossBarSender {
                 DynamicText text = texts[counter % (texts.length)];
                 updatePrivatePlaceholders();
                 if (text.update(privateContext.placeholderMap())) {
-                    bossBar.name(AdventureHelper.miniMessage().deserialize(text.getLatestValue()));
+                    bossBar.name(AdventureHelper.miniMessage(text.getLatestValue()));
                 }
                 bossBar.progress(competition.getProgress());
             }
