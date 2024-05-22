@@ -52,16 +52,15 @@ public class VersionManagerImpl implements VersionManager {
         // Get the server version
         serverVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
         String[] split = serverVersion.split("\\.");
-        int main_ver = Integer.parseInt(split[0]);
+        int main_ver = Integer.parseInt(split[1]);
         // Determine if the server version is newer than 1_19_R2 and 1_20_R1
         if (main_ver >= 20) {
-            isNewerThan1_19_R2 = isNewerThan1_19_R3 = true;
+            isNewerThan1_19 = isNewerThan1_19_R2 = isNewerThan1_19_R3 = true;
             isNewerThan1_20 = true;
-            isNewerThan1_19 = true;
         } else if (main_ver == 19) {
             isNewerThan1_20 = false;
-            isNewerThan1_19_R2 = Integer.parseInt(split[1]) >= 2;
-            isNewerThan1_19_R3 = Integer.parseInt(split[1]) >= 3;
+            isNewerThan1_19_R2 = Integer.parseInt(split[2]) >= 3;
+            isNewerThan1_19_R3 = Integer.parseInt(split[2]) >= 4;
             isNewerThan1_19 = true;
         } else {
             isNewerThan1_20 = isNewerThan1_19 = isNewerThan1_19_R2 = isNewerThan1_19_R3 = false;
