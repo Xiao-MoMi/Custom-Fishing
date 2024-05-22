@@ -18,66 +18,52 @@
 package net.momirealms.customfishing.bukkit.market;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
+import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.market.MarketGUIHolder;
 import net.momirealms.customfishing.api.storage.data.EarningData;
-import net.momirealms.customfishing.api.util.InventoryUtils;
-import net.momirealms.customfishing.bukkit.util.ItemUtils;
-import net.momirealms.customfishing.bukkit.util.NumberUtils;
+import net.momirealms.customfishing.api.storage.user.UserData;
+import net.momirealms.customfishing.bukkit.util.PlayerUtils;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.util.Pair;
+import net.momirealms.sparrow.heart.SparrowHeart;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MarketGUI {
 
-    // A map that associates characters with MarketGUI elements.
     private final HashMap<Character, MarketGUIElement> itemsCharMap;
-    // A map that associates slot indices with MarketGUI elements.
     private final HashMap<Integer, MarketGUIElement> itemsSlotMap;
-    private final Inventory inventory;
     private final BukkitMarketManager manager;
-    private final Player owner;
-    private final EarningData earningData;
+    protected final Inventory inventory;
+    protected final Context<Player> context;
+    protected final EarningData earningData;
 
-    /**
-     * Constructor for creating a MarketGUI.
-     *
-     * @param manager     The Market Manager implementation associated with this MarketGUI.
-     * @param player      The player who owns this MarketGUI.
-     * @param earningData Data related to earnings for this MarketGUI.
-     */
-    public MarketGUI(BukkitMarketManager manager, Player player, EarningData earningData) {
+    public MarketGUI(BukkitMarketManager manager, Context<Player> context, EarningData earningData) {
         this.manager = manager;
-        this.owner = player;
+        this.context = context;
         this.earningData = earningData;
         this.itemsCharMap = new HashMap<>();
         this.itemsSlotMap = new HashMap<>();
         var holder = new MarketGUIHolder();
-        this.inventory = InventoryUtils.createInventory(
-                holder,
-                manager.getLayout().length * 9,
-                AdventureHelper.getInstance().getComponentFromMiniMessage(manager.getTitle())
-        );
+        this.inventory = Bukkit.createInventory(holder, manager.layout.length * 9);
         holder.setInventory(this.inventory);
     }
 
-    /**
-     * Initialize the GUI layout by mapping elements to inventory slots.
-     */
     private void init() {
         int line = 0;
-        for (String content : manager.getLayout()) {
+        for (String content : manager.layout) {
             for (int index = 0; index < 9; index++) {
                 char symbol;
-                if (index < content.length()) {
-                    symbol = content.charAt(index);
-                } else {
-                    symbol = ' ';
-                }
+                if (index < content.length()) symbol = content.charAt(index);
+                else symbol = ' ';
                 MarketGUIElement element = itemsCharMap.get(symbol);
                 if (element != null) {
                     element.addSlot(index + line * 9);
@@ -91,11 +77,6 @@ public class MarketGUI {
         }
     }
 
-    /**
-     * Add one or more elements to the GUI.
-     * @param elements Elements to be added.
-     * @return The MarketGUI instance.
-     */
     @SuppressWarnings("UnusedReturnValue")
     public MarketGUI addElement(MarketGUIElement... elements) {
         for (MarketGUIElement element : elements) {
@@ -104,38 +85,21 @@ public class MarketGUI {
         return this;
     }
 
-    /**
-     * Build and initialize the GUI.
-     */
     public MarketGUI build() {
         init();
         return this;
     }
 
-    /**
-     * Show the GUI to a player if the player is the owner.
-     * @param player The player to show the GUI to.
-     */
-    public void show(Player player) {
-        if (player != owner) return;
-        player.openInventory(inventory);
+    public void show() {
+        context.getHolder().openInventory(inventory);
+        SparrowHeart.getInstance().updateInventoryTitle(context.getHolder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(manager.title.render(context))));
     }
 
-    /**
-     * Get the MarketGUIElement associated with a specific inventory slot.
-     * @param slot The slot index in the inventory.
-     * @return The associated MarketGUIElement or null if not found.
-     */
     @Nullable
     public MarketGUIElement getElement(int slot) {
         return itemsSlotMap.get(slot);
     }
 
-    /**
-     * Get the MarketGUIElement associated with a specific character symbol.
-     * @param slot The character symbol.
-     * @return The associated MarketGUIElement or null if not found.
-     */
     @Nullable
     public MarketGUIElement getElement(char slot) {
         return itemsCharMap.get(slot);
@@ -145,100 +109,52 @@ public class MarketGUI {
      * Refresh the GUI, updating the display based on current data.
      * @return The MarketGUI instance.
      */
+    @SuppressWarnings("DuplicatedCode")
     public MarketGUI refresh() {
-        double earningLimit = manager.earningLimit(owner);
-        MarketDynamicGUIElement sellElement = (MarketDynamicGUIElement) getElement(manager.getSellSlot());
-        if (sellElement != null && sellElement.getSlots().size() > 0) {
-            double totalWorth = getTotalWorthInMarketGUI();
-            int soldAmount = getSoldAmount();
+        double earningLimit = manager.earningLimit(context);
+        MarketDynamicGUIElement sellElement = (MarketDynamicGUIElement) getElement(manager.sellSlot);
+        if (sellElement != null && !sellElement.getSlots().isEmpty()) {
+            Pair<Integer, Double> pair = manager.getItemsToSell(context, getItemsInGUI());
+            double totalWorth = pair.right();
+            int soldAmount = pair.left();
+            context.arg(ContextKeys.MONEY, manager.money(totalWorth))
+                    .arg(ContextKeys.MONEY_FORMATTED, String.format("%.2f", totalWorth))
+                    .arg(ContextKeys.REST, manager.money(earningLimit - earningData.earnings))
+                    .arg(ContextKeys.REST_FORMATTED, String.format("%.2f", (earningLimit - earningData.earnings)))
+                    .arg(ContextKeys.SOLD_ITEM_AMOUNT, soldAmount);
             if (totalWorth <= 0) {
-                sellElement.setItemStack(
-                        manager.getSellIconDenyBuilder().build(owner,
-                                Map.of("{money}", NumberUtils.money(totalWorth)
-                                        ,"{money_formatted}", String.format("%.2f", totalWorth)
-                                        ,"{player}", owner.getName()
-                                        ,"{rest}", NumberUtils.money(earningLimit - earningData.earnings)
-                                        ,"{rest_formatted}", String.format("%.2f", (earningLimit - earningData.earnings))
-                                        ,"{sold-item-amount}", String.valueOf(soldAmount)
-                                )
-                        )
-                );
+                sellElement.setItemStack(manager.sellIconDenyItem.build(context));
             } else if (earningLimit != -1 && (earningLimit - earningData.earnings < totalWorth)) {
-                sellElement.setItemStack(
-                        manager.getSellIconLimitBuilder().build(owner,
-                                Map.of("{money}", NumberUtils.money(totalWorth)
-                                        ,"{money_formatted}", String.format("%.2f", totalWorth)
-                                        ,"{player}", owner.getName()
-                                        ,"{rest}", NumberUtils.money(earningLimit - earningData.earnings)
-                                        ,"{rest_formatted}", String.format("%.2f", (earningLimit - earningData.earnings))
-                                        ,"{sold-item-amount}", String.valueOf(soldAmount)
-                                )
-                        )
-                );
+                sellElement.setItemStack(manager.sellIconLimitItem.build(context));
             } else {
-                sellElement.setItemStack(
-                        manager.getSellIconAllowBuilder().build(owner,
-                                Map.of("{money}", NumberUtils.money(totalWorth)
-                                        ,"{money_formatted}", String.format("%.2f", totalWorth)
-                                        ,"{player}", owner.getName()
-                                        ,"{rest}", NumberUtils.money(earningLimit - earningData.earnings)
-                                        ,"{rest_formatted}", String.format("%.2f", (earningLimit - earningData.earnings))
-                                        ,"{sold-item-amount}", String.valueOf(soldAmount)
-                                )
-                        )
-                );
+                sellElement.setItemStack(manager.sellIconAllowItem.build(context));
             }
         }
 
-        MarketDynamicGUIElement sellAllElement = (MarketDynamicGUIElement) getElement(manager.getSellAllSlot());
-        if (sellAllElement != null && sellAllElement.getSlots().size() > 0) {
-            double totalWorth = manager.getInventoryTotalWorth(owner.getInventory());
-            int sellAmount = manager.getInventorySellAmount(owner.getInventory());
-            if (manager.sellFishingBag() && BukkitCustomFishingPlugin.get().getBagManager().isEnabled()) {
-                Inventory bag = BukkitCustomFishingPlugin.get().getBagManager().getOnlineBagInventory(owner.getUniqueId());
-                if (bag != null) {
-                    totalWorth += manager.getInventoryTotalWorth(bag);
-                    sellAmount += manager.getInventorySellAmount(bag);
-                }
+        MarketDynamicGUIElement sellAllElement = (MarketDynamicGUIElement) getElement(manager.sellAllSlot);
+        if (sellAllElement != null && !sellAllElement.getSlots().isEmpty()) {
+            ArrayList<ItemStack> itemStacksToSell = new ArrayList<>(List.of(context.getHolder().getInventory().getStorageContents()));
+            if (manager.sellFishingBag && ConfigManager.enableFishingBag()) {
+                Optional<UserData> optionalUserData = BukkitCustomFishingPlugin.getInstance().getStorageManager().getOnlineUser(context.getHolder().getUniqueId());
+                optionalUserData.ifPresent(userData -> itemStacksToSell.addAll(List.of(userData.holder().getInventory().getStorageContents())));
             }
+            Pair<Integer, Double> pair = manager.getItemsToSell(context, itemStacksToSell);
+            double totalWorth = pair.right();
+            int soldAmount = pair.left();
+            context.arg(ContextKeys.MONEY, manager.money(totalWorth))
+                    .arg(ContextKeys.MONEY_FORMATTED, String.format("%.2f", totalWorth))
+                    .arg(ContextKeys.REST, manager.money(earningLimit - earningData.earnings))
+                    .arg(ContextKeys.REST_FORMATTED, String.format("%.2f", (earningLimit - earningData.earnings)))
+                    .arg(ContextKeys.SOLD_ITEM_AMOUNT, soldAmount);
             if (totalWorth <= 0) {
-                sellAllElement.setItemStack(
-                        manager.getSellAllIconDenyBuilder().build(owner,
-                                Map.of("{money}", NumberUtils.money(totalWorth)
-                                        ,"{money_formatted}", String.format("%.2f", totalWorth)
-                                        ,"{player}", owner.getName()
-                                        ,"{rest}", NumberUtils.money(earningLimit - earningData.earnings)
-                                        ,"{rest_formatted}", String.format("%.2f", (earningLimit - earningData.earnings))
-                                        ,"{sold-item-amount}", String.valueOf(sellAmount)
-                                )
-                        )
-                );
+                sellAllElement.setItemStack(manager.sellAllIconAllowItem.build(context));
             } else if (earningLimit != -1 && (earningLimit - earningData.earnings < totalWorth)) {
-                sellAllElement.setItemStack(
-                        manager.getSellAllIconLimitBuilder().build(owner,
-                                Map.of("{money}", NumberUtils.money(totalWorth)
-                                        ,"{money_formatted}", String.format("%.2f", totalWorth)
-                                        ,"{player}", owner.getName()
-                                        ,"{rest}", NumberUtils.money(earningLimit - earningData.earnings)
-                                        ,"{rest_formatted}", String.format("%.2f", (earningLimit - earningData.earnings))
-                                        ,"{sold-item-amount}", String.valueOf(sellAmount)
-                                )
-                        )
-                );
+                sellAllElement.setItemStack(manager.sellAllIconLimitItem.build(context));
             } else {
-                sellAllElement.setItemStack(
-                        manager.getSellAllIconAllowBuilder().build(owner,
-                                Map.of("{money}", NumberUtils.money(totalWorth)
-                                        ,"{money_formatted}", String.format("%.2f", totalWorth)
-                                        ,"{player}", owner.getName()
-                                        ,"{rest}", NumberUtils.money(earningLimit - earningData.earnings)
-                                        ,"{rest_formatted}", String.format("%.2f", (earningLimit - earningData.earnings))
-                                        ,"{sold-item-amount}", String.valueOf(sellAmount)
-                                )
-                        )
-                );
+                sellAllElement.setItemStack(manager.sellAllIconAllowItem.build(context));
             }
         }
+
         for (Map.Entry<Integer, MarketGUIElement> entry : itemsSlotMap.entrySet()) {
             if (entry.getValue() instanceof MarketDynamicGUIElement dynamicGUIElement) {
                 this.inventory.setItem(entry.getKey(), dynamicGUIElement.getItemStack().clone());
@@ -247,53 +163,14 @@ public class MarketGUI {
         return this;
     }
 
-    /**
-     * Calculate and return the total worth of items in the inventory.
-     * @return The total worth of items.
-     */
-    public double getTotalWorthInMarketGUI() {
-        double money = 0d;
-        MarketGUIElement itemElement = getElement(manager.getItemSlot());
-        if (itemElement == null) {
-            LogUtils.warn("No item slot available. Please check if GUI layout contains the item slot symbol.");
-            return money;
-        }
-        for (int slot : itemElement.getSlots()) {
-            money += manager.getItemPrice(this.inventory.getItem(slot));
-        }
-        return money;
+    public List<ItemStack> getItemsInGUI() {
+        MarketGUIElement itemElement = getElement(manager.itemSlot);
+        if (itemElement == null) return List.of();
+        return itemElement.getSlots().stream().map(inventory::getItem).filter(Objects::nonNull).toList();
     }
 
-    /**
-     * Get the inventory associated with this MarketGUI.
-     * @return The Inventory object.
-     */
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    /**
-     * Clear items with non-zero value from the inventory.
-     */
-    public void clearWorthyItems() {
-        MarketGUIElement itemElement = getElement(manager.getItemSlot());
-        if (itemElement == null) {
-            return;
-        }
-        for (int slot : itemElement.getSlots()) {
-            double money = manager.getItemPrice(inventory.getItem(slot));
-            if (money != 0) {
-                inventory.setItem(slot, new ItemStack(Material.AIR));
-            }
-        }
-    }
-
-    /**
-     * Get an empty slot in the item section of the inventory.
-     * @return The index of an empty slot or -1 if none are found.
-     */
     public int getEmptyItemSlot() {
-        MarketGUIElement itemElement = getElement(manager.getItemSlot());
+        MarketGUIElement itemElement = getElement(manager.itemSlot);
         if (itemElement == null) {
             return -1;
         }
@@ -306,44 +183,17 @@ public class MarketGUI {
         return -1;
     }
 
-    /**
-     * Return items to the owner's inventory.
-     */
     public void returnItems() {
-        MarketGUIElement itemElement = getElement(manager.getItemSlot());
+        MarketGUIElement itemElement = getElement(manager.itemSlot);
         if (itemElement == null) {
             return;
         }
         for (int slot : itemElement.getSlots()) {
             ItemStack itemStack = inventory.getItem(slot);
             if (itemStack != null && itemStack.getType() != Material.AIR) {
-                ItemUtils.giveItem(owner, itemStack, itemStack.getAmount());
+                PlayerUtils.giveItem(context.getHolder(), itemStack, itemStack.getAmount());
                 inventory.setItem(slot, new ItemStack(Material.AIR));
             }
         }
-    }
-
-    /**
-     * Get the earning data associated with this MarketGUI.
-     * @return The EarningData object.
-     */
-    public EarningData getEarningData() {
-        return earningData;
-    }
-
-    public int getSoldAmount() {
-        int amount = 0;
-        MarketGUIElement itemElement = getElement(manager.getItemSlot());
-        if (itemElement == null) {
-            return amount;
-        }
-        for (int slot : itemElement.getSlots()) {
-            ItemStack itemStack = inventory.getItem(slot);
-            double money = manager.getItemPrice(itemStack);
-            if (money > 0 && itemStack != null) {
-                amount += itemStack.getAmount();
-            }
-        }
-        return amount;
     }
 }

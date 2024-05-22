@@ -17,9 +17,6 @@
 
 package net.momirealms.customfishing.api.mechanic.block;
 
-import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
-import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +32,11 @@ public class BlockConfigImpl implements BlockConfig {
         this.dataModifierList = dataModifierList;
         this.stateModifierList = stateModifierList;
         this.id = id;
+    }
+
+    @Override
+    public String id() {
+        return id;
     }
 
     @Override

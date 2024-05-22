@@ -1,6 +1,5 @@
 package net.momirealms.customfishing.api.mechanic.config.function;
 
-import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 
 import java.util.function.Consumer;

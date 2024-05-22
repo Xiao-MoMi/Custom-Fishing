@@ -4,7 +4,6 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.mechanic.block.BlockConfig;
 import net.momirealms.customfishing.api.mechanic.config.function.*;
 import net.momirealms.customfishing.api.mechanic.effect.LootBaseEffect;
-import net.momirealms.customfishing.api.mechanic.entity.EntityConfig;
 import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.item.ItemType;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;

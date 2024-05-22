@@ -9,7 +9,6 @@ import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.config.function.*;
 import net.momirealms.customfishing.api.mechanic.context.Context;
-import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.effect.LootBaseEffect;
 import net.momirealms.customfishing.api.mechanic.entity.EntityConfig;
@@ -19,6 +18,7 @@ import net.momirealms.customfishing.common.config.ConfigLoader;
 import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.item.Item;
 import net.momirealms.customfishing.common.plugin.feature.Reloadable;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -77,6 +78,17 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     public static boolean lockData() {
         return false;
+    }
+
+    public static boolean bagStoreLoots() {
+        return false;
+    }
+
+    public static Collection<Material> bagWhiteListItems() {
+        return null;
+    }
+
+    public static String bagTitle() {
     }
 
     public void registerLootParser(Function<Object, Consumer<Loot.Builder>> function, String... nodes) {

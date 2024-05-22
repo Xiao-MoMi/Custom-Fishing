@@ -19,6 +19,7 @@ package net.momirealms.customfishing.api;
 
 import net.momirealms.customfishing.api.integration.IntegrationManager;
 import net.momirealms.customfishing.api.mechanic.action.ActionManager;
+import net.momirealms.customfishing.api.mechanic.bag.BagManager;
 import net.momirealms.customfishing.api.mechanic.block.BlockManager;
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionManager;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
@@ -71,6 +72,7 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
     protected StatisticsManager statisticsManager;
     protected EffectManager effectManager;
     protected HookManager hookManager;
+    protected BagManager bagManager;
 
     public BukkitCustomFishingPlugin() {
         instance = this;
@@ -163,6 +165,10 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
 
     public EffectManager getEffectManager() {
         return effectManager;
+    }
+
+    public BagManager getBagManager() {
+        return bagManager;
     }
 
     public Plugin getBoostrap() {

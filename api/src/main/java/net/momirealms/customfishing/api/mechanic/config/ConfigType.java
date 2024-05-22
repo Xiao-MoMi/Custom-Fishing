@@ -3,7 +3,6 @@ package net.momirealms.customfishing.api.mechanic.config;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.config.function.ConfigParserFunction;
-import net.momirealms.customfishing.api.mechanic.hook.HookConfig;
 import net.momirealms.customfishing.common.config.node.Node;
 import org.apache.logging.log4j.util.TriConsumer;
 
@@ -54,7 +53,7 @@ public class ConfigType {
     public static final ConfigType BAIT = of(
             "bait",
             (id, section, functions) -> {
-                HookConfigParser config = new HookConfigParser(id, section, functions);
+                BaitConfigParser config = new BaitConfigParser(id, section, functions);
                 BukkitCustomFishingPlugin.getInstance().getItemManager().registerItem(config.getItem());
                 BukkitCustomFishingPlugin.getInstance().getEffectManager().registerEffectModifier(config.getEffectModifier());
                 BukkitCustomFishingPlugin.getInstance().getEventManager().registerEventCarrier(config.getEventCarrier());

@@ -3,7 +3,6 @@ package net.momirealms.customfishing.api.mechanic.config;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.mechanic.config.function.*;
 import net.momirealms.customfishing.api.mechanic.context.Context;
-import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.item.CustomFishingItem;

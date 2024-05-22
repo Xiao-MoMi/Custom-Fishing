@@ -5,7 +5,6 @@ import net.momirealms.customfishing.api.mechanic.action.ActionManager;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.item.ItemType;
-import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

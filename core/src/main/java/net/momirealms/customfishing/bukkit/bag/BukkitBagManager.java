@@ -22,25 +22,26 @@ import net.momirealms.customfishing.api.mechanic.bag.BagManager;
 import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
-import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.api.storage.user.UserData;
+import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class BukkitBagManager implements BagManager, Listener {
 
@@ -50,10 +51,6 @@ public class BukkitBagManager implements BagManager, Listener {
     public BukkitBagManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.tempEditMap = new HashMap<>();
-    }
-
-    private boolean isEnabled() {
-        return ConfigManager.enableFishingBag();
     }
 
     @Override
@@ -72,56 +69,33 @@ public class BukkitBagManager implements BagManager, Listener {
         this.plugin.getStorageManager().getDataSource().updateManyPlayersData(tempEditMap.values(), true);
     }
 
-    /**
-     * Retrieves the online bag inventory associated with a player's UUID.
-     *
-     * @param uuid The UUID of the player for whom the bag inventory is retrieved.
-     * @return The online bag inventory if the player is online, or null if not found.
-     */
-    @Nullable
     @Override
-    public Inventory getOnlineBagInventory(UUID uuid) {
-        var onlinePlayer = plugin.getStorageManager().getOnlineUser(uuid);
-        if (onlinePlayer == null) {
-            return null;
-        }
-        Player player = onlinePlayer.getPlayer();
-        int rows = getBagInventoryRows(player);
-        Inventory bag = onlinePlayer.holder().getInventory();
-        if (bag.getSize() != rows * 9) {
-            Inventory newBag = InventoryUtils.createInventory(onlinePlayer.holder(), rows * 9,
-                    AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            BukkitPlaceholderManager.getInstance().parse(
-                                    player, bagTitle, Map.of("{player}", player.getName())
+    public CompletableFuture<Boolean> openBag(Player viewer, UUID owner) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        Optional<UserData> onlineUser = plugin.getStorageManager().getOnlineUser(owner);
+        onlineUser.ifPresentOrElse(userData -> {
+            viewer.openInventory(userData.holder().getInventory());
+            future.complete(true);
+        }, () -> plugin.getStorageManager().getOfflineUserData(owner, true).thenAccept(result -> result.ifPresentOrElse(data -> {
+            if (data.isLocked()) {
+                future.complete(false);
+                return;
+            }
+            this.tempEditMap.put(viewer.getUniqueId(), data);
+            viewer.openInventory(data.holder().getInventory());
+            SparrowHeart.getInstance().updateInventoryTitle(viewer,
+                    plugin.getPlaceholderManager().parse(
+                            Bukkit.getOfflinePlayer(owner),
+                            ConfigManager.bagTitle(),
+                            Map.of(
+                                "{uuid}", owner.toString(),
+                                "{player}", data.name()
                             )
-                    ));
-            onlinePlayer.holder().setInventory(newBag);
-            assert newBag != null;
-            ItemStack[] newContents = new ItemStack[rows * 9];
-            ItemStack[] oldContents = bag.getContents();
-            for (int i = 0; i < rows * 9 && i < oldContents.length; i++) {
-                newContents[i] = oldContents[i];
-            }
-            newBag.setContents(newContents);
-        }
-        return onlinePlayer.holder().getInventory();
-    }
-
-    @Override
-    public int getBagInventoryRows(Player player) {
-        int size = 1;
-        for (int i = 6; i > 1; i--) {
-            if (player.hasPermission("fishingbag.rows." + i)) {
-                size = i;
-                break;
-            }
-        }
-        return size;
-    }
-
-    public void editBag(Player admin, UserData userData) {
-        this.tempEditMap.put(admin.getUniqueId(), userData);
-        admin.openInventory(userData.holder().getInventory());
+                    )
+            );
+            future.complete(true);
+        }, () -> future.complete(false))));
+        return future;
     }
 
     /**
@@ -152,20 +126,25 @@ public class BukkitBagManager implements BagManager, Listener {
             return;
         if (!(event.getInventory().getHolder() instanceof FishingBagHolder))
             return;
+        ItemStack movedItem = event.getCurrentItem();
         Inventory clicked = event.getClickedInventory();
-        if (clicked != event.getWhoClicked().getInventory())
-            return;
-        ItemStack clickedItem = event.getCurrentItem();
-        if (clickedItem == null || clickedItem.getType() == Material.AIR)
-            return;
-        if (bagWhiteListItems.contains(clickedItem.getType()))
-            return;
-        String id = plugin.getItemManager().getItemID(clickedItem);
-        Optional<EffectModifier> optionalEffectModifier = plugin.getEffectManager().getEffectModifier(id);
-        if (optionalEffectModifier.isEmpty()) {
-            return;
+        if (clicked != event.getWhoClicked().getInventory()) {
+            if (event.getAction() != InventoryAction.HOTBAR_SWAP
+                    && event.getAction() != InventoryAction.HOTBAR_MOVE_AND_READD
+            ) {
+                return;
+            }
+            movedItem = event.getWhoClicked().getInventory().getItem(event.getHotbarButton());
         }
-        if (bagStoreLoots && plugin.getLootManager().getLoot(id).isPresent())
+        if (movedItem == null || movedItem.getType() == Material.AIR)
+            return;
+        if (ConfigManager.bagWhiteListItems().contains(movedItem.getType()))
+            return;
+        String id = plugin.getItemManager().getItemID(movedItem);
+        Optional<EffectModifier> optionalEffectModifier = plugin.getEffectManager().getEffectModifier(id);
+        if (optionalEffectModifier.isPresent())
+            return;
+        if (ConfigManager.bagStoreLoots() && plugin.getLootManager().getLoot(id).isPresent())
             return;
         event.setCancelled(true);
     }

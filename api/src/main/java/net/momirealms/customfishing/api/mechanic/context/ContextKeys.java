@@ -52,6 +52,12 @@ public class ContextKeys<T> {
     public static final ContextKeys<Integer> HOOK_X = of("hook_x", Integer.class);
     public static final ContextKeys<Integer> HOOK_Y = of("hook_y", Integer.class);
     public static final ContextKeys<Integer> HOOK_Z = of("hook_z", Integer.class);
+    public static final ContextKeys<String> MONEY = of("money", String.class);
+    public static final ContextKeys<String> MONEY_FORMATTED = of("money_formatted", String.class);
+    public static final ContextKeys<String> REST = of("rest", String.class);
+    public static final ContextKeys<String> REST_FORMATTED = of("rest_formatted", String.class);
+    public static final ContextKeys<Integer> SOLD_ITEM_AMOUNT = of("sold_item_amount", Integer.class);
+    public static final ContextKeys<Double> WEIGHT = of("0", Double.class);
 
     private final String key;
     private final Class<T> type;

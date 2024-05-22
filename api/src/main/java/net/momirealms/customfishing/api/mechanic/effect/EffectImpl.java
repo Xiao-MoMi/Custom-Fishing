@@ -1,5 +1,6 @@
 package net.momirealms.customfishing.api.mechanic.effect;
 
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.entity.Player;
 
@@ -23,8 +24,8 @@ public class EffectImpl implements Effect {
     private double waitTimeMultiplier = 1;
     private double difficultyAdder = 0;
     private double difficultyMultiplier = 1;
-    private final List<Pair<String, BiFunction<Player, Double, Double>>> weightOperations = new ArrayList<>();
-    private final List<Pair<String, BiFunction<Player, Double, Double>>> weightOperationsIgnored = new ArrayList<>();
+    private final List<Pair<String, BiFunction<Context<Player>, Double, Double>>> weightOperations = new ArrayList<>();
+    private final List<Pair<String, BiFunction<Context<Player>, Double, Double>>> weightOperationsIgnored = new ArrayList<>();
 
     @Override
     public Map<EffectProperties<?>, Object> properties() {
@@ -165,23 +166,23 @@ public class EffectImpl implements Effect {
     }
 
     @Override
-    public List<Pair<String, BiFunction<Player, Double, Double>>> weightOperations() {
+    public List<Pair<String, BiFunction<Context<Player>, Double, Double>>> weightOperations() {
         return weightOperations;
     }
 
     @Override
-    public Effect weightOperations(List<Pair<String, BiFunction<Player, Double, Double>>> weightOperations) {
+    public Effect weightOperations(List<Pair<String, BiFunction<Context<Player>, Double, Double>>> weightOperations) {
         this.weightOperations.addAll(weightOperations);
         return this;
     }
 
     @Override
-    public List<Pair<String, BiFunction<Player, Double, Double>>> weightOperationsIgnored() {
+    public List<Pair<String, BiFunction<Context<Player>, Double, Double>>> weightOperationsIgnored() {
         return weightOperationsIgnored;
     }
 
     @Override
-    public Effect weightOperationsIgnored(List<Pair<String, BiFunction<Player, Double, Double>>> weightOperations) {
+    public Effect weightOperationsIgnored(List<Pair<String, BiFunction<Context<Player>, Double, Double>>> weightOperations) {
         this.weightOperationsIgnored.addAll(weightOperations);
         return this;
     }

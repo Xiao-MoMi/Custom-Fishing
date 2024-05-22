@@ -18,10 +18,11 @@
 package net.momirealms.customfishing.api.mechanic.market;
 
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public interface MarketManager {
+public interface MarketManager extends Reloadable {
 
     void openMarketGUI(Player player);
 

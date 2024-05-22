@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.api.mechanic.effect;
 
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.entity.Player;
 
@@ -225,7 +226,7 @@ public interface Effect {
      *
      * @return the list of weight operations
      */
-    List<Pair<String, BiFunction<Player, Double, Double>>> weightOperations();
+    List<Pair<String, BiFunction<Context<Player>, Double, Double>>> weightOperations();
 
     /**
      * Adds the list of weight operations.
@@ -233,14 +234,14 @@ public interface Effect {
      * @param weightOperations the list of weight operations to add
      * @return the effect instance with the updated weight operations
      */
-    Effect weightOperations(List<Pair<String, BiFunction<Player, Double, Double>>> weightOperations);
+    Effect weightOperations(List<Pair<String, BiFunction<Context<Player>, Double, Double>>> weightOperations);
 
     /**
      * Gets the list of weight operations that are conditions ignored.
      *
      * @return the list of weight operations that are conditions ignored
      */
-    List<Pair<String, BiFunction<Player, Double, Double>>> weightOperationsIgnored();
+    List<Pair<String, BiFunction<Context<Player>, Double, Double>>> weightOperationsIgnored();
 
     /**
      * Adds the list of weight operations that are conditions ignored.
@@ -248,7 +249,7 @@ public interface Effect {
      * @param weightOperations the list of weight operations that are conditions ignored
      * @return the effect instance with the updated ignored weight operations
      */
-    Effect weightOperationsIgnored(List<Pair<String, BiFunction<Player, Double, Double>>> weightOperations);
+    Effect weightOperationsIgnored(List<Pair<String, BiFunction<Context<Player>, Double, Double>>> weightOperations);
 
     /**
      * Combines this effect with another effect.
