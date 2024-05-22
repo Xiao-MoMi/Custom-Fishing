@@ -1,28 +1,68 @@
 package net.momirealms.customfishing.bukkit.config;
 
+import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
+import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
+import net.momirealms.customfishing.api.mechanic.config.ConfigType;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.mechanic.statistic.StatisticsKeys;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
-import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
 import net.momirealms.customfishing.common.util.ListUtils;
 import net.momirealms.customfishing.common.util.RandomUtils;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.io.File;
+import java.util.*;
 
 public class BukkitConfigLoader extends ConfigManager {
 
-    public BukkitConfigLoader(CustomFishingPlugin plugin) {
+    public BukkitConfigLoader(BukkitCustomFishingPlugin plugin) {
         super(plugin);
         this.registerBuiltInItemProperties();
         this.registerBuiltInBaseEffectParser();
         this.registerBuiltInLootParser();
+        this.registerBuiltInEntityParser();
+        this.registerBuiltInEventParser();
+        this.registerBuiltInEffectModifierParser();
+    }
+
+    @Override
+    public void load() {
+        this.loadConfigs();
+    }
+
+    private void loadConfigs() {
+        Deque<File> fileDeque = new ArrayDeque<>();
+        for (ConfigType type : ConfigType.values()) {
+            File typeFolder = new File(plugin.getDataFolder(), "contents" + File.separator + type.path());
+            if (!typeFolder.exists()) {
+                if (!typeFolder.mkdirs()) return;
+                plugin.getBoostrap().saveResource("contents" + File.separator + type.path() + File.separator + "default.yml", false);
+            }
+            fileDeque.push(typeFolder);
+            while (!fileDeque.isEmpty()) {
+                File file = fileDeque.pop();
+                File[] files = file.listFiles();
+                if (files == null) continue;
+                for (File subFile : files) {
+                    if (subFile.isDirectory()) {
+                        fileDeque.push(subFile);
+                    } else if (subFile.isFile() && subFile.getName().endsWith(".yml")) {
+                        YamlDocument document = plugin.getConfigManager().loadData(file);
+                        for (Map.Entry<String, Object> entry : document.getStringRouteMappedValues(false).entrySet()) {
+                            if (entry.getValue() instanceof Section section) {
+                                type.parse(entry.getKey(), section, formatFunctions);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void registerBuiltInItemProperties() {
@@ -84,6 +124,13 @@ public class BukkitConfigLoader extends ConfigManager {
         }, 1_500, "price");
     }
 
+    private void registerBuiltInEffectModifierParser() {
+        this.registerEffectModifierParser(object -> {
+            Section section = (Section) object;
+            return builder -> builder.requirements(List.of(plugin.getRequirementManager().parseRequirements(section, true)));
+        }, "requirements");
+    }
+
     private void registerBuiltInBaseEffectParser() {
         this.registerBaseEffectParser(object -> {
             MathValue<Player> mathValue = MathValue.auto(object);
@@ -109,6 +156,87 @@ public class BukkitConfigLoader extends ConfigManager {
             MathValue<Player> mathValue = MathValue.auto(object);
             return builder -> builder.waitTimeMultiplier(mathValue);
         }, "base-effects", "wait-time-multiplier");
+    }
+
+    private void registerBuiltInEntityParser() {
+        this.registerEntityParser(object -> {
+            String entity = (String) object;
+            return builder -> builder.entityID(entity);
+        }, "entity");
+        this.registerEntityParser(object -> {
+            String entity = (String) object;
+            return builder -> builder.entityID(entity);
+        }, "velocity", "horizontal");
+        this.registerEntityParser(object -> {
+            String entity = (String) object;
+            return builder -> builder.entityID(entity);
+        }, "velocity", "vertical");
+        this.registerEntityParser(object -> {
+            Section section = (Section) object;
+            return builder -> builder.propertyMap(section.getStringRouteMappedValues(false));
+        }, "properties");
+    }
+
+    private void registerBuiltInEventParser() {
+        this.registerEventParser(object -> {
+            boolean disable = (boolean) object;
+            return builder -> builder.disableGlobalActions(disable);
+        }, "disable-global-event");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            Action<Player>[] actions = plugin.getActionManager().parseActions(section);
+            return builder -> builder.action(ActionTrigger.SUCCESS, actions);
+        }, "events", "success");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            Action<Player>[] actions = plugin.getActionManager().parseActions(section);
+            return builder -> builder.action(ActionTrigger.ACTIVATE, actions);
+        }, "events", "activate");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            Action<Player>[] actions = plugin.getActionManager().parseActions(section);
+            return builder -> builder.action(ActionTrigger.FAILURE, actions);
+        }, "events", "failure");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            Action<Player>[] actions = plugin.getActionManager().parseActions(section);
+            return builder -> builder.action(ActionTrigger.HOOK, actions);
+        }, "events", "hook");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            Action<Player>[] actions = plugin.getActionManager().parseActions(section);
+            return builder -> builder.action(ActionTrigger.CONSUME, actions);
+        }, "events", "consume");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            Action<Player>[] actions = plugin.getActionManager().parseActions(section);
+            return builder -> builder.action(ActionTrigger.CAST, actions);
+        }, "events", "cast");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            Action<Player>[] actions = plugin.getActionManager().parseActions(section);
+            return builder -> builder.action(ActionTrigger.BITE, actions);
+        }, "events", "bite");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            Action<Player>[] actions = plugin.getActionManager().parseActions(section);
+            return builder -> builder.action(ActionTrigger.LAND, actions);
+        }, "events", "land");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            Action<Player>[] actions = plugin.getActionManager().parseActions(section);
+            return builder -> builder.action(ActionTrigger.TIMER, actions);
+        }, "events", "timer");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            Action<Player>[] actions = plugin.getActionManager().parseActions(section);
+            return builder -> builder.action(ActionTrigger.INTERACT, actions);
+        }, "events", "interact");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            Action<Player>[] actions = plugin.getActionManager().parseActions(section);
+            return builder -> builder.action(ActionTrigger.NEW_SIZE_RECORD, actions);
+        }, "events", "new_size_record");
     }
 
     private void registerBuiltInLootParser() {

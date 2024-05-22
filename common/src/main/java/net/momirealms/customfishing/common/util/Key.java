@@ -8,9 +8,7 @@ public record Key(String namespace, String value) {
 
     @Override
     public int hashCode() {
-        int result = this.namespace.hashCode();
-        result = (31 * result) + this.value.hashCode();
-        return result;
+        return toString().hashCode();
     }
 
     @Override

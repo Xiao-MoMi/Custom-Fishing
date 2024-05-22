@@ -28,15 +28,13 @@ public class BlockConfigImpl implements BlockConfig {
     private final String blockID;
     private final List<BlockDataModifier> dataModifierList;
     private final List<BlockStateModifier> stateModifierList;
-    private final MathValue<Player> horizontalVector;
-    private final MathValue<Player> verticalVector;
+    private final String id;
 
-    public BlockConfigImpl(String blockID, List<BlockDataModifier> dataModifierList, List<BlockStateModifier> stateModifierList, MathValue<Player> horizontalVector, MathValue<Player> verticalVector) {
+    public BlockConfigImpl(String id, String blockID, List<BlockDataModifier> dataModifierList, List<BlockStateModifier> stateModifierList) {
         this.blockID = blockID;
         this.dataModifierList = dataModifierList;
         this.stateModifierList = stateModifierList;
-        this.horizontalVector = horizontalVector;
-        this.verticalVector = verticalVector;
+        this.id = id;
     }
 
     @Override
@@ -54,22 +52,16 @@ public class BlockConfigImpl implements BlockConfig {
         return stateModifierList;
     }
 
-    @Override
-    public MathValue<Player> horizontalVector() {
-        return horizontalVector;
-    }
-
-    @Override
-    public MathValue<Player> verticalVector() {
-        return verticalVector;
-    }
-
     public static class BuilderImpl implements Builder {
         private String blockID;
         private final List<BlockDataModifier> dataModifierList = new ArrayList<>();
         private final List<BlockStateModifier> stateModifierList = new ArrayList<>();
-        private MathValue<Player> horizontalVector;
-        private MathValue<Player> verticalVector;
+        private String id;
+        @Override
+        public Builder id(String id) {
+            this.id = id;
+            return this;
+        }
         @Override
         public Builder blockID(String blockID) {
             this.blockID = blockID;
@@ -86,18 +78,8 @@ public class BlockConfigImpl implements BlockConfig {
             return this;
         }
         @Override
-        public Builder horizontalVector(MathValue<Player> horizontalVector) {
-            this.horizontalVector = horizontalVector;
-            return this;
-        }
-        @Override
-        public Builder verticalVector(MathValue<Player> verticalVector) {
-            this.verticalVector = verticalVector;
-            return this;
-        }
-        @Override
         public BlockConfig build() {
-            return new BlockConfigImpl(blockID, dataModifierList, stateModifierList, horizontalVector, verticalVector);
+            return new BlockConfigImpl(id, blockID, dataModifierList, stateModifierList);
         }
     }
 }

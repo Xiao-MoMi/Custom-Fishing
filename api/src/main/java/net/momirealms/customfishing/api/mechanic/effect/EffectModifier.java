@@ -13,6 +13,8 @@ import java.util.function.BiConsumer;
  */
 public interface EffectModifier {
 
+    String id();
+
     /**
      * Returns an array of requirements that must be met by a Player for the effect to be applied.
      *
@@ -40,6 +42,8 @@ public interface EffectModifier {
      * Builder interface for constructing EffectModifier instances.
      */
     interface Builder {
+
+        Builder id(String id);
 
         /**
          * Sets the requirements for the EffectModifier being built.

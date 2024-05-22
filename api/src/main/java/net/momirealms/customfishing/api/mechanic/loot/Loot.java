@@ -65,14 +65,14 @@ public interface Loot {
      *
      * @return The unique ID of the loot.
      */
-    String getID();
+    String id();
 
     /**
      * Get the type of this loot.
      *
      * @return The type of the loot.
      */
-    LootType getType();
+    LootType type();
 
     /**
      * Get the display nickname for this loot.
@@ -80,21 +80,21 @@ public interface Loot {
      * @return The nickname of the loot.
      */
     @NotNull
-    String getNick();
+    String nick();
 
     /**
      * Get the statistics key associated with this loot.
      *
      * @return The statistics key for this loot.
      */
-    StatisticsKeys getStatisticKey();
+    StatisticsKeys statisticKey();
 
     /**
      * Get the score value for this loot.
      *
      * @return The score associated with the loot.
      */
-    MathValue<Player> getScore();
+    MathValue<Player> score();
 
     /**
      * Get the groups this loot belongs to.

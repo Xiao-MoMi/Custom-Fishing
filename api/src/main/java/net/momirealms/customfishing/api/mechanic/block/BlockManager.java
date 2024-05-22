@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface BlockManager extends Reloadable {
 
-    boolean registerBlock(@NotNull String id, @NotNull BlockConfig block);
+    boolean registerBlock(@NotNull BlockConfig block);
 
     @Nullable
     FallingBlock summonBlockLoot(@NotNull Context<Player> context);

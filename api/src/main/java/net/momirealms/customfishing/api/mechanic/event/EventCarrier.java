@@ -4,6 +4,7 @@ import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.item.ItemType;
+import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -21,6 +22,8 @@ public interface EventCarrier {
      * @return type
      */
     ItemType type();
+
+    String id();
 
     /**
      * Whether to disable global actions
@@ -61,6 +64,8 @@ public interface EventCarrier {
      */
     interface Builder {
 
+        Builder id(String id);
+
         /**
          * Sets the map of actions associated with their triggers.
          *
@@ -69,6 +74,8 @@ public interface EventCarrier {
          */
         Builder actionMap(HashMap<ActionTrigger, Action<Player>[]> actionMap);
 
+        Builder action(ActionTrigger trigger, Action<Player>[] actions);
+
         /**
          * Sets the map of actions associated with their triggers and occurrence times.
          *
@@ -76,6 +83,8 @@ public interface EventCarrier {
          * @return the Builder instance.
          */
         Builder actionTimesMap(HashMap<ActionTrigger, TreeMap<Integer, Action<Player>[]>> actionTimesMap);
+
+        Builder actionTimes(ActionTrigger trigger, TreeMap<Integer, Action<Player>[]> actions);
 
         /**
          * Set the type of the item

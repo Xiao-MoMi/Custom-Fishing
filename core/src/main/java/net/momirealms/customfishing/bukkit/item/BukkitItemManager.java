@@ -1,6 +1,5 @@
 package net.momirealms.customfishing.bukkit.item;
 
-import net.kyori.adventure.key.Key;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.FishingLootPreSpawnEvent;
 import net.momirealms.customfishing.api.event.FishingLootSpawnEvent;
@@ -47,7 +46,7 @@ public class BukkitItemManager implements ItemManager, Listener {
 
     private final BukkitCustomFishingPlugin plugin;
     private final HashMap<String, ItemProvider> itemProviders = new HashMap<>();
-    private final HashMap<Key, CustomFishingItem> items = new HashMap<>();
+    private final HashMap<String, CustomFishingItem> items = new HashMap<>();
     private final BukkitItemFactory factory;
     private ItemProvider[] itemDetectArray;
 
@@ -83,16 +82,22 @@ public class BukkitItemManager implements ItemManager, Listener {
     }
 
     @Override
-    public boolean registerItem(@NotNull Key key, @NotNull CustomFishingItem item) {
-        if (items.containsKey(key)) return false;
-        items.put(key, item);
+    public boolean registerItem(@NotNull CustomFishingItem item) {
+        if (items.containsKey(item.id())) return false;
+        items.put(item.id(), item);
         return true;
     }
 
     @Nullable
     @Override
-    public ItemStack buildInternal(@NotNull Context<Player> context, @NotNull Key key) {
-        CustomFishingItem item = requireNonNull(items.get(key), () -> "No item found for " + key);
+    public ItemStack buildInternal(@NotNull Context<Player> context, @NotNull String id) {
+        CustomFishingItem item = requireNonNull(items.get(id), () -> "No item found for " + id);
+        return build(context, item);
+    }
+
+    @NotNull
+    @Override
+    public ItemStack build(@NotNull Context<Player> context, CustomFishingItem item) {
         ItemStack itemStack = getOriginalStack(context.getHolder(), item.material());
         Item<ItemStack> wrappedItemStack = factory.wrap(itemStack);
         for (BiConsumer<Item<ItemStack>, Context<Player>> consumer : item.tagConsumers()) {
@@ -130,7 +135,7 @@ public class BukkitItemManager implements ItemManager, Listener {
     @SuppressWarnings("all")
     public org.bukkit.entity.Item dropItemLoot(@NotNull Context<Player> context) {
         String id = requireNonNull(context.arg(ContextKeys.ID));
-        ItemStack itemStack = requireNonNull(buildInternal(context, Key.key("item", id)));
+        ItemStack itemStack = requireNonNull(buildInternal(context, id));
         Player player = context.getHolder();
         Location playerLocation = player.getLocation();
         Location hookLocation = requireNonNull(context.arg(ContextKeys.HOOK_LOCATION));
@@ -300,5 +305,10 @@ public class BukkitItemManager implements ItemManager, Listener {
             }
         }
         blocks.removeAll(blockToRemove);
+    }
+
+    @Override
+    public BukkitItemFactory getFactory() {
+        return factory;
     }
 }

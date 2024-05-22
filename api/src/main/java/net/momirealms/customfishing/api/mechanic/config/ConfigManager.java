@@ -6,15 +6,19 @@ import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
+import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.config.function.*;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
+import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.effect.LootBaseEffect;
+import net.momirealms.customfishing.api.mechanic.entity.EntityConfig;
+import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
-import net.momirealms.customfishing.api.mechanic.misc.function.*;
 import net.momirealms.customfishing.common.config.ConfigLoader;
 import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.item.Item;
-import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
+import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -29,13 +33,13 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public abstract class ConfigManager implements ConfigLoader {
+public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
-    private final CustomFishingPlugin plugin;
+    protected final BukkitCustomFishingPlugin plugin;
 
-    private final HashMap<String, Node<ConfigParserFunction>> formatFunctions = new HashMap<>();
+    protected final HashMap<String, Node<ConfigParserFunction>> formatFunctions = new HashMap<>();
 
-    public ConfigManager(CustomFishingPlugin plugin) {
+    public ConfigManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -60,12 +64,15 @@ public abstract class ConfigManager implements ConfigLoader {
     }
 
     public static boolean enableFishingBag() {
+        return true;
     }
 
     public static int dataSaveInterval() {
+        return 360;
     }
 
     public static boolean logDataSaving() {
+        return true;
     }
 
     public static boolean lockData() {
@@ -84,8 +91,16 @@ public abstract class ConfigManager implements ConfigLoader {
         registerNodeFunction(nodes, new ItemParserFunction(priority, function));
     }
 
-    public void registerEffectModifierParser(Function<Object, Consumer<Effect>> function, String... nodes) {
+    public void registerEffectModifierParser(Function<Object, Consumer<EffectModifier.Builder>> function, String... nodes) {
         registerNodeFunction(nodes, new EffectModifierParserFunction(function));
+    }
+
+    public void registerEntityParser(Function<Object, Consumer<EntityConfig.Builder>> function, String... nodes) {
+        registerNodeFunction(nodes, new EntityParserFunction(function));
+    }
+
+    public void registerEventParser(Function<Object, Consumer<EventCarrier.Builder>> function, String... nodes) {
+        registerNodeFunction(nodes, new EventParserFunction(function));
     }
 
     public void unregisterNodeFunction(String... nodes) {
@@ -200,5 +215,9 @@ public abstract class ConfigManager implements ConfigLoader {
             plugin.getPluginLogger().severe("Failed to load config " + file, e);
             throw new RuntimeException(e);
         }
+    }
+
+    public Map<String, Node<ConfigParserFunction>> getFormatFunctions() {
+        return formatFunctions;
     }
 }

@@ -76,13 +76,13 @@ public class CustomFishingPapi extends PlaceholderExpansion {
                 switch (split[1]) {
                     case "limit" -> {
                         if (split.length < 3) {
-                            return String.format("%.2f", plugin.getMarketManager().getEarningLimit(player));
+                            return String.format("%.2f", plugin.getMarketManager().earningLimit(player));
                         } else {
                             Player another = Bukkit.getPlayer(split[2]);
                             if (another == null) {
                                 return "";
                             }
-                            return String.format("%.2f", plugin.getMarketManager().getEarningLimit(another));
+                            return String.format("%.2f", plugin.getMarketManager().earningLimit(another));
                         }
                     }
                     case "earnings" -> {
@@ -105,7 +105,7 @@ public class CustomFishingPapi extends PlaceholderExpansion {
                             OnlineUserData user = plugin.getStorageManager().getOnlineUser(player.getUniqueId());
                             if (user == null)
                                 return "";
-                            return String.format("%.2f", plugin.getMarketManager().getEarningLimit(player) - user.getEarningData().earnings);
+                            return String.format("%.2f", plugin.getMarketManager().earningLimit(player) - user.getEarningData().earnings);
                         } else {
                             Player another = Bukkit.getPlayer(split[2]);
                             if (another == null) {
@@ -115,7 +115,7 @@ public class CustomFishingPapi extends PlaceholderExpansion {
                             OnlineUserData user = plugin.getStorageManager().getOnlineUser(another.getUniqueId());
                             if (user == null)
                                 return "";
-                            return String.format("%.2f", plugin.getMarketManager().getEarningLimit(another) - user.getEarningData().earnings);
+                            return String.format("%.2f", plugin.getMarketManager().earningLimit(another) - user.getEarningData().earnings);
                         }
                     }
                 }

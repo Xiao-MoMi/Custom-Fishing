@@ -17,51 +17,47 @@
 
 package net.momirealms.customfishing.api.mechanic.hook;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class HookSetting {
+public class HookConfigImpl implements HookConfig {
 
-    private final String key;
-    private int maxDurability;
-    private List<String> lore;
+    private final String id;
+    private final int maxDurability;
+    private final List<String> lore;
 
-    public HookSetting(String key) {
-        this.key = key;
+    public HookConfigImpl(String id, int maxDurability, List<String> lore) {
+        this.id = id;
+        this.maxDurability = maxDurability;
+        this.lore = lore;
     }
 
-    public String getKey() {
-        return key;
+    @Override
+    public String id() {
+        return id;
     }
 
-    public int getMaxDurability() {
-        return maxDurability;
+    @Override
+    public List<String> lore() {
+        return lore;
     }
 
-    public List<String> getLore() {
-        return lore == null ? new ArrayList<>() : lore;
-    }
-
-    public static class Builder {
-
-        private final HookSetting setting;
-
-        public Builder(String key) {
-            this.setting = new HookSetting(key);
-        }
-
-        public Builder durability(int maxDurability) {
-            setting.maxDurability = maxDurability;
+    public static class BuilderImpl implements Builder {
+        private String id;
+        private int maxDurability;
+        private List<String> lore;
+        @Override
+        public Builder id(String id) {
+            this.id = id;
             return this;
         }
-
+        @Override
         public Builder lore(List<String> lore) {
-            setting.lore = lore;
+            this.lore = lore;
             return this;
         }
-
-        public HookSetting build() {
-            return setting;
+        @Override
+        public HookConfig build() {
+            return new HookConfigImpl(id, maxDurability, lore);
         }
     }
 }

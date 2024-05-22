@@ -57,10 +57,10 @@ public class BattlePassQuest implements Listener {
             Player player = event.getPlayer();
 
             // Single Fish Quest
-            if (event.getLoot().getID() != null)
+            if (event.getLoot().id() != null)
                 this.executionBuilder("loot")
                         .player(player)
-                        .root(event.getLoot().getID())
+                        .root(event.getLoot().id())
                         .progress(event.getAmount())
                         .buildAndExecute();
 

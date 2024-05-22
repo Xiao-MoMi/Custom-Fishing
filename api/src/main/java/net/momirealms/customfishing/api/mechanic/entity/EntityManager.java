@@ -38,7 +38,7 @@ public interface EntityManager extends Reloadable {
      */
     Optional<EntityConfig> getEntity(String id);
 
-    boolean registerEntity(String id, EntityConfig entity);
+    boolean registerEntity(EntityConfig entity);
 
     @Nullable
     Entity summonEntityLoot(Context<Player> context);

@@ -79,7 +79,7 @@ public class BetonQuestQuest {
                 if (isInvalidLocation(event, onlineProfile)) {
                     return;
                 }
-                if (this.loot_ids.contains(event.getLoot().getID()) && this.checkConditions(onlineProfile)) {
+                if (this.loot_ids.contains(event.getLoot().id()) && this.checkConditions(onlineProfile)) {
                     getCountingData(onlineProfile).progress(event.getAmount());
                     completeIfDoneOrNotify(onlineProfile);
                 }

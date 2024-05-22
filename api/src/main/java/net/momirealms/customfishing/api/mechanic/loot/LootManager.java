@@ -23,7 +23,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public interface LootManager {
 
@@ -35,13 +37,9 @@ public interface LootManager {
     @NotNull
     Optional<Loot> getLoot(String key);
 
-    HashMap<String, Double> getLootWithWeight(Context<Player> context);
-
-    Collection<String> getPossibleLootKeys(Context<Player> context);
-
-    @NotNull
-    Map<String, Double> getPossibleLootKeysWithWeight(Effect effect, Context<Player> context);
+    Map<String, Double> getWeightedLoots(Context<Player> context);
 
     @Nullable
-    Loot getNextLoot(Effect effect, Context<Player> context);
+    Loot
+    getNextLoot(Effect effect, Context<Player> context);
 }

@@ -40,11 +40,10 @@ public interface EventManager extends Reloadable {
     /**
      * Registers a new EventCarrier with a specified identifier.
      *
-     * @param id      The unique identifier of the event carrier.
      * @param carrier The EventCarrier to be registered.
      * @return True if the registration was successful, false otherwise.
      */
-    boolean registerEventCarrier(String id, EventCarrier carrier);
+    boolean registerEventCarrier(EventCarrier carrier);
 
     /**
      * Triggers an event for a given context, identifier, and trigger.

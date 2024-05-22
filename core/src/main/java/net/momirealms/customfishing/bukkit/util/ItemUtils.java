@@ -25,7 +25,7 @@ import net.kyori.adventure.text.ScoreComponent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.common.Pair;
-import net.momirealms.customfishing.api.mechanic.hook.HookSetting;
+import net.momirealms.customfishing.api.mechanic.hook.HookConfigImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -68,17 +68,17 @@ public class ItemUtils {
 
         if (cfCompound.hasTag("hook_id")) {
             String hookID = cfCompound.getString("hook_id");
-            HookSetting setting = BukkitCustomFishingPlugin.get().getHookManager().getHookSetting(hookID);
+            HookConfigImpl setting = BukkitCustomFishingPlugin.get().getHookManager().getHookSetting(hookID);
             if (setting == null) {
                 cfCompound.removeKey("hook_id");
                 cfCompound.removeKey("hook_item");
                 cfCompound.removeKey("hook_dur");
             } else {
-                for (String newLore : setting.getLore()) {
+                for (String newLore : setting.lore()) {
                     ScoreComponent.Builder builder = Component.score().name("cf").objective("hook");
                     builder.append(AdventureHelper.getInstance().getComponentFromMiniMessage(
                             newLore.replace("{dur}", String.valueOf(cfCompound.getInteger("hook_dur")))
-                                    .replace("{max}", String.valueOf(setting.getMaxDurability()))
+                                    .replace("{max}", String.valueOf(setting.maxDurability()))
                     ));
                     lore.add(GsonComponentSerializer.gson().serialize(builder.build()));
                 }
@@ -156,13 +156,13 @@ public class ItemUtils {
             int hookDur = cfCompound.getInteger("hook_dur");
             if (hookDur != -1) {
                 String id = cfCompound.getString("hook_id");
-                HookSetting setting = BukkitCustomFishingPlugin.get().getHookManager().getHookSetting(id);
+                HookConfigImpl setting = BukkitCustomFishingPlugin.get().getHookManager().getHookSetting(id);
                 if (setting == null) {
                     cfCompound.removeKey("hook_id");
                     cfCompound.removeKey("hook_dur");
                     cfCompound.removeKey("hook_item");
                 } else {
-                    hookDur = Math.min(setting.getMaxDurability(), hookDur + amount);
+                    hookDur = Math.min(setting.maxDurability(), hookDur + amount);
                     cfCompound.setInteger("hook_dur", hookDur);
                 }
             }
@@ -187,13 +187,13 @@ public class ItemUtils {
             int hookDur = cfCompound.getInteger("hook_dur");
             if (hookDur != -1) {
                 String id = cfCompound.getString("hook_id");
-                HookSetting setting = BukkitCustomFishingPlugin.get().getHookManager().getHookSetting(id);
+                HookConfigImpl setting = BukkitCustomFishingPlugin.get().getHookManager().getHookSetting(id);
                 if (setting == null) {
                     cfCompound.removeKey("hook_id");
                     cfCompound.removeKey("hook_dur");
                     cfCompound.removeKey("hook_item");
                 } else {
-                    hookDur = Math.min(setting.getMaxDurability(), amount);
+                    hookDur = Math.min(setting.maxDurability(), amount);
                     cfCompound.setInteger("hook_dur", hookDur);
                 }
             }

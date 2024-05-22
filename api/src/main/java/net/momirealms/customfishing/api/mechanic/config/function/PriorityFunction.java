@@ -1,4 +1,4 @@
-package net.momirealms.customfishing.api.mechanic.misc.function;
+package net.momirealms.customfishing.api.mechanic.config.function;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -12,10 +12,17 @@ public class EffectModifierImpl implements EffectModifier {
 
     private final Requirement<Player>[] requirements;
     private final List<BiConsumer<Effect, Context<Player>>> modifiers;
+    private final String id;
 
-    public EffectModifierImpl(Requirement<Player>[] requirements, List<BiConsumer<Effect, Context<Player>>> modifiers) {
+    public EffectModifierImpl(String id, Requirement<Player>[] requirements, List<BiConsumer<Effect, Context<Player>>> modifiers) {
         this.requirements = requirements;
         this.modifiers = modifiers;
+        this.id = id;
+    }
+
+    @Override
+    public String id() {
+        return id;
     }
 
     @Override
@@ -31,6 +38,12 @@ public class EffectModifierImpl implements EffectModifier {
     public static class BuilderImpl implements Builder {
         private final List<Requirement<Player>> requirements = new ArrayList<>();
         private final List<BiConsumer<Effect, Context<Player>>> modifiers = new ArrayList<>();
+        private String id;
+        @Override
+        public Builder id(String id) {
+            this.id = id;
+            return this;
+        }
         @Override
         public Builder requirements(List<Requirement<Player>> requirements) {
             this.requirements.addAll(requirements);
@@ -44,7 +57,7 @@ public class EffectModifierImpl implements EffectModifier {
         @Override
         @SuppressWarnings("unchecked")
         public EffectModifier build() {
-            return new EffectModifierImpl(this.requirements.toArray(new Requirement[0]), this.modifiers);
+            return new EffectModifierImpl(id, this.requirements.toArray(new Requirement[0]), this.modifiers);
         }
     }
 }

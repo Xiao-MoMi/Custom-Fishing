@@ -146,7 +146,7 @@ public class MarketGUI {
      * @return The MarketGUI instance.
      */
     public MarketGUI refresh() {
-        double earningLimit = manager.getEarningLimit(owner);
+        double earningLimit = manager.earningLimit(owner);
         MarketDynamicGUIElement sellElement = (MarketDynamicGUIElement) getElement(manager.getSellSlot());
         if (sellElement != null && sellElement.getSlots().size() > 0) {
             double totalWorth = getTotalWorthInMarketGUI();

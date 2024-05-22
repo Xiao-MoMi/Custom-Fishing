@@ -57,7 +57,7 @@ public class ClueScrollsQuest implements Listener {
             idClue.handle(
                     player,
                     event.getAmount(),
-                    new ClueDataPair("id", loot.getID())
+                    new ClueDataPair("id", loot.id())
             );
         }
 

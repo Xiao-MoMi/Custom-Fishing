@@ -44,9 +44,9 @@ public class BukkitEventManager implements EventManager, Listener {
     }
 
     @Override
-    public boolean registerEventCarrier(String id, EventCarrier carrier) {
-        if (carriers.containsKey(id)) return false;
-        carriers.put(id, carrier);
+    public boolean registerEventCarrier(EventCarrier carrier) {
+        if (carriers.containsKey(carrier.id())) return false;
+        carriers.put(carrier.id(), carrier);
         return true;
     }
 

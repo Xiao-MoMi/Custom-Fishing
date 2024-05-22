@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface EffectManager extends Reloadable {
 
-    boolean registerEffectModifier(String id, EffectModifier effect);
+    boolean registerEffectModifier(EffectModifier effect);
 
     Optional<EffectModifier> getEffectModifier(String id);
 }

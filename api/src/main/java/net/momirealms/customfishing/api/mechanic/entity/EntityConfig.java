@@ -17,6 +17,8 @@
 
 package net.momirealms.customfishing.api.mechanic.entity;
 
+import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -28,24 +30,26 @@ import java.util.Map;
  */
 public interface EntityConfig {
 
-    double DEFAULT_HORIZONTAL_VECTOR = 1;
-    double DEFAULT_VERTICAL_VECTOR = 1;
-    String DEFAULT_ENTITY_ID = "";
+    MathValue<Player> DEFAULT_HORIZONTAL_VECTOR = MathValue.plain(1.1);
+    MathValue<Player> DEFAULT_VERTICAL_VECTOR = MathValue.plain(1.2);
+    String DEFAULT_ENTITY_ID = "COD";
     Map<String, Object> DEFAULT_PROPERTY_MAP = Map.of();
+
+    String id();
 
     /**
      * Retrieves the horizontal vector value for the entity.
      *
      * @return the horizontal vector value as a double
      */
-    double getHorizontalVector();
+    MathValue<Player> getHorizontalVector();
 
     /**
      * Retrieves the vertical vector value for the entity.
      *
      * @return the vertical vector value as a double
      */
-    double getVerticalVector();
+    MathValue<Player> getVerticalVector();
 
     /**
      * Retrieves the unique identifier for the entity.
@@ -77,6 +81,8 @@ public interface EntityConfig {
      */
     interface Builder {
 
+        Builder id(String id);
+
         /**
          * Sets the entity ID for the EntityConfig being built.
          *
@@ -91,7 +97,7 @@ public interface EntityConfig {
          * @param value the vertical vector value as a double
          * @return the current Builder instance
          */
-        Builder verticalVector(double value);
+        Builder verticalVector(MathValue<Player> value);
 
         /**
          * Sets the horizontal vector value for the EntityConfig being built.
@@ -99,7 +105,7 @@ public interface EntityConfig {
          * @param value the horizontal vector value as a double
          * @return the current Builder instance
          */
-        Builder horizontalVector(double value);
+        Builder horizontalVector(MathValue<Player> value);
 
         /**
          * Sets the property map for the EntityConfig being built.

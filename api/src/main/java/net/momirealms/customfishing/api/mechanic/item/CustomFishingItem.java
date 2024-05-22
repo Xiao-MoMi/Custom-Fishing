@@ -1,7 +1,8 @@
 package net.momirealms.customfishing.api.mechanic.item;
 
+import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.config.function.PriorityFunction;
 import net.momirealms.customfishing.api.mechanic.context.Context;
-import net.momirealms.customfishing.api.mechanic.misc.function.PriorityFunction;
 import net.momirealms.customfishing.common.item.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -20,6 +21,8 @@ public interface CustomFishingItem {
      */
     String material();
 
+    String id();
+
     /**
      * Returns a list of tag consumers which are functions that take an item and context as parameters
      * and perform some operation on them.
@@ -27,6 +30,10 @@ public interface CustomFishingItem {
      * @return a list of BiConsumer instances.
      */
     List<BiConsumer<Item<ItemStack>, Context<Player>>> tagConsumers();
+
+    default ItemStack build(Context<Player> context) {
+        return BukkitCustomFishingPlugin.getInstance().getItemManager().build(context, this);
+    }
 
     /**
      * Creates a new Builder instance to construct a CustomFishingItem.
@@ -41,6 +48,8 @@ public interface CustomFishingItem {
      * Builder interface for constructing instances of CustomFishingItem.
      */
     interface Builder {
+
+        Builder id(String id);
 
         /**
          * Sets the material type for the CustomFishingItem being built.

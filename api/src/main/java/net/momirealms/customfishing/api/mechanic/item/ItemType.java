@@ -4,7 +4,11 @@ import java.util.Objects;
 
 public class ItemType {
 
-    public static ItemType LOOT = of("loot");
+    public static final ItemType LOOT = of("loot");
+    public static final ItemType ROD = of("rod");
+    public static final ItemType UTIL = of("util");
+    public static final ItemType BAIT = of("bait");
+    public static final ItemType HOOK = of("hook");
 
     private final String type;
 

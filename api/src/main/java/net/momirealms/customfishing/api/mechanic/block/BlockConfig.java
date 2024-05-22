@@ -28,6 +28,8 @@ import java.util.List;
  */
 public interface BlockConfig {
 
+    String id();
+
     /**
      * Gets the unique identifier for the block.
      *
@@ -50,20 +52,6 @@ public interface BlockConfig {
     List<BlockStateModifier> stateModifiers();
 
     /**
-     * Gets the horizontal vector math value associated with the block.
-     *
-     * @return A {@link MathValue} representing the horizontal vector for a player.
-     */
-    MathValue<Player> horizontalVector();
-
-    /**
-     * Gets the vertical vector math value associated with the block.
-     *
-     * @return A {@link MathValue} representing the vertical vector for a player.
-     */
-    MathValue<Player> verticalVector();
-
-    /**
      * Creates a new builder instance for constructing a {@link BlockConfig}.
      *
      * @return A new {@link Builder} instance.
@@ -76,6 +64,8 @@ public interface BlockConfig {
      * Builder interface for constructing a {@link BlockConfig} instance.
      */
     interface Builder {
+
+        Builder id(String id);
 
         /**
          * Sets the block ID for the configuration.
@@ -100,22 +90,6 @@ public interface BlockConfig {
          * @return The current {@link Builder} instance.
          */
         Builder stateModifierList(List<BlockStateModifier> stateModifierList);
-
-        /**
-         * Sets the horizontal vector math value for the configuration.
-         *
-         * @param horizontalVector A {@link MathValue} representing the horizontal vector for a player.
-         * @return The current {@link Builder} instance.
-         */
-        Builder horizontalVector(MathValue<Player> horizontalVector);
-
-        /**
-         * Sets the vertical vector math value for the configuration.
-         *
-         * @param verticalVector A {@link MathValue} representing the vertical vector for a player.
-         * @return The current {@link Builder} instance.
-         */
-        Builder verticalVector(MathValue<Player> verticalVector);
 
         /**
          * Builds and returns the configured {@link BlockConfig} instance.

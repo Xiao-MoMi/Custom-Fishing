@@ -539,7 +539,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 String loot = context.arg(ContextKeys.ID);
                 Optional<Loot> lootInstance = plugin.getLootManager().getLoot(loot);
                 if (lootInstance.isPresent()) {
-                    if (types.contains(lootInstance.get().getType().name().toLowerCase(Locale.ENGLISH)))
+                    if (types.contains(lootInstance.get().type().name().toLowerCase(Locale.ENGLISH)))
                         return true;
                 }
                 if (advanced) ActionManager.trigger(context, actions);
@@ -552,7 +552,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 String loot = context.arg(ContextKeys.ID);
                 Optional<Loot> lootInstance = plugin.getLootManager().getLoot(loot);
                 if (lootInstance.isPresent()) {
-                    if (!types.contains(lootInstance.get().getType().name().toLowerCase(Locale.ENGLISH)))
+                    if (!types.contains(lootInstance.get().type().name().toLowerCase(Locale.ENGLISH)))
                         return true;
                 }
                 if (advanced) ActionManager.trigger(context, actions);

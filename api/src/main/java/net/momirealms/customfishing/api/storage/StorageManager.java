@@ -20,7 +20,6 @@ package net.momirealms.customfishing.api.storage;
 import net.momirealms.customfishing.api.storage.data.PlayerData;
 import net.momirealms.customfishing.api.storage.user.UserData;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -32,7 +31,7 @@ public interface StorageManager {
     @NotNull
     String getServerID();
 
-    @Nullable
+    @NotNull
     Optional<UserData> getOnlineUser(UUID uuid);
 
     @NotNull

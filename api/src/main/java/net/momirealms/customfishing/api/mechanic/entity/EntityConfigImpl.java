@@ -17,6 +17,8 @@
 
 package net.momirealms.customfishing.api.mechanic.entity;
 
+import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -24,31 +26,38 @@ import java.util.Map;
 public class EntityConfigImpl implements EntityConfig {
 
     private final String id;
-    private final double horizontalVector;
-    private final double verticalVector;
+    private final String entityID;
+    private final MathValue<Player> horizontalVector;
+    private final MathValue<Player> verticalVector;
     private final Map<String, Object> propertyMap;
 
-    public EntityConfigImpl(String id, double horizontalVector, double verticalVector, Map<String, Object> propertyMap) {
+    public EntityConfigImpl(String id, String entityID, MathValue<Player> horizontalVector, MathValue<Player> verticalVector, Map<String, Object> propertyMap) {
         this.id = id;
+        this.entityID = entityID;
         this.horizontalVector = horizontalVector;
         this.verticalVector = verticalVector;
         this.propertyMap = propertyMap;
     }
 
     @Override
-    public double getHorizontalVector() {
+    public String id() {
+        return id;
+    }
+
+    @Override
+    public MathValue<Player> getHorizontalVector() {
         return horizontalVector;
     }
 
     @Override
-    public double getVerticalVector() {
+    public MathValue<Player> getVerticalVector() {
         return verticalVector;
     }
 
     @NotNull
     @Override
     public String getEntityID() {
-        return id;
+        return entityID;
     }
 
     @NotNull
@@ -59,21 +68,27 @@ public class EntityConfigImpl implements EntityConfig {
 
     public static class BuilderImpl implements Builder {
         private String entity = DEFAULT_ENTITY_ID;
-        private double horizontalVector = DEFAULT_HORIZONTAL_VECTOR;
-        private double verticalVector = DEFAULT_VERTICAL_VECTOR;
+        private MathValue<Player> horizontalVector = DEFAULT_HORIZONTAL_VECTOR;
+        private MathValue<Player> verticalVector = DEFAULT_VERTICAL_VECTOR;
         private Map<String, Object> propertyMap = DEFAULT_PROPERTY_MAP;
+        private String id;
+        @Override
+        public Builder id(String id) {
+            this.id = id;
+            return this;
+        }
         @Override
         public BuilderImpl entityID(String value) {
             this.entity = value;
             return this;
         }
         @Override
-        public BuilderImpl verticalVector(double value) {
+        public BuilderImpl verticalVector(MathValue<Player> value) {
             this.verticalVector = value;
             return this;
         }
         @Override
-        public BuilderImpl horizontalVector(double value) {
+        public BuilderImpl horizontalVector(MathValue<Player> value) {
             this.horizontalVector = value;
             return this;
         }
@@ -84,7 +99,7 @@ public class EntityConfigImpl implements EntityConfig {
         }
         @Override
         public EntityConfigImpl build() {
-            return new EntityConfigImpl(entity, horizontalVector, verticalVector, propertyMap);
+            return new EntityConfigImpl(id, entity, horizontalVector, verticalVector, propertyMap);
         }
     }
 }

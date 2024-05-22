@@ -5,6 +5,7 @@ import net.momirealms.customfishing.api.mechanic.action.ActionManager;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.item.ItemType;
+import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -20,17 +21,24 @@ public class EventCarrierImpl implements EventCarrier {
     private final HashMap<ActionTrigger, TreeMap<Integer, Action<Player>[]>> actionTimesMap;
     private final ItemType type;
     private final boolean disableGlobalActions;
+    private final String id;
 
-    public EventCarrierImpl(ItemType type, boolean disableGlobalActions, HashMap<ActionTrigger, Action<Player>[]> actionMap, HashMap<ActionTrigger, TreeMap<Integer, Action<Player>[]>> actionTimesMap) {
+    public EventCarrierImpl(String id, ItemType type, boolean disableGlobalActions, HashMap<ActionTrigger, Action<Player>[]> actionMap, HashMap<ActionTrigger, TreeMap<Integer, Action<Player>[]>> actionTimesMap) {
         this.actionMap = actionMap;
         this.actionTimesMap = actionTimesMap;
         this.type = type;
         this.disableGlobalActions = disableGlobalActions;
+        this.id = id;
     }
 
     @Override
     public ItemType type() {
         return type;
+    }
+
+    @Override
+    public String id() {
+        return id;
     }
 
     @Override
@@ -63,14 +71,30 @@ public class EventCarrierImpl implements EventCarrier {
         private final HashMap<ActionTrigger, TreeMap<Integer, Action<Player>[]>> actionTimesMap = new HashMap<>();
         private ItemType type = null;
         private boolean disableGlobalActions = false;
+        private String id;
+        @Override
+        public Builder id(String id) {
+            this.id = id;
+            return this;
+        }
         @Override
         public Builder actionMap(HashMap<ActionTrigger, Action<Player>[]> actionMap) {
             this.actionMap.putAll(actionMap);
             return this;
         }
         @Override
+        public Builder action(ActionTrigger trigger, Action<Player>[] actions) {
+            this.actionMap.put(trigger, actions);
+            return this;
+        }
+        @Override
         public Builder actionTimesMap(HashMap<ActionTrigger, TreeMap<Integer, Action<Player>[]>> actionTimesMap) {
             this.actionTimesMap.putAll(actionTimesMap);
+            return this;
+        }
+        @Override
+        public Builder actionTimes(ActionTrigger trigger, TreeMap<Integer, Action<Player>[]> actions) {
+            this.actionTimesMap.put(trigger, actions);
             return this;
         }
         @Override
@@ -85,7 +109,7 @@ public class EventCarrierImpl implements EventCarrier {
         }
         @Override
         public EventCarrier build() {
-            return new EventCarrierImpl(requireNonNull(type), disableGlobalActions, actionMap, actionTimesMap);
+            return new EventCarrierImpl(requireNonNull(id), requireNonNull(type), disableGlobalActions, actionMap, actionTimesMap);
         }
     }
 }

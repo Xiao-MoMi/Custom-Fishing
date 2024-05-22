@@ -17,8 +17,10 @@
 
 package net.momirealms.customfishing.api.mechanic.item;
 
-import net.kyori.adventure.key.Key;
+import com.saicone.rtag.RtagItem;
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.common.item.ItemFactory;
+import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
 import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -28,13 +30,15 @@ import org.jetbrains.annotations.Nullable;
 
 public interface ItemManager extends Reloadable {
 
-    boolean registerItem(@NotNull Key key, @NotNull CustomFishingItem item);
+    boolean registerItem(@NotNull CustomFishingItem item);
 
     @Nullable
-    ItemStack buildInternal(@NotNull Context<Player> context, @NotNull Key key);
+    ItemStack buildInternal(@NotNull Context<Player> context, @NotNull String id);
+
+    ItemStack build(@NotNull Context<Player> context, CustomFishingItem item);
 
     @Nullable
-    ItemStack buildAny(@NotNull Context<Player> context, @NotNull String item);
+    ItemStack buildAny(@NotNull Context<Player> context, @NotNull String id);
 
     @NotNull
     String getItemID(@NotNull ItemStack itemStack);
@@ -44,4 +48,6 @@ public interface ItemManager extends Reloadable {
 
     @Nullable
     Item dropItemLoot(@NotNull Context<Player> context);
+
+    ItemFactory<CustomFishingPlugin, RtagItem, ItemStack> getFactory();
 }

@@ -44,23 +44,23 @@ public class LootImpl implements Loot {
     }
 
     @Override
-    public String getID() {
+    public String id() {
         return id;
     }
 
     @Override
-    public LootType getType() {
+    public LootType type() {
         return type;
     }
 
     @NotNull
     @Override
-    public String getNick() {
+    public String nick() {
         return nick;
     }
 
     @Override
-    public StatisticsKeys getStatisticKey() {
+    public StatisticsKeys statisticKey() {
         return statisticsKeys;
     }
 
@@ -70,7 +70,7 @@ public class LootImpl implements Loot {
     }
 
     @Override
-    public MathValue<Player> getScore() {
+    public MathValue<Player> score() {
         return score;
     }
 

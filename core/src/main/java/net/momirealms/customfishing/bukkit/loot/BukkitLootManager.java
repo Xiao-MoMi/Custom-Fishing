@@ -23,9 +23,9 @@ public class BukkitLootManager implements LootManager {
 
     @Override
     public void registerLoot(@NotNull Loot loot) {
-        this.lootMap.put(loot.getID(), loot);
+        this.lootMap.put(loot.id(), loot);
         for (String group : loot.lootGroup()) {
-            addGroupMember(group, loot.getID());
+            addGroupMember(group, loot.id());
         }
     }
 
@@ -52,19 +52,8 @@ public class BukkitLootManager implements LootManager {
     }
 
     @Override
-    public HashMap<String, Double> getLootWithWeight(Context<Player> context) {
+    public HashMap<String, Double> getWeightedLoots(Context<Player> context) {
         return null;
-    }
-
-    @Override
-    public Collection<String> getPossibleLootKeys(Context<Player> context) {
-        return List.of();
-    }
-
-    @NotNull
-    @Override
-    public Map<String, Double> getPossibleLootKeysWithWeight(Effect effect, Context<Player> context) {
-        return Map.of();
     }
 
     @Nullable

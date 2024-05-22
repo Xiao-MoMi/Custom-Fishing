@@ -25,6 +25,7 @@ import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.effect.EffectManager;
 import net.momirealms.customfishing.api.mechanic.entity.EntityManager;
 import net.momirealms.customfishing.api.mechanic.event.EventManager;
+import net.momirealms.customfishing.api.mechanic.hook.HookManager;
 import net.momirealms.customfishing.api.mechanic.item.ItemManager;
 import net.momirealms.customfishing.api.mechanic.loot.LootManager;
 import net.momirealms.customfishing.api.mechanic.market.MarketManager;
@@ -69,6 +70,7 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
     protected BlockManager blockManager;
     protected StatisticsManager statisticsManager;
     protected EffectManager effectManager;
+    protected HookManager hookManager;
 
     public BukkitCustomFishingPlugin() {
         instance = this;
@@ -141,6 +143,10 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
 
     public EntityManager getEntityManager() {
         return entityManager;
+    }
+
+    public HookManager getHookManager() {
+        return hookManager;
     }
 
     public BlockManager getBlockManager() {

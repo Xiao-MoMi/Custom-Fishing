@@ -38,9 +38,9 @@ public class BukkitEffectManager implements EffectManager {
     }
 
     @Override
-    public boolean registerEffectModifier(String id, EffectModifier effect) {
-        if (effectModifiers.containsKey(id)) return false;
-        this.effectModifiers.put(id, effect);
+    public boolean registerEffectModifier(EffectModifier effect) {
+        if (effectModifiers.containsKey(effect.id())) return false;
+        this.effectModifiers.put(effect.id(), effect);
         return true;
     }
 

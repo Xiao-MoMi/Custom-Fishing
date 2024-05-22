@@ -48,7 +48,7 @@ public class ComponentItemFactory extends BukkitItemFactory {
 
     @Override
     protected Optional<String> displayName(RtagItem item) {
-        if (item.getComponent(ComponentKeys.CUSTOM_NAME) == null) return Optional.empty();
+        if (!item.hasComponent(ComponentKeys.CUSTOM_NAME)) return Optional.empty();
         return Optional.ofNullable(
                 (String) ComponentType.encodeJava(
                         ComponentKeys.CUSTOM_NAME,

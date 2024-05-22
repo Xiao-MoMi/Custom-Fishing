@@ -148,6 +148,7 @@ public class BukkitStorageManager implements StorageManager, Listener {
         return serverID;
     }
 
+    @NotNull
     @Override
     public Optional<UserData> getOnlineUser(UUID uuid) {
         return Optional.ofNullable(onlineUserMap.get(uuid));
