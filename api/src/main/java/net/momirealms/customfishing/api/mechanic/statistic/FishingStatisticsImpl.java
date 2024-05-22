@@ -79,12 +79,12 @@ public class FishingStatisticsImpl implements FishingStatistics {
     }
 
     @Override
-    public Map<String, Integer> getAmountMap() {
+    public Map<String, Integer> amountMap() {
         return amountMap;
     }
 
     @Override
-    public Map<String, Float> getSizeMap() {
+    public Map<String, Float> sizeMap() {
         return sizeMap;
     }
 

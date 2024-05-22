@@ -17,9 +17,13 @@
 
 package net.momirealms.customfishing.api.storage.user;
 
+import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
 import net.momirealms.customfishing.api.mechanic.statistic.FishingStatistics;
 import net.momirealms.customfishing.api.storage.data.EarningData;
 import net.momirealms.customfishing.api.storage.data.PlayerData;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -30,35 +34,48 @@ public interface UserData {
      *
      * @return user name
      */
-    String getName();
+    @NotNull
+    String name();
 
     /**
      * Get the user's uuid
      *
      * @return uuid
      */
-    UUID getUUID();
+    @NotNull
+    UUID uuid();
+
+    /**
+     * Get the player instance if that player is online
+     *
+     * @return player
+     */
+    @Nullable
+    Player player();
 
     /**
      * Get the fishing bag holder
      *
      * @return fishing bag holder
      */
-    FishingBagHolder getHolder();
+    @NotNull
+    FishingBagHolder holder();
 
     /**
      * Get the player's earning data
      *
      * @return earning data
      */
-    EarningData getEarningData();
+    @NotNull
+    EarningData earningData();
 
     /**
      * Get the player's statistics
      *
      * @return statistics
      */
-    FishingStatistics getStatistics();
+    @NotNull
+    FishingStatistics statistics();
 
     /**
      * If the user is online on current server
@@ -68,16 +85,75 @@ public interface UserData {
     boolean isOnline();
 
     /**
+     * If the data is locked
+     *
+     * @return locked or not
+     */
+    boolean isLocked();
+
+    /**
      * Get the data in another minimized format that can be saved
      *
      * @return player data
      */
-    PlayerData getPlayerData();
+    @NotNull
+    PlayerData toPlayerData();
 
-    /**
-     * Get the user
-     *
-     * @return user
-     */
-    O getUser();
+    static Builder builder() {
+        return new UserDataImpl.BuilderImpl();
+    }
+
+    interface Builder {
+
+        /**
+         * Set the username for the UserData being built.
+         *
+         * @param name the username to set.
+         * @return the current Builder instance.
+         */
+        Builder name(String name);
+
+        /**
+         * Set the UUID for the UserData being built.
+         *
+         * @param uuid the UUID to set.
+         * @return the current Builder instance.
+         */
+        Builder uuid(UUID uuid);
+
+        /**
+         * Set the FishingBagHolder for the UserData being built.
+         *
+         * @param holder the FishingBagHolder to set.
+         * @return the current Builder instance.
+         */
+        Builder holder(FishingBagHolder holder);
+
+        /**
+         * Set the EarningData for the UserData being built.
+         *
+         * @param earningData the EarningData to set.
+         * @return the current Builder instance.
+         */
+        Builder earningData(EarningData earningData);
+
+        /**
+         * Set the FishingStatistics for the UserData being built.
+         *
+         * @param statistics the FishingStatistics to set.
+         * @return the current Builder instance.
+         */
+        Builder statistics(FishingStatistics statistics);
+
+        Builder locked(boolean isLocked);
+
+        Builder data(PlayerData playerData);
+
+        /**
+         * Build and return the UserData instance based on the current state of the Builder.
+         *
+         * @return the constructed UserData instance.
+         */
+        UserData build();
+    }
 }

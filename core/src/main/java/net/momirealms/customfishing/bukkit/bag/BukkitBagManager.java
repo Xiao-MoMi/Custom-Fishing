@@ -18,15 +18,14 @@
 package net.momirealms.customfishing.bukkit.bag;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.bag.BagManager;
+import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
+import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
+import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
-import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.storage.user.UserData;
-import net.momirealms.customfishing.api.util.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -38,52 +37,39 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 public class BukkitBagManager implements BagManager, Listener {
 
     private final BukkitCustomFishingPlugin plugin;
     private final HashMap<UUID, UserData> tempEditMap;
-    private Action<Player>[] collectLootActions;
-    private Action<Player>[] bagFullActions;
-    private boolean bagStoreLoots;
-    private String bagTitle;
-    private List<Material> bagWhiteListItems;
-    private Requirement<Player>[] collectRequirements;
 
-    public BukkitBagManager(BukkitCustomFishingPluginImpl plugin) {
+    public BukkitBagManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.tempEditMap = new HashMap<>();
     }
 
+    private boolean isEnabled() {
+        return ConfigManager.enableFishingBag();
+    }
+
     @Override
-    public boolean isEnabled() {
-        return CFConfig.enableFishingBag;
-    }
-
     public void load() {
-        Bukkit.getPluginManager().registerEvents(this, plugin);
-        YamlConfiguration config = plugin.getConfig("config.yml");
-        ConfigurationSection bagSection = config.getConfigurationSection("mechanics.fishing-bag");
-        if (bagSection != null) {
-            bagTitle = bagSection.getString("bag-title");
-            bagStoreLoots = bagSection.getBoolean("can-store-loot", false);
-            bagWhiteListItems = bagSection.getStringList("whitelist-items").stream().map(it -> Material.valueOf(it.toUpperCase(Locale.ENGLISH))).toList();
-            if (bagStoreLoots) {
-                collectLootActions = plugin.getActionManager().getActions(bagSection.getConfigurationSection("collect-actions"));
-                bagFullActions = plugin.getActionManager().getActions(bagSection.getConfigurationSection("full-actions"));
-                collectRequirements = plugin.getRequirementManager().parseRequirements(bagSection.getConfigurationSection("collect-requirements"), false);
-            }
-        }
+        Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
     }
 
+    @Override
     public void unload() {
         HandlerList.unregisterAll(this);
     }
 
+    @Override
     public void disable() {
         unload();
-        plugin.getStorageManager().getDataSource().updateManyPlayersData(tempEditMap.values(), true);
+        this.plugin.getStorageManager().getDataSource().updateManyPlayersData(tempEditMap.values(), true);
     }
 
     /**
@@ -101,15 +87,15 @@ public class BukkitBagManager implements BagManager, Listener {
         }
         Player player = onlinePlayer.getPlayer();
         int rows = getBagInventoryRows(player);
-        Inventory bag = onlinePlayer.getHolder().getInventory();
+        Inventory bag = onlinePlayer.holder().getInventory();
         if (bag.getSize() != rows * 9) {
-            Inventory newBag = InventoryUtils.createInventory(onlinePlayer.getHolder(), rows * 9,
+            Inventory newBag = InventoryUtils.createInventory(onlinePlayer.holder(), rows * 9,
                     AdventureHelper.getInstance().getComponentFromMiniMessage(
                             BukkitPlaceholderManager.getInstance().parse(
                                     player, bagTitle, Map.of("{player}", player.getName())
                             )
                     ));
-            onlinePlayer.getHolder().setInventory(newBag);
+            onlinePlayer.holder().setInventory(newBag);
             assert newBag != null;
             ItemStack[] newContents = new ItemStack[rows * 9];
             ItemStack[] oldContents = bag.getContents();
@@ -118,7 +104,7 @@ public class BukkitBagManager implements BagManager, Listener {
             }
             newBag.setContents(newContents);
         }
-        return onlinePlayer.getHolder().getInventory();
+        return onlinePlayer.holder().getInventory();
     }
 
     @Override
@@ -133,16 +119,9 @@ public class BukkitBagManager implements BagManager, Listener {
         return size;
     }
 
-    /**
-     * Initiates the process of editing the bag inventory of an offline player by an admin.
-     *
-     * @param admin    The admin player performing the edit.
-     * @param userData The OfflineUser data of the player whose bag is being edited.
-     */
-    @Override
-    public void editOfflinePlayerBag(Player admin, UserData userData) {
+    public void editBag(Player admin, UserData userData) {
         this.tempEditMap.put(admin.getUniqueId(), userData);
-        admin.openInventory(userData.getHolder().getInventory());
+        admin.openInventory(userData.holder().getInventory());
     }
 
     /**
@@ -158,7 +137,7 @@ public class BukkitBagManager implements BagManager, Listener {
         UserData userData = tempEditMap.remove(viewer.getUniqueId());
         if (userData == null)
             return;
-        plugin.getStorageManager().saveUserData(userData, true);
+        this.plugin.getStorageManager().saveUserData(userData, true);
     }
 
     /**
@@ -181,16 +160,12 @@ public class BukkitBagManager implements BagManager, Listener {
             return;
         if (bagWhiteListItems.contains(clickedItem.getType()))
             return;
-        String id = plugin.getItemManager().getAnyPluginItemID(clickedItem);
-        EffectManager effectManager = plugin.getEffectManager();
-        if (effectManager.hasEffectCarrier("rod", id)
-                || effectManager.hasEffectCarrier("bait", id)
-                || effectManager.hasEffectCarrier("util", id)
-                || effectManager.hasEffectCarrier("hook", id)
-        ) {
+        String id = plugin.getItemManager().getItemID(clickedItem);
+        Optional<EffectModifier> optionalEffectModifier = plugin.getEffectManager().getEffectModifier(id);
+        if (optionalEffectModifier.isEmpty()) {
             return;
         }
-        if (bagStoreLoots && plugin.getLootManager().getLoot(id) != null)
+        if (bagStoreLoots && plugin.getLootManager().getLoot(id).isPresent())
             return;
         event.setCancelled(true);
     }
@@ -209,35 +184,5 @@ public class BukkitBagManager implements BagManager, Listener {
         if (userData == null)
             return;
         plugin.getStorageManager().saveUserData(userData, true);
-    }
-
-    @Override
-    public Action[] getCollectLootActions() {
-        return collectLootActions;
-    }
-
-    @Override
-    public Action[] getBagFullActions() {
-        return bagFullActions;
-    }
-
-    @Override
-    public boolean doesBagStoreLoots() {
-        return bagStoreLoots;
-    }
-
-    @Override
-    public String getBagTitle() {
-        return bagTitle;
-    }
-
-    @Override
-    public List<Material> getBagWhiteListItems() {
-        return bagWhiteListItems;
-    }
-
-    @Override
-    public Requirement[] getCollectRequirements() {
-        return collectRequirements;
     }
 }

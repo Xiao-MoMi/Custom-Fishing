@@ -20,9 +20,9 @@ package net.momirealms.customfishing.bukkit.storage.method.database.sql;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.storage.StorageType;
 
-public class MariaDBImpl extends AbstractHikariDatabase {
+public class MariaDBProvider extends AbstractHikariDatabase {
 
-    public MariaDBImpl(BukkitCustomFishingPlugin plugin) {
+    public MariaDBProvider(BukkitCustomFishingPlugin plugin) {
         super(plugin);
     }
 

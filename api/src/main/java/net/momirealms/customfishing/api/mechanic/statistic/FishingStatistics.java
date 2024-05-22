@@ -84,14 +84,14 @@ public interface FishingStatistics {
      *
      * @return the map containing the amounts of fish caught.
      */
-    Map<String, Integer> getAmountMap();
+    Map<String, Integer> amountMap();
 
     /**
      * Retrieves the map containing the maximum sizes of fish.
      *
      * @return the map containing the maximum sizes of fish.
      */
-    Map<String, Float> getSizeMap();
+    Map<String, Float> sizeMap();
 
     /**
      * Creates a new Builder instance for constructing FishingStatistics objects.

@@ -38,10 +38,10 @@ import java.util.concurrent.CompletableFuture;
 /**
  * A data storage implementation that uses JSON files to store player data.
  */
-public class JsonImpl extends AbstractStorage {
+public class JsonProvider extends AbstractStorage {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public JsonImpl(BukkitCustomFishingPlugin plugin) {
+    public JsonProvider(BukkitCustomFishingPlugin plugin) {
         super(plugin);
         File folder = new File(plugin.getDataFolder(), "data");
         if (!folder.exists()) folder.mkdirs();
@@ -130,7 +130,7 @@ public class JsonImpl extends AbstractStorage {
 
     // Retrieve a set of unique user UUIDs based on JSON data files in the 'data' folder.
     @Override
-    public Set<UUID> getUniqueUsers(boolean legacy) {
+    public Set<UUID> getUniqueUsers() {
         // No legacy files
         File folder = new File(plugin.getDataFolder(), "data");
         Set<UUID> uuids = new HashSet<>();

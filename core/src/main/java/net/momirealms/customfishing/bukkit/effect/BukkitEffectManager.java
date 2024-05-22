@@ -20,7 +20,6 @@ package net.momirealms.customfishing.bukkit.effect;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.effect.EffectManager;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
-import net.momirealms.customfishing.common.util.Key;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -28,7 +27,7 @@ import java.util.Optional;
 public class BukkitEffectManager implements EffectManager {
 
     private final BukkitCustomFishingPlugin plugin;
-    private final HashMap<Key, EffectModifier> effectModifiers = new HashMap<>();
+    private final HashMap<String, EffectModifier> effectModifiers = new HashMap<>();
 
     public BukkitEffectManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
@@ -39,14 +38,14 @@ public class BukkitEffectManager implements EffectManager {
     }
 
     @Override
-    public boolean registerEffectModifier(Key key, EffectModifier effect) {
-        if (effectModifiers.containsKey(key)) return false;
-        this.effectModifiers.put(key, effect);
+    public boolean registerEffectModifier(String id, EffectModifier effect) {
+        if (effectModifiers.containsKey(id)) return false;
+        this.effectModifiers.put(id, effect);
         return true;
     }
 
     @Override
-    public Optional<EffectModifier> getEffectModifier(Key key) {
-        return Optional.ofNullable(this.effectModifiers.get(key));
+    public Optional<EffectModifier> getEffectModifier(String id) {
+        return Optional.ofNullable(this.effectModifiers.get(id));
     }
 }

@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.bukkit.storage.method;
 
+import dev.dejvokep.boostedyaml.YamlDocument;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.storage.DataStorageProvider;
 import net.momirealms.customfishing.api.storage.data.PlayerData;
@@ -39,7 +40,7 @@ public abstract class AbstractStorage implements DataStorageProvider {
     }
 
     @Override
-    public void initialize() {
+    public void initialize(YamlDocument config) {
         // This method can be overridden in subclasses to perform initialization tasks specific to the storage type.
     }
 
@@ -59,18 +60,11 @@ public abstract class AbstractStorage implements DataStorageProvider {
 
     @Override
     public void updateManyPlayersData(Collection<? extends UserData> users, boolean unlock) {
-        // Update data for multiple players by iterating through the collection of OfflineUser objects.
         for (UserData user : users) {
-            this.updatePlayerData(user.getUUID(), user.getPlayerData(), unlock);
+            this.updatePlayerData(user.uuid(), user.toPlayerData(), unlock);
         }
     }
 
-    /**
-     * Lock or unlock player data based on the provided UUID and lock flag.
-     *
-     * @param uuid The UUID of the player.
-     * @param lock True to lock the player data, false to unlock it.
-     */
     public void lockOrUnlockPlayerData(UUID uuid, boolean lock) {
         // Note: Only remote database would override this method
     }
@@ -79,9 +73,5 @@ public abstract class AbstractStorage implements DataStorageProvider {
     public CompletableFuture<Boolean> updateOrInsertPlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         // By default, delegate to the updatePlayerData method to update or insert player data.
         return updatePlayerData(uuid, playerData, unlock);
-    }
-
-    public BukkitCustomFishingPlugin getPlugin() {
-        return plugin;
     }
 }

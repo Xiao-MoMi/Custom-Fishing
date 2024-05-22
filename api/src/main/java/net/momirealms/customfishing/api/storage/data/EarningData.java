@@ -19,6 +19,8 @@ package net.momirealms.customfishing.api.storage.data;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Calendar;
+
 /**
  * The EarningData class holds data related to the earnings of a player from selling fish.
  * It includes the total earnings and the date of the earnings record.
@@ -39,6 +41,7 @@ public class EarningData {
     public EarningData(double earnings, int date) {
         this.earnings = earnings;
         this.date = date;
+        this.refresh();
     }
 
     /**
@@ -48,5 +51,18 @@ public class EarningData {
      */
     public static EarningData empty() {
         return new EarningData(0d, 0);
+    }
+
+    public EarningData copy() {
+        return new EarningData(earnings, date);
+    }
+
+    public void refresh() {
+        Calendar calendar = Calendar.getInstance();
+        int dat = (calendar.get(Calendar.MONTH) +1) * 100 + calendar.get(Calendar.DATE);
+        if (dat != date) {
+            date = dat;
+            earnings = 0;
+        }
     }
 }

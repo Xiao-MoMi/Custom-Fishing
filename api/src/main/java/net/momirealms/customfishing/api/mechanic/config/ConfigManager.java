@@ -59,6 +59,19 @@ public abstract class ConfigManager implements ConfigLoader {
         return new String[0];
     }
 
+    public static boolean enableFishingBag() {
+    }
+
+    public static int dataSaveInterval() {
+    }
+
+    public static boolean logDataSaving() {
+    }
+
+    public static boolean lockData() {
+        return false;
+    }
+
     public void registerLootParser(Function<Object, Consumer<Loot.Builder>> function, String... nodes) {
         registerNodeFunction(nodes, new LootParserFunction(function));
     }

@@ -257,6 +257,18 @@ public enum Dependency {
             "maven",
             "exp4j",
             Relocation.of("exp4j", "net{}objecthunter{}exp4j")
+    ),
+    SLF4J_SIMPLE(
+            "org.slf4j",
+            "slf4j-simple",
+            "maven",
+            "slf4j-simple"
+    ),
+    SLF4J_API(
+            "org.slf4j",
+            "slf4j-api",
+            "maven",
+            "slf4j-api"
     );
 
     private final List<Relocation> relocations;

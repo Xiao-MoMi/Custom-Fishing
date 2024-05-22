@@ -37,9 +37,6 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-/**
- * A RedisManager class responsible for managing interactions with a Redis server for data storage.
- */
 public class RedisManager extends AbstractStorage {
 
     private static RedisManager instance;
@@ -79,8 +76,7 @@ public class RedisManager extends AbstractStorage {
      * Initialize the Redis connection and configuration based on the plugin's YAML configuration.
      */
     @Override
-    public void initialize() {
-        YamlDocument config = plugin.getConfigManager().loadConfig("database.yml");
+    public void initialize(YamlDocument config) {
         Section section = config.getSection("Redis");
         if (section == null) {
             plugin.getPluginLogger().warn("Failed to load database config. It seems that your config is broken. Please regenerate a new one.");

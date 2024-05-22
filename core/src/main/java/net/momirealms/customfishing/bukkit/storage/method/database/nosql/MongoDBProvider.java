@@ -21,7 +21,10 @@ import com.mongodb.*;
 import com.mongodb.client.*;
 import com.mongodb.client.model.*;
 import com.mongodb.client.result.UpdateResult;
+import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.storage.StorageType;
 import net.momirealms.customfishing.api.storage.data.PlayerData;
 import net.momirealms.customfishing.api.storage.user.UserData;
@@ -31,34 +34,25 @@ import org.bson.UuidRepresentation;
 import org.bson.conversions.Bson;
 import org.bson.types.Binary;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-/**
- * An implementation of AbstractStorage that uses MongoDB for player data storage.
- */
-public class MongoDBImpl extends AbstractStorage {
+public class MongoDBProvider extends AbstractStorage {
 
     private MongoClient mongoClient;
     private MongoDatabase database;
     private String collectionPrefix;
 
-    public MongoDBImpl(BukkitCustomFishingPlugin plugin) {
+    public MongoDBProvider(BukkitCustomFishingPlugin plugin) {
         super(plugin);
     }
 
-    /**
-     * Initialize the MongoDB connection and configuration based on the plugin's YAML configuration.
-     */
     @Override
-    public void initialize() {
-        YamlConfiguration config = plugin.getConfig("database.yml");
-        ConfigurationSection section = config.getConfigurationSection("MongoDB");
+    public void initialize(YamlDocument config) {
+        Section section = config.getSection("MongoDB");
         if (section == null) {
-            LogUtils.warn("Failed to load database config. It seems that your config is broken. Please regenerate a new one.");
+            plugin.getPluginLogger().warn("Failed to load database config. It seems that your config is broken. Please regenerate a new one.");
             return;
         }
 
@@ -87,9 +81,6 @@ public class MongoDBImpl extends AbstractStorage {
         this.database = mongoClient.getDatabase(section.getString("database", "minecraft"));
     }
 
-    /**
-     * Disable the MongoDB connection by closing the MongoClient.
-     */
     @Override
     public void disable() {
         if (this.mongoClient != null) {
@@ -121,17 +112,10 @@ public class MongoDBImpl extends AbstractStorage {
         return StorageType.MongoDB;
     }
 
-    /**
-     * Asynchronously retrieve player data from the MongoDB database.
-     *
-     * @param uuid The UUID of the player.
-     * @param lock Flag indicating whether to lock the data.
-     * @return A CompletableFuture with an optional PlayerData.
-     */
     @Override
     public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock) {
         var future = new CompletableFuture<Optional<PlayerData>>();
-        plugin.getScheduler().runTaskAsync(() -> {
+        plugin.getScheduler().async().execute(() -> {
         MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
         Document doc = collection.find(Filters.eq("uuid", uuid)).first();
         if (doc == null) {
@@ -142,30 +126,25 @@ public class MongoDBImpl extends AbstractStorage {
                 future.complete(Optional.empty());
             }
         } else {
-            if (doc.getInteger("lock") != 0 && getCurrentSeconds() - CFConfig.dataSaveInterval <= doc.getInteger("lock")) {
-                future.complete(Optional.of(PlayerData.LOCKED));
+            Binary binary = (Binary) doc.get("data");
+            PlayerData data = plugin.getStorageManager().fromBytes(binary.getData());
+            data.uuid(uuid);
+            if (doc.getInteger("lock") != 0 && getCurrentSeconds() - ConfigManager.dataSaveInterval() <= doc.getInteger("lock")) {
+                data.locked(true);
+                future.complete(Optional.of(data));
                 return;
             }
-            Binary binary = (Binary) doc.get("data");
             if (lock) lockOrUnlockPlayerData(uuid, true);
-            future.complete(Optional.of(plugin.getStorageManager().fromBytes(binary.getData())));
+            future.complete(Optional.of(data));
         }
         });
         return future;
     }
 
-    /**
-     * Asynchronously update player data in the MongoDB database.
-     *
-     * @param uuid       The UUID of the player.
-     * @param playerData The player's data to update.
-     * @param unlock     Flag indicating whether to unlock the data.
-     * @return A CompletableFuture indicating the update result.
-     */
     @Override
     public CompletableFuture<Boolean> updatePlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         var future = new CompletableFuture<Boolean>();
-        plugin.getScheduler().runTaskAsync(() -> {
+        plugin.getScheduler().async().execute(() -> {
         MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
         try {
             Document query = new Document("uuid", uuid);
@@ -182,39 +161,27 @@ public class MongoDBImpl extends AbstractStorage {
         return future;
     }
 
-    /**
-     * Asynchronously update data for multiple players in the MongoDB database.
-     *
-     * @param users  A collection of OfflineUser instances to update.
-     * @param unlock Flag indicating whether to unlock the data.
-     */
     @Override
     public void updateManyPlayersData(Collection<? extends UserData> users, boolean unlock) {
         MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
         try {
             int lock = unlock ? 0 : getCurrentSeconds();
             var list = users.stream().map(it -> new UpdateOneModel<Document>(
-                    new Document("uuid", it.getUUID()),
+                    new Document("uuid", it.uuid()),
                     Updates.combine(
                             Updates.set("lock", lock),
-                            Updates.set("data", new Binary(plugin.getStorageManager().toBytes(it.getPlayerData())))
+                            Updates.set("data", new Binary(plugin.getStorageManager().toBytes(it.toPlayerData())))
                     ),
                     new UpdateOptions().upsert(true)
             )
             ).toList();
-            if (list.size() == 0) return;
+            if (list.isEmpty()) return;
             collection.bulkWrite(list);
         } catch (MongoException e) {
-            LogUtils.warn("Failed to update data for online players", e);
+            plugin.getPluginLogger().warn("Failed to update data for online players", e);
         }
     }
 
-    /**
-     * Lock or unlock player data in the MongoDB database.
-     *
-     * @param uuid The UUID of the player.
-     * @param lock Flag indicating whether to lock or unlock the data.
-     */
     @Override
     public void lockOrUnlockPlayerData(UUID uuid, boolean lock) {
         MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
@@ -224,18 +191,12 @@ public class MongoDBImpl extends AbstractStorage {
             UpdateOptions options = new UpdateOptions().upsert(true);
             collection.updateOne(query, updates, options);
         } catch (MongoException e) {
-            LogUtils.warn("Failed to lock data for " + uuid, e);
+            plugin.getPluginLogger().warn("Failed to lock data for " + uuid, e);
         }
     }
 
-    /**
-     * Get a set of unique player UUIDs from the MongoDB database.
-     *
-     * @param legacy Flag indicating whether to retrieve legacy data.
-     * @return A set of unique player UUIDs.
-     */
     @Override
-    public Set<UUID> getUniqueUsers(boolean legacy) {
+    public Set<UUID> getUniqueUsers() {
         // no legacy files
         Set<UUID> uuids = new HashSet<>();
         MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
@@ -247,7 +208,7 @@ public class MongoDBImpl extends AbstractStorage {
                 }
             }
         } catch (MongoException e) {
-            LogUtils.warn("Failed to get unique data.", e);
+            plugin.getPluginLogger().warn("Failed to get unique data.", e);
         }
         return uuids;
     }

@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.bukkit.storage.method.database.sql;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.storage.data.PlayerData;
 import net.momirealms.customfishing.api.storage.user.UserData;
 import net.momirealms.customfishing.bukkit.storage.method.AbstractStorage;
@@ -61,12 +62,12 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
                     statement.execute(tableCreationStatement);
                 }
             } catch (SQLException e) {
-                LogUtils.warn("Failed to create tables", e);
+                plugin.getPluginLogger().warn("Failed to create tables", e);
             }
         } catch (SQLException e) {
-            LogUtils.warn("Failed to get sql connection", e);
+            plugin.getPluginLogger().warn("Failed to get sql connection", e);
         } catch (IOException e) {
-            LogUtils.warn("Failed to get schema resource", e);
+            plugin.getPluginLogger().warn("Failed to get schema resource", e);
         }
     }
 
@@ -78,7 +79,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
      * @throws IOException If there is an error reading the schema resource.
      */
     private String[] getSchema(@NotNull String fileName) throws IOException {
-        return replaceSchemaPlaceholder(new String(Objects.requireNonNull(plugin.getResource("schema/" + fileName + ".sql"))
+        return replaceSchemaPlaceholder(new String(Objects.requireNonNull(plugin.getBoostrap().getResource("schema/" + fileName + ".sql"))
                .readAllBytes(), StandardCharsets.UTF_8)).split(";");
     }
 
@@ -111,18 +112,11 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         return tablePrefix;
     }
 
-    /**
-     * Retrieve a player's data from the SQL database.
-     *
-     * @param uuid The UUID of the player.
-     * @param lock Whether to lock the player data during retrieval.
-     * @return A CompletableFuture containing the optional player data.
-     */
     @SuppressWarnings("DuplicatedCode")
     @Override
     public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock) {
         var future = new CompletableFuture<Optional<PlayerData>>();
-        plugin.getScheduler().runTaskAsync(() -> {
+        plugin.getScheduler().async().execute(() -> {
         try (
             Connection connection = getConnection();
             PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_SELECT_BY_UUID, getTableName("data")))
@@ -130,21 +124,25 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
             statement.setString(1, uuid.toString());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                if (lock) {
-                    int lockValue = rs.getInt(2);
-                    if (lockValue != 0 && getCurrentSeconds() - CFConfig.dataSaveInterval <= lockValue) {
-                        connection.close();
-                        future.complete(Optional.of(PlayerData.LOCKED));
-                        LogUtils.warn("Player " + uuid + "'s data is locked. Retrying...");
-                        return;
-                    }
-                }
                 final Blob blob = rs.getBlob("data");
                 final byte[] dataByteArray = blob.getBytes(1, (int) blob.length());
                 blob.free();
+                PlayerData data = plugin.getStorageManager().fromBytes(dataByteArray);
+                data.uuid(uuid);
+                if (lock) {
+                    int lockValue = rs.getInt(2);
+                    if (lockValue != 0 && getCurrentSeconds() - ConfigManager.dataSaveInterval() <= lockValue) {
+                        connection.close();
+                        data.locked(true);
+                        future.complete(Optional.of(data));
+                        plugin.getPluginLogger().warn("Player " + uuid + "'s data is locked. Retrying...");
+                        return;
+                    }
+                }
                 if (lock) lockOrUnlockPlayerData(uuid, true);
-                future.complete(Optional.of(plugin.getStorageManager().fromBytes(dataByteArray)));
+                future.complete(Optional.of(data));
             } else if (Bukkit.getPlayer(uuid) != null) {
+                // the player is online
                 var data = PlayerData.empty();
                 insertPlayerData(uuid, data, lock);
                 future.complete(Optional.of(data));
@@ -152,25 +150,17 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
                 future.complete(Optional.empty());
             }
         } catch (SQLException e) {
-            LogUtils.warn("Failed to get " + uuid + "'s data.", e);
+            plugin.getPluginLogger().warn("Failed to get " + uuid + "'s data.", e);
             future.completeExceptionally(e);
         }
         });
         return future;
     }
 
-    /**
-     * Update a player's data in the SQL database.
-     *
-     * @param uuid      The UUID of the player.
-     * @param playerData The player data to update.
-     * @param unlock    Whether to unlock the player data after updating.
-     * @return A CompletableFuture indicating the success of the update.
-     */
     @Override
     public CompletableFuture<Boolean> updatePlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         var future = new CompletableFuture<Boolean>();
-        plugin.getScheduler().runTaskAsync(() -> {
+        plugin.getScheduler().async().execute(() -> {
         try (
             Connection connection = getConnection();
             PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data")))
@@ -180,21 +170,14 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
             statement.setString(3, uuid.toString());
             statement.executeUpdate();
             future.complete(true);
-            plugin.debug("SQL data saved for " + uuid + "; unlock: " + unlock);
         } catch (SQLException e) {
-            LogUtils.warn("Failed to update " + uuid + "'s data.", e);
+            plugin.getPluginLogger().warn("Failed to update " + uuid + "'s data.", e);
             future.completeExceptionally(e);
         }
         });
         return future;
     }
 
-    /**
-     * Update data for multiple players in the SQL database.
-     *
-     * @param users  A collection of OfflineUser objects representing players.
-     * @param unlock Whether to unlock the player data after updating.
-     */
     @Override
     public void updateManyPlayersData(Collection<? extends UserData> users, boolean unlock) {
         String sql = String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data"));
@@ -203,28 +186,21 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 for (UserData user : users) {
                     statement.setInt(1, unlock ? 0 : getCurrentSeconds());
-                    statement.setBlob(2, new ByteArrayInputStream(plugin.getStorageManager().toBytes(user.getPlayerData())));
-                    statement.setString(3, user.getUUID().toString());
+                    statement.setBlob(2, new ByteArrayInputStream(plugin.getStorageManager().toBytes(user.toPlayerData())));
+                    statement.setString(3, user.uuid().toString());
                     statement.addBatch();
                 }
                 statement.executeBatch();
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
-                LogUtils.warn("Failed to update data for online players", e);
+                plugin.getPluginLogger().warn("Failed to update data for online players", e);
             }
         } catch (SQLException e) {
-            LogUtils.warn("Failed to get connection when saving online players' data", e);
+            plugin.getPluginLogger().warn("Failed to get connection when saving online players' data", e);
         }
     }
 
-    /**
-     * Insert a new player's data into the SQL database.
-     *
-     * @param uuid      The UUID of the player.
-     * @param playerData The player data to insert.
-     * @param lock      Whether to lock the player data upon insertion.
-     */
     public void insertPlayerData(UUID uuid, PlayerData playerData, boolean lock) {
         try (
             Connection connection = getConnection();
@@ -235,16 +211,10 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
             statement.setBlob(3, new ByteArrayInputStream(plugin.getStorageManager().toBytes(playerData)));
             statement.execute();
         } catch (SQLException e) {
-            LogUtils.warn("Failed to insert " + uuid + "'s data.", e);
+            plugin.getPluginLogger().warn("Failed to insert " + uuid + "'s data.", e);
         }
     }
 
-    /**
-     * Lock or unlock a player's data in the SQL database.
-     *
-     * @param uuid The UUID of the player.
-     * @param lock Whether to lock or unlock the player data.
-     */
     @Override
     public void lockOrUnlockPlayerData(UUID uuid, boolean lock) {
         try (
@@ -255,22 +225,14 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
             statement.setString(2, uuid.toString());
             statement.execute();
         } catch (SQLException e) {
-            LogUtils.warn("Failed to lock " + uuid + "'s data.", e);
+            plugin.getPluginLogger().warn("Failed to lock " + uuid + "'s data.", e);
         }
     }
 
-    /**
-     * Update or insert a player's data into the SQL database.
-     *
-     * @param uuid      The UUID of the player.
-     * @param playerData The player data to update or insert.
-     * @param unlock    Whether to unlock the player data after updating or inserting.
-     * @return A CompletableFuture indicating the success of the operation.
-     */
     @Override
     public CompletableFuture<Boolean> updateOrInsertPlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         var future = new CompletableFuture<Boolean>();
-        plugin.getScheduler().runTaskAsync(() -> {
+        plugin.getScheduler().async().execute(() -> {
             try (
                 Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_SELECT_BY_UUID, getTableName("data")))
@@ -284,23 +246,17 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
                     future.complete(true);
                 }
             } catch (SQLException e) {
-                LogUtils.warn("Failed to get " + uuid + "'s data.", e);
+                plugin.getPluginLogger().warn("Failed to get " + uuid + "'s data.", e);
             }
         });
         return future;
     }
 
-    /**
-     * Get a set of unique user UUIDs from the SQL database.
-     *
-     * @param legacy Whether to include legacy data in the retrieval.
-     * @return A set of unique user UUIDs.
-     */
     @Override
-    public Set<UUID> getUniqueUsers(boolean legacy) {
+    public Set<UUID> getUniqueUsers() {
         Set<UUID> uuids = new HashSet<>();
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_SELECT_ALL_UUID, legacy ? getTableName("fishingbag") : getTableName("data")))) {
+             PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_SELECT_ALL_UUID, getTableName("data")))) {
             try (ResultSet rs = statement.executeQuery()) {
                 while (rs.next()) {
                     UUID uuid = UUID.fromString(rs.getString("uuid"));
@@ -308,7 +264,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
                 }
             }
         } catch (SQLException e) {
-            LogUtils.warn("Failed to get unique data.", e);
+            plugin.getPluginLogger().warn("Failed to get unique data.", e);
         }
         return uuids;
     }

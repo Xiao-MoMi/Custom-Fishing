@@ -21,6 +21,10 @@ import com.google.gson.annotations.SerializedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
+import static java.util.Objects.requireNonNull;
+
 /**
  * The PlayerData class holds data related to a player.
  * It includes the player's name, their fishing statistics, inventory data, and earnings data.
@@ -40,44 +44,29 @@ public class PlayerData {
     protected InventoryData bagData;
     @SerializedName("trade")
     protected EarningData earningData;
+    transient private UUID uuid;
+    transient private boolean locked;
 
-    /**
-     * Constructs a new PlayerData instance with specified values.
-     *
-     * @param name the name of the player.
-     * @param statisticsData the fishing statistics data.
-     * @param bagData the inventory data.
-     * @param earningData the earnings data.
-     */
-    public PlayerData(String name, StatisticData statisticsData, InventoryData bagData, EarningData earningData) {
+    public PlayerData(UUID uuid, String name, StatisticData statisticsData, InventoryData bagData, EarningData earningData, boolean isLocked) {
         this.name = name;
         this.statisticsData = statisticsData;
         this.bagData = bagData;
         this.earningData = earningData;
+        this.locked = isLocked;
+        this.uuid = uuid;
     }
 
-    // A static instance representing a locked state of PlayerData.
-    public static PlayerData LOCKED = empty();
-
-    /**
-     * Creates a new Builder instance for constructing PlayerData objects.
-     *
-     * @return a new Builder instance.
-     */
     public static Builder builder() {
         return new Builder();
     }
 
-    /**
-     * Creates an instance of PlayerData with empty fields.
-     *
-     * @return a new instance of PlayerData with empty fields.
-     */
     public static PlayerData empty() {
         return new Builder()
                 .bag(InventoryData.empty())
                 .earnings(EarningData.empty())
-                .stats(StatisticData.empty())
+                .statistics(StatisticData.empty())
+                .uuid(new UUID(0, 0))
+                .locked(false)
                 .build();
     }
 
@@ -90,63 +79,48 @@ public class PlayerData {
         private StatisticData statisticsData = DEFAULT_STATISTICS;
         private InventoryData bagData = DEFAULT_BAG;
         private EarningData earningData = DEFAULT_EARNING;
+        private boolean isLocked = false;
+        private UUID uuid;
 
-        /**
-         * Sets the name for the PlayerData instance.
-         *
-         * @param name the name of the player.
-         * @return the Builder instance.
-         */
         @NotNull
-        public Builder name(@Nullable String name) {
+        public Builder name(@NotNull String name) {
             this.name = name;
             return this;
         }
 
-        /**
-         * Sets the statistics data for the PlayerData instance.
-         *
-         * @param statisticsData the fishing statistics data.
-         * @return the Builder instance.
-         */
         @NotNull
-        public Builder stats(@Nullable StatisticData statisticsData) {
+        public Builder uuid(@NotNull UUID uuid) {
+            this.uuid = uuid;
+            return this;
+        }
+
+        @NotNull
+        public Builder locked(boolean locked) {
+            this.isLocked = locked;
+            return this;
+        }
+
+        @NotNull
+        public Builder statistics(@Nullable StatisticData statisticsData) {
             this.statisticsData = statisticsData;
             return this;
         }
 
-        /**
-         * Sets the inventory data for the PlayerData instance.
-         *
-         * @param inventoryData the inventory data.
-         * @return the Builder instance.
-         */
         @NotNull
         public Builder bag(@Nullable InventoryData inventoryData) {
             this.bagData = inventoryData;
             return this;
         }
 
-        /**
-         * Sets the earnings data for the PlayerData instance.
-         *
-         * @param earningData the earnings data.
-         * @return the Builder instance.
-         */
         @NotNull
         public Builder earnings(@Nullable EarningData earningData) {
             this.earningData = earningData;
             return this;
         }
 
-        /**
-         * Builds and returns the PlayerData instance.
-         *
-         * @return the constructed PlayerData instance.
-         */
         @NotNull
         public PlayerData build() {
-            return new PlayerData(name, statisticsData, bagData, earningData);
+            return new PlayerData(requireNonNull(uuid), name, statisticsData, bagData, earningData, isLocked);
         }
     }
 
@@ -155,7 +129,7 @@ public class PlayerData {
      *
      * @return the fishing statistics data.
      */
-    public StatisticData getStatistics() {
+    public StatisticData statistics() {
         return statisticsData;
     }
 
@@ -164,7 +138,7 @@ public class PlayerData {
      *
      * @return the bag data.
      */
-    public InventoryData getBagData() {
+    public InventoryData bagData() {
         return bagData;
     }
 
@@ -173,7 +147,7 @@ public class PlayerData {
      *
      * @return the earnings data.
      */
-    public EarningData getEarningData() {
+    public EarningData earningData() {
         return earningData;
     }
 
@@ -182,16 +156,33 @@ public class PlayerData {
      *
      * @return the player's name.
      */
-    public String getName() {
+    public String name() {
         return name;
     }
 
     /**
-     * Checks if the PlayerData instance is in a locked state.
+     * Gets if the data is locked
      *
-     * @return true if the PlayerData instance is locked, false otherwise.
+     * @return locked or not
      */
-    public boolean isLocked() {
-        return this == LOCKED;
+    public boolean locked() {
+        return locked;
+    }
+
+    public void locked(boolean locked) {
+        this.locked = locked;
+    }
+
+    /**
+     * Gets the uuid
+     *
+     * @return uuid
+     */
+    public UUID uuid() {
+        return uuid;
+    }
+
+    public void uuid(UUID uuid) {
+        this.uuid = uuid;
     }
 }

@@ -17,27 +17,26 @@
 
 package net.momirealms.customfishing.bukkit.storage;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import dev.dejvokep.boostedyaml.YamlDocument;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.scheduler.CancellableTask;
+import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.storage.DataStorageProvider;
 import net.momirealms.customfishing.api.storage.StorageManager;
 import net.momirealms.customfishing.api.storage.StorageType;
 import net.momirealms.customfishing.api.storage.data.PlayerData;
 import net.momirealms.customfishing.api.storage.user.UserData;
-import net.momirealms.customfishing.bukkit.storage.method.database.nosql.MongoDBImpl;
+import net.momirealms.customfishing.bukkit.storage.method.database.nosql.MongoDBProvider;
 import net.momirealms.customfishing.bukkit.storage.method.database.nosql.RedisManager;
-import net.momirealms.customfishing.bukkit.storage.method.database.sql.H2Impl;
-import net.momirealms.customfishing.bukkit.storage.method.database.sql.MariaDBImpl;
-import net.momirealms.customfishing.bukkit.storage.method.database.sql.MySQLImpl;
-import net.momirealms.customfishing.bukkit.storage.method.database.sql.SQLiteImpl;
-import net.momirealms.customfishing.bukkit.storage.method.file.JsonImpl;
-import net.momirealms.customfishing.bukkit.storage.method.file.YAMLImpl;
-import net.momirealms.customfishing.bukkit.storage.user.OfflineUser;
+import net.momirealms.customfishing.bukkit.storage.method.database.sql.H2Provider;
+import net.momirealms.customfishing.bukkit.storage.method.database.sql.MariaDBProvider;
+import net.momirealms.customfishing.bukkit.storage.method.database.sql.MySQLProvider;
+import net.momirealms.customfishing.bukkit.storage.method.database.sql.SQLiteProvider;
+import net.momirealms.customfishing.bukkit.storage.method.file.JsonProvider;
+import net.momirealms.customfishing.bukkit.storage.method.file.YAMLProvider;
+import net.momirealms.customfishing.common.helper.GsonHelper;
+import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -56,37 +55,28 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-/**
- * This class implements the StorageManager interface and is responsible for managing player data storage.
- * It includes methods to handle player data retrieval, storage, and serialization.
- */
 public class BukkitStorageManager implements StorageManager, Listener {
 
     private final BukkitCustomFishingPlugin plugin;
     private DataStorageProvider dataSource;
     private StorageType previousType;
-    private final ConcurrentHashMap<UUID, OnlineUserData> onlineUserMap;
+    private final ConcurrentHashMap<UUID, UserData> onlineUserMap;
     private final HashSet<UUID> locked;
     private boolean hasRedis;
     private RedisManager redisManager;
-    private String uniqueID;
-    private CancellableTask timerSaveTask;
-    private final Gson gson;
+    private String serverID;
+    private SchedulerTask timerSaveTask;
 
-    public BukkitStorageManager(BukkitCustomFishingPluginImpl plugin) {
+    public BukkitStorageManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.locked = new HashSet<>();
         this.onlineUserMap = new ConcurrentHashMap<>();
-        this.gson = new GsonBuilder().create();
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+        Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
     }
 
-    /**
-     * Reloads the storage manager configuration.
-     */
     public void reload() {
-        YamlConfiguration config = plugin.getConfig("database.yml");
-        this.uniqueID = config.getString("unique-server-id", "default");
+        YamlDocument config = plugin.getConfigManager().loadConfig("database.yml");
+        this.serverID = config.getString("unique-server-id", "default");
 
         // Check if storage type has changed and reinitialize if necessary
         StorageType storageType = StorageType.valueOf(config.getString("data-storage-method", "H2"));
@@ -94,23 +84,23 @@ public class BukkitStorageManager implements StorageManager, Listener {
             if (this.dataSource != null) this.dataSource.disable();
             this.previousType = storageType;
             switch (storageType) {
-                case H2 -> this.dataSource = new H2Impl(plugin);
-                case JSON -> this.dataSource = new JsonImpl(plugin);
-                case YAML -> this.dataSource = new YAMLImpl(plugin);
-                case SQLite -> this.dataSource = new SQLiteImpl(plugin);
-                case MySQL -> this.dataSource = new MySQLImpl(plugin);
-                case MariaDB -> this.dataSource = new MariaDBImpl(plugin);
-                case MongoDB -> this.dataSource = new MongoDBImpl(plugin);
+                case H2 -> this.dataSource = new H2Provider(plugin);
+                case JSON -> this.dataSource = new JsonProvider(plugin);
+                case YAML -> this.dataSource = new YAMLProvider(plugin);
+                case SQLite -> this.dataSource = new SQLiteProvider(plugin);
+                case MySQL -> this.dataSource = new MySQLProvider(plugin);
+                case MariaDB -> this.dataSource = new MariaDBProvider(plugin);
+                case MongoDB -> this.dataSource = new MongoDBProvider(plugin);
             }
-            if (this.dataSource != null) this.dataSource.initialize();
-            else LogUtils.severe("No storage type is set.");
+            if (this.dataSource != null) this.dataSource.initialize(config);
+            else plugin.getPluginLogger().severe("No storage type is set.");
         }
 
         // Handle Redis configuration
         if (!this.hasRedis && config.getBoolean("Redis.enable", false)) {
             this.hasRedis = true;
             this.redisManager = new RedisManager(plugin);
-            this.redisManager.initialize();
+            this.redisManager.initialize(config);
         }
 
         // Disable Redis if it was enabled but is now disabled
@@ -120,21 +110,21 @@ public class BukkitStorageManager implements StorageManager, Listener {
         }
 
         // Cancel any existing timerSaveTask
-        if (this.timerSaveTask != null && !this.timerSaveTask.isCancelled()) {
+        if (this.timerSaveTask != null) {
             this.timerSaveTask.cancel();
         }
 
         // Schedule periodic data saving if dataSaveInterval is configured
-        if (CFConfig.dataSaveInterval != -1 && CFConfig.dataSaveInterval != 0)
-            this.timerSaveTask = this.plugin.getScheduler().runTaskAsyncTimer(
+        if (ConfigManager.dataSaveInterval() > 0)
+            this.timerSaveTask = this.plugin.getScheduler().asyncRepeating(
                     () -> {
                         long time1 = System.currentTimeMillis();
-                        this.dataSource.updateManyPlayersData(this.onlineUserMap.values(), !CFConfig.lockData);
-                        if (CFConfig.logDataSaving)
-                            LogUtils.info("Data Saved for online players. Took " + (System.currentTimeMillis() - time1) + "ms.");
+                        this.dataSource.updateManyPlayersData(this.onlineUserMap.values(), !ConfigManager.lockData());
+                        if (ConfigManager.logDataSaving())
+                            plugin.getPluginLogger().info("Data Saved for online players. Took " + (System.currentTimeMillis() - time1) + "ms.");
                     },
-                    CFConfig.dataSaveInterval,
-                    CFConfig.dataSaveInterval,
+                    ConfigManager.dataSaveInterval(),
+                    ConfigManager.dataSaveInterval(),
                     TimeUnit.SECONDS
             );
     }
@@ -152,80 +142,43 @@ public class BukkitStorageManager implements StorageManager, Listener {
             this.redisManager.disable();
     }
 
-    /**
-     * Gets the unique server identifier.
-     *
-     * @return The unique server identifier.
-     */
     @NotNull
     @Override
-    public String getUniqueID() {
-        return uniqueID;
-    }
-
-    /**
-     * Gets an OnlineUser instance for the specified UUID.
-     *
-     * @param uuid The UUID of the player.
-     * @return An OnlineUser instance if the player is online, or null if not.
-     */
-    @Override
-    public OnlineUserData getOnlineUser(UUID uuid) {
-        return onlineUserMap.get(uuid);
+    public String getServerID() {
+        return serverID;
     }
 
     @Override
-    public Collection<OnlineUserData> getOnlineUsers() {
+    public Optional<UserData> getOnlineUser(UUID uuid) {
+        return Optional.ofNullable(onlineUserMap.get(uuid));
+    }
+
+    @NotNull
+    @Override
+    public Collection<UserData> getOnlineUsers() {
         return onlineUserMap.values();
     }
 
-    /**
-     * Asynchronously retrieves an OfflineUser instance for the specified UUID.
-     *
-     * @param uuid The UUID of the player.
-     * @param lock Whether to lock the data during retrieval.
-     * @return A CompletableFuture that resolves to an Optional containing the OfflineUser instance if found, or empty if not found or locked.
-     */
     @Override
-    public CompletableFuture<Optional<UserData>> getOfflineUser(UUID uuid, boolean lock) {
-        var optionalDataFuture = dataSource.getPlayerData(uuid, lock);
+    public CompletableFuture<Optional<UserData>> getOfflineUserData(UUID uuid, boolean lock) {
+        CompletableFuture<Optional<PlayerData>> optionalDataFuture = dataSource.getPlayerData(uuid, lock);
         return optionalDataFuture.thenCompose(optionalUser -> {
             if (optionalUser.isEmpty()) {
-                // locked
                 return CompletableFuture.completedFuture(Optional.empty());
             }
             PlayerData data = optionalUser.get();
-            if (data.isLocked()) {
-                return CompletableFuture.completedFuture(Optional.of(OfflineUser.LOCKED_USER));
-            } else {
-                UserData userData = new OfflineUser(uuid, data.getName(), data);
-                return CompletableFuture.completedFuture(Optional.of(userData));
-            }
+            return CompletableFuture.completedFuture(Optional.of(UserData.builder()
+                    .data(data)
+                    .build()));
         });
     }
 
     @Override
-    public boolean isLockedData(UserData userData) {
-        return OfflineUser.LOCKED_USER == userData;
-    }
-
-    /**
-     * Asynchronously saves user data for an OfflineUser.
-     *
-     * @param userData The OfflineUser whose data needs to be saved.
-     * @param unlock Whether to unlock the data after saving.
-     * @return A CompletableFuture that resolves to a boolean indicating the success of the data saving operation.
-     */
-    @Override
     public CompletableFuture<Boolean> saveUserData(UserData userData, boolean unlock) {
-        return dataSource.updatePlayerData(userData.getUUID(), userData.getPlayerData(), unlock);
+        return dataSource.updatePlayerData(userData.uuid(), userData.toPlayerData(), unlock);
     }
 
-    /**
-     * Gets the data source used for data storage.
-     *
-     * @return The data source.
-     */
+    @NotNull
     @Override
     public DataStorageProvider getDataSource() {
         return dataSource;
@@ -242,11 +195,11 @@ public class BukkitStorageManager implements StorageManager, Listener {
         UUID uuid = player.getUniqueId();
         locked.add(uuid);
         if (!hasRedis) {
-            waitForDataLockRelease(uuid, 1);
+            waitLock(uuid, 1);
         } else {
-            plugin.getScheduler().runTaskAsyncLater(() -> redisManager.getChangeServer(uuid).thenAccept(changeServer -> {
+            plugin.getScheduler().asyncLater(() -> redisManager.getChangeServer(uuid).thenAccept(changeServer -> {
                 if (!changeServer) {
-                    waitForDataLockRelease(uuid, 3);
+                    waitLock(uuid, 3);
                 } else {
                     new RedisGetDataTask(uuid);
                 }
@@ -266,9 +219,9 @@ public class BukkitStorageManager implements StorageManager, Listener {
         if (locked.contains(uuid))
             return;
 
-        OnlineUserData onlineUser = onlineUserMap.remove(uuid);
+        UserData onlineUser = onlineUserMap.remove(uuid);
         if (onlineUser == null) return;
-        PlayerData data = onlineUser.getPlayerData();
+        PlayerData data = onlineUser.toPlayerData();
 
         if (hasRedis) {
             redisManager.setChangeServer(uuid).thenRun(
@@ -289,15 +242,15 @@ public class BukkitStorageManager implements StorageManager, Listener {
      * Runnable task for asynchronously retrieving data from Redis.
      * Retries up to 6 times and cancels the task if the player is offline.
      */
-    public class RedisGetDataTask implements Runnable {
+    private class RedisGetDataTask implements Runnable {
 
         private final UUID uuid;
         private int triedTimes;
-        private final CancellableTask task;
+        private final SchedulerTask task;
 
         public RedisGetDataTask(UUID uuid) {
             this.uuid = uuid;
-            this.task = plugin.getScheduler().runTaskAsyncTimer(this, 0, 333, TimeUnit.MILLISECONDS);
+            this.task = plugin.getScheduler().asyncRepeating(this, 0, 333, TimeUnit.MILLISECONDS);
         }
 
         @Override
@@ -310,14 +263,14 @@ public class BukkitStorageManager implements StorageManager, Listener {
                 return;
             }
             if (triedTimes >= 6) {
-                waitForDataLockRelease(uuid, 3);
+                waitLock(uuid, 3);
                 return;
             }
             redisManager.getPlayerData(uuid, false).thenAccept(optionalData -> {
                 if (optionalData.isPresent()) {
-                    putDataInCache(player, optionalData.get());
+                    addOnlineUser(player, optionalData.get());
                     task.cancel();
-                    if (CFConfig.lockData) dataSource.lockOrUnlockPlayerData(uuid, true);
+                    if (ConfigManager.lockData()) dataSource.lockOrUnlockPlayerData(uuid, true);
                 }
             });
         }
@@ -329,115 +282,78 @@ public class BukkitStorageManager implements StorageManager, Listener {
      * @param uuid  The UUID of the player.
      * @param times The number of times this method has been retried.
      */
-    public void waitForDataLockRelease(UUID uuid, int times) {
-        plugin.getScheduler().runTaskAsyncLater(() -> {
+    private void waitLock(UUID uuid, int times) {
+        plugin.getScheduler().asyncLater(() -> {
         var player = Bukkit.getPlayer(uuid);
         if (player == null || !player.isOnline())
             return;
         if (times > 3) {
-            LogUtils.warn("Tried 3 times when getting data for " + uuid + ". Giving up.");
+            plugin.getPluginLogger().warn("Tried 3 times when getting data for " + uuid + ". Giving up.");
             return;
         }
-        this.dataSource.getPlayerData(uuid, CFConfig.lockData).thenAccept(optionalData -> {
+        this.dataSource.getPlayerData(uuid, ConfigManager.lockData()).thenAccept(optionalData -> {
             // Data should not be empty
             if (optionalData.isEmpty()) {
-                LogUtils.severe("Unexpected error: Data is null");
+                plugin.getPluginLogger().severe("Unexpected error: Data is null");
                 return;
             }
 
-            if (optionalData.get().isLocked()) {
-                waitForDataLockRelease(uuid, times + 1);
+            if (optionalData.get().locked()) {
+                waitLock(uuid, times + 1);
             } else {
                 try {
-                    putDataInCache(player, optionalData.get());
+                    addOnlineUser(player, optionalData.get());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    plugin.getPluginLogger().severe("Unexpected error: " + e.getMessage(), e);
                 }
             }
         });
         }, 1, TimeUnit.SECONDS);
     }
 
-    /**
-     * Puts player data in cache and removes the player from the locked set.
-     *
-     * @param player     The player whose data is being cached.
-     * @param playerData The data to be cached.
-     */
-    public void putDataInCache(Player player, PlayerData playerData) {
-        locked.remove(player.getUniqueId());
-        OnlineUserDataImpl bukkitUser = new OnlineUserDataImpl(player, playerData);
-        onlineUserMap.put(player.getUniqueId(), bukkitUser);
+    private void addOnlineUser(Player player, PlayerData playerData) {
+        this.locked.remove(player.getUniqueId());
+        this.onlineUserMap.put(player.getUniqueId(), UserData.builder()
+                .data(playerData)
+                // update the name
+                .name(player.getName())
+                .build());
     }
 
-    /**
-     * Checks if Redis is enabled.
-     *
-     * @return True if Redis is enabled; otherwise, false.
-     */
     @Override
     public boolean isRedisEnabled() {
         return hasRedis;
     }
 
-    /**
-     * Gets the RedisManager instance.
-     *
-     * @return The RedisManager instance.
-     */
     @Nullable
     public RedisManager getRedisManager() {
         return redisManager;
     }
 
-    /**
-     * Converts PlayerData to bytes.
-     *
-     * @param data The PlayerData to be converted.
-     * @return The byte array representation of PlayerData.
-     */
     @NotNull
     @Override
     public byte[] toBytes(@NotNull PlayerData data) {
         return toJson(data).getBytes(StandardCharsets.UTF_8);
     }
 
-    /**
-     * Converts PlayerData to JSON format.
-     *
-     * @param data The PlayerData to be converted.
-     * @return The JSON string representation of PlayerData.
-     */
     @Override
     @NotNull
     public String toJson(@NotNull PlayerData data) {
-        return gson.toJson(data);
+        return GsonHelper.get().toJson(data);
     }
 
-    /**
-     * Converts JSON string to PlayerData.
-     *
-     * @param json The JSON string to be converted.
-     * @return The PlayerData object.
-     */
     @NotNull
     @Override
     public PlayerData fromJson(String json) {
         try {
-            return gson.fromJson(json, PlayerData.class);
+            return GsonHelper.get().fromJson(json, PlayerData.class);
         } catch (JsonSyntaxException e) {
-            LogUtils.severe("Failed to parse PlayerData from json");
-            LogUtils.info("Json: " + json);
+            plugin.getPluginLogger().severe("Failed to parse PlayerData from json");
+            plugin.getPluginLogger().info("Json: " + json);
             throw new RuntimeException(e);
         }
     }
 
-    /**
-     * Converts bytes to PlayerData.
-     *
-     * @param data The byte array to be converted.
-     * @return The PlayerData object.
-     */
     @Override
     @NotNull
     public PlayerData fromBytes(byte[] data) {

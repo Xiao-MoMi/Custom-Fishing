@@ -20,9 +20,9 @@ package net.momirealms.customfishing.bukkit.storage.method.database.sql;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.storage.StorageType;
 
-public class MySQLImpl extends AbstractHikariDatabase {
+public class MySQLProvider extends AbstractHikariDatabase {
 
-    public MySQLImpl(BukkitCustomFishingPlugin plugin) {
+    public MySQLProvider(BukkitCustomFishingPlugin plugin) {
         super(plugin);
     }
 

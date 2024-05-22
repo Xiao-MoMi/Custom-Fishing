@@ -17,10 +17,10 @@
 
 package net.momirealms.customfishing.bukkit.storage.method.database.sql;
 
+import dev.dejvokep.boostedyaml.YamlDocument;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.storage.StorageType;
-import net.momirealms.customfishing.libraries.dependencies.Dependency;
-import org.bukkit.configuration.file.YamlConfiguration;
+import net.momirealms.customfishing.common.dependency.Dependency;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -30,13 +30,13 @@ import java.util.EnumSet;
 /**
  * An implementation of AbstractSQLDatabase that uses the H2 embedded database for player data storage.
  */
-public class H2Impl extends AbstractSQLDatabase {
+public class H2Provider extends AbstractSQLDatabase {
 
     private Object connectionPool;
     private Method disposeMethod;
     private Method getConnectionMethod;
 
-    public H2Impl(BukkitCustomFishingPlugin plugin) {
+    public H2Provider(BukkitCustomFishingPlugin plugin) {
         super(plugin);
     }
 
@@ -44,13 +44,12 @@ public class H2Impl extends AbstractSQLDatabase {
      * Initialize the H2 database and connection pool based on the configuration.
      */
     @Override
-    public void initialize() {
-        YamlConfiguration config = plugin.getConfig("database.yml");
+    public void initialize(YamlDocument config) {
         File databaseFile = new File(plugin.getDataFolder(), config.getString("H2.file", "data.db"));
         super.tablePrefix = config.getString("H2.table-prefix", "customfishing");
 
         final String url = String.format("jdbc:h2:%s", databaseFile.getAbsolutePath());
-        ClassLoader classLoader = ((BukkitCustomFishingPluginImpl) plugin).getDependencyManager().obtainClassLoaderWith(EnumSet.of(Dependency.H2_DRIVER));
+        ClassLoader classLoader = plugin.getDependencyManager().obtainClassLoaderWith(EnumSet.of(Dependency.H2_DRIVER));
         try {
             Class<?> connectionClass = classLoader.loadClass("org.h2.jdbcx.JdbcConnectionPool");
             Method createPoolMethod = connectionClass.getMethod("create", String.class, String.class, String.class);
@@ -64,9 +63,6 @@ public class H2Impl extends AbstractSQLDatabase {
         super.createTableIfNotExist();
     }
 
-    /**
-     * Disable the H2 database by disposing of the connection pool.
-     */
     @Override
     public void disable() {
         if (connectionPool != null) {

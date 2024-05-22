@@ -19,7 +19,6 @@ package net.momirealms.customfishing.api.storage;
 
 import net.momirealms.customfishing.api.storage.data.PlayerData;
 import net.momirealms.customfishing.api.storage.user.UserData;
-import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,61 +29,22 @@ import java.util.concurrent.CompletableFuture;
 
 public interface StorageManager {
 
-    /**
-     * Gets the unique server identifier.
-     *
-     * @return The unique server identifier.
-     */
-    @NotNull String getUniqueID();
+    @NotNull
+    String getServerID();
 
-    /**
-     * Gets an OnlineUser instance for the specified UUID.
-     *
-     * @param uuid The UUID of the player.
-     * @return An OnlineUser instance if the player is online, or null if not.
-     */
     @Nullable
-    UserData<? extends OfflinePlayer> getOnlineUser(UUID uuid);
+    Optional<UserData> getOnlineUser(UUID uuid);
 
-    /**
-     * Get all the online users
-     *
-     * @return online users
-     */
-    Collection<UserData<? extends OfflinePlayer>> getOnlineUsers();
+    @NotNull
+    Collection<UserData> getOnlineUsers();
 
-    /**
-     * Asynchronously retrieves an OfflineUser instance for the specified UUID.
-     * The offline user might be a locked one with no data, use isLockedData() method
-     * to check if it's an empty locked data
-     *
-     * @param uuid The UUID of the player.
-     * @param lock Whether to lock the data during retrieval.
-     * @return A CompletableFuture that resolves to an Optional containing the OfflineUser instance if found, or empty if not found or locked.
-     */
-    CompletableFuture<Optional<UserData<? extends OfflinePlayer>>> getOfflineUser(UUID uuid, boolean lock);
+    CompletableFuture<Optional<UserData>> getOfflineUserData(UUID uuid, boolean lock);
 
-    /**
-     * Asynchronously saves user data for an OfflineUser.
-     *
-     * @param userData The OfflineUser whose data needs to be saved.
-     * @param unlock Whether to unlock the data after saving.
-     * @return A CompletableFuture that resolves to a boolean indicating the success of the data saving operation.
-     */
     CompletableFuture<Boolean> saveUserData(UserData userData, boolean unlock);
 
-    /**
-     * Gets the data source used for data storage.
-     *
-     * @return The data source.
-     */
+    @NotNull
     DataStorageProvider getDataSource();
 
-    /**
-     * Checks if Redis is enabled.
-     *
-     * @return True if Redis is enabled; otherwise, false.
-     */
     boolean isRedisEnabled();
 
     /**
