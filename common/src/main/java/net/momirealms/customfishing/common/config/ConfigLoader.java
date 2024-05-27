@@ -13,4 +13,6 @@ public interface ConfigLoader {
     YamlDocument loadData(File file);
 
     YamlDocument loadData(File file, char routeSeparator);
+
+    void saveResource(String filePath);
 }

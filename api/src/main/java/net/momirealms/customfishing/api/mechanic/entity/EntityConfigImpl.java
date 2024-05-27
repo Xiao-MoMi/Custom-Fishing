@@ -45,24 +45,24 @@ public class EntityConfigImpl implements EntityConfig {
     }
 
     @Override
-    public MathValue<Player> getHorizontalVector() {
+    public MathValue<Player> horizontalVector() {
         return horizontalVector;
     }
 
     @Override
-    public MathValue<Player> getVerticalVector() {
+    public MathValue<Player> verticalVector() {
         return verticalVector;
     }
 
     @NotNull
     @Override
-    public String getEntityID() {
+    public String entityID() {
         return entityID;
     }
 
     @NotNull
     @Override
-    public Map<String, Object> getPropertyMap() {
+    public Map<String, Object> propertyMap() {
         return propertyMap;
     }
 

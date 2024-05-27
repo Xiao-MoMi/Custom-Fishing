@@ -20,7 +20,7 @@ public class ReloadCommand extends BukkitCommandFeature<CommandSender> {
                 .flag(manager.flagBuilder("silent"))
                 .handler(context -> {
                     BukkitCustomFishingPlugin.getInstance().reload();
-                    handleFeedback(context.sender(), MessageConstants.COMMAND_RELOAD);
+                    handleFeedback(context.sender(), MessageConstants.COMMAND_RELOAD_SUCCESS);
                 });
     }
 

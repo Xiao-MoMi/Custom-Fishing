@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.api.mechanic.misc.placeholder;
 
+import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public interface PlaceholderManager {
+public interface PlaceholderManager extends Reloadable {
 
     Pattern PATTERN = Pattern.compile("\\{[^{}]+}");
 

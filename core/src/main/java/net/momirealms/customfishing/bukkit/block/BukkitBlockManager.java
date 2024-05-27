@@ -65,7 +65,7 @@ public class BukkitBlockManager implements BlockManager, Listener {
     private final HashMap<String, BlockStateModifierFactory> stateFactories = new HashMap<>();
     private BlockProvider[] blockDetectArray;
 
-    public BukkitBlockManager(BukkitCustomFishingPluginImpl plugin) {
+    public BukkitBlockManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.registerInbuiltProperties();
         this.registerBlockProvider(new BlockProvider() {
@@ -86,13 +86,6 @@ public class BukkitBlockManager implements BlockManager, Listener {
                 return block.getType().name();
             }
         });
-    }
-
-    @Override
-    public boolean registerBlock(@NotNull String id, @NotNull BlockConfig block) {
-        if (blocks.containsKey(id)) return false;
-        blocks.put(id, block);
-        return true;
     }
 
     @Override
@@ -120,6 +113,13 @@ public class BukkitBlockManager implements BlockManager, Listener {
                 list.add(library);
         }
         this.blockDetectArray = list.toArray(new BlockProvider[0]);
+    }
+
+    @Override
+    public boolean registerBlock(@NotNull BlockConfig block) {
+        if (blocks.containsKey(block.id())) return false;
+        blocks.put(block.id(), block);
+        return true;
     }
 
     /**
@@ -230,8 +230,8 @@ public class BukkitBlockManager implements BlockManager, Listener {
                 PersistentDataType.STRING,
                 id + ";" + context.getHolder().getName()
         );
-        Vector vector = playerLocation.subtract(hookLocation).toVector().multiply((config.horizontalVector().evaluate(context)) - 1);
-        vector = vector.setY((vector.getY() + 0.2) * config.verticalVector().evaluate(context));
+        Vector vector = playerLocation.subtract(hookLocation).toVector().multiply(1.2 - 1);
+        vector = vector.setY((vector.getY() + 0.2) * 1.2);
         fallingBlock.setVelocity(vector);
         return fallingBlock;
     }

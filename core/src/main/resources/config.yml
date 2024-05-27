@@ -1,6 +1,4 @@
-# Developer: @Xiao-MoMi
-# Wiki: https://mo-mi.gitbook.io/xiaomomi-plugins/
-config-version: '32'
+config-version: '${config_version}'
 
 # Debug
 debug: false

@@ -27,9 +27,9 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-public class BukkitConfigLoader extends ConfigManager {
+public class BukkitConfigManager extends ConfigManager {
 
-    public BukkitConfigLoader(BukkitCustomFishingPlugin plugin) {
+    public BukkitConfigManager(BukkitCustomFishingPlugin plugin) {
         super(plugin);
         this.registerBuiltInItemProperties();
         this.registerBuiltInBaseEffectParser();
@@ -437,5 +437,12 @@ public class BukkitConfigLoader extends ConfigManager {
             );
             return builder -> builder.statisticsKeys(keys);
         }, "statistics");
+    }
+
+    @Override
+    public void saveResource(String filePath) {
+        if (!new File(plugin.getDataFolder(), filePath).exists()) {
+            plugin.getBoostrap().saveResource(filePath, false);
+        }
     }
 }

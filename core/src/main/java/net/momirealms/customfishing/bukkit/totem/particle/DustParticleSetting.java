@@ -18,8 +18,8 @@
 package net.momirealms.customfishing.bukkit.totem.particle;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.common.Pair;
-import net.momirealms.customfishing.api.scheduler.CancellableTask;
+import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
+import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -46,7 +46,7 @@ public class DustParticleSetting extends ParticleSetting {
     }
 
     @SuppressWarnings("DuplicatedCode")
-    public CancellableTask start(Location location, double radius) {
+    public SchedulerTask start(Location location, double radius) {
         World world = location.getWorld();
         return BukkitCustomFishingPlugin.get().getScheduler().runTaskAsyncTimer(() -> {
             for (Pair<Double, Double> range : ranges) {

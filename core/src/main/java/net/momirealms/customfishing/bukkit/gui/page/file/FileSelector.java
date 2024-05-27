@@ -23,6 +23,8 @@ import net.momirealms.customfishing.bukkit.gui.icon.BackToFolderItem;
 import net.momirealms.customfishing.bukkit.gui.icon.ScrollDownItem;
 import net.momirealms.customfishing.bukkit.gui.icon.ScrollUpItem;
 import net.momirealms.customfishing.bukkit.gui.page.item.ItemSelector;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -79,18 +81,9 @@ public class FileSelector {
 
         Window window = Window.single()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_SELECT_FILE
-                )))
+                .setTitle(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_SELECT_FILE.build())))
                 .setGui(gui)
                 .build();
-
-//        gui.playAnimation(new SequentialAnimation(1, true), slotElement -> {
-//            if (slotElement instanceof SlotElement.ItemSlotElement itemSlotElement) {
-//                return !(itemSlotElement.getItem() instanceof Icon);
-//            }
-//            return true;
-//        });
 
         window.open();
     }

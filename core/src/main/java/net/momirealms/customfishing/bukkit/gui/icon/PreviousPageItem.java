@@ -17,8 +17,11 @@
 
 package net.momirealms.customfishing.bukkit.gui.icon;
 
+import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.Icon;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import xyz.xenondevs.invui.gui.PagedGui;
 import xyz.xenondevs.invui.item.ItemProvider;
@@ -34,16 +37,13 @@ public class PreviousPageItem extends PageItem implements Icon {
     @Override
     public ItemProvider getItemProvider(PagedGui<?> gui) {
         ItemBuilder builder = new ItemBuilder(Material.RED_STAINED_GLASS_PANE);
-        builder.setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_PREVIOUS_PAGE
-                )))
-                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        gui.hasPreviousPage()
-                                ? CFLocale.GUI_GOTO_PREVIOUS_PAGE
-                                .replace("{0}", String.valueOf(gui.getCurrentPage()))
-                                .replace("{1}", String.valueOf(gui.getPageAmount()))
-                                : CFLocale.GUI_CANNOT_GOTO_PREVIOUS_PAGE
-                )));
+        builder.setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PREVIOUS_PAGE.build())))
+                .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(                        gui.hasPreviousPage()
+                        ? MessageConstants.GUI_GOTO_PREVIOUS_PAGE.arguments(
+                                Component.text(gui.getCurrentPage()),
+                                Component.text(gui.getPageAmount())
+                        ).build()
+                        : MessageConstants.GUI_CANNOT_GOTO_PREVIOUS_PAGE.build())));
         return builder;
     }
 }

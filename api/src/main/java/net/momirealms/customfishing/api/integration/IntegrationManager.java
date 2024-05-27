@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.api.integration;
 
+import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,7 @@ import java.util.List;
  * This allows for the registration and retrieval of various types of providers
  * such as Leveler, Enchantment, and Season providers.
  */
-public interface IntegrationManager {
+public interface IntegrationManager extends Reloadable {
 
     /**
      * Registers a LevelerProvider.

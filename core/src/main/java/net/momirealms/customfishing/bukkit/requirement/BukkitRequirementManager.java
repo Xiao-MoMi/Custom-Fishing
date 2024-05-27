@@ -47,7 +47,16 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
     public BukkitRequirementManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.registerBuiltInRequirements();
+    }
+
+    @Override
+    public void reload() {
         this.loadExpansions();
+    }
+
+    @Override
+    public void disable() {
+        this.requirementFactoryMap.clear();
     }
 
     @Override

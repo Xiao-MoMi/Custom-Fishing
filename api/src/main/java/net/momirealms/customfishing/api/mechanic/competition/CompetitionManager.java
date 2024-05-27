@@ -17,9 +17,10 @@
 
 package net.momirealms.customfishing.api.mechanic.competition;
 
+import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import org.jetbrains.annotations.Nullable;
 
-public interface CompetitionManager {
+public interface CompetitionManager extends Reloadable {
 
     boolean startCompetition(String competition, boolean force, @Nullable String serverGroup);
 

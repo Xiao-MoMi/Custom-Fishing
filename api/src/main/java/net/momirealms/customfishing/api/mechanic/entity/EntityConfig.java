@@ -42,14 +42,14 @@ public interface EntityConfig {
      *
      * @return the horizontal vector value as a double
      */
-    MathValue<Player> getHorizontalVector();
+    MathValue<Player> horizontalVector();
 
     /**
      * Retrieves the vertical vector value for the entity.
      *
      * @return the vertical vector value as a double
      */
-    MathValue<Player> getVerticalVector();
+    MathValue<Player> verticalVector();
 
     /**
      * Retrieves the unique identifier for the entity.
@@ -57,7 +57,7 @@ public interface EntityConfig {
      * @return the entity ID as a non-null String
      */
     @NotNull
-    String getEntityID();
+    String entityID();
 
     /**
      * Retrieves a map of properties associated with the entity.
@@ -65,7 +65,7 @@ public interface EntityConfig {
      * @return a non-null map where keys are property names and values are property values
      */
     @NotNull
-    Map<String, Object> getPropertyMap();
+    Map<String, Object> propertyMap();
 
     /**
      * Creates a new Builder instance for constructing an EntityConfig.

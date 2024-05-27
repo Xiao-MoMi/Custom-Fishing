@@ -89,6 +89,15 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     }
 
     public static String bagTitle() {
+        return null;
+    }
+
+    public static boolean metrics() {
+        return true;
+    }
+
+    public static boolean checkUpdate() {
+        return true;
     }
 
     public void registerLootParser(Function<Object, Consumer<Loot.Builder>> function, String... nodes) {

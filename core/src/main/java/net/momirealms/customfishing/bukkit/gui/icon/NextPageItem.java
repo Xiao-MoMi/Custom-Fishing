@@ -17,8 +17,11 @@
 
 package net.momirealms.customfishing.bukkit.gui.icon;
 
+import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.Icon;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import xyz.xenondevs.invui.gui.PagedGui;
 import xyz.xenondevs.invui.item.ItemProvider;
@@ -34,15 +37,13 @@ public class NextPageItem extends PageItem implements Icon {
     @Override
     public ItemProvider getItemProvider(PagedGui<?> gui) {
         ItemBuilder builder = new ItemBuilder(Material.GREEN_STAINED_GLASS_PANE);
-        builder.setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_NEXT_PAGE
-                )))
-                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        gui.hasNextPage()
-                                ? CFLocale.GUI_GOTO_NEXT_PAGE
-                                .replace("{0}", String.valueOf(gui.getCurrentPage() + 2))
-                                .replace("{1}", String.valueOf(gui.getPageAmount()))
-                                : CFLocale.GUI_CANNOT_GOTO_NEXT_PAGE
+        builder.setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_NEXT_PAGE.build())))
+                .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(                        gui.hasNextPage()
+                        ? MessageConstants.GUI_GOTO_NEXT_PAGE.arguments(
+                                Component.text(gui.getCurrentPage() + 2),
+                                Component.text(gui.getPageAmount())
+                        ).build() :
+                        MessageConstants.GUI_CANNOT_GOTO_NEXT_PAGE.build()
                 )));
         return builder;
     }

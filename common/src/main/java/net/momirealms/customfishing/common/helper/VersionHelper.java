@@ -17,126 +17,25 @@
 
 package net.momirealms.customfishing.common.helper;
 
+import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 /**
  * This class implements the VersionManager interface and is responsible for managing version-related information.
  */
 public class VersionHelper {
 
-    private final boolean isNewerThan1_19_3;
-    private final boolean isNewerThan1_19_4;
-    private final boolean isNewerThan1_20;
-    private final boolean isNewerThan1_20_5;
-    private final boolean isNewerThan1_19;
-    private final String serverVersion;
-    private final boolean isSpigot;
-    private boolean hasRegionScheduler;
-    private boolean isMojmap;
-    private final String pluginVersion;
-
-    public VersionHelper(String serverVersion) {
-        this.serverVersion = serverVersion;
-        String[] split = serverVersion.split("\\.");
-        int main_ver = Integer.parseInt(split[0]);
-        // Determine if the server version is newer than 1_19_R2 and 1_20_R1
-        if (main_ver >= 20) {
-            isNewerThan1_20_5 = Integer.parseInt(split[1]) >= 5;
-            isNewerThan1_19_3 = isNewerThan1_19_4 = true;
-            isNewerThan1_20 = true;
-            isNewerThan1_19 = true;
-        } else if (main_ver == 19) {
-            isNewerThan1_20 = isNewerThan1_20_5 = false;
-            isNewerThan1_19_3 = Integer.parseInt(split[1]) >= 3;
-            isNewerThan1_19_4 = Integer.parseInt(split[1]) >= 4;
-            isNewerThan1_19 = true;
-        } else {
-            isNewerThan1_20 = isNewerThan1_20_5 = isNewerThan1_19 = isNewerThan1_19_3 = isNewerThan1_19_4 = false;
-        }
-        // Check if the server is Spigot
-        String server_name = plugin.getServer().getName();
-        this.isSpigot = server_name.equals("CraftBukkit");
-
-        // Check if the server is Folia
-        try {
-            Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
-            this.hasRegionScheduler = true;
-        } catch (ClassNotFoundException ignored) {
-
-        }
-
-        // Check if the server is Mojmap
-        try {
-            Class.forName("net.minecraft.network.protocol.game.ClientboundBossEventPacket");
-            this.isMojmap = true;
-        } catch (ClassNotFoundException ignored) {
-
-        }
-
-        // Get the plugin version
-        this.pluginVersion = plugin.getDescription().getVersion();
-    }
-
-    @Override
-    public boolean isVersionNewerThan1_19() {
-        return isNewerThan1_19;
-    }
-
-    @Override
-    public boolean isVersionNewerThan1_19_4() {
-        return isNewerThan1_19_4;
-    }
-
-    @Override
-    public boolean isVersionNewerThan1_19_3() {
-        return isNewerThan1_19_3;
-    }
-
-    @Override
-    public boolean isVersionNewerThan1_20() {
-        return isNewerThan1_20;
-    }
-
-    @Override
-    public boolean isNewerThan1_20_5() {
-        return isNewerThan1_20_5;
-    }
-
-    @Override
-    public boolean isSpigot() {
-        return isSpigot;
-    }
-
-    @Override
-    public String getPluginVersion() {
-        return pluginVersion;
-    }
-
-    @Override
-    public boolean hasRegionScheduler() {
-        return hasRegionScheduler;
-    }
-
-    @Override
-    public boolean isMojmap() {
-        return isMojmap;
-    }
-
-    @Override
-    public String getServerVersion() {
-        return serverVersion;
-    }
-
     // Method to asynchronously check for plugin updates
-    @Override
-    public CompletableFuture<Boolean> checkUpdate() {
+    public static final Function<CustomFishingPlugin, CompletableFuture<Boolean>> UPDATE_CHECKER = (plugin) -> {
         CompletableFuture<Boolean> updateFuture = new CompletableFuture<>();
-        plugin.getScheduler().async(() -> {
+        plugin.getScheduler().async().execute(() -> {
             try {
                 URL url = new URL("https://api.polymart.org/v1/getResourceInfoSimple/?resource_id=2723&key=version");
                 URLConnection conn = url.openConnection();
@@ -144,7 +43,7 @@ public class VersionHelper {
                 conn.setReadTimeout(60000);
                 InputStream inputStream = conn.getInputStream();
                 String newest = new BufferedReader(new InputStreamReader(inputStream)).readLine();
-                String current = plugin.getVersionManager().getPluginVersion();
+                String current = plugin.getPluginVersion();
                 inputStream.close();
                 if (!compareVer(newest, current)) {
                     updateFuture.complete(false);
@@ -152,15 +51,71 @@ public class VersionHelper {
                 }
                 updateFuture.complete(true);
             } catch (Exception exception) {
-                LogUtils.warn("Error occurred when checking update.", exception);
+                plugin.getPluginLogger().warn("Error occurred when checking update.", exception);
                 updateFuture.complete(false);
             }
         });
         return updateFuture;
+    };
+
+    private static float version;
+    private static boolean mojmap;
+    private static boolean folia;
+
+    public static void init(String serverVersion) {
+        String[] split = serverVersion.split("\\.");
+        version = Float.parseFloat(split[1] + "." + split[2]);
+        checkMojMap();
+        checkFolia();
+    }
+
+    private static void checkMojMap() {
+        // Check if the server is Mojmap
+        try {
+            Class.forName("net.minecraft.network.protocol.game.ClientboundBossEventPacket");
+            mojmap = true;
+        } catch (ClassNotFoundException ignored) {
+        }
+    }
+
+    private static void checkFolia() {
+        try {
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            folia = true;
+        } catch (ClassNotFoundException ignored) {
+        }
+    }
+
+    public static boolean isVersionNewerThan1_19() {
+        return version >= 19;
+    }
+
+    public static boolean isVersionNewerThan1_19_4() {
+        return version >= 19.4;
+    }
+
+    public static boolean isVersionNewerThan1_19_3() {
+        return version >= 19.3;
+    }
+
+    public static boolean isVersionNewerThan1_20() {
+        return version >= 20.0;
+    }
+
+    public boolean isNewerThan1_20_5() {
+        return version >= 20.5;
+    }
+
+    public static boolean isFolia() {
+        return folia;
+    }
+
+    public static boolean isMojmap() {
+        return mojmap;
     }
 
     // Method to compare two version strings
-    private boolean compareVer(String newV, String currentV) {
+    private static boolean compareVer(String newV, String currentV) {
         if (newV == null || currentV == null || newV.isEmpty() || currentV.isEmpty()) {
             return false;
         }

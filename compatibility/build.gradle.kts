@@ -8,6 +8,7 @@ repositories {
     maven("https://repo.oraxen.com/releases/") // oraxen
     maven("https://repo.auxilor.io/repository/maven-public/") // eco
     maven("https://nexus.betonquest.org/repository/betonquest/") // betonquest
+    maven("https://repo.dmulloy2.net/repository/public/") // betonquest needs packet wrapper?
 }
 
 dependencies {
@@ -48,7 +49,7 @@ dependencies {
     compileOnly("net.Indyuce:MMOItems-API:6.10-SNAPSHOT")
     compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")
     compileOnly("pers.neige.neigeitems:NeigeItems:1.17.13")
-    compileOnly("io.th0rgal:oraxen:1.175.0")
+    compileOnly("io.th0rgal:oraxen:1.168.0")
     // entity
     compileOnly("io.lumine:Mythic-Dist:5.6.2")
     // eco

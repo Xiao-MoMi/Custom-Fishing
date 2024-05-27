@@ -236,13 +236,6 @@ public enum Dependency {
             "caffeine",
             Relocation.of("caffeine", "com{}github{}benmanes{}caffeine")
     ),
-    LETTUCE(
-            "io{}lettuce",
-            "lettuce-core",
-            "maven",
-            "lettuce-core",
-            Relocation.of("lettuce", "io{}lettuce")
-    ),
     JEDIS(
             "redis{}clients",
             "jedis",

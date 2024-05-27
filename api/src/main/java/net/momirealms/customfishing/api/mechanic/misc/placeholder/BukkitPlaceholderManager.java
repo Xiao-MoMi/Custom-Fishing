@@ -32,15 +32,19 @@ import java.util.stream.Collectors;
 public class BukkitPlaceholderManager implements PlaceholderManager {
 
     private final BukkitCustomFishingPlugin plugin;
-    private final boolean hasPapi;
+    private boolean hasPapi;
     private final HashMap<String, String> customPlaceholderMap;
     private static BukkitPlaceholderManager instance;
 
     public BukkitPlaceholderManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
-        this.hasPapi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
         this.customPlaceholderMap = new HashMap<>();
         instance = this;
+    }
+
+    @Override
+    public void reload() {
+        this.hasPapi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
     }
 
     public static BukkitPlaceholderManager getInstance() {

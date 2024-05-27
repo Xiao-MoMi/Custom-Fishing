@@ -17,11 +17,12 @@
 
 package net.momirealms.customfishing.api.mechanic.hook;
 
+import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public interface HookManager {
+public interface HookManager extends Reloadable {
 
     boolean registerHook(HookConfig hook);
 

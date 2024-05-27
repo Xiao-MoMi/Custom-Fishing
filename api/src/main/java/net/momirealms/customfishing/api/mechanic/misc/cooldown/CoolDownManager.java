@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.mechanic.misc.cooldown;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -34,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Manages cooldowns for various actions or events.
  * Keeps track of cooldown times for different keys associated with player UUIDs.
  */
-public class CoolDownManager implements Listener {
+public class CoolDownManager implements Listener, Reloadable {
 
     private final ConcurrentHashMap<UUID, Data> dataMap;
     private final BukkitCustomFishingPlugin plugin;
@@ -57,14 +58,17 @@ public class CoolDownManager implements Listener {
         return data.isCoolDown(key, time);
     }
 
+    @Override
     public void load() {
         Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
     }
 
+    @Override
     public void unload() {
         HandlerList.unregisterAll(this);
     }
 
+    @Override
     public void disable() {
         unload();
         this.dataMap.clear();

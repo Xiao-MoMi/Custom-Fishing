@@ -17,10 +17,10 @@
 
 package net.momirealms.customfishing.bukkit.integration.item;
 
-import net.kyori.adventure.key.Key;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.integration.ItemProvider;
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.common.util.Key;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +38,13 @@ public class CustomFishingItemProvider implements ItemProvider {
     @Override
     public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
         String[] split = id.split(":", 2);
-        ItemStack itemStack = BukkitCustomFishingPlugin.getInstance().getItemManager().buildInternal(Context.player(player), Key.key(split[0], split[1]));
+        String finalID;
+        if (split.length != 2) {
+            finalID = split[0];
+        } else {
+            finalID = split[1];
+        }
+        ItemStack itemStack = BukkitCustomFishingPlugin.getInstance().getItemManager().buildInternal(Context.player(player), finalID);
         return requireNonNull(itemStack);
     }
 

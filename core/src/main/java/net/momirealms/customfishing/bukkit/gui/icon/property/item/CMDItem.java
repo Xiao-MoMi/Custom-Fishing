@@ -17,9 +17,12 @@
 
 package net.momirealms.customfishing.bukkit.gui.icon.property.item;
 
+import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
 import net.momirealms.customfishing.bukkit.gui.page.property.CustomModelDataEditor;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -40,23 +43,20 @@ public class CMDItem extends AbstractItem {
     @Override
     public ItemProvider getItemProvider() {
         ItemBuilder itemBuilder = new ItemBuilder(Material.GLOW_INK_SAC)
-                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_ITEM_MODEL_DATA
+                .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(
+                        MessageConstants.GUI_ITEM_CUSTOM_MODEL_DATA.build()
                 )));
         if (itemPage.getSection().contains("custom-model-data")) {
-            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_CURRENT_VALUE + itemPage.getSection().getInt("custom-model-data")
+            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(
+                            MessageConstants.GUI_CURRENT_VALUE.arguments(
+                                    Component.text(itemPage.getSection().getInt("custom-model-data"))
+                            ).build()
                     )))
                     .addLoreLines("");
-            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_LEFT_CLICK_EDIT
-            ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_RIGHT_CLICK_RESET
-            )));
+            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_LEFT_CLICK_EDIT.build())))
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_RIGHT_CLICK_RESET.build())));
         } else {
-            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_LEFT_CLICK_EDIT
-            )));
+            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_LEFT_CLICK_EDIT.build())));
         }
         return itemBuilder;
     }

@@ -1,3 +1,5 @@
+config-version: '${config_version}'
+
 enable: true
 
 # Container title

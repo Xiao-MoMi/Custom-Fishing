@@ -19,6 +19,8 @@ package net.momirealms.customfishing.bukkit.gui.icon;
 
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.ParentPage;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -39,9 +41,7 @@ public class BackToPageItem extends AbstractItem {
     @Override
     public ItemProvider getItemProvider() {
         return new ItemBuilder(Material.ORANGE_STAINED_GLASS_PANE)
-                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_BACK_TO_PARENT_PAGE
-                )));
+                .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_BACK_TO_PARENT_PAGE.build())));
     }
 
     @Override

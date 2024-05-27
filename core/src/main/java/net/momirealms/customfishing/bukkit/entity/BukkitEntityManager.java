@@ -76,9 +76,9 @@ public class BukkitEntityManager implements EntityManager {
     }
 
     @Override
-    public boolean registerEntity(String id, EntityConfig entity) {
-        if (entities.containsKey(id)) return false;
-        this.entities.put(id, entity);
+    public boolean registerEntity(EntityConfig entity) {
+        if (entities.containsKey(entity.id())) return false;
+        this.entities.put(entity.id(), entity);
         return true;
     }
 
@@ -99,17 +99,17 @@ public class BukkitEntityManager implements EntityManager {
         EntityConfig config = requireNonNull(entities.get(id), "Entity " + id + " not found");
         Location hookLocation = requireNonNull(context.arg(ContextKeys.HOOK_LOCATION));
         Location playerLocation = requireNonNull(context.getHolder().getLocation());
-        String entityID = config.getEntityID();
+        String entityID = config.entityID();
         Entity entity;
         if (entityID.contains(":")) {
             String[] split = entityID.split(":", 2);
             EntityProvider provider = requireNonNull(entityProviders.get(split[0]), "EntityProvider " + split[0] + " doesn't exist");
-            entity = requireNonNull(provider.spawn(hookLocation, split[1], config.getPropertyMap()), "Entity " + entityID + " doesn't exist");
+            entity = requireNonNull(provider.spawn(hookLocation, split[1], config.propertyMap()), "Entity " + entityID + " doesn't exist");
         } else {
-            entity = entityProviders.get("vanilla").spawn(hookLocation, entityID, config.getPropertyMap());
+            entity = entityProviders.get("vanilla").spawn(hookLocation, entityID, config.propertyMap());
         }
-        Vector vector = playerLocation.subtract(hookLocation).toVector().multiply((config.getHorizontalVector()) - 1);
-        vector = vector.setY((vector.getY() + 0.2) * config.getVerticalVector());
+        Vector vector = playerLocation.subtract(hookLocation).toVector().multiply(config.horizontalVector().evaluate(context) - 1);
+        vector = vector.setY((vector.getY() + 0.2) * config.verticalVector().evaluate(context));
         entity.setVelocity(vector);
         return entity;
     }

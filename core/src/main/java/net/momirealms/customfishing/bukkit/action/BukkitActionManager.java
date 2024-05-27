@@ -13,7 +13,6 @@ import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.bukkit.integration.VaultHook;
-import net.momirealms.customfishing.bukkit.util.ItemUtils;
 import net.momirealms.customfishing.bukkit.util.LocationUtils;
 import net.momirealms.customfishing.bukkit.util.PlayerUtils;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
@@ -52,6 +51,16 @@ public class BukkitActionManager implements ActionManager<Player> {
     public BukkitActionManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.registerBuiltInActions();
+
+    }
+
+    @Override
+    public void disable() {
+        this.actionFactoryMap.clear();
+    }
+
+    @Override
+    public void reload() {
         this.loadExpansions();
     }
 
@@ -393,11 +402,11 @@ public class BukkitActionManager implements ActionManager<Player> {
                     if (Math.random() > chance) return;
                     Player player = context.getHolder();
                     ItemStack itemStack = player.getInventory().getItem(slot);
-                    if (amount > 0) {
-                        ItemUtils.increaseDurability(itemStack, amount, true);
-                    } else {
-                        ItemUtils.decreaseDurability(context.getHolder(), itemStack, -amount, true);
-                    }
+//                    if (amount > 0) {
+//                        ItemUtils.increaseDurability(itemStack, amount, true);
+//                    } else {
+//                        ItemUtils.decreaseDurability(context.getHolder(), itemStack, -amount, true);
+//                    }
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at durability action which should be Section");

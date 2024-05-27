@@ -19,6 +19,7 @@ package net.momirealms.customfishing.api.storage;
 
 import net.momirealms.customfishing.api.storage.data.PlayerData;
 import net.momirealms.customfishing.api.storage.user.UserData;
+import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -26,7 +27,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public interface StorageManager {
+public interface StorageManager extends Reloadable {
 
     @NotNull
     String getServerID();
@@ -52,7 +53,7 @@ public interface StorageManager {
      * @param data The PlayerData to be converted.
      * @return The byte array representation of PlayerData.
      */
-    byte @NotNull [] toBytes(@NotNull PlayerData data);
+    byte[] toBytes(@NotNull PlayerData data);
 
     /**
      * Converts PlayerData to JSON format.

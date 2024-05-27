@@ -35,10 +35,12 @@ import net.momirealms.customfishing.api.mechanic.misc.placeholder.PlaceholderMan
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.statistic.StatisticsManager;
 import net.momirealms.customfishing.api.storage.StorageManager;
+import net.momirealms.customfishing.common.dependency.DependencyManager;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
+import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import net.momirealms.customfishing.common.plugin.scheduler.AbstractJavaScheduler;
 import net.momirealms.customfishing.common.sender.SenderFactory;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -46,12 +48,10 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 
-import static java.util.Objects.requireNonNull;
-
-public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
+public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin, Reloadable {
 
     private static BukkitCustomFishingPlugin instance;
-    private final Plugin boostrap = requireNonNull(Bukkit.getPluginManager().getPlugin("CustomFishing"));
+    private final Plugin boostrap;
 
     protected EventManager eventManager;
     protected ConfigManager configManager;
@@ -73,13 +73,20 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
     protected EffectManager effectManager;
     protected HookManager hookManager;
     protected BagManager bagManager;
+    protected DependencyManager dependencyManager;
+    protected TranslationManager translationManager;
+    protected boolean initialized = false;
 
-    public BukkitCustomFishingPlugin() {
+    public BukkitCustomFishingPlugin(Plugin boostrap) {
+        if (!boostrap.getName().equals("CustomFishing")) {
+            throw new IllegalArgumentException("CustomFishing plugin requires custom fishing plugin");
+        }
+        this.boostrap = boostrap;
         instance = this;
     }
 
     public static BukkitCustomFishingPlugin getInstance() {
-        if (instance == null) {
+        if (instance == null || !instance.initialized) {
             throw new IllegalArgumentException("Plugin not initialized");
         }
         return instance;
@@ -175,7 +182,15 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
         return boostrap;
     }
 
-    public void reload() {
-
+    @Override
+    public DependencyManager getDependencyManager() {
+        return dependencyManager;
     }
+
+    @Override
+    public TranslationManager getTranslationManager() {
+        return translationManager;
+    }
+
+    public abstract void enable();
 }

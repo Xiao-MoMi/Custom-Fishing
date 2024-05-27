@@ -19,6 +19,7 @@ package net.momirealms.customfishing.api.mechanic.requirement;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +30,7 @@ import java.util.List;
  *
  * @param <T> the type of the context in which the requirements are evaluated.
  */
-public interface RequirementManager<T> {
+public interface RequirementManager<T> extends Reloadable {
 
     /**
      * Registers a custom requirement type with its corresponding factory.

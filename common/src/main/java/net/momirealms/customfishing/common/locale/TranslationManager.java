@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 public class TranslationManager {
 
     public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
-    private static final List<String> locales = List.of("en");
+    private static final List<String> locales = List.of("en", "zh_cn");
 
     private final CustomFishingPlugin plugin;
     private final Set<Locale> installed = ConcurrentHashMap.newKeySet();
@@ -40,7 +40,7 @@ public class TranslationManager {
         }
 
         for (String lang : locales) {
-            this.plugin.getConfigManager().loadConfig("translations/" + lang + ".yml");
+            this.plugin.getConfigManager().saveResource("translations/" + lang + ".yml");
         }
 
         this.registry = MiniMessageTranslationRegistry.create(Key.key("customfishing", "main"), AdventureHelper.getMiniMessage());

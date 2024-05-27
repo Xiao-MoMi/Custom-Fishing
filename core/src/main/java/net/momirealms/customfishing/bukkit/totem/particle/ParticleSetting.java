@@ -18,9 +18,9 @@
 package net.momirealms.customfishing.bukkit.totem.particle;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.common.Pair;
 import net.momirealms.customfishing.api.mechanic.totem.TotemParticle;
-import net.momirealms.customfishing.api.scheduler.CancellableTask;
+import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
+import net.momirealms.customfishing.common.util.Pair;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.Location;
@@ -63,9 +63,9 @@ public class ParticleSetting implements TotemParticle {
     }
 
     @SuppressWarnings("DuplicatedCode")
-    public CancellableTask start(Location location, double radius) {
+    public SchedulerTask start(Location location, double radius) {
         World world = location.getWorld();
-        return BukkitCustomFishingPlugin.get().getScheduler().runTaskAsyncTimer(() -> {
+        return BukkitCustomFishingPlugin.getInstance().getScheduler().asyncRepeating(() -> {
             for (Pair<Double, Double> range : ranges) {
                 for (double theta = range.left(); theta <= range.right(); theta += interval) {
                     double r = expressionHorizontal.setVariable("theta", theta).setVariable("radius", radius).evaluate();

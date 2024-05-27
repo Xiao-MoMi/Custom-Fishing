@@ -18,7 +18,9 @@
 package net.momirealms.customfishing.api.mechanic.competition;
 
 import net.kyori.adventure.util.Index;
+import net.momirealms.customfishing.common.locale.StandardLocales;
 import net.momirealms.customfishing.common.util.RandomUtils;
+import org.apache.logging.log4j.util.Supplier;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.entity.Player;
 
@@ -26,11 +28,13 @@ public final class CompetitionGoal {
 
     public static final CompetitionGoal CATCH_AMOUNT = new CompetitionGoal(
             "catch_amount",
-            ((rankingProvider, player, score) -> rankingProvider.refreshData(player, 1))
+            ((rankingProvider, player, score) -> rankingProvider.refreshData(player, 1)),
+            () -> StandardLocales.GOAL_CATCH_AMOUNT
     );
     public static final CompetitionGoal TOTAL_SCORE = new CompetitionGoal(
           "total_score",
-            (RankingProvider::refreshData)
+            (RankingProvider::refreshData),
+            () -> StandardLocales.GOAL_TOTAL_SCORE
     );
     public static final CompetitionGoal MAX_SIZE = new CompetitionGoal(
             "max_size",
@@ -38,15 +42,18 @@ public final class CompetitionGoal {
                 if (rankingProvider.getPlayerScore(player) < score) {
                     rankingProvider.setData(player, score);
                 }
-            })
+            }),
+            () -> StandardLocales.GOAL_MAX_SIZE
     );
     public static final CompetitionGoal TOTAL_SIZE = new CompetitionGoal(
            "total_size",
-            (RankingProvider::refreshData)
+            (RankingProvider::refreshData),
+            () -> StandardLocales.GOAL_TOTAL_SIZE
     );
     public static final CompetitionGoal RANDOM = new CompetitionGoal(
            "random",
-            (rankingProvider, player, score) -> {}
+            (rankingProvider, player, score) -> {},
+            () -> "random"
     );
 
     private static final CompetitionGoal[] values = new CompetitionGoal[] {
@@ -84,10 +91,12 @@ public final class CompetitionGoal {
 
     private final String key;
     private final TriConsumer<RankingProvider, String, Double> scoreConsumer;
+    private final Supplier<String> nameSupplier;
 
-    private CompetitionGoal(String key, TriConsumer<RankingProvider, String, Double> scoreConsumer) {
+    private CompetitionGoal(String key, TriConsumer<RankingProvider, String, Double> scoreConsumer, Supplier<String> nameSupplier) {
         this.key = key;
         this.scoreConsumer = scoreConsumer;
+        this.nameSupplier = nameSupplier;
     }
 
     /**
@@ -105,6 +114,6 @@ public final class CompetitionGoal {
 
     @Override
     public String toString() {
-        return super.toString();
+        return nameSupplier.get();
     }
 }
