@@ -20,6 +20,9 @@ package net.momirealms.customfishing.bukkit.gui.icon.property.item;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
 import net.momirealms.customfishing.bukkit.gui.page.property.EnchantmentEditor;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -44,29 +47,20 @@ public class EnchantmentItem extends AbstractItem {
     @Override
     public ItemProvider getItemProvider() {
         ItemBuilder itemBuilder = new ItemBuilder(Material.IRON_HOE)
-                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_ITEM_ENCHANTMENT
-                )))
+                .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_ITEM_ENCHANTMENT.build())))
                 .addEnchantment(Enchantment.ARROW_FIRE,1,true)
                 .addItemFlags(ItemFlag.HIDE_ENCHANTS);
         if (itemPage.getSection().contains("enchantments")) {
-            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_CURRENT_VALUE
-                    )));
-            for (Map.Entry<String, Object> entry : itemPage.getSection().getConfigurationSection("enchantments").getValues(false).entrySet()) {
-                itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        " <gray>- <white>" + entry.getKey() + ":" + entry.getValue()
-                )));
+            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_CURRENT_VALUE.build())));
+            for (Map.Entry<String, Object> entry : itemPage.getSection().getSection("enchantments").getStringRouteMappedValues(false).entrySet()) {
+                itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage(" <gray>- <white>" + entry.getKey() + ":" + entry.getValue())));
             }
-            itemBuilder.addLoreLines("").addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_LEFT_CLICK_EDIT
-            ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_RIGHT_CLICK_RESET
-            )));
+            itemBuilder
+                    .addLoreLines("")
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_LEFT_CLICK_EDIT.build())))
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_RIGHT_CLICK_RESET.build())));
         } else {
-            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_LEFT_CLICK_EDIT
-            )));
+            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_LEFT_CLICK_EDIT.build())));
         }
         return itemBuilder;
     }

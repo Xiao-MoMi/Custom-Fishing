@@ -17,9 +17,14 @@
 
 package net.momirealms.customfishing.bukkit.gui.icon.property.item;
 
+import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.bukkit.BukkitCustomFishingPluginImpl;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -42,13 +47,9 @@ public class Head64Item extends AbstractItem {
     @Override
     public ItemProvider getItemProvider() {
         ItemBuilder itemBuilder = new ItemBuilder(Material.PLAYER_HEAD)
-                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_ITEM_HEAD64
-                )));
+                .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_ITEM_HEAD64.build())));
         if (itemPage.getSection().contains("head64")) {
-            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_CURRENT_VALUE
-                    )));
+            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_CURRENT_VALUE.build())));
             String head64 = itemPage.getSection().getString("head64", "");
             ArrayList<String> list = new ArrayList<>();
             for (int i = 0; i < head64.length(); i += 16) {
@@ -59,19 +60,17 @@ public class Head64Item extends AbstractItem {
                 }
             }
             for (String line : list) {
-                itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        "<white>"+ line
+                itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage(
+                        "<white>" + line
                 )));
             }
-            itemBuilder.addLoreLines("").addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_LEFT_CLICK_EDIT
-            ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_RIGHT_CLICK_RESET
-            )));
+            itemBuilder
+                    .addLoreLines("")
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_LEFT_CLICK_EDIT.build())))
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_RIGHT_CLICK_RESET.build())));
         } else {
-            itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_LEFT_CLICK_EDIT
-            )));
+            itemBuilder
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_LEFT_CLICK_EDIT.build())));
         }
         return itemBuilder;
     }
@@ -80,8 +79,9 @@ public class Head64Item extends AbstractItem {
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
         if (clickType.isLeftClick()) {
             player.closeInventory();
-            AdventureHelper.getInstance().sendMessageWithPrefix(player, "Input the head64 value in chat");
-            ((BukkitCustomFishingPluginImpl) BukkitCustomFishingPlugin.get()).getChatCatcherManager().catchMessage(player, "head64", itemPage);
+            BukkitCustomFishingPlugin.getInstance().getSenderFactory().wrap(player)
+                            .sendMessage(Component.text("Input the head64 value in chat"));
+            ((BukkitCustomFishingPluginImpl) BukkitCustomFishingPlugin.getInstance()).getChatCatcherManager().catchMessage(player, "head64", itemPage);
         } else if (clickType.isRightClick()) {
             itemPage.getSection().set("head64", null);
             itemPage.save();

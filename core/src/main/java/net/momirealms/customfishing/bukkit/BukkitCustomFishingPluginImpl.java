@@ -12,6 +12,7 @@ import net.momirealms.customfishing.bukkit.config.BukkitConfigManager;
 import net.momirealms.customfishing.bukkit.effect.BukkitEffectManager;
 import net.momirealms.customfishing.bukkit.entity.BukkitEntityManager;
 import net.momirealms.customfishing.bukkit.event.BukkitEventManager;
+import net.momirealms.customfishing.bukkit.gui.ChatCatcherManager;
 import net.momirealms.customfishing.bukkit.hook.BukkitHookManager;
 import net.momirealms.customfishing.bukkit.integration.BukkitIntegrationManager;
 import net.momirealms.customfishing.bukkit.item.BukkitItemManager;
@@ -42,6 +43,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
 
     private final ClassPathAppender classPathAppender;
     private final PluginLogger logger;
+    private final ChatCatcherManager chatCatcherManager;
 
     public BukkitCustomFishingPluginImpl(Plugin boostrap) {
         super(boostrap);
@@ -69,6 +71,8 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.bagManager = new BukkitBagManager(this);
         this.dependencyManager = new DependencyManagerImpl(this);
         this.translationManager = new TranslationManager(this);
+
+        this.chatCatcherManager = new ChatCatcherManager(this);
     }
 
     @Override
@@ -187,5 +191,9 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
     @Override
     public String getPluginVersion() {
         return getBoostrap().getDescription().getVersion();
+    }
+
+    public ChatCatcherManager getChatCatcherManager() {
+        return chatCatcherManager;
     }
 }

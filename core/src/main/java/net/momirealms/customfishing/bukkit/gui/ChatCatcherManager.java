@@ -15,10 +15,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.bukkit.misc;
+package net.momirealms.customfishing.bukkit.gui;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.bukkit.gui.SectionPage;
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -42,7 +41,7 @@ public class ChatCatcherManager implements Listener {
     }
 
     public void load() {
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+        Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
     }
 
     public void unload() {

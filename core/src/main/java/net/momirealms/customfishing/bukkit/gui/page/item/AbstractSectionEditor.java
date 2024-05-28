@@ -17,6 +17,8 @@
 
 package net.momirealms.customfishing.bukkit.gui.page.item;
 
+import dev.dejvokep.boostedyaml.block.implementation.Section;
+import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
@@ -24,8 +26,8 @@ import net.momirealms.customfishing.bukkit.gui.icon.BackGroundItem;
 import net.momirealms.customfishing.bukkit.gui.icon.BackToPageItem;
 import net.momirealms.customfishing.bukkit.gui.icon.NextPageItem;
 import net.momirealms.customfishing.bukkit.gui.icon.PreviousPageItem;
+import net.momirealms.customfishing.common.locale.MessageConstants;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -46,10 +48,10 @@ public abstract class AbstractSectionEditor implements SectionPage {
 
     protected final Player player;
     protected final ItemSelector itemSelector;
-    protected final ConfigurationSection section;
+    protected final Section section;
     protected final String key;
 
-    public AbstractSectionEditor(Player player, ItemSelector itemSelector, ConfigurationSection section, String key) {
+    public AbstractSectionEditor(Player player, ItemSelector itemSelector, Section section, String key) {
         this.player = player;
         this.itemSelector = itemSelector;
         this.section = section;
@@ -58,7 +60,7 @@ public abstract class AbstractSectionEditor implements SectionPage {
     }
 
     @Override
-    public ConfigurationSection getSection() {
+    public Section getSection() {
         return section;
     }
 
@@ -90,9 +92,7 @@ public abstract class AbstractSectionEditor implements SectionPage {
 
         var window = AnvilWindow.split()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_EDIT_KEY.replace("{0}", key))
-                ))
+                .setTitle(new ShadedAdventureComponentWrapper(MessageConstants.GUI_EDIT_KEY.arguments(Component.text(key)).build()))
                 .setUpperGui(upperGui)
                 .setLowerGui(gui)
                 .build();
@@ -109,7 +109,7 @@ public abstract class AbstractSectionEditor implements SectionPage {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(BukkitCustomFishingPlugin.get().getItemManager().getItemBuilder(section, "bait", key).build(player));
+            return new ItemBuilder(BukkitCustomFishingPlugin.getInstance().getItemManager().getItemBuilder(section, "bait", key).build(player));
         }
 
         @Override

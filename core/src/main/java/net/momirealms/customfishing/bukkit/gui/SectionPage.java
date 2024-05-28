@@ -17,9 +17,9 @@
 
 package net.momirealms.customfishing.bukkit.gui;
 
-import org.bukkit.configuration.ConfigurationSection;
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 
 public interface SectionPage extends YamlPage {
 
-    ConfigurationSection getSection();
+    Section getSection();
 }

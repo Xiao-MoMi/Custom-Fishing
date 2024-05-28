@@ -17,8 +17,12 @@
 
 package net.momirealms.customfishing.bukkit.gui.icon.property.item;
 
+import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -38,20 +42,18 @@ public class RandomDurabilityItem extends AbstractItem {
 
     @Override
     public ItemProvider getItemProvider() {
-        ItemBuilder itemBuilder = new ItemBuilder(Material.LEATHER_BOOTS)
-                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_ITEM_RANDOM_DURABILITY
+        return new ItemBuilder(Material.LEATHER_BOOTS)
+                .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(
+                        MessageConstants.GUI_ITEM_RANDOM_DURABILITY.build()
                 )))
-                .setDamage(15);
-        itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_CURRENT_VALUE + itemPage.getSection().getBoolean("random-durability", false)
+                .setDamage(15)
+                .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(
+                        MessageConstants.GUI_CURRENT_VALUE
+                                .arguments(Component.text(itemPage.getSection().getBoolean("random-durability", false)))
+                                .build()
                 )))
                 .addLoreLines("")
-                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_CLICK_TO_TOGGLE
-                )));
-
-        return itemBuilder;
+                .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_CLICK_TO_TOGGLE.build())));
     }
 
     @Override
