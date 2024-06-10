@@ -200,7 +200,6 @@ public class BukkitMarketManager implements MarketManager, Listener {
      */
     @Override
     public void openMarketGUI(Player player) {
-        if (!enable) return;
         Optional<UserData> optionalUserData = plugin.getStorageManager().getOnlineUser(player.getUniqueId());
         if (optionalUserData.isEmpty()) {
             plugin.getPluginLogger().warn("Player " + player.getName() + "'s market data is not loaded yet.");

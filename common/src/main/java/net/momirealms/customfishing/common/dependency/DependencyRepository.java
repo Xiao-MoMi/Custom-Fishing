@@ -33,7 +33,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Represents a repository which contains {@link Dependency}s.
@@ -47,8 +46,8 @@ public enum DependencyRepository {
         @Override
         protected URLConnection openConnection(Dependency dependency) throws IOException {
             URLConnection connection = super.openConnection(dependency);
-            connection.setConnectTimeout((int) TimeUnit.SECONDS.toMillis(5));
-            connection.setReadTimeout((int) TimeUnit.SECONDS.toMillis(5));
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
             return connection;
         }
     },

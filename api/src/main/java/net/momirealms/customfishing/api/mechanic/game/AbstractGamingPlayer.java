@@ -19,7 +19,6 @@ package net.momirealms.customfishing.api.mechanic.game;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
-import net.momirealms.customfishing.api.mechanic.fishing.FishingManager;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import org.bukkit.Material;
 import org.bukkit.entity.FishHook;

@@ -23,30 +23,44 @@
  *  SOFTWARE.
  */
 
-package net.momirealms.customfishing.bukkit.scheduler;
+package net.momirealms.customfishing.bukkit.scheduler.impl;
 
-import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.bukkit.scheduler.impl.BukkitExecutor;
-import net.momirealms.customfishing.bukkit.scheduler.impl.FoliaExecutor;
-import net.momirealms.customfishing.common.helper.VersionHelper;
-import net.momirealms.customfishing.common.plugin.scheduler.AbstractJavaScheduler;
 import net.momirealms.customfishing.common.plugin.scheduler.RegionExecutor;
+import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.plugin.Plugin;
 
-public class BukkitSchedulerAdapter extends AbstractJavaScheduler<Location> {
-    protected RegionExecutor<Location> sync;
+import java.util.Optional;
 
-    public BukkitSchedulerAdapter(BukkitCustomFishingPlugin plugin) {
-        super(plugin);
-        if (VersionHelper.isFolia()) {
-            this.sync = new FoliaExecutor(plugin.getBoostrap());
+public class FoliaExecutor implements RegionExecutor<Location> {
+
+    private final Plugin plugin;
+
+    public FoliaExecutor(Plugin plugin) {
+        this.plugin = plugin;
+    }
+
+    @Override
+    public void run(Runnable r, Location l) {
+        Optional.ofNullable(l).ifPresentOrElse(loc -> Bukkit.getRegionScheduler().execute(plugin, loc, r), () -> Bukkit.getGlobalRegionScheduler().execute(plugin, r));
+    }
+
+    @Override
+    public SchedulerTask runLater(Runnable r, long delayTicks, Location l) {
+        if (l == null) {
+            return Bukkit.getGlobalRegionScheduler().runDelayed(plugin, scheduledTask -> r.run(), delayTicks)::cancel;
         } else {
-            this.sync = new BukkitExecutor(plugin.getBoostrap());
+            return Bukkit.getRegionScheduler().runDelayed(plugin, l, scheduledTask -> r.run(), delayTicks)::cancel;
         }
     }
 
     @Override
-    public RegionExecutor<Location> sync() {
-        return this.sync;
+    public SchedulerTask runRepeating(Runnable r, long delayTicks, long period, Location l) {
+        if (l == null) {
+            return Bukkit.getGlobalRegionScheduler().runAtFixedRate(plugin, scheduledTask -> r.run(), delayTicks, period)::cancel;
+        } else {
+            return Bukkit.getRegionScheduler().runAtFixedRate(plugin, l, scheduledTask -> r.run(), delayTicks, period)::cancel;
+        }
     }
 }

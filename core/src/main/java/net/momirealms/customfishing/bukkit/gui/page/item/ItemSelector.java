@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.bukkit.gui.page.item;
 
-import com.saicone.rtag.RtagItem;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
@@ -27,16 +26,13 @@ import net.momirealms.customfishing.bukkit.gui.icon.BackToFolderItem;
 import net.momirealms.customfishing.bukkit.gui.icon.NextPageItem;
 import net.momirealms.customfishing.bukkit.gui.icon.PreviousPageItem;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
-import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.gui.PagedGui;
@@ -48,7 +44,6 @@ import xyz.xenondevs.invui.item.impl.AbstractItem;
 import xyz.xenondevs.invui.item.impl.SimpleItem;
 import xyz.xenondevs.invui.window.AnvilWindow;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

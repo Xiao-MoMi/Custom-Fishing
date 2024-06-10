@@ -1,8 +1,14 @@
 package net.momirealms.customfishing.api.mechanic.item;
 
+import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
 import java.util.Objects;
 
 public class ItemType {
+
+    private static final HashMap<String, ItemType> types = new HashMap<>();
 
     public static final ItemType LOOT = of("loot");
     public static final ItemType ROD = of("rod");
@@ -24,6 +30,25 @@ public class ItemType {
         return new ItemType(type);
     }
 
+    public static void register(String id, ItemType type) {
+        ItemType previous = types.put(id, type);
+        if (previous != null) {
+            BukkitCustomFishingPlugin.getInstance().getPluginLogger().warn(
+                    "Attempted to register item type " + id + " twice, this is not a safe behavior. ["
+                            + type.getType() + "," + previous.getType() + "]"
+                    );
+        }
+    }
+
+    @Nullable
+    public static ItemType getTypeByID(String id) {
+        return types.get(id);
+    }
+
+    public static void reset() {
+        types.clear();
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
@@ -31,6 +56,7 @@ public class ItemType {
         ItemType itemType = (ItemType) object;
         return Objects.equals(type, itemType.type);
     }
+
 
     @Override
     public int hashCode() {

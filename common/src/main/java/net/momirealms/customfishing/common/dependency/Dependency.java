@@ -121,6 +121,13 @@ public enum Dependency {
             Relocation.of("examination", "net{}kyori{}examination"),
             Relocation.of("geantyref", "io{}leangen{}geantyref")
     ),
+    GEANTY_REF(
+            "io{}leangen{}geantyref",
+            "geantyref",
+            "maven",
+            "geantyref",
+            Relocation.of("geantyref", "io{}leangen{}geantyref")
+    ),
     BOOSTED_YAML(
             "dev{}dejvokep",
             "boosted-yaml",
@@ -216,13 +223,6 @@ public enum Dependency {
             return Dependency.BSTATS_BASE.getVersion();
         }
     },
-    GEANTY_REF(
-            "io{}leangen{}geantyref",
-            "geantyref",
-            "maven",
-            "geantyref",
-            Relocation.of("geantyref", "io{}leangen{}geantyref")
-    ),
     GSON(
             "com.google.code.gson",
             "gson",

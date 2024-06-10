@@ -8,13 +8,27 @@ config-version: "${config_version}"
 #
 reload:
   enable: true
-  permission: customfishing.reload
+  permission: customfishing.command.reload
   usage:
     - /customfishing reload
     - /cfishing reload
 
 sellfish:
   enable: true
-  permission: customfishing.sellfish
+  permission: customfishing.command.sellfish
   usage:
     - /sellfish
+
+getitem:
+  enable: true
+  permission: customfishing.command.getitem
+  usage:
+    - /customfishing items get
+    - /cfishing items get
+
+giveitem:
+  enable: true
+  permission: customfishing.command.giveitem
+  usage:
+    - /customfishing items give
+    - /cfishing items give

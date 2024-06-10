@@ -19,7 +19,6 @@ package net.momirealms.customfishing.bukkit.gui.page.item;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.bukkit.gui.icon.property.item.*;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import xyz.xenondevs.invui.item.Item;
 

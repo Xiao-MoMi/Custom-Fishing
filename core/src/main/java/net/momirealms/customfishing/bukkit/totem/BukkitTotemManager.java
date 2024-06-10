@@ -17,38 +17,8 @@
 
 package net.momirealms.customfishing.bukkit.totem;
 
-import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import net.momirealms.customfishing.api.mechanic.totem.TotemManager;
-import net.momirealms.customfishing.api.mechanic.totem.TotemModel;
-import net.momirealms.customfishing.api.mechanic.totem.block.TotemBlock;
-import net.momirealms.customfishing.api.mechanic.totem.block.property.AxisImpl;
-import net.momirealms.customfishing.api.mechanic.totem.block.property.FaceImpl;
-import net.momirealms.customfishing.api.mechanic.totem.block.property.HalfImpl;
-import net.momirealms.customfishing.api.mechanic.totem.block.property.TotemBlockProperty;
-import net.momirealms.customfishing.api.mechanic.totem.block.type.TypeCondition;
-import net.momirealms.customfishing.api.util.SimpleLocation;
-import net.momirealms.customfishing.bukkit.totem.particle.DustParticleSetting;
-import net.momirealms.customfishing.bukkit.totem.particle.ParticleSetting;
-import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
-import net.momirealms.customfishing.common.util.Pair;
-import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Bisected;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
-
-import java.io.File;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 public class BukkitTotemManager implements TotemManager, Listener {
 

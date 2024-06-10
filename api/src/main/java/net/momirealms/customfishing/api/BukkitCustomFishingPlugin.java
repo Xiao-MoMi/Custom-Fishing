@@ -75,7 +75,6 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin, 
     protected BagManager bagManager;
     protected DependencyManager dependencyManager;
     protected TranslationManager translationManager;
-    protected boolean initialized = false;
 
     public BukkitCustomFishingPlugin(Plugin boostrap) {
         if (!boostrap.getName().equals("CustomFishing")) {
@@ -86,7 +85,7 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin, 
     }
 
     public static BukkitCustomFishingPlugin getInstance() {
-        if (instance == null || !instance.initialized) {
+        if (instance == null) {
             throw new IllegalArgumentException("Plugin not initialized");
         }
         return instance;

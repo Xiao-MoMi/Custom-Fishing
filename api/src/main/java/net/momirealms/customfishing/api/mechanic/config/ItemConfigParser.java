@@ -31,6 +31,7 @@ public class ItemConfigParser {
     public ItemConfigParser(String id, Section section, Map<String, Node<ConfigParserFunction>> functionMap) {
         this.id = id;
         this.material = section.getString("material");
+        if (!section.contains("tag")) section.set("tag", true);
         analyze(section, functionMap);
     }
 

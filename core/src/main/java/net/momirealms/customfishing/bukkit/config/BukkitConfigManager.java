@@ -61,7 +61,7 @@ public class BukkitConfigManager extends ConfigManager {
                     if (subFile.isDirectory()) {
                         fileDeque.push(subFile);
                     } else if (subFile.isFile() && subFile.getName().endsWith(".yml")) {
-                        YamlDocument document = plugin.getConfigManager().loadData(file);
+                        YamlDocument document = plugin.getConfigManager().loadData(subFile);
                         for (Map.Entry<String, Object> entry : document.getStringRouteMappedValues(false).entrySet()) {
                             if (entry.getValue() instanceof Section section) {
                                 type.parse(entry.getKey(), section, formatFunctions);
@@ -79,7 +79,7 @@ public class BukkitConfigManager extends ConfigManager {
             return (item, context) -> item.customModelData((int) mathValue.evaluate(context));
         }, 5000, "custom-model-data");
         this.registerItemParser(arg -> {
-            TextValue<Player> textValue = TextValue.auto((String) arg);
+            TextValue<Player> textValue = TextValue.auto("<!i><white>" + arg);
             return (item, context) -> {
                 item.displayName(AdventureHelper.miniMessageToJson(textValue.render(context)));
             };
@@ -88,7 +88,7 @@ public class BukkitConfigManager extends ConfigManager {
             List<String> list = ListUtils.toList(arg);
             List<TextValue<Player>> lore = new ArrayList<>();
             for (String text : list) {
-                lore.add(TextValue.auto(text));
+                lore.add(TextValue.auto("<!i><white>" + text));
             }
             return (item, context) -> {
                 item.lore(lore.stream()
@@ -101,7 +101,6 @@ public class BukkitConfigManager extends ConfigManager {
             return (item, context) -> {
                 if (!enable) return;
                 item.setTag(context.arg(ContextKeys.ID), "CustomFishing", "id");
-                item.setTag(context.arg(ContextKeys.TYPE), "CustomFishing", "type");
             };
         }, 2_000, "tag");
         this.registerItemParser(arg -> {
@@ -119,8 +118,8 @@ public class BukkitConfigManager extends ConfigManager {
         }, 1_000, "size");
         this.registerItemParser(arg -> {
             Section section = (Section) arg;
-            MathValue<Player> base = MathValue.auto(section.get("base"));
-            MathValue<Player> bonus = MathValue.auto(section.get("bonus"));
+            MathValue<Player> base = MathValue.auto(section.get("base", "0"));
+            MathValue<Player> bonus = MathValue.auto(section.get("bonus", "0"));
             return (item, context) -> {
                 double basePrice = base.evaluate(context);
                 double bonusPrice = bonus.evaluate(context);
@@ -325,12 +324,12 @@ public class BukkitConfigManager extends ConfigManager {
             return builder -> builder.entityID(entity);
         }, "entity");
         this.registerEntityParser(object -> {
-            String entity = (String) object;
-            return builder -> builder.entityID(entity);
+            MathValue<Player> mathValue = MathValue.auto(object);
+            return builder -> builder.horizontalVector(mathValue);
         }, "velocity", "horizontal");
         this.registerEntityParser(object -> {
-            String entity = (String) object;
-            return builder -> builder.entityID(entity);
+            MathValue<Player> mathValue = MathValue.auto(object);
+            return builder -> builder.verticalVector(mathValue);
         }, "velocity", "vertical");
         this.registerEntityParser(object -> {
             Section section = (Section) object;

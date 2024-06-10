@@ -23,30 +23,34 @@
  *  SOFTWARE.
  */
 
-package net.momirealms.customfishing.bukkit.scheduler;
+package net.momirealms.customfishing.bukkit.scheduler.impl;
 
-import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.bukkit.scheduler.impl.BukkitExecutor;
-import net.momirealms.customfishing.bukkit.scheduler.impl.FoliaExecutor;
-import net.momirealms.customfishing.common.helper.VersionHelper;
-import net.momirealms.customfishing.common.plugin.scheduler.AbstractJavaScheduler;
 import net.momirealms.customfishing.common.plugin.scheduler.RegionExecutor;
+import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.plugin.Plugin;
 
-public class BukkitSchedulerAdapter extends AbstractJavaScheduler<Location> {
-    protected RegionExecutor<Location> sync;
+public class BukkitExecutor implements RegionExecutor<Location> {
 
-    public BukkitSchedulerAdapter(BukkitCustomFishingPlugin plugin) {
-        super(plugin);
-        if (VersionHelper.isFolia()) {
-            this.sync = new FoliaExecutor(plugin.getBoostrap());
-        } else {
-            this.sync = new BukkitExecutor(plugin.getBoostrap());
-        }
+    private final Plugin plugin;
+
+    public BukkitExecutor(Plugin plugin) {
+        this.plugin = plugin;
     }
 
     @Override
-    public RegionExecutor<Location> sync() {
-        return this.sync;
+    public void run(Runnable r, Location l) {
+        Bukkit.getScheduler().runTask(plugin, r);
+    }
+
+    @Override
+    public SchedulerTask runLater(Runnable r, long delayTicks, Location l) {
+        return Bukkit.getScheduler().runTaskLater(plugin, r, delayTicks)::cancel;
+    }
+
+    @Override
+    public SchedulerTask runRepeating(Runnable r, long delayTicks, long period, Location l) {
+        return Bukkit.getScheduler().runTaskTimer(plugin, r, delayTicks, period)::cancel;
     }
 }

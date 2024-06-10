@@ -20,7 +20,6 @@ package net.momirealms.customfishing.bukkit.gui.icon.property.item;
 import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
-import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;

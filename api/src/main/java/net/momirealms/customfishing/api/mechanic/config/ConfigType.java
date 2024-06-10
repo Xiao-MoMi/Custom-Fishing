@@ -3,6 +3,7 @@ package net.momirealms.customfishing.api.mechanic.config;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.config.function.ConfigParserFunction;
+import net.momirealms.customfishing.api.mechanic.item.ItemType;
 import net.momirealms.customfishing.common.config.node.Node;
 import org.apache.logging.log4j.util.TriConsumer;
 
@@ -13,6 +14,7 @@ public class ConfigType {
     public static final ConfigType ITEM = of(
             "item",
             (id, section, functions) -> {
+                ItemType.register(id, ItemType.LOOT);
                 ItemConfigParser config = new ItemConfigParser(id, section, functions);
                 BukkitCustomFishingPlugin.getInstance().getItemManager().registerItem(config.getItem());
                 BukkitCustomFishingPlugin.getInstance().getLootManager().registerLoot(config.getLoot());
@@ -43,8 +45,10 @@ public class ConfigType {
     public static final ConfigType ROD = of(
             "rod",
             (id, section, functions) -> {
+                ItemType.register(id, ItemType.ROD);
                 RodConfigParser config = new RodConfigParser(id, section, functions);
                 BukkitCustomFishingPlugin.getInstance().getItemManager().registerItem(config.getItem());
+                BukkitCustomFishingPlugin.getInstance().getLootManager().registerLoot(config.getLoot());
                 BukkitCustomFishingPlugin.getInstance().getEffectManager().registerEffectModifier(config.getEffectModifier());
                 BukkitCustomFishingPlugin.getInstance().getEventManager().registerEventCarrier(config.getEventCarrier());
             }
@@ -53,8 +57,10 @@ public class ConfigType {
     public static final ConfigType BAIT = of(
             "bait",
             (id, section, functions) -> {
+                ItemType.register(id, ItemType.BAIT);
                 BaitConfigParser config = new BaitConfigParser(id, section, functions);
                 BukkitCustomFishingPlugin.getInstance().getItemManager().registerItem(config.getItem());
+                BukkitCustomFishingPlugin.getInstance().getLootManager().registerLoot(config.getLoot());
                 BukkitCustomFishingPlugin.getInstance().getEffectManager().registerEffectModifier(config.getEffectModifier());
                 BukkitCustomFishingPlugin.getInstance().getEventManager().registerEventCarrier(config.getEventCarrier());
             }
@@ -63,8 +69,10 @@ public class ConfigType {
     public static final ConfigType HOOK = of(
             "hook",
             (id, section, functions) -> {
+                ItemType.register(id, ItemType.HOOK);
                 HookConfigParser config = new HookConfigParser(id, section, functions);
                 BukkitCustomFishingPlugin.getInstance().getItemManager().registerItem(config.getItem());
+                BukkitCustomFishingPlugin.getInstance().getLootManager().registerLoot(config.getLoot());
                 BukkitCustomFishingPlugin.getInstance().getEffectManager().registerEffectModifier(config.getEffectModifier());
                 BukkitCustomFishingPlugin.getInstance().getEventManager().registerEventCarrier(config.getEventCarrier());
                 BukkitCustomFishingPlugin.getInstance().getHookManager().registerHook(config.getHook());
@@ -74,8 +82,10 @@ public class ConfigType {
     public static final ConfigType UTIL = of(
             "util",
             (id, section, functions) -> {
+                ItemType.register(id, ItemType.UTIL);
                 UtilConfigParser config = new UtilConfigParser(id, section, functions);
                 BukkitCustomFishingPlugin.getInstance().getItemManager().registerItem(config.getItem());
+                BukkitCustomFishingPlugin.getInstance().getLootManager().registerLoot(config.getLoot());
                 BukkitCustomFishingPlugin.getInstance().getEffectManager().registerEffectModifier(config.getEffectModifier());
                 BukkitCustomFishingPlugin.getInstance().getEventManager().registerEventCarrier(config.getEventCarrier());
             }

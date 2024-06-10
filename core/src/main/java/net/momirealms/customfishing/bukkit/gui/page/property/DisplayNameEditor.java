@@ -26,7 +26,6 @@ import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;

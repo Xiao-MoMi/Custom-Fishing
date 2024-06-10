@@ -137,6 +137,7 @@ public class UserDataImpl implements UserData {
     @Override
     public PlayerData toPlayerData() {
         return PlayerData.builder()
+                .uuid(uuid)
                 .bag(new InventoryData(InventoryUtils.stacksToBase64(holder.getInventory().getStorageContents()), holder.getInventory().getSize()))
                 .earnings(earningData)
                 .statistics(new StatisticData(statistics.amountMap(), statistics.sizeMap()))

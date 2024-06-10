@@ -29,14 +29,16 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+
 public interface ItemManager extends Reloadable {
 
     boolean registerItem(@NotNull CustomFishingItem item);
 
     @Nullable
-    ItemStack buildInternal(@NotNull Context<Player> context, @NotNull String id);
+    ItemStack buildInternal(@NotNull Context<Player> context, @NotNull String id) throws NullPointerException;
 
-    ItemStack build(@NotNull Context<Player> context, CustomFishingItem item);
+    ItemStack build(@NotNull Context<Player> context, @NotNull CustomFishingItem item);
 
     @Nullable
     ItemStack buildAny(@NotNull Context<Player> context, @NotNull String id);
@@ -48,9 +50,17 @@ public interface ItemManager extends Reloadable {
     String getCustomFishingItemID(@NotNull ItemStack itemStack);
 
     @Nullable
+    ItemType getItemType(@NotNull ItemStack itemStack);
+
+    @Nullable
+    ItemType getItemType(@NotNull String id);
+
+    @Nullable
     Item dropItemLoot(@NotNull Context<Player> context);
 
     ItemFactory<CustomFishingPlugin, RtagItem, ItemStack> getFactory();
 
     ItemProvider[] getItemProviders();
+
+    Collection<String> getItemIDs();
 }

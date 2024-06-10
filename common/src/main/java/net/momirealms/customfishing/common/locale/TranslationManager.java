@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 public class TranslationManager {
 
     public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
-    private static final List<String> locales = List.of("en", "zh_cn");
+    private static final List<String> locales = List.of("en");
 
     private final CustomFishingPlugin plugin;
     private final Set<Locale> installed = ConcurrentHashMap.newKeySet();

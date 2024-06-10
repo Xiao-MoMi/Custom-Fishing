@@ -1,5 +1,6 @@
 package net.momirealms.customfishing.bukkit.command.feature;
 
+import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.bukkit.command.BukkitCommandFeature;
 import net.momirealms.customfishing.common.command.CustomFishingCommandManager;
@@ -17,10 +18,11 @@ public class ReloadCommand extends BukkitCommandFeature<CommandSender> {
     @Override
     public Command.Builder<? extends CommandSender> assembleCommand(CommandManager<CommandSender> manager, Command.Builder<CommandSender> builder) {
         return builder
-                .flag(manager.flagBuilder("silent"))
+                .flag(manager.flagBuilder("silent").withAliases("s"))
                 .handler(context -> {
+                    long time1 = System.currentTimeMillis();
                     BukkitCustomFishingPlugin.getInstance().reload();
-                    handleFeedback(context.sender(), MessageConstants.COMMAND_RELOAD_SUCCESS);
+                    handleFeedback(context, MessageConstants.COMMAND_RELOAD_SUCCESS, Component.text(System.currentTimeMillis() - time1));
                 });
     }
 

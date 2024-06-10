@@ -4,10 +4,12 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.mechanic.config.function.*;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
+import net.momirealms.customfishing.api.mechanic.effect.LootBaseEffect;
 import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.hook.HookConfig;
 import net.momirealms.customfishing.api.mechanic.item.CustomFishingItem;
 import net.momirealms.customfishing.api.mechanic.item.ItemType;
+import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.item.Item;
 import org.bukkit.entity.Player;
@@ -27,10 +29,13 @@ public class HookConfigParser {
     private final List<Consumer<EventCarrier.Builder>> eventBuilderConsumers = new ArrayList<>();
     private final List<Consumer<HookConfig.Builder>> hookBuilderConsumers = new ArrayList<>();
     private final List<Consumer<EffectModifier.Builder>> effectBuilderConsumers = new ArrayList<>();
+    private final List<Consumer<LootBaseEffect.Builder>> baseEffectBuilderConsumers = new ArrayList<>();
+    private final List<Consumer<Loot.Builder>> lootBuilderConsumers = new ArrayList<>();
 
     public HookConfigParser(String id, Section section, Map<String, Node<ConfigParserFunction>> functionMap) {
         this.id = id;
         this.material = section.getString("material");
+        if (!section.contains("tag")) section.set("tag", true);
         analyze(section, functionMap);
     }
 
@@ -43,6 +48,16 @@ public class HookConfigParser {
             ConfigParserFunction function = node.nodeValue();
             if (function != null) {
                 switch (function.type()) {
+                    case BASE_EFFECT -> {
+                        BaseEffectParserFunction baseEffectParserFunction = (BaseEffectParserFunction) function;
+                        Consumer<LootBaseEffect.Builder> consumer = baseEffectParserFunction.accept(entry.getValue());
+                        baseEffectBuilderConsumers.add(consumer);
+                    }
+                    case LOOT -> {
+                        LootParserFunction lootParserFunction = (LootParserFunction) function;
+                        Consumer<Loot.Builder> consumer = lootParserFunction.accept(entry.getValue());
+                        lootBuilderConsumers.add(consumer);
+                    }
                     case ITEM -> {
                         ItemParserFunction propertyFunction = (ItemParserFunction) function;
                         BiConsumer<Item<ItemStack>, Context<Player>> result = propertyFunction.accept(entry.getValue());
@@ -101,6 +116,24 @@ public class HookConfigParser {
         HookConfig.Builder builder = HookConfig.builder()
                 .id(id);
         for (Consumer<HookConfig.Builder> consumer : hookBuilderConsumers) {
+            consumer.accept(builder);
+        }
+        return builder.build();
+    }
+
+    private LootBaseEffect getBaseEffect() {
+        LootBaseEffect.Builder builder = LootBaseEffect.builder();
+        for (Consumer<LootBaseEffect.Builder> consumer : baseEffectBuilderConsumers) {
+            consumer.accept(builder);
+        }
+        return builder.build();
+    }
+
+    public Loot getLoot() {
+        Loot.Builder builder = Loot.builder()
+                .id(id)
+                .lootBaseEffect(getBaseEffect());
+        for (Consumer<Loot.Builder> consumer : lootBuilderConsumers) {
             consumer.accept(builder);
         }
         return builder.build();

@@ -2,11 +2,13 @@ package net.momirealms.customfishing.bukkit;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
+import net.momirealms.customfishing.api.mechanic.item.ItemType;
 import net.momirealms.customfishing.api.mechanic.misc.cooldown.CoolDownManager;
 import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.bukkit.action.BukkitActionManager;
 import net.momirealms.customfishing.bukkit.bag.BukkitBagManager;
 import net.momirealms.customfishing.bukkit.block.BukkitBlockManager;
+import net.momirealms.customfishing.bukkit.command.BukkitCommandManager;
 import net.momirealms.customfishing.bukkit.competition.BukkitCompetitionManager;
 import net.momirealms.customfishing.bukkit.config.BukkitConfigManager;
 import net.momirealms.customfishing.bukkit.effect.BukkitEffectManager;
@@ -19,6 +21,7 @@ import net.momirealms.customfishing.bukkit.item.BukkitItemManager;
 import net.momirealms.customfishing.bukkit.loot.BukkitLootManager;
 import net.momirealms.customfishing.bukkit.market.BukkitMarketManager;
 import net.momirealms.customfishing.bukkit.requirement.BukkitRequirementManager;
+import net.momirealms.customfishing.bukkit.scheduler.BukkitSchedulerAdapter;
 import net.momirealms.customfishing.bukkit.sender.BukkitSenderFactory;
 import net.momirealms.customfishing.bukkit.statistic.BukkitStatisticsManager;
 import net.momirealms.customfishing.bukkit.storage.BukkitStorageManager;
@@ -43,13 +46,41 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
 
     private final ClassPathAppender classPathAppender;
     private final PluginLogger logger;
-    private final ChatCatcherManager chatCatcherManager;
+    private ChatCatcherManager chatCatcherManager;
+    private BukkitCommandManager commandManager;
 
     public BukkitCustomFishingPluginImpl(Plugin boostrap) {
         super(boostrap);
         VersionHelper.init(getServerVersion());
+        this.scheduler = new BukkitSchedulerAdapter(this);
         this.classPathAppender = new ReflectionClassPathAppender(this);
         this.logger = new JavaPluginLogger(getBoostrap().getLogger());
+        this.dependencyManager = new DependencyManagerImpl(this);
+    }
+
+    @Override
+    public void load() {
+        this.dependencyManager.loadDependencies(
+                List.of(
+                        Dependency.BOOSTED_YAML,
+                        Dependency.BSTATS_BASE, Dependency.BSTATS_BUKKIT,
+                        Dependency.CAFFEINE,
+                        Dependency.GEANTY_REF,
+                        Dependency.CLOUD_CORE, Dependency.CLOUD_SERVICES, Dependency.CLOUD_BUKKIT, Dependency.CLOUD_PAPER, Dependency.CLOUD_BRIGADIER, Dependency.CLOUD_MINECRAFT_EXTRAS,
+                        Dependency.GSON,
+                        Dependency.COMMONS_POOL_2,
+                        Dependency.JEDIS,
+                        Dependency.EXP4J,
+                        Dependency.MYSQL_DRIVER, Dependency.MARIADB_DRIVER,
+                        Dependency.SQLITE_DRIVER,
+                        Dependency.H2_DRIVER,
+                        Dependency.MONGODB_DRIVER_CORE, Dependency.MONGODB_DRIVER_SYNC, Dependency.MONGODB_DRIVER_BSON,
+                        Dependency.HIKARI_CP)
+        );
+    }
+
+    @Override
+    public void enable() {
         this.eventManager = new BukkitEventManager(this);
         this.configManager = new BukkitConfigManager(this);
         this.requirementManager = new BukkitRequirementManager(this);
@@ -69,41 +100,11 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.effectManager = new BukkitEffectManager(this);
         this.hookManager = new BukkitHookManager(this);
         this.bagManager = new BukkitBagManager(this);
-        this.dependencyManager = new DependencyManagerImpl(this);
         this.translationManager = new TranslationManager(this);
         this.chatCatcherManager = new ChatCatcherManager(this);
-    }
+        this.commandManager = new BukkitCommandManager(this);
+        this.commandManager.registerDefaultFeatures();
 
-    @Override
-    public void load() {
-        this.dependencyManager.loadDependencies(
-                List.of(Dependency.BOOSTED_YAML,
-                        Dependency.BSTATS_BASE,
-                        Dependency.BSTATS_BUKKIT,
-                        Dependency.CAFFEINE,
-                        Dependency.CLOUD_CORE,
-                        Dependency.CLOUD_SERVICES,
-                        Dependency.CLOUD_BUKKIT,
-                        Dependency.CLOUD_PAPER,
-                        Dependency.CLOUD_BRIGADIER,
-                        Dependency.CLOUD_MINECRAFT_EXTRAS,
-                        Dependency.GSON,
-                        Dependency.COMMONS_POOL_2,
-                        Dependency.JEDIS,
-                        Dependency.EXP4J,
-                        Dependency.MYSQL_DRIVER,
-                        Dependency.MARIADB_DRIVER,
-                        Dependency.SQLITE_DRIVER,
-                        Dependency.H2_DRIVER,
-                        Dependency.MONGODB_DRIVER_CORE,
-                        Dependency.MONGODB_DRIVER_SYNC,
-                        Dependency.MONGODB_DRIVER_BSON,
-                        Dependency.HIKARI_CP)
-        );
-    }
-
-    @Override
-    public void enable() {
         this.reload();
         if (ConfigManager.metrics()) new Metrics((JavaPlugin) getBoostrap(), 16648);
         if (ConfigManager.checkUpdate()) {
@@ -112,12 +113,13 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
                 else this.getPluginLogger().warn("Update is available: https://polymart.org/resource/2723");
             });
         }
+
         this.integrationManager.load();
-        this.initialized = true;
     }
 
     @Override
     public void reload() {
+        ItemType.reset();
         this.eventManager.reload();
         this.configManager.reload();
         this.requirementManager.reload();
@@ -148,7 +150,6 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.itemManager.disable();
         this.competitionManager.disable();
         this.marketManager.disable();
-        this.storageManager.disable();
         this.lootManager.disable();
         this.coolDownManager.disable();
         this.entityManager.disable();
@@ -158,7 +159,8 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.hookManager.disable();
         this.bagManager.disable();
         this.integrationManager.disable();
-        this.initialized = false;
+        this.storageManager.disable();
+        this.commandManager.unregisterFeatures();
     }
 
     @Override

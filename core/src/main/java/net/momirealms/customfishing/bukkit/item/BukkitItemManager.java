@@ -9,6 +9,7 @@ import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.item.CustomFishingItem;
 import net.momirealms.customfishing.api.mechanic.item.ItemManager;
+import net.momirealms.customfishing.api.mechanic.item.ItemType;
 import net.momirealms.customfishing.bukkit.util.ItemUtils;
 import net.momirealms.customfishing.bukkit.util.LocationUtils;
 import net.momirealms.customfishing.common.item.Item;
@@ -33,10 +34,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
@@ -97,13 +95,13 @@ public class BukkitItemManager implements ItemManager, Listener {
 
     @NotNull
     @Override
-    public ItemStack build(@NotNull Context<Player> context, CustomFishingItem item) {
+    public ItemStack build(@NotNull Context<Player> context, @NotNull CustomFishingItem item) {
         ItemStack itemStack = getOriginalStack(context.getHolder(), item.material());
         Item<ItemStack> wrappedItemStack = factory.wrap(itemStack);
         for (BiConsumer<Item<ItemStack>, Context<Player>> consumer : item.tagConsumers()) {
             consumer.accept(wrappedItemStack, context);
         }
-        return wrappedItemStack.getItem();
+        return wrappedItemStack.load();
     }
 
     @Override
@@ -128,6 +126,18 @@ public class BukkitItemManager implements ItemManager, Listener {
     @Override
     public String getCustomFishingItemID(@NotNull ItemStack itemStack) {
         return (String) factory.wrap(itemStack).getTag("CustomFishing", "id").orElse(null);
+    }
+
+    @Nullable
+    @Override
+    public ItemType getItemType(@NotNull ItemStack itemStack) {
+        return ItemType.getTypeByID(getCustomFishingItemID(itemStack));
+    }
+
+    @Nullable
+    @Override
+    public ItemType getItemType(@NotNull String id) {
+        return ItemType.getTypeByID(id);
     }
 
     @Nullable
@@ -315,5 +325,10 @@ public class BukkitItemManager implements ItemManager, Listener {
     @Override
     public ItemProvider[] getItemProviders() {
         return itemProviders.values().toArray(new ItemProvider[0]);
+    }
+
+    @Override
+    public Collection<String> getItemIDs() {
+        return items.keySet();
     }
 }
