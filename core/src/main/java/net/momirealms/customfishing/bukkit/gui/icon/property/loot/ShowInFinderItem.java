@@ -17,8 +17,11 @@
 
 package net.momirealms.customfishing.bukkit.gui.icon.property.loot;
 
+import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -39,15 +42,17 @@ public class ShowInFinderItem extends AbstractItem {
     @Override
     public ItemProvider getItemProvider() {
         ItemBuilder itemBuilder = new ItemBuilder(Material.COMPASS)
-                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_LOOT_SHOW_IN_FINDER
+                .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(
+                        MessageConstants.GUI_LOOT_SHOW_IN_FINDER.build()
                 )));
-        itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_CURRENT_VALUE + itemPage.getSection().getBoolean("show-in-fishfinder", true)
+        itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(
+                        MessageConstants.GUI_CURRENT_VALUE
+                                .arguments(Component.text(itemPage.getSection().getBoolean("show-in-fishfinder", true)))
+                                .build()
                 )))
                 .addLoreLines("")
-                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_CLICK_TO_TOGGLE
+                .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(
+                        MessageConstants.GUI_CLICK_TO_TOGGLE.build()
                 )));
         return itemBuilder;
     }

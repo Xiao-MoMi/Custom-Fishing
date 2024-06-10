@@ -17,9 +17,14 @@
 
 package net.momirealms.customfishing.bukkit.gui.page.property;
 
+import dev.dejvokep.boostedyaml.block.implementation.Section;
+import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
 import net.momirealms.customfishing.bukkit.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -40,7 +45,7 @@ public class NickEditor {
 
     private final SectionPage parentPage;
     private String nick;
-    private final ConfigurationSection section;
+    private final Section section;
 
     public NickEditor(Player player, SectionPage parentPage) {
         this.parentPage = parentPage;
@@ -50,7 +55,8 @@ public class NickEditor {
         var confirm  = new ConfirmIcon();
         Gui upperGui = Gui.normal()
                 .setStructure("a # b")
-                .addIngredient('a', new ItemBuilder(Material.WRITABLE_BOOK).setDisplayName(section.getString("nick", CFLocale.GUI_NICK_NEW)))
+                .addIngredient('a', new ItemBuilder(Material.WRITABLE_BOOK)
+                        .setDisplayName(new ShadedAdventureComponentWrapper(section.contains("nick") ? MessageConstants.GUI_PAGE_NEW_NICK.build() : Component.text(section.getString("nick")))))
                 .addIngredient('#', border)
                 .addIngredient('b', confirm)
                 .build();
@@ -69,9 +75,7 @@ public class NickEditor {
 
         var window = AnvilWindow.split()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_NICK_TITLE)
-                ))
+                .setTitle(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_NICK_TITLE.build())))
                 .addRenameHandler(s -> {
                     nick = s;
                     confirm.notifyWindows();
@@ -88,17 +92,11 @@ public class NickEditor {
         @Override
         public ItemProvider getItemProvider() {
             if (nick == null || nick.isEmpty()) {
-                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_DELETE_PROPERTY
-                )));
+                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_DELETE_PROPERTY.build())));
             } else {
                 return new ItemBuilder(Material.WRITABLE_BOOK)
-                        .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                              "<!i><white>" + nick
-                        )))
-                        .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                CFLocale.GUI_CLICK_CONFIRM
-                        )));
+                        .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage("<!i><white>" + nick)))
+                        .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_CLICK_CONFIRM.build())));
             }
         }
 

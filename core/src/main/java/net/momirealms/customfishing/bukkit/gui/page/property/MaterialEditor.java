@@ -17,10 +17,13 @@
 
 package net.momirealms.customfishing.bukkit.gui.page.property;
 
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
 import net.momirealms.customfishing.bukkit.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -45,7 +48,7 @@ public class MaterialEditor {
     private final Player player;
     private final SectionPage parentPage;
     private String material;
-    private final ConfigurationSection section;
+    private final Section section;
 
     public MaterialEditor(Player player, SectionPage parentPage) {
         this.player = player;
@@ -55,18 +58,18 @@ public class MaterialEditor {
 
         Item border = new SimpleItem(new ItemBuilder(Material.AIR));
         var confirm = new ConfirmIcon();
-        var itemBuilder = new ItemBuilder(BukkitCustomFishingPlugin.get()
-                .getItemManager()
-                .getItemStackAppearance(player, material)
-        )
-        .setDisplayName(section.getString("material", ""));
-
-        if (section.contains("custom-model-data"))
-            itemBuilder.setCustomModelData(section.getInt("custom-model-data", 0));
+//        var itemBuilder = new ItemBuilder(BukkitCustomFishingPlugin.get()
+//                .getItemManager()
+//                .getItemStackAppearance(player, material)
+//        )
+//        .setDisplayName(section.getString("material", ""));
+//
+//        if (section.contains("custom-model-data"))
+//            itemBuilder.setCustomModelData(section.getInt("custom-model-data", 0));
 
         Gui upperGui = Gui.normal()
                 .setStructure("a # b")
-                .addIngredient('a', itemBuilder)
+//                .addIngredient('a', itemBuilder)
                 .addIngredient('#', border)
                 .addIngredient('b', confirm)
                 .build();
@@ -86,9 +89,7 @@ public class MaterialEditor {
 
         var window = AnvilWindow.split()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_MATERIAL)
-                ))
+                .setTitle(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_MATERIAL_TITLE.build())))
                 .addRenameHandler(s -> {
                     material = s;
                     confirm.notifyWindows();
@@ -102,8 +103,8 @@ public class MaterialEditor {
 
     public List<Item> getCompatibilityItemList() {
         ArrayList<Item> items = new ArrayList<>();
-        for (String lib : ((ItemManagerImpl) BukkitCustomFishingPlugin.get().getItemManager()).getItemLibraries()) {
-            switch (lib) {
+        for (net.momirealms.customfishing.api.integration.ItemProvider lib : BukkitCustomFishingPlugin.getInstance().getItemManager().getItemProviders()) {
+            switch (lib.identifier()) {
                 case "MMOItems" -> items.add(new SimpleItem(new ItemBuilder(Material.BELL).setDisplayName(lib + ":TYPE:ID")));
                 case "ItemsAdder" -> items.add(new SimpleItem(new ItemBuilder(Material.BELL).setDisplayName(lib + ":namespace:id")));
                 case "vanilla", "CustomFishing" -> {}
@@ -118,33 +119,32 @@ public class MaterialEditor {
         @Override
         public ItemProvider getItemProvider() {
             if (material == null || material.isEmpty()) {
-                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_DELETE_PROPERTY
-                )));
+                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_DELETE_PROPERTY.build())));
             } else {
-                var builder = new ItemBuilder(
-                        BukkitCustomFishingPlugin.get()
-                                .getItemManager()
-                                .getItemStackAppearance(player, material)
-                ).setDisplayName(CFLocale.GUI_NEW_VALUE + material)
-                        .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                CFLocale.GUI_CLICK_CONFIRM
-                        )));
-                if (section.contains("custom-model-data"))
-                    builder.setCustomModelData(section.getInt("custom-model-data"));
-                return builder;
+//                var builder = new ItemBuilder(
+//                        BukkitCustomFishingPlugin.get()
+//                                .getItemManager()
+//                                .getItemStackAppearance(player, material)
+//                ).setDisplayName(CFLocale.GUI_NEW_VALUE + material)
+//                        .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
+//                                CFLocale.GUI_CLICK_CONFIRM
+//                        )));
+//                if (section.contains("custom-model-data"))
+//                    builder.setCustomModelData(section.getInt("custom-model-data"));
+//                return builder;
+                return null;
             }
         }
 
         @Override
         public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
-            if (material == null || material.isEmpty()) {
-                section.set("material", null);
-            } else if (BukkitCustomFishingPlugin.get().getItemManager().getItemStackAppearance(player, material).getType() == Material.BARRIER) {
-                return;
-            } else {
-                section.set("material", material);
-            }
+//            if (material == null || material.isEmpty()) {
+//                section.set("material", null);
+//            } else if (BukkitCustomFishingPlugin.get().getItemManager().getItemStackAppearance(player, material).getType() == Material.BARRIER) {
+//                return;
+//            } else {
+//                section.set("material", material);
+//            }
             parentPage.reOpen();
             parentPage.save();
         }

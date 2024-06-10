@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.bukkit.gui.page.item;
 
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.bukkit.gui.icon.property.item.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -28,7 +29,7 @@ import java.util.List;
 @SuppressWarnings("DuplicatedCode")
 public class HookEditor extends AbstractSectionEditor {
 
-    public HookEditor(Player player, String key, ItemSelector itemSelector, ConfigurationSection section) {
+    public HookEditor(Player player, String key, ItemSelector itemSelector, Section section) {
         super(player, itemSelector, section, key);
     }
 

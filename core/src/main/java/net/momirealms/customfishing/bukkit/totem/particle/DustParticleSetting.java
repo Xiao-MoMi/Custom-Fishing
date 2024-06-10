@@ -48,7 +48,7 @@ public class DustParticleSetting extends ParticleSetting {
     @SuppressWarnings("DuplicatedCode")
     public SchedulerTask start(Location location, double radius) {
         World world = location.getWorld();
-        return BukkitCustomFishingPlugin.get().getScheduler().runTaskAsyncTimer(() -> {
+        return BukkitCustomFishingPlugin.getInstance().getScheduler().asyncRepeating(() -> {
             for (Pair<Double, Double> range : ranges) {
                 for (double theta = range.left(); theta <= range.right(); theta += interval) {
                     double r = expressionHorizontal.setVariable("theta", theta).setVariable("radius", radius).evaluate();

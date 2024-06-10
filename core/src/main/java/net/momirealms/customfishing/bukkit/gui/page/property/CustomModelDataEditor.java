@@ -17,10 +17,14 @@
 
 package net.momirealms.customfishing.bukkit.gui.page.property;
 
+import dev.dejvokep.boostedyaml.block.implementation.Section;
+import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
 import net.momirealms.customfishing.bukkit.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -42,7 +46,7 @@ public class CustomModelDataEditor {
     private final Player player;
     private final SectionPage parentPage;
     private String cmd;
-    private final ConfigurationSection section;
+    private final Section section;
     private final String material;
 
     public CustomModelDataEditor(Player player, SectionPage parentPage) {
@@ -57,14 +61,14 @@ public class CustomModelDataEditor {
                 .setStructure(
                         "a # b"
                 )
-                .addIngredient('a', new ItemBuilder(BukkitCustomFishingPlugin.get()
-                        .getItemManager()
-                        .getItemStackAppearance(player, material)
-                )
-                .setCustomModelData(section.getInt("custom-model-data", 0))
-                .setDisplayName(String.valueOf(section.getInt("custom-model-data", 0))))
                 .addIngredient('#', border)
                 .addIngredient('b', confirm)
+//                .addIngredient('a', new ItemBuilder(BukkitCustomFishingPlugin.getInstance()
+//                        .getItemManager()
+//                        .getItemStackAppearance(player, material))
+//                            .setCustomModelData(section.getInt("custom-model-data", 0))
+//                            .setDisplayName(String.valueOf(section.getInt("custom-model-data", 0)))
+//                )
                 .build();
 
         var gui = PagedGui.items()
@@ -81,9 +85,7 @@ public class CustomModelDataEditor {
 
         var window = AnvilWindow.split()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_MODEL_DATA)
-                ))
+                .setTitle(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_MODEL_DATA_TITLE.build())))
                 .addRenameHandler(s -> {
                     cmd = s;
                     confirm.notifyWindows();
@@ -100,32 +102,27 @@ public class CustomModelDataEditor {
         @Override
         public ItemProvider getItemProvider() {
             if (cmd == null || cmd.isEmpty()) {
-                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_DELETE_PROPERTY
+                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(
+                        MessageConstants.GUI_DELETE_PROPERTY.build()
                 )));
             } else {
                 try {
                     int value = Integer.parseInt(cmd);
                     if (value >= 0) {
-                        return new ItemBuilder(
-                                BukkitCustomFishingPlugin.get()
-                                        .getItemManager()
-                                        .getItemStackAppearance(player, material)
-                        )
-                                .setCustomModelData(value)
-                                .setDisplayName(CFLocale.GUI_NEW_VALUE + value)
-                                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                        CFLocale.GUI_CLICK_CONFIRM
-                                )));
+                        return null;
+//                        return new ItemBuilder(
+//                                BukkitCustomFishingPlugin.getInstance()
+//                                        .getItemManager()
+//                                        .getItemStackAppearance(player, material)
+//                                )
+//                                .setCustomModelData(value)
+//                                .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_NEW_VALUE.arguments(Component.text(value)).build())))
+//                                .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_CLICK_CONFIRM.build())));
                     } else {
-                        return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                CFLocale.GUI_INVALID_NUMBER
-                        )));
+                        return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_INVALID_NUMBER.build())));
                     }
                 } catch (NumberFormatException e) {
-                    return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_INVALID_NUMBER
-                    )));
+                    return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_INVALID_NUMBER.build())));
                 }
             }
         }

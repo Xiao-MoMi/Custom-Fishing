@@ -109,7 +109,8 @@ public abstract class AbstractSectionEditor implements SectionPage {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(BukkitCustomFishingPlugin.getInstance().getItemManager().getItemBuilder(section, "bait", key).build(player));
+            return null;
+            //return new ItemBuilder(BukkitCustomFishingPlugin.getInstance().getItemManager().getItemBuilder(section, "bait", key).build(player));
         }
 
         @Override

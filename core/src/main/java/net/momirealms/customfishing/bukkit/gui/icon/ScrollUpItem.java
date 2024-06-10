@@ -19,6 +19,8 @@ package net.momirealms.customfishing.bukkit.gui.icon;
 
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.Icon;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import xyz.xenondevs.invui.gui.ScrollGui;
 import xyz.xenondevs.invui.item.ItemProvider;
@@ -34,12 +36,12 @@ public class ScrollUpItem extends ScrollItem implements Icon {
     @Override
     public ItemProvider getItemProvider(ScrollGui<?> gui) {
         ItemBuilder builder = new ItemBuilder(Material.RED_STAINED_GLASS_PANE);
-        builder.setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                CFLocale.GUI_SCROLL_UP
+        builder.setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(
+                MessageConstants.GUI_SCROLL_UP.build()
         )));
         if (!gui.canScroll(-1))
-            builder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_CANNOT_SCROLL_UP
+            builder.addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(
+                    MessageConstants.GUI_CANNOT_SCROLL_UP.build()
             )));
         return builder;
     }

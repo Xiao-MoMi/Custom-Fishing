@@ -1,11 +1,7 @@
+val commitID: String by project
+
 plugins {
     id("io.github.goooler.shadow") version "8.1.7"
-}
-
-repositories {
-    maven("https://jitpack.io/") // sparrow-heart, rtag
-    maven("https://repo.xenondevs.xyz/releases") // invui
-    maven("https://papermc.io/repo/repository/maven-public/")
 }
 
 dependencies {
@@ -13,7 +9,9 @@ dependencies {
     compileOnly("dev.folia:folia-api:${rootProject.properties["paper_version"]}-R0.1-SNAPSHOT")
     // subprojects
     implementation(project(":common"))
-    implementation(project(":api"))
+    implementation(project(":api")) {
+        exclude("dev.dejvokep", "boosted-yaml")
+    }
     implementation(project(":compatibility"))
     // adventure
     implementation("net.kyori:adventure-api:${rootProject.properties["adventure_bundle_version"]}")
@@ -53,6 +51,8 @@ dependencies {
 
 tasks {
     shadowJar {
+        archiveFileName = "CustomFishing-${rootProject.properties["project_version"]}-${commitID}.jar"
+        destinationDirectory.set(file("$rootDir/target"))
         relocate("net.kyori", "net.momirealms.customfishing.libraries")
         relocate("org.incendo", "net.momirealms.customfishing.libraries")
         relocate("dev.dejvokep", "net.momirealms.customfishing.libraries")
@@ -66,7 +66,14 @@ tasks {
         relocate ("com.github.benmanes.caffeine", "net.momirealms.customfishing.libraries.caffeine")
         relocate ("net.momirealms.sparrow.heart", "net.momirealms.customfishing.bukkit.nms")
         relocate ("com.saicone.rtag", "net.momirealms.customfishing.libraries.rtag")
+        relocate ("xyz.xenondevs", "net.momirealms.customfishing.libraries")
+        relocate ("xyz.xenondevs", "net.momirealms.customfishing.libraries")
+        relocate ("xyz.xenondevs", "net.momirealms.customfishing.libraries")
     }
+}
+
+artifacts {
+    archives(tasks.shadowJar)
 }
 
 java {

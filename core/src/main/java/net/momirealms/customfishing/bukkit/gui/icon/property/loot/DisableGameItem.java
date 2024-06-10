@@ -41,11 +41,8 @@ public class DisableGameItem extends AbstractItem {
 
     @Override
     public ItemProvider getItemProvider() {
-        ItemBuilder itemBuilder = new ItemBuilder(Material.LEAD)
-                .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(
-                        MessageConstants.GUI_LOOT_DISABLE_GAME.build()
-                )));
-        itemBuilder
+        return new ItemBuilder(Material.LEAD)
+                .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_LOOT_DISABLE_GAME.build())))
                 .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(
                         MessageConstants.GUI_CURRENT_VALUE.arguments(
                                 Component.text(itemPage.getSection().getBoolean("disable-game", false))
@@ -53,7 +50,6 @@ public class DisableGameItem extends AbstractItem {
                 )))
                 .addLoreLines("")
                 .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_CLICK_TO_TOGGLE.build())));
-        return itemBuilder;
     }
 
     @Override

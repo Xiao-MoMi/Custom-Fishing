@@ -17,11 +17,14 @@
 
 package net.momirealms.customfishing.bukkit.gui.page.property;
 
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
 import net.momirealms.customfishing.bukkit.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -45,7 +48,7 @@ public class EnchantmentEditor {
     private final Player player;
     private final SectionPage parentPage;
     private final ArrayList<String> enchantments;
-    private final ConfigurationSection section;
+    private final Section section;
     private int index;
     private final boolean store;
 
@@ -56,10 +59,10 @@ public class EnchantmentEditor {
         this.store = store;
         this.index = 0;
         this.enchantments = new ArrayList<>();
-        this.enchantments.add(CFLocale.GUI_SELECT_ONE_ENCHANTMENT);
-        ConfigurationSection eSection = section.getConfigurationSection(store ? "stored-enchantments" : "enchantments");
+        this.enchantments.add("Select one enchantment");
+        Section eSection = section.getSection(store ? "stored-enchantments" : "enchantments");
         if (eSection != null)
-            for (Map.Entry<String, Object> entry : eSection.getValues(false).entrySet()) {
+            for (Map.Entry<String, Object> entry : eSection.getStringRouteMappedValues(false).entrySet()) {
                 this.enchantments.add(entry.getKey() + ":" + entry.getValue());
             }
         reOpen(0);
@@ -91,7 +94,7 @@ public class EnchantmentEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureHelper.getInstance().getComponentFromMiniMessage(store ? CFLocale.GUI_TITLE_STORED_ENCHANTMENT : CFLocale.GUI_TITLE_ENCHANTMENT)
+                        TranslationManager.render(store ? MessageConstants.GUI_PAGE_STORED_ENCHANTMENT_TITLE.build() : MessageConstants.GUI_PAGE_ENCHANTMENT_TITLE.build())
                 ))
                 .addRenameHandler(s -> {
                     if (index == 0) return;
@@ -120,8 +123,8 @@ public class EnchantmentEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.ANVIL).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_ADD_NEW_ENCHANTMENT
+            return new ItemBuilder(Material.ANVIL).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(
+                    MessageConstants.GUI_PAGE_ADD_NEW_ENCHANTMENT.build()
             )));
         }
 
@@ -145,14 +148,11 @@ public class EnchantmentEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.ENCHANTED_BOOK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    line
-            ))).addLoreLines("")
-                    .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_LEFT_CLICK_EDIT
-                    ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_RIGHT_CLICK_DELETE
-                    )));
+            return new ItemBuilder(Material.ENCHANTED_BOOK)
+                    .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage(line)))
+                    .addLoreLines("")
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_LEFT_CLICK_EDIT.build())))
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_RIGHT_CLICK_DELETE.build())));
         }
 
         @Override
@@ -174,30 +174,19 @@ public class EnchantmentEditor {
         public ItemProvider getItemProvider() {
             List<String> subList = enchantments.subList(1, enchantments.size());
             if (subList.isEmpty()) {
-                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_DELETE_PROPERTY
-                )));
+                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_DELETE_PROPERTY.build())));
             } else {
-                var builder = new ItemBuilder(Material.NAME_TAG)
-                        .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                CFLocale.GUI_CLICK_CONFIRM
-                        )));
+                var builder = new ItemBuilder(Material.NAME_TAG).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_CLICK_CONFIRM.build())));
                 for (String enchantment : subList) {
                     String[] split = enchantment.split(":");
                     if (split.length != 3) {
-                        return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                CFLocale.GUI_ILLEGAL_FORMAT
-                        )));
+                        return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_ILLEGAL_FORMAT.build())));
                     }
                     try {
                         Integer.parseInt(split[2]);
-                        builder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                " <gray>-</gray> " + enchantment
-                        )));
+                        builder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage(" <gray>-</gray> " + enchantment)));
                     } catch (NumberFormatException e) {
-                        return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                CFLocale.GUI_ILLEGAL_FORMAT
-                        )));
+                        return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_ILLEGAL_FORMAT.build())));
                     }
                 }
                 return builder;

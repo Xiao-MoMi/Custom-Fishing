@@ -17,10 +17,14 @@
 
 package net.momirealms.customfishing.bukkit.gui.page.property;
 
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
 import net.momirealms.customfishing.bukkit.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -46,7 +50,7 @@ public class ItemFlagEditor {
     private final Player player;
     private final SectionPage parentPage;
     private final List<String> flags;
-    private final ConfigurationSection section;
+    private final Section section;
 
     public ItemFlagEditor(Player player, SectionPage parentPage) {
         this.player = player;
@@ -61,7 +65,7 @@ public class ItemFlagEditor {
                 .setStructure(
                         "# a #"
                 )
-                .addIngredient('a', new ItemBuilder(BukkitCustomFishingPlugin.get().getItemManager().getItemBuilder(section, "item", "id").build(player)))
+                //.addIngredient('a', new ItemBuilder(BukkitCustomFishingPlugin.getInstance().getItemManager().getItemBuilder(section, "item", "id").build(player)))
                 .addIngredient('#', new SimpleItem(new ItemBuilder(Material.AIR)))
                 .build();
 
@@ -81,7 +85,7 @@ public class ItemFlagEditor {
         var window = AnvilWindow.split()
                 .setViewer(player)
                 .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_ITEM_FLAG)
+                        TranslationManager.render(MessageConstants.GUI_PAGE_ITEM_FLAG_TITLE.build())
                 ))
                 .setUpperGui(upperGui)
                 .setLowerGui(gui)
@@ -109,13 +113,9 @@ public class ItemFlagEditor {
         @Override
         public ItemProvider getItemProvider() {
             if (flags.contains(flag)) {
-                return new ItemBuilder(Material.GREEN_BANNER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        "<green>" + flag
-                )));
+                return new ItemBuilder(Material.GREEN_BANNER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage("<green>" + flag)));
             } else {
-                return new ItemBuilder(Material.RED_BANNER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        "<red>" + flag
-                )));
+                return new ItemBuilder(Material.RED_BANNER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage("<red>" + flag)));
             }
         }
 
@@ -126,7 +126,7 @@ public class ItemFlagEditor {
             } else {
                 flags.add(flag);
             }
-            if (flags.size() != 0) {
+            if (!flags.isEmpty()) {
                 section.set("item-flags", flags);
             } else {
                 section.set("item-flags", null);

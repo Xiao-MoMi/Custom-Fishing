@@ -9,6 +9,7 @@ import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.item.CustomFishingItem;
 import net.momirealms.customfishing.api.mechanic.item.ItemManager;
+import net.momirealms.customfishing.bukkit.util.ItemUtils;
 import net.momirealms.customfishing.bukkit.util.LocationUtils;
 import net.momirealms.customfishing.common.item.Item;
 import org.bukkit.Bukkit;
@@ -309,5 +310,10 @@ public class BukkitItemManager implements ItemManager, Listener {
     @Override
     public BukkitItemFactory getFactory() {
         return factory;
+    }
+
+    @Override
+    public ItemProvider[] getItemProviders() {
+        return itemProviders.values().toArray(new ItemProvider[0]);
     }
 }

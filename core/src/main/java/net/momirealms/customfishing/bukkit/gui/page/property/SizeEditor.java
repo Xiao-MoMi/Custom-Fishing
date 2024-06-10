@@ -17,9 +17,13 @@
 
 package net.momirealms.customfishing.bukkit.gui.page.property;
 
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
 import net.momirealms.customfishing.bukkit.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -42,7 +46,7 @@ public class SizeEditor {
     private final SectionPage parentPage;
     private final String[] size;
     private int index;
-    private final ConfigurationSection section;
+    private final Section section;
 
     public SizeEditor(Player player, SectionPage parentPage) {
         this.player = player;
@@ -79,11 +83,9 @@ public class SizeEditor {
 
         var window = AnvilWindow.split()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_SIZE_TITLE)
-                ))
+                .setTitle(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_SIZE_TITLE.build())))
                 .addRenameHandler(s -> {
-                    if (s == null || s.equals("")) {
+                    if (s == null || s.isEmpty()) {
                         size[index] = "0";
                         return;
                     }
@@ -101,9 +103,7 @@ public class SizeEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.IRON_INGOT).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_SIZE_MIN
-            )));
+            return new ItemBuilder(Material.IRON_INGOT).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_SIZE_MIN.build())));
         }
 
         @Override
@@ -117,9 +117,7 @@ public class SizeEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.IRON_BLOCK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_SIZE_MAX
-            )));
+            return new ItemBuilder(Material.IRON_BLOCK).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_SIZE_MAX.build())));
         }
 
         @Override
@@ -134,9 +132,7 @@ public class SizeEditor {
         @Override
         public ItemProvider getItemProvider() {
             if (size[0].equals("0") && size[1].equals("0")) {
-                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_DELETE_PROPERTY
-                )));
+                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_DELETE_PROPERTY.build())));
             } else {
                 try {
                     double min = Double.parseDouble(size[0]);
@@ -144,24 +140,14 @@ public class SizeEditor {
 
                     if (min <= max) {
                         return new ItemBuilder(Material.PUFFERFISH)
-                                .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                        CFLocale.GUI_NEW_VALUE
-                                )))
-                                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                        "<gray> - <white>" + size[0] + "~" + size[1]
-                                )))
-                                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                        CFLocale.GUI_CLICK_CONFIRM
-                                )));
+                                .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_NEW_VALUE.build())))
+                                .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage("<gray> - <white>" + size[0] + "~" + size[1])))
+                                .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_CLICK_CONFIRM.build())));
                     } else {
-                        return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                CFLocale.GUI_SIZE_MAX_NO_LESS
-                        )));
+                        return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_SIZE_MAX_NO_LESS_MIN.build())));
                     }
                 } catch (NumberFormatException e) {
-                    return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_INVALID_NUMBER
-                    )));
+                    return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_INVALID_NUMBER.build())));
                 }
             }
         }

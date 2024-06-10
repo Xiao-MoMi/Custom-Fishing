@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.mechanic.item;
 
 import com.saicone.rtag.RtagItem;
+import net.momirealms.customfishing.api.integration.ItemProvider;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.common.item.ItemFactory;
 import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
@@ -50,4 +51,6 @@ public interface ItemManager extends Reloadable {
     Item dropItemLoot(@NotNull Context<Player> context);
 
     ItemFactory<CustomFishingPlugin, RtagItem, ItemStack> getFactory();
+
+    ItemProvider[] getItemProviders();
 }

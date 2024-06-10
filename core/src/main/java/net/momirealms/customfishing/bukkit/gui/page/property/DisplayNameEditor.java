@@ -17,9 +17,14 @@
 
 package net.momirealms.customfishing.bukkit.gui.page.property;
 
+import dev.dejvokep.boostedyaml.block.implementation.Section;
+import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
 import net.momirealms.customfishing.bukkit.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -40,7 +45,7 @@ public class DisplayNameEditor {
 
     private final SectionPage parentPage;
     private String name;
-    private final ConfigurationSection section;
+    private final Section section;
 
     public DisplayNameEditor(Player player, SectionPage parentPage) {
         this.parentPage = parentPage;
@@ -50,7 +55,12 @@ public class DisplayNameEditor {
         var confirm  = new ConfirmIcon();
         Gui upperGui = Gui.normal()
                 .setStructure("a # b")
-                .addIngredient('a', new ItemBuilder(Material.NAME_TAG).setDisplayName(section.getString("display.name", CFLocale.GUI_NEW_DISPLAY_NAME)))
+                .addIngredient('a', new ItemBuilder(Material.NAME_TAG).setDisplayName(
+                        new ShadedAdventureComponentWrapper(
+                                section.contains("display.name") ?
+                                        Component.text(section.getString("display.name")) : MessageConstants.GUI_PAGE_NEW_DISPLAY_NAME.build()
+                        )
+                ))
                 .addIngredient('#', border)
                 .addIngredient('b', confirm)
                 .build();
@@ -69,9 +79,7 @@ public class DisplayNameEditor {
 
         var window = AnvilWindow.split()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_DISPLAY_NAME)
-                ))
+                .setTitle(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_DISPLAY_NAME_TITLE.build())))
                 .addRenameHandler(s -> {
                     name = s;
                     confirm.notifyWindows();
@@ -88,16 +96,14 @@ public class DisplayNameEditor {
         @Override
         public ItemProvider getItemProvider() {
             if (name == null || name.isEmpty()) {
-                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_DELETE_PROPERTY
-                )));
+                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_DELETE_PROPERTY.build())));
             } else {
                 return new ItemBuilder(Material.NAME_TAG)
-                        .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                              "<!i>" + name
+                        .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage(
+                                "<!i>" + name
                         )))
-                        .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                CFLocale.GUI_CLICK_CONFIRM
+                        .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(
+                                MessageConstants.GUI_CLICK_CONFIRM.build()
                         )));
             }
         }

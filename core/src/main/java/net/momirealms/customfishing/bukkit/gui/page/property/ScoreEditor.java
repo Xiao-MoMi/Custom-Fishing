@@ -17,9 +17,13 @@
 
 package net.momirealms.customfishing.bukkit.gui.page.property;
 
+import dev.dejvokep.boostedyaml.block.implementation.Section;
+import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
 import net.momirealms.customfishing.bukkit.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -40,7 +44,7 @@ public class ScoreEditor {
 
     private final SectionPage parentPage;
     private String score;
-    private final ConfigurationSection section;
+    private final Section section;
 
     public ScoreEditor(Player player, SectionPage parentPage) {
         this.parentPage = parentPage;
@@ -50,7 +54,7 @@ public class ScoreEditor {
         var confirm  = new ConfirmIcon();
         Gui upperGui = Gui.normal()
                 .setStructure("a # b")
-                .addIngredient('a', new ItemBuilder(Material.NETHER_STAR).setDisplayName(String.valueOf(section.getDouble("score", 0))))
+                .addIngredient('a', new ItemBuilder(Material.NETHER_STAR).setDisplayName(String.valueOf(section.getDouble("score", 0d))))
                 .addIngredient('#', border)
                 .addIngredient('b', confirm)
                 .build();
@@ -69,9 +73,7 @@ public class ScoreEditor {
 
         var window = AnvilWindow.split()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_SCORE_TITLE)
-                ))
+                .setTitle(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_SCORE_TITLE.build())))
                 .addRenameHandler(s -> {
                     score = s;
                     confirm.notifyWindows();
@@ -88,23 +90,15 @@ public class ScoreEditor {
         @Override
         public ItemProvider getItemProvider() {
             if (score == null || score.isEmpty()) {
-                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_DELETE_PROPERTY
-                )));
+                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_DELETE_PROPERTY.build())));
             } else {
                 try {
                     Double.parseDouble(score);
                     return new ItemBuilder(Material.NETHER_STAR)
-                            .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                  CFLocale.GUI_NEW_VALUE + score
-                            )))
-                            .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                    CFLocale.GUI_CLICK_CONFIRM
-                            )));
+                            .setDisplayName(new ShadedAdventureComponentWrapper((MessageConstants.GUI_NEW_VALUE.arguments(Component.text(score)).build())))
+                            .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_CLICK_CONFIRM.build())));
                 } catch (NumberFormatException e) {
-                    return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_INVALID_NUMBER
-                    )));
+                    return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_INVALID_NUMBER.build())));
                 }
             }
         }

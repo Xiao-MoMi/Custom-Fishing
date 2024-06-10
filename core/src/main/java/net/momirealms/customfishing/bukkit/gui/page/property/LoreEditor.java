@@ -17,9 +17,13 @@
 
 package net.momirealms.customfishing.bukkit.gui.page.property;
 
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
 import net.momirealms.customfishing.bukkit.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -44,7 +48,7 @@ public class LoreEditor {
     private final Player player;
     private final SectionPage parentPage;
     private final ArrayList<String> lore;
-    private final ConfigurationSection section;
+    private final Section section;
     private int index;
 
     public LoreEditor(Player player, SectionPage parentPage) {
@@ -53,7 +57,7 @@ public class LoreEditor {
         this.section = parentPage.getSection();
         this.index = 0;
         this.lore = new ArrayList<>(section.getStringList("display.lore"));
-        this.lore.add(0, CFLocale.GUI_SELECT_ONE_LORE);
+        this.lore.add(0, "Select one lore");
         reOpen(0);
     }
 
@@ -82,9 +86,7 @@ public class LoreEditor {
 
         var window = AnvilWindow.split()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_LORE)
-                ))
+                .setTitle(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_LORE_TITLE.build())))
                 .addRenameHandler(s -> {
                     if (index == 0) return;
                     lore.set(index, s);
@@ -112,9 +114,7 @@ public class LoreEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.ANVIL).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_ADD_NEW_LORE
-            )));
+            return new ItemBuilder(Material.ANVIL).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_ADD_NEW_LORE.build())));
         }
 
         @Override
@@ -137,14 +137,10 @@ public class LoreEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.PAPER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    line
-            ))).addLoreLines("")
-                    .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_LEFT_CLICK_EDIT
-                    ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_RIGHT_CLICK_DELETE
-                    )));
+            return new ItemBuilder(Material.PAPER)
+                    .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage(line))).addLoreLines("")
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_LEFT_CLICK_EDIT.build())))
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_RIGHT_CLICK_DELETE.build())));
         }
 
         @Override
@@ -166,18 +162,12 @@ public class LoreEditor {
         public ItemProvider getItemProvider() {
             List<String> subList = lore.subList(1, lore.size());
             if (subList.isEmpty()) {
-                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_DELETE_PROPERTY
-                )));
+                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_DELETE_PROPERTY.build())));
             } else {
                 var builder = new ItemBuilder(Material.NAME_TAG)
-                        .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                CFLocale.GUI_CLICK_CONFIRM
-                        )));
+                        .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_CLICK_CONFIRM.build())));
                 for (String lore : subList) {
-                    builder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            " <gray>-</gray> " + lore
-                    )));
+                    builder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage(" <gray>-</gray> " + lore)));
                 }
                 return builder;
             }

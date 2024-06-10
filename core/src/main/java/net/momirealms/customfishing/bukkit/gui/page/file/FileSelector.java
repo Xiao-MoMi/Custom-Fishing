@@ -23,6 +23,7 @@ import net.momirealms.customfishing.bukkit.gui.icon.BackToFolderItem;
 import net.momirealms.customfishing.bukkit.gui.icon.ScrollDownItem;
 import net.momirealms.customfishing.bukkit.gui.icon.ScrollUpItem;
 import net.momirealms.customfishing.bukkit.gui.page.item.ItemSelector;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
@@ -98,7 +99,7 @@ public class FileSelector {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.PAPER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
+            return new ItemBuilder(Material.PAPER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage(
                     "<#FDF5E6>" + file.getName()
             )));
         }
@@ -126,7 +127,7 @@ public class FileSelector {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.BOOK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
+            return new ItemBuilder(Material.BOOK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage(
                     "<#D2B48C><b>" + file.getName()
             )));
         }

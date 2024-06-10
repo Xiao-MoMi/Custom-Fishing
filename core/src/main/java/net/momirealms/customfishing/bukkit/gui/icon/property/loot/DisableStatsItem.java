@@ -41,16 +41,15 @@ public class DisableStatsItem extends AbstractItem {
 
     @Override
     public ItemProvider getItemProvider() {
-        ItemBuilder itemBuilder = new ItemBuilder(Material.WRITTEN_BOOK)
-                .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_LOOT_DISABLE_STATISTICS.build())));
-        itemBuilder.addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(
+        return new ItemBuilder(Material.WRITTEN_BOOK)
+                .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_LOOT_DISABLE_STATISTICS.build())))
+                .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(
                         MessageConstants.GUI_CURRENT_VALUE.arguments(
                                 Component.text(itemPage.getSection().getBoolean("disable-stat", false))
                         ).build()
                 )))
                 .addLoreLines("")
                 .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_CLICK_TO_TOGGLE.build())));
-        return itemBuilder;
     }
 
     @Override

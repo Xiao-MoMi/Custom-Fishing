@@ -17,11 +17,15 @@
 
 package net.momirealms.customfishing.bukkit.gui.page.property;
 
+import dev.dejvokep.boostedyaml.block.implementation.Section;
+import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
 import net.momirealms.customfishing.bukkit.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -43,15 +47,15 @@ public class NBTEditor {
 
     private final Player player;
     private final SectionPage parentPage;
-    private ConfigurationSection nbtSection;
-    private ConfigurationSection currentSection;
+    private Section nbtSection;
+    private Section currentSection;
     private String value;
     private String currentNode;
 
     public NBTEditor(Player player, SectionPage parentPage) {
         this.player = player;
         this.parentPage = parentPage;
-        this.nbtSection = parentPage.getSection().getConfigurationSection("nbt");
+        this.nbtSection = parentPage.getSection().getSection("nbt");
         if (this.nbtSection == null)
             this.nbtSection = parentPage.getSection().createSection("nbt");
         this.currentSection = nbtSection;
@@ -61,13 +65,13 @@ public class NBTEditor {
 
     public List<Item> getNBTContents() {
         Deque<Item> deque = new ArrayDeque<>();
-        for (Map.Entry<String, Object> entry : currentSection.getValues(false).entrySet()) {
+        for (Map.Entry<String, Object> entry : currentSection.getStringRouteMappedValues(false).entrySet()) {
             String path = Objects.equals(currentNode, "") ? entry.getKey() : currentNode + "." + entry.getKey();
             if (entry.getValue() instanceof List<?> list) {
                 deque.addLast(new InvListIcon(path));
             } else if (entry.getValue() instanceof String str) {
                 deque.addLast(new InvValueIcon(path, str));
-            } else if (entry.getValue() instanceof ConfigurationSection inner) {
+            } else if (entry.getValue() instanceof Section inner) {
                 deque.addFirst(new InvCompoundIcon(path, inner));
             } else if (entry.getValue() instanceof Map<?,?> map) {
                 deque.addLast(new InvMapIcon(path));
@@ -104,7 +108,7 @@ public class NBTEditor {
 
         var window = AnvilWindow.split()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_NBT_EDIT_TITLE)))
+                .setTitle(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_NBT_EDIT_TITLE.build())))
                 .setUpperGui(upperGui)
                 .setLowerGui(gui)
                 .build();
@@ -138,9 +142,7 @@ public class NBTEditor {
 
         var window = AnvilWindow.split()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_NBT_COMPOUND)
-                ))
+                .setTitle(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_NBT_COMPOUND_KEY_TITLE.build())))
                 .addRenameHandler(s -> {
                     value = s;
                     confirm.notifyWindows();
@@ -178,9 +180,7 @@ public class NBTEditor {
 
         var window = AnvilWindow.split()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_NBT_LIST)
-                ))
+                .setTitle(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_NBT_LIST_KEY_TITLE.build())))
                 .addRenameHandler(s -> {
                     value = s;
                     confirm.notifyWindows();
@@ -218,7 +218,7 @@ public class NBTEditor {
 
         var window = AnvilWindow.split()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_TITLE_NBT_KEY)))
+                .setTitle(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_NBT_KEY_TITLE.build())))
                 .addRenameHandler(s -> {
                     value = s;
                     confirm.notifyWindows();
@@ -256,9 +256,7 @@ public class NBTEditor {
 
         var window = AnvilWindow.split()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_NBT_SET_VALUE_TITLE)
-                ))
+                .setTitle(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_NBT_SET_VALUE_TITLE.build())))
                 .addRenameHandler(s -> {
                     value = s;
                     save.notifyWindows();
@@ -308,9 +306,7 @@ public class NBTEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.BELL).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    "(" + type + ") " + tip
-            )));
+            return new ItemBuilder(Material.BELL).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage("(" + type + ") " + tip)));
         }
 
         @Override
@@ -323,25 +319,20 @@ public class NBTEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            if (value == null || value.equals("") || value.contains(".") || currentSection.contains(value)) {
-                return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_NBT_INVALID_KEY
-                )));
+            if (value == null || value.isEmpty() || value.contains(".") || currentSection.contains(value)) {
+                return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_NBT_INVALID_KEY.build())));
             }
 
-            return new ItemBuilder(Material.COMMAND_BLOCK_MINECART).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_NEW_VALUE + value
-            ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_CLICK_CONFIRM
-            ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_RIGHT_CLICK_CANCEL
-            )));
+            return new ItemBuilder(Material.COMMAND_BLOCK_MINECART)
+                    .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_NEW_VALUE.arguments(Component.text(value)).build())))
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_CLICK_CONFIRM.build())))
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_RIGHT_CLICK_CANCEL.build())));
         }
 
         @Override
         public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
             if (clickType.isLeftClick()) {
-                if (value == null || value.equals("") || value.contains(".")) {
+                if (value == null || value.isEmpty() || value.contains(".")) {
                     return;
                 }
                 if (currentSection.contains(value)) {
@@ -358,24 +349,19 @@ public class NBTEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            if (value == null || value.equals("") || value.contains(".") || currentSection.contains(value)) {
-                return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_NBT_INVALID_KEY
-                )));
+            if (value == null || value.isEmpty() || value.contains(".") || currentSection.contains(value)) {
+                return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_NBT_INVALID_KEY.build())));
             }
-            return new ItemBuilder(Material.CHAIN_COMMAND_BLOCK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_NEW_VALUE + value
-            ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_CLICK_CONFIRM
-            ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_RIGHT_CLICK_CANCEL
-            )));
+            return new ItemBuilder(Material.CHAIN_COMMAND_BLOCK)
+                    .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_NEW_VALUE.arguments(Component.text(value)).build())))
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_CLICK_CONFIRM.build())))
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_RIGHT_CLICK_CANCEL.build())));
         }
 
         @Override
         public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
             if (clickType.isLeftClick()) {
-                if (value == null || value.equals("") || value.contains(".")) {
+                if (value == null || value.isEmpty() || value.contains(".")) {
                     return;
                 }
                 if (currentSection.contains(value)) {
@@ -392,25 +378,20 @@ public class NBTEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            if (value == null || value.equals("") || value.contains(".") || currentSection.contains(value)) {
-                return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_NBT_INVALID_KEY
-                )));
+            if (value == null || value.isEmpty() || value.contains(".") || currentSection.contains(value)) {
+                return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_NBT_INVALID_KEY.build())));
             }
 
-            return new ItemBuilder(Material.COMMAND_BLOCK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_NEW_VALUE + value
-            ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_CLICK_CONFIRM
-            ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_RIGHT_CLICK_CANCEL
-            )));
+            return new ItemBuilder(Material.COMMAND_BLOCK)
+                    .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_NEW_VALUE.arguments(Component.text(value)).build())))
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_CLICK_CONFIRM.build())))
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_RIGHT_CLICK_CANCEL.build())));
         }
 
         @Override
         public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
             if (clickType.isLeftClick()) {
-                if (value == null || value.equals("") || value.contains(".")) {
+                if (value == null || value.isEmpty() || value.contains(".")) {
                     return;
                 }
                 if (currentSection.contains(value)) {
@@ -427,9 +408,7 @@ public class NBTEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.OAK_SIGN).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_NBT_ADD_COMPOUND
-            )));
+            return new ItemBuilder(Material.OAK_SIGN).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_NBT_ADD_NEW_COMPOUND.build())));
         }
 
         @Override
@@ -442,9 +421,7 @@ public class NBTEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.SPRUCE_SIGN).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_NBT_ADD_LIST
-            )));
+            return new ItemBuilder(Material.SPRUCE_SIGN).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_NBT_ADD_NEW_LIST.build())));
         }
 
         @Override
@@ -457,9 +434,7 @@ public class NBTEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.ACACIA_SIGN).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_NBT_ADD_VALUE
-            )));
+            return new ItemBuilder(Material.ACACIA_SIGN).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_NBT_ADD_NEW_VALUE.build())));
         }
 
         @Override
@@ -471,9 +446,9 @@ public class NBTEditor {
     public class InvCompoundIcon extends AbstractItem {
 
         private final String node;
-        private final ConfigurationSection compound;
+        private final Section compound;
 
-        public InvCompoundIcon(String node, ConfigurationSection compound) {
+        public InvCompoundIcon(String node, Section compound) {
             this.compound = compound;
             this.node = node;
         }
@@ -481,14 +456,11 @@ public class NBTEditor {
         @Override
         public ItemProvider getItemProvider() {
             String[] splits = node.split("\\.");
-            return new ItemBuilder(Material.COMMAND_BLOCK_MINECART).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            "Compound: " + splits[splits.length -1]
-                    ))).addLoreLines("")
-                    .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_LEFT_CLICK_EDIT
-                    ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_RIGHT_CLICK_DELETE
-                    )));
+            return new ItemBuilder(Material.COMMAND_BLOCK_MINECART)
+                    .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage("Compound: " + splits[splits.length -1])))
+                    .addLoreLines("")
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_LEFT_CLICK_EDIT.build())))
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_RIGHT_CLICK_DELETE.build())));
         }
 
         @Override
@@ -516,22 +488,18 @@ public class NBTEditor {
         @Override
         public ItemProvider getItemProvider() {
             String[] splits = node.split("\\.");
-            return new ItemBuilder(Material.REPEATING_COMMAND_BLOCK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            splits[splits.length -1] + ": " + value
-                    )))
+            return new ItemBuilder(Material.REPEATING_COMMAND_BLOCK)
+                    .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage(splits[splits.length -1] + ": " + value)))
                     .addLoreLines("")
-                    .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_LEFT_CLICK_EDIT
-                    ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_RIGHT_CLICK_DELETE
-                    )));
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_LEFT_CLICK_EDIT.build())))
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_RIGHT_CLICK_DELETE.build())));
         }
 
         @Override
         public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
             String[] split = node.split("\\.");
             if (clickType.isLeftClick()) {
-                reOpenSetValue(split[split.length-1], NBTUtils.getTypeAndData(value)[0]);
+                //reOpenSetValue(split[split.length-1], NBTUtils.getTypeAndData(value)[0]);
             } else if (clickType.isRightClick()) {
                 removeByNode(node);
                 reOpenMain();
@@ -550,15 +518,11 @@ public class NBTEditor {
         @Override
         public ItemProvider getItemProvider() {
             String[] splits = node.split("\\.");
-            return new ItemBuilder(Material.CHAIN_COMMAND_BLOCK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            "List: " + splits[splits.length -1]
-                    )))
+            return new ItemBuilder(Material.CHAIN_COMMAND_BLOCK)
+                    .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage("List: " + splits[splits.length -1])))
                     .addLoreLines("")
-                    .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            "<st>" + CFLocale.GUI_LEFT_CLICK_EDIT + "</st>"
-                    ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_RIGHT_CLICK_DELETE
-                    )));
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_LEFT_CLICK_EDIT.build())))
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_RIGHT_CLICK_DELETE.build())));
         }
 
         @Override
@@ -581,15 +545,11 @@ public class NBTEditor {
         @Override
         public ItemProvider getItemProvider() {
             String[] splits = node.split("\\.");
-            return new ItemBuilder(Material.COMMAND_BLOCK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            "Map: " + splits[splits.length -1]
-                    )))
+            return new ItemBuilder(Material.COMMAND_BLOCK)
+                    .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage("Map: " + splits[splits.length -1])))
                     .addLoreLines("")
-                    .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            "<st>" + CFLocale.GUI_LEFT_CLICK_EDIT + "</st>"
-                    ))).addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_RIGHT_CLICK_DELETE
-                    )));
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_LEFT_CLICK_EDIT.build())))
+                    .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_RIGHT_CLICK_DELETE.build())));
         }
 
         @Override
@@ -612,18 +572,14 @@ public class NBTEditor {
         @Override
         public ItemProvider getItemProvider() {
             try {
-                NBTUtils.getTypeAndData(value);
+                //NBTUtils.getTypeAndData(value);
                 return new ItemBuilder(Material.COMMAND_BLOCK)
                         .setDisplayName(value)
-                        .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                CFLocale.GUI_CLICK_CONFIRM
-                        )))
-                        .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                CFLocale.GUI_RIGHT_CLICK_CANCEL
-                        )));
+                        .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_CLICK_CONFIRM.build())))
+                        .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_RIGHT_CLICK_CANCEL.build())));
             } catch (IllegalArgumentException e) {
-                return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_ILLEGAL_FORMAT
+                return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(
+                        MessageConstants.GUI_ILLEGAL_FORMAT.build()
                 )));
             }
         }
@@ -632,7 +588,7 @@ public class NBTEditor {
         public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
             if (clickType == ClickType.LEFT) {
                 try {
-                    NBTUtils.getTypeAndData(value);
+                    //NBTUtils.getTypeAndData(value);
                     currentSection.set(key, value);
                     parentPage.save();
                     reOpenMain();
@@ -649,26 +605,20 @@ public class NBTEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            if (nbtSection.getValues(false).size() > 0) {
-                var builder = new ItemBuilder(Material.ACACIA_SIGN).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_NBT_PREVIEW
-                )));
-                for (String line : ConfigUtils.getReadableSection(nbtSection.getValues(false))) {
-                    builder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            line
-                    )));
-                }
+            if (!nbtSection.getStringRouteMappedValues(false).isEmpty()) {
+                var builder = new ItemBuilder(Material.ACACIA_SIGN).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_NBT_PREVIEW.build())));
+//                for (String line : ConfigUtils.getReadableSection(nbtSection.getValues(false))) {
+//                    builder.addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.miniMessage(line)));
+//                }
                 return builder;
             } else {
-                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_DELETE_PROPERTY
-                )));
+                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_DELETE_PROPERTY.build())));
             }
         }
 
         @Override
         public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
-            if (nbtSection.getValues(false).size() == 0) {
+            if (nbtSection.getStringRouteMappedValues(false).isEmpty()) {
                 Objects.requireNonNull(nbtSection.getParent()).set("nbt", null);
             }
             parentPage.save();
@@ -680,9 +630,7 @@ public class NBTEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.MINECART).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_NBT_BACK_TO_COMPOUND
-            )));
+            return new ItemBuilder(Material.MINECART).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_NBT_BACK_TO_COMPOUND.build())));
         }
 
         @Override

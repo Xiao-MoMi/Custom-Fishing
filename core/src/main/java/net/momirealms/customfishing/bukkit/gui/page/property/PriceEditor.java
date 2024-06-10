@@ -17,9 +17,13 @@
 
 package net.momirealms.customfishing.bukkit.gui.page.property;
 
+import dev.dejvokep.boostedyaml.block.implementation.Section;
+import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.bukkit.adventure.ShadedAdventureComponentWrapper;
 import net.momirealms.customfishing.bukkit.gui.SectionPage;
 import net.momirealms.customfishing.bukkit.gui.icon.BackGroundItem;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -42,7 +46,7 @@ public class PriceEditor {
     private final SectionPage parentPage;
     private final String[] price;
     private int index;
-    private final ConfigurationSection section;
+    private final Section section;
 
     public PriceEditor(Player player, SectionPage parentPage) {
         this.player = player;
@@ -79,11 +83,9 @@ public class PriceEditor {
 
         var window = AnvilWindow.split()
                 .setViewer(player)
-                .setTitle(new ShadedAdventureComponentWrapper(
-                        AdventureHelper.getInstance().getComponentFromMiniMessage(CFLocale.GUI_PRICE_TITLE)
-                ))
+                .setTitle(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_PAGE_PRICE_TITLE.build())))
                 .addRenameHandler(s -> {
-                    if (s == null || s.equals("")) {
+                    if (s == null || s.isEmpty()) {
                         price[index] = "0";
                         return;
                     }
@@ -101,9 +103,7 @@ public class PriceEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.GOLD_BLOCK).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_PRICE_BASE
-            )));
+            return new ItemBuilder(Material.GOLD_BLOCK).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_ITEM_PRICE_BASE.build())));
         }
 
         @Override
@@ -117,9 +117,7 @@ public class PriceEditor {
 
         @Override
         public ItemProvider getItemProvider() {
-            return new ItemBuilder(Material.GOLD_NUGGET).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                    CFLocale.GUI_PRICE_BONUS
-            )));
+            return new ItemBuilder(Material.GOLD_NUGGET).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_ITEM_PRICE_BONUS.build())));
         }
 
         @Override
@@ -134,30 +132,18 @@ public class PriceEditor {
         @Override
         public ItemProvider getItemProvider() {
             if (price[0].equals("0") && price[1].equals("0")) {
-                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                        CFLocale.GUI_DELETE_PROPERTY
-                )));
+                return new ItemBuilder(Material.STRUCTURE_VOID).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_DELETE_PROPERTY.build())));
             } else {
                 try {
                     Double.parseDouble(price[0]);
                     Double.parseDouble(price[1]);
                     return new ItemBuilder(Material.GOLD_INGOT)
-                            .setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                  CFLocale.GUI_NEW_VALUE
-                            )))
-                            .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                    CFLocale.GUI_ITEM_PRICE_BASE + price[0]
-                            )))
-                            .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                    CFLocale.GUI_ITEM_PRICE_BONUS + price[1]
-                            )))
-                            .addLoreLines(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                                    CFLocale.GUI_CLICK_CONFIRM
-                            )));
+                            .setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_NEW_VALUE.build())))
+                            .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_ITEM_PRICE_BASE.arguments(Component.text(price[0])).build())))
+                            .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_ITEM_PRICE_BONUS.arguments(Component.text(price[1])).build())))
+                            .addLoreLines(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_CLICK_CONFIRM.build())));
                 } catch (NumberFormatException e) {
-                    return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            CFLocale.GUI_INVALID_NUMBER
-                    )));
+                    return new ItemBuilder(Material.BARRIER).setDisplayName(new ShadedAdventureComponentWrapper(TranslationManager.render(MessageConstants.GUI_INVALID_NUMBER.build())));
                 }
             }
         }

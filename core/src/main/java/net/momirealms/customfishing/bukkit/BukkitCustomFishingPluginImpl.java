@@ -71,7 +71,6 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.bagManager = new BukkitBagManager(this);
         this.dependencyManager = new DependencyManagerImpl(this);
         this.translationManager = new TranslationManager(this);
-
         this.chatCatcherManager = new ChatCatcherManager(this);
     }
 
