@@ -19,16 +19,51 @@ sellfish:
   usage:
     - /sellfish
 
-getitem:
+get_item:
   enable: true
   permission: customfishing.command.getitem
   usage:
     - /customfishing items get
     - /cfishing items get
 
-giveitem:
+give_item:
   enable: true
   permission: customfishing.command.giveitem
   usage:
     - /customfishing items give
     - /cfishing items give
+
+stop_competition:
+  enable: true
+  permission: customfishing.command.competition
+  usage:
+    - /customfishing competition stop
+    - /cfishing competition stop
+
+end_competition:
+  enable: true
+  permission: customfishing.command.competition
+  usage:
+    - /customfishing competition end
+    - /cfishing competition end
+
+start_competition:
+  enable: true
+  permission: customfishing.command.competition
+  usage:
+    - /customfishing competition start
+    - /cfishing competition start
+
+open_market:
+  enable: true
+  permission: customfishing.command.open.market
+  usage:
+    - /customfishing open market
+    - /cfishing open market
+
+open_bag:
+  enable: true
+  permission: customfishing.command.open.bag
+  usage:
+    - /customfishing open bag
+    - /cfishing open bag

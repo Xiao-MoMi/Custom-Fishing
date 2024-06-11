@@ -44,6 +44,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.Objects.requireNonNull;
+
 public class BukkitCompetitionManager implements CompetitionManager {
 
     private final BukkitCustomFishingPlugin plugin;
@@ -216,7 +218,6 @@ public class BukkitCompetitionManager implements CompetitionManager {
     public boolean startCompetition(String competition, boolean force, String serverGroup) {
         CompetitionConfig config = commandConfigMap.get(competition);
         if (config == null) {
-            plugin.getPluginLogger().warn("Competition " + competition + " doesn't exist.");
             return false;
         }
         return startCompetition(config, force, serverGroup);
@@ -290,5 +291,10 @@ public class BukkitCompetitionManager implements CompetitionManager {
     @Override
     public CompetitionConfig getCompetition(String key) {
         return commandConfigMap.get(key);
+    }
+
+    @Override
+    public Collection<String> getCompetitionIDs() {
+        return commandConfigMap.keySet();
     }
 }

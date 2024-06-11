@@ -113,8 +113,6 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
                 else this.getPluginLogger().warn("Update is available: https://polymart.org/resource/2723");
             });
         }
-
-        this.integrationManager.load();
     }
 
     @Override

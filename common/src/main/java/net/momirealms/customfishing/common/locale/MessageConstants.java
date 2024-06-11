@@ -15,11 +15,12 @@ public interface MessageConstants {
     TranslatableComponent.Builder COMMAND_FISH_FINDER_SPLIT_CHAR = Component.translatable().key("command.fish_finder.split_char");
     TranslatableComponent.Builder COMMAND_COMPETITION_FAILURE_NOT_EXIST = Component.translatable().key("command.competition.failure.not_exist");
     TranslatableComponent.Builder COMMAND_COMPETITION_FAILURE_NO_COMPETITION = Component.translatable().key("command.competition.failure.no_competition");
-    TranslatableComponent.Builder COMMAND_COMPETITION_FAILURE_STOP_SUCCESS = Component.translatable().key("command.competition.failure.stop.success");
-    TranslatableComponent.Builder COMMAND_COMPETITION_FAILURE_END_SUCCESS = Component.translatable().key("command.competition.failure.end.success");
+    TranslatableComponent.Builder COMMAND_COMPETITION_START_SUCCESS = Component.translatable().key("command.competition.start.success");
+    TranslatableComponent.Builder COMMAND_COMPETITION_STOP_SUCCESS = Component.translatable().key("command.competition.stop.success");
+    TranslatableComponent.Builder COMMAND_COMPETITION_END_SUCCESS = Component.translatable().key("command.competition.end.success");
     TranslatableComponent.Builder COMMAND_BAG_EDIT_FAILURE_UNSAFE = Component.translatable().key("command.bag.edit.failure.unsafe");
     TranslatableComponent.Builder COMMAND_BAG_EDIT_FAILURE_NEVER_PLAYED = Component.translatable().key("command.bag.edit.failure.never_played");
-    TranslatableComponent.Builder COMMAND_BAG_OPEN_SUCCESS = Component.translatable().key("command.bag.edit.open.success");
+    TranslatableComponent.Builder COMMAND_BAG_OPEN_SUCCESS = Component.translatable().key("command.bag.open.success");
     TranslatableComponent.Builder COMMAND_DATA_FAILURE_NOT_LOAD = Component.translatable().key("command.data.failure.not_load");
     TranslatableComponent.Builder COMMAND_MARKET_OPEN_SUCCESS = Component.translatable().key("command.market.open.success");
     TranslatableComponent.Builder GUI_SELECT_FILE = Component.translatable().key("gui.select_file");

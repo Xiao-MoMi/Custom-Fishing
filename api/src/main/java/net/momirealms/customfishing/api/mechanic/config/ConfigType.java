@@ -98,10 +98,14 @@ public class ConfigType {
     }
 
     private final String path;
-    private final TriConsumer<String, Section, Map<String, Node<ConfigParserFunction>>> argumentConsumer;
+    private TriConsumer<String, Section, Map<String, Node<ConfigParserFunction>>> argumentConsumer;
 
     public ConfigType(String path, TriConsumer<String, Section, Map<String, Node<ConfigParserFunction>>> argumentConsumer) {
         this.path = path;
+        this.argumentConsumer = argumentConsumer;
+    }
+
+    public void argumentConsumer(TriConsumer<String, Section, Map<String, Node<ConfigParserFunction>>> argumentConsumer) {
         this.argumentConsumer = argumentConsumer;
     }
 

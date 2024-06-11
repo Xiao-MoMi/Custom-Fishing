@@ -32,8 +32,10 @@ public class ContextKeys<T> {
     public static final ContextKeys<String> ID = of("id", String.class);
     public static final ContextKeys<Boolean> OPEN_WATER = of("open_water", Boolean.class);
     public static final ContextKeys<String> TYPE = of("type", String.class);
-    public static final ContextKeys<Float> SIZE = of("size", Float.class);
-    public static final ContextKeys<Double> PRICE = of("price", Double.class);
+    public static final ContextKeys<Float> SIZE = of("SIZE", Float.class);
+    public static final ContextKeys<String> SIZE_FORMATTED = of("size", String.class);
+    public static final ContextKeys<Double> PRICE = of("PRICE", Double.class);
+    public static final ContextKeys<String> PRICE_FORMATTED = of("price", String.class);
     public static final ContextKeys<String> SURROUNDING = of("surrounding", String.class);
     public static final ContextKeys<String> TEMP_NEAR_PLAYER = of("near", String.class);
     public static final ContextKeys<String> ROD = of("rod", String.class);

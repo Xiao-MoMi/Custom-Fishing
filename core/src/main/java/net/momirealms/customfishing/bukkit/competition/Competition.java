@@ -67,10 +67,7 @@ public class Competition implements FishingCompetition {
         if (ConfigManager.redisRanking()) this.rankingProvider = new RedisRankingProvider();
                               else this.rankingProvider = new LocalRankingProvider();
         this.publicContext = Context.player(null, true);
-        this.publicContext.arg(
-                ContextKeys.GOAL,
-                goal
-        );
+        this.publicContext.arg(ContextKeys.GOAL, goal);
     }
 
     @Override

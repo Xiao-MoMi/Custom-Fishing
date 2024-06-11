@@ -59,11 +59,13 @@ public class BukkitIntegrationManager implements IntegrationManager {
         this.load();
     }
 
+    @Override
     public void disable() {
         this.enchantmentProviders.clear();
         this.levelerProviders.clear();
     }
 
+    @Override
     public void load() {
         if (isHooked("ItemsAdder")) {
             registerItemProvider(new ItemsAdderItemProvider());

@@ -1,17 +1,12 @@
+# Don"t change this
 config-version: '${config_version}'
 
 # Debug
 debug: false
-
 # BStats
 metrics: true
-
 # Check updates
 update-checker: true
-
-# Language
-# https://github.com/Xiao-MoMi/Custom-Fishing/tree/main/plugin/src/main/resources/messages
-lang: en
 
 # Mechanic settings
 mechanics:
@@ -23,7 +18,6 @@ mechanics:
       type: '!world'
       value:
         - blacklist_world
-
   # Configures global effects. This is useful if you want to give all the players certain effects based on certain conditions
   global-effects:
     effect_1:
@@ -156,7 +150,6 @@ mechanics:
     # Other whitelist-items
     whitelist-items:
       - fishing_rod
-
     # Can fishing bag store fishing loots?
     can-store-loot: false
     # Requirements for automatically collecting
@@ -193,31 +186,178 @@ mechanics:
             message_action:
               type: message
               value: "<#EEE8AA>[Fishing Bag]</#EEE8AA> Your fishing bag has been full."
-
-  # Fishing wait time
+  market:
+    # Market GUI title
+    title: '<gradient:#A52A2A:#800000:#A52A2A>Fish Market</gradient>'
+    # Whether to enable limitations
+    limitation:
+      enable: true
+      earnings: '10000' # You can use expressions here
+    # Market menu layout
+    layout:
+      - 'AAAAAAAAA'
+      - 'AIIIIIIIA'
+      - 'AIIIIIIIA'
+      - 'AIIIIIIIA'
+      - 'AAAABAAAA'
+    # Price formula (For CustomFishing loots)
+    price-formula: '{BASE} + {BONUS} * {SIZE}'
+    # Allow player to sell fish in bundles
+    allow-bundle: true
+    # Allow player to sell fish in shulker boxes
+    allow-shulker-box: true
+    # Item price (For vanilla items & other plugin items that have CustomModelData)
+    item-price:
+      # Vanilla Items
+      COD: 10
+      PUFFERFISH: 10
+      SALMON: 10
+      TROPICAL_FISH: 10
+      # PAPER (CustomModelData: 999)
+      PAPER:999: 5
+    # Slots to put items in
+    item-slot:
+      symbol: 'I'
+      allow-items-with-no-price: true
+    # This is an icon that allows players to sell all the fish from their inventory and fishingbag
+    # You can enable it by putting the symbol into layout
+    sell-all-icons:
+      symbol: 'S'
+      # Should the fish in fishing bag be sold
+      fishingbag: true
+      allow-icon:
+        material: IRON_BLOCK
+        display:
+          name: '<#00CED1><b>● <!b>Ship the fish'
+          lore:
+            - '<font:uniform><gradient:#E6E6FA:#48D1CC:#E6E6FA>You will get <green>{money_formatted} coins</green> from the fish in inventory and bag</gradient></font>'
+        action:
+          sound_action:
+            type: sound
+            value:
+              key: 'minecraft:block.amethyst_block.place'
+              source: 'player'
+              volume: 1
+              pitch: 1
+          message_action:
+            type: message
+            value: 'You earned {money_formatted} coins from the fish! You can get {rest_formatted} more coins from market today'
+          command_action:
+            type: command
+            value: 'money give {player} {money}'
+      # Requires Vault and any economy plugin
+      #      money_action:
+      #        type: give-money
+      #        value: '{money}'
+      deny-icon:
+        material: REDSTONE_BLOCK
+        display:
+          name: '<red><b>● <!b>Denied trade'
+          lore:
+            - '<font:uniform><gradient:#E6E6FA:red:#E6E6FA>Nothing to sell!</gradient></font>'
+        action:
+          sound_action:
+            type: sound
+            value:
+              key: 'minecraft:entity.villager.no'
+              source: 'player'
+              volume: 1
+              pitch: 1
+      limit-icon:
+        material: REDSTONE_BLOCK
+        display:
+          name: '<red><b>● <!b>Denied trade'
+          lore:
+            - '<font:uniform><gradient:#E6E6FA:red:#E6E6FA>The worth of items exceeds the money that can be earned for the rest of today!</gradient></font>'
+        action:
+          sound_action:
+            type: sound
+            value:
+              key: 'minecraft:block.anvil.land'
+              source: 'player'
+              volume: 1
+              pitch: 1
+    # Sell icon
+    sell-icons:
+      symbol: 'B'
+      allow-icon:
+        material: IRON_BLOCK
+        display:
+          name: '<#00CED1><b>● <!b>Ship the fish'
+          lore:
+            - '<font:uniform><gradient:#E6E6FA:#48D1CC:#E6E6FA>You will get <green>{money_formatted} coins</green> from the fish</gradient></font>'
+        action:
+          sound_action:
+            type: sound
+            value:
+              key: 'minecraft:block.amethyst_block.place'
+              source: 'player'
+              volume: 1
+              pitch: 1
+          message_action:
+            type: message
+            value: 'You earned {money_formatted} coins from the fish! You can get {rest_formatted} more coins from market today'
+          command_action:
+            type: command
+            value: 'money give {player} {money}'
+      # Requires Vault and any economy plugin
+      #      money_action:
+      #        type: give-money
+      #        value: '{money}'
+      deny-icon:
+        material: REDSTONE_BLOCK
+        display:
+          name: '<red><b>● <!b>Denied trade'
+          lore:
+            - '<font:uniform><gradient:#E6E6FA:red:#E6E6FA>Nothing to sell!</gradient></font>'
+        action:
+          sound_action:
+            type: sound
+            value:
+              key: 'minecraft:entity.villager.no'
+              source: 'player'
+              volume: 1
+              pitch: 1
+      limit-icon:
+        material: REDSTONE_BLOCK
+        display:
+          name: '<red><b>● <!b>Denied trade'
+          lore:
+            - '<font:uniform><gradient:#E6E6FA:red:#E6E6FA>The worth of items exceeds the money that can be earned for the rest of today!</gradient></font>'
+        action:
+          sound_action:
+            type: sound
+            value:
+              key: 'minecraft:block.anvil.land'
+              source: 'player'
+              volume: 1
+              pitch: 1
+    # Decorative icons
+    decorative-icons:
+      glass-pane:
+        symbol: 'A'
+        material: BLACK_STAINED_GLASS_PANE
+        display:
+          name: ' '
   # This section would take effect if you set "override-vanilla" to true
   # That also means vanilla mechanics for example lure enchantment
-  # would no longer take effect, so you have to configurate its effect
-  # in enchantment effects.
+  # would no longer take effect, so you have to configure its effect in CustomFishing
   fishing-wait-time:
     # override vanilla mechanic
     override-vanilla: false
     # ticks
     min-wait-time: 100
     max-wait-time: 600
-
   # Lava fishing settings
   # To modify vanilla fishing time, you should edit paper-world-defaults.yml where there's a section called fishing-time-range
   lava-fishing:
     # ticks
     min-wait-time: 100
     max-wait-time: 600
-
   # Size settings
   size:
     # Some effects would increase/decrease size so the option decides whether they could ignore the limit
     restricted-size-range: true
-
   # Competition settings
   competition:
     # Use redis for cross server data synchronization
@@ -226,8 +366,7 @@ mechanics:
     server-group: default
     # Increase this value would allow you to use more placeholders like {4_player} {5_score} in sacrifice of some performance
     placeholder-limit: 3
-
-  # If a player could get multiple loots from fishing, should the loots spawn at the same time or have delays for each (tick)
+  # If a player could get multiple loots from fishing, should the loots spawn at the same time or have delay for each (measured in ticks)
   multiple-loot-spawn-delay: 4
 
 # Other settings
@@ -235,7 +374,6 @@ other-settings:
   # It's recommended to use MiniMessage format. If you insist on using legacy color code "&", enable the support below.
   # Disable this would improve performance
   legacy-color-code-support: true
-
   # Thread pool settings
   thread-pool-settings:
     # The size of the core Thread pool, that is, the size of the Thread pool when there is no task to execute
@@ -245,21 +383,16 @@ other-settings:
     maximumPoolSize: 10
     # If a thread is idle for more than this attribute value, it will exit due to timeout
     keepAliveTime: 30
-
   # Event priority: MONITOR HIGHEST HIGH NORMAL LOW LOWEST
   event-priority: NORMAL
-
   # Save the data from cache to file periodically to minimize the data loss if server crashes
   # -1 to disable
   data-saving-interval: 600
-
   # Log the consumption of time on data saving
   log-data-saving: true
-
   # Lock player's data if a player is playing on a server that connected to database
   # If you can ensure low database link latency and fast processing, you can consider disabling this option to improve performance
   lock-data: true
-
   # Requires PlaceholderAPI to work
   placeholder-register:
     '{record}': '%fishingstats_size-record_{loot}%'
@@ -267,7 +400,6 @@ other-settings:
     '{date}': '%server_time_yyyy-MM-dd-HH:mm:ss%'
     # Requires player expansion
     '{yaw}': '%player_yaw%'
-
   # CustomFishing supports using items/blocks from other plugins
   # If items share the same id, they would inherit the effects
   # Check the wiki for examples
@@ -276,13 +408,11 @@ other-settings:
     - vanilla
   block-detection-order:
     - vanilla
-
   # Custom durability format
   custom-durability-format:
     - ''
     - '<gray>Durability</gray><white>: {dur} <gray>/</gray> {max}</white>'
-
-  # Offset characters' unicodes
+  # Offset characters
   # Never edit this unless you know what you are doing
   offset-characters:
     font: customfishing:offset_chars

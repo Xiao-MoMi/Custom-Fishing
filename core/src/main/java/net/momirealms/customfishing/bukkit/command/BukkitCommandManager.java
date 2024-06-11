@@ -2,10 +2,7 @@ package net.momirealms.customfishing.bukkit.command;
 
 import net.kyori.adventure.util.Index;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.bukkit.command.feature.GetItemCommand;
-import net.momirealms.customfishing.bukkit.command.feature.GiveItemCommand;
-import net.momirealms.customfishing.bukkit.command.feature.ReloadCommand;
-import net.momirealms.customfishing.bukkit.command.feature.SellFishCommand;
+import net.momirealms.customfishing.bukkit.command.feature.*;
 import net.momirealms.customfishing.common.command.AbstractCommandManager;
 import net.momirealms.customfishing.common.command.CommandFeature;
 import net.momirealms.customfishing.common.sender.Sender;
@@ -24,7 +21,12 @@ public class BukkitCommandManager extends AbstractCommandManager<CommandSender> 
             new ReloadCommand(this),
             new SellFishCommand(this),
             new GetItemCommand(this),
-            new GiveItemCommand(this)
+            new GiveItemCommand(this),
+            new EndCompetitionCommand(this),
+            new StopCompetitionCommand(this),
+            new StartCompetitionCommand(this),
+            new OpenMarketCommand(this),
+            new OpenBagCommand(this)
     );
 
     private final Index<String, CommandFeature<CommandSender>> INDEX = Index.create(CommandFeature::getFeatureID, FEATURES);

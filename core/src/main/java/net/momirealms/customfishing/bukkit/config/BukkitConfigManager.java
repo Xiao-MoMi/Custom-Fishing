@@ -29,6 +29,12 @@ import java.util.function.BiFunction;
 
 public class BukkitConfigManager extends ConfigManager {
 
+    private static YamlDocument MAIN_CONFIG;
+
+    public static YamlDocument getMainConfig() {
+        return MAIN_CONFIG;
+    }
+
     public BukkitConfigManager(BukkitCustomFishingPlugin plugin) {
         super(plugin);
         this.registerBuiltInItemProperties();
@@ -42,6 +48,7 @@ public class BukkitConfigManager extends ConfigManager {
     @Override
     public void load() {
         this.loadConfigs();
+        MAIN_CONFIG = loadConfig("config.yml");
     }
 
     private void loadConfigs() {
@@ -114,6 +121,7 @@ public class BukkitConfigManager extends ConfigManager {
                 float size = (float) RandomUtils.generateRandomDouble(minSize, maxSize);
                 item.setTag(size, "CustomFishing", "size");
                 context.arg(ContextKeys.SIZE, size);
+                context.arg(ContextKeys.SIZE_FORMATTED, String.format("%.2f", size));
             };
         }, 1_000, "size");
         this.registerItemParser(arg -> {
@@ -125,8 +133,9 @@ public class BukkitConfigManager extends ConfigManager {
                 double bonusPrice = bonus.evaluate(context);
                 float size = Optional.ofNullable(context.arg(ContextKeys.SIZE)).orElse(0f);
                 double price = basePrice + bonusPrice * size;
-                item.setTag(price, "CustomFishing", "price");
+                item.setTag(price, "Price");
                 context.arg(ContextKeys.PRICE, price);
+                context.arg(ContextKeys.PRICE_FORMATTED, String.format("%.2f", price));
             };
         }, 1_500, "price");
     }

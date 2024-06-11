@@ -33,12 +33,14 @@ import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.storage.data.EarningData;
 import net.momirealms.customfishing.api.storage.user.UserData;
+import net.momirealms.customfishing.bukkit.config.BukkitConfigManager;
 import net.momirealms.customfishing.bukkit.item.BukkitItemFactory;
 import net.momirealms.customfishing.common.item.Item;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -47,6 +49,8 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.BundleMeta;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -89,6 +93,9 @@ public class BukkitMarketManager implements MarketManager, Listener {
     private SchedulerTask resetEarningsTask;
     private int cachedDate;
 
+    private boolean allowBundle;
+    private boolean allowShulkerBox;
+
     public BukkitMarketManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.priceMap = new HashMap<>();
@@ -127,18 +134,16 @@ public class BukkitMarketManager implements MarketManager, Listener {
             this.resetEarningsTask.cancel();
     }
 
-    // Load configuration from the plugin's config file
     private void loadConfig() {
-        YamlDocument config = plugin.getConfigManager().loadConfig("market.yml");
-        this.enable = config.getBoolean("enable", true);
-        this.formula = config.getString("price-formula", "{base} + {bonus} * {size}");
-        if (!this.enable) return;
+        Section config = BukkitConfigManager.getMainConfig().getSection("mechanics.market");
 
-        // Load various configuration settings
+        this.formula = config.getString("price-formula", "{base} + {bonus} * {size}");
         this.layout = config.getStringList("layout").toArray(new String[0]);
         this.title = TextValue.auto(config.getString("title", "market.title"));
         this.itemSlot = config.getString("item-slot.symbol", "I").charAt(0);
         this.allowItemWithNoPrice = config.getBoolean("item-slot.allow-items-with-no-price", true);
+        this.allowBundle = config.getBoolean("allow-bundle", true);
+        this.allowShulkerBox = config.getBoolean("allow-shulker-box", true);
 
         Section sellAllSection = config.getSection("sell-all-icons");
         if (sellAllSection != null) {
@@ -202,7 +207,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
     public void openMarketGUI(Player player) {
         Optional<UserData> optionalUserData = plugin.getStorageManager().getOnlineUser(player.getUniqueId());
         if (optionalUserData.isEmpty()) {
-            plugin.getPluginLogger().warn("Player " + player.getName() + "'s market data is not loaded yet.");
+            plugin.getPluginLogger().warn("Player " + player.getName() + "'s market data has not been loaded yet.");
             return;
         }
         Context<Player> context = Context.player(player);
@@ -447,6 +452,18 @@ public class BukkitMarketManager implements MarketManager, Listener {
             return price * itemStack.getAmount();
         }
 
+        if (allowBundle && itemStack.getItemMeta() instanceof BundleMeta bundleMeta) {
+            Pair<Integer, Double> pair = getItemsToSell(context, bundleMeta.getItems());
+            return pair.right();
+        }
+
+        if (allowShulkerBox && itemStack.getItemMeta() instanceof BlockStateMeta stateMeta) {
+            if (stateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
+                Pair<Integer, Double> pair = getItemsToSell(context, Arrays.stream(shulkerBox.getInventory().getStorageContents()).filter(Objects::nonNull).toList());
+                return pair.right();
+            }
+        }
+
         // If no custom price is defined, attempt to fetch the price from a predefined price map.
         String itemID = itemStack.getType().name();
         Optional<Integer> optionalCMD = wrapped.customModelData();
@@ -487,6 +504,19 @@ public class BukkitMarketManager implements MarketManager, Listener {
         for (ItemStack itemStack : itemStacks) {
             double price = getItemPrice(context, itemStack);
             if (price > 0 && itemStack != null) {
+                if (allowBundle && itemStack.getItemMeta() instanceof BundleMeta bundleMeta) {
+                    clearWorthyItems(context, bundleMeta.getItems());
+                    itemStack.setItemMeta(bundleMeta);
+                    continue;
+                }
+                if (allowShulkerBox && itemStack.getItemMeta() instanceof BlockStateMeta stateMeta) {
+                    if (stateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
+                        clearWorthyItems(context, Arrays.stream(shulkerBox.getInventory().getStorageContents()).filter(Objects::nonNull).toList());
+                        stateMeta.setBlockState(shulkerBox);
+                        itemStack.setItemMeta(stateMeta);
+                        continue;
+                    }
+                }
                 itemStack.setAmount(0);
             }
         }

@@ -26,14 +26,14 @@ beginner_rod:
       - '<gray> - novice angler''s best friend.'
       - ''
       - '<#FFD700>Effects:'
-      - '<gray> - Increase the hook time'
+      - '<gray> - Increase the waiting time'
       - '<gray> - Reduces the challenge of fishing'
   custom-model-data: 50001
   max-durability: 64
   effects:
     effect_1:
       type: wait-time-multiplier
-      value: 1.8
+      value: 1.5
     effect_2:
       type: difficulty
       value: -8
@@ -117,8 +117,8 @@ bone_rod:
       - '<gray> - regular rods.'
       - ''
       - '<#FFD700>Effects:'
-      - '<gray> - Fishing in lava'
-      - '<gray> - Sometimes skeleton would grab the hook'
+      - '<gray> - Fish in lava'
+      - '<gray> - Attract skeletons'
   custom-model-data: 50005
   max-durability: 32
   effects:
@@ -140,7 +140,7 @@ magical_rod:
       - ''
       - '<#FFD700>Effects:'
       - '<gray> - Get an enchantment book from fishing.'
-      - '<gray> - Require a long time to get hooked.'
+      - '<gray> - The waiting time is very long.'
       - ''
       - '<#CD5C5C>Requirements:'
       - '<gray> - 1x book bait'
@@ -193,7 +193,7 @@ master_rod:
       - '<gray> - time it takes for a fish to bite.'
       - ''
       - '<#FFD700>Effects:'
-      - '<gray> - Reduce the hook time'
+      - '<gray> - Reduce the waiting time'
       - '<gray> - Increase the challenge of fishing'
       - '<gray> - Higher chance of getting quality fish'
   custom-model-data: 50007

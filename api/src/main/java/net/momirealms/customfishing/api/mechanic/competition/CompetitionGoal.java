@@ -24,17 +24,19 @@ import org.apache.logging.log4j.util.Supplier;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.entity.Player;
 
+import java.util.Optional;
+
 public final class CompetitionGoal {
 
     public static final CompetitionGoal CATCH_AMOUNT = new CompetitionGoal(
             "catch_amount",
             ((rankingProvider, player, score) -> rankingProvider.refreshData(player, 1)),
-            () -> StandardLocales.GOAL_CATCH_AMOUNT
+            () -> Optional.ofNullable(StandardLocales.GOAL_CATCH_AMOUNT).orElse("catch_amount")
     );
     public static final CompetitionGoal TOTAL_SCORE = new CompetitionGoal(
           "total_score",
             (RankingProvider::refreshData),
-            () -> StandardLocales.GOAL_TOTAL_SCORE
+            () -> Optional.ofNullable(StandardLocales.GOAL_TOTAL_SCORE).orElse("total_score")
     );
     public static final CompetitionGoal MAX_SIZE = new CompetitionGoal(
             "max_size",
@@ -43,12 +45,12 @@ public final class CompetitionGoal {
                     rankingProvider.setData(player, score);
                 }
             }),
-            () -> StandardLocales.GOAL_MAX_SIZE
+            () -> Optional.ofNullable(StandardLocales.GOAL_MAX_SIZE).orElse("max_size")
     );
     public static final CompetitionGoal TOTAL_SIZE = new CompetitionGoal(
            "total_size",
             (RankingProvider::refreshData),
-            () -> StandardLocales.GOAL_TOTAL_SIZE
+            () -> Optional.ofNullable(StandardLocales.GOAL_TOTAL_SIZE).orElse("total_size")
     );
     public static final CompetitionGoal RANDOM = new CompetitionGoal(
            "random",

@@ -69,6 +69,6 @@ public class GetItemCommand extends BukkitCommandFeature<CommandSender> {
 
     @Override
     public String getFeatureID() {
-        return "getitem";
+        return "get_item";
     }
 }

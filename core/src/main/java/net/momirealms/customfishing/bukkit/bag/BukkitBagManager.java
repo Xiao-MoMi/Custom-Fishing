@@ -73,8 +73,18 @@ public class BukkitBagManager implements BagManager, Listener {
     public CompletableFuture<Boolean> openBag(Player viewer, UUID owner) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         Optional<UserData> onlineUser = plugin.getStorageManager().getOnlineUser(owner);
-        onlineUser.ifPresentOrElse(userData -> {
-            viewer.openInventory(userData.holder().getInventory());
+        onlineUser.ifPresentOrElse(data -> {
+            viewer.openInventory(data.holder().getInventory());
+            SparrowHeart.getInstance().updateInventoryTitle(viewer,
+                    plugin.getPlaceholderManager().parse(
+                            Bukkit.getOfflinePlayer(owner),
+                            ConfigManager.bagTitle(),
+                            Map.of(
+                                    "{uuid}", owner.toString(),
+                                    "{player}", data.name()
+                            )
+                    )
+            );
             future.complete(true);
         }, () -> plugin.getStorageManager().getOfflineUserData(owner, true).thenAccept(result -> result.ifPresentOrElse(data -> {
             if (data.isLocked()) {

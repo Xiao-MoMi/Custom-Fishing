@@ -20,6 +20,8 @@ package net.momirealms.customfishing.api.mechanic.competition;
 import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+
 public interface CompetitionManager extends Reloadable {
 
     boolean startCompetition(String competition, boolean force, @Nullable String serverGroup);
@@ -33,4 +35,6 @@ public interface CompetitionManager extends Reloadable {
 
     @Nullable
     CompetitionConfig getCompetition(String key);
+
+    Collection<String> getCompetitionIDs();
 }

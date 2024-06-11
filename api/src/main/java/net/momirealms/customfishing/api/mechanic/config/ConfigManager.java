@@ -45,7 +45,7 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     }
 
     public static int placeholderLimit() {
-        return 0;
+        return 3;
     }
 
     public static boolean redisRanking() {
