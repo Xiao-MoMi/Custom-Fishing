@@ -21,7 +21,6 @@ import dev.dejvokep.boostedyaml.YamlDocument;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.storage.StorageType;
 import net.momirealms.customfishing.common.dependency.Dependency;
-import org.h2.jdbcx.JdbcConnectionPool;
 
 import java.io.File;
 import java.lang.reflect.Method;

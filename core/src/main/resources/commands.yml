@@ -15,9 +15,15 @@ reload:
 
 sellfish:
   enable: true
-  permission: customfishing.command.sellfish
+  permission: customfishing.sellfish
   usage:
     - /sellfish
+
+fishingbag:
+  enable: true
+  permission: fishingbag.user
+  usage:
+    - /fishingbag
 
 get_item:
   enable: true
@@ -67,3 +73,24 @@ open_bag:
   usage:
     - /customfishing open bag
     - /cfishing open bag
+
+edit_online_bag:
+  enable: true
+  permission: customfishing.command.edit.bag
+  usage:
+    - /customfishing fishingbag edit-online
+    - /cfishing fishingbag edit-online
+
+edit_offline_bag:
+  enable: true
+  permission: customfishing.command.edit.bag
+  usage:
+    - /customfishing fishingbag edit-offline
+    - /cfishing fishingbag edit-offline
+
+browser:
+  enable: true
+  permission: customfishing.command.browser
+  usage:
+    - /customfishing browser
+    - /cfishing browser

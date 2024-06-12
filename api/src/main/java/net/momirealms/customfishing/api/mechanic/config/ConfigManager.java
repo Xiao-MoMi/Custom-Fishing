@@ -18,7 +18,6 @@ import net.momirealms.customfishing.common.config.ConfigLoader;
 import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.item.Item;
 import net.momirealms.customfishing.common.plugin.feature.Reloadable;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -27,8 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -36,68 +35,113 @@ import java.util.function.Function;
 
 public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
+    private static ConfigManager instance;
     protected final BukkitCustomFishingPlugin plugin;
-
     protected final HashMap<String, Node<ConfigParserFunction>> formatFunctions = new HashMap<>();
+    protected int placeholderLimit;
+    protected boolean redisRanking;
+    protected String serverGroup;
+    protected String[] itemDetectOrder = new String[0];
+    protected String[] blockDetectOrder = new String[0];
+    protected int dataSaveInterval;
+    protected boolean logDataSaving;
+    protected boolean lockData;
+    protected boolean metrics;
+    protected boolean checkUpdate;
+    protected boolean debug;
+    protected boolean overrideVanillaWaitTime;
+    protected int waterMinTime;
+    protected int waterMaxTime;
+    protected int lavaMinTime;
+    protected int lavaMaxTime;
+    protected boolean restrictedSizeRange;
+    protected List<String> durabilityLore;
+    protected boolean allowMultipleTotemType;
+    protected boolean allowSameTotemType;
 
-    public ConfigManager(BukkitCustomFishingPlugin plugin) {
+    protected ConfigManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
+        instance = this;
+    }
+
+    public static boolean debug() {
+        return instance.debug;
     }
 
     public static int placeholderLimit() {
-        return 3;
+        return instance.placeholderLimit;
     }
 
     public static boolean redisRanking() {
-        return false;
+        return instance.redisRanking;
     }
 
     public static String serverGroup() {
-        return null;
+        return instance.serverGroup;
     }
 
     public static String[] itemDetectOrder() {
-        return new String[0];
+        return instance.itemDetectOrder;
     }
 
     public static String[] blockDetectOrder() {
-        return new String[0];
-    }
-
-    public static boolean enableFishingBag() {
-        return true;
+        return instance.blockDetectOrder;
     }
 
     public static int dataSaveInterval() {
-        return 360;
+        return instance.dataSaveInterval;
     }
 
     public static boolean logDataSaving() {
-        return true;
+        return instance.logDataSaving;
     }
 
     public static boolean lockData() {
-        return false;
-    }
-
-    public static boolean bagStoreLoots() {
-        return false;
-    }
-
-    public static Collection<Material> bagWhiteListItems() {
-        return null;
-    }
-
-    public static String bagTitle() {
-        return null;
+        return instance.lockData;
     }
 
     public static boolean metrics() {
-        return true;
+        return instance.metrics;
     }
 
     public static boolean checkUpdate() {
-        return true;
+        return instance.checkUpdate;
+    }
+
+    public static boolean overrideVanillaWaitTime() {
+        return instance.overrideVanillaWaitTime;
+    }
+
+    public static int waterMinTime() {
+        return instance.waterMinTime;
+    }
+
+    public static int waterMaxTime() {
+        return instance.waterMaxTime;
+    }
+
+    public static int lavaMinTime() {
+        return instance.lavaMinTime;
+    }
+
+    public static int lavaMaxTime() {
+        return instance.lavaMaxTime;
+    }
+
+    public static boolean restrictedSizeRange() {
+        return instance.restrictedSizeRange;
+    }
+
+    public static boolean allowMultipleTotemType() {
+        return instance.allowMultipleTotemType;
+    }
+
+    public static boolean allowSameTotemType() {
+        return instance.allowSameTotemType;
+    }
+
+    public static List<String> durabilityLore() {
+        return instance.durabilityLore;
     }
 
     public void registerLootParser(Function<Object, Consumer<Loot.Builder>> function, String... nodes) {

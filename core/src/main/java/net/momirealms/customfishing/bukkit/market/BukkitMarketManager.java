@@ -17,12 +17,10 @@
 
 package net.momirealms.customfishing.bukkit.market;
 
-import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionManager;
-import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.config.GUIItemParser;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
@@ -56,11 +54,10 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("DuplicatedCode")
 public class BukkitMarketManager implements MarketManager, Listener {
 
     private final BukkitCustomFishingPlugin plugin;
-
-    private boolean enable;
 
     private final HashMap<String, MathValue<Player>> priceMap;
     private String formula;
@@ -108,7 +105,6 @@ public class BukkitMarketManager implements MarketManager, Listener {
     public void load() {
         this.loadConfig();
         Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
-        if (!enable) return;
         this.resetEarningsTask = plugin.getScheduler().asyncRepeating(() -> {
             int now = getRealTimeDate();
             if (this.cachedDate != now) {
@@ -365,7 +361,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
                 }
             } else if (element.getSymbol() == sellAllSlot) {
                 ArrayList<ItemStack> itemStacksToSell = new ArrayList<>(List.of(gui.context.getHolder().getInventory().getStorageContents()));
-                if (sellFishingBag && ConfigManager.enableFishingBag()) {
+                if (sellFishingBag) {
                     Optional<UserData> optionalUserData = BukkitCustomFishingPlugin.getInstance().getStorageManager().getOnlineUser(gui.context.getHolder().getUniqueId());
                     optionalUserData.ifPresent(userData -> itemStacksToSell.addAll(List.of(userData.holder().getInventory().getStorageContents())));
                 }
@@ -441,6 +437,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
     }
 
     @Override
+    @SuppressWarnings("UnstableApiUsage")
     public double getItemPrice(Context<Player> context, ItemStack itemStack) {
         if (itemStack == null || itemStack.getType() == Material.AIR)
             return 0;
@@ -500,6 +497,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
         return Pair.of(amount, worth);
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     public void clearWorthyItems(Context<Player> context, List<ItemStack> itemStacks) {
         for (ItemStack itemStack : itemStacks) {
             double price = getItemPrice(context, itemStack);

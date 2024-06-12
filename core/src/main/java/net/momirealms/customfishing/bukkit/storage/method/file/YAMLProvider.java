@@ -64,7 +64,9 @@ public class YAMLProvider extends AbstractStorage {
         File dataFile = getPlayerDataFile(uuid);
         if (!dataFile.exists()) {
             if (Bukkit.getPlayer(uuid) != null) {
-                return CompletableFuture.completedFuture(Optional.of(PlayerData.empty()));
+                var data = PlayerData.empty();
+                data.uuid(uuid);
+                return CompletableFuture.completedFuture(Optional.of(data));
             } else {
                 return CompletableFuture.completedFuture(Optional.empty());
             }

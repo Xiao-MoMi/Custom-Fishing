@@ -121,7 +121,9 @@ public class MongoDBProvider extends AbstractStorage {
         if (doc == null) {
             if (Bukkit.getPlayer(uuid) != null) {
                 if (lock) lockOrUnlockPlayerData(uuid, true);
-                future.complete(Optional.of(PlayerData.empty()));
+                var data = PlayerData.empty();
+                data.uuid(uuid);
+                future.complete(Optional.of(data));
             } else {
                 future.complete(Optional.empty());
             }

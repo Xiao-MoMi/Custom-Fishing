@@ -38,7 +38,7 @@ argument.parse.failure.aggregate.missing: "<red>Missing component '<arg:0>'</red
 argument.parse.failure.aggregate.failure: "<red>Invalid component '<arg:0>': <arg:1></red>"
 argument.parse.failure.either: "<red>Could not resolve <arg:1> or <arg:2> from '<arg:0>'</red>"
 argument.parse.failure.namedtextcolor: "<red>'<arg:0>' is not a named text color</red>"
-command.reload.success: "<white>Reloaded. Took <green><arg:0></green>ms.</white>"
+command.reload.success: "<white>Reloaded. Took <green><arg:0></green> ms.</white>"
 command.item.failure.not_exist: "<red>Item [<arg:0>] not exists.</red>"
 command.item.give.success: "<white>Successfully given <arg:0> <arg:1>x <arg:2>.</white>"
 command.item.get.success: "<white>Successfully got <arg:0>x <arg:1>.</white>"

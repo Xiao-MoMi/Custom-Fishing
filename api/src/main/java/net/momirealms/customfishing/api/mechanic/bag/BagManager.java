@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
 
 public interface BagManager extends Reloadable {
 
-    default int getBagInventoryRows(Player player) {
+    static int getBagInventoryRows(Player player) {
         int size = 1;
         for (int i = 6; i > 1; i--) {
             if (player.hasPermission("fishingbag.rows." + i)) {

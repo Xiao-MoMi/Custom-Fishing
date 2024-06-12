@@ -127,6 +127,7 @@ public class SQLiteProvider extends AbstractSQLDatabase {
                 future.complete(Optional.of(data));
             } else if (Bukkit.getPlayer(uuid) != null) {
                 var data = PlayerData.empty();
+                data.uuid(uuid);
                 insertPlayerData(uuid, data, lock);
                 future.complete(Optional.of(data));
             } else {

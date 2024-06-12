@@ -47,8 +47,52 @@ public class BukkitConfigManager extends ConfigManager {
 
     @Override
     public void load() {
-        this.loadConfigs();
         MAIN_CONFIG = loadConfig("config.yml");
+        this.loadSettings();
+        this.loadConfigs();
+    }
+
+    private void loadSettings() {
+        YamlDocument config = getMainConfig();
+
+        metrics = config.getBoolean("metrics", true);
+        checkUpdate = config.getBoolean("update-checker", true);
+        debug = config.getBoolean("debug", false);
+
+        overrideVanillaWaitTime = config.getBoolean("mechanics.fishing-wait-time.override-vanilla", false);
+        waterMinTime = config.getInt("mechanics.fishing-wait-time.min-wait-time", 100);
+        waterMaxTime = config.getInt("mechanics.fishing-wait-time.max-wait-time", 600);
+
+        lavaMinTime = config.getInt("mechanics.lava-fishing.min-wait-time", 100);
+        lavaMaxTime = config.getInt("mechanics.lava-fishing.max-wait-time", 600);
+
+        restrictedSizeRange = config.getBoolean("mechanics.size.restricted-size-range", true);
+
+        placeholderLimit = config.getInt("mechanics.competition.placeholder-limit", 3);
+        serverGroup = config.getString("mechanics.competition.server-group", "default");
+        redisRanking = config.getBoolean("mechanics.competition.redis-ranking", false);
+
+        AdventureHelper.legacySupport = config.getBoolean("other-settings.legacy-color-code-support", true);
+        dataSaveInterval = config.getInt("other-settings.data-save-interval", 600);
+        logDataSaving = config.getBoolean("other-settings.log-data-saving", true);
+        lockData = config.getBoolean("other-settings.lock-data", true);
+
+        durabilityLore = new ArrayList<>(config.getStringList("other-settings.custom-durability-format"));
+
+        itemDetectOrder = config.getStringList("other-settings.item-detection-order").toArray(new String[0]);
+        blockDetectOrder = config.getStringList("other-settings.block-detection-order").toArray(new String[0]);
+
+        allowMultipleTotemType = config.getBoolean("mechanics.totem.allow-multiple-type", true);
+        allowSameTotemType = config.getBoolean("mechanics.totem.allow-same-type", false);
+
+        Section placeholderSection = config.getSection("other-settings.placeholder-register");
+        if (placeholderSection != null) {
+            for (Map.Entry<String, Object> entry : placeholderSection.getStringRouteMappedValues(false).entrySet()) {
+                if (entry.getValue() instanceof String original) {
+                    plugin.getPlaceholderManager().registerCustomPlaceholder(entry.getKey(), original);
+                }
+            }
+        }
     }
 
     private void loadConfigs() {

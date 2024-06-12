@@ -26,7 +26,11 @@ public class BukkitCommandManager extends AbstractCommandManager<CommandSender> 
             new StopCompetitionCommand(this),
             new StartCompetitionCommand(this),
             new OpenMarketCommand(this),
-            new OpenBagCommand(this)
+            new OpenBagCommand(this),
+            new FishingBagCommand(this),
+            new GUIEditorCommand(this),
+            new EditOnlineBagCommand(this),
+            new EditOfflineBagCommand(this)
     );
 
     private final Index<String, CommandFeature<CommandSender>> INDEX = Index.create(CommandFeature::getFeatureID, FEATURES);

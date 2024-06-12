@@ -255,13 +255,18 @@ public enum Dependency {
             "org.slf4j",
             "slf4j-simple",
             "maven",
-            "slf4j-simple"
-    ),
+            "slf4j_simple"
+    ) {
+        @Override
+        public String getVersion() {
+            return Dependency.SLF4J_API.getVersion();
+        }
+    },
     SLF4J_API(
             "org.slf4j",
             "slf4j-api",
             "maven",
-            "slf4j-api"
+            "slf4j"
     );
 
     private final List<Relocation> relocations;

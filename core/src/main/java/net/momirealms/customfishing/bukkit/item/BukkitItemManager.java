@@ -72,11 +72,13 @@ public class BukkitItemManager implements ItemManager, Listener {
     @Override
     public void unload() {
         HandlerList.unregisterAll(this);
+        this.items.clear();
     }
 
     @Override
     public void load() {
         Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
+        this.resetItemDetectionOrder();
     }
 
     @Override

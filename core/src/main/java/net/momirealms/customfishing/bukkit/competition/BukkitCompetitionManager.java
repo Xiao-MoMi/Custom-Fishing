@@ -44,8 +44,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static java.util.Objects.requireNonNull;
-
 public class BukkitCompetitionManager implements CompetitionManager {
 
     private final BukkitCustomFishingPlugin plugin;
@@ -75,7 +73,7 @@ public class BukkitCompetitionManager implements CompetitionManager {
         if (this.timerCheckTask != null)
             this.timerCheckTask.cancel();
         if (currentCompetition != null && currentCompetition.isOnGoing())
-            currentCompetition.stop(true);
+            this.currentCompetition.stop(true);
         this.commandConfigMap.clear();
         this.timeConfigMap.clear();
     }
@@ -84,7 +82,7 @@ public class BukkitCompetitionManager implements CompetitionManager {
         if (this.timerCheckTask != null)
             this.timerCheckTask.cancel();
         if (currentCompetition != null && currentCompetition.isOnGoing())
-            currentCompetition.stop(false);
+            this.currentCompetition.stop(false);
         this.commandConfigMap.clear();
         this.timeConfigMap.clear();
     }

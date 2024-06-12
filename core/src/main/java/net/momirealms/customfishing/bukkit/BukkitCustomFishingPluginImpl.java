@@ -41,6 +41,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
 
@@ -48,6 +49,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
     private final PluginLogger logger;
     private ChatCatcherManager chatCatcherManager;
     private BukkitCommandManager commandManager;
+    private Consumer<String> debugger;
 
     public BukkitCustomFishingPluginImpl(Plugin boostrap) {
         super(boostrap);
@@ -56,6 +58,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.classPathAppender = new ReflectionClassPathAppender(this);
         this.logger = new JavaPluginLogger(getBoostrap().getLogger());
         this.dependencyManager = new DependencyManagerImpl(this);
+        this.debugger = (s) -> {};
     }
 
     @Override
@@ -72,10 +75,11 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
                         Dependency.JEDIS,
                         Dependency.EXP4J,
                         Dependency.MYSQL_DRIVER, Dependency.MARIADB_DRIVER,
-                        Dependency.SQLITE_DRIVER,
+                        Dependency.SQLITE_DRIVER, Dependency.SLF4J_API, Dependency.SLF4J_SIMPLE,
                         Dependency.H2_DRIVER,
                         Dependency.MONGODB_DRIVER_CORE, Dependency.MONGODB_DRIVER_SYNC, Dependency.MONGODB_DRIVER_BSON,
-                        Dependency.HIKARI_CP)
+                        Dependency.HIKARI_CP
+                )
         );
     }
 
@@ -118,24 +122,38 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
     @Override
     public void reload() {
         ItemType.reset();
-        this.eventManager.reload();
-        this.configManager.reload();
-        this.requirementManager.reload();
-        this.actionManager.reload();
+
+        this.itemManager.unload();
+        this.eventManager.unload();
+        this.entityManager.unload();
+        this.lootManager.unload();
+        this.blockManager.unload();
+        this.effectManager.unload();
+        this.hookManager.unload();
+
+        // before ConfigManager
         this.placeholderManager.reload();
-        this.itemManager.reload();
-        this.competitionManager.reload();
-        this.marketManager.reload();
-        this.storageManager.reload();
-        this.lootManager.reload();
+        this.configManager.reload();
+        // after ConfigManager
+        this.debugger = ConfigManager.debug() ? logger::info : (s) -> {};
+
+        this.actionManager.reload();
+        this.requirementManager.reload();
         this.coolDownManager.reload();
-        this.entityManager.reload();
-        this.blockManager.reload();
-        this.statisticsManager.reload();
-        this.effectManager.reload();
-        this.hookManager.reload();
-        this.bagManager.reload();
         this.translationManager.reload();
+        this.marketManager.reload();
+        this.competitionManager.reload();
+        this.statisticsManager.reload();
+        this.bagManager.reload();
+        this.storageManager.reload();
+
+        this.itemManager.load();
+        this.eventManager.load();
+        this.entityManager.load();
+        this.lootManager.load();
+        this.blockManager.load();
+        this.effectManager.load();
+        this.hookManager.load();
     }
 
     @Override
@@ -190,6 +208,11 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
     @Override
     public String getPluginVersion() {
         return getBoostrap().getDescription().getVersion();
+    }
+
+    @Override
+    public void debug(String message) {
+        this.debugger.accept(message);
     }
 
     public ChatCatcherManager getChatCatcherManager() {

@@ -25,6 +25,17 @@ public class BukkitLootManager implements LootManager {
     }
 
     @Override
+    public void unload() {
+        this.lootMap.clear();
+        this.groupMembersMap.clear();
+    }
+
+    @Override
+    public void load() {
+
+    }
+
+    @Override
     public void registerLoot(@NotNull Loot loot) {
         this.lootMap.put(loot.id(), loot);
         for (String group : loot.lootGroup()) {

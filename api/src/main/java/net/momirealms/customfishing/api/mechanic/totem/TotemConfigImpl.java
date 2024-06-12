@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.api.mechanic.totem;
 
+import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.mechanic.totem.block.TotemBlock;
 import org.bukkit.Location;
@@ -26,14 +27,14 @@ import static java.util.Objects.requireNonNull;
 
 public class TotemConfigImpl implements TotemConfig {
 
-    private String id;
-    private TotemModel[] totemModels;
-    private TotemParticle[] particleSettings;
-    private Requirement<Player>[] activateRequirements;
-    private double radius;
-    private int duration;
+    private final String id;
+    private final TotemModel[] totemModels;
+    private final TotemParticle[] particleSettings;
+    private final Requirement<Player>[] activateRequirements;
+    private final MathValue<Player> radius;
+    private final MathValue<Player> duration;
 
-    public TotemConfigImpl(String id, TotemModel[] totemModels, TotemParticle[] particleSettings, Requirement<Player>[] activateRequirements, double radius, int duration) {
+    public TotemConfigImpl(String id, TotemModel[] totemModels, TotemParticle[] particleSettings, Requirement<Player>[] activateRequirements, MathValue<Player> radius, MathValue<Player> duration) {
         this.id = id;
         this.totemModels = totemModels;
         this.particleSettings = particleSettings;
@@ -73,12 +74,12 @@ public class TotemConfigImpl implements TotemConfig {
     }
 
     @Override
-    public double radius() {
+    public MathValue<Player> radius() {
         return radius;
     }
 
     @Override
-    public int duration() {
+    public MathValue<Player> duration() {
         return duration;
     }
 
@@ -92,32 +93,39 @@ public class TotemConfigImpl implements TotemConfig {
         private TotemModel[] totemModels;
         private TotemParticle[] particleSettings;
         private Requirement<Player>[] activateRequirements;
-        private double radius;
-        private int duration;
+        private MathValue<Player> radius;
+        private MathValue<Player> duration;
+        @Override
         public Builder id(String id) {
             this.id = id;
             return this;
         }
+        @Override
         public Builder totemModels(TotemModel[] totemModels) {
             this.totemModels = totemModels;
             return this;
         }
+        @Override
         public Builder particleSettings(TotemParticle[] particleSettings) {
             this.particleSettings = particleSettings;
             return this;
         }
-        public Builder radius(double radius) {
+        @Override
+        public Builder radius(MathValue<Player> radius) {
             this.radius = radius;
             return this;
         }
-        public Builder duration(int duration) {
+        @Override
+        public Builder duration(MathValue<Player> duration) {
             this.duration = duration;
             return this;
         }
+        @Override
         public Builder activateRequirements(Requirement<Player>[] activateRequirements) {
             this.activateRequirements = activateRequirements;
             return this;
         }
+        @Override
         public TotemConfig build() {
             return new TotemConfigImpl(requireNonNull(id), requireNonNull(totemModels), particleSettings, activateRequirements, radius, duration);
         }

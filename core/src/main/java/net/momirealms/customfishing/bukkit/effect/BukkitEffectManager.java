@@ -33,8 +33,14 @@ public class BukkitEffectManager implements EffectManager {
         this.plugin = plugin;
     }
 
-    public void disable() {
+    @Override
+    public void unload() {
         this.effectModifiers.clear();
+    }
+
+    @Override
+    public void load() {
+
     }
 
     @Override

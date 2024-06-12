@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.bukkit.market;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.market.MarketGUIHolder;
@@ -37,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+@SuppressWarnings("DuplicatedCode")
 public class MarketGUI {
 
     private final HashMap<Character, MarketGUIElement> itemsCharMap;
@@ -109,7 +109,6 @@ public class MarketGUI {
      * Refresh the GUI, updating the display based on current data.
      * @return The MarketGUI instance.
      */
-    @SuppressWarnings("DuplicatedCode")
     public MarketGUI refresh() {
         double earningLimit = manager.earningLimit(context);
         MarketDynamicGUIElement sellElement = (MarketDynamicGUIElement) getElement(manager.sellSlot);
@@ -134,7 +133,7 @@ public class MarketGUI {
         MarketDynamicGUIElement sellAllElement = (MarketDynamicGUIElement) getElement(manager.sellAllSlot);
         if (sellAllElement != null && !sellAllElement.getSlots().isEmpty()) {
             ArrayList<ItemStack> itemStacksToSell = new ArrayList<>(List.of(context.getHolder().getInventory().getStorageContents()));
-            if (manager.sellFishingBag && ConfigManager.enableFishingBag()) {
+            if (manager.sellFishingBag) {
                 Optional<UserData> optionalUserData = BukkitCustomFishingPlugin.getInstance().getStorageManager().getOnlineUser(context.getHolder().getUniqueId());
                 optionalUserData.ifPresent(userData -> itemStacksToSell.addAll(List.of(userData.holder().getInventory().getStorageContents())));
             }

@@ -144,6 +144,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
             } else if (Bukkit.getPlayer(uuid) != null) {
                 // the player is online
                 var data = PlayerData.empty();
+                data.uuid(uuid);
                 insertPlayerData(uuid, data, lock);
                 future.complete(Optional.of(data));
             } else {

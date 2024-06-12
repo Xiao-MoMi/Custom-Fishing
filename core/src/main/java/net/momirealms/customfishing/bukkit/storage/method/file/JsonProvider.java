@@ -60,6 +60,7 @@ public class JsonProvider extends AbstractStorage {
             playerData = readFromJsonFile(file, PlayerData.class);
         } else if (Bukkit.getPlayer(uuid) != null) {
             playerData = PlayerData.empty();
+            playerData.uuid(uuid);
         } else {
             playerData = null;
         }

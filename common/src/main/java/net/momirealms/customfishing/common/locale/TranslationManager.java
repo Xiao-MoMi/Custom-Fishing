@@ -101,7 +101,7 @@ public class TranslationManager {
 
         Locale localLocale = Locale.getDefault();
         if (!this.installed.contains(localLocale)) {
-            plugin.getPluginLogger().warn(localLocale.toString().toLowerCase(Locale.ENGLISH) + ".yml not exists, using en.yml as default locale. Consider contributing if you have time for that. We appreciate your work!");
+            plugin.getPluginLogger().warn(localLocale.toString().toLowerCase(Locale.ENGLISH) + ".yml not exists, using en.yml as default locale.");
         }
     }
 
