@@ -65,6 +65,7 @@ subprojects {
         toolchain {
             languageVersion = JavaLanguageVersion.of(21)
     }
+}
 
     tasks.shadowJar {
         destinationDirectory.set(file("$rootDir/target"))
