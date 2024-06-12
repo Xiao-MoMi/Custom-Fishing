@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         java:
-          - 17
+          - 21
       fail-fast: false
     steps:
       - name: Checkout
