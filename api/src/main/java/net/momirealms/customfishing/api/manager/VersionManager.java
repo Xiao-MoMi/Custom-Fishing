@@ -30,6 +30,8 @@ public interface VersionManager {
     CompletableFuture<Boolean> checkUpdate();
 
     boolean isVersionNewerThan1_20();
+    
+    boolean isVersionNewerThan1_20_R6();
 
     boolean isSpigot();
 
