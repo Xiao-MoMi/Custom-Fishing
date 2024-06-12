@@ -115,7 +115,7 @@ public class VersionManagerImpl implements VersionManager {
     }
 
     @Override
-    public boolean isVersionNewerThan1_20() {
+    public boolean isVersionNewerThan1_20_R6() {
         return isNewerTha1_20_R6;
     }
 
