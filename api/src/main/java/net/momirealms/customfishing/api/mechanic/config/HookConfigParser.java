@@ -8,7 +8,7 @@ import net.momirealms.customfishing.api.mechanic.effect.LootBaseEffect;
 import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.hook.HookConfig;
 import net.momirealms.customfishing.api.mechanic.item.CustomFishingItem;
-import net.momirealms.customfishing.api.mechanic.item.ItemType;
+import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.item.Item;
@@ -74,7 +74,9 @@ public class HookConfigParser {
                         effectBuilderConsumers.add(consumer);
                     }
                     case HOOK -> {
-
+                        HookParserFunction hookParserFunction = (HookParserFunction) function;
+                        Consumer<HookConfig.Builder> consumer = hookParserFunction.accept(entry.getValue());
+                        hookBuilderConsumers.add(consumer);
                     }
                 }
                 continue;
@@ -96,7 +98,7 @@ public class HookConfigParser {
     public EventCarrier getEventCarrier() {
         EventCarrier.Builder builder = EventCarrier.builder()
                 .id(id)
-                .type(ItemType.HOOK);
+                .type(MechanicType.HOOK);
         for (Consumer<EventCarrier.Builder> consumer : eventBuilderConsumers) {
             consumer.accept(builder);
         }
@@ -105,7 +107,8 @@ public class HookConfigParser {
 
     public EffectModifier getEffectModifier() {
         EffectModifier.Builder builder = EffectModifier.builder()
-                .id(id);
+                .id(id)
+                .type(MechanicType.ROD);
         for (Consumer<EffectModifier.Builder> consumer : effectBuilderConsumers) {
             consumer.accept(builder);
         }

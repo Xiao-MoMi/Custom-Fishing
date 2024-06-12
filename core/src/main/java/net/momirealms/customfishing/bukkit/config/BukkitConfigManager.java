@@ -16,10 +16,25 @@ import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.statistic.StatisticsKeys;
+import net.momirealms.customfishing.api.mechanic.totem.TotemModel;
+import net.momirealms.customfishing.api.mechanic.totem.TotemParticle;
+import net.momirealms.customfishing.api.mechanic.totem.block.TotemBlock;
+import net.momirealms.customfishing.api.mechanic.totem.block.property.AxisImpl;
+import net.momirealms.customfishing.api.mechanic.totem.block.property.FaceImpl;
+import net.momirealms.customfishing.api.mechanic.totem.block.property.HalfImpl;
+import net.momirealms.customfishing.api.mechanic.totem.block.property.TotemBlockProperty;
+import net.momirealms.customfishing.api.mechanic.totem.block.type.TypeCondition;
+import net.momirealms.customfishing.bukkit.totem.particle.DustParticleSetting;
+import net.momirealms.customfishing.bukkit.totem.particle.ParticleSetting;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.util.ListUtils;
 import net.momirealms.customfishing.common.util.Pair;
 import net.momirealms.customfishing.common.util.RandomUtils;
+import org.bukkit.Axis;
+import org.bukkit.Color;
+import org.bukkit.Particle;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -43,6 +58,8 @@ public class BukkitConfigManager extends ConfigManager {
         this.registerBuiltInEntityParser();
         this.registerBuiltInEventParser();
         this.registerBuiltInEffectModifierParser();
+        this.registerBuiltInTotemParser();
+        this.registerBuiltInHookParser();
     }
 
     @Override
@@ -344,6 +361,34 @@ public class BukkitConfigManager extends ConfigManager {
         return result;
     }
 
+    private void registerBuiltInHookParser() {
+        this.registerHookParser(object -> {
+            List<String> lore = ListUtils.toList(object);
+            return builder -> builder.lore(lore);
+        }, "lore-on-rod");
+    }
+
+    private void registerBuiltInTotemParser() {
+        this.registerTotemParser(object -> {
+            MathValue<Player> mathValue = MathValue.auto(object);
+            return builder -> builder.radius(mathValue);
+        }, "radius");
+        this.registerTotemParser(object -> {
+            MathValue<Player> mathValue = MathValue.auto(object);
+            return builder -> builder.duration(mathValue);
+        }, "duration");
+        this.registerTotemParser(object -> {
+            Section section = (Section) object;
+            TotemParticle[] particles = getParticleSettings(section);
+            return builder -> builder.particleSettings(particles);
+        }, "particles");
+        this.registerTotemParser(object -> {
+            Section section = (Section) object;
+            TotemModel[] models = getTotemModels(section);
+            return builder -> builder.totemModels(models);
+        }, "pattern");
+    }
+
     private void registerBuiltInBaseEffectParser() {
         this.registerBaseEffectParser(object -> {
             MathValue<Player> mathValue = MathValue.auto(object);
@@ -496,5 +541,191 @@ public class BukkitConfigManager extends ConfigManager {
         if (!new File(plugin.getDataFolder(), filePath).exists()) {
             plugin.getBoostrap().saveResource(filePath, false);
         }
+    }
+
+    private ParticleSetting[] getParticleSettings(Section section) {
+        List<ParticleSetting> particleSettings = new ArrayList<>();
+        if (section != null)
+            for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
+                if (entry.getValue() instanceof Section innerSection) {
+                    particleSettings.add(getParticleSetting(innerSection));
+                }
+            }
+        return particleSettings.toArray(new ParticleSetting[0]);
+    }
+
+    private ParticleSetting getParticleSetting(Section section) {
+        Particle particle = Particle.valueOf(section.getString("type","REDSTONE"));
+        String formulaHorizontal = section.getString("polar-coordinates-formula.horizontal");
+        String formulaVertical = section.getString("polar-coordinates-formula.vertical");
+        List<Pair<Double, Double>> ranges = section.getStringList("theta.range")
+                .stream().map(it -> {
+                    String[] split = it.split("~");
+                    return Pair.of(Double.parseDouble(split[0]) * Math.PI / 180, Double.parseDouble(split[1]) * Math.PI / 180);
+                }).toList();
+
+        double interval = section.getDouble("theta.draw-interval", 3d);
+        int delay = section.getInt("task.delay", 0);
+        int period = section.getInt("task.period", 0);
+        if (particle == Particle.REDSTONE) {
+            String color = section.getString("options.color","0,0,0");
+            String[] colorSplit = color.split(",");
+            return new DustParticleSetting(
+                    formulaHorizontal,
+                    formulaVertical,
+                    particle,
+                    interval,
+                    ranges,
+                    delay,
+                    period,
+                    new Particle.DustOptions(
+                            Color.fromRGB(
+                                    Integer.parseInt(colorSplit[0]),
+                                    Integer.parseInt(colorSplit[1]),
+                                    Integer.parseInt(colorSplit[2])
+                            ),
+                            section.getDouble("options.scale", 1.0).floatValue()
+                    )
+            );
+        } else if (particle == Particle.DUST_COLOR_TRANSITION) {
+            String color = section.getString("options.from","0,0,0");
+            String[] colorSplit = color.split(",");
+            String toColor = section.getString("options.to","255,255,255");
+            String[] toColorSplit = toColor.split(",");
+            return new DustParticleSetting(
+                    formulaHorizontal,
+                    formulaVertical,
+                    particle,
+                    interval,
+                    ranges,
+                    delay,
+                    period,
+                    new Particle.DustTransition(
+                            Color.fromRGB(
+                                    Integer.parseInt(colorSplit[0]),
+                                    Integer.parseInt(colorSplit[1]),
+                                    Integer.parseInt(colorSplit[2])
+                            ),
+                            Color.fromRGB(
+                                    Integer.parseInt(toColorSplit[0]),
+                                    Integer.parseInt(toColorSplit[1]),
+                                    Integer.parseInt(toColorSplit[2])
+                            ),
+                            section.getDouble("options.scale", 1.0).floatValue()
+                    )
+            );
+        } else {
+            return new ParticleSetting(
+                    formulaHorizontal,
+                    formulaVertical,
+                    particle,
+                    interval,
+                    ranges,
+                    delay,
+                    period
+            );
+        }
+    }
+
+    private TotemModel[] getTotemModels(Section section) {
+        TotemModel originalModel = parseModel(section);
+        List<TotemModel> modelList = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            originalModel = originalModel.deepClone().rotate90();
+            modelList.add(originalModel);
+            if (i % 2 == 0) {
+                modelList.add(originalModel.mirrorVertically());
+            } else {
+                modelList.add(originalModel.mirrorHorizontally());
+            }
+        }
+        return modelList.toArray(new TotemModel[0]);
+    }
+
+    @SuppressWarnings("unchecked")
+    private TotemModel parseModel(Section section) {
+        Section layerSection = section.getSection("layer");
+        List<TotemBlock[][][]> totemBlocksList = new ArrayList<>();
+        if (layerSection != null) {
+            var set = layerSection.getStringRouteMappedValues(false).entrySet();
+            TotemBlock[][][][] totemBlocks = new TotemBlock[set.size()][][][];
+            for (Map.Entry<String, Object> entry : set) {
+                if (entry.getValue() instanceof List<?> list) {
+                    totemBlocks[Integer.parseInt(entry.getKey())-1] = parseLayer((List<String>) list);
+                }
+            }
+            totemBlocksList.addAll(List.of(totemBlocks));
+        }
+
+        String[] core = section.getString("core","1,1,1").split(",");
+        int x = Integer.parseInt(core[2]) - 1;
+        int z = Integer.parseInt(core[1]) - 1;
+        int y = Integer.parseInt(core[0]) - 1;
+        return new TotemModel(
+                x,y,z,
+                totemBlocksList.toArray(new TotemBlock[0][][][])
+        );
+    }
+
+    private TotemBlock[][][] parseLayer(List<String> lines) {
+        List<TotemBlock[][]> totemBlocksList = new ArrayList<>();
+        for (String line : lines) {
+            totemBlocksList.add(parseSingleLine(line));
+        }
+        return totemBlocksList.toArray(new TotemBlock[0][][]);
+    }
+
+    private TotemBlock[][] parseSingleLine(String line) {
+        List<TotemBlock[]> totemBlocksList = new ArrayList<>();
+        String[] splits = line.split("\\s+");
+        for (String split : splits) {
+            totemBlocksList.add(parseSingleElement(split));
+        }
+        return totemBlocksList.toArray(new TotemBlock[0][]);
+    }
+
+    private TotemBlock[] parseSingleElement(String element) {
+        String[] orBlocks = element.split("\\|\\|");
+        List<TotemBlock> totemBlockList = new ArrayList<>();
+        for (String block : orBlocks) {
+            int index = block.indexOf("{");
+            List<TotemBlockProperty> propertyList = new ArrayList<>();
+            if (index == -1) {
+                index = block.length();
+            } else {
+                String propertyStr = block.substring(index+1, block.length()-1);
+                String[] properties = propertyStr.split(";");
+                for (String property : properties) {
+                    String[] split = property.split("=");
+                    if (split.length < 2) continue;
+                    String key = split[0];
+                    String value = split[1];
+                    switch (key) {
+                        // Block face
+                        case "face" -> {
+                            BlockFace blockFace = BlockFace.valueOf(value.toUpperCase(Locale.ENGLISH));
+                            propertyList.add(new FaceImpl(blockFace));
+                        }
+                        // Block axis
+                        case "axis" -> {
+                            Axis axis = Axis.valueOf(value.toUpperCase(Locale.ENGLISH));
+                            propertyList.add(new AxisImpl(axis));
+                        }
+                        // Slab, Stair half
+                        case "half" -> {
+                            Bisected.Half half = Bisected.Half.valueOf(value.toUpperCase(Locale.ENGLISH));
+                            propertyList.add(new HalfImpl(half));
+                        }
+                    }
+                }
+            }
+            String type = block.substring(0, index);
+            TotemBlock totemBlock = new TotemBlock(
+                    TypeCondition.getTypeCondition(type),
+                    propertyList.toArray(new TotemBlockProperty[0])
+            );
+            totemBlockList.add(totemBlock);
+        }
+        return totemBlockList.toArray(new TotemBlock[0]);
     }
 }

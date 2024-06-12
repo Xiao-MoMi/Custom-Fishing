@@ -9,7 +9,7 @@ import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.item.CustomFishingItem;
 import net.momirealms.customfishing.api.mechanic.item.ItemManager;
-import net.momirealms.customfishing.api.mechanic.item.ItemType;
+import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.bukkit.util.ItemUtils;
 import net.momirealms.customfishing.bukkit.util.LocationUtils;
 import net.momirealms.customfishing.common.item.Item;
@@ -132,14 +132,14 @@ public class BukkitItemManager implements ItemManager, Listener {
 
     @Nullable
     @Override
-    public ItemType getItemType(@NotNull ItemStack itemStack) {
-        return ItemType.getTypeByID(getCustomFishingItemID(itemStack));
+    public MechanicType getItemType(@NotNull ItemStack itemStack) {
+        return MechanicType.getTypeByID(getCustomFishingItemID(itemStack));
     }
 
     @Nullable
     @Override
-    public ItemType getItemType(@NotNull String id) {
-        return ItemType.getTypeByID(id);
+    public MechanicType getItemType(@NotNull String id) {
+        return MechanicType.getTypeByID(id);
     }
 
     @Nullable

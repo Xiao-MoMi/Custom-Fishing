@@ -8,5 +8,6 @@ public enum ParserType {
     EVENT,
     ENTITY,
     HOOK,
-    BLOCK
+    BLOCK,
+    TOTEM
 }

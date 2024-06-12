@@ -13,7 +13,9 @@ import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.effect.LootBaseEffect;
 import net.momirealms.customfishing.api.mechanic.entity.EntityConfig;
 import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
+import net.momirealms.customfishing.api.mechanic.hook.HookConfig;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import net.momirealms.customfishing.common.config.ConfigLoader;
 import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.item.Item;
@@ -142,6 +144,14 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     public static List<String> durabilityLore() {
         return instance.durabilityLore;
+    }
+
+    public void registerHookParser(Function<Object, Consumer<HookConfig.Builder>> function, String... nodes) {
+        registerNodeFunction(nodes, new HookParserFunction(function));
+    }
+
+    public void registerTotemParser(Function<Object, Consumer<TotemConfig.Builder>> function, String... nodes) {
+        registerNodeFunction(nodes, new TotemParserFunction(function));
     }
 
     public void registerLootParser(Function<Object, Consumer<Loot.Builder>> function, String... nodes) {

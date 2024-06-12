@@ -50,10 +50,10 @@ public interface ItemManager extends Reloadable {
     String getCustomFishingItemID(@NotNull ItemStack itemStack);
 
     @Nullable
-    ItemType getItemType(@NotNull ItemStack itemStack);
+    MechanicType getItemType(@NotNull ItemStack itemStack);
 
     @Nullable
-    ItemType getItemType(@NotNull String id);
+    MechanicType getItemType(@NotNull String id);
 
     @Nullable
     Item dropItemLoot(@NotNull Context<Player> context);

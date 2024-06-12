@@ -4,7 +4,7 @@ import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionManager;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.context.Context;
-import net.momirealms.customfishing.api.mechanic.item.ItemType;
+import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import org.bukkit.entity.Player;
 
@@ -22,20 +22,21 @@ public interface EventManager extends Reloadable {
     /**
      * A map storing global actions for different item types and triggers.
      */
-    Map<ItemType, Map<ActionTrigger, Action<Player>[]>> GLOBAL_ACTIONS = new HashMap<>();
+    Map<MechanicType, Map<ActionTrigger, Action<Player>[]>> GLOBAL_ACTIONS = new HashMap<>();
 
     /**
      * A map storing global timed actions for different item types and triggers.
      */
-    Map<ItemType, Map<ActionTrigger, TreeMap<Integer, Action<Player>[]>>> GLOBAL_TIMES_ACTION = new HashMap<>();
+    Map<MechanicType, Map<ActionTrigger, TreeMap<Integer, Action<Player>[]>>> GLOBAL_TIMES_ACTION = new HashMap<>();
 
     /**
      * Retrieves an EventCarrier by its identifier.
      *
-     * @param id The unique identifier of the event carrier.
+     * @param id   The unique identifier of the event carrier.
+     * @param type
      * @return An Optional containing the EventCarrier if found, or an empty Optional if not found.
      */
-    Optional<EventCarrier> getEventCarrier(String id);
+    Optional<EventCarrier> getEventCarrier(String id, MechanicType type);
 
     /**
      * Registers a new EventCarrier with a specified identifier.
@@ -50,10 +51,11 @@ public interface EventManager extends Reloadable {
      *
      * @param context The context in which the event is triggered.
      * @param id      The unique identifier of the event carrier.
+     * @param type
      * @param trigger The trigger that initiates the event.
      */
-    default void trigger(Context<Player> context, String id, ActionTrigger trigger) {
-        getEventCarrier(id).ifPresent(carrier -> trigger(context, carrier, trigger));
+    default void trigger(Context<Player> context, String id, MechanicType type, ActionTrigger trigger) {
+        getEventCarrier(id, type).ifPresent(carrier -> trigger(context, carrier, trigger));
     }
 
     /**
@@ -61,12 +63,13 @@ public interface EventManager extends Reloadable {
      *
      * @param context       The context in which the event is triggered.
      * @param id            The unique identifier of the event carrier.
+     * @param type
      * @param trigger       The trigger that initiates the event.
      * @param previousTimes The previous times count for the event.
      * @param afterTimes    The after times count for the event.
      */
-    default void trigger(Context<Player> context, String id, ActionTrigger trigger, int previousTimes, int afterTimes) {
-        getEventCarrier(id).ifPresent(carrier -> trigger(context, carrier, trigger, previousTimes, afterTimes));
+    default void trigger(Context<Player> context, String id, MechanicType type, ActionTrigger trigger, int previousTimes, int afterTimes) {
+        getEventCarrier(id, type).ifPresent(carrier -> trigger(context, carrier, trigger, previousTimes, afterTimes));
     }
 
     /**
@@ -106,7 +109,7 @@ public interface EventManager extends Reloadable {
      * @param type    The type of item that triggered the event.
      * @param trigger The trigger that initiates the event.
      */
-    static void triggerGlobalActions(Context<Player> context, ItemType type, ActionTrigger trigger) {
+    static void triggerGlobalActions(Context<Player> context, MechanicType type, ActionTrigger trigger) {
         Optional.ofNullable(GLOBAL_ACTIONS.get(type))
                 .flatMap(actionTriggerMap -> Optional.ofNullable(actionTriggerMap.get(trigger)))
                 .ifPresent(action -> ActionManager.trigger(context, action));
@@ -121,7 +124,7 @@ public interface EventManager extends Reloadable {
      * @param previousTimes The previous times count for the event.
      * @param afterTimes    The after times count for the event.
      */
-    static void triggerGlobalActions(Context<Player> context, ItemType type, ActionTrigger trigger, int previousTimes, int afterTimes) {
+    static void triggerGlobalActions(Context<Player> context, MechanicType type, ActionTrigger trigger, int previousTimes, int afterTimes) {
         Optional.ofNullable(GLOBAL_TIMES_ACTION.get(type))
                 .flatMap(actionTriggerMap -> Optional.ofNullable(actionTriggerMap.get(trigger)))
                 .ifPresent(integerTreeMap -> {

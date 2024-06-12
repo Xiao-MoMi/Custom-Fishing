@@ -4,7 +4,7 @@ import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionManager;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.context.Context;
-import net.momirealms.customfishing.api.mechanic.item.ItemType;
+import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -18,11 +18,11 @@ public class EventCarrierImpl implements EventCarrier {
 
     private final HashMap<ActionTrigger, Action<Player>[]> actionMap;
     private final HashMap<ActionTrigger, TreeMap<Integer, Action<Player>[]>> actionTimesMap;
-    private final ItemType type;
+    private final MechanicType type;
     private final boolean disableGlobalActions;
     private final String id;
 
-    public EventCarrierImpl(String id, ItemType type, boolean disableGlobalActions, HashMap<ActionTrigger, Action<Player>[]> actionMap, HashMap<ActionTrigger, TreeMap<Integer, Action<Player>[]>> actionTimesMap) {
+    public EventCarrierImpl(String id, MechanicType type, boolean disableGlobalActions, HashMap<ActionTrigger, Action<Player>[]> actionMap, HashMap<ActionTrigger, TreeMap<Integer, Action<Player>[]>> actionTimesMap) {
         this.actionMap = actionMap;
         this.actionTimesMap = actionTimesMap;
         this.type = type;
@@ -31,7 +31,7 @@ public class EventCarrierImpl implements EventCarrier {
     }
 
     @Override
-    public ItemType type() {
+    public MechanicType type() {
         return type;
     }
 
@@ -68,7 +68,7 @@ public class EventCarrierImpl implements EventCarrier {
     public static class BuilderImpl implements Builder {
         private final HashMap<ActionTrigger, Action<Player>[]> actionMap = new HashMap<>();
         private final HashMap<ActionTrigger, TreeMap<Integer, Action<Player>[]>> actionTimesMap = new HashMap<>();
-        private ItemType type = null;
+        private MechanicType type = null;
         private boolean disableGlobalActions = false;
         private String id;
         @Override
@@ -97,7 +97,7 @@ public class EventCarrierImpl implements EventCarrier {
             return this;
         }
         @Override
-        public Builder type(ItemType type) {
+        public Builder type(MechanicType type) {
             this.type = type;
             return this;
         }

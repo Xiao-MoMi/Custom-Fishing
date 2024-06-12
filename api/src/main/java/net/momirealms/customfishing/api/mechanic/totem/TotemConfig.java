@@ -1,16 +1,12 @@
 package net.momirealms.customfishing.api.mechanic.totem;
 
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
-import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.mechanic.totem.block.TotemBlock;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public interface TotemConfig
-{
+public interface TotemConfig {
     TotemModel[] totemModels();
-
-    Requirement<Player>[] activateRequirements();
 
     String id();
 
@@ -39,8 +35,6 @@ public interface TotemConfig
         Builder radius(MathValue<Player> radius);
 
         Builder duration(MathValue<Player> duration);
-
-        Builder activateRequirements(Requirement<Player>[] activateRequirements);
 
         TotemConfig build();
     }

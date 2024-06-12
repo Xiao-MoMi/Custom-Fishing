@@ -1,6 +1,7 @@
 package net.momirealms.customfishing.api.mechanic.effect;
 
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import org.bukkit.entity.Player;
 
@@ -13,11 +14,13 @@ public class EffectModifierImpl implements EffectModifier {
     private final Requirement<Player>[] requirements;
     private final List<BiConsumer<Effect, Context<Player>>> modifiers;
     private final String id;
+    private final MechanicType type;
 
-    public EffectModifierImpl(String id, Requirement<Player>[] requirements, List<BiConsumer<Effect, Context<Player>>> modifiers) {
+    public EffectModifierImpl(String id, MechanicType type, Requirement<Player>[] requirements, List<BiConsumer<Effect, Context<Player>>> modifiers) {
         this.requirements = requirements;
         this.modifiers = modifiers;
         this.id = id;
+        this.type = type;
     }
 
     @Override
@@ -35,10 +38,16 @@ public class EffectModifierImpl implements EffectModifier {
         return modifiers;
     }
 
+    @Override
+    public MechanicType type() {
+        return type;
+    }
+
     public static class BuilderImpl implements Builder {
         private final List<Requirement<Player>> requirements = new ArrayList<>();
         private final List<BiConsumer<Effect, Context<Player>>> modifiers = new ArrayList<>();
         private String id;
+        private MechanicType type;
         @Override
         public Builder id(String id) {
             this.id = id;
@@ -54,10 +63,17 @@ public class EffectModifierImpl implements EffectModifier {
             this.modifiers.addAll(modifiers);
             return this;
         }
+
+        @Override
+        public Builder type(MechanicType type) {
+            this.type = type;
+            return this;
+        }
+
         @Override
         @SuppressWarnings("unchecked")
         public EffectModifier build() {
-            return new EffectModifierImpl(id, this.requirements.toArray(new Requirement[0]), this.modifiers);
+            return new EffectModifierImpl(id, type, this.requirements.toArray(new Requirement[0]), this.modifiers);
         }
     }
 }

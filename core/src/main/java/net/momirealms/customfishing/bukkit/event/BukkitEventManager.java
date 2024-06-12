@@ -5,6 +5,7 @@ import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.event.EventManager;
+import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -39,14 +40,14 @@ public class BukkitEventManager implements EventManager, Listener {
     }
 
     @Override
-    public Optional<EventCarrier> getEventCarrier(String id) {
-        return Optional.ofNullable(carriers.get(id));
+    public Optional<EventCarrier> getEventCarrier(String id, MechanicType type) {
+        return Optional.ofNullable(carriers.get(type.getType() + ":" + id));
     }
 
     @Override
     public boolean registerEventCarrier(EventCarrier carrier) {
         if (carriers.containsKey(carrier.id())) return false;
-        carriers.put(carrier.id(), carrier);
+        carriers.put(carrier.type().getType() + ":" + carrier.id(), carrier);
         return true;
     }
 

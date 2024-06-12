@@ -3,7 +3,7 @@ package net.momirealms.customfishing.api.mechanic.event;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.context.Context;
-import net.momirealms.customfishing.api.mechanic.item.ItemType;
+import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -20,7 +20,7 @@ public interface EventCarrier {
      *
      * @return type
      */
-    ItemType type();
+    MechanicType type();
 
     String id();
 
@@ -91,7 +91,7 @@ public interface EventCarrier {
          * @param type type
          * @return the Builder instance.
          */
-        Builder type(ItemType type);
+        Builder type(MechanicType type);
 
         /**
          * Set whether to disable global events

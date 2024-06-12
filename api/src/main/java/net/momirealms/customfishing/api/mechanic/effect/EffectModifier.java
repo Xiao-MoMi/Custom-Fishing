@@ -1,6 +1,7 @@
 package net.momirealms.customfishing.api.mechanic.effect;
 
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import org.bukkit.entity.Player;
 
@@ -38,6 +39,8 @@ public interface EffectModifier {
         return new EffectModifierImpl.BuilderImpl();
     }
 
+    MechanicType type();
+
     /**
      * Builder interface for constructing EffectModifier instances.
      */
@@ -60,6 +63,14 @@ public interface EffectModifier {
          * @return the current Builder instance
          */
         Builder modifiers(List<BiConsumer<Effect, Context<Player>>> modifiers);
+
+        /**
+         * Set the type of the item
+         *
+         * @param type type
+         * @return the Builder instance.
+         */
+        Builder type(MechanicType type);
 
         /**
          * Builds and returns the EffectModifier instance.

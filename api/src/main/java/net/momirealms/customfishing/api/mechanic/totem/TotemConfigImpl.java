@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.api.mechanic.totem;
 
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
-import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.mechanic.totem.block.TotemBlock;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -30,15 +29,13 @@ public class TotemConfigImpl implements TotemConfig {
     private final String id;
     private final TotemModel[] totemModels;
     private final TotemParticle[] particleSettings;
-    private final Requirement<Player>[] activateRequirements;
     private final MathValue<Player> radius;
     private final MathValue<Player> duration;
 
-    public TotemConfigImpl(String id, TotemModel[] totemModels, TotemParticle[] particleSettings, Requirement<Player>[] activateRequirements, MathValue<Player> radius, MathValue<Player> duration) {
+    public TotemConfigImpl(String id, TotemModel[] totemModels, TotemParticle[] particleSettings, MathValue<Player> radius, MathValue<Player> duration) {
         this.id = id;
         this.totemModels = totemModels;
         this.particleSettings = particleSettings;
-        this.activateRequirements = activateRequirements;
         this.radius = radius;
         this.duration = duration;
     }
@@ -46,11 +43,6 @@ public class TotemConfigImpl implements TotemConfig {
     @Override
     public TotemModel[] totemModels() {
         return totemModels;
-    }
-
-    @Override
-    public Requirement<Player>[] activateRequirements() {
-        return activateRequirements;
     }
 
     @Override
@@ -92,7 +84,6 @@ public class TotemConfigImpl implements TotemConfig {
         private String id;
         private TotemModel[] totemModels;
         private TotemParticle[] particleSettings;
-        private Requirement<Player>[] activateRequirements;
         private MathValue<Player> radius;
         private MathValue<Player> duration;
         @Override
@@ -121,13 +112,8 @@ public class TotemConfigImpl implements TotemConfig {
             return this;
         }
         @Override
-        public Builder activateRequirements(Requirement<Player>[] activateRequirements) {
-            this.activateRequirements = activateRequirements;
-            return this;
-        }
-        @Override
         public TotemConfig build() {
-            return new TotemConfigImpl(requireNonNull(id), requireNonNull(totemModels), particleSettings, activateRequirements, radius, duration);
+            return new TotemConfigImpl(requireNonNull(id), requireNonNull(totemModels), particleSettings, radius, duration);
         }
     }
 }

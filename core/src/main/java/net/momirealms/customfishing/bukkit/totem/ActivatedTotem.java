@@ -21,6 +21,7 @@ import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
+import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import net.momirealms.customfishing.api.mechanic.totem.TotemParticle;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
@@ -81,7 +82,7 @@ public class ActivatedTotem {
 
     public void doTimerAction() {
         this.context.arg(ContextKeys.TIME_LEFT, String.valueOf((expireTime - System.currentTimeMillis())/1000));
-        BukkitCustomFishingPlugin.getInstance().getEventManager().getEventCarrier(totemConfig.id())
+        BukkitCustomFishingPlugin.getInstance().getEventManager().getEventCarrier(totemConfig.id(), MechanicType.TOTEM)
                 .ifPresent(carrier -> carrier.trigger(context, ActionTrigger.TIMER));
     }
 }

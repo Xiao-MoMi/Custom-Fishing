@@ -22,7 +22,7 @@ import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.bag.BagManager;
 import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
-import net.momirealms.customfishing.api.mechanic.item.ItemType;
+import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.storage.user.UserData;
 import net.momirealms.customfishing.bukkit.config.BukkitConfigManager;
@@ -150,16 +150,16 @@ public class BukkitBagManager implements BagManager, Listener {
             return;
 
         String id = plugin.getItemManager().getItemID(movedItem);
-        ItemType type = ItemType.getTypeByID(id);
+        MechanicType type = MechanicType.getTypeByID(id);
         if (type == null) {
             event.setCancelled(true);
             return;
         }
 
-        if (type == ItemType.LOOT && bagStoreLoots)
+        if (type == MechanicType.LOOT && bagStoreLoots)
             return;
 
-        if (type == ItemType.BAIT || type == ItemType.ROD || type == ItemType.UTIL || type == ItemType.HOOK)
+        if (type == MechanicType.BAIT || type == MechanicType.ROD || type == MechanicType.UTIL || type == MechanicType.HOOK)
             return;
 
         event.setCancelled(true);
