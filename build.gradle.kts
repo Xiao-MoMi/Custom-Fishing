@@ -58,6 +58,13 @@ subprojects {
         options.encoding = "UTF-8"
         options.release.set(21)
     }
+    
+    java {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+    }
 
     tasks.shadowJar {
         destinationDirectory.set(file("$rootDir/target"))
