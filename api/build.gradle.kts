@@ -9,11 +9,3 @@ tasks {
         relocate ("de.tr7zw.changeme", "net.momirealms.customfishing.libraries")
     }
 }
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
-}
