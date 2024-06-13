@@ -26,6 +26,7 @@ import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.effect.EffectManager;
 import net.momirealms.customfishing.api.mechanic.entity.EntityManager;
 import net.momirealms.customfishing.api.mechanic.event.EventManager;
+import net.momirealms.customfishing.api.mechanic.fishing.FishingManager;
 import net.momirealms.customfishing.api.mechanic.hook.HookManager;
 import net.momirealms.customfishing.api.mechanic.item.ItemManager;
 import net.momirealms.customfishing.api.mechanic.loot.LootManager;
@@ -77,6 +78,7 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin, 
     protected DependencyManager dependencyManager;
     protected TranslationManager translationManager;
     protected TotemManager totemManager;
+    protected FishingManager fishingManager;
 
     public BukkitCustomFishingPlugin(Plugin boostrap) {
         if (!boostrap.getName().equals("CustomFishing")) {
@@ -181,6 +183,10 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin, 
 
     public TotemManager getTotemManager() {
         return totemManager;
+    }
+
+    public FishingManager getFishingManager() {
+        return fishingManager;
     }
 
     public Plugin getBoostrap() {

@@ -176,7 +176,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         });
         registerAction("message-nearby", (args, chance) -> {
             if (args instanceof Section section) {
-                List<String> messages = ListUtils.toList(args);
+                List<String> messages = ListUtils.toList(section.get("message"));
                 MathValue<Player> range = MathValue.auto(section.get("range"));
                 return context -> {
                     if (Math.random() > chance) return;
@@ -247,7 +247,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         });
         registerAction("command-nearby", (args, chance) -> {
             if (args instanceof Section section) {
-                List<String> cmd = section.getStringList("command");
+                List<String> cmd = ListUtils.toList(section.get("command"));
                 MathValue<Player> range = MathValue.auto(section.get("range"));
                 return context -> {
                     if (Math.random() > chance) return;

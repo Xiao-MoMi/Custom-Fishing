@@ -51,7 +51,7 @@ public class ActivatedTotem {
         this.expireTime = (long) (System.currentTimeMillis() + config.duration().evaluate(context) * 1000L);
         this.coreLocation = coreLocation.clone().add(0.5,0,0.5);
         this.totemConfig = config;
-        this.radius = config.duration().evaluate(context);
+        this.radius = config.radius().evaluate(context);
         for (TotemParticle particleSetting : config.particleSettings()) {
             this.subTasks.add(particleSetting.start(coreLocation, radius));
         }

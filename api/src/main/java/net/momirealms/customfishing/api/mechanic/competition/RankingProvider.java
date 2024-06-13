@@ -62,9 +62,9 @@ public interface RankingProvider {
     void removePlayer(String player);
 
     /**
-     * Returns an iterator for iterating over pairs of player names and scores.
+     * Returns an iterator for iterating over items of player names and scores.
      *
-     * @return An iterator for pairs of player names and scores.
+     * @return An iterator for items of player names and scores.
      */
     Iterator<Pair<String, Double>> getIterator();
 

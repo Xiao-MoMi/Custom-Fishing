@@ -79,9 +79,9 @@ public class RedisRankingProvider implements RankingProvider {
     }
 
     /**
-     * Returns an iterator for iterating over pairs of player names and scores in descending order.
+     * Returns an iterator for iterating over items of player names and scores in descending order.
      *
-     * @return An iterator for pairs of player names and scores.
+     * @return An iterator for items of player names and scores.
      */
     @Override
     public Iterator<Pair<String, Double>> getIterator() {

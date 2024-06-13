@@ -25,6 +25,7 @@ import net.momirealms.customfishing.bukkit.scheduler.BukkitSchedulerAdapter;
 import net.momirealms.customfishing.bukkit.sender.BukkitSenderFactory;
 import net.momirealms.customfishing.bukkit.statistic.BukkitStatisticsManager;
 import net.momirealms.customfishing.bukkit.storage.BukkitStorageManager;
+import net.momirealms.customfishing.bukkit.totem.BukkitTotemManager;
 import net.momirealms.customfishing.common.dependency.Dependency;
 import net.momirealms.customfishing.common.dependency.DependencyManagerImpl;
 import net.momirealms.customfishing.common.helper.VersionHelper;
@@ -104,6 +105,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.effectManager = new BukkitEffectManager(this);
         this.hookManager = new BukkitHookManager(this);
         this.bagManager = new BukkitBagManager(this);
+        this.totemManager = new BukkitTotemManager(this);
         this.translationManager = new TranslationManager(this);
         this.chatCatcherManager = new ChatCatcherManager(this);
         this.commandManager = new BukkitCommandManager(this);
@@ -130,6 +132,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.blockManager.unload();
         this.effectManager.unload();
         this.hookManager.unload();
+        this.totemManager.unload();
 
         // before ConfigManager
         this.placeholderManager.reload();
@@ -154,6 +157,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.blockManager.load();
         this.effectManager.load();
         this.hookManager.load();
+        this.totemManager.load();
     }
 
     @Override

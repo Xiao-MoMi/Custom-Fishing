@@ -8,7 +8,6 @@ import net.momirealms.customfishing.api.mechanic.config.function.TotemParserFunc
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
-import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import net.momirealms.customfishing.common.config.node.Node;
 
@@ -20,14 +19,12 @@ import java.util.function.Consumer;
 public class TotemConfigParser {
 
     private final String id;
-    private final String material;
     private final List<Consumer<EventCarrier.Builder>> eventBuilderConsumers = new ArrayList<>();
     private final List<Consumer<EffectModifier.Builder>> effectBuilderConsumers = new ArrayList<>();
     private final List<Consumer<TotemConfig.Builder>> totemBuilderConsumers = new ArrayList<>();
 
     public TotemConfigParser(String id, Section section, Map<String, Node<ConfigParserFunction>> functionMap) {
         this.id = id;
-        this.material = section.getString("material");
         if (!section.contains("tag")) section.set("tag", true);
         analyze(section, functionMap);
     }

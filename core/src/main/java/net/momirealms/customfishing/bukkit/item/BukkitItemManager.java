@@ -219,6 +219,11 @@ public class BukkitItemManager implements ItemManager, Listener {
         return success;
     }
 
+    @Override
+    public void decreaseDurability(ItemStack itemStack) {
+
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onInvPickItem(InventoryPickupItemEvent event) {
         ItemStack itemStack = event.getItem().getItemStack();

@@ -112,7 +112,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         }
         var factory = getRequirementFactory(type);
         if (factory == null) {
-            plugin.getPluginLogger().warn("No requirement type found at " + section.getRouteAsString());
+            plugin.getPluginLogger().warn("Requirement type: " + type + " not exists");
             return EmptyRequirement.INSTANCE;
         }
         return factory.process(section.get("value"), actionList, runActions);

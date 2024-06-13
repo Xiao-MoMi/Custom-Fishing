@@ -15,12 +15,14 @@ import net.momirealms.customfishing.api.mechanic.entity.EntityConfig;
 import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.hook.HookConfig;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import net.momirealms.customfishing.common.config.ConfigLoader;
 import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.item.Item;
 import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
@@ -60,6 +62,9 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     protected List<String> durabilityLore;
     protected boolean allowMultipleTotemType;
     protected boolean allowSameTotemType;
+    protected EventPriority eventPriority;
+    protected Requirement<Player>[] mechanicRequirements;
+    protected boolean enableBag;
 
     protected ConfigManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
@@ -142,8 +147,20 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
         return instance.allowSameTotemType;
     }
 
+    public static boolean enableBag() {
+        return instance.enableBag;
+    }
+
     public static List<String> durabilityLore() {
         return instance.durabilityLore;
+    }
+
+    public static EventPriority eventPriority() {
+        return instance.eventPriority;
+    }
+
+    public static Requirement<Player>[] mechanicRequirements() {
+        return instance.mechanicRequirements;
     }
 
     public void registerHookParser(Function<Object, Consumer<HookConfig.Builder>> function, String... nodes) {

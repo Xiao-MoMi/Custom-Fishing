@@ -58,6 +58,8 @@ public interface ItemManager extends Reloadable {
     @Nullable
     Item dropItemLoot(@NotNull Context<Player> context);
 
+    void decreaseDurability(ItemStack itemStack);
+
     ItemFactory<CustomFishingPlugin, RtagItem, ItemStack> getFactory();
 
     ItemProvider[] getItemProviders();

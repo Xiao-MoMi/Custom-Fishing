@@ -327,10 +327,10 @@ public class BukkitBlockManager implements BlockManager, Listener {
         }
         Collections.shuffle(unused);
         for (Tuple<MathValue<Player>, String, Pair<MathValue<Player>, MathValue<Player>>> tuple : contents) {
-            if (tuple.getLeft().evaluate(context) > Math.random()) {
-                ItemStack itemStack = plugin.getItemManager().buildAny(context, tuple.getMid());
+            if (tuple.left().evaluate(context) > Math.random()) {
+                ItemStack itemStack = plugin.getItemManager().buildAny(context, tuple.mid());
                 if (itemStack != null) {
-                    itemStack.setAmount(RandomUtils.generateRandomInt((int) tuple.getRight().left().evaluate(context), (int) (tuple.getRight().right().evaluate(context) + 1)));
+                    itemStack.setAmount(RandomUtils.generateRandomInt((int) tuple.right().left().evaluate(context), (int) (tuple.right().right().evaluate(context) + 1)));
                     inventory.setItem(unused.pop(), itemStack);
                 }
             }

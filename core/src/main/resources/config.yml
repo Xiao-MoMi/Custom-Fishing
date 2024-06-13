@@ -143,6 +143,7 @@ mechanics:
 
   # Fishing bag is where players can store their baits, utils, hooks and rods (Loot optional)
   fishing-bag:
+    enable: true
     # Fishing bag container title
     bag-title: '<blue>{player}''s Fishing Bag</blue>'
     # Other whitelist-items
@@ -378,7 +379,7 @@ other-settings:
   # It's recommended to use MiniMessage format. If you insist on using legacy color code "&", enable the support below.
   # Disable this would improve performance
   legacy-color-code-support: true
-  # Event priority: MONITOR HIGHEST HIGH NORMAL LOW LOWEST
+  # Fishing event priority: MONITOR HIGHEST HIGH NORMAL LOW LOWEST
   event-priority: NORMAL
   # Save the data from cache to file periodically to minimize the data loss if server crashes
   # -1 to disable

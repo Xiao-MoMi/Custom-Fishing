@@ -17,7 +17,20 @@
 
 package net.momirealms.customfishing.api.mechanic.fishing;
 
+import org.bukkit.entity.FishHook;
+import org.bukkit.entity.Player;
+
+import java.util.Optional;
+import java.util.UUID;
+
 public interface FishingManager {
 
 
+    Optional<FishHook> getFishHook(Player player);
+
+    Optional<FishHook> getFishHook(UUID player);
+
+    Optional<Player> getOwner(FishHook hook);
+
+    void destroy(UUID player);
 }

@@ -36,6 +36,7 @@ import org.bukkit.Particle;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventPriority;
 
 import java.io.File;
 import java.util.*;
@@ -101,6 +102,12 @@ public class BukkitConfigManager extends ConfigManager {
 
         allowMultipleTotemType = config.getBoolean("mechanics.totem.allow-multiple-type", true);
         allowSameTotemType = config.getBoolean("mechanics.totem.allow-same-type", false);
+
+        eventPriority = EventPriority.valueOf(config.getString("other-settings.event-priority", "NORMAL").toUpperCase(Locale.ENGLISH));
+
+        mechanicRequirements = plugin.getRequirementManager().parseRequirements(config.getSection("mechanics.mechanic-requirements"), true);
+
+        enableBag = config.getBoolean("mechanics.fishing-bag.enable", true);
 
         Section placeholderSection = config.getSection("other-settings.placeholder-register");
         if (placeholderSection != null) {

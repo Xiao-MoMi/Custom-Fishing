@@ -1,7 +1,6 @@
 package net.momirealms.customfishing.api.mechanic.config.function;
 
 import net.momirealms.customfishing.api.mechanic.hook.HookConfig;
-import net.momirealms.customfishing.api.mechanic.loot.Loot;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.event;
 
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
+import net.momirealms.customfishing.api.mechanic.fishing.FishingGears;
 import net.momirealms.customfishing.api.mechanic.fishing.FishingPreparation;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -30,24 +31,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public class RodCastEvent extends PlayerEvent implements Cancellable {
 
-    private final Effect effect;
+    private final FishingGears gears;
     private boolean isCancelled;
     private final PlayerFishEvent event;
-    private final FishingPreparation preparation;
     private static final HandlerList handlerList = new HandlerList();
 
-    /**
-     * Constructs a new RodCastEvent.
-     *
-     * @param event              The original PlayerFishEvent that triggered the rod cast.
-     * @param fishingPreparation The fishing preparation associated with the rod cast.
-     * @param effect             The effect associated with the fishing rod cast.
-     */
-    public RodCastEvent(PlayerFishEvent event, FishingPreparation fishingPreparation, Effect effect) {
+    public RodCastEvent(PlayerFishEvent event, FishingGears gears) {
         super(event.getPlayer());
-        this.effect = effect;
+        this.gears = gears;
         this.event = event;
-        this.preparation = fishingPreparation;
     }
 
     @Override
@@ -69,14 +61,6 @@ public class RodCastEvent extends PlayerEvent implements Cancellable {
         return handlerList;
     }
 
-    /**
-     * Gets the fishing preparation associated with the rod cast.
-     *
-     * @return The FishingPreparation associated with the rod cast.
-     */
-    public FishingPreparation getPreparation() {
-        return preparation;
-    }
 
     @NotNull
     @Override
@@ -84,13 +68,8 @@ public class RodCastEvent extends PlayerEvent implements Cancellable {
         return getHandlerList();
     }
 
-    /**
-     * Gets the effect associated with the fishing rod cast.
-     *
-     * @return The Effect associated with the rod cast.
-     */
-    public Effect getEffect() {
-        return effect;
+    public FishingGears getGears() {
+        return gears;
     }
 
     /**
