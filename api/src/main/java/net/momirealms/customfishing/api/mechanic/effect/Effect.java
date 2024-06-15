@@ -37,6 +37,8 @@ public interface Effect {
      */
     Map<EffectProperties<?>, Object> properties();
 
+    Effect properties(Map<EffectProperties<?>, Object> properties);
+
     /**
      * Sets the specified property to the given value.
      *
@@ -257,6 +259,8 @@ public interface Effect {
      * @param effect the effect to combine with
      */
     void combine(Effect effect);
+
+    Effect copy();
 
     /**
      * Creates a new instance of {@link Effect}.

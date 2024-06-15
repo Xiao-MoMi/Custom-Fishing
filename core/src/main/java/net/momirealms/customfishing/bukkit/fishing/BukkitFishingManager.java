@@ -4,8 +4,9 @@ import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.RodCastEvent;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.fishing.FishingGears;
-import net.momirealms.customfishing.api.mechanic.fishing.FishingHookTimerTask;
+import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
 import net.momirealms.customfishing.api.mechanic.fishing.FishingManager;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import org.bukkit.Bukkit;
@@ -27,7 +28,7 @@ public class BukkitFishingManager implements FishingManager, Listener {
     private BukkitCustomFishingPlugin plugin;
     private final ConcurrentHashMap<UUID, FishHook> castHooks = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, FishingGears> gears = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<UUID, FishingHookTimerTask> tasks = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, CustomFishingHook> tasks = new ConcurrentHashMap<>();
 
     public BukkitFishingManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
@@ -124,6 +125,9 @@ public class BukkitFishingManager implements FishingManager, Listener {
             return;
         }
 
+        Effect effect = Effect.newInstance();
+
+
         RodCastEvent rodCastEvent = new RodCastEvent(event, gears);
         Bukkit.getPluginManager().callEvent(rodCastEvent);
         if (rodCastEvent.isCancelled()) {
@@ -141,7 +145,7 @@ public class BukkitFishingManager implements FishingManager, Listener {
             this.castHooks.remove(uuid);
         });
         this.gears.remove(uuid);
-        FishingHookTimerTask task = this.tasks.remove(uuid);
+        CustomFishingHook task = this.tasks.remove(uuid);
         if (task != null) {
             task.cancel();
         }

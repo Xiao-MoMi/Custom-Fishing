@@ -30,6 +30,7 @@ import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.util.ListUtils;
 import net.momirealms.customfishing.common.util.Pair;
 import net.momirealms.customfishing.common.util.RandomUtils;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Axis;
 import org.bukkit.Color;
 import org.bukkit.Particle;
@@ -215,101 +216,137 @@ public class BukkitConfigManager extends ConfigManager {
         }, "requirements");
         this.registerEffectModifierParser(object -> {
             Section section = (Section) object;
-            ArrayList<BiConsumer<Effect, Context<Player>>> consumers = new ArrayList<>();
+            ArrayList<TriConsumer<Effect, Context<Player>, Integer>> property = new ArrayList<>();
             for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
                 if (entry.getValue() instanceof Section innerSection) {
-                    consumers.add(parseEffect(innerSection));
+                    property.add(parseEffect(innerSection));
                 }
             }
-            return builder -> builder.modifiers(consumers);
+            return builder -> {
+                builder.modifiers(property);
+            };
         }, "effects");
     }
 
-    private BiConsumer<Effect, Context<Player>> parseEffect(Section section) {
+    private TriConsumer<Effect, Context<Player>, Integer> parseEffect(Section section) {
         switch (section.getString("type")) {
+            case "lava-fishing" -> {
+                return (((effect, context, phase) -> {
+                    if (phase == 0) effect.properties().put(EffectProperties.LAVA_FISHING, true);
+                }));
+            }
+            case "void-fishing" -> {
+                return (((effect, context, phase) -> {
+                    if (phase == 0) effect.properties().put(EffectProperties.VOID_FISHING, true);
+                }));
+            }
             case "weight-mod" -> {
                 var op = parseWeightOperation(section.getStringList("value"));
-                return (((effect, context) -> effect.weightOperations(op)));
+                return (((effect, context, phase) -> {
+                    if (phase == 1) effect.weightOperations(op);
+                }));
             }
             case "weight-mod-ignore-conditions" -> {
                 var op = parseWeightOperation(section.getStringList("value"));
-                return (((effect, context) -> effect.weightOperationsIgnored(op)));
+                return (((effect, context, phase) -> {
+                    if (phase == 1) effect.weightOperationsIgnored(op);
+                }));
             }
             case "group-mod" -> {
                 var op = parseGroupWeightOperation(section.getStringList("value"));
-                return (((effect, context) -> effect.weightOperations(op)));
+                return (((effect, context, phase) -> {
+                    if (phase == 1) effect.weightOperations(op);
+                }));
             }
             case "group-mod-ignore-conditions" -> {
                 var op = parseGroupWeightOperation(section.getStringList("value"));
-                return (((effect, context) -> effect.weightOperationsIgnored(op)));
+                return (((effect, context, phase) -> {
+                    if (phase == 1) effect.weightOperationsIgnored(op);
+                }));
             }
             case "wait-time" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
-                return (((effect, context) -> effect.waitTimeAdder(effect.waitTimeAdder() + value.evaluate(context))));
+                return (((effect, context, phase) -> {
+                    if (phase == 2) effect.waitTimeAdder(effect.waitTimeAdder() + value.evaluate(context));
+                }));
             }
             case "hook-time", "wait-time-multiplier" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
-                return (((effect, context) -> effect.waitTimeMultiplier(effect.waitTimeMultiplier() - 1 + value.evaluate(context))));
+                return (((effect, context, phase) -> {
+                    if (phase == 2) effect.waitTimeMultiplier(effect.waitTimeMultiplier() - 1 + value.evaluate(context));
+                }));
             }
             case "difficulty" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
-                return (((effect, context) -> effect.difficultyAdder(effect.difficultyAdder() + value.evaluate(context))));
+                return (((effect, context, phase) -> {
+                    if (phase == 2) effect.difficultyAdder(effect.difficultyAdder() + value.evaluate(context));
+                }));
             }
             case "difficulty-multiplier", "difficulty-bonus" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
-                return (((effect, context) -> effect.difficultyMultiplier(effect.difficultyMultiplier() - 1 + value.evaluate(context))));
+                return (((effect, context, phase) -> {
+                    if (phase == 2) effect.difficultyMultiplier(effect.difficultyMultiplier() - 1 + value.evaluate(context));
+                }));
             }
             case "size" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
-                return (((effect, context) -> effect.sizeAdder(effect.sizeAdder() + value.evaluate(context))));
+                return (((effect, context, phase) -> {
+                    if (phase == 2) effect.sizeAdder(effect.sizeAdder() + value.evaluate(context));
+                }));
             }
             case "size-multiplier", "size-bonus" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
-                return (((effect, context) -> effect.sizeMultiplier(effect.sizeMultiplier() - 1 + value.evaluate(context))));
+                return (((effect, context, phase) -> {
+                    if (phase == 2) effect.sizeMultiplier(effect.sizeMultiplier() - 1 + value.evaluate(context));
+                }));
             }
             case "game-time" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
-                return (((effect, context) -> effect.gameTimeAdder(effect.gameTimeAdder() + value.evaluate(context))));
+                return (((effect, context, phase) -> {
+                    if (phase == 2) effect.gameTimeAdder(effect.gameTimeAdder() + value.evaluate(context));
+                }));
             }
             case "game-time-multiplier", "game-time-bonus" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
-                return (((effect, context) -> effect.gameTimeMultiplier(effect.gameTimeMultiplier() - 1 + value.evaluate(context))));
+                return (((effect, context, phase) -> {
+                    if (phase == 2) effect.gameTimeMultiplier(effect.gameTimeMultiplier() - 1 + value.evaluate(context));
+                }));
             }
             case "score" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
-                return (((effect, context) -> effect.scoreAdder(effect.scoreAdder() + value.evaluate(context))));
+                return (((effect, context, phase) -> {
+                    if (phase == 2) effect.scoreAdder(effect.scoreAdder() + value.evaluate(context));
+                }));
             }
             case "score-multiplier", "score-bonus" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
-                return (((effect, context) -> effect.scoreMultiplier(effect.scoreMultiplier() - 1 + value.evaluate(context))));
+                return (((effect, context, phase) -> {
+                    if (phase == 2) effect.scoreMultiplier(effect.scoreMultiplier() - 1 + value.evaluate(context));
+                }));
             }
             case "multiple-loot" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
-                return (((effect, context) -> effect.multipleLootChance(effect.multipleLootChance() + value.evaluate(context))));
-            }
-            case "lava-fishing" -> {
-                return (((effect, context) -> effect.properties().put(EffectProperties.LAVA_FISHING, true)));
-            }
-            case "void-fishing" -> {
-                return (((effect, context) -> effect.properties().put(EffectProperties.VOID_FISHING, true)));
+                return (((effect, context, phase) -> {
+                    if (phase == 2) effect.multipleLootChance(effect.multipleLootChance() + value.evaluate(context));
+                }));
             }
             case "conditional" -> {
                 Requirement<Player>[] requirements = plugin.getRequirementManager().parseRequirements(section.getSection("conditions"), true);
                 Section effectSection = section.getSection("effects");
-                ArrayList<BiConsumer<Effect, Context<Player>>> effects = new ArrayList<>();
+                ArrayList<TriConsumer<Effect, Context<Player>, Integer>> effects = new ArrayList<>();
                 if (effectSection != null)
                     for (Map.Entry<String, Object> entry : effectSection.getStringRouteMappedValues(false).entrySet())
                         if (entry.getValue() instanceof Section inner)
                             effects.add(parseEffect(inner));
-                return (((effect, context) -> {
+                return (((effect, context, phase) -> {
                     if (!RequirementManager.isSatisfied(context, requirements)) return;
-                    for (BiConsumer<Effect, Context<Player>> consumer : effects) {
-                        consumer.accept(effect, context);
+                    for (TriConsumer<Effect, Context<Player>, Integer> consumer : effects) {
+                        consumer.accept(effect, context, phase);
                     }
                 }));
             }
             default -> {
-                return (((effect, context) -> {}));
+                return (((effect, context, phase) -> {}));
             }
         }
     }

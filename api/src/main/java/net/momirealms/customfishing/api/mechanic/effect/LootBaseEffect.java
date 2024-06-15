@@ -1,5 +1,6 @@
 package net.momirealms.customfishing.api.mechanic.effect;
 
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import org.bukkit.entity.Player;
 
@@ -65,6 +66,8 @@ public interface LootBaseEffect {
     static Builder builder() {
         return new LootBaseEffectImpl.BuilderImpl();
     }
+
+    Effect toEffect(Context<Player> context);
 
     /**
      * Builder interface for constructing {@link LootBaseEffect} instances.

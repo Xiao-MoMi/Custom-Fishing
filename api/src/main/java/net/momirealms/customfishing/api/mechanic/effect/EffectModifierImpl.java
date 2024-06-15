@@ -3,20 +3,25 @@ package net.momirealms.customfishing.api.mechanic.effect;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 public class EffectModifierImpl implements EffectModifier {
 
     private final Requirement<Player>[] requirements;
-    private final List<BiConsumer<Effect, Context<Player>>> modifiers;
+    private final List<TriConsumer<Effect, Context<Player>, Integer>> modifiers;
     private final String id;
     private final MechanicType type;
 
-    public EffectModifierImpl(String id, MechanicType type, Requirement<Player>[] requirements, List<BiConsumer<Effect, Context<Player>>> modifiers) {
+    public EffectModifierImpl(
+            String id,
+            MechanicType type,
+            Requirement<Player>[] requirements,
+            List<TriConsumer<Effect, Context<Player>, Integer>> modifiers
+    ) {
         this.requirements = requirements;
         this.modifiers = modifiers;
         this.id = id;
@@ -34,7 +39,7 @@ public class EffectModifierImpl implements EffectModifier {
     }
 
     @Override
-    public List<BiConsumer<Effect, Context<Player>>> modifiers() {
+    public List<TriConsumer<Effect, Context<Player>, Integer>> modifiers() {
         return modifiers;
     }
 
@@ -45,7 +50,7 @@ public class EffectModifierImpl implements EffectModifier {
 
     public static class BuilderImpl implements Builder {
         private final List<Requirement<Player>> requirements = new ArrayList<>();
-        private final List<BiConsumer<Effect, Context<Player>>> modifiers = new ArrayList<>();
+        private final List<TriConsumer<Effect, Context<Player>, Integer>> modifiers = new ArrayList<>();
         private String id;
         private MechanicType type;
         @Override
@@ -59,17 +64,15 @@ public class EffectModifierImpl implements EffectModifier {
             return this;
         }
         @Override
-        public Builder modifiers(List<BiConsumer<Effect, Context<Player>>> modifiers) {
+        public Builder modifiers(List<TriConsumer<Effect, Context<Player>, Integer>> modifiers) {
             this.modifiers.addAll(modifiers);
             return this;
         }
-
         @Override
         public Builder type(MechanicType type) {
             this.type = type;
             return this;
         }
-
         @Override
         @SuppressWarnings("unchecked")
         public EffectModifier build() {

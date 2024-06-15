@@ -3,10 +3,10 @@ package net.momirealms.customfishing.api.mechanic.effect;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 
 /**
  * EffectModifier interface for modifying effects in the CustomFishing plugin.
@@ -28,7 +28,7 @@ public interface EffectModifier {
      *
      * @return a list of effect modifiers
      */
-    List<BiConsumer<Effect, Context<Player>>> modifiers();
+    List<TriConsumer<Effect, Context<Player>, Integer>> modifiers();
 
     /**
      * Creates and returns a new Builder instance for constructing EffectModifier instances.
@@ -62,7 +62,7 @@ public interface EffectModifier {
          * @param modifiers a list of effect modifiers
          * @return the current Builder instance
          */
-        Builder modifiers(List<BiConsumer<Effect, Context<Player>>> modifiers);
+        Builder modifiers(List<TriConsumer<Effect, Context<Player>, Integer>> modifiers);
 
         /**
          * Set the type of the item

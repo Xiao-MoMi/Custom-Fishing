@@ -1,5 +1,6 @@
 package net.momirealms.customfishing.api.mechanic.effect;
 
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import org.bukkit.entity.Player;
 
@@ -56,6 +57,18 @@ public class LootBaseEffectImpl implements LootBaseEffect {
     @Override
     public MathValue<Player> gameTimeMultiplier() {
         return gameTimeMultiplier;
+    }
+
+    @Override
+    public Effect toEffect(Context<Player> context) {
+        Effect effect = Effect.newInstance();
+        effect.waitTimeAdder(waitTimeAdder.evaluate(context));
+        effect.waitTimeMultiplier(waitTimeMultiplier.evaluate(context));
+        effect.difficultyAdder(difficultyAdder.evaluate(context));
+        effect.difficultyMultiplier(difficultyMultiplier.evaluate(context));
+        effect.gameTimeAdder(gameTimeAdder.evaluate(context));
+        effect.gameTimeMultiplier(gameTimeMultiplier.evaluate(context));
+        return effect;
     }
 
     public static class BuilderImpl implements Builder {

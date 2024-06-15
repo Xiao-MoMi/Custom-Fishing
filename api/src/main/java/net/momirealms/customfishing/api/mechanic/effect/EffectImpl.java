@@ -33,6 +33,12 @@ public class EffectImpl implements Effect {
     }
 
     @Override
+    public Effect properties(Map<EffectProperties<?>, Object> properties) {
+        this.properties.putAll(properties);
+        return this;
+    }
+
+    @Override
     public <C> EffectImpl arg(EffectProperties<C> key, C value) {
         properties.put(key, value);
         return this;
@@ -204,5 +210,25 @@ public class EffectImpl implements Effect {
         this.weightOperations.addAll(another.weightOperations());
         this.weightOperationsIgnored.addAll(another.weightOperationsIgnored());
         this.properties.putAll(another.properties());
+    }
+
+    @Override
+    public Effect copy() {
+        return Effect.newInstance()
+                .scoreMultiplier(this.scoreMultiplier)
+                .scoreAdder(this.scoreAdder)
+                .sizeMultiplier(this.sizeMultiplier)
+                .sizeAdder(this.sizeAdder)
+                .difficultyMultiplier(this.difficultyMultiplier)
+                .difficultyAdder(this.difficultyAdder)
+                .gameTimeMultiplier(this.gameTimeMultiplier)
+                .gameTimeAdder(this.gameTimeAdder)
+                .waitTimeMultiplier(this.waitTimeMultiplier)
+                .waitTimeAdder(this.waitTimeAdder)
+                .multipleLootChance(this.multipleLootChance)
+                .weightOperations(this.weightOperations)
+                .weightOperationsIgnored(this.weightOperationsIgnored)
+                .properties(this.properties);
+
     }
 }
