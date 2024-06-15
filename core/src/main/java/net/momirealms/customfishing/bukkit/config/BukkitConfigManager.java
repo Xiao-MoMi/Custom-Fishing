@@ -30,7 +30,7 @@ import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.util.ListUtils;
 import net.momirealms.customfishing.common.util.Pair;
 import net.momirealms.customfishing.common.util.RandomUtils;
-import org.apache.logging.log4j.util.TriConsumer;
+import net.momirealms.customfishing.common.util.TriConsumer;
 import org.bukkit.Axis;
 import org.bukkit.Color;
 import org.bukkit.Particle;
@@ -41,7 +41,6 @@ import org.bukkit.event.EventPriority;
 
 import java.io.File;
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 public class BukkitConfigManager extends ConfigManager {

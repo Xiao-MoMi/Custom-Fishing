@@ -7,7 +7,7 @@ import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.fishing.hook.HookMechanic;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
-import org.apache.logging.log4j.util.TriConsumer;
+import net.momirealms.customfishing.common.util.TriConsumer;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 

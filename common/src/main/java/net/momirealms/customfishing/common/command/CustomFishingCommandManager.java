@@ -4,7 +4,7 @@ import dev.dejvokep.boostedyaml.YamlDocument;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.util.Index;
-import org.apache.logging.log4j.util.TriConsumer;
+import net.momirealms.customfishing.common.util.TriConsumer;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.jetbrains.annotations.NotNull;

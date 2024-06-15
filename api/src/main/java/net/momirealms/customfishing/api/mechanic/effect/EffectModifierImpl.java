@@ -3,7 +3,7 @@ package net.momirealms.customfishing.api.mechanic.effect;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
-import org.apache.logging.log4j.util.TriConsumer;
+import net.momirealms.customfishing.common.util.TriConsumer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

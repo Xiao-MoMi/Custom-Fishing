@@ -10,6 +10,7 @@ import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.config.function.*;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
+import net.momirealms.customfishing.api.mechanic.effect.LootBaseEffect;
 import net.momirealms.customfishing.api.mechanic.entity.EntityConfig;
 import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.hook.HookConfig;
@@ -188,6 +189,10 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     public void registerEventParser(Function<Object, Consumer<EventCarrier.Builder>> function, String... nodes) {
         registerNodeFunction(nodes, new EventParserFunction(function));
+    }
+
+    public void registerBaseEffectParser(Function<Object, Consumer<LootBaseEffect.Builder>> function, String... nodes) {
+        registerNodeFunction(nodes, new BaseEffectParserFunction(function));
     }
 
     public void unregisterNodeFunction(String... nodes) {

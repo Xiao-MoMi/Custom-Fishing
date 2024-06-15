@@ -105,11 +105,11 @@ public class BukkitFishingManager implements FishingManager, Listener {
     private void selectState(PlayerFishEvent event) {
         switch (event.getState()) {
             case FISHING -> onCastRod(event);
-            case REEL_IN -> onReelIn(event);
-            case CAUGHT_ENTITY -> onCaughtEntity(event);
-            case CAUGHT_FISH -> onCaughtFish(event);
-            case BITE -> onBite(event);
-            case IN_GROUND -> onInGround(event);
+//            case REEL_IN -> onReelIn(event);
+//            case CAUGHT_ENTITY -> onCaughtEntity(event);
+//            case CAUGHT_FISH -> onCaughtFish(event);
+//            case BITE -> onBite(event);
+//            case IN_GROUND -> onInGround(event);
         }
     }
 
@@ -124,9 +124,6 @@ public class BukkitFishingManager implements FishingManager, Listener {
             this.destroy(player.getUniqueId());
             return;
         }
-
-        Effect effect = Effect.newInstance();
-
 
         RodCastEvent rodCastEvent = new RodCastEvent(event, gears);
         Bukkit.getPluginManager().callEvent(rodCastEvent);

@@ -11,7 +11,7 @@ import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
 import net.momirealms.customfishing.common.sender.Sender;
 import net.momirealms.customfishing.common.util.ArrayUtils;
-import org.apache.logging.log4j.util.TriConsumer;
+import net.momirealms.customfishing.common.util.TriConsumer;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
