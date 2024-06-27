@@ -252,7 +252,7 @@ public class HookManagerImpl implements Listener, HookManager {
             return;
 
         ItemStack cursor = event.getCursor();
-        if (cursor == null || cursor.getType() == Material.AIR) {
+        if (cursor.getType() == Material.AIR) {
             if (event.getClick() == ClickType.RIGHT) {
                 NBTItem nbtItem = new NBTItem(clicked);
                 NBTCompound cfCompound = nbtItem.getCompound("CustomFishing");
@@ -315,7 +315,7 @@ public class HookManagerImpl implements Listener, HookManager {
         clonedHook.setAmount(1);
         cursor.setAmount(cursor.getAmount() - 1);
 
-        if (previousHookID != null && !previousHookID.equals("")) {
+        if (previousHookID != null && !previousHookID.isEmpty()) {
             int previousHookDurability = cfCompound.getInteger("hook_dur");
             ItemStack previousItemStack = cfCompound.getItemStack("hook_item");
             ItemUtils.setDurability(previousItemStack, previousHookDurability, true);

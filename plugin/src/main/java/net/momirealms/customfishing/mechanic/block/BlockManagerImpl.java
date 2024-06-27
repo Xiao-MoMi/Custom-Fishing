@@ -99,7 +99,7 @@ public class BlockManagerImpl implements BlockManager, Listener {
 
     private void resetBlockDetectionOrder() {
         ArrayList<BlockLibrary> list = new ArrayList<>();
-        for (String plugin : CFConfig.itemDetectOrder) {
+        for (String plugin : CFConfig.blockDetectOrder) {
             BlockLibrary library = blockLibraryMap.get(plugin);
             if (library != null) {
                 list.add(library);

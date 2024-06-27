@@ -136,11 +136,9 @@ public class TotemManagerImpl implements TotemManager, Listener {
             activatedTotem.cancel();
     }
 
-    @EventHandler
+    @EventHandler (ignoreCancelled = true)
     public void onInteractBlock(PlayerInteractEvent event) {
         if (event.isBlockInHand())
-            return;
-        if (event.useItemInHand() == Event.Result.DENY)
             return;
         if (event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK)
             return;

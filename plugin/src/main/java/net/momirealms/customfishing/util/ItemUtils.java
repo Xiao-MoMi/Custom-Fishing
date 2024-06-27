@@ -238,7 +238,7 @@ public class ItemUtils {
             }
         } else {
             ItemMeta previousMeta = itemStack.getItemMeta().clone();
-            PlayerItemDamageEvent itemDamageEvent = new PlayerItemDamageEvent(player, itemStack, amount, amount);
+            PlayerItemDamageEvent itemDamageEvent = new PlayerItemDamageEvent(player, itemStack, amount);
             Bukkit.getPluginManager().callEvent(itemDamageEvent);
             if (!itemStack.getItemMeta().equals(previousMeta) || itemDamageEvent.isCancelled()) {
                 return;

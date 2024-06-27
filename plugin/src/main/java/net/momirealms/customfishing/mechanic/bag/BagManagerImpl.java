@@ -31,12 +31,14 @@ import net.momirealms.customfishing.compatibility.papi.PlaceholderManagerImpl;
 import net.momirealms.customfishing.setting.CFConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -109,12 +111,7 @@ public class BagManagerImpl implements BagManager, Listener {
         int rows = getBagInventoryRows(player);
         Inventory bag = onlinePlayer.getHolder().getInventory();
         if (bag.getSize() != rows * 9) {
-            Inventory newBag = InventoryUtils.createInventory(onlinePlayer.getHolder(), rows * 9,
-                    AdventureHelper.getInstance().getComponentFromMiniMessage(
-                            PlaceholderManagerImpl.getInstance().parse(
-                                    player, bagTitle, Map.of("{player}", player.getName())
-                            )
-                    ));
+            Inventory newBag = InventoryUtils.createInventory(onlinePlayer.getHolder(), rows * 9, AdventureHelper.getInstance().getComponentFromMiniMessage(PlaceholderManagerImpl.getInstance().parse(player, bagTitle, Map.of("{player}", player.getName()))));
             onlinePlayer.getHolder().setInventory(newBag);
             assert newBag != null;
             ItemStack[] newContents = new ItemStack[rows * 9];
@@ -180,9 +177,13 @@ public class BagManagerImpl implements BagManager, Listener {
         if (!(event.getInventory().getHolder() instanceof FishingBagHolder))
             return;
         Inventory clicked = event.getClickedInventory();
-        if (clicked != event.getWhoClicked().getInventory())
-            return;
         ItemStack clickedItem = event.getCurrentItem();
+        if (clicked != event.getWhoClicked().getInventory()) {
+            if (event.getAction() != InventoryAction.HOTBAR_SWAP && event.getAction() != InventoryAction.HOTBAR_MOVE_AND_READD) {
+                return;
+            }
+            clickedItem = event.getWhoClicked().getInventory().getItem(event.getHotbarButton());
+        }
         if (clickedItem == null || clickedItem.getType() == Material.AIR)
             return;
         if (bagWhiteListItems.contains(clickedItem.getType()))

@@ -34,47 +34,32 @@ import java.util.concurrent.CompletableFuture;
  */
 public class VersionManagerImpl implements VersionManager {
 
-    private final boolean isNewerThan1_19_R2;
-    private final boolean isNewerThan1_19_R3;
-    private final boolean isNewerThan1_20;
-    private final boolean isNewerThan1_19;
-    private final String serverVersion;
     private final CustomFishingPluginImpl plugin;
-    private final boolean isSpigot;
-    private boolean hasRegionScheduler;
+    private final float mcVersion;
+    private boolean isFolia;
     private boolean isMojmap;
+    private boolean isSpigot;
     private final String pluginVersion;
 
     @SuppressWarnings("deprecation")
     public VersionManagerImpl(CustomFishingPluginImpl plugin) {
         this.plugin = plugin;
-
         // Get the server version
-        serverVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
-        String[] split = serverVersion.split("\\.");
-        int main_ver = Integer.parseInt(split[1]);
-        // Determine if the server version is newer than 1_19_R2 and 1_20_R1
-        if (main_ver >= 20) {
-            isNewerThan1_19 = isNewerThan1_19_R2 = isNewerThan1_19_R3 = true;
-            isNewerThan1_20 = true;
-        } else if (main_ver == 19) {
-            isNewerThan1_20 = false;
-            isNewerThan1_19_R2 = Integer.parseInt(split[2]) >= 3;
-            isNewerThan1_19_R3 = Integer.parseInt(split[2]) >= 4;
-            isNewerThan1_19 = true;
-        } else {
-            isNewerThan1_20 = isNewerThan1_19 = isNewerThan1_19_R2 = isNewerThan1_19_R3 = false;
-        }
-        // Check if the server is Spigot
-        String server_name = plugin.getServer().getName();
-        this.isSpigot = server_name.equals("CraftBukkit");
+
+        String[] split = Bukkit.getServer().getBukkitVersion().split("-")[0].split("\\.");
+        this.mcVersion = Float.parseFloat(split[1] + "." + (split.length >= 3 ? split[2] : "0"));
+
+        // Get the plugin version
+        this.pluginVersion = plugin.getDescription().getVersion();
+
+        this.isSpigot = Bukkit.getServer().getName().equals("CraftBukkit");
 
         // Check if the server is Folia
         try {
-            Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
-            this.hasRegionScheduler = true;
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            this.isFolia = true;
         } catch (ClassNotFoundException ignored) {
-
+            this.isFolia = false;
         }
 
         // Check if the server is Mojmap
@@ -82,37 +67,32 @@ public class VersionManagerImpl implements VersionManager {
             Class.forName("net.minecraft.network.protocol.game.ClientboundBossEventPacket");
             this.isMojmap = true;
         } catch (ClassNotFoundException ignored) {
-
         }
-
-        // Get the plugin version
-        this.pluginVersion = plugin.getDescription().getVersion();
     }
 
     @Override
     public boolean isVersionNewerThan1_19() {
-        return isNewerThan1_19;
+        return mcVersion >= 19;
     }
 
     @Override
     public boolean isVersionNewerThan1_19_R3() {
-        return isNewerThan1_19_R3;
+        return mcVersion >= 19.4;
     }
-
-
+    
     @Override
     public boolean isVersionNewerThan1_19_R2() {
-        return isNewerThan1_19_R2;
+        return mcVersion >= 19.3;
     }
 
     @Override
     public boolean isVersionNewerThan1_20() {
-        return isNewerThan1_20;
+        return mcVersion >= 20;
     }
 
     @Override
     public boolean isSpigot() {
-        return isSpigot;
+        return false;
     }
 
     @Override
@@ -122,17 +102,12 @@ public class VersionManagerImpl implements VersionManager {
 
     @Override
     public boolean hasRegionScheduler() {
-        return hasRegionScheduler;
+        return isFolia;
     }
 
     @Override
     public boolean isMojmap() {
         return isMojmap;
-    }
-
-    @Override
-    public String getServerVersion() {
-        return serverVersion;
     }
 
     // Method to asynchronously check for plugin updates

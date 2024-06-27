@@ -306,8 +306,6 @@ public class RequirementManagerImpl implements RequirementManager {
                     }
                 }
             }
-            if (actionList.size() == 0)
-                actionList = null;
         }
         String type = section.getString("type");
         if (type == null) {
@@ -372,7 +370,9 @@ public class RequirementManagerImpl implements RequirementManager {
             HashSet<String> arg = new HashSet<>(ConfigUtils.stringListArgs(args));
             return condition -> {
                 String lootID = condition.getArg("{loot}");
+                if (lootID == null) return false;
                 Loot loot = plugin.getLootManager().getLoot(lootID);
+                if (loot == null) return false;
                 String[] groups = loot.getLootGroup();
                 if (groups != null) {
                     for (String g : groups) {

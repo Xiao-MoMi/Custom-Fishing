@@ -47,7 +47,8 @@ public class NBTUtils {
             field.setAccessible(true);
             MinecraftVersion minecraftVersion;
             try {
-                minecraftVersion = MinecraftVersion.valueOf(CustomFishingPlugin.get().getVersionManager().getServerVersion().replace("v", "MC"));
+                String serverVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+                minecraftVersion = MinecraftVersion.valueOf(serverVersion.replace("v", "MC"));
             } catch (Exception ex) {
                 minecraftVersion = VERSION_TO_REVISION.getOrDefault(Bukkit.getServer().getBukkitVersion().split("-")[0],
                         MinecraftVersion.UNKNOWN);

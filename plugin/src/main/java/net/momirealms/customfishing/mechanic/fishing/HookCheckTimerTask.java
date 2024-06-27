@@ -320,21 +320,24 @@ public class HookCheckTimerTask implements Runnable {
         armorLoc.setY(armorLoc.getBlockY() + 0.2);
         if (hookedEntity != null && !hookedEntity.isDead())
             hookedEntity.remove();
-        hookedEntity = armorLoc.getWorld().spawn(armorLoc, ArmorStand.class, a -> {
-            a.setInvisible(true);
-            a.setCollidable(false);
-            a.setInvulnerable(true);
-            a.setVisible(false);
-            a.setCustomNameVisible(false);
-            a.setSmall(true);
-            a.setGravity(false);
-            a.getPersistentDataContainer().set(
-                    Objects.requireNonNull(NamespacedKey.fromString("lavafishing", CustomFishingPlugin.get())),
-                    PersistentDataType.STRING,
-                    "temp"
-            );
-        });
+        hookedEntity = armorLoc.getWorld().spawn(armorLoc, ArmorStand.class);
+        setTempEntity((ArmorStand) hookedEntity);
         fishHook.setHookedEntity(hookedEntity);
+    }
+
+    private void setTempEntity(ArmorStand entity) {
+        entity.setInvisible(true);
+        entity.setCollidable(false);
+        entity.setInvulnerable(true);
+        entity.setVisible(false);
+        entity.setCustomNameVisible(false);
+        entity.setSmall(true);
+        entity.setGravity(false);
+        entity.getPersistentDataContainer().set(
+                Objects.requireNonNull(NamespacedKey.fromString("lavafishing", CustomFishingPlugin.get())),
+                PersistentDataType.STRING,
+                "temp"
+        );
     }
 
     /**
@@ -351,8 +354,9 @@ public class HookCheckTimerTask implements Runnable {
             double initialTime = ThreadLocalRandom.current().nextInt(CFConfig.waterMaxTime - CFConfig.waterMinTime + 1) + CFConfig.waterMinTime;
             fishHook.setWaitTime(Math.max(1, (int) (initialTime * tempEffect.getWaitTimeMultiplier() + tempEffect.getWaitTime())));
         } else {
-            fishHook.setMinWaitTime(Math.max(1, (int) (fishHook.getMinWaitTime() * tempEffect.getWaitTimeMultiplier() + tempEffect.getWaitTime())));
-            fishHook.setMaxWaitTime(Math.max(2, (int) (fishHook.getMaxWaitTime() * tempEffect.getWaitTimeMultiplier() + tempEffect.getWaitTime())));
+            int maxWait = Math.max(2, (int) (fishHook.getMaxWaitTime() * tempEffect.getWaitTimeMultiplier() + tempEffect.getWaitTime()));
+            int minWait = Math.min(Math.max(1, (int) (fishHook.getMinWaitTime() * tempEffect.getWaitTimeMultiplier() + tempEffect.getWaitTime())), fishHook.getMaxWaitTime());
+            fishHook.setWaitTime(ThreadLocalRandom.current().nextInt(minWait, maxWait + 1));
         }
     }
 }

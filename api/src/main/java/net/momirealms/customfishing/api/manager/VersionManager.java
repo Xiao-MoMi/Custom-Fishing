@@ -38,6 +38,4 @@ public interface VersionManager {
     String getPluginVersion();
 
     boolean isMojmap();
-
-    String getServerVersion();
 }
