@@ -173,6 +173,10 @@ public class BukkitFishingManager implements FishingManager, Listener {
 
         if (!RequirementManager.isSatisfied(context, ConfigManager.mechanicRequirements())) {
             this.destroy(player.getUniqueId());
+            return;
+        }
+
+        if (!gears.canFish()) {
             event.setCancelled(true);
             return;
         }

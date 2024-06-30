@@ -6,6 +6,8 @@ public interface HookMechanic
 {
     boolean canStart();
 
+    boolean shouldStop();
+
     void preStart();
 
     void start(Effect finalEffect);

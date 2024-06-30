@@ -349,10 +349,10 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
 
     private void registerInVoidRequirement() {
         registerRequirement("in-void", (args, actions, advanced) -> {
-            boolean inWater = (boolean) args;
+            boolean inVoid = (boolean) args;
             return context -> {
-                boolean in_water = Optional.ofNullable(context.arg(ContextKeys.SURROUNDING)).orElse("").equals(EffectProperties.VOID_FISHING.key());
-                if (in_water == inWater) return true;
+                boolean in_void = Optional.ofNullable(context.arg(ContextKeys.SURROUNDING)).orElse("").equals(EffectProperties.VOID_FISHING.key());
+                if (in_void == inVoid) return true;
                 if (advanced) ActionManager.trigger(context, actions);
                 return false;
             };

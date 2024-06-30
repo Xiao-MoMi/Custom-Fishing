@@ -27,6 +27,10 @@ public class RandomUtils {
         return min + (max - min) * getInstance().random.nextDouble();
     }
 
+    public static float generateRandomFloat(float min, float max) {
+        return min + (max - min) * getInstance().random.nextFloat();
+    }
+
     public static boolean generateRandomBoolean() {
         return getInstance().random.nextBoolean();
     }
@@ -34,6 +38,10 @@ public class RandomUtils {
     public static <T> T getRandomElementFromArray(T[] array) {
         int index = getInstance().random.nextInt(array.length);
         return array[index];
+    }
+
+    public static double triangle(double mode, double deviation) {
+        return mode + deviation * (generateRandomDouble(0,1) - generateRandomDouble(0,1));
     }
 
     public static <T> T[] getRandomElementsFromArray(T[] array, int count) {

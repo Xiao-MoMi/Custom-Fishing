@@ -24,7 +24,12 @@ public class LavaFishingMechanic implements HookMechanic {
         if (!(boolean) gearsEffect.properties().getOrDefault(EffectProperties.LAVA_FISHING, false)) {
             return false;
         }
-        return hook.getLocation().getY() <= hook.getWorld().getMinHeight();
+        return false;
+    }
+
+    @Override
+    public boolean shouldStop() {
+        return false;
     }
 
     @Override

@@ -13,7 +13,6 @@ import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import net.momirealms.customfishing.common.util.TriConsumer;
 import net.momirealms.customfishing.common.util.TriFunction;
-import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +40,7 @@ public class CustomFishingHook {
             if (ConfigManager.enableVoidFishing()) mechanics.add(new VoidFishingMechanic(h, e, c));
             return mechanics;
         };
-    };
+    }
 
     public static void mechanicProviders(TriFunction<FishHook, Context<Player>, Effect, List<HookMechanic>> mechanicProviders) {
         CustomFishingHook.mechanicProviders = mechanicProviders;
@@ -65,6 +64,12 @@ public class CustomFishingHook {
             if (!hook.isValid()) {
                 BukkitCustomFishingPlugin.getInstance().getFishingManager().destroy(hook.getOwnerUniqueId());
                 return;
+            }
+            if (this.hookMechanic != null) {
+                if (this.hookMechanic.shouldStop()) {
+                    this.hookMechanic.destroy();
+                    this.hookMechanic = null;
+                }
             }
             for (HookMechanic mechanic : enabledMechanics) {
                 // find the first available mechanic

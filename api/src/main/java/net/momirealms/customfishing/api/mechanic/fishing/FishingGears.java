@@ -6,6 +6,8 @@ import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
+import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
+import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.storage.user.UserData;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -23,6 +25,7 @@ public class FishingGears {
     private static BiConsumer<Context<Player>, FishingGears> fishingGearsConsumers = defaultFishingGearsConsumers();
     private final HashMap<GearType, Collection<ItemStack>> gears = new HashMap<>();
     private final ArrayList<EffectModifier> modifiers = new ArrayList<>();
+    private boolean canFish = true;
 
     public static void fishingGearsConsumers(BiConsumer<Context<Player>, FishingGears> fishingGearsConsumers) {
         FishingGears.fishingGearsConsumers = fishingGearsConsumers;
@@ -30,6 +33,10 @@ public class FishingGears {
 
     public FishingGears(Context<Player> context) {
         fishingGearsConsumers.accept(context, this);
+    }
+
+    public boolean canFish() {
+        return canFish;
     }
 
     public void cast() {
@@ -136,6 +143,13 @@ public class FishingGears {
                         }
                         fishingGears.gears.put(GearType.UTIL, utils);
                     }
+                }
+            }
+
+            // check requirements before checking totems
+            for (EffectModifier modifier : fishingGears.modifiers) {
+                if (!RequirementManager.isSatisfied(context, modifier.requirements())) {
+                    fishingGears.canFish = false;
                 }
             }
 

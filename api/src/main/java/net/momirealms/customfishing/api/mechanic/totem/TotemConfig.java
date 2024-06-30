@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public interface TotemConfig {
+
     TotemModel[] totemModels();
 
     String id();

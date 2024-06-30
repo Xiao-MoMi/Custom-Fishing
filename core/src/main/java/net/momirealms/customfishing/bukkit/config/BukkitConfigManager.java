@@ -81,8 +81,13 @@ public class BukkitConfigManager extends ConfigManager {
         waterMinTime = config.getInt("mechanics.fishing-wait-time.min-wait-time", 100);
         waterMaxTime = config.getInt("mechanics.fishing-wait-time.max-wait-time", 600);
 
+        enableLavaFishing = config.getBoolean("mechanics.lava-fishing.enable", false);
         lavaMinTime = config.getInt("mechanics.lava-fishing.min-wait-time", 100);
         lavaMaxTime = config.getInt("mechanics.lava-fishing.max-wait-time", 600);
+
+        enableVoidFishing = config.getBoolean("mechanics.void-fishing.enable", false);
+        voidMinTime = config.getInt("mechanics.void-fishing.min-wait-time", 100);
+        voidMaxTime = config.getInt("mechanics.void-fishing.max-wait-time", 600);
 
         restrictedSizeRange = config.getBoolean("mechanics.size.restricted-size-range", true);
 
