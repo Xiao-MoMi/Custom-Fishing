@@ -43,7 +43,7 @@ dependencies {
     compileOnly("com.github.LoneDev6:api-itemsadder:3.5.0c-r5")
     compileOnly("io.th0rgal:oraxen:1.165.0")
     compileOnly("pers.neige.neigeitems:NeigeItems:1.16.24")
-    compileOnly("com.github.Zrips:Jobs:4.17.2")
+    compileOnly("com.github.Zrips:Jobs:v4.17.2")
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
     compileOnly("dev.aurelium:auraskills-api-bukkit:2.0.0-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
