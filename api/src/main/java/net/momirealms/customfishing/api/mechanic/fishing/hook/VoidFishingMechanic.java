@@ -32,6 +32,7 @@ public class VoidFishingMechanic implements HookMechanic {
     private int nibble;
     private boolean hooked;
     private float fishAngle;
+    private int timer;
 
     public VoidFishingMechanic(FishHook hook, Effect gearsEffect, Context<Player> context) {
         this.hook = hook;
@@ -64,10 +65,20 @@ public class VoidFishingMechanic implements HookMechanic {
         this.setTempEntityProperties(this.tempEntity);
         this.hook.setHookedEntity(this.tempEntity);
         this.task = BukkitCustomFishingPlugin.getInstance().getScheduler().sync().runRepeating(() -> {
+            timer++;
+            if (timer % 2 == 0) {
+                if (timer >= 16) timer = 0;
+                hook.getWorld().spawnParticle(Particle.END_ROD, hook.getX() + 0.5 * Math.cos(timer * 22.5D * 0.017453292F), hook.getY() - 0.15, hook.getZ() + 0.5 * Math.sin(timer * 22.5D * 0.017453292F), 0,0,0,0);
+            }
+
             if (this.nibble > 0) {
                 --this.nibble;
                 if (this.nibble % 4 == 0) {
-                    hook.getWorld().spawnParticle(Particle.END_ROD, hook.getX(), hook.getY(), hook.getZ(), (int) (1.0F + 0.3 * 20.0F), 0.3, 0.0D, 0.3, 0.10000000298023224D);
+                    if (RandomUtils.generateRandomDouble(0, 1) < 0.5) {
+                        hook.getWorld().spawnParticle(Particle.END_ROD, hook.getX(), hook.getY(), hook.getZ(), (int) (1.0F + 0.3 * 20.0F), 0.3, 0.0D, 0.3, 0.10000000298023224D);
+                    } else {
+                        hook.getWorld().spawnParticle(Particle.DRAGON_BREATH, hook.getX(), hook.getY(), hook.getZ(), (int) (1.0F + 0.3 * 20.0F), 0.3, 0.0D, 0.3, 0.10000000298023224D);
+                    }
                 }
                 if (this.nibble <= 0) {
                     this.timeUntilLured = 0;
