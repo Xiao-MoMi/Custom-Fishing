@@ -62,9 +62,13 @@ public class MechanicType {
         return Objects.equals(type, mechanicType.type);
     }
 
-
     @Override
     public int hashCode() {
         return Objects.hashCode(type);
+    }
+
+    @Override
+    public String toString() {
+        return type;
     }
 }

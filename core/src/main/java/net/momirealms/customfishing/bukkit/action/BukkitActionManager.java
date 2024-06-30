@@ -21,6 +21,8 @@ import net.momirealms.customfishing.common.util.ClassUtils;
 import net.momirealms.customfishing.common.util.ListUtils;
 import net.momirealms.customfishing.common.util.Pair;
 import net.momirealms.customfishing.common.util.RandomUtils;
+import net.momirealms.sparrow.heart.SparrowHeart;
+import net.momirealms.sparrow.heart.feature.armorstand.FakeArmorStand;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -51,7 +53,6 @@ public class BukkitActionManager implements ActionManager<Player> {
     public BukkitActionManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.registerBuiltInActions();
-
     }
 
     @Override
@@ -89,6 +90,7 @@ public class BukkitActionManager implements ActionManager<Player> {
 
     @Override
     public Action<Player> parseAction(Section section) {
+        if (section == null) return EmptyAction.INSTANCE;
         ActionFactory<Player> factory = getActionFactory(section.getString("type"));
         if (factory == null) {
             plugin.getPluginLogger().warn("Action type: " + section.getString("type") + " doesn't exist.");
@@ -100,15 +102,16 @@ public class BukkitActionManager implements ActionManager<Player> {
     @NotNull
     @Override
     @SuppressWarnings("unchecked")
-    public Action<Player>[] parseActions(@NotNull Section section) {
+    public Action<Player>[] parseActions(Section section) {
         ArrayList<Action<Player>> actionList = new ArrayList<>();
-        for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
-            if (entry.getValue() instanceof Section innerSection) {
-                Action<Player> action = parseAction(innerSection);
-                if (action != null)
-                    actionList.add(action);
+        if (section != null)
+            for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
+                if (entry.getValue() instanceof Section innerSection) {
+                    Action<Player> action = parseAction(innerSection);
+                    if (action != null)
+                        actionList.add(action);
+                }
             }
-        }
         return actionList.toArray(new Action[0]);
     }
 
@@ -136,6 +139,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         this.registerFishFindAction();
         this.registerPluginExpAction();
         this.registerSoundAction();
+        this.registerHologramAction();
         this.registerTitleAction();
     }
 
@@ -390,7 +394,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     itemStack.setAmount(Math.max(0, itemStack.getAmount() + amount));
                 };
             } else {
-                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at item-amount action which should be Section");
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at item-amount action which is expected to be `Section`");
                 return EmptyAction.INSTANCE;
             }
         });
@@ -409,7 +413,7 @@ public class BukkitActionManager implements ActionManager<Player> {
 //                    }
                 };
             } else {
-                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at durability action which should be Section");
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at durability action which is expected to be `Section`");
                 return EmptyAction.INSTANCE;
             }
         });
@@ -432,7 +436,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     }
                 };
             } else {
-                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at give-item action which should be Section");
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at give-item action which is expected to be `Section`");
                 return EmptyAction.INSTANCE;
             }
         });
@@ -543,7 +547,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     }
                 };
             } else {
-                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at conditional action which should be Section");
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at conditional action which is expected to be `Section`");
                 return EmptyAction.INSTANCE;
             }
         });
@@ -575,7 +579,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     }
                 };
             } else {
-                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at priority action which should be Section");
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at priority action which is expected to be `Section`");
                 return EmptyAction.INSTANCE;
             }
         });
@@ -611,7 +615,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     context.getHolder().addPotionEffect(potionEffect);
                 };
             } else {
-                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at potion-effect action which should be Section");
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at potion-effect action which is expected to be `Section`");
                 return EmptyAction.INSTANCE;
             }
         });
@@ -632,7 +636,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     AdventureHelper.playSound(audience, sound);
                 };
             } else {
-                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at sound action which should be Section");
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at sound action which is expected to be `Section`");
                 return EmptyAction.INSTANCE;
             }
         });
@@ -652,7 +656,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     }, () -> plugin.getPluginLogger().warn("Plugin (" + pluginName + "'s) level is not compatible. Please double check if it's a problem caused by pronunciation."));
                 };
             } else {
-                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at plugin-exp action which should be Section");
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at plugin-exp action which is expected to be `Section`");
                 return EmptyAction.INSTANCE;
             }
         });
@@ -677,7 +681,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     );
                 };
             } else {
-                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at title action which should be Section");
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at title action which is expected to be `Section`");
                 return EmptyAction.INSTANCE;
             }
         });
@@ -703,7 +707,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     );
                 };
             } else {
-                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at random-title action which should be Section");
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at random-title action which is expected to be `Section`");
                 return EmptyAction.INSTANCE;
             }
         });
@@ -735,10 +739,59 @@ public class BukkitActionManager implements ActionManager<Player> {
                     );
                 };
             } else {
-                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at title-nearby action which should be Section");
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at title-nearby action which is expected to be `Section`");
                 return EmptyAction.INSTANCE;
             }
         });
+    }
+
+    private void registerHologramAction() {
+        registerAction("hologram", ((args, chance) -> {
+            if (args instanceof Section section) {
+                TextValue<Player> text = TextValue.auto(section.getString("text", ""));
+                MathValue<Player> duration = MathValue.auto(section.get("duration", 20));
+                boolean position = section.getString("position", "other").equals("other");
+                MathValue<Player> x = MathValue.auto(section.get("x", 0));
+                MathValue<Player> y = MathValue.auto(section.get("y", 0));
+                MathValue<Player> z = MathValue.auto(section.get("z", 0));
+                int range = section.getInt("range", 16);
+                return context -> {
+                    if (Math.random() > chance) return;
+                    Player owner = context.getHolder();
+
+                    Location location = position ? requireNonNull(context.arg(ContextKeys.LOCATION)).clone() : owner.getLocation().clone();
+                    location.add(x.evaluate(context), y.evaluate(context), z.evaluate(context));
+                    FakeArmorStand armorStand = SparrowHeart.getInstance().createFakeArmorStand(location);
+                    armorStand.invisible(true);
+                    armorStand.small(true);
+                    armorStand.name(AdventureHelper.miniMessageToJson(text.render(context)));
+                    ArrayList<Player> viewers = new ArrayList<>();
+                    if (range > 0) {
+                        for (Entity player : location.getWorld().getNearbyEntities(location, range, range, range, entity -> entity instanceof Player)) {
+                            double distance = LocationUtils.getDistance(player.getLocation(), location);
+                            if (distance <= range) {
+                                viewers.add((Player) player);
+                            }
+                        }
+                    } else {
+                        viewers.add(owner);
+                    }
+                    for (Player player : viewers) {
+                        armorStand.spawn(player);
+                    }
+                    plugin.getScheduler().asyncLater(() -> {
+                        for (Player player : viewers) {
+                            if (player.isOnline() && player.isValid()) {
+                                armorStand.destroy(player);
+                            }
+                        }
+                    }, (long) (duration.evaluate(context) * 50), TimeUnit.MILLISECONDS);
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at hologram action which is expected to be `Section`");
+                return EmptyAction.INSTANCE;
+            }
+        }));
     }
 
     private void registerFishFindAction() {

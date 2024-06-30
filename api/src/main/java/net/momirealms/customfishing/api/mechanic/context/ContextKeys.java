@@ -98,4 +98,11 @@ public class ContextKeys<T> {
     public final int hashCode() {
         return Objects.hashCode(this.key);
     }
+
+    @Override
+    public String toString() {
+        return "ContextKeys{" +
+                "key='" + key + '\'' +
+                '}';
+    }
 }

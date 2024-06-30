@@ -93,21 +93,38 @@ public class ComponentItemFactory extends BukkitItemFactory {
 
     @Override
     protected boolean unbreakable(RtagItem item) {
-        return false;
+        return item.isUnbreakable();
     }
 
     @Override
     protected void unbreakable(RtagItem item, boolean unbreakable) {
-
+        item.setUnbreakable(unbreakable);
     }
 
     @Override
     protected Optional<Boolean> glint(RtagItem item) {
-        return Optional.empty();
+        return Optional.ofNullable((Boolean) item.getComponent(ComponentKeys.ENCHANTMENT_GLINT_OVERRIDE));
     }
 
     @Override
     protected void glint(RtagItem item, Boolean glint) {
+        item.setComponent(ComponentKeys.ENCHANTMENT_GLINT_OVERRIDE, glint);
+    }
 
+    @Override
+    protected Optional<Integer> damage(RtagItem item) {
+        if (!item.hasComponent(ComponentKeys.DAMAGE)) return Optional.empty();
+        return Optional.ofNullable(
+                (Integer) ComponentType.encodeJava(
+                        ComponentKeys.DAMAGE,
+                        item.getComponent(ComponentKeys.DAMAGE)
+                ).orElse(null)
+        );
+    }
+
+    @Override
+    protected void damage(RtagItem item, Integer damage) {
+        if (damage == null) damage = 0;
+        item.setComponent(ComponentKeys.DAMAGE, damage);
     }
 }

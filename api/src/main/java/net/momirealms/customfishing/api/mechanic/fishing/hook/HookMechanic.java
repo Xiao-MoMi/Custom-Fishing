@@ -1,7 +1,6 @@
 package net.momirealms.customfishing.api.mechanic.fishing.hook;
 
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
-import org.bukkit.entity.FishHook;
 
 public interface HookMechanic
 {

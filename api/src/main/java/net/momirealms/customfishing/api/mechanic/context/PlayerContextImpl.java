@@ -90,4 +90,12 @@ public final class PlayerContextImpl implements Context<Player> {
     public Player getHolder() {
         return player;
     }
+
+    @Override
+    public String toString() {
+        return "PlayerContext{" +
+                "args=" + args +
+                ", player=" + player +
+                '}';
+    }
 }

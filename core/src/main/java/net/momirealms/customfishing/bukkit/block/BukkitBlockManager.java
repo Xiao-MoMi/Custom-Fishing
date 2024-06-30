@@ -20,6 +20,7 @@ package net.momirealms.customfishing.bukkit.block;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.integration.BlockProvider;
+import net.momirealms.customfishing.api.integration.ExternalProvider;
 import net.momirealms.customfishing.api.mechanic.block.*;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
@@ -92,6 +93,11 @@ public class BukkitBlockManager implements BlockManager, Listener {
     public void load() {
         Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
         this.resetBlockDetectionOrder();
+        for (BlockProvider provider : blockProviders.values()) {
+            plugin.debug("Registered BlockProvider: " + provider.identifier());
+        }
+        plugin.debug("Loaded " + blocks.size() + " blocks");
+        plugin.debug("Block order: " + Arrays.toString(Arrays.stream(blockDetectArray).map(ExternalProvider::identifier).toList().toArray(new String[0])));
     }
 
     @Override

@@ -56,4 +56,8 @@ public abstract class ItemFactory<P extends CustomFishingPlugin, R, I> {
     protected abstract Optional<Boolean> glint(R item);
 
     protected abstract void glint(R item, Boolean glint);
+
+    protected abstract Optional<Integer> damage(R item);
+
+    protected abstract void damage(R item, Integer damage);
 }

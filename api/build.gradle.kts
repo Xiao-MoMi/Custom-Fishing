@@ -21,6 +21,7 @@ dependencies {
     compileOnly("dev.folia:folia-api:${rootProject.properties["paper_version"]}-R0.1-SNAPSHOT")
     compileOnly("com.google.code.gson:gson:${rootProject.properties["gson_version"]}")
     compileOnly("me.clip:placeholderapi:${rootProject.properties["placeholder_api_version"]}")
+    compileOnly("com.github.Xiao-MoMi:Sparrow-Heart:${rootProject.properties["sparrow_heart_version"]}")
 }
 
 java {

@@ -21,6 +21,7 @@ import net.momirealms.customfishing.common.config.ConfigLoader;
 import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.item.Item;
 import net.momirealms.customfishing.common.plugin.feature.Reloadable;
+import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -56,8 +58,12 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     protected boolean overrideVanillaWaitTime;
     protected int waterMinTime;
     protected int waterMaxTime;
+    protected boolean enableLavaFishing;
     protected int lavaMinTime;
     protected int lavaMaxTime;
+    protected boolean enableVoidFishing;
+    protected int voidMinTime;
+    protected int voidMaxTime;
     protected boolean restrictedSizeRange;
     protected List<String> durabilityLore;
     protected boolean allowMultipleTotemType;
@@ -65,6 +71,7 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     protected EventPriority eventPriority;
     protected Requirement<Player>[] mechanicRequirements;
     protected boolean enableBag;
+
 
     protected ConfigManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
@@ -127,12 +134,28 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
         return instance.waterMaxTime;
     }
 
+    public static boolean enableLavaFishing() {
+        return instance.enableLavaFishing;
+    }
+
     public static int lavaMinTime() {
         return instance.lavaMinTime;
     }
 
     public static int lavaMaxTime() {
         return instance.lavaMaxTime;
+    }
+
+    public static boolean enableVoidFishing() {
+        return instance.enableVoidFishing;
+    }
+
+    public static int voidMinTime() {
+        return instance.voidMinTime;
+    }
+
+    public static int voidMaxTime() {
+        return instance.voidMaxTime;
     }
 
     public static boolean restrictedSizeRange() {
@@ -312,4 +335,8 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     public Map<String, Node<ConfigParserFunction>> getFormatFunctions() {
         return formatFunctions;
     }
+
+    public abstract List<Pair<String, BiFunction<Context<Player>, Double, Double>>> parseWeightOperation(List<String> ops);
+
+    public abstract List<Pair<String, BiFunction<Context<Player>, Double, Double>>> parseGroupWeightOperation(List<String> gops);
 }

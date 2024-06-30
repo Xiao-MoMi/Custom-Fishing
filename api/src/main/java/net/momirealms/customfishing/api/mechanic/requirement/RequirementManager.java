@@ -74,7 +74,7 @@ public interface RequirementManager<T> extends Reloadable {
      * @return An array of Requirement objects based on the configuration section.
      */
     @NotNull
-    Requirement<T>[] parseRequirements(@NotNull Section section, boolean runActions);
+    Requirement<T>[] parseRequirements(Section section, boolean runActions);
 
     /**
      * Retrieves a Requirement object based on a configuration section and advanced flag.

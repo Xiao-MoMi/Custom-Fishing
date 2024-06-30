@@ -102,6 +102,10 @@ public class VersionHelper {
         return version >= 20.0;
     }
 
+    public static boolean isVersionNewerThan1_20_5() {
+        return version >= 20.5;
+    }
+
     public boolean isNewerThan1_20_5() {
         return version >= 20.5;
     }

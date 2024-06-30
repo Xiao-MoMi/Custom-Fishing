@@ -67,6 +67,7 @@ public class BukkitCompetitionManager implements CompetitionManager {
                 1,
                 TimeUnit.SECONDS
         );
+        plugin.debug("Loaded " + commandConfigMap.size() + " competitions");
     }
 
     public void unload() {

@@ -18,6 +18,17 @@ public class AbstractItem<R, I> implements Item<I> {
     }
 
     @Override
+    public Item<I> damage(Integer data) {
+        factory.damage(item, data);
+        return this;
+    }
+
+    @Override
+    public Optional<Integer> damage() {
+        return factory.damage(item);
+    }
+
+    @Override
     public Item<I> customModelData(Integer data) {
         factory.customModelData(item, data);
         return this;

@@ -41,6 +41,5 @@ public interface LootManager extends Reloadable {
     Map<String, Double> getWeightedLoots(Context<Player> context);
 
     @Nullable
-    Loot
-    getNextLoot(Effect effect, Context<Player> context);
+    Loot getNextLoot(Effect effect, Context<Player> context);
 }

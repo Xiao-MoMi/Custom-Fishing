@@ -9,6 +9,10 @@ public interface Item<I> {
 
     Optional<Integer> customModelData();
 
+    Item<I> damage(Integer data);
+
+    Optional<Integer> damage();
+
     Item<I> displayName(String displayName);
 
     Optional<String> displayName();

@@ -15,7 +15,6 @@ subprojects {
     repositories {
         mavenCentral()
         maven("https://jitpack.io/") // sparrow-heart, rtag
-        maven("https://repo.xenondevs.xyz/releases") // invui
         maven("https://papermc.io/repo/repository/maven-public/") // paper
         maven("https://oss.sonatype.org/content/repositories/snapshots")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") // spigot

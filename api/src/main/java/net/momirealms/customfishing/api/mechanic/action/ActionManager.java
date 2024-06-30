@@ -81,7 +81,7 @@ public interface ActionManager<T> extends Reloadable {
      * @return An array of parsed actions.
      */
     @NotNull
-    Action<T>[] parseActions(@NotNull Section section);
+    Action<T>[] parseActions(Section section);
 
     /**
      * Parses an action from the given type and arguments.

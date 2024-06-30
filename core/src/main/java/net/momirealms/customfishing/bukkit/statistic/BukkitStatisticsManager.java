@@ -37,6 +37,9 @@ public class BukkitStatisticsManager implements StatisticsManager {
     @Override
     public void load() {
         this.loadCategoriesFromPluginFolder();
+        for (Map.Entry<String, List<String>> entry : categoryMap.entrySet()) {
+            plugin.debug("Category: {" + entry.getKey() + "} Members: " + entry.getValue());
+        }
     }
 
     @Override

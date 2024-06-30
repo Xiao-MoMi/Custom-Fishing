@@ -25,7 +25,10 @@ import java.util.Map;
 /**
  * Utility class for selecting random items based on weights.
  */
+@SuppressWarnings("DuplicatedCode")
 public class WeightUtils {
+
+    private WeightUtils() {}
 
     /**
      * Get a random item from a list of pairs, each associated with a weight.

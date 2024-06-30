@@ -79,6 +79,7 @@ public class BukkitTotemManager implements TotemManager, Listener {
                 activatedTotems.remove(simpleLocation);
             }
         }, 1, 1, TimeUnit.SECONDS);
+        plugin.debug("Loaded " + id2Totem.size() + " totems");
     }
 
     @Override

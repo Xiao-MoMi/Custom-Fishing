@@ -14,6 +14,7 @@ import net.momirealms.customfishing.bukkit.config.BukkitConfigManager;
 import net.momirealms.customfishing.bukkit.effect.BukkitEffectManager;
 import net.momirealms.customfishing.bukkit.entity.BukkitEntityManager;
 import net.momirealms.customfishing.bukkit.event.BukkitEventManager;
+import net.momirealms.customfishing.bukkit.fishing.BukkitFishingManager;
 import net.momirealms.customfishing.bukkit.gui.ChatCatcherManager;
 import net.momirealms.customfishing.bukkit.hook.BukkitHookManager;
 import net.momirealms.customfishing.bukkit.integration.BukkitIntegrationManager;
@@ -59,7 +60,6 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.classPathAppender = new ReflectionClassPathAppender(this);
         this.logger = new JavaPluginLogger(getBoostrap().getLogger());
         this.dependencyManager = new DependencyManagerImpl(this);
-        this.debugger = (s) -> {};
     }
 
     @Override
@@ -104,6 +104,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.statisticsManager = new BukkitStatisticsManager(this);
         this.effectManager = new BukkitEffectManager(this);
         this.hookManager = new BukkitHookManager(this);
+        this.fishingManager = new BukkitFishingManager(this);
         this.bagManager = new BukkitBagManager(this);
         this.totemManager = new BukkitTotemManager(this);
         this.translationManager = new TranslationManager(this);
@@ -138,7 +139,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.placeholderManager.reload();
         this.configManager.reload();
         // after ConfigManager
-        this.debugger = ConfigManager.debug() ? logger::info : (s) -> {};
+        this.debugger = ConfigManager.debug() ? (s) -> logger.info("[DEBUG] " + s) : (s) -> {};
 
         this.actionManager.reload();
         this.requirementManager.reload();
@@ -149,6 +150,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.statisticsManager.reload();
         this.bagManager.reload();
         this.storageManager.reload();
+        this.fishingManager.reload();
 
         this.itemManager.load();
         this.eventManager.load();

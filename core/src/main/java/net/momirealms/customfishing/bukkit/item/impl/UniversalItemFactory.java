@@ -70,21 +70,32 @@ public class UniversalItemFactory extends BukkitItemFactory {
 
     @Override
     protected boolean unbreakable(RtagItem item) {
-        return false;
+        return item.isUnbreakable();
     }
 
     @Override
     protected void unbreakable(RtagItem item, boolean unbreakable) {
-
+        item.setUnbreakable(unbreakable);
     }
 
     @Override
     protected Optional<Boolean> glint(RtagItem item) {
-        return Optional.empty();
+        return Optional.of(false);
     }
 
     @Override
     protected void glint(RtagItem item, Boolean glint) {
+        throw new UnsupportedOperationException("This feature is only available on 1.20.5+");
+    }
 
+    @Override
+    protected Optional<Integer> damage(RtagItem item) {
+        if (!item.hasTag("Damage")) return Optional.empty();
+        return Optional.of(item.get("Damage"));
+    }
+
+    @Override
+    protected void damage(RtagItem item, Integer damage) {
+        item.set(damage, "Damage");
     }
 }

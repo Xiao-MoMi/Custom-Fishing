@@ -38,9 +38,11 @@ public class CustomFishingItemProvider implements ItemProvider {
     public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
         String[] split = id.split(":", 2);
         String finalID;
-        if (split.length != 2) {
+        if (split.length == 1) {
+            // CustomFishing:ID
             finalID = split[0];
         } else {
+            // CustomFishing:TYPE:ID
             finalID = split[1];
         }
         ItemStack itemStack = BukkitCustomFishingPlugin.getInstance().getItemManager().buildInternal(Context.player(player), finalID);

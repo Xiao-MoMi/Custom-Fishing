@@ -15,22 +15,22 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.api.mechanic.fishing;
+package net.momirealms.customfishing.bukkit.util;
 
-import net.momirealms.customfishing.common.plugin.feature.Reloadable;
-import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 
-import java.util.Optional;
-import java.util.UUID;
+public class EventUtils {
 
-public interface FishingManager extends Reloadable {
+    public static void fireAndForget(Event event) {
+        Bukkit.getPluginManager().callEvent(event);
+    }
 
-    Optional<CustomFishingHook> getFishHook(Player player);
-
-    Optional<CustomFishingHook> getFishHook(UUID player);
-
-    Optional<Player> getOwner(FishHook hook);
-
-    void destroy(UUID player);
+    public static boolean fireAndCheckCancel(Event event) {
+        if (!(event instanceof Cancellable cancellable))
+            throw new IllegalArgumentException("Only cancellable events are allowed here");
+        Bukkit.getPluginManager().callEvent(event);
+        return cancellable.isCancelled();
+    }
 }

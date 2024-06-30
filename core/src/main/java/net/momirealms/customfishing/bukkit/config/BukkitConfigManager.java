@@ -383,7 +383,8 @@ public class BukkitConfigManager extends ConfigManager {
         }
     }
 
-    private List<Pair<String, BiFunction<Context<Player>, Double, Double>>> parseWeightOperation(List<String> ops) {
+    @Override
+    public List<Pair<String, BiFunction<Context<Player>, Double, Double>>> parseWeightOperation(List<String> ops) {
         List<Pair<String, BiFunction<Context<Player>, Double, Double>>> result = new ArrayList<>();
         for (String op : ops) {
             String[] split = op.split(":", 2);
@@ -392,7 +393,8 @@ public class BukkitConfigManager extends ConfigManager {
         return result;
     }
 
-    private List<Pair<String, BiFunction<Context<Player>, Double, Double>>> parseGroupWeightOperation(List<String> gops) {
+    @Override
+    public List<Pair<String, BiFunction<Context<Player>, Double, Double>>> parseGroupWeightOperation(List<String> gops) {
         List<Pair<String, BiFunction<Context<Player>, Double, Double>>> result = new ArrayList<>();
         for (String gop : gops) {
             String[] split = gop.split(":", 2);

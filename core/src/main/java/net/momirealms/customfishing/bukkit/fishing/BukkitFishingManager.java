@@ -4,43 +4,61 @@ import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.RodCastEvent;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
-import net.momirealms.customfishing.api.mechanic.effect.Effect;
-import net.momirealms.customfishing.api.mechanic.fishing.FishingGears;
 import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
+import net.momirealms.customfishing.api.mechanic.fishing.FishingGears;
 import net.momirealms.customfishing.api.mechanic.fishing.FishingManager;
+import net.momirealms.customfishing.api.mechanic.fishing.hook.VanillaMechanic;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
+import net.momirealms.customfishing.bukkit.util.EventUtils;
+import net.momirealms.customfishing.common.helper.VersionHelper;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BukkitFishingManager implements FishingManager, Listener {
 
-    private BukkitCustomFishingPlugin plugin;
-    private final ConcurrentHashMap<UUID, FishHook> castHooks = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<UUID, FishingGears> gears = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<UUID, CustomFishingHook> tasks = new ConcurrentHashMap<>();
+    private final BukkitCustomFishingPlugin plugin;
+    private final ConcurrentHashMap<UUID, CustomFishingHook> castHooks = new ConcurrentHashMap<>();
 
     public BukkitFishingManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
     }
 
     @Override
-    public Optional<FishHook> getFishHook(Player player) {
-        return Optional.ofNullable(castHooks.get(player.getUniqueId()));
+    public void unload() {
+        HandlerList.unregisterAll(this);
     }
 
     @Override
-    public Optional<FishHook> getFishHook(UUID player) {
+    public void load() {
+        Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
+    }
+
+    @Override
+    public Optional<CustomFishingHook> getFishHook(Player player) {
+        return getFishHook(player.getUniqueId());
+    }
+
+    @Override
+    public Optional<CustomFishingHook> getFishHook(UUID player) {
         return Optional.ofNullable(castHooks.get(player));
     }
 
@@ -105,12 +123,46 @@ public class BukkitFishingManager implements FishingManager, Listener {
     private void selectState(PlayerFishEvent event) {
         switch (event.getState()) {
             case FISHING -> onCastRod(event);
-//            case REEL_IN -> onReelIn(event);
-//            case CAUGHT_ENTITY -> onCaughtEntity(event);
-//            case CAUGHT_FISH -> onCaughtFish(event);
-//            case BITE -> onBite(event);
-//            case IN_GROUND -> onInGround(event);
+            case REEL_IN -> onReelIn(event);
+            case CAUGHT_ENTITY -> onCaughtEntity(event);
+            case CAUGHT_FISH -> onCaughtFish(event);
+            case BITE -> onBite(event);
+            case IN_GROUND -> onInGround(event);
         }
+    }
+
+    private void onCaughtEntity(PlayerFishEvent event) {
+        final Player player = event.getPlayer();
+        getFishHook(player).ifPresent(hook -> {
+            Entity entity = event.getCaught();
+            if (entity != null && entity.getPersistentDataContainer().get(
+                    Objects.requireNonNull(NamespacedKey.fromString("temp-entity", plugin.getBoostrap())),
+                    PersistentDataType.STRING
+            ) != null) {
+
+            }
+        });
+    }
+
+    private void onReelIn(PlayerFishEvent event) {
+        Player player = event.getPlayer();
+        getFishHook(player).ifPresent(hook -> {
+            hook.onReelIn();
+        });
+    }
+
+    private void onBite(PlayerFishEvent event) {
+        Player player = event.getPlayer();
+        getFishHook(player).ifPresent(hook -> {
+            hook.onBite();
+        });
+    }
+
+    private void onCaughtFish(PlayerFishEvent event) {
+        Player player = event.getPlayer();
+        getFishHook(player).ifPresent(hook -> {
+            hook.onReelIn();
+        });
     }
 
     private void onCastRod(PlayerFishEvent event) {
@@ -118,33 +170,40 @@ public class BukkitFishingManager implements FishingManager, Listener {
         Player player = event.getPlayer();
         Context<Player> context = Context.player(player);
         FishingGears gears = new FishingGears(context);
-        this.gears.put(player.getUniqueId(), gears);
 
         if (!RequirementManager.isSatisfied(context, ConfigManager.mechanicRequirements())) {
             this.destroy(player.getUniqueId());
+            event.setCancelled(true);
             return;
         }
 
-        RodCastEvent rodCastEvent = new RodCastEvent(event, gears);
-        Bukkit.getPluginManager().callEvent(rodCastEvent);
-        if (rodCastEvent.isCancelled()) {
+        if (EventUtils.fireAndCheckCancel(new RodCastEvent(event, gears))) {
             return;
         }
 
+        plugin.debug(context.toString());
         gears.cast();
-        this.castHooks.put(player.getUniqueId(), hook);
+        CustomFishingHook customHook = new CustomFishingHook(hook, gears, context);
+        this.castHooks.put(player.getUniqueId(), customHook);
+    }
+
+    private void onInGround(PlayerFishEvent event) {
+        if (VersionHelper.isVersionNewerThan1_20_5()) return;
+        final Player player = event.getPlayer();
+        if (player.getGameMode() != GameMode.CREATIVE) {
+            ItemStack itemStack = player.getInventory().getItemInMainHand();
+            if (itemStack.getType() != Material.FISHING_ROD) itemStack = player.getInventory().getItemInOffHand();
+            if (itemStack.getType() == Material.FISHING_ROD) {
+                plugin.getItemManager().decreaseDurability(itemStack, 5, true);
+            }
+        }
     }
 
     @Override
     public void destroy(UUID uuid) {
         this.getFishHook(uuid).ifPresent(hook -> {
-            hook.remove();
+            hook.destroy();
             this.castHooks.remove(uuid);
         });
-        this.gears.remove(uuid);
-        CustomFishingHook task = this.tasks.remove(uuid);
-        if (task != null) {
-            task.cancel();
-        }
     }
 }

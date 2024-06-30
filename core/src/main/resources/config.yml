@@ -350,6 +350,12 @@ mechanics:
   # Lava fishing settings
   # To modify vanilla fishing time, you should edit paper-world-defaults.yml where there's a section called fishing-time-range
   lava-fishing:
+    enable: true
+    # ticks
+    min-wait-time: 100
+    max-wait-time: 600
+  void-fishing:
+    enable: true
     # ticks
     min-wait-time: 100
     max-wait-time: 600

@@ -60,6 +60,14 @@ public class BukkitEntityManager implements EntityManager {
     }
 
     @Override
+    public void load() {
+        for (EntityProvider provider : entityProviders.values()) {
+            plugin.debug("Registered EntityProvider: " + provider.identifier());
+        }
+        plugin.debug("Loaded " + entities.size() + " entities");
+    }
+
+    @Override
     public void unload() {
         this.entities.clear();
     }

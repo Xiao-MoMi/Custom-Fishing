@@ -4,6 +4,7 @@ import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectProperties;
+import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 

@@ -9,6 +9,7 @@ repositories {
     maven("https://repo.auxilor.io/repository/maven-public/") // eco
     maven("https://nexus.betonquest.org/repository/betonquest/") // betonquest
     maven("https://repo.dmulloy2.net/repository/public/") // betonquest needs packet wrapper?
+    maven("https://maven.enginehub.org/repo/") // worldguard
 }
 
 dependencies {

@@ -4,6 +4,10 @@ plugins {
     id("io.github.goooler.shadow") version "8.1.7"
 }
 
+repositories {
+    maven("https://repo.xenondevs.xyz/releases") // invui
+}
+
 dependencies {
     // platform
     compileOnly("dev.folia:folia-api:${rootProject.properties["paper_version"]}-R0.1-SNAPSHOT")

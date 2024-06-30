@@ -41,7 +41,7 @@ public class BukkitEffectManager implements EffectManager {
 
     @Override
     public void load() {
-
+        plugin.debug("Loaded " + effectModifiers.size() + " effects");
     }
 
     @Override

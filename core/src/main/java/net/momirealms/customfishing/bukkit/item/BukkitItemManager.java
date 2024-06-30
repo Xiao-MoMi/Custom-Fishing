@@ -3,6 +3,7 @@ package net.momirealms.customfishing.bukkit.item;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.FishingLootPreSpawnEvent;
 import net.momirealms.customfishing.api.event.FishingLootSpawnEvent;
+import net.momirealms.customfishing.api.integration.ExternalProvider;
 import net.momirealms.customfishing.api.integration.ItemProvider;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
@@ -10,6 +11,7 @@ import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.item.CustomFishingItem;
 import net.momirealms.customfishing.api.mechanic.item.ItemManager;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
+import net.momirealms.customfishing.bukkit.integration.item.CustomFishingItemProvider;
 import net.momirealms.customfishing.bukkit.util.ItemUtils;
 import net.momirealms.customfishing.bukkit.util.LocationUtils;
 import net.momirealms.customfishing.common.item.Item;
@@ -67,6 +69,7 @@ public class BukkitItemManager implements ItemManager, Listener {
                 return "vanilla";
             }
         });
+        this.registerItemProvider(new CustomFishingItemProvider());
     }
 
     @Override
@@ -79,6 +82,11 @@ public class BukkitItemManager implements ItemManager, Listener {
     public void load() {
         Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
         this.resetItemDetectionOrder();
+        for (ItemProvider provider : itemProviders.values()) {
+            plugin.debug("Registered ItemProvider: " + provider.identifier());
+        }
+        plugin.debug("Loaded " + items.size() + " items");
+        plugin.debug("Item order: " + Arrays.toString(Arrays.stream(itemDetectArray).map(ExternalProvider::identifier).toList().toArray(new String[0])));
     }
 
     @Override
@@ -220,7 +228,7 @@ public class BukkitItemManager implements ItemManager, Listener {
     }
 
     @Override
-    public void decreaseDurability(ItemStack itemStack) {
+    public void decreaseDurability(ItemStack itemStack, int amount, boolean incorrectUsage) {
 
     }
 

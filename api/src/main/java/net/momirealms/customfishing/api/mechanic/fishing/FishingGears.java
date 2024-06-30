@@ -20,22 +20,54 @@ import java.util.function.Consumer;
 
 public class FishingGears {
 
-    private static BiConsumer<Context<Player>, FishingGears> fishingGearsGetter = defaultFishingGearsGetter();
+    private static BiConsumer<Context<Player>, FishingGears> fishingGearsConsumers = defaultFishingGearsConsumers();
     private final HashMap<GearType, Collection<ItemStack>> gears = new HashMap<>();
     private final ArrayList<EffectModifier> modifiers = new ArrayList<>();
 
-    public static void fishingGearsGetter(BiConsumer<Context<Player>, FishingGears> fishingGearsGetter) {
-        FishingGears.fishingGearsGetter = fishingGearsGetter;
+    public static void fishingGearsConsumers(BiConsumer<Context<Player>, FishingGears> fishingGearsConsumers) {
+        FishingGears.fishingGearsConsumers = fishingGearsConsumers;
     }
 
     public FishingGears(Context<Player> context) {
-        fishingGearsGetter.accept(context, this);
+        fishingGearsConsumers.accept(context, this);
     }
 
     public void cast() {
         for (Map.Entry<GearType, Collection<ItemStack>> entry : gears.entrySet()) {
             for (ItemStack itemStack : entry.getValue()) {
                 entry.getKey().castFunction.accept(itemStack);
+            }
+        }
+    }
+
+    public void reel() {
+        for (Map.Entry<GearType, Collection<ItemStack>> entry : gears.entrySet()) {
+            for (ItemStack itemStack : entry.getValue()) {
+                entry.getKey().reelFunction.accept(itemStack);
+            }
+        }
+    }
+
+    public void succeed() {
+        for (Map.Entry<GearType, Collection<ItemStack>> entry : gears.entrySet()) {
+            for (ItemStack itemStack : entry.getValue()) {
+                entry.getKey().successFunction.accept(itemStack);
+            }
+        }
+    }
+
+    public void fail() {
+        for (Map.Entry<GearType, Collection<ItemStack>> entry : gears.entrySet()) {
+            for (ItemStack itemStack : entry.getValue()) {
+                entry.getKey().failureFunction.accept(itemStack);
+            }
+        }
+    }
+
+    public void bite() {
+        for (Map.Entry<GearType, Collection<ItemStack>> entry : gears.entrySet()) {
+            for (ItemStack itemStack : entry.getValue()) {
+                entry.getKey().biteFunction.accept(itemStack);
             }
         }
     }
@@ -50,7 +82,7 @@ public class FishingGears {
         return gears.getOrDefault(type, List.of());
     }
 
-    public static BiConsumer<Context<Player>, FishingGears> defaultFishingGearsGetter() {
+    public static BiConsumer<Context<Player>, FishingGears> defaultFishingGearsConsumers() {
         return (context, fishingGears) -> {
             Player player = context.getHolder();
             PlayerInventory playerInventory = player.getInventory();
@@ -120,16 +152,19 @@ public class FishingGears {
         public static final GearType ROD = new GearType("rod",
                 (itemStack -> {}),
                 (itemStack -> {}),
-                (itemStack -> BukkitCustomFishingPlugin.getInstance().getItemManager().decreaseDurability(itemStack)),
+                (itemStack -> {}),
+                (itemStack -> BukkitCustomFishingPlugin.getInstance().getItemManager().decreaseDurability(itemStack, 1, false)),
                 (itemStack -> {}));
 
         public static final GearType BAIT = new GearType("bait",
                 (itemStack -> itemStack.setAmount(itemStack.getAmount() - 1)),
                 (itemStack -> {}),
                 (itemStack -> {}),
+                (itemStack -> {}),
                 (itemStack -> {}));
 
         public static final GearType HOOK = new GearType("hook",
+                (itemStack -> {}),
                 (itemStack -> {}),
                 (itemStack -> {}),
                 (itemStack -> {}),
@@ -139,18 +174,21 @@ public class FishingGears {
                 (itemStack -> {}),
                 (itemStack -> {}),
                 (itemStack -> {}),
+                (itemStack -> {}),
                 (itemStack -> {}));
 
         private final String type;
         private Consumer<ItemStack> castFunction;
         private Consumer<ItemStack> reelFunction;
+        private Consumer<ItemStack> biteFunction;
         private Consumer<ItemStack> successFunction;
         private Consumer<ItemStack> failureFunction;
 
-        public GearType(String type, Consumer<ItemStack> castFunction, Consumer<ItemStack> reelFunction, Consumer<ItemStack> successFunction, Consumer<ItemStack> failureFunction) {
+        public GearType(String type, Consumer<ItemStack> castFunction, Consumer<ItemStack> reelFunction, Consumer<ItemStack> biteFunction, Consumer<ItemStack> successFunction, Consumer<ItemStack> failureFunction) {
             this.type = type;
             this.castFunction = castFunction;
             this.reelFunction = reelFunction;
+            this.biteFunction = biteFunction;
             this.successFunction = successFunction;
             this.failureFunction = failureFunction;
         }
@@ -161,6 +199,10 @@ public class FishingGears {
 
         public void reelFunction(Consumer<ItemStack> reelFunction) {
             this.reelFunction = reelFunction;
+        }
+
+        public void biteFunction(Consumer<ItemStack> biteFunction) {
+            this.biteFunction = biteFunction;
         }
 
         public void successFunction(Consumer<ItemStack> successFunction) {
@@ -182,6 +224,11 @@ public class FishingGears {
         @Override
         public int hashCode() {
             return Objects.hashCode(type);
+        }
+
+        @Override
+        public String toString() {
+            return type;
         }
     }
 }
