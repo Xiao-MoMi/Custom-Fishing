@@ -24,7 +24,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -171,7 +170,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
 
     private void registerCompetitionRequirement() {
         registerRequirement("competition", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 boolean onCompetition = section.getBoolean("ongoing", true);
                 List<String> ids = ListUtils.toList(section.get("id"));
                 return context -> {
@@ -863,7 +862,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
 
     private void registerPAPIRequirement() {
         registerRequirement("<", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
                 return context -> {
@@ -877,7 +876,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             }
         });
         registerRequirement("<=", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
                 return context -> {
@@ -891,7 +890,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             }
         });
         registerRequirement("!=", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
                 return context -> {
@@ -905,7 +904,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             }
         });
         registerRequirement("==", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
                 return context -> {
@@ -919,7 +918,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             }
         });
         registerRequirement(">=", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
                 return context -> {
@@ -933,7 +932,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             }
         });
         registerRequirement(">", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
                 return context -> {
@@ -947,7 +946,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             }
         });
         registerRequirement("regex", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("papi", ""));
                 String v2 = section.getString("regex", "");
                 return context -> {
@@ -961,7 +960,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             }
         });
         registerRequirement("startsWith", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
                 return context -> {
@@ -975,7 +974,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             }
         });
         registerRequirement("!startsWith", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
                 return context -> {
@@ -989,7 +988,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             }
         });
         registerRequirement("endsWith", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
                 return context -> {
@@ -1003,7 +1002,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             }
         });
         registerRequirement("!endsWith", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
                 return context -> {
@@ -1017,7 +1016,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             }
         });
         registerRequirement("contains", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
                 return context -> {
@@ -1031,7 +1030,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             }
         });
         registerRequirement("!contains", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
                 return context -> {
@@ -1045,7 +1044,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             }
         });
         registerRequirement("in-list", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 TextValue<Player> papi = TextValue.auto(section.getString("papi", ""));
                 List<String> values = ListUtils.toList(section.get("values"));
                 return context -> {
@@ -1059,7 +1058,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             }
         });
         registerRequirement("!in-list", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 TextValue<Player> papi = TextValue.auto(section.getString("papi", ""));
                 List<String> values = ListUtils.toList(section.get("values"));
                 return context -> {
@@ -1073,7 +1072,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             }
         });
         registerRequirement("equals", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
                 return context -> {
@@ -1087,7 +1086,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             }
         });
         registerRequirement("!equals", (args, actions, advanced) -> {
-            if (args instanceof ConfigurationSection section) {
+            if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
                 return context -> {

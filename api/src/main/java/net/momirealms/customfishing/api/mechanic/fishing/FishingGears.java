@@ -6,9 +6,9 @@ import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
-import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.storage.user.UserData;
+import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -102,6 +102,13 @@ public class FishingGears {
             context.arg(ContextKeys.ROD, rodID);
             BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(rodID, MechanicType.ROD).ifPresent(fishingGears.modifiers::add);
 
+            // set enchantments
+            List<Pair<String, Short>> enchants = BukkitCustomFishingPlugin.getInstance().getIntegrationManager().getEnchantments(rodOnMainHand ? mainHandItem : offHandItem);
+            for (Pair<String, Short> enchantment : enchants) {
+                String effectID = enchantment.left() + ":" + enchantment.right();
+                BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(effectID, MechanicType.ENCHANT).ifPresent(fishingGears.modifiers::add);
+            }
+
             // set bait if it is
             boolean hasBait = false;
             String anotherItemID = BukkitCustomFishingPlugin.getInstance().getItemManager().getItemID(rodOnMainHand ? offHandItem : mainHandItem);
@@ -158,6 +165,14 @@ public class FishingGears {
             for (String id : totemIDs) {
                 BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(id, MechanicType.TOTEM).ifPresent(fishingGears.modifiers::add);
             }
+
+            // add global effects
+            fishingGears.modifiers.add(
+                    EffectModifier.builder()
+                            .id("__GLOBAL__")
+                            .modifiers(ConfigManager.globalEffects())
+                            .build()
+            );
         };
     }
 

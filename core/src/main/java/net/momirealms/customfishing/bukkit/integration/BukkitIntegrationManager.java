@@ -24,8 +24,10 @@ import net.momirealms.customfishing.bukkit.entity.BukkitEntityManager;
 import net.momirealms.customfishing.bukkit.integration.block.ItemsAdderBlockProvider;
 import net.momirealms.customfishing.bukkit.integration.block.OraxenBlockProvider;
 import net.momirealms.customfishing.bukkit.integration.enchant.AdvancedEnchantmentsProvider;
+import net.momirealms.customfishing.bukkit.integration.enchant.VanillaEnchantmentsProvider;
 import net.momirealms.customfishing.bukkit.integration.entity.ItemsAdderEntityProvider;
 import net.momirealms.customfishing.bukkit.integration.entity.MythicEntityProvider;
+import net.momirealms.customfishing.bukkit.integration.entity.VanillaEntityProvider;
 import net.momirealms.customfishing.bukkit.integration.item.*;
 import net.momirealms.customfishing.bukkit.integration.level.*;
 import net.momirealms.customfishing.bukkit.integration.quest.BattlePassQuest;
@@ -67,6 +69,7 @@ public class BukkitIntegrationManager implements IntegrationManager {
 
     @Override
     public void load() {
+        registerEnchantmentProvider(new VanillaEnchantmentsProvider());
         if (isHooked("ItemsAdder")) {
             registerItemProvider(new ItemsAdderItemProvider());
             registerBlockProvider(new ItemsAdderBlockProvider());

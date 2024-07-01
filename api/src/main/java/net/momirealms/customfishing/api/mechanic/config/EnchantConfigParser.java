@@ -16,14 +16,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class TotemConfigParser {
+public class EnchantConfigParser {
 
     private final String id;
     private final List<Consumer<EventCarrier.Builder>> eventBuilderConsumers = new ArrayList<>();
     private final List<Consumer<EffectModifier.Builder>> effectBuilderConsumers = new ArrayList<>();
-    private final List<Consumer<TotemConfig.Builder>> totemBuilderConsumers = new ArrayList<>();
 
-    public TotemConfigParser(String id, Section section, Map<String, Node<ConfigParserFunction>> functionMap) {
+    public EnchantConfigParser(String id, Section section, Map<String, Node<ConfigParserFunction>> functionMap) {
         this.id = id;
         analyze(section, functionMap);
     }
@@ -46,11 +45,6 @@ public class TotemConfigParser {
                         EffectModifierParserFunction effectModifierParserFunction = (EffectModifierParserFunction) function;
                         Consumer<EffectModifier.Builder> consumer = effectModifierParserFunction.accept(entry.getValue());
                         effectBuilderConsumers.add(consumer);
-                    }
-                    case TOTEM -> {
-                        TotemParserFunction totemParserFunction = (TotemParserFunction) function;
-                        Consumer<TotemConfig.Builder> consumer = totemParserFunction.accept(entry.getValue());
-                        totemBuilderConsumers.add(consumer);
                     }
                 }
                 continue;
@@ -76,15 +70,6 @@ public class TotemConfigParser {
                 .id(id)
                 .type(MechanicType.TOTEM);
         for (Consumer<EffectModifier.Builder> consumer : effectBuilderConsumers) {
-            consumer.accept(builder);
-        }
-        return builder.build();
-    }
-
-    public TotemConfig getTotemConfig() {
-        TotemConfig.Builder builder = TotemConfig.builder()
-                .id(id);
-        for (Consumer<TotemConfig.Builder> consumer : totemBuilderConsumers) {
             consumer.accept(builder);
         }
         return builder.build();

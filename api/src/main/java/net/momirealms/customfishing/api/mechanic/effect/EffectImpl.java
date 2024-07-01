@@ -204,8 +204,8 @@ public class EffectImpl implements Effect {
         this.difficultyAdder += another.difficultyAdder();
         this.gameTimeMultiplier += (another.gameTimeMultiplier() - 1);
         this.gameTimeAdder += another.gameTimeAdder();
-        this.waitTimeAdder += (another.waitTimeAdder() -1);
         this.waitTimeMultiplier += (another.waitTimeMultiplier() -1);
+        this.waitTimeAdder += (another.waitTimeAdder());
         this.multipleLootChance += another.multipleLootChance();
         this.weightOperations.addAll(another.weightOperations());
         this.weightOperationsIgnored.addAll(another.weightOperationsIgnored());

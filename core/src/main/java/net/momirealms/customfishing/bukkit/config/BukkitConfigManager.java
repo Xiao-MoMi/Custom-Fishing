@@ -2,6 +2,11 @@ package net.momirealms.customfishing.bukkit.config;
 
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
+import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
@@ -26,6 +31,7 @@ import net.momirealms.customfishing.api.mechanic.totem.block.property.TotemBlock
 import net.momirealms.customfishing.api.mechanic.totem.block.type.TypeCondition;
 import net.momirealms.customfishing.bukkit.totem.particle.DustParticleSetting;
 import net.momirealms.customfishing.bukkit.totem.particle.ParticleSetting;
+import net.momirealms.customfishing.common.dependency.DependencyProperties;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.util.ListUtils;
 import net.momirealms.customfishing.common.util.Pair;
@@ -40,6 +46,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.function.BiFunction;
 
@@ -65,7 +72,34 @@ public class BukkitConfigManager extends ConfigManager {
 
     @Override
     public void load() {
-        MAIN_CONFIG = loadConfig("config.yml");
+        String configVersion = DependencyProperties.getDependencyVersion("config");
+        try {
+            MAIN_CONFIG = YamlDocument.create(
+                    resolveConfig("config.yml").toFile(),
+                    plugin.getResourceStream("config.yml"),
+                    GeneralSettings.builder()
+                            .setRouteSeparator('.')
+                            .setUseDefaults(false)
+                            .build(),
+                    LoaderSettings
+                            .builder()
+                            .setAutoUpdate(true)
+                            .build(),
+                    DumperSettings.DEFAULT,
+                    UpdaterSettings
+                            .builder()
+                            .setVersioning(new BasicVersioning("config-version"))
+                            .addIgnoredRoute(configVersion, "mechanics.mechanic-requirements", '.')
+                            .addIgnoredRoute(configVersion, "mechanics.global-events", '.')
+                            .addIgnoredRoute(configVersion, "mechanics.global-effects", '.')
+                            .addIgnoredRoute(configVersion, "mechanics.fishing-bag.collect-actions", '.')
+                            .addIgnoredRoute(configVersion, "mechanics.fishing-bag.full-actions", '.')
+                            .addIgnoredRoute(configVersion, "other-settings.placeholder-register", '.')
+                            .build()
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         this.loadSettings();
         this.loadConfigs();
     }
@@ -122,6 +156,15 @@ public class BukkitConfigManager extends ConfigManager {
                 }
             }
         }
+
+        globalEffects = new ArrayList<>();
+        Section globalEffectSection = config.getSection("mechanics.global-effects");
+        if (globalEffectSection != null)
+            for (Map.Entry<String, Object> entry : globalEffectSection.getStringRouteMappedValues(false).entrySet()) {
+                if (entry.getValue() instanceof Section innerSection) {
+                    globalEffects.add(parseEffect(innerSection));
+                }
+            }
     }
 
     private void loadConfigs() {

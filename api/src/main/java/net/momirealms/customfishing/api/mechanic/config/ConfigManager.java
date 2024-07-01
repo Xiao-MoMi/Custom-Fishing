@@ -9,6 +9,7 @@ import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.config.function.*;
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.effect.LootBaseEffect;
 import net.momirealms.customfishing.api.mechanic.entity.EntityConfig;
@@ -22,6 +23,7 @@ import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.item.Item;
 import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import net.momirealms.customfishing.common.util.Pair;
+import net.momirealms.customfishing.common.util.TriConsumer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
@@ -71,7 +73,7 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     protected EventPriority eventPriority;
     protected Requirement<Player>[] mechanicRequirements;
     protected boolean enableBag;
-
+    protected List<TriConsumer<Effect, Context<Player>, Integer>> globalEffects;
 
     protected ConfigManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
@@ -184,6 +186,10 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     public static Requirement<Player>[] mechanicRequirements() {
         return instance.mechanicRequirements;
+    }
+
+    public static List<TriConsumer<Effect, Context<Player>, Integer>> globalEffects() {
+        return instance.globalEffects;
     }
 
     public void registerHookParser(Function<Object, Consumer<HookConfig.Builder>> function, String... nodes) {

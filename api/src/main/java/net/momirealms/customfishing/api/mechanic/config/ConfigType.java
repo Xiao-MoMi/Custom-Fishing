@@ -101,7 +101,16 @@ public class ConfigType {
             }
     );
 
-    private static final ConfigType[] values = new ConfigType[] {ITEM, ENTITY, BLOCK, HOOK, ROD, BAIT, UTIL, TOTEM};
+    public static final ConfigType ENCHANT = of(
+            "enchant",
+            (id, section, functions) -> {
+                EnchantConfigParser config = new EnchantConfigParser(id, section, functions);
+                BukkitCustomFishingPlugin.getInstance().getEffectManager().registerEffectModifier(config.getEffectModifier(), MechanicType.ENCHANT);
+                BukkitCustomFishingPlugin.getInstance().getEventManager().registerEventCarrier(config.getEventCarrier());
+            }
+    );
+
+    private static final ConfigType[] values = new ConfigType[] {ITEM, ENTITY, BLOCK, HOOK, ROD, BAIT, UTIL, TOTEM, ENCHANT};
 
     public static ConfigType[] values() {
         return values;

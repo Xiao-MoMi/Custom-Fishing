@@ -30,21 +30,42 @@ minecraft:luck_of_the_sea:3:
       value:
         - silver_star:+6
         - golden_star:+3
-#minecraft:lure:1:
-#  requirements: {}
-#  effects:
-#    effect_1:
-#      type: wait-time
-#      value: -50
-#minecraft:lure:2:
-#  requirements: {}
-#  effects:
-#    effect_1:
-#      type: wait-time
-#      value: -100
-#minecraft:lure:3:
-#  requirements: {}
-#  effects:
-#    effect_1:
-#      type: wait-time
-#      value: -150
+minecraft:lure:1:
+  requirements: {}
+  effects:
+    effect_1:
+      type: conditional
+      conditions:
+        "||":
+          in-lava: true
+          in-void: true
+      effects:
+        effect_1:
+          type: wait-time
+          value: -80
+minecraft:lure:2:
+  requirements: {}
+  effects:
+    effect_1:
+      type: conditional
+      conditions:
+        "||":
+          in-lava: true
+          in-void: true
+      effects:
+        effect_1:
+          type: wait-time
+          value: -160
+minecraft:lure:3:
+  requirements: {}
+  effects:
+    effect_1:
+      type: conditional
+      conditions:
+        "||":
+          in-lava: true
+          in-void: true
+      effects:
+        effect_1:
+          type: wait-time
+          value: -240

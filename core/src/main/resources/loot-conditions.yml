@@ -5,7 +5,7 @@ global-group:
   sub-groups:
     loots_in_water:
       conditions:
-        lava-fishing: false
+        in-water: true
         environment:
           - normal
         '!rod':
@@ -126,7 +126,7 @@ global-group:
             - 'skeleton:+30'
     loots_in_lava:
       conditions:
-        lava-fishing: true
+        in-lava: true
       list: []
       sub-groups:
         world_loots:
