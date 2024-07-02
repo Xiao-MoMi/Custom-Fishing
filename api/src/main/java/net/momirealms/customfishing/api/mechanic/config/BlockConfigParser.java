@@ -7,6 +7,7 @@ import net.momirealms.customfishing.api.mechanic.effect.LootBaseEffect;
 import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import net.momirealms.customfishing.api.mechanic.loot.LootType;
 import net.momirealms.customfishing.common.config.node.Node;
 
 import java.util.ArrayList;
@@ -85,6 +86,7 @@ public class BlockConfigParser {
     public Loot getLoot() {
         Loot.Builder builder = Loot.builder()
                 .id(id)
+                .type(LootType.BLOCK)
                 .lootBaseEffect(getBaseEffect());
         for (Consumer<Loot.Builder> consumer : lootBuilderConsumers) {
             consumer.accept(builder);
@@ -95,7 +97,7 @@ public class BlockConfigParser {
     public EventCarrier getEventCarrier() {
         EventCarrier.Builder builder = EventCarrier.builder()
                 .id(id)
-                .type(MechanicType.LOOT);
+                .type(MechanicType.BLOCK);
         for (Consumer<EventCarrier.Builder> consumer : eventBuilderConsumers) {
             consumer.accept(builder);
         }

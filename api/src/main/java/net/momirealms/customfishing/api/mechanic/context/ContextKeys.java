@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.mechanic.context;
 
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionGoal;
+import net.momirealms.customfishing.api.mechanic.loot.LootType;
 import org.bukkit.Location;
 
 import java.util.Objects;
@@ -30,6 +31,8 @@ public class ContextKeys<T> {
     public static final ContextKeys<Integer> Z = of("z", Integer.class);
     public static final ContextKeys<String> WORLD = of("world", String.class);
     public static final ContextKeys<String> ID = of("id", String.class);
+    public static final ContextKeys<LootType> LOOT = of("loot", LootType.class);
+    public static final ContextKeys<String> NICK = of("nick", String.class);
     public static final ContextKeys<Boolean> OPEN_WATER = of("open_water", Boolean.class);
     public static final ContextKeys<String> TYPE = of("type", String.class);
     public static final ContextKeys<Float> SIZE = of("SIZE", Float.class);
@@ -48,7 +51,9 @@ public class ContextKeys<T> {
     public static final ContextKeys<String> SECOND = of("second", String.class);
     public static final ContextKeys<Integer> SECONDS = of("seconds", Integer.class);
     public static final ContextKeys<String> PLAYER = of("player", String.class);
-    public static final ContextKeys<String> SCORE = of("score", String.class);
+    public static final ContextKeys<String> SCORE_FORMATTED = of("score_formatted", String.class);
+    public static final ContextKeys<Double> SCORE = of("score", Double.class);
+    public static final ContextKeys<Double> CUSTOM_SCORE = of("custom_score", Double.class);
     public static final ContextKeys<String> RANK = of("rank", String.class);
     public static final ContextKeys<Location> HOOK_LOCATION = of("hook_location", Location.class);
     public static final ContextKeys<Integer> HOOK_X = of("hook_x", Integer.class);

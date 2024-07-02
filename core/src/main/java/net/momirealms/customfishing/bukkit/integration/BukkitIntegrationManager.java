@@ -27,7 +27,6 @@ import net.momirealms.customfishing.bukkit.integration.enchant.AdvancedEnchantme
 import net.momirealms.customfishing.bukkit.integration.enchant.VanillaEnchantmentsProvider;
 import net.momirealms.customfishing.bukkit.integration.entity.ItemsAdderEntityProvider;
 import net.momirealms.customfishing.bukkit.integration.entity.MythicEntityProvider;
-import net.momirealms.customfishing.bukkit.integration.entity.VanillaEntityProvider;
 import net.momirealms.customfishing.bukkit.integration.item.*;
 import net.momirealms.customfishing.bukkit.integration.level.*;
 import net.momirealms.customfishing.bukkit.integration.quest.BattlePassQuest;

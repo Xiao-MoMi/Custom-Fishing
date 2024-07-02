@@ -1,11 +1,13 @@
 package net.momirealms.customfishing.api.mechanic.fishing.hook;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.event.FishingHookStateEvent;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectProperties;
+import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.entity.FishHook;
@@ -42,6 +44,7 @@ public class VanillaMechanic implements HookMechanic {
 
     @Override
     public void start(Effect finalEffect) {
+        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.LAND));
         setWaitTime(hook, finalEffect);
         this.task = BukkitCustomFishingPlugin.getInstance().getScheduler().sync().runRepeating(() -> {
             if (isHooked) {
@@ -66,7 +69,7 @@ public class VanillaMechanic implements HookMechanic {
                 hook.setWaitTime(after);
             } else {
                 int before = ThreadLocalRandom.current().nextInt(ConfigManager.waterMaxTime() - ConfigManager.waterMinTime() + 1) + ConfigManager.waterMinTime();
-                int after = Math.max(1, (int) (before * effect.waitTimeMultiplier() + effect.waitTimeAdder()));
+                int after = Math.max(ConfigManager.waterMinTime(), (int) (before * effect.waitTimeMultiplier() + effect.waitTimeAdder()));
                 hook.setWaitTime(after);
                 BukkitCustomFishingPlugin.getInstance().debug("Wait time: " + before + " -> " + after + " ticks");
             }
@@ -81,5 +84,13 @@ public class VanillaMechanic implements HookMechanic {
     @Override
     public void destroy() {
         if (this.task != null) this.task.cancel();
+    }
+
+    public void onBite() {
+        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.BITE));
+    }
+
+    public void onFailedAttempt() {
+        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.ESCAPE));
     }
 }

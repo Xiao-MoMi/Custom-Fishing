@@ -9,6 +9,7 @@ import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.item.CustomFishingItem;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import net.momirealms.customfishing.api.mechanic.loot.LootType;
 import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.item.Item;
 import org.bukkit.entity.Player;
@@ -91,7 +92,7 @@ public class UtilConfigParser {
     public EventCarrier getEventCarrier() {
         EventCarrier.Builder builder = EventCarrier.builder()
                 .id(id)
-                .type(MechanicType.BAIT);
+                .type(MechanicType.UTIL);
         for (Consumer<EventCarrier.Builder> consumer : eventBuilderConsumers) {
             consumer.accept(builder);
         }
@@ -118,6 +119,7 @@ public class UtilConfigParser {
     public Loot getLoot() {
         Loot.Builder builder = Loot.builder()
                 .id(id)
+                .type(LootType.ITEM)
                 .lootBaseEffect(getBaseEffect());
         for (Consumer<Loot.Builder> consumer : lootBuilderConsumers) {
             consumer.accept(builder);

@@ -122,7 +122,7 @@ mechanics:
                   value:
                     duration: 35
                     position: other
-                    item: util:lava_effect
+                    item: lava_effect
             priority_2:
               conditions:
                 lava-fishing: false
@@ -132,7 +132,7 @@ mechanics:
                   value:
                     duration: 35
                     position: other
-                    item: util:water_effect
+                    item: water_effect
 
   # Global properties which would help you reduce duplicated lines
   global-loot-property:

@@ -66,6 +66,7 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     protected boolean enableVoidFishing;
     protected int voidMinTime;
     protected int voidMaxTime;
+    protected int multipleLootSpawnDelay;
     protected boolean restrictedSizeRange;
     protected List<String> durabilityLore;
     protected boolean allowMultipleTotemType;
@@ -158,6 +159,10 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     public static int voidMaxTime() {
         return instance.voidMaxTime;
+    }
+
+    public static int multipleLootSpawnDelay() {
+        return instance.multipleLootSpawnDelay;
     }
 
     public static boolean restrictedSizeRange() {

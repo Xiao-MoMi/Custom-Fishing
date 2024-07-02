@@ -58,6 +58,10 @@ public interface MathValue<T> {
         return new PlainMathValueImpl<>(value);
     }
 
+    static <T> MathValue<T> ranged(String value) {
+        return new RangedMathValueImpl<>(value);
+    }
+
     /**
      * Automatically creates a MathValue based on the given object.
      * If the object is a String, it is treated as a mathematical expression.
@@ -70,6 +74,9 @@ public interface MathValue<T> {
      */
     static <T> MathValue<T> auto(Object o) {
         if (o instanceof String s) {
+            if (s.contains("~")) {
+                return ranged(s);
+            }
             try {
                 return plain(Double.parseDouble(s));
             } catch (NumberFormatException e) {

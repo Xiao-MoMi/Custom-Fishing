@@ -36,18 +36,18 @@ public class BukkitEventManager implements EventManager, Listener {
 
     @Override
     public void load() {
-        Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, this.plugin.getBoostrap());
     }
 
     @Override
     public Optional<EventCarrier> getEventCarrier(String id, MechanicType type) {
-        return Optional.ofNullable(carriers.get(type.getType() + ":" + id));
+        return Optional.ofNullable(this.carriers.get(type.getType() + ":" + id));
     }
 
     @Override
     public boolean registerEventCarrier(EventCarrier carrier) {
-        if (carriers.containsKey(carrier.id())) return false;
-        carriers.put(carrier.type().getType() + ":" + carrier.id(), carrier);
+        if (this.carriers.containsKey(carrier.id())) return false;
+        this.carriers.put(carrier.type().getType() + ":" + carrier.id(), carrier);
         return true;
     }
 
@@ -60,8 +60,8 @@ public class BukkitEventManager implements EventManager, Listener {
         ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
         if (itemStack.getType() == Material.AIR || itemStack.getAmount() == 0)
             return;
-        String id = plugin.getItemManager().getItemID(itemStack);
-        Optional.ofNullable(carriers.get(id)).ifPresent(carrier -> {
+        String id = this.plugin.getItemManager().getItemID(itemStack);
+        Optional.ofNullable(this.carriers.get(id)).ifPresent(carrier -> {
             carrier.trigger(Context.player(event.getPlayer()), ActionTrigger.INTERACT);
         });
     }

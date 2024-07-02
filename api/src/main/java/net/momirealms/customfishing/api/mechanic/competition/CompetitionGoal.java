@@ -47,6 +47,15 @@ public final class CompetitionGoal {
             }),
             () -> Optional.ofNullable(StandardLocales.GOAL_MAX_SIZE).orElse("max_size")
     );
+    public static final CompetitionGoal MIN_SIZE = new CompetitionGoal(
+            "min_size",
+            ((rankingProvider, player, score) -> {
+                if (rankingProvider.getPlayerScore(player) > score) {
+                    rankingProvider.setData(player, score);
+                }
+            }),
+            () -> Optional.ofNullable(StandardLocales.GOAL_MIN_SIZE).orElse("min_size")
+    );
     public static final CompetitionGoal TOTAL_SIZE = new CompetitionGoal(
            "total_size",
             (RankingProvider::refreshData),

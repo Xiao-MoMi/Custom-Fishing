@@ -10,6 +10,7 @@ public class StandardLocales {
     public static String GOAL_CATCH_AMOUNT;
     public static String GOAL_TOTAL_SCORE;
     public static String GOAL_MAX_SIZE;
+    public static String GOAL_MIN_SIZE;
 
     public static String FORMAT_SECOND = "s";
     public static String FORMAT_MINUTE = "m";

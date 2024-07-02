@@ -25,6 +25,7 @@ public class ConfigType {
     public static final ConfigType ENTITY = of(
             "entity",
             (id, section, functions) -> {
+                MechanicType.register(id, MechanicType.ENTITY);
                 EntityConfigParser config = new EntityConfigParser(id, section, functions);
                 BukkitCustomFishingPlugin.getInstance().getEntityManager().registerEntity(config.getEntity());
                 BukkitCustomFishingPlugin.getInstance().getLootManager().registerLoot(config.getLoot());
@@ -35,6 +36,7 @@ public class ConfigType {
     public static final ConfigType BLOCK = of(
             "block",
             (id, section, functions) -> {
+                MechanicType.register(id, MechanicType.BLOCK);
                 BlockConfigParser config = new BlockConfigParser(id, section, functions);
                 BukkitCustomFishingPlugin.getInstance().getBlockManager().registerBlock(config.getBlock());
                 BukkitCustomFishingPlugin.getInstance().getLootManager().registerLoot(config.getLoot());

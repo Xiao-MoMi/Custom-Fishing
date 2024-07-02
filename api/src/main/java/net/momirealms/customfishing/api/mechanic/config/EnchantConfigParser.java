@@ -4,11 +4,9 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.mechanic.config.function.ConfigParserFunction;
 import net.momirealms.customfishing.api.mechanic.config.function.EffectModifierParserFunction;
 import net.momirealms.customfishing.api.mechanic.config.function.EventParserFunction;
-import net.momirealms.customfishing.api.mechanic.config.function.TotemParserFunction;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
-import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import net.momirealms.customfishing.common.config.node.Node;
 
 import java.util.ArrayList;
@@ -58,7 +56,7 @@ public class EnchantConfigParser {
     public EventCarrier getEventCarrier() {
         EventCarrier.Builder builder = EventCarrier.builder()
                 .id(id)
-                .type(MechanicType.TOTEM);
+                .type(MechanicType.ENCHANT);
         for (Consumer<EventCarrier.Builder> consumer : eventBuilderConsumers) {
             consumer.accept(builder);
         }
@@ -68,7 +66,7 @@ public class EnchantConfigParser {
     public EffectModifier getEffectModifier() {
         EffectModifier.Builder builder = EffectModifier.builder()
                 .id(id)
-                .type(MechanicType.TOTEM);
+                .type(MechanicType.ENCHANT);
         for (Consumer<EffectModifier.Builder> consumer : effectBuilderConsumers) {
             consumer.accept(builder);
         }

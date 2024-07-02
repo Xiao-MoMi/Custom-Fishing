@@ -1,11 +1,13 @@
 package net.momirealms.customfishing.api.mechanic.fishing.hook;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.event.FishingHookStateEvent;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectProperties;
+import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import net.momirealms.customfishing.common.util.RandomUtils;
 import org.bukkit.NamespacedKey;
@@ -59,6 +61,7 @@ public class VoidFishingMechanic implements HookMechanic {
 
     @Override
     public void start(Effect finalEffect) {
+        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.LAND));
         this.setWaitTime(finalEffect);
         this.tempEntity = hook.getWorld().spawn(hook.getLocation().clone().subtract(0,1,0), ArmorStand.class);
         this.setTempEntityProperties(this.tempEntity);
@@ -69,7 +72,6 @@ public class VoidFishingMechanic implements HookMechanic {
                 if (timer >= 16) timer = 0;
                 hook.getWorld().spawnParticle(Particle.END_ROD, hook.getX() + 0.5 * Math.cos(timer * 22.5D * 0.017453292F), hook.getY() - 0.15, hook.getZ() + 0.5 * Math.sin(timer * 22.5D * 0.017453292F), 0,0,0,0);
             }
-
             if (this.nibble > 0) {
                 --this.nibble;
                 if (this.nibble % 4 == 0) {
@@ -83,6 +85,7 @@ public class VoidFishingMechanic implements HookMechanic {
                     this.timeUntilLured = 0;
                     this.timeUntilHooked = 0;
                     this.hooked = false;
+                    EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.ESCAPE));
                 }
             } else {
                 float f;
@@ -113,6 +116,7 @@ public class VoidFishingMechanic implements HookMechanic {
                         this.nibble = RandomUtils.generateRandomInt(20, 40);
                         this.hooked = true;
                         hook.getWorld().playSound(hook.getLocation(), Sound.ITEM_TRIDENT_THUNDER, 0.25F, 1.0F + (RandomUtils.generateRandomFloat(0,1)-RandomUtils.generateRandomFloat(0,1)) * 0.4F);
+                        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.BITE));
                     }
                 } else if (timeUntilLured > 0) {
                     timeUntilLured--;
@@ -130,11 +134,12 @@ public class VoidFishingMechanic implements HookMechanic {
                         d0 = hook.getX() + Math.sin(f1) * f2 * 0.1D;
                         d1 = hook.getY();
                         d2 = hook.getZ() + Math.cos(f1) * f2 * 0.1D;
-                        hook.getWorld().spawnParticle(Particle.DRAGON_BREATH, d0, d1, d2, 2 + RandomUtils.generateRandomInt(0,2), 0.10000000149011612D, 0.0D, 0.10000000149011612D, 0.0D);
+                        hook.getWorld().spawnParticle(Particle.DRAGON_BREATH, d0, d1, d2, 2 + RandomUtils.generateRandomInt(0,1), 0.10000000149011612D, 0.0D, 0.10000000149011612D, 0.0D);
                     }
                     if (this.timeUntilLured <= 0) {
                         this.fishAngle = RandomUtils.generateRandomFloat(0F, 360F);
                         this.timeUntilHooked = RandomUtils.generateRandomInt(20, 80);
+                        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.LURE));
                     }
                 } else {
                     setWaitTime(finalEffect);
@@ -160,7 +165,7 @@ public class VoidFishingMechanic implements HookMechanic {
 
     private void setWaitTime(Effect effect) {
         int before = ThreadLocalRandom.current().nextInt(ConfigManager.voidMaxTime() - ConfigManager.voidMinTime() + 1) + ConfigManager.voidMinTime();
-        int after = Math.max(1, (int) (before * effect.waitTimeMultiplier() + effect.waitTimeAdder()));
+        int after = Math.max(ConfigManager.voidMinTime(), (int) (before * effect.waitTimeMultiplier() + effect.waitTimeAdder()));
         BukkitCustomFishingPlugin.getInstance().debug("Wait time: " + before + " -> " + after + " ticks");
         this.timeUntilLured = after;
     }

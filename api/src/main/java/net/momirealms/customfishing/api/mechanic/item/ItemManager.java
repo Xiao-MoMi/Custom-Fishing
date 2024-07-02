@@ -23,6 +23,7 @@ import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.common.item.ItemFactory;
 import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
 import net.momirealms.customfishing.common.plugin.feature.Reloadable;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -56,7 +57,7 @@ public interface ItemManager extends Reloadable {
     MechanicType getItemType(@NotNull String id);
 
     @Nullable
-    Item dropItemLoot(@NotNull Context<Player> context);
+    Item dropItemLoot(@NotNull Context<Player> context, ItemStack rod, FishHook hook);
 
     void decreaseDurability(ItemStack itemStack, int amount, boolean incorrectUsage);
 
@@ -65,4 +66,6 @@ public interface ItemManager extends Reloadable {
     ItemProvider[] getItemProviders();
 
     Collection<String> getItemIDs();
+
+    net.momirealms.customfishing.common.item.Item<ItemStack> wrap(ItemStack itemStack);
 }

@@ -102,7 +102,7 @@ public class LootImpl implements Loot {
         private boolean disableStatistics = DEFAULT_DISABLE_STATS;
         private boolean showInFinder = DEFAULT_SHOW_IN_FINDER;
         private String id = null;
-        private String nick = null;
+        private String nick = "UNDEFINED";
         private StatisticsKeys statisticsKeys = null;
         private MathValue<Player> score = DEFAULT_SCORE;
         private String[] groups = new String[0];

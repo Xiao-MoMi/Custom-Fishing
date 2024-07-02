@@ -9,6 +9,7 @@ import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.item.CustomFishingItem;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import net.momirealms.customfishing.api.mechanic.loot.LootType;
 import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.item.Item;
 import org.bukkit.Material;
@@ -120,6 +121,7 @@ public class RodConfigParser {
     public Loot getLoot() {
         Loot.Builder builder = Loot.builder()
                 .id(id)
+                .type(LootType.ITEM)
                 .lootBaseEffect(getBaseEffect());
         for (Consumer<Loot.Builder> consumer : lootBuilderConsumers) {
             consumer.accept(builder);

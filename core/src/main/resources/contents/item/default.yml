@@ -12,6 +12,12 @@ vanilla:
   disable-stat: true
   group:
     - river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 1~7
+        chance: 1.0
 # Some rubbish
 stick:
   tag: false

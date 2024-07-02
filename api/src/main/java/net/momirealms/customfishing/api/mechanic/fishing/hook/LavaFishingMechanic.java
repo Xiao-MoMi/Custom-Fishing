@@ -2,11 +2,13 @@ package net.momirealms.customfishing.api.mechanic.fishing.hook;
 
 import io.papermc.paper.block.fluid.FluidData;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.event.FishingHookStateEvent;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectProperties;
+import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import net.momirealms.customfishing.common.util.RandomUtils;
 import org.bukkit.*;
@@ -34,6 +36,7 @@ public class LavaFishingMechanic implements HookMechanic {
     private float fishAngle;
     private int currentState;
     private int jumpTimer;
+    private boolean firstTime = true;
 
     public LavaFishingMechanic(FishHook hook, Effect gearsEffect, Context<Player> context) {
         this.hook = hook;
@@ -46,6 +49,9 @@ public class LavaFishingMechanic implements HookMechanic {
         if (!(boolean) gearsEffect.properties().getOrDefault(EffectProperties.LAVA_FISHING, false)) {
             return false;
         }
+        if (hook.isInLava()) {
+            return true;
+        }
         float lavaHeight = 0F;
         FluidData fluidData = this.hook.getWorld().getFluidData(this.hook.getLocation());
         if (fluidData.getFluidType() == Fluid.LAVA || fluidData.getFluidType() == Fluid.FLOWING_LAVA) {
@@ -56,6 +62,9 @@ public class LavaFishingMechanic implements HookMechanic {
 
     @Override
     public boolean shouldStop() {
+        if (hook.isInLava()) {
+            return false;
+        }
         return hook.isOnGround() || (hook.getLocation().getBlock().getType() != Material.LAVA && hook.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() != Material.LAVA);
     }
 
@@ -66,6 +75,7 @@ public class LavaFishingMechanic implements HookMechanic {
 
     @Override
     public void start(Effect finalEffect) {
+        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.LAND));
         this.setWaitTime(finalEffect);
         this.task = BukkitCustomFishingPlugin.getInstance().getScheduler().sync().runRepeating(() -> {
             float lavaHeight = 0F;
@@ -79,7 +89,6 @@ public class LavaFishingMechanic implements HookMechanic {
                     this.jumpTimer++;
                     if (this.jumpTimer >= 4) {
                         this.jumpTimer = 0;
-                        Vector previousVector = this.hook.getVelocity();
                         this.hook.setVelocity(new Vector(0,0.24,0));
                     }
                 }
@@ -91,7 +100,7 @@ public class LavaFishingMechanic implements HookMechanic {
                     this.currentState = 0;
                 }
             } else {
-                if (this.hook.getY() % 1 <= lavaHeight) {
+                if (this.hook.getY() % 1 <= lavaHeight || this.hook.isInLava()) {
                     Vector previousVector = this.hook.getVelocity();
                     this.hook.setVelocity(new Vector(previousVector.getX() * 0.6, Math.min(0.1, Math.max(-0.1, previousVector.getY() + 0.1)), previousVector.getZ() * 0.6));
                     this.currentState = 1;
@@ -102,6 +111,10 @@ public class LavaFishingMechanic implements HookMechanic {
                         this.tempEntity = this.hook.getWorld().spawn(this.hook.getLocation().clone().subtract(0,1,0), ArmorStand.class);
                         this.setTempEntityProperties(this.tempEntity);
                         this.hook.setHookedEntity(this.tempEntity);
+                        if (!firstTime) {
+                            EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.ESCAPE));
+                        }
+                        firstTime = false;
                     }
                 }
                 float f;
@@ -132,6 +145,7 @@ public class LavaFishingMechanic implements HookMechanic {
                         this.nibble = RandomUtils.generateRandomInt(20, 40);
                         this.hooked = true;
                         hook.getWorld().playSound(hook.getLocation(), Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.25F, 1.0F + (RandomUtils.generateRandomFloat(0,1)-RandomUtils.generateRandomFloat(0,1)) * 0.4F);
+                        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.BITE));
                         if (this.tempEntity != null && this.tempEntity.isValid()) {
                             this.tempEntity.remove();
                         }
@@ -141,6 +155,7 @@ public class LavaFishingMechanic implements HookMechanic {
                     if (this.timeUntilLured <= 0) {
                         this.fishAngle = RandomUtils.generateRandomFloat(0F, 360F);
                         this.timeUntilHooked = RandomUtils.generateRandomInt(20, 80);
+                        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.LURE));
                     }
                 } else {
                     setWaitTime(finalEffect);
@@ -166,7 +181,7 @@ public class LavaFishingMechanic implements HookMechanic {
 
     private void setWaitTime(Effect effect) {
         int before = ThreadLocalRandom.current().nextInt(ConfigManager.lavaMaxTime() - ConfigManager.lavaMinTime() + 1) + ConfigManager.lavaMinTime();
-        int after = Math.max(1, (int) (before * effect.waitTimeMultiplier() + effect.waitTimeAdder()));
+        int after = Math.max(ConfigManager.lavaMinTime(), (int) (before * effect.waitTimeMultiplier() + effect.waitTimeAdder()));
         BukkitCustomFishingPlugin.getInstance().debug("Wait time: " + before + " -> " + after + " ticks");
         this.timeUntilLured = after;
     }

@@ -1,6 +1,7 @@
 package net.momirealms.customfishing.api.mechanic.fishing;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
@@ -9,7 +10,10 @@ import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.storage.user.UserData;
 import net.momirealms.customfishing.common.util.Pair;
+import net.momirealms.customfishing.common.util.TriConsumer;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -18,12 +22,24 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class FishingGears {
 
+    private static final Map<ActionTrigger, TriConsumer<GearType, Context<Player>, ItemStack>> triggers = new HashMap<>();
+
+    static {
+        triggers.put(ActionTrigger.CAST, ((type, context, itemStack) -> type.castFunction.accept(context, itemStack)));
+        triggers.put(ActionTrigger.REEL, ((type, context, itemStack) -> type.reelFunction.accept(context, itemStack)));
+        triggers.put(ActionTrigger.LAND, ((type, context, itemStack) -> type.landFunction.accept(context, itemStack)));
+        triggers.put(ActionTrigger.ESCAPE, ((type, context, itemStack) -> type.escapeFunction.accept(context, itemStack)));
+        triggers.put(ActionTrigger.LURE, ((type, context, itemStack) -> type.lureFunction.accept(context, itemStack)));
+        triggers.put(ActionTrigger.SUCCESS, ((type, context, itemStack) -> type.successFunction.accept(context, itemStack)));
+        triggers.put(ActionTrigger.FAILURE, ((type, context, itemStack) -> type.failureFunction.accept(context, itemStack)));
+        triggers.put(ActionTrigger.BITE, ((type, context, itemStack) -> type.biteFunction.accept(context, itemStack)));
+    }
+
     private static BiConsumer<Context<Player>, FishingGears> fishingGearsConsumers = defaultFishingGearsConsumers();
-    private final HashMap<GearType, Collection<ItemStack>> gears = new HashMap<>();
+    private final HashMap<GearType, Collection<Pair<String, ItemStack>>> gears = new HashMap<>();
     private final ArrayList<EffectModifier> modifiers = new ArrayList<>();
     private boolean canFish = true;
 
@@ -39,42 +55,12 @@ public class FishingGears {
         return canFish;
     }
 
-    public void cast() {
-        for (Map.Entry<GearType, Collection<ItemStack>> entry : gears.entrySet()) {
-            for (ItemStack itemStack : entry.getValue()) {
-                entry.getKey().castFunction.accept(itemStack);
-            }
-        }
-    }
-
-    public void reel() {
-        for (Map.Entry<GearType, Collection<ItemStack>> entry : gears.entrySet()) {
-            for (ItemStack itemStack : entry.getValue()) {
-                entry.getKey().reelFunction.accept(itemStack);
-            }
-        }
-    }
-
-    public void succeed() {
-        for (Map.Entry<GearType, Collection<ItemStack>> entry : gears.entrySet()) {
-            for (ItemStack itemStack : entry.getValue()) {
-                entry.getKey().successFunction.accept(itemStack);
-            }
-        }
-    }
-
-    public void fail() {
-        for (Map.Entry<GearType, Collection<ItemStack>> entry : gears.entrySet()) {
-            for (ItemStack itemStack : entry.getValue()) {
-                entry.getKey().failureFunction.accept(itemStack);
-            }
-        }
-    }
-
-    public void bite() {
-        for (Map.Entry<GearType, Collection<ItemStack>> entry : gears.entrySet()) {
-            for (ItemStack itemStack : entry.getValue()) {
-                entry.getKey().biteFunction.accept(itemStack);
+    public void trigger(ActionTrigger trigger, Context<Player> context) {
+        for (Map.Entry<GearType, Collection<Pair<String, ItemStack>>> entry : gears.entrySet()) {
+            for (Pair<String, ItemStack> itemPair : entry.getValue()) {
+                BukkitCustomFishingPlugin.getInstance().debug(entry.getKey() + " | " + itemPair.left() + " | " + trigger);
+                triggers.get(trigger).accept(entry.getKey(), context, itemPair.right());
+                BukkitCustomFishingPlugin.getInstance().getEventManager().trigger(context, itemPair.left(), entry.getKey().getType(), trigger);
             }
         }
     }
@@ -85,7 +71,7 @@ public class FishingGears {
     }
 
     @NotNull
-    public Collection<ItemStack> getItem(GearType type) {
+    public Collection<Pair<String, ItemStack>> getItem(GearType type) {
         return gears.getOrDefault(type, List.of());
     }
 
@@ -98,7 +84,7 @@ public class FishingGears {
             // set rod
             boolean rodOnMainHand = mainHandItem.getType() == Material.FISHING_ROD;
             String rodID = BukkitCustomFishingPlugin.getInstance().getItemManager().getItemID(rodOnMainHand ? mainHandItem : offHandItem);
-            fishingGears.gears.put(GearType.ROD, List.of(rodOnMainHand ? mainHandItem : offHandItem));
+            fishingGears.gears.put(GearType.ROD, List.of(Pair.of(rodID, rodOnMainHand ? mainHandItem : offHandItem)));
             context.arg(ContextKeys.ROD, rodID);
             BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(rodID, MechanicType.ROD).ifPresent(fishingGears.modifiers::add);
 
@@ -114,7 +100,7 @@ public class FishingGears {
             String anotherItemID = BukkitCustomFishingPlugin.getInstance().getItemManager().getItemID(rodOnMainHand ? offHandItem : mainHandItem);
             MechanicType type = MechanicType.getTypeByID(anotherItemID);
             if (type == MechanicType.BAIT) {
-                fishingGears.gears.put(GearType.BAIT, List.of(rodOnMainHand ? offHandItem : mainHandItem));
+                fishingGears.gears.put(GearType.BAIT, List.of(Pair.of(anotherItemID, rodOnMainHand ? offHandItem : mainHandItem)));
                 context.arg(ContextKeys.BAIT, anotherItemID);
                 BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(anotherItemID, MechanicType.BAIT).ifPresent(fishingGears.modifiers::add);
                 hasBait = true;
@@ -133,7 +119,7 @@ public class FishingGears {
                         String bagItemID = BukkitCustomFishingPlugin.getInstance().getItemManager().getItemID(itemInBag);
                         MechanicType bagItemType = MechanicType.getTypeByID(bagItemID);
                         if (!hasBait && bagItemType == MechanicType.BAIT) {
-                            fishingGears.gears.put(GearType.BAIT, List.of(itemInBag));
+                            fishingGears.gears.put(GearType.BAIT, List.of(Pair.of(bagItemID, itemInBag)));
                             context.arg(ContextKeys.BAIT, bagItemID);
                             BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(bagItemID, MechanicType.BAIT).ifPresent(fishingGears.modifiers::add);
                             hasBait = true;
@@ -143,9 +129,9 @@ public class FishingGears {
                         }
                     }
                     if (!uniqueUtils.isEmpty()) {
-                        ArrayList<ItemStack> utils = new ArrayList<>();
+                        ArrayList<Pair<String, ItemStack>> utils = new ArrayList<>();
                         for (Map.Entry<String, ItemStack> entry : uniqueUtils.entrySet()) {
-                            utils.add(entry.getValue());
+                            utils.add(Pair.of(entry.getKey(), entry.getValue()));
                             BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(entry.getKey(), MechanicType.UTIL).ifPresent(fishingGears.modifiers::add);
                         }
                         fishingGears.gears.put(GearType.UTIL, utils);
@@ -178,68 +164,116 @@ public class FishingGears {
 
     public static class GearType {
 
-        public static final GearType ROD = new GearType("rod",
-                (itemStack -> {}),
-                (itemStack -> {}),
-                (itemStack -> {}),
-                (itemStack -> BukkitCustomFishingPlugin.getInstance().getItemManager().decreaseDurability(itemStack, 1, false)),
-                (itemStack -> {}));
+        public static final GearType ROD = new GearType(MechanicType.ROD,
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {
+                    if (context.getHolder().getGameMode() != GameMode.CREATIVE)
+                        BukkitCustomFishingPlugin.getInstance().getItemManager().decreaseDurability(itemStack, 1, false);
+                }),
+                ((context, itemStack) -> {
+                    if (context.getHolder().getGameMode() != GameMode.CREATIVE)
+                        BukkitCustomFishingPlugin.getInstance().getItemManager().decreaseDurability(itemStack, 1, false);
+                }),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {})
+        );
 
-        public static final GearType BAIT = new GearType("bait",
-                (itemStack -> itemStack.setAmount(itemStack.getAmount() - 1)),
-                (itemStack -> {}),
-                (itemStack -> {}),
-                (itemStack -> {}),
-                (itemStack -> {}));
+        public static final GearType BAIT = new GearType(MechanicType.BAIT,
+                ((context, itemStack) -> {
+                    if (context.getHolder().getGameMode() != GameMode.CREATIVE)
+                        itemStack.setAmount(itemStack.getAmount() - 1);
+                }),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {})
+        );
 
-        public static final GearType HOOK = new GearType("hook",
-                (itemStack -> {}),
-                (itemStack -> {}),
-                (itemStack -> {}),
-                (itemStack -> {}),
-                (itemStack -> {}));
+        public static final GearType HOOK = new GearType(MechanicType.HOOK,
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {})
+        );
 
-        public static final GearType UTIL = new GearType("util",
-                (itemStack -> {}),
-                (itemStack -> {}),
-                (itemStack -> {}),
-                (itemStack -> {}),
-                (itemStack -> {}));
+        public static final GearType UTIL = new GearType(MechanicType.UTIL,
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {})
+        );
 
-        private final String type;
-        private Consumer<ItemStack> castFunction;
-        private Consumer<ItemStack> reelFunction;
-        private Consumer<ItemStack> biteFunction;
-        private Consumer<ItemStack> successFunction;
-        private Consumer<ItemStack> failureFunction;
+        private final MechanicType type;
+        private BiConsumer<Context<Player>, ItemStack> castFunction;
+        private BiConsumer<Context<Player>, ItemStack> reelFunction;
+        private BiConsumer<Context<Player>, ItemStack> biteFunction;
+        private BiConsumer<Context<Player>, ItemStack> successFunction;
+        private BiConsumer<Context<Player>, ItemStack> failureFunction;
+        private BiConsumer<Context<Player>, ItemStack> lureFunction;
+        private BiConsumer<Context<Player>, ItemStack> escapeFunction;
+        private BiConsumer<Context<Player>, ItemStack> landFunction;
 
-        public GearType(String type, Consumer<ItemStack> castFunction, Consumer<ItemStack> reelFunction, Consumer<ItemStack> biteFunction, Consumer<ItemStack> successFunction, Consumer<ItemStack> failureFunction) {
+        public GearType(MechanicType type,
+                        BiConsumer<Context<Player>, ItemStack> castFunction, BiConsumer<Context<Player>, ItemStack> reelFunction,
+                        BiConsumer<Context<Player>, ItemStack> biteFunction, BiConsumer<Context<Player>, ItemStack> successFunction,
+                        BiConsumer<Context<Player>, ItemStack> failureFunction, BiConsumer<Context<Player>, ItemStack> lureFunction,
+                        BiConsumer<Context<Player>, ItemStack> escapeFunction, BiConsumer<Context<Player>, ItemStack> landFunction
+        ) {
             this.type = type;
             this.castFunction = castFunction;
             this.reelFunction = reelFunction;
             this.biteFunction = biteFunction;
             this.successFunction = successFunction;
             this.failureFunction = failureFunction;
+            this.landFunction = landFunction;
+            this.lureFunction = lureFunction;
+            this.escapeFunction = escapeFunction;
         }
 
-        public void castFunction(Consumer<ItemStack> castFunction) {
+        public void castFunction(BiConsumer<Context<Player>, ItemStack> castFunction) {
             this.castFunction = castFunction;
         }
 
-        public void reelFunction(Consumer<ItemStack> reelFunction) {
+        public void reelFunction(BiConsumer<Context<Player>, ItemStack> reelFunction) {
             this.reelFunction = reelFunction;
         }
 
-        public void biteFunction(Consumer<ItemStack> biteFunction) {
+        public void biteFunction(BiConsumer<Context<Player>, ItemStack> biteFunction) {
             this.biteFunction = biteFunction;
         }
 
-        public void successFunction(Consumer<ItemStack> successFunction) {
+        public void successFunction(BiConsumer<Context<Player>, ItemStack> successFunction) {
             this.successFunction = successFunction;
         }
 
-        public void failureFunction(Consumer<ItemStack> failureFunction) {
+        public void failureFunction(BiConsumer<Context<Player>, ItemStack> failureFunction) {
             this.failureFunction = failureFunction;
+        }
+
+        public void escapeFunction(BiConsumer<Context<Player>, ItemStack> escapeFunction) {
+            this.escapeFunction = escapeFunction;
+        }
+
+        public void lureFunction(BiConsumer<Context<Player>, ItemStack> lureFunction) {
+            this.lureFunction = lureFunction;
+        }
+
+        public void landFunction(BiConsumer<Context<Player>, ItemStack> landFunction) {
+            this.landFunction = landFunction;
         }
 
         @Override
@@ -257,6 +291,10 @@ public class FishingGears {
 
         @Override
         public String toString() {
+            return type.toString();
+        }
+
+        public MechanicType getType() {
             return type;
         }
     }

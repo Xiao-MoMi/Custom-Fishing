@@ -1,14 +1,16 @@
 package net.momirealms.customfishing.bukkit.fishing;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.event.FishingHookStateEvent;
 import net.momirealms.customfishing.api.event.RodCastEvent;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
 import net.momirealms.customfishing.api.mechanic.fishing.FishingGears;
 import net.momirealms.customfishing.api.mechanic.fishing.FishingManager;
+import net.momirealms.customfishing.api.mechanic.fishing.hook.VanillaMechanic;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
-import net.momirealms.customfishing.bukkit.util.EventUtils;
+import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.common.helper.VersionHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -127,7 +129,28 @@ public class BukkitFishingManager implements FishingManager, Listener {
             case CAUGHT_FISH -> onCaughtFish(event);
             case BITE -> onBite(event);
             case IN_GROUND -> onInGround(event);
+            case FAILED_ATTEMPT -> onFailedAttempt(event);
         }
+    }
+
+    // for vanilla mechanics
+    private void onFailedAttempt(PlayerFishEvent event) {
+        Player player = event.getPlayer();
+        getFishHook(player).ifPresent(hook -> {
+            if (hook.getCurrentHookMechanic() instanceof VanillaMechanic vanillaMechanic) {
+                vanillaMechanic.onFailedAttempt();
+            }
+        });
+    }
+
+    // for vanilla mechanics
+    private void onBite(PlayerFishEvent event) {
+        Player player = event.getPlayer();
+        getFishHook(player).ifPresent(hook -> {
+            if (hook.getCurrentHookMechanic() instanceof VanillaMechanic vanillaMechanic) {
+                vanillaMechanic.onBite();
+            }
+        });
     }
 
     private void onCaughtEntity(PlayerFishEvent event) {
@@ -138,7 +161,8 @@ public class BukkitFishingManager implements FishingManager, Listener {
                     Objects.requireNonNull(NamespacedKey.fromString("temp-entity", plugin.getBoostrap())),
                     PersistentDataType.STRING
             ) != null) {
-
+                event.setCancelled(true);
+                hook.onReelIn();
             }
         });
     }
@@ -146,20 +170,15 @@ public class BukkitFishingManager implements FishingManager, Listener {
     private void onReelIn(PlayerFishEvent event) {
         Player player = event.getPlayer();
         getFishHook(player).ifPresent(hook -> {
+            event.setCancelled(true);
             hook.onReelIn();
-        });
-    }
-
-    private void onBite(PlayerFishEvent event) {
-        Player player = event.getPlayer();
-        getFishHook(player).ifPresent(hook -> {
-            hook.onBite();
         });
     }
 
     private void onCaughtFish(PlayerFishEvent event) {
         Player player = event.getPlayer();
         getFishHook(player).ifPresent(hook -> {
+            event.setCancelled(true);
             hook.onReelIn();
         });
     }
@@ -169,24 +188,19 @@ public class BukkitFishingManager implements FishingManager, Listener {
         Player player = event.getPlayer();
         Context<Player> context = Context.player(player);
         FishingGears gears = new FishingGears(context);
-
         if (!RequirementManager.isSatisfied(context, ConfigManager.mechanicRequirements())) {
             this.destroy(player.getUniqueId());
             return;
         }
-
         if (!gears.canFish()) {
             event.setCancelled(true);
             return;
         }
-
         if (EventUtils.fireAndCheckCancel(new RodCastEvent(event, gears))) {
             return;
         }
-
-        plugin.debug(context.toString());
-        gears.cast();
-        CustomFishingHook customHook = new CustomFishingHook(hook, gears, context);
+        plugin.debug(context);
+        CustomFishingHook customHook = new CustomFishingHook(plugin, hook, gears, context);
         this.castHooks.put(player.getUniqueId(), customHook);
     }
 
@@ -200,6 +214,19 @@ public class BukkitFishingManager implements FishingManager, Listener {
                 plugin.getItemManager().decreaseDurability(itemStack, 5, true);
             }
         }
+    }
+
+    @EventHandler
+    public void onHookStateChange(FishingHookStateEvent event) {
+        Player player = event.getPlayer();
+        getFishHook(player).ifPresent(hook -> {
+            switch (event.getState()) {
+                case BITE -> hook.onBite();
+                case LAND -> hook.onLand();
+                case ESCAPE -> hook.onEscape();
+                case LURE -> hook.onLure();
+            }
+        });
     }
 
     @Override

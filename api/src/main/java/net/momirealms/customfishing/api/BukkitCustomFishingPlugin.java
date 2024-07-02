@@ -205,5 +205,5 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin, 
 
     public abstract void enable();
 
-    public abstract void debug(String message);
+    public abstract void debug(Object message);
 }

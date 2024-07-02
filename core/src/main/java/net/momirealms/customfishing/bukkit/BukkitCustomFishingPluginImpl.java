@@ -1,10 +1,12 @@
 package net.momirealms.customfishing.bukkit;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.event.CustomFishingReloadEvent;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.misc.cooldown.CoolDownManager;
 import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
+import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.bukkit.action.BukkitActionManager;
 import net.momirealms.customfishing.bukkit.bag.BukkitBagManager;
 import net.momirealms.customfishing.bukkit.block.BukkitBlockManager;
@@ -51,7 +53,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
     private final PluginLogger logger;
     private ChatCatcherManager chatCatcherManager;
     private BukkitCommandManager commandManager;
-    private Consumer<String> debugger;
+    private Consumer<Object> debugger;
 
     public BukkitCustomFishingPluginImpl(Plugin boostrap) {
         super(boostrap);
@@ -139,7 +141,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.placeholderManager.reload();
         this.configManager.reload();
         // after ConfigManager
-        this.debugger = ConfigManager.debug() ? (s) -> logger.info("[DEBUG] " + s) : (s) -> {};
+        this.debugger = ConfigManager.debug() ? (s) -> logger.info("[DEBUG] " + s.toString()) : (s) -> {};
 
         this.actionManager.reload();
         this.requirementManager.reload();
@@ -160,6 +162,8 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.effectManager.load();
         this.hookManager.load();
         this.totemManager.load();
+
+        EventUtils.fireAndForget(new CustomFishingReloadEvent(this));
     }
 
     @Override
@@ -217,7 +221,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
     }
 
     @Override
-    public void debug(String message) {
+    public void debug(Object message) {
         this.debugger.accept(message);
     }
 

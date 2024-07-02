@@ -116,8 +116,12 @@ public class BukkitEntityManager implements EntityManager {
         } else {
             entity = entityProviders.get("vanilla").spawn(hookLocation, entityID, config.propertyMap());
         }
-        Vector vector = playerLocation.subtract(hookLocation).toVector().multiply(config.horizontalVector().evaluate(context) - 1);
-        vector = vector.setY((vector.getY() + 0.2) * config.verticalVector().evaluate(context));
+        double d0 = playerLocation.getX() - hookLocation.getX();
+        double d1 = playerLocation.getY() - hookLocation.getY();
+        double d2 = playerLocation.getZ() - hookLocation.getZ();
+        double d3 = config.horizontalVector().evaluate(context);
+        double d4 = config.verticalVector().evaluate(context);
+        Vector vector = new Vector(d0 * 0.1D * d3, d1 * 0.1D + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08D * d4, d2 * 0.1D * d3);
         entity.setVelocity(vector);
         return entity;
     }

@@ -1,7 +1,6 @@
 package net.momirealms.customfishing.bukkit.item;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.event.FishingLootPreSpawnEvent;
 import net.momirealms.customfishing.api.event.FishingLootSpawnEvent;
 import net.momirealms.customfishing.api.integration.ExternalProvider;
 import net.momirealms.customfishing.api.integration.ItemProvider;
@@ -15,12 +14,14 @@ import net.momirealms.customfishing.bukkit.integration.item.CustomFishingItemPro
 import net.momirealms.customfishing.bukkit.util.ItemUtils;
 import net.momirealms.customfishing.bukkit.util.LocationUtils;
 import net.momirealms.customfishing.common.item.Item;
+import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -152,19 +153,28 @@ public class BukkitItemManager implements ItemManager, Listener {
 
     @Nullable
     @Override
-    @SuppressWarnings("all")
-    public org.bukkit.entity.Item dropItemLoot(@NotNull Context<Player> context) {
+    public org.bukkit.entity.Item dropItemLoot(@NotNull Context<Player> context, ItemStack rod, FishHook hook) {
         String id = requireNonNull(context.arg(ContextKeys.ID));
-        ItemStack itemStack = requireNonNull(buildInternal(context, id));
+        ItemStack itemStack;
+        if (id.equals("vanilla")) {
+            itemStack = SparrowHeart.getInstance().getFishingLoot(context.getHolder(), hook, rod).stream().findAny().orElseThrow(() -> new RuntimeException("new EntityItem would throw if for whatever reason (mostly shitty datapacks) the fishing loot turns out to be empty"));
+        } else {
+            itemStack = requireNonNull(buildInternal(context, id));
+        }
+
+        if (itemStack.getType() == Material.AIR) {
+            return null;
+        }
+
         Player player = context.getHolder();
         Location playerLocation = player.getLocation();
         Location hookLocation = requireNonNull(context.arg(ContextKeys.HOOK_LOCATION));
 
-        FishingLootPreSpawnEvent preSpawnEvent = new FishingLootPreSpawnEvent(player, hookLocation, itemStack);
-        Bukkit.getPluginManager().callEvent(preSpawnEvent);
-        if (preSpawnEvent.isCancelled()) {
-            return null;
-        }
+        double d0 = playerLocation.getX() - hookLocation.getX();
+        double d1 = playerLocation.getY() - hookLocation.getY();
+        double d2 = playerLocation.getZ() - hookLocation.getZ();
+        double d3 = 0.1D;
+        Vector vector = new Vector(d0 * 0.1D, d1 * 0.1D + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08D, d2 * 0.1D);
 
         org.bukkit.entity.Item itemEntity = hookLocation.getWorld().dropItem(hookLocation, itemStack);
         FishingLootSpawnEvent spawnEvent = new FishingLootSpawnEvent(player, hookLocation, itemEntity);
@@ -181,8 +191,6 @@ public class BukkitItemManager implements ItemManager, Listener {
                 itemEntity.setInvulnerable(false);
         }, 1, TimeUnit.SECONDS);
 
-        Vector vector = playerLocation.subtract(hookLocation).toVector().multiply(0.105);
-        vector = vector.setY((vector.getY() + 0.22) * 1.18);
         itemEntity.setVelocity(vector);
 
         return itemEntity;
@@ -345,5 +353,10 @@ public class BukkitItemManager implements ItemManager, Listener {
     @Override
     public Collection<String> getItemIDs() {
         return items.keySet();
+    }
+
+    @Override
+    public Item<ItemStack> wrap(ItemStack itemStack) {
+        return factory.wrap(itemStack);
     }
 }

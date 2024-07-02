@@ -25,8 +25,11 @@ public enum ActionTrigger {
     CAST,
     BITE,
     LAND,
+    LURE,
+    ESCAPE,
     ACTIVATE,
     TIMER,
     INTERACT,
+    REEL,
     NEW_SIZE_RECORD
 }

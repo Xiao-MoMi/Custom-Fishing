@@ -17,52 +17,46 @@
 
 package net.momirealms.customfishing.api.event;
 
-import org.bukkit.Location;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class FishingLootPreSpawnEvent extends PlayerEvent implements Cancellable {
+public class FishingHookStateEvent extends PlayerEvent {
 
     private static final HandlerList handlerList = new HandlerList();
-    private final Location location;
-    private final ItemStack itemStack;
-    private boolean isCancelled;
+    private final FishHook fishHook;
+    private final State state;
 
-    public FishingLootPreSpawnEvent(@NotNull Player who, Location location, ItemStack itemStack) {
+    public FishingHookStateEvent(@NotNull Player who, FishHook hook, State state) {
         super(who);
-        this.itemStack = itemStack;
-        this.location = location;
-        this.isCancelled = false;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return isCancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean cancel) {
-        isCancelled = cancel;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public ItemStack getItemStack() {
-        return itemStack;
-    }
-
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return handlerList;
+        this.fishHook = hook;
+        this.state = state;
     }
 
     public static HandlerList getHandlerList() {
         return handlerList;
+    }
+
+    public FishHook getFishHook() {
+        return fishHook;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    @NotNull
+    @Override
+    public HandlerList getHandlers() {
+        return getHandlerList();
+    }
+
+    public enum State {
+        BITE,
+        ESCAPE,
+        LURE,
+        LAND
     }
 }

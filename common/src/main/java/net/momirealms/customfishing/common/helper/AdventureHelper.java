@@ -76,6 +76,10 @@ public class AdventureHelper {
         return "<font:" + font.asString() + ">" + text + "</font>";
     }
 
+    public static String jsonToMiniMessage(String json) {
+        return getInstance().miniMessageStrict.serialize(getInstance().gsonComponentSerializer.deserialize(json));
+    }
+
     public static String legacyToMiniMessage(String legacy) {
         StringBuilder stringBuilder = new StringBuilder();
         char[] chars = legacy.toCharArray();

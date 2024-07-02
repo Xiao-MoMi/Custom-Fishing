@@ -140,6 +140,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         this.registerPluginExpAction();
         this.registerSoundAction();
         this.registerHologramAction();
+        this.registerFakeItemAction();
         this.registerTitleAction();
     }
 
@@ -159,7 +160,7 @@ public class BukkitActionManager implements ActionManager<Player> {
             List<String> messages = ListUtils.toList(args);
             return context -> {
                 if (Math.random() > chance) return;
-                String random = messages.get(RandomUtils.generateRandomInt(0, messages.size()));
+                String random = messages.get(RandomUtils.generateRandomInt(0, messages.size() - 1));
                 random = BukkitPlaceholderManager.getInstance().parse(context.getHolder(), random, context.placeholderMap());
                 Audience audience = plugin.getSenderFactory().getAudience(context.getHolder());
                 audience.sendMessage(AdventureHelper.miniMessage(random));
@@ -299,7 +300,7 @@ public class BukkitActionManager implements ActionManager<Player> {
             List<String> texts = ListUtils.toList(args);
             return context -> {
                 if (Math.random() > chance) return;
-                String random = texts.get(RandomUtils.generateRandomInt(0, texts.size()));
+                String random = texts.get(RandomUtils.generateRandomInt(0, texts.size() - 1));
                 random = plugin.getPlaceholderManager().parse(context.getHolder(), random, context.placeholderMap());
                 Audience audience = plugin.getSenderFactory().getAudience(context.getHolder());
                 audience.sendActionBar(AdventureHelper.miniMessage(random));
@@ -340,7 +341,7 @@ public class BukkitActionManager implements ActionManager<Player> {
             return context -> {
                 if (Math.random() > chance) return;
                 final Player player = context.getHolder();
-                player.getLocation().getWorld().spawn(player.getLocation(), ExperienceOrb.class, e -> e.setExperience((int) value.evaluate(context)));
+                player.getLocation().getWorld().spawn(player.getLocation().clone().add(0,0.5,0), ExperienceOrb.class, e -> e.setExperience((int) value.evaluate(context)));
             };
         });
         registerAction("exp", (args, chance) -> {
@@ -348,7 +349,7 @@ public class BukkitActionManager implements ActionManager<Player> {
             return context -> {
                 if (Math.random() > chance) return;
                 final Player player = context.getHolder();
-                player.giveExp((int) value.evaluate(context));
+                player.giveExp((int) Math.round(value.evaluate(context)));
                 Audience audience = plugin.getSenderFactory().getAudience(player);
                 AdventureHelper.playSound(audience, Sound.sound(Key.key("minecraft:entity.experience_orb.pickup"), Sound.Source.PLAYER, 1, 1));
             };
@@ -696,8 +697,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                 int fadeOut = section.getInt("fade-out", 10);
                 return context -> {
                     if (Math.random() > chance) return;
-                    TextValue<Player> title = TextValue.auto(titles.get(RandomUtils.generateRandomInt(0, titles.size())));
-                    TextValue<Player> subtitle = TextValue.auto(subtitles.get(RandomUtils.generateRandomInt(0, subtitles.size())));
+                    TextValue<Player> title = TextValue.auto(titles.get(RandomUtils.generateRandomInt(0, titles.size() - 1)));
+                    TextValue<Player> subtitle = TextValue.auto(subtitles.get(RandomUtils.generateRandomInt(0, subtitles.size() - 1)));
                     final Player player = context.getHolder();
                     Audience audience = plugin.getSenderFactory().getAudience(player);
                     AdventureHelper.sendTitle(audience,
@@ -745,6 +746,60 @@ public class BukkitActionManager implements ActionManager<Player> {
         });
     }
 
+    private void registerFakeItemAction() {
+        registerAction("fake-item", ((args, chance) -> {
+            if (args instanceof Section section) {
+                String itemID = section.getString("item", "");
+                String[] split = itemID.split(":");
+                if (split.length >= 2) itemID = split[split.length - 1];
+                MathValue<Player> duration = MathValue.auto(section.get("duration", 20));
+                boolean position = !section.getString("position", "player").equals("player");
+                MathValue<Player> x = MathValue.auto(section.get("x", 0));
+                MathValue<Player> y = MathValue.auto(section.get("y", 0));
+                MathValue<Player> z = MathValue.auto(section.get("z", 0));
+                MathValue<Player> yaw = MathValue.auto(section.get("yaw", 0));
+                int range = section.getInt("range", 0);
+                boolean opposite = section.getBoolean("opposite-yaw", false);
+                String finalItemID = itemID;
+                return context -> {
+                    if (Math.random() > chance) return;
+                    Player owner = context.getHolder();
+                    Location location = position ? requireNonNull(context.arg(ContextKeys.HOOK_LOCATION)).clone() : owner.getLocation().clone();
+                    location.add(x.evaluate(context), y.evaluate(context) - 1, z.evaluate(context));
+                    if (opposite) location.setYaw(-owner.getLocation().getYaw());
+                    else location.setYaw((float) yaw.evaluate(context));
+                    FakeArmorStand armorStand = SparrowHeart.getInstance().createFakeArmorStand(location);
+                    armorStand.invisible(true);
+                    armorStand.equipment(EquipmentSlot.HEAD, plugin.getItemManager().buildInternal(context, finalItemID));
+                    ArrayList<Player> viewers = new ArrayList<>();
+                    if (range > 0) {
+                        for (Entity player : location.getWorld().getNearbyEntities(location, range, range, range, entity -> entity instanceof Player)) {
+                            double distance = LocationUtils.getDistance(player.getLocation(), location);
+                            if (distance <= range) {
+                                viewers.add((Player) player);
+                            }
+                        }
+                    } else {
+                        viewers.add(owner);
+                    }
+                    for (Player player : viewers) {
+                        armorStand.spawn(player);
+                    }
+                    plugin.getScheduler().asyncLater(() -> {
+                        for (Player player : viewers) {
+                            if (player.isOnline() && player.isValid()) {
+                                armorStand.destroy(player);
+                            }
+                        }
+                    }, (long) (duration.evaluate(context) * 50), TimeUnit.MILLISECONDS);
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at fake-item action which is expected to be `Section`");
+                return EmptyAction.INSTANCE;
+            }
+        }));
+    }
+
     private void registerHologramAction() {
         registerAction("hologram", ((args, chance) -> {
             if (args instanceof Section section) {
@@ -758,8 +813,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 return context -> {
                     if (Math.random() > chance) return;
                     Player owner = context.getHolder();
-
-                    Location location = position ? requireNonNull(context.arg(ContextKeys.LOCATION)).clone() : owner.getLocation().clone();
+                    Location location = position ? requireNonNull(context.arg(ContextKeys.HOOK_LOCATION)).clone() : owner.getLocation().clone();
                     location.add(x.evaluate(context), y.evaluate(context), z.evaluate(context));
                     FakeArmorStand armorStand = SparrowHeart.getInstance().createFakeArmorStand(location);
                     armorStand.invisible(true);

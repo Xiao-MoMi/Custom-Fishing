@@ -16,6 +16,8 @@ import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectProperties;
+import net.momirealms.customfishing.api.mechanic.event.EventManager;
+import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
@@ -148,6 +150,8 @@ public class BukkitConfigManager extends ConfigManager {
 
         enableBag = config.getBoolean("mechanics.fishing-bag.enable", true);
 
+        multipleLootSpawnDelay = config.getInt("mechanics.multiple-loot-spawn-delay", 4);
+
         Section placeholderSection = config.getSection("other-settings.placeholder-register");
         if (placeholderSection != null) {
             for (Map.Entry<String, Object> entry : placeholderSection.getStringRouteMappedValues(false).entrySet()) {
@@ -159,12 +163,31 @@ public class BukkitConfigManager extends ConfigManager {
 
         globalEffects = new ArrayList<>();
         Section globalEffectSection = config.getSection("mechanics.global-effects");
-        if (globalEffectSection != null)
+        if (globalEffectSection != null) {
             for (Map.Entry<String, Object> entry : globalEffectSection.getStringRouteMappedValues(false).entrySet()) {
                 if (entry.getValue() instanceof Section innerSection) {
                     globalEffects.add(parseEffect(innerSection));
                 }
             }
+        }
+
+        EventManager.GLOBAL_ACTIONS.clear();
+        EventManager.GLOBAL_TIMES_ACTION.clear();
+        Section globalEvents = config.getSection("mechanics.global-events");
+        if (globalEvents != null) {
+            for (Map.Entry<String, Object> entry : globalEvents.getStringRouteMappedValues(false).entrySet()) {
+                MechanicType type = MechanicType.index().value(entry.getKey());
+                if (entry.getValue() instanceof Section inner) {
+                    Map<ActionTrigger, Action<Player>[]> actionMap = new HashMap<>();
+                    for (Map.Entry<String, Object> innerEntry : inner.getStringRouteMappedValues(false).entrySet()) {
+                        if (innerEntry.getValue() instanceof Section actionSection) {
+                            actionMap.put(ActionTrigger.valueOf(innerEntry.getKey().toUpperCase(Locale.ENGLISH)), plugin.getActionManager().parseActions(actionSection));
+                        }
+                    }
+                    EventManager.GLOBAL_ACTIONS.put(type, actionMap);
+                }
+            }
+        }
     }
 
     private void loadConfigs() {

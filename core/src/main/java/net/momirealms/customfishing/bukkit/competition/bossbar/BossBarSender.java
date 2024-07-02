@@ -73,7 +73,7 @@ public class BossBarSender {
 
     @SuppressWarnings("DuplicatedCode")
     private void updatePrivatePlaceholders() {
-        this.privateContext.arg(ContextKeys.SCORE, String.format("%.2f", competition.getRanking().getPlayerScore(player.getName())));
+        this.privateContext.arg(ContextKeys.SCORE_FORMATTED, String.format("%.2f", competition.getRanking().getPlayerScore(player.getName())));
         int rank = competition.getRanking().getPlayerRank(player.getName());
         this.privateContext.arg(ContextKeys.RANK, rank != -1 ? String.valueOf(rank) : StandardLocales.COMPETITION_NO_RANK);
         this.privateContext.combine(competition.getPublicContext());
