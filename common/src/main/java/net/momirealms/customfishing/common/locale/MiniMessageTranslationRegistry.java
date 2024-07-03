@@ -24,6 +24,8 @@ public interface MiniMessageTranslationRegistry extends Translator {
 
     boolean contains(@NotNull String key);
 
+    String miniMessageTranslation(@NotNull String key, @NotNull Locale locale);
+
     void defaultLocale(@NotNull Locale defaultLocale);
 
     default void registerAll(final @NotNull Locale locale, final @NotNull Map<String, String> bundle) {

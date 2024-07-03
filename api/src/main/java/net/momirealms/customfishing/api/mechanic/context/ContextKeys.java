@@ -64,6 +64,7 @@ public class ContextKeys<T> {
     public static final ContextKeys<String> REST = of("rest", String.class);
     public static final ContextKeys<String> REST_FORMATTED = of("rest_formatted", String.class);
     public static final ContextKeys<Integer> SOLD_ITEM_AMOUNT = of("sold_item_amount", Integer.class);
+    public static final ContextKeys<Integer> AMOUNT = of("amount", Integer.class);
     public static final ContextKeys<Double> WEIGHT = of("0", Double.class);
     public static final ContextKeys<String> TIME_LEFT = of("time_left", String.class);
 

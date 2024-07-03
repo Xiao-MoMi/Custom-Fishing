@@ -49,9 +49,17 @@ public class FoliaExecutor implements RegionExecutor<Location> {
     @Override
     public SchedulerTask runLater(Runnable r, long delayTicks, Location l) {
         if (l == null) {
-            return Bukkit.getGlobalRegionScheduler().runDelayed(plugin, scheduledTask -> r.run(), delayTicks)::cancel;
+            if (delayTicks == 0) {
+                return Bukkit.getGlobalRegionScheduler().runDelayed(plugin, scheduledTask -> r.run(), delayTicks)::cancel;
+            } else {
+                return Bukkit.getGlobalRegionScheduler().run(plugin, scheduledTask -> r.run())::cancel;
+            }
         } else {
-            return Bukkit.getRegionScheduler().runDelayed(plugin, l, scheduledTask -> r.run(), delayTicks)::cancel;
+            if (delayTicks == 0) {
+                return Bukkit.getRegionScheduler().run(plugin, l, scheduledTask -> r.run())::cancel;
+            } else {
+                return Bukkit.getRegionScheduler().runDelayed(plugin, l, scheduledTask -> r.run(), delayTicks)::cancel;
+            }
         }
     }
 

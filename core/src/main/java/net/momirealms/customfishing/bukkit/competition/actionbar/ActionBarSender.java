@@ -25,7 +25,8 @@ import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.misc.value.DynamicText;
 import net.momirealms.customfishing.bukkit.competition.Competition;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
-import net.momirealms.customfishing.common.locale.StandardLocales;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import org.bukkit.entity.Player;
 
@@ -65,7 +66,7 @@ public class ActionBarSender {
     private void updatePrivatePlaceholders() {
         this.privateContext.arg(ContextKeys.SCORE_FORMATTED, String.format("%.2f", competition.getRanking().getPlayerScore(player.getName())));
         int rank = competition.getRanking().getPlayerRank(player.getName());
-        this.privateContext.arg(ContextKeys.RANK, rank != -1 ? String.valueOf(rank) : StandardLocales.COMPETITION_NO_RANK);
+        this.privateContext.arg(ContextKeys.RANK, rank != -1 ? String.valueOf(rank) : TranslationManager.miniMessageTranslation(MessageConstants.COMPETITION_NO_RANK.build().key()));
         this.privateContext.combine(competition.getPublicContext());
     }
 

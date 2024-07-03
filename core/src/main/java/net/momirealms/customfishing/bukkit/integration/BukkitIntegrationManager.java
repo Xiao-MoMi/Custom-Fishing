@@ -49,14 +49,12 @@ import java.util.List;
 public class BukkitIntegrationManager implements IntegrationManager {
 
     private final BukkitCustomFishingPlugin plugin;
-    private final HashMap<String, LevelerProvider> levelerProviders;
-    private final HashMap<String, EnchantmentProvider> enchantmentProviders;
+    private final HashMap<String, LevelerProvider> levelerProviders = new HashMap<>();
+    private final HashMap<String, EnchantmentProvider> enchantmentProviders = new HashMap<>();
     private SeasonProvider seasonProvider;
 
     public BukkitIntegrationManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
-        this.levelerProviders = new HashMap<>();
-        this.enchantmentProviders = new HashMap<>();
         this.load();
     }
 

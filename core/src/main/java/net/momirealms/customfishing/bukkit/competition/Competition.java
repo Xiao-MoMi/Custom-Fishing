@@ -32,7 +32,8 @@ import net.momirealms.customfishing.bukkit.competition.actionbar.ActionBarManage
 import net.momirealms.customfishing.bukkit.competition.bossbar.BossBarManager;
 import net.momirealms.customfishing.bukkit.competition.ranking.LocalRankingProvider;
 import net.momirealms.customfishing.bukkit.competition.ranking.RedisRankingProvider;
-import net.momirealms.customfishing.common.locale.StandardLocales;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.Bukkit;
@@ -188,13 +189,13 @@ public class Competition implements FishingCompetition {
                 this.publicContext.arg(ContextKeys.of(i + "_player", String.class), player.get());
                 this.publicContext.arg(ContextKeys.of(i + "_score", String.class), String.format("%.2f", this.rankingProvider.getScoreAt(i)));
             } else {
-                this.publicContext.arg(ContextKeys.of(i + "_player", String.class), StandardLocales.COMPETITION_NO_PLAYER);
-                this.publicContext.arg(ContextKeys.of(i + "_score", String.class), StandardLocales.COMPETITION_NO_SCORE);
+                this.publicContext.arg(ContextKeys.of(i + "_player", String.class), TranslationManager.miniMessageTranslation(MessageConstants.COMPETITION_NO_PLAYER.build().key()));
+                this.publicContext.arg(ContextKeys.of(i + "_score", String.class), TranslationManager.miniMessageTranslation(MessageConstants.COMPETITION_NO_SCORE.build().key()));
             }
         }
-        this.publicContext.arg(ContextKeys.HOUR, remainingTime < 3600 ? "" : (remainingTime / 3600) + StandardLocales.FORMAT_HOUR);
-        this.publicContext.arg(ContextKeys.MINUTE, remainingTime < 60 ? "" : (remainingTime % 3600) / 60 + StandardLocales.FORMAT_MINUTE);
-        this.publicContext.arg(ContextKeys.SECOND, remainingTime == 0 ? "" : remainingTime % 60 + StandardLocales.FORMAT_SECOND);
+        this.publicContext.arg(ContextKeys.HOUR, remainingTime < 3600 ? "" : (remainingTime / 3600) + TranslationManager.miniMessageTranslation(MessageConstants.FORMAT_HOUR.build().key()));
+        this.publicContext.arg(ContextKeys.MINUTE, remainingTime < 60 ? "" : (remainingTime % 3600) / 60 + TranslationManager.miniMessageTranslation(MessageConstants.FORMAT_MINUTE.build().key()));
+        this.publicContext.arg(ContextKeys.SECOND, remainingTime == 0 ? "" : remainingTime % 60 + TranslationManager.miniMessageTranslation(MessageConstants.FORMAT_SECOND.build().key()));
         this.publicContext.arg(ContextKeys.SECONDS, remainingTime);
     }
 

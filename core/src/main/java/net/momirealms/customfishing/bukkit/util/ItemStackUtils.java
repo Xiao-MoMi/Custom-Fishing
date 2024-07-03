@@ -1,5 +1,8 @@
 package net.momirealms.customfishing.bukkit.util;
 
+import com.saicone.rtag.RtagMirror;
+import com.saicone.rtag.item.ItemObject;
+import com.saicone.rtag.tag.TagCompound;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
@@ -9,10 +12,11 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Map;
 
-public class ItemUtils {
+public class ItemStackUtils {
 
-    private ItemUtils() {}
+    private ItemStackUtils() {}
 
     public static ItemStack fromBase64(String base64) {
         if (base64 == null || base64.isEmpty())
@@ -46,5 +50,26 @@ public class ItemUtils {
             e.printStackTrace();
             return "";
         }
+    }
+
+    public static Map<String, Object> toReadableMap(ItemStack item) {
+        return toMap(item);
+    }
+
+    private static Map<String, Object> toMap(ItemStack object) {
+        return TagCompound.getValue(RtagMirror.INSTANCE, toCompound(object));
+    }
+
+    private static Object toCompound(ItemStack object) {
+        if (object == null) {
+            return null;
+        } else {
+            Object compound = extract(object);
+            return TagCompound.isTagCompound(compound) ? compound : null;
+        }
+    }
+
+    private static Object extract(ItemStack object) {
+        return ItemObject.save(ItemObject.asNMSCopy(object));
     }
 }

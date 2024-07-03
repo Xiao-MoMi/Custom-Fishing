@@ -5,6 +5,21 @@ import net.kyori.adventure.text.TranslatableComponent;
 
 public interface MessageConstants {
 
+    TranslatableComponent.Builder COMPETITION_NO_PLAYER = Component.translatable().key("competition.no_player");;
+    TranslatableComponent.Builder COMPETITION_NO_SCORE = Component.translatable().key("competition.no_score");
+    TranslatableComponent.Builder COMPETITION_NO_RANK = Component.translatable().key("competition.no_rank");
+
+    TranslatableComponent.Builder GOAL_TOTAL_SIZE = Component.translatable().key("competition.goal.total_size");
+    TranslatableComponent.Builder GOAL_CATCH_AMOUNT = Component.translatable().key("competition.goal.catch_amount");
+    TranslatableComponent.Builder GOAL_TOTAL_SCORE = Component.translatable().key("competition.goal.total_score");
+    TranslatableComponent.Builder GOAL_MAX_SIZE = Component.translatable().key("competition.goal.max_size");
+    TranslatableComponent.Builder GOAL_MIN_SIZE = Component.translatable().key("competition.goal.min_size");
+
+    TranslatableComponent.Builder FORMAT_SECOND = Component.translatable().key("format.second");
+    TranslatableComponent.Builder FORMAT_MINUTE =  Component.translatable().key("format.minute");
+    TranslatableComponent.Builder FORMAT_HOUR =  Component.translatable().key("format.hour");
+    TranslatableComponent.Builder FORMAT_DAY =  Component.translatable().key("format.day");
+
     TranslatableComponent.Builder COMMAND_PREFIX = Component.translatable().key("command.prefix");
     TranslatableComponent.Builder COMMAND_RELOAD_SUCCESS = Component.translatable().key("command.reload.success");
     TranslatableComponent.Builder COMMAND_ITEM_FAILURE_NOT_EXIST = Component.translatable().key("command.item.failure.not_exist");

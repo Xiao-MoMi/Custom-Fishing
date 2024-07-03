@@ -25,6 +25,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -121,6 +122,11 @@ public class BukkitFishingManager implements FishingManager, Listener {
         }
     }
 
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        this.destroy(event.getPlayer().getUniqueId());
+    }
+
     private void selectState(PlayerFishEvent event) {
         switch (event.getState()) {
             case FISHING -> onCastRod(event);
@@ -130,6 +136,7 @@ public class BukkitFishingManager implements FishingManager, Listener {
             case BITE -> onBite(event);
             case IN_GROUND -> onInGround(event);
             case FAILED_ATTEMPT -> onFailedAttempt(event);
+            // case LURED 1.20.5+
         }
     }
 

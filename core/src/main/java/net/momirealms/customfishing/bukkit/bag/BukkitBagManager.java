@@ -135,33 +135,26 @@ public class BukkitBagManager implements BagManager, Listener {
     public void onInvClick(InventoryClickEvent event) {
         if (!(event.getInventory().getHolder() instanceof FishingBagHolder))
             return;
-
         ItemStack movedItem = event.getCurrentItem();
         Inventory clicked = event.getClickedInventory();
-
         if (clicked != event.getWhoClicked().getInventory()) {
             if (event.getAction() != InventoryAction.HOTBAR_SWAP && event.getAction() != InventoryAction.HOTBAR_MOVE_AND_READD) {
                 return;
             }
             movedItem = event.getWhoClicked().getInventory().getItem(event.getHotbarButton());
         }
-
         if (movedItem == null || movedItem.getType() == Material.AIR || bagWhiteListItems.contains(movedItem.getType()))
             return;
-
         String id = plugin.getItemManager().getItemID(movedItem);
         MechanicType type = MechanicType.getTypeByID(id);
         if (type == null) {
             event.setCancelled(true);
             return;
         }
-
         if (type == MechanicType.LOOT && bagStoreLoots)
             return;
-
         if (type == MechanicType.BAIT || type == MechanicType.ROD || type == MechanicType.UTIL || type == MechanicType.HOOK)
             return;
-
         event.setCancelled(true);
     }
 

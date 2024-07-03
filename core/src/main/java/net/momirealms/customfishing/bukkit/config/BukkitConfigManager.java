@@ -18,6 +18,7 @@ import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectProperties;
 import net.momirealms.customfishing.api.mechanic.event.EventManager;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
+import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
@@ -92,10 +93,17 @@ public class BukkitConfigManager extends ConfigManager {
                             .builder()
                             .setVersioning(new BasicVersioning("config-version"))
                             .addIgnoredRoute(configVersion, "mechanics.mechanic-requirements", '.')
+                            .addIgnoredRoute(configVersion, "mechanics.skip-game-requirements", '.')
+                            .addIgnoredRoute(configVersion, "mechanics.auto-fishing-requirements", '.')
                             .addIgnoredRoute(configVersion, "mechanics.global-events", '.')
                             .addIgnoredRoute(configVersion, "mechanics.global-effects", '.')
+                            .addIgnoredRoute(configVersion, "mechanics.fishing-bag.collect-requirements", '.')
                             .addIgnoredRoute(configVersion, "mechanics.fishing-bag.collect-actions", '.')
                             .addIgnoredRoute(configVersion, "mechanics.fishing-bag.full-actions", '.')
+                            .addIgnoredRoute(configVersion, "mechanics.market.item-price", '.')
+                            .addIgnoredRoute(configVersion, "mechanics.market.sell-all-icons", '.')
+                            .addIgnoredRoute(configVersion, "mechanics.market.sell-icons", '.')
+                            .addIgnoredRoute(configVersion, "mechanics.market.decorative-icons", '.')
                             .addIgnoredRoute(configVersion, "other-settings.placeholder-register", '.')
                             .build()
             );
@@ -147,10 +155,17 @@ public class BukkitConfigManager extends ConfigManager {
         eventPriority = EventPriority.valueOf(config.getString("other-settings.event-priority", "NORMAL").toUpperCase(Locale.ENGLISH));
 
         mechanicRequirements = plugin.getRequirementManager().parseRequirements(config.getSection("mechanics.mechanic-requirements"), true);
+        skipGameRequirements = plugin.getRequirementManager().parseRequirements(config.getSection("mechanics.skip-game-requirements"), true);
+        autoFishingRequirements = plugin.getRequirementManager().parseRequirements(config.getSection("mechanics.auto-fishing-requirements"), true);
 
         enableBag = config.getBoolean("mechanics.fishing-bag.enable", true);
 
         multipleLootSpawnDelay = config.getInt("mechanics.multiple-loot-spawn-delay", 4);
+
+        Loot.DefaultProperties.DEFAULT_DISABLE_GAME = config.getBoolean("mechanics.global-loot-property.disable-game", false);
+        Loot.DefaultProperties.DEFAULT_DISABLE_STATS = config.getBoolean("mechanics.global-loot-property.disable-stat", false);
+        Loot.DefaultProperties.DEFAULT_INSTANT_GAME = config.getBoolean("mechanics.global-loot-property.instant-game", false);
+        Loot.DefaultProperties.DEFAULT_SHOW_IN_FINDER = config.getBoolean("mechanics.global-loot-property.show-in-fishfinder", true);
 
         Section placeholderSection = config.getSection("other-settings.placeholder-register");
         if (placeholderSection != null) {

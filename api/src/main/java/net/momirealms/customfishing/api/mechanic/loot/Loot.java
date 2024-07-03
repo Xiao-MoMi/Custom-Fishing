@@ -25,10 +25,13 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Loot {
 
-    boolean DEFAULT_INSTANT_GAME = false;
-    boolean DEFAULT_DISABLE_GAME = false;
-    boolean DEFAULT_DISABLE_STATS = false;
-    boolean DEFAULT_SHOW_IN_FINDER = false;
+    class DefaultProperties {
+        public static boolean DEFAULT_INSTANT_GAME = false;
+        public static boolean DEFAULT_DISABLE_GAME = false;
+        public static boolean DEFAULT_DISABLE_STATS = false;
+        public static boolean DEFAULT_SHOW_IN_FINDER = false;
+    }
+
     LootType DEFAULT_TYPE = LootType.ITEM;
     MathValue<Player> DEFAULT_SCORE = MathValue.plain(0);
 

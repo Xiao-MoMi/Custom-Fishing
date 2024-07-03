@@ -21,6 +21,7 @@ public class TranslationManager {
 
     public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
     private static final List<String> locales = List.of("en");
+    private static TranslationManager instance;
 
     private final CustomFishingPlugin plugin;
     private final Set<Locale> installed = ConcurrentHashMap.newKeySet();
@@ -30,6 +31,7 @@ public class TranslationManager {
     public TranslationManager(CustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.translationsDirectory = this.plugin.getConfigDirectory().resolve("translations");
+        instance = this;
     }
 
     public void reload() {
@@ -47,6 +49,20 @@ public class TranslationManager {
         this.registry.defaultLocale(DEFAULT_LOCALE);
         this.loadFromFileSystem(this.translationsDirectory, false);
         MiniMessageTranslator.translator().addSource(this.registry);
+    }
+
+    public static String miniMessageTranslation(String key) {
+        return miniMessageTranslation(key, null);
+    }
+
+    public static String miniMessageTranslation(String key, @Nullable Locale locale) {
+        if (locale == null) {
+            locale = Locale.getDefault();
+            if (locale == null) {
+                locale = DEFAULT_LOCALE;
+            }
+        }
+        return instance.registry.miniMessageTranslation(key, locale);
     }
 
     public static Component render(Component component) {
@@ -113,6 +129,7 @@ public class TranslationManager {
         return e instanceof IllegalArgumentException && (e.getMessage().startsWith("Invalid key") || e.getMessage().startsWith("Translation already exists"));
     }
 
+    @SuppressWarnings("unchecked")
     private Pair<Locale, Map<String, String>> loadTranslationFile(Path translationFile) {
         String fileName = translationFile.getFileName().toString();
         String localeString = fileName.substring(0, fileName.length() - ".yml".length());

@@ -73,6 +73,8 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     protected boolean allowSameTotemType;
     protected EventPriority eventPriority;
     protected Requirement<Player>[] mechanicRequirements;
+    protected Requirement<Player>[] skipGameRequirements;
+    protected Requirement<Player>[] autoFishingRequirements;
     protected boolean enableBag;
     protected List<TriConsumer<Effect, Context<Player>, Integer>> globalEffects;
 
@@ -191,6 +193,14 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     public static Requirement<Player>[] mechanicRequirements() {
         return instance.mechanicRequirements;
+    }
+
+    public static Requirement<Player>[] autoFishingRequirements() {
+        return instance.autoFishingRequirements;
+    }
+
+    public static Requirement<Player>[] skipGameRequirements() {
+        return instance.skipGameRequirements;
     }
 
     public static List<TriConsumer<Effect, Context<Player>, Integer>> globalEffects() {

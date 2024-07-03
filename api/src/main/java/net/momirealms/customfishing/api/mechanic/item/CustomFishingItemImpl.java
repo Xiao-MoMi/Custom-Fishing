@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.TreeSet;
 import java.util.function.BiConsumer;
 
@@ -27,7 +28,7 @@ public class CustomFishingItemImpl implements CustomFishingItem {
 
     @Override
     public String material() {
-        return material;
+        return Optional.ofNullable(material).orElse("AIR");
     }
 
     @Override

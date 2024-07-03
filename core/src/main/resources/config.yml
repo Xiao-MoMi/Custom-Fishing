@@ -18,6 +18,16 @@ mechanics:
       type: '!world'
       value:
         - blacklist_world
+  # If you want to let some players skip games, you can set requirements that used to skip games
+  # We used `impossible` requirement here, so players should play the game if there exists
+  skip-game-requirements:
+    impossible_requirement:
+      type: 'impossible'
+  # Requirements for enabling auto-fishing
+  auto-fishing-requirements:
+    impossible_requirement:
+      type: 'impossible'
+
   # Configures global effects. This is useful if you want to give all the players certain effects based on certain conditions
   global-effects:
     effect_1:

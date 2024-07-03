@@ -28,7 +28,6 @@ public class BukkitCommandManager extends AbstractCommandManager<CommandSender> 
             new OpenMarketCommand(this),
             new OpenBagCommand(this),
             new FishingBagCommand(this),
-            new GUIEditorCommand(this),
             new EditOnlineBagCommand(this),
             new EditOfflineBagCommand(this)
     );

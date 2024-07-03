@@ -18,7 +18,8 @@
 package net.momirealms.customfishing.api.mechanic.competition;
 
 import net.kyori.adventure.util.Index;
-import net.momirealms.customfishing.common.locale.StandardLocales;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.util.RandomUtils;
 import org.apache.logging.log4j.util.Supplier;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -31,12 +32,12 @@ public final class CompetitionGoal {
     public static final CompetitionGoal CATCH_AMOUNT = new CompetitionGoal(
             "catch_amount",
             ((rankingProvider, player, score) -> rankingProvider.refreshData(player, 1)),
-            () -> Optional.ofNullable(StandardLocales.GOAL_CATCH_AMOUNT).orElse("catch_amount")
+            () -> Optional.ofNullable(TranslationManager.miniMessageTranslation(MessageConstants.GOAL_CATCH_AMOUNT.build().key())).orElse("catch_amount")
     );
     public static final CompetitionGoal TOTAL_SCORE = new CompetitionGoal(
           "total_score",
             (RankingProvider::refreshData),
-            () -> Optional.ofNullable(StandardLocales.GOAL_TOTAL_SCORE).orElse("total_score")
+            () -> Optional.ofNullable(TranslationManager.miniMessageTranslation(MessageConstants.GOAL_TOTAL_SCORE.build().key())).orElse("total_score")
     );
     public static final CompetitionGoal MAX_SIZE = new CompetitionGoal(
             "max_size",
@@ -45,7 +46,7 @@ public final class CompetitionGoal {
                     rankingProvider.setData(player, score);
                 }
             }),
-            () -> Optional.ofNullable(StandardLocales.GOAL_MAX_SIZE).orElse("max_size")
+            () -> Optional.ofNullable(TranslationManager.miniMessageTranslation(MessageConstants.GOAL_MAX_SIZE.build().key())).orElse("max_size")
     );
     public static final CompetitionGoal MIN_SIZE = new CompetitionGoal(
             "min_size",
@@ -54,12 +55,12 @@ public final class CompetitionGoal {
                     rankingProvider.setData(player, score);
                 }
             }),
-            () -> Optional.ofNullable(StandardLocales.GOAL_MIN_SIZE).orElse("min_size")
+            () -> Optional.ofNullable(TranslationManager.miniMessageTranslation(MessageConstants.GOAL_MIN_SIZE.build().key())).orElse("min_size")
     );
     public static final CompetitionGoal TOTAL_SIZE = new CompetitionGoal(
            "total_size",
             (RankingProvider::refreshData),
-            () -> Optional.ofNullable(StandardLocales.GOAL_TOTAL_SIZE).orElse("total_size")
+            () -> Optional.ofNullable(TranslationManager.miniMessageTranslation(MessageConstants.GOAL_TOTAL_SIZE.build().key())).orElse("total_size")
     );
     public static final CompetitionGoal RANDOM = new CompetitionGoal(
            "random",

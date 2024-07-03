@@ -74,7 +74,7 @@ public class MiniMessageTranslationRegistryImpl implements Examinable, MiniMessa
         if (miniMessageString == null) {
             return null;
         }
-        if (miniMessageString.equals("")) {
+        if (miniMessageString.isEmpty()) {
             return Component.empty();
         }
         final Component resultingComponent;
@@ -88,6 +88,15 @@ public class MiniMessageTranslationRegistryImpl implements Examinable, MiniMessa
         } else {
             return resultingComponent.children(component.children());
         }
+    }
+
+    @Override
+    public String miniMessageTranslation(@NotNull String key, @NotNull Locale locale) {
+        Translation translation = translations.get(key);
+        if (translation == null) {
+            return null;
+        }
+        return translation.translate(locale);
     }
 
     @Override

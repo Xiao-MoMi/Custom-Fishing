@@ -97,10 +97,10 @@ public class LootImpl implements Loot {
     public static class BuilderImpl implements Builder {
 
         private LootType type = DEFAULT_TYPE;
-        private boolean instantGame = DEFAULT_INSTANT_GAME;
-        private boolean disableGame = DEFAULT_DISABLE_GAME;
-        private boolean disableStatistics = DEFAULT_DISABLE_STATS;
-        private boolean showInFinder = DEFAULT_SHOW_IN_FINDER;
+        private boolean instantGame = Loot.DefaultProperties.DEFAULT_INSTANT_GAME;
+        private boolean disableGame = Loot.DefaultProperties.DEFAULT_DISABLE_GAME;
+        private boolean disableStatistics = Loot.DefaultProperties.DEFAULT_DISABLE_STATS;
+        private boolean showInFinder = Loot.DefaultProperties.DEFAULT_SHOW_IN_FINDER;
         private String id = null;
         private String nick = "UNDEFINED";
         private StatisticsKeys statisticsKeys = null;
