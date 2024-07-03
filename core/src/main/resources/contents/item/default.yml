@@ -135,106 +135,97 @@ rainbow_fish:
   price:
     base: 100
 # Enchantments
-sharpness_book:
+enchantment_book:
   tag: false
   material: enchanted_book
   group: enchantments
   nick: "<lang:item.minecraft.enchanted_book>"
   show-in-fishfinder: false
   disable-stat: true
-  random-stored-enchantments:
-    lv5:
-      enchant: minecraft:sharpness
-      level: 5
-      chance: 0.1
-    lv4:
-      enchant: minecraft:sharpness
-      level: 4
-      chance: 0.2
-    lv3:
-      enchant: minecraft:sharpness
-      level: 3
-      chance: 0.4
-    lv2:
-      enchant: minecraft:sharpness
-      level: 2
-      chance: 0.7
-    lv1:
-      enchant: minecraft:sharpness
-      level: 1
-      chance: 1
-efficiency_book:
-  tag: false
-  material: enchanted_book
-  group: enchantments
-  show-in-fishfinder: false
-  nick: "<lang:item.minecraft.enchanted_book>"
-  disable-stat: true
-  random-stored-enchantments:
-    lv5:
-      enchant: minecraft:efficiency
-      level: 5
-      chance: 0.1
-    lv4:
-      enchant: minecraft:efficiency
-      level: 4
-      chance: 0.2
-    lv3:
-      enchant: minecraft:efficiency
-      level: 3
-      chance: 0.4
-    lv2:
-      enchant: minecraft:efficiency
-      level: 2
-      chance: 0.7
-    lv1:
-      enchant: minecraft:efficiency
-      level: 1
-      chance: 1
-unbreaking_book:
-  tag: false
-  material: enchanted_book
-  group: enchantments
-  show-in-fishfinder: false
-  nick: "<lang:item.minecraft.enchanted_book>"
-  disable-stat: true
-  random-stored-enchantments:
-    lv3:
-      enchant: minecraft:unbreaking
-      level: 3
-      chance: 0.2
-    lv2:
-      enchant: minecraft:unbreaking
-      level: 2
-      chance: 0.5
-    lv1:
-      enchant: minecraft:unbreaking
-      level: 1
-      chance: 1
-protection_book:
-  tag: false
-  material: enchanted_book
-  group: enchantments
-  show-in-fishfinder: false
-  nick: "<lang:item.minecraft.enchanted_book>"
-  disable-stat: true
-  random-stored-enchantments:
-    lv4:
-      enchant: minecraft:protection
-      level: 4
-      chance: 0.1
-    lv3:
-      enchant: minecraft:protection
-      level: 3
-      chance: 0.2
-    lv2:
-      enchant: minecraft:protection
-      level: 2
-      chance: 0.5
-    lv1:
-      enchant: minecraft:protection
-      level: 1
-      chance: 1
+  stored-enchantment-pool:
+    # max enchantments on the item
+    amount:
+      1: 6
+      2: 3
+      3: 1
+    pool:
+      'minecraft:unbreaking:1': 6
+      'minecraft:unbreaking:2': 3
+      'minecraft:unbreaking:3': 1
+      'minecraft:sharpness:1': 6
+      'minecraft:sharpness:2': 3
+      'minecraft:sharpness:3': 2
+      'minecraft:sharpness:4': 1
+      'minecraft:efficiency:1': 12
+      'minecraft:efficiency:2': 6
+      'minecraft:efficiency:3': 2
+      'minecraft:efficiency:4': 1
+      'minecraft:protection:1': 10
+      'minecraft:protection:2': 6
+      'minecraft:protection:3': 2
+      'minecraft:feather_falling:1': 4
+      'minecraft:feather_falling:2': 3
+      'minecraft:feather_falling:3': 2
+      'minecraft:blast_protection:1': 10
+      'minecraft:blast_protection:2': 6
+      'minecraft:blast_protection:3': 2
+      'minecraft:fire_protection:1': 10
+      'minecraft:fire_protection:2': 6
+      'minecraft:fire_protection:3': 2
+      'minecraft:projectile_protection:1': 10
+      'minecraft:projectile_protection:2': 6
+      'minecraft:projectile_protection:3': 2
+      'minecraft:binding_curse:1': 2
+      'minecraft:vanishing_curse:1': 2
+      'minecraft:depth_strider:1': 8
+      'minecraft:depth_strider:2': 4
+      'minecraft:depth_strider:3': 2
+      'minecraft:fortune:1': 4
+      'minecraft:fortune:2': 3
+      'minecraft:fortune:3': 2
+      'minecraft:flame:1': 12
+      'minecraft:loyalty:1': 8
+      'minecraft:loyalty:2': 5
+      'minecraft:lure:1': 9
+      'minecraft:lure:2': 3
+      'minecraft:lure:3': 1
+      'minecraft:luck_of_the_sea:1': 8
+      'minecraft:luck_of_the_sea:2': 2
+      'minecraft:luck_of_the_sea:3': 1
+      'minecraft:channeling:1': 7
+      'minecraft:frost_walker:1': 7
+      'minecraft:mending:1': 10
+      'minecraft:power:1': 12
+      'minecraft:power:2': 6
+      'minecraft:power:3': 3
+      'minecraft:power:4': 1
+      'minecraft:knockback:1': 8
+      'minecraft:knockback:2': 3
+      'minecraft:silk_touch:1': 12
+      'minecraft:smite:1': 12
+      'minecraft:smite:2': 6
+      'minecraft:smite:3': 3
+      'minecraft:smite:4': 1
+      'minecraft:bane_of_arthropods:1': 12
+      'minecraft:bane_of_arthropods:2': 6
+      'minecraft:bane_of_arthropods:3': 3
+      'minecraft:bane_of_arthropods:4': 1
+      'minecraft:multishot:1': 7
+      'minecraft:punch:1': 8
+      'minecraft:punch:2': 4
+      'minecraft:thorns:1': 8
+      'minecraft:thorns:2': 4
+      'minecraft:looting:1': 12
+      'minecraft:looting:2': 6
+      'minecraft:looting:3': 2
+      'minecraft:sweeping:1': 8
+      'minecraft:sweeping:2': 4
+      'minecraft:soul_speed:1': 8
+      'minecraft:soul_speed:2': 4
+      'minecraft:fire_aspect:1': 10
+      'minecraft:fire_aspect:2': 5
+      'minecraft:quick_charge:1': 9
+      'minecraft:infinity:1': 7
 # Fish
 tuna_fish:
   material: cod

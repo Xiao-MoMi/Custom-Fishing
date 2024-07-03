@@ -36,22 +36,22 @@ import net.momirealms.customfishing.bukkit.totem.particle.DustParticleSetting;
 import net.momirealms.customfishing.bukkit.totem.particle.ParticleSetting;
 import net.momirealms.customfishing.common.dependency.DependencyProperties;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
-import net.momirealms.customfishing.common.util.ListUtils;
-import net.momirealms.customfishing.common.util.Pair;
-import net.momirealms.customfishing.common.util.RandomUtils;
-import net.momirealms.customfishing.common.util.TriConsumer;
-import org.bukkit.Axis;
-import org.bukkit.Color;
-import org.bukkit.Particle;
+import net.momirealms.customfishing.common.item.Item;
+import net.momirealms.customfishing.common.util.*;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Bisected;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class BukkitConfigManager extends ConfigManager {
 
@@ -234,7 +234,91 @@ public class BukkitConfigManager extends ConfigManager {
         }
     }
 
+    private Map<Key, Short> getEnchantments(Section section) {
+        Map<Key, Short> map = new HashMap<>();
+        for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
+            int level = Math.min(255, Math.max(1, (int) entry.getValue()));
+            if (Registry.ENCHANTMENT.get(Objects.requireNonNull(NamespacedKey.fromString(entry.getKey()))) != null) {
+                map.put(Key.fromString(entry.getKey()), (short) level);
+            }
+        }
+        return map;
+    }
+
+    private Pair<Key, Short> getEnchantmentPair(String enchantmentWithLevel) {
+        String[] split = enchantmentWithLevel.split(":", 3);
+        return Pair.of(Key.of(split[0], split[1]), Short.parseShort(split[2]));
+    }
+
     private void registerBuiltInItemProperties() {
+        Function<Object, BiConsumer<Item<ItemStack>, Context<Player>>> function = arg -> {
+            Section section = (Section) arg;
+            System.out.println(section.getNameAsString());
+            boolean stored = Objects.equals(section.getNameAsString(), "stored-enchantment-pool");
+            Section amountSection = section.getSection("amount");
+            Section enchantSection = section.getSection("pool");
+            List<Pair<Integer, MathValue<Player>>> amountList = new ArrayList<>();
+            for (Map.Entry<String, Object> entry : amountSection.getStringRouteMappedValues(false).entrySet()) {
+                amountList.add(Pair.of(Integer.parseInt(entry.getKey()), MathValue.auto(entry.getValue())));
+            }
+            List<Pair<Pair<Key, Short>, MathValue<Player>>> enchantPoolPair = new ArrayList<>();
+            for (Map.Entry<String, Object> entry : enchantSection.getStringRouteMappedValues(false).entrySet()) {
+                enchantPoolPair.add(Pair.of(getEnchantmentPair(entry.getKey()), MathValue.auto(entry.getValue())));
+            }
+            if (amountList.isEmpty() || enchantPoolPair.isEmpty()) {
+                throw new RuntimeException("Both `pool` and `amount` should not be empty");
+            }
+            return (item, context) -> {
+                List<Pair<Integer, Double>> parsedAmountPair = new ArrayList<>(amountList.size());
+                for (Pair<Integer, MathValue<Player>> rawValue : amountList) {
+                    parsedAmountPair.add(Pair.of(rawValue.left(), rawValue.right().evaluate(context)));
+                }
+                int amount = WeightUtils.getRandom(parsedAmountPair);
+                if (amount <= 0) return;
+                HashSet<Enchantment> addedEnchantments = new HashSet<>();
+                List<Pair<Pair<Key, Short>, Double>> cloned = new ArrayList<>(enchantPoolPair.size());
+                for (Pair<Pair<Key, Short>, MathValue<Player>> rawValue : enchantPoolPair) {
+                    cloned.add(Pair.of(rawValue.left(), rawValue.right().evaluate(context)));
+                }
+                int i = 0;
+                outer:
+                while (i < amount && !cloned.isEmpty()) {
+                    Pair<Key, Short> enchantPair = WeightUtils.getRandom(cloned);
+                    Enchantment enchantment = Registry.ENCHANTMENT.get(Objects.requireNonNull(NamespacedKey.fromString(enchantPair.left().toString())));
+                    if (enchantment == null) {
+                        throw new NullPointerException("Enchantment: " + enchantPair.left() + " doesn't exist.");
+                    }
+                    if (!stored) {
+                        for (Enchantment added : addedEnchantments) {
+                            if (enchantment.conflictsWith(added)) {
+                                cloned.removeIf(pair -> pair.left().left().equals(enchantPair.left()));
+                                continue outer;
+                            }
+                        }
+                    }
+                    if (stored) {
+                        item.addStoredEnchantment(enchantPair.left(), enchantPair.right());
+                    } else {
+                        item.addEnchantment(enchantPair.left(), enchantPair.right());
+                    }
+                    addedEnchantments.add(enchantment);
+                    cloned.removeIf(pair -> pair.left().left().equals(enchantPair.left()));
+                    i++;
+                }
+            };
+        };
+        this.registerItemParser(function, 4800, "stored-enchantment-pool");
+        this.registerItemParser(function, 4700, "enchantment-pool");
+        this.registerItemParser(arg -> {
+            Section section = (Section) arg;
+            Map<Key, Short> map = getEnchantments(section);
+            return (item, context) -> item.storedEnchantments(map);
+        }, 4600, "stored-enchantments");
+        this.registerItemParser(arg -> {
+            Section section = (Section) arg;
+            Map<Key, Short> map = getEnchantments(section);
+            return (item, context) -> item.enchantments(map);
+        }, 4500, "enchantments");
         this.registerItemParser(arg -> {
             MathValue<Player> mathValue = MathValue.auto(arg);
             return (item, context) -> item.customModelData((int) mathValue.evaluate(context));
@@ -571,6 +655,16 @@ public class BukkitConfigManager extends ConfigManager {
             boolean disable = (boolean) object;
             return builder -> builder.disableGlobalActions(disable);
         }, "disable-global-event");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            Action<Player>[] actions = plugin.getActionManager().parseActions(section);
+            return builder -> builder.action(ActionTrigger.LURE, actions);
+        }, "events", "lure");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            Action<Player>[] actions = plugin.getActionManager().parseActions(section);
+            return builder -> builder.action(ActionTrigger.ESCAPE, actions);
+        }, "events", "escape");
         this.registerEventParser(object -> {
             Section section = (Section) object;
             Action<Player>[] actions = plugin.getActionManager().parseActions(section);

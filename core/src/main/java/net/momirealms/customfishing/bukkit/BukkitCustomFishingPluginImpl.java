@@ -93,7 +93,6 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.senderFactory = new BukkitSenderFactory(this);
         this.placeholderManager = new BukkitPlaceholderManager(this);
         this.itemManager = new BukkitItemManager(this);
-        this.integrationManager = new BukkitIntegrationManager(this);
         this.competitionManager = new BukkitCompetitionManager(this);
         this.marketManager = new BukkitMarketManager(this);
         this.storageManager = new BukkitStorageManager(this);
@@ -108,6 +107,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.bagManager = new BukkitBagManager(this);
         this.totemManager = new BukkitTotemManager(this);
         this.translationManager = new TranslationManager(this);
+        this.integrationManager = new BukkitIntegrationManager(this);
         this.commandManager = new BukkitCommandManager(this);
         this.commandManager.registerDefaultFeatures();
 

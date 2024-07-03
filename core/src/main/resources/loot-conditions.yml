@@ -13,6 +13,7 @@ global-group:
       list:
         - rubbish:+15
         - seagrass:+5
+        - vanilla:+60
       sub-groups:
         # parent ocean group
         ocean_fish:
@@ -79,7 +80,6 @@ global-group:
               - minecraft:deep_lukewarm_ocean
               - minecraft:warm_ocean
           list:
-            - vanilla:+30
             - rainbow_fish:+5
             - stick:+15
             - gold_fish:+15

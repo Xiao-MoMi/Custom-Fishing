@@ -1,6 +1,9 @@
 package net.momirealms.customfishing.common.item;
 
+import net.momirealms.customfishing.common.util.Key;
+
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface Item<I> {
@@ -22,6 +25,14 @@ public interface Item<I> {
     Optional<List<String>> lore();
 
     Item<I> skull(String data);
+
+    Item<I> enchantments(Map<Key, Short> enchantments);
+
+    Item<I> addEnchantment(Key enchantment, int level);
+
+    Item<I> storedEnchantments(Map<Key, Short> enchantments);
+
+    Item<I> addStoredEnchantment(Key enchantment, int level);
 
     Optional<Object> getTag(Object... path);
 

@@ -6,6 +6,11 @@ public record Key(String namespace, String value) {
         return new Key(namespace, value);
     }
 
+    public static Key fromString(String key) {
+        String[] split = key.split(":", 2);
+        return of(split[0], split[1]);
+    }
+
     @Override
     public int hashCode() {
         return toString().hashCode();

@@ -1,8 +1,10 @@
 package net.momirealms.customfishing.common.item;
 
 import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
+import net.momirealms.customfishing.common.util.Key;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class AbstractItem<R, I> implements Item<I> {
@@ -64,6 +66,30 @@ public class AbstractItem<R, I> implements Item<I> {
     @Override
     public Item<I> skull(String data) {
         factory.skull(item, data);
+        return this;
+    }
+
+    @Override
+    public Item<I> enchantments(Map<Key, Short> enchantments) {
+        factory.enchantments(item, enchantments);
+        return this;
+    }
+
+    @Override
+    public Item<I> addEnchantment(Key enchantment, int level) {
+        factory.addEnchantment(item, enchantment, level);
+        return this;
+    }
+
+    @Override
+    public Item<I> storedEnchantments(Map<Key, Short> enchantments) {
+        factory.storedEnchantments(item, enchantments);
+        return this;
+    }
+
+    @Override
+    public Item<I> addStoredEnchantment(Key enchantment, int level) {
+        factory.addStoredEnchantment(item, enchantment, level);
         return this;
     }
 

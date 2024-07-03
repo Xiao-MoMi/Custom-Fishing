@@ -24,10 +24,13 @@ import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import net.momirealms.customfishing.common.util.TriConsumer;
 import net.momirealms.customfishing.common.util.TriFunction;
 import net.momirealms.sparrow.heart.SparrowHeart;
+import net.momirealms.sparrow.heart.feature.inventory.HandSlot;
+import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -196,6 +199,7 @@ public class CustomFishingHook {
             SparrowHeart.getInstance().swingHand(context.getHolder(), gears.getRodSlot());
             end();
             scheduleNextFishing();
+            return;
         }
         if (nextLoot.instantGame()) {
 
@@ -203,7 +207,16 @@ public class CustomFishingHook {
     }
 
     private void scheduleNextFishing() {
-        
+        final Player player = context.getHolder();
+        plugin.getScheduler().sync().runLater(() -> {
+            if (player.isOnline()) {
+                ItemStack item = player.getInventory().getItem(gears.getRodSlot() == HandSlot.MAIN ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND);
+                if (item.getType() == Material.FISHING_ROD) {
+                    SparrowHeart.getInstance().useItem(player, gears.getRodSlot(), item);
+                    SparrowHeart.getInstance().swingHand(context.getHolder(), gears.getRodSlot());
+                }
+            }
+        }, 20, player.getLocation());
     }
 
     public void onLand() {

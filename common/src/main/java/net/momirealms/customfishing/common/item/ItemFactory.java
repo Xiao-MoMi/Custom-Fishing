@@ -1,8 +1,10 @@
 package net.momirealms.customfishing.common.item;
 
 import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
+import net.momirealms.customfishing.common.util.Key;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -60,4 +62,12 @@ public abstract class ItemFactory<P extends CustomFishingPlugin, R, I> {
     protected abstract Optional<Integer> damage(R item);
 
     protected abstract void damage(R item, Integer damage);
+
+    protected abstract void enchantments(R item, Map<Key, Short> enchantments);
+
+    protected abstract void storedEnchantments(R item, Map<Key, Short> enchantments);
+
+    protected abstract void addEnchantment(R item, Key enchantment, int level);
+
+    protected abstract void addStoredEnchantment(R item, Key enchantment, int level);
 }
