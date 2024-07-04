@@ -70,7 +70,7 @@ public class McMMOTreasureProvider implements ItemProvider {
                 times++;
             }
         }
-        return itemStack == null ? new ItemStack(Material.COD) : itemStack;
+        return itemStack == null ? (Math.random() > 0.5 ? new ItemStack(Material.COD) : (Math.random() > 0.2) ? new ItemStack(Material.SALMON) : new ItemStack(Material.PUFFERFISH)) : itemStack;
     }
 
     @Override

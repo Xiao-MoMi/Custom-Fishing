@@ -29,6 +29,9 @@ import net.momirealms.customfishing.bukkit.integration.entity.ItemsAdderEntityPr
 import net.momirealms.customfishing.bukkit.integration.entity.MythicEntityProvider;
 import net.momirealms.customfishing.bukkit.integration.item.*;
 import net.momirealms.customfishing.bukkit.integration.level.*;
+import net.momirealms.customfishing.bukkit.integration.papi.CompetitionPapi;
+import net.momirealms.customfishing.bukkit.integration.papi.CustomFishingPapi;
+import net.momirealms.customfishing.bukkit.integration.papi.StatisticsPapi;
 import net.momirealms.customfishing.bukkit.integration.quest.BattlePassQuest;
 import net.momirealms.customfishing.bukkit.integration.quest.BetonQuestQuest;
 import net.momirealms.customfishing.bukkit.integration.quest.ClueScrollsQuest;
@@ -138,6 +141,11 @@ public class BukkitIntegrationManager implements IntegrationManager {
         }
         if (isHooked("BetonQuest")) {
             BetonQuestQuest.register();
+        }
+        if (isHooked("PlaceholderAPI")) {
+            new CustomFishingPapi(plugin).load();
+            new CompetitionPapi(plugin).load();
+            new StatisticsPapi(plugin).load();
         }
     }
 

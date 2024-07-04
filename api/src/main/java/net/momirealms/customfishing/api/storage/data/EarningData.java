@@ -57,6 +57,14 @@ public class EarningData {
         return new EarningData(earnings, date);
     }
 
+    public double earnings() {
+        return earnings;
+    }
+
+    public int date() {
+        return date;
+    }
+
     public void refresh() {
         Calendar calendar = Calendar.getInstance();
         int dat = (calendar.get(Calendar.MONTH) +1) * 100 + calendar.get(Calendar.DATE);
