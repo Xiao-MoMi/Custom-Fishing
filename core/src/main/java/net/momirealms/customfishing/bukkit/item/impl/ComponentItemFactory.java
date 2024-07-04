@@ -6,6 +6,7 @@ import net.momirealms.customfishing.bukkit.item.BukkitItemFactory;
 import net.momirealms.customfishing.common.item.ComponentKeys;
 import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
 import net.momirealms.customfishing.common.util.Key;
+import net.momirealms.sparrow.heart.SparrowHeart;
 
 import java.util.HashMap;
 import java.util.List;
@@ -150,11 +151,17 @@ public class ComponentItemFactory extends BukkitItemFactory {
 
     @Override
     protected void addEnchantment(RtagItem item, Key enchantment, int level) {
-
+        Object enchant = item.getComponent(ComponentKeys.ENCHANTMENTS);
+        Map<String, Integer> map = SparrowHeart.getInstance().itemEnchantmentsToMap(enchant);
+        map.put(enchantment.toString(), level);
+        item.setComponent(ComponentKeys.ENCHANTMENTS, map);
     }
 
     @Override
     protected void addStoredEnchantment(RtagItem item, Key enchantment, int level) {
-
+        Object enchant = item.getComponent(ComponentKeys.STORED_ENCHANTMENTS);
+        Map<String, Integer> map = SparrowHeart.getInstance().itemEnchantmentsToMap(enchant);
+        map.put(enchantment.toString(), level);
+        item.setComponent(ComponentKeys.STORED_ENCHANTMENTS, map);
     }
 }

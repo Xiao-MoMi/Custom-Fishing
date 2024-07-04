@@ -33,6 +33,7 @@ dependencies {
     implementation("com.saicone.rtag:rtag-item:${rootProject.properties["rtag_version"]}")
     // nms util
     implementation("com.github.Xiao-MoMi:Sparrow-Heart:${rootProject.properties["sparrow_heart_version"]}")
+    //implementation(files("libs/Sparrow-Heart-${rootProject.properties["sparrow_heart_version"]}.jar"))
     // bstats
     compileOnly("org.bstats:bstats-bukkit:${rootProject.properties["bstats_version"]}")
     // config

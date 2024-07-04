@@ -245,15 +245,49 @@ public class BukkitConfigManager extends ConfigManager {
         return map;
     }
 
+    private List<Tuple<Double, String, Short>> getPossibleEnchantments(Section section) {
+        List<Tuple<Double, String, Short>> list = new ArrayList<>();
+        for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
+            if (entry.getValue() instanceof Section inner) {
+                Tuple<Double, String, Short> tuple = Tuple.of(
+                        inner.getDouble("chance"),
+                        inner.getString("enchant"),
+                        Short.valueOf(String.valueOf(inner.getInt("level")))
+                );
+                list.add(tuple);
+            }
+        }
+        return list;
+    }
+
     private Pair<Key, Short> getEnchantmentPair(String enchantmentWithLevel) {
         String[] split = enchantmentWithLevel.split(":", 3);
         return Pair.of(Key.of(split[0], split[1]), Short.parseShort(split[2]));
     }
 
     private void registerBuiltInItemProperties() {
-        Function<Object, BiConsumer<Item<ItemStack>, Context<Player>>> function = arg -> {
+        Function<Object, BiConsumer<Item<ItemStack>, Context<Player>>> f2 = arg -> {
             Section section = (Section) arg;
-            System.out.println(section.getNameAsString());
+            boolean stored = Objects.equals(section.getNameAsString(), "stored-random-enchantments");
+            List<Tuple<Double, String, Short>> enchantments = getPossibleEnchantments(section);
+            return (item, context) -> {
+                HashSet<String> ids = new HashSet<>();
+                for (Tuple<Double, String, Short> pair : enchantments) {
+                    if (Math.random() < pair.left() && !ids.contains(pair.mid())) {
+                        if (stored) {
+                            item.addStoredEnchantment(Key.fromString(pair.mid()), pair.right());
+                        } else {
+                            item.addEnchantment(Key.fromString(pair.mid()), pair.right());
+                        }
+                        ids.add(pair.mid());
+                    }
+                }
+            };
+        };
+        this.registerItemParser(f2, 4850, "random-stored-enchantments");
+        this.registerItemParser(f2, 4750, "random-enchantments");
+        Function<Object, BiConsumer<Item<ItemStack>, Context<Player>>> f1 = arg -> {
+            Section section = (Section) arg;
             boolean stored = Objects.equals(section.getNameAsString(), "stored-enchantment-pool");
             Section amountSection = section.getSection("amount");
             Section enchantSection = section.getSection("pool");
@@ -286,7 +320,8 @@ public class BukkitConfigManager extends ConfigManager {
                     Pair<Key, Short> enchantPair = WeightUtils.getRandom(cloned);
                     Enchantment enchantment = Registry.ENCHANTMENT.get(Objects.requireNonNull(NamespacedKey.fromString(enchantPair.left().toString())));
                     if (enchantment == null) {
-                        throw new NullPointerException("Enchantment: " + enchantPair.left() + " doesn't exist.");
+                        plugin.getPluginLogger().warn("Enchantment: " + enchantPair.left() + " doesn't exist.");
+                        return;
                     }
                     if (!stored) {
                         for (Enchantment added : addedEnchantments) {
@@ -307,8 +342,8 @@ public class BukkitConfigManager extends ConfigManager {
                 }
             };
         };
-        this.registerItemParser(function, 4800, "stored-enchantment-pool");
-        this.registerItemParser(function, 4700, "enchantment-pool");
+        this.registerItemParser(f1, 4800, "stored-enchantment-pool");
+        this.registerItemParser(f1, 4700, "enchantment-pool");
         this.registerItemParser(arg -> {
             Section section = (Section) arg;
             Map<Key, Short> map = getEnchantments(section);

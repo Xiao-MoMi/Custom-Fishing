@@ -150,7 +150,7 @@ magical_rod:
   requirements:
     requirement_1:
       type: level
-      value: 10
+      value: 1
       not-met-actions:
         action_1:
           type: message
@@ -169,7 +169,7 @@ magical_rod:
     cast:
       action_level:
         type: level
-        value: -10
+        value: -1
   effects:
     effect_1:
       type: group-mod-ignore-conditions

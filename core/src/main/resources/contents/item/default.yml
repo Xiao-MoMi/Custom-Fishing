@@ -218,8 +218,6 @@ enchantment_book:
       'minecraft:looting:1': 12
       'minecraft:looting:2': 6
       'minecraft:looting:3': 2
-      'minecraft:sweeping:1': 8
-      'minecraft:sweeping:2': 4
       'minecraft:soul_speed:1': 8
       'minecraft:soul_speed:2': 4
       'minecraft:fire_aspect:1': 10
