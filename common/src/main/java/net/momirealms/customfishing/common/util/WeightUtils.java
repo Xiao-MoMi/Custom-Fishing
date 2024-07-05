@@ -82,6 +82,7 @@ public class WeightUtils {
      * @return A randomly selected item from the list, or null if no item was selected.
      */
     private static <T> T getRandom(double[] weights, List<T> available, int effectiveSize) {
+        if (available.isEmpty()) return null;
         double total = Arrays.stream(weights).sum();
         double[] weightRatios = new double[effectiveSize];
         for (int i = 0; i < effectiveSize; i++){

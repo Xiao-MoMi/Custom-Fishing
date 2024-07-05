@@ -26,6 +26,8 @@ import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
 import net.momirealms.customfishing.api.mechanic.fishing.FishingGears;
 import net.momirealms.customfishing.api.mechanic.fishing.FishingManager;
 import net.momirealms.customfishing.api.mechanic.fishing.hook.VanillaMechanic;
+import net.momirealms.customfishing.api.mechanic.game.AbstractGamingPlayer;
+import net.momirealms.customfishing.api.mechanic.game.GamingPlayer;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.common.helper.VersionHelper;
@@ -40,10 +42,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.*;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -134,8 +135,26 @@ public class BukkitFishingManager implements FishingManager, Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onSwapItem(PlayerSwapHandItemsEvent event) {
-        if (getFishHook(event.getPlayer()).isPresent()) {
-            this.destroy(event.getPlayer().getUniqueId());
+        getFishHook(event.getPlayer()).ifPresent(hook -> {
+            Optional<GamingPlayer> optionalGamingPlayer = hook.getGamingPlayer();
+            if (optionalGamingPlayer.isPresent()) {
+                optionalGamingPlayer.get().handleSwapHand();
+                event.setCancelled(true);
+            } else {
+                this.destroy(event.getPlayer().getUniqueId());
+            }
+        });
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onJump(PlayerMoveEvent event) {
+        final Player player = event.getPlayer();
+        if (event.getFrom().getY() < event.getTo().getY() && player.isOnGround()) {
+            getFishHook(player).flatMap(CustomFishingHook::getGamingPlayer).ifPresent(gamingPlayer -> {
+                if (gamingPlayer.handleJump()) {
+                    event.setCancelled(true);
+                }
+            });
         }
     }
 
@@ -144,12 +163,56 @@ public class BukkitFishingManager implements FishingManager, Listener {
         this.destroy(event.getPlayer().getUniqueId());
     }
 
+    @EventHandler (ignoreCancelled = false)
+    public void onLeftClick(PlayerInteractEvent event) {
+        if (event.getAction() != Action.LEFT_CLICK_AIR)
+            return;
+        if (event.getMaterial() != Material.FISHING_ROD)
+            return;
+        if (event.getHand() != EquipmentSlot.HAND)
+            return;
+        getFishHook(event.getPlayer()).ifPresent(hook -> {
+            Optional<GamingPlayer> optionalGamingPlayer = hook.getGamingPlayer();
+            if (optionalGamingPlayer.isPresent()) {
+                if (((AbstractGamingPlayer) optionalGamingPlayer.get()).internalLeftClick()) {
+                    event.setCancelled(true);
+                }
+            }
+        });
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onSneak(PlayerToggleSneakEvent event) {
+        if (!event.isSneaking()) return;
+        getFishHook(event.getPlayer()).ifPresent(hook -> {
+            Optional<GamingPlayer> optionalGamingPlayer = hook.getGamingPlayer();
+            if (optionalGamingPlayer.isPresent()) {
+                if (optionalGamingPlayer.get().handleSneak()) {
+                    event.setCancelled(true);
+                }
+            }
+        });
+    }
+
+    @EventHandler
+    public void onChat(AsyncPlayerChatEvent event) {
+        if (event.isCancelled()) return;
+        getFishHook(event.getPlayer()).ifPresent(hook -> {
+            Optional<GamingPlayer> optionalGamingPlayer = hook.getGamingPlayer();
+            if (optionalGamingPlayer.isPresent()) {
+                if (optionalGamingPlayer.get().handleChat(event.getMessage())) {
+                    event.setCancelled(true);
+                }
+            }
+        });
+    }
+
     private void selectState(PlayerFishEvent event) {
         switch (event.getState()) {
             case FISHING -> onCastRod(event);
-            case REEL_IN -> onReelIn(event);
+            case REEL_IN, CAUGHT_FISH -> onReelIn(event);
             case CAUGHT_ENTITY -> onCaughtEntity(event);
-            case CAUGHT_FISH -> onCaughtFish(event);
+            //case CAUGHT_FISH -> onCaughtFish(event);
             case BITE -> onBite(event);
             case IN_GROUND -> onInGround(event);
             case FAILED_ATTEMPT -> onFailedAttempt(event);
@@ -194,18 +257,30 @@ public class BukkitFishingManager implements FishingManager, Listener {
     private void onReelIn(PlayerFishEvent event) {
         Player player = event.getPlayer();
         getFishHook(player).ifPresent(hook -> {
+            Optional<GamingPlayer> gamingPlayer = hook.getGamingPlayer();
+            if (gamingPlayer.isPresent()) {
+                ((AbstractGamingPlayer) gamingPlayer.get()).internalRightClick();
+                return;
+            }
             event.setCancelled(true);
             hook.onReelIn();
         });
     }
 
-    private void onCaughtFish(PlayerFishEvent event) {
-        Player player = event.getPlayer();
-        getFishHook(player).ifPresent(hook -> {
-            event.setCancelled(true);
-            hook.onReelIn();
-        });
-    }
+//    private void onCaughtFish(PlayerFishEvent event) {
+//        Player player = event.getPlayer();
+//        getFishHook(player).ifPresent(hook -> {
+//            Optional<GamingPlayer> gamingPlayer = hook.getGamingPlayer();
+//            if (gamingPlayer.isPresent()) {
+//                if (gamingPlayer.get().handleRightClick()) {
+//                    event.setCancelled(true);
+//                }
+//                return;
+//            }
+//            event.setCancelled(true);
+//            hook.onReelIn();
+//        });
+//    }
 
     private void onCastRod(PlayerFishEvent event) {
         FishHook hook = event.getHook();

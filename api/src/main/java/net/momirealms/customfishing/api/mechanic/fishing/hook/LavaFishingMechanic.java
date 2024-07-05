@@ -197,6 +197,7 @@ public class LavaFishingMechanic implements HookMechanic {
         if (this.task != null) {
             this.task.cancel();
         }
+        freeze = false;
     }
 
     @Override

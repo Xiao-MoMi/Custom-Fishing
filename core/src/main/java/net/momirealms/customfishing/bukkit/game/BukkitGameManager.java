@@ -81,6 +81,11 @@ public class BukkitGameManager implements GameManager {
         }
     }
 
+    @Override
+    public void unload() {
+        this.gameMap.clear();
+    }
+
     private ConditionalElement<List<Pair<String, BiFunction<Context<Player>, Double, Double>>>, Player> parseGameConditions(Section section) {
         Section subSection = section.getSection("sub-groups");
         if (subSection == null) {
@@ -144,7 +149,7 @@ public class BukkitGameManager implements GameManager {
         String gameID = WeightUtils.getRandom(lootWeightMap);
         return Optional.ofNullable(gameID)
                 .map(id -> getGame(gameID).orElseThrow(() -> new RuntimeException("Could not find game " + gameID)))
-                .orElseThrow(() -> new RuntimeException("No game available. " + context));
+                .orElse(null);
     }
 
     private void modifyWeightMap(Map<String, Double> weightMap, Context<Player> context, ConditionalElement<List<Pair<String, BiFunction<Context<Player>, Double, Double>>>, Player> conditionalElement) {
@@ -424,15 +429,15 @@ public class BukkitGameManager implements GameManager {
                         }
 
                         @Override
-                        public boolean handleRightClick() {
+                        public void handleRightClick() {
                             if (left) {
                                 setGameResult(false);
                                 endGame();
-                                return true;
+                                return;
                             }
                             played = true;
                             fish_velocity = pullingStrength;
-                            return true;
+                            return;
                         }
 
                         @Override
@@ -487,9 +492,8 @@ public class BukkitGameManager implements GameManager {
                         }
 
                         @Override
-                        public boolean handleRightClick() {
+                        public void handleRightClick() {
                             handleClicks();
-                            return true;
                         }
 
                         @Override
@@ -675,13 +679,12 @@ public class BukkitGameManager implements GameManager {
                         }
 
                         @Override
-                        public boolean handleRightClick() {
+                        public void handleRightClick() {
                             if (order[clickedTimes] != 1) {
                                 handleWrongAction();
-                                return true;
+                                return;
                             }
                             handleCorrectAction();
-                            return true;
                         }
 
                         @Override

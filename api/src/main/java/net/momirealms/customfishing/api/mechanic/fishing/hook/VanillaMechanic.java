@@ -102,6 +102,7 @@ public class VanillaMechanic implements HookMechanic {
     @Override
     public void destroy() {
         if (this.task != null) this.task.cancel();
+        this.tempWaitTime = 0;
     }
 
     @Override

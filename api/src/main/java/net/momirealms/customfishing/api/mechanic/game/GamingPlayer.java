@@ -17,9 +17,7 @@
 
 package net.momirealms.customfishing.api.mechanic.game;
 
-import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 
 public interface GamingPlayer {
 
@@ -31,9 +29,9 @@ public interface GamingPlayer {
 
     boolean isSuccessful();
 
-    boolean handleRightClick();
+    void handleRightClick();
 
-    boolean handleSwapHand();
+    void handleSwapHand();
 
     boolean handleLeftClick();
 
@@ -44,7 +42,4 @@ public interface GamingPlayer {
     boolean handleSneak();
 
     Player getPlayer();
-
-    @Nullable
-    Effect getEffectReward();
 }

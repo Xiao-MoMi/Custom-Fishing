@@ -19,7 +19,6 @@ package net.momirealms.customfishing.api.mechanic.game;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
-import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import org.bukkit.entity.Player;
@@ -67,15 +66,14 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     }
 
     @ApiStatus.Internal
-    public boolean internalRightClick() {
+    public void internalRightClick() {
         firstFlag = true;
-        return handleRightClick();
+        handleRightClick();
     }
 
     @Override
-    public boolean handleRightClick() {
+    public void handleRightClick() {
         endGame();
-        return true;
     }
 
     @ApiStatus.Internal
@@ -98,8 +96,7 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     }
 
     @Override
-    public boolean handleSwapHand() {
-        return false;
+    public void handleSwapHand() {
     }
 
     @Override
@@ -115,11 +112,6 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     @Override
     public Player getPlayer() {
         return hook.getContext().getHolder();
-    }
-
-    @Override
-    public Effect getEffectReward() {
-        return null;
     }
 
     @Override

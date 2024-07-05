@@ -139,30 +139,33 @@ public class CustomFishingHook {
 
                         // get the next loot
                         Loot loot = plugin.getLootManager().getNextLoot(effect, context);
-                        if (loot == null) {
-                            plugin.debug("No loot available for player " + context.getHolder().getName());
-                            return;
-                        }
-                        this.nextLoot = loot;
+                        if (loot != null) {
+                            this.nextLoot = loot;
 
-                        context.arg(ContextKeys.ID, loot.id());
-                        context.arg(ContextKeys.NICK, loot.nick());
-                        context.arg(ContextKeys.LOOT, loot.type());
+                            context.arg(ContextKeys.ID, loot.id());
+                            context.arg(ContextKeys.NICK, loot.nick());
+                            context.arg(ContextKeys.LOOT, loot.type());
 
-                        plugin.debug("Next loot: " + loot.id());
-                        // get its basic properties
-                        Effect baseEffect = loot.baseEffect().toEffect(context);
-                        tempEffect.combine(baseEffect);
-                        // apply the gears' effects
-                        for (EffectModifier modifier : gears.effectModifiers()) {
-                            for (TriConsumer<Effect, Context<Player>, Integer> consumer : modifier.modifiers()) {
-                                consumer.accept(tempEffect, context, 2);
+                            plugin.debug("Next loot: " + loot.id());
+                            // get its basic properties
+                            Effect baseEffect = loot.baseEffect().toEffect(context);
+                            tempEffect.combine(baseEffect);
+                            // apply the gears' effects
+                            for (EffectModifier modifier : gears.effectModifiers()) {
+                                for (TriConsumer<Effect, Context<Player>, Integer> consumer : modifier.modifiers()) {
+                                    consumer.accept(tempEffect, context, 2);
+                                }
                             }
-                        }
-                        // start the mechanic
-                        mechanic.start(tempEffect);
+                            // start the mechanic
+                            mechanic.start(tempEffect);
 
-                        this.tempFinalEffect = tempEffect;
+                            this.tempFinalEffect = tempEffect;
+                        } else {
+                            mechanic.start(tempEffect);
+                            this.tempFinalEffect = tempEffect;
+                            // to prevent players from getting any loot
+                            mechanic.freeze();
+                        }
                     }
                 }
             }
@@ -263,15 +266,22 @@ public class CustomFishingHook {
     }
 
     public void gameStart() {
-        if (gamingPlayer != null && gamingPlayer.isValid())
+        if (isPlayingGame())
             return;
         Game nextGame = plugin.getGameManager().getNextGame(tempFinalEffect, context);
         if (nextGame != null) {
-            nextGame.start(this, tempFinalEffect);
+            gamingPlayer = nextGame.start(this, tempFinalEffect);
             if (this.hookMechanic != null) {
                 this.hookMechanic.freeze();
             }
+        } else {
+            handleSuccessfulFishing();
+            end();
         }
+    }
+
+    public Optional<GamingPlayer> getGamingPlayer() {
+        return Optional.ofNullable(gamingPlayer);
     }
 
     private void scheduleNextFishing() {
