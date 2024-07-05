@@ -17,5 +17,12 @@
 
 package net.momirealms.customfishing.api.mechanic.game;
 
-public record GameSettings(double time, int difficulty) {
+import net.momirealms.customfishing.api.mechanic.effect.Effect;
+import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
+
+public interface Game {
+
+    String id();
+    
+    GamingPlayer start(CustomFishingHook hook, Effect effect);
 }

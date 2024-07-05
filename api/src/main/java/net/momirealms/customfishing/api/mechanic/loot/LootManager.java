@@ -30,7 +30,7 @@ import java.util.Optional;
 
 public interface LootManager extends Reloadable {
 
-    void registerLoot(@NotNull Loot loot);
+    boolean registerLoot(@NotNull Loot loot);
 
     @NotNull
     List<String> getGroupMembers(String key);

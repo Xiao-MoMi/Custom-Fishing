@@ -67,6 +67,10 @@ public class ContextKeys<T> {
     public static final ContextKeys<Integer> AMOUNT = of("amount", Integer.class);
     public static final ContextKeys<Double> WEIGHT = of("0", Double.class);
     public static final ContextKeys<String> TIME_LEFT = of("time_left", String.class);
+    public static final ContextKeys<String> REASON = of("reason", String.class);
+    public static final ContextKeys<String> PROGRESS = of("progress", String.class);
+    public static final ContextKeys<Integer> CLICKS_LEFT = of("left_clicks", Integer.class);
+    public static final ContextKeys<Integer> REQUIRED_TIMES = of("clicks", Integer.class);
 
     private final String key;
     private final Class<T> type;

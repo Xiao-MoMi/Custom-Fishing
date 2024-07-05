@@ -54,6 +54,7 @@ public class LavaFishingMechanic implements HookMechanic {
     private int currentState;
     private int jumpTimer;
     private boolean firstTime = true;
+    private boolean freeze = false;
 
     public LavaFishingMechanic(FishHook hook, Effect gearsEffect, Context<Player> context) {
         this.hook = hook;
@@ -168,7 +169,9 @@ public class LavaFishingMechanic implements HookMechanic {
                         }
                     }
                 } else if (timeUntilLured > 0) {
-                    timeUntilLured--;
+                    if (!freeze) {
+                        timeUntilLured--;
+                    }
                     if (this.timeUntilLured <= 0) {
                         this.fishAngle = RandomUtils.generateRandomFloat(0F, 360F);
                         this.timeUntilHooked = RandomUtils.generateRandomInt(20, 80);
@@ -194,6 +197,16 @@ public class LavaFishingMechanic implements HookMechanic {
         if (this.task != null) {
             this.task.cancel();
         }
+    }
+
+    @Override
+    public void freeze() {
+        freeze = true;
+    }
+
+    @Override
+    public void unfreeze(Effect effect) {
+        freeze = false;
     }
 
     private void setWaitTime(Effect effect) {

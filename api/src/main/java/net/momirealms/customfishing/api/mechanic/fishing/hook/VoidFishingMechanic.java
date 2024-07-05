@@ -51,6 +51,7 @@ public class VoidFishingMechanic implements HookMechanic {
     private boolean hooked;
     private float fishAngle;
     private int timer;
+    private boolean freeze;
 
     public VoidFishingMechanic(FishHook hook, Effect gearsEffect, Context<Player> context) {
         this.hook = hook;
@@ -136,7 +137,9 @@ public class VoidFishingMechanic implements HookMechanic {
                         EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.BITE));
                     }
                 } else if (timeUntilLured > 0) {
-                    timeUntilLured--;
+                    if (!freeze) {
+                        timeUntilLured--;
+                    }
                     f = 0.1F;
                     if (this.timeUntilLured < 20) {
                         f += (float) (20 - this.timeUntilLured) * 0.05F;
@@ -178,6 +181,16 @@ public class VoidFishingMechanic implements HookMechanic {
         if (this.task != null) {
             this.task.cancel();
         }
+    }
+
+    @Override
+    public void freeze() {
+        freeze = true;
+    }
+
+    @Override
+    public void unfreeze(Effect finalEffect) {
+        freeze = false;
     }
 
     private void setWaitTime(Effect effect) {

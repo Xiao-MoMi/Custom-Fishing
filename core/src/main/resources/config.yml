@@ -210,7 +210,7 @@ mechanics:
       - 'AIIIIIIIA'
       - 'AAAABAAAA'
     # Price formula (For CustomFishing loots)
-    price-formula: '{BASE} + {BONUS} * {SIZE}'
+    price-formula: '{base} + {bonus} * {size}'
     # Allow player to sell fish in bundles
     allow-bundle: true
     # Allow player to sell fish in shulker boxes

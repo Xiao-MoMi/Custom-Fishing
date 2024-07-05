@@ -93,6 +93,10 @@ public class AdventureHelper {
         return "<font:" + font.asString() + ">" + text + "</font>";
     }
 
+    public static String surroundWithMiniMessageFont(String text, String font) {
+        return "<font:" + font + ">" + text + "</font>";
+    }
+
     public static String jsonToMiniMessage(String json) {
         return getInstance().miniMessageStrict.serialize(getInstance().gsonComponentSerializer.deserialize(json));
     }

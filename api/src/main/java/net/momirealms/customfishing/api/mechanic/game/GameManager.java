@@ -18,13 +18,14 @@
 package net.momirealms.customfishing.api.mechanic.game;
 
 import net.momirealms.customfishing.api.mechanic.context.Context;
-import net.momirealms.customfishing.common.util.Pair;
+import net.momirealms.customfishing.api.mechanic.effect.Effect;
+import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
+import java.util.Optional;
 
-public interface GameManager {
+public interface GameManager extends Reloadable {
 
     /**
      * Registers a new game type with the specified type identifier.
@@ -49,23 +50,13 @@ public interface GameManager {
      * @param type The type identifier of the game.
      * @return The {@code GameFactory} for the specified game type, or {@code null} if not found.
      */
-    @Nullable GameFactory getGameFactory(String type);
-
-    /**
-     * Retrieves a game instance and its basic configuration associated with the specified key.
-     *
-     * @param key The key identifying the game instance.
-     * @return An {@code Optional} containing a {@code Pair} of the basic game configuration and the game instance
-     *         if found, or an empty {@code Optional} if not found.
-     */
     @Nullable
-    Pair<BasicGameConfig, GameInstance> getGameInstance(String key);
+    GameFactory getGameFactory(String type);
 
-    /**
-     * Retrieves a map of game names and their associated weights based on the specified conditions.
-     *
-     * @param playerContext The condition to evaluate game weights.
-     * @return A {@code HashMap} containing game names as keys and their associated weights as values.
-     */
-    HashMap<String, Double> getGameWithWeight(Context<Player> playerContext);
+    Optional<Game> getGame(String id);
+
+    boolean registerGame(Game game);
+
+    @Nullable
+    Game getNextGame(Effect effect, Context<Player> context);
 }

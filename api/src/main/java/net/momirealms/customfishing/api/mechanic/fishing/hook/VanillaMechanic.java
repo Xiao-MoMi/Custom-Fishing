@@ -38,6 +38,7 @@ public class VanillaMechanic implements HookMechanic {
     private final Context<Player> context;
     private SchedulerTask task;
     private boolean isHooked = false;
+    private int tempWaitTime;
 
     public VanillaMechanic(FishHook hook, Context<Player> context) {
         this.hook = hook;
@@ -101,6 +102,24 @@ public class VanillaMechanic implements HookMechanic {
     @Override
     public void destroy() {
         if (this.task != null) this.task.cancel();
+    }
+
+    @Override
+    public void freeze() {
+        if (hook.getWaitTime() > 0) {
+            this.tempWaitTime = hook.getWaitTime();
+        }
+        hook.setWaitTime(Integer.MAX_VALUE);
+    }
+
+    @Override
+    public void unfreeze(Effect effect) {
+        if (this.tempWaitTime != 0) {
+            hook.setWaitTime(this.tempWaitTime);
+            this.tempWaitTime = 0;
+        } else {
+            setWaitTime(hook, effect);
+        }
     }
 
     public void onBite() {

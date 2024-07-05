@@ -36,6 +36,7 @@ import java.io.File;
 import java.util.*;
 import java.util.function.BiFunction;
 
+@SuppressWarnings("DuplicatedCode")
 public class BukkitLootManager implements LootManager {
 
     private final BukkitCustomFishingPlugin plugin;
@@ -96,11 +97,13 @@ public class BukkitLootManager implements LootManager {
     }
 
     @Override
-    public void registerLoot(@NotNull Loot loot) {
+    public boolean registerLoot(@NotNull Loot loot) {
+        if (lootMap.containsKey(loot.id())) return false;
         this.lootMap.put(loot.id(), loot);
         for (String group : loot.lootGroup()) {
             addGroupMember(group, loot.id());
         }
+        return true;
     }
 
     private void addGroupMember(String group, String member) {

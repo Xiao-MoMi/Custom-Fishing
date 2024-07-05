@@ -129,7 +129,15 @@ public class ConfigType {
             }
     );
 
-    private static final ConfigType[] values = new ConfigType[] {ITEM, ENTITY, BLOCK, HOOK, ROD, BAIT, UTIL, TOTEM, ENCHANT};
+    public static final ConfigType MINI_GAME = of(
+        "minigame",
+            (id, section, functions) -> {
+                MiniGameConfigParser config = new MiniGameConfigParser(id, section);
+                BukkitCustomFishingPlugin.getInstance().getGameManager().registerGame(config.getGame());
+            }
+    );
+
+    private static final ConfigType[] values = new ConfigType[] {ITEM, ENTITY, BLOCK, HOOK, ROD, BAIT, UTIL, TOTEM, ENCHANT, MINI_GAME};
 
     public static ConfigType[] values() {
         return values;

@@ -21,5 +21,5 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 
 public interface GameFactory {
 
-    GameInstance setArgs(Section section);
+    Game create(String id, Section section);
 }

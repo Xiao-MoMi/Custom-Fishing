@@ -17,10 +17,5 @@
 
 package net.momirealms.customfishing.api.mechanic.game;
 
-import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Player;
-
-public interface GameInstance {
-    
-    GamingPlayer start(Player player, FishHook hook, GameSettings settings);
+public record GameSetting(double time, int difficulty) {
 }

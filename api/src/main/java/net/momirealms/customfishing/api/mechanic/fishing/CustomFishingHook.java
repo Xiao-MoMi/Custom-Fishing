@@ -31,6 +31,8 @@ import net.momirealms.customfishing.api.mechanic.fishing.hook.HookMechanic;
 import net.momirealms.customfishing.api.mechanic.fishing.hook.LavaFishingMechanic;
 import net.momirealms.customfishing.api.mechanic.fishing.hook.VanillaMechanic;
 import net.momirealms.customfishing.api.mechanic.fishing.hook.VoidFishingMechanic;
+import net.momirealms.customfishing.api.mechanic.game.Game;
+import net.momirealms.customfishing.api.mechanic.game.GamingPlayer;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
@@ -67,6 +69,7 @@ public class CustomFishingHook {
     private Effect tempFinalEffect;
     private HookMechanic hookMechanic;
     private Loot nextLoot;
+    private GamingPlayer gamingPlayer;
 
     private static TriFunction<FishHook, Context<Player>, Effect, List<HookMechanic>> mechanicProviders = defaultMechanicProviders();
 
@@ -103,6 +106,9 @@ public class CustomFishingHook {
             // destroy if hook is invalid
             if (!hook.isValid()) {
                 plugin.getFishingManager().destroy(hook.getOwnerUniqueId());
+                return;
+            }
+            if (isPlayingGame()) {
                 return;
             }
             if (this.hookMechanic != null) {
@@ -167,6 +173,11 @@ public class CustomFishingHook {
         if (task != null) task.cancel();
         if (hook.isValid()) hook.remove();
         if (hookMechanic != null) hookMechanic.destroy();
+        if (gamingPlayer != null) gamingPlayer.destroy();
+    }
+
+    public Context<Player> getContext() {
+        return context;
     }
 
     @NotNull
@@ -185,6 +196,7 @@ public class CustomFishingHook {
     }
 
     public void onReelIn() {
+        if (isPlayingGame()) return;
         if (hookMechanic != null) {
             if (!hookMechanic.isHooked()) {
                 gears.trigger(ActionTrigger.REEL, context);
@@ -194,8 +206,7 @@ public class CustomFishingHook {
                     handleSuccessfulFishing();
                     end();
                 } else {
-                    handleSuccessfulFishing();
-                    end();
+                    gameStart();
                 }
             }
         } else {
@@ -209,6 +220,7 @@ public class CustomFishingHook {
     }
 
     public void onBite() {
+        if (isPlayingGame()) return;
         plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.getTypeByID(nextLoot.id()), ActionTrigger.BITE);
         gears.trigger(ActionTrigger.BITE, context);
         if (RequirementManager.isSatisfied(context, ConfigManager.autoFishingRequirements())) {
@@ -219,7 +231,46 @@ public class CustomFishingHook {
             return;
         }
         if (nextLoot.instantGame()) {
+            gameStart();
+        }
+    }
 
+    public boolean isPlayingGame() {
+        return gamingPlayer != null && gamingPlayer.isValid();
+    }
+
+    public void handleGameResult() {
+        if (gamingPlayer == null || !gamingPlayer.isValid()) {
+            throw new RuntimeException("You can't call this method if the player is not playing the game");
+        }
+        if (gamingPlayer.isSuccessful()) {
+            handleSuccessfulFishing();
+        } else {
+            handleFailedFishing();
+        }
+        end();
+    }
+
+    public void cancelCurrentGame() {
+        if (gamingPlayer == null || !gamingPlayer.isValid()) {
+            throw new RuntimeException("You can't call this method if the player is not playing the game");
+        }
+        gamingPlayer.cancel();
+        gamingPlayer = null;
+        if (hookMechanic != null) {
+            hookMechanic.unfreeze(tempFinalEffect);
+        }
+    }
+
+    public void gameStart() {
+        if (gamingPlayer != null && gamingPlayer.isValid())
+            return;
+        Game nextGame = plugin.getGameManager().getNextGame(tempFinalEffect, context);
+        if (nextGame != null) {
+            nextGame.start(this, tempFinalEffect);
+            if (this.hookMechanic != null) {
+                this.hookMechanic.freeze();
+            }
         }
     }
 

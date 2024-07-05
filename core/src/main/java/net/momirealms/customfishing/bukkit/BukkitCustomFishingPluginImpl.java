@@ -34,6 +34,7 @@ import net.momirealms.customfishing.bukkit.effect.BukkitEffectManager;
 import net.momirealms.customfishing.bukkit.entity.BukkitEntityManager;
 import net.momirealms.customfishing.bukkit.event.BukkitEventManager;
 import net.momirealms.customfishing.bukkit.fishing.BukkitFishingManager;
+import net.momirealms.customfishing.bukkit.game.BukkitGameManager;
 import net.momirealms.customfishing.bukkit.hook.BukkitHookManager;
 import net.momirealms.customfishing.bukkit.integration.BukkitIntegrationManager;
 import net.momirealms.customfishing.bukkit.item.BukkitItemManager;
@@ -125,6 +126,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.totemManager = new BukkitTotemManager(this);
         this.translationManager = new TranslationManager(this);
         this.integrationManager = new BukkitIntegrationManager(this);
+        this.gameManager = new BukkitGameManager(this);
         this.commandManager = new BukkitCommandManager(this);
         this.commandManager.registerDefaultFeatures();
 
@@ -167,6 +169,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.bagManager.reload();
         this.storageManager.reload();
         this.fishingManager.reload();
+        this.gameManager.reload();
 
         this.itemManager.load();
         this.eventManager.load();

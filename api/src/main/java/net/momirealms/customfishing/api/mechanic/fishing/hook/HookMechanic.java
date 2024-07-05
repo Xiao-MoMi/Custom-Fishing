@@ -32,4 +32,8 @@ public interface HookMechanic
     boolean isHooked();
 
     void destroy();
+
+    void freeze();
+
+    void unfreeze(Effect finalEffect);
 }

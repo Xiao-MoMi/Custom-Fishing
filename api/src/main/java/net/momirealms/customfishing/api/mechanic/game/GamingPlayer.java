@@ -23,53 +23,28 @@ import org.jetbrains.annotations.Nullable;
 
 public interface GamingPlayer {
 
-    /**
-     * Cancel the game
-     */
+    boolean isValid();
+
+    void destroy();
+
     void cancel();
 
     boolean isSuccessful();
 
-    /**
-     * @return whether to cancel the event
-     */
-    boolean onRightClick();
+    boolean handleRightClick();
 
-    /**
-     * @return whether to cancel the event
-     */
-    boolean onSwapHand();
+    boolean handleSwapHand();
 
-    /**
-     * @return whether to cancel the event
-     */
-    boolean onLeftClick();
+    boolean handleLeftClick();
 
-    /**
-     * @return whether to cancel the event
-     */
-    boolean onChat(String message);
+    boolean handleChat(String message);
 
-    /**
-     * @return whether to cancel the event
-     */
-    boolean onJump();
+    boolean handleJump();
 
-    /**
-     * @return whether to cancel the event
-     */
-    boolean onSneak();
+    boolean handleSneak();
 
-    /**
-     * Get the player
-     *
-     * @return the player
-     */
     Player getPlayer();
 
-    /**
-     * @return effect reward based on game results
-     */
     @Nullable
     Effect getEffectReward();
 }

@@ -49,6 +49,7 @@ import net.momirealms.customfishing.api.mechanic.totem.block.property.FaceImpl;
 import net.momirealms.customfishing.api.mechanic.totem.block.property.HalfImpl;
 import net.momirealms.customfishing.api.mechanic.totem.block.property.TotemBlockProperty;
 import net.momirealms.customfishing.api.mechanic.totem.block.type.TypeCondition;
+import net.momirealms.customfishing.api.util.OffsetUtils;
 import net.momirealms.customfishing.bukkit.totem.particle.DustParticleSetting;
 import net.momirealms.customfishing.bukkit.totem.particle.ParticleSetting;
 import net.momirealms.customfishing.common.dependency.DependencyProperties;
@@ -193,6 +194,8 @@ public class BukkitConfigManager extends ConfigManager {
             }
         }
 
+        OffsetUtils.load(config.getSection("other-settings.offset-characters"));
+
         globalEffects = new ArrayList<>();
         Section globalEffectSection = config.getSection("mechanics.global-effects");
         if (globalEffectSection != null) {
@@ -220,6 +223,7 @@ public class BukkitConfigManager extends ConfigManager {
                 }
             }
         }
+
     }
 
     private void loadConfigs() {
