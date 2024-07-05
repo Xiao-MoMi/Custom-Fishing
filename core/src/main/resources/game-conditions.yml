@@ -5,7 +5,7 @@ global-group:
   sub-groups:
     lava_fishing_game:
       conditions:
-        lava-fishing: true
+        in-lava: true
       list:
         - hold_game_easy:+15
         - hold_game_normal:+5
@@ -28,7 +28,7 @@ global-group:
             - hold_game_hard:+7
     water_fish_game:
       conditions:
-        lava-fishing: false
+        in-water: true
       list: []
       sub-groups:
         rainbow_fish_game:
