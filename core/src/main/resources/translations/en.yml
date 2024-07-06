@@ -1,5 +1,5 @@
 # Don"t change this
-config-version: "31"
+config-version: "33"
 
 exception.invalid_syntax: "<red>Invalid syntax. Correct syntax: <white><arg:0></white></red>"
 exception.invalid_argument: "<red>Invalid argument. Reason: <white><arg:0></white></red>"

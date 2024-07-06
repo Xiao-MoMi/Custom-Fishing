@@ -38,8 +38,7 @@ fishfinder:
           actions:
             action_1:
               type: fish-finder
-              value: false
-
+              value: water
 water_effect:
   material: PAPER
   custom-model-data: 49998
