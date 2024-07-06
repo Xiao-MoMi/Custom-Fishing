@@ -24,7 +24,7 @@ import org.bukkit.inventory.ItemStack;
 
 public interface MarketManager extends Reloadable {
 
-    void openMarketGUI(Player player);
+    boolean openMarketGUI(Player player);
 
     double getItemPrice(Context<Player> context, ItemStack itemStack);
 

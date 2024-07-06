@@ -46,7 +46,14 @@ public class BukkitCommandManager extends AbstractCommandManager<CommandSender> 
             new OpenBagCommand(this),
             new FishingBagCommand(this),
             new EditOnlineBagCommand(this),
-            new EditOfflineBagCommand(this)
+            new EditOfflineBagCommand(this),
+            new UnlockDataCommand(this),
+            new ImportDataCommand(this),
+            new ExportDataCommand(this),
+            new AddStatisticsCommand(this),
+            new SetStatisticsCommand(this),
+            new ResetStatisticsCommand(this),
+            new QueryStatisticsCommand(this)
     );
 
     private final Index<String, CommandFeature<CommandSender>> INDEX = Index.create(CommandFeature::getFeatureID, FEATURES);

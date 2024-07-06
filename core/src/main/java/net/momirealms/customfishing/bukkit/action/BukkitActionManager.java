@@ -33,6 +33,8 @@ import net.momirealms.customfishing.bukkit.integration.VaultHook;
 import net.momirealms.customfishing.bukkit.util.LocationUtils;
 import net.momirealms.customfishing.bukkit.util.PlayerUtils;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.locale.MessageConstants;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import net.momirealms.customfishing.common.util.ClassUtils;
 import net.momirealms.customfishing.common.util.ListUtils;
@@ -867,7 +869,22 @@ public class BukkitActionManager implements ActionManager<Player> {
 
     private void registerFishFindAction() {
         registerAction("fish-finder", (args, chance) -> {
+            String surrounding = (String) args;
             return context -> {
+                if (Math.random() > chance) return;
+                String previous = context.arg(ContextKeys.SURROUNDING);
+                context.arg(ContextKeys.SURROUNDING, surrounding);
+                Collection<String> loots = plugin.getLootManager().getWeightedLoots(context).keySet();
+                StringJoiner stringJoiner = new StringJoiner(TranslationManager.miniMessageTranslation(MessageConstants.COMMAND_FISH_FINDER_SPLIT_CHAR.build().key()));
+                for (String loot : loots) {
+                    stringJoiner.add(loot);
+                }
+                context.arg(ContextKeys.SURROUNDING, previous);
+                if (loots.isEmpty()) {
+                    plugin.getSenderFactory().wrap(context.getHolder()).sendMessage(TranslationManager.render(MessageConstants.COMMAND_FISH_FINDER_NO_LOOT.build()));
+                } else {
+                    plugin.getSenderFactory().wrap(context.getHolder()).sendMessage(TranslationManager.render(MessageConstants.COMMAND_FISH_FINDER_POSSIBLE_LOOTS.arguments(Component.text(stringJoiner.toString())).build()));
+                }
             };
         });
     }

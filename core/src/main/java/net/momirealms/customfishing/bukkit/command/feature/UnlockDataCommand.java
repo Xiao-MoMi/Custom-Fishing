@@ -17,36 +17,38 @@
 
 package net.momirealms.customfishing.bukkit.command.feature;
 
+import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.bukkit.command.BukkitCommandFeature;
 import net.momirealms.customfishing.common.command.CustomFishingCommandManager;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.parser.standard.UUIDParser;
 
-public class FishingBagCommand extends BukkitCommandFeature<CommandSender> {
+import java.util.UUID;
 
-    public FishingBagCommand(CustomFishingCommandManager<CommandSender> commandManager) {
+public class UnlockDataCommand extends BukkitCommandFeature<CommandSender> {
+
+    public UnlockDataCommand(CustomFishingCommandManager<CommandSender> commandManager) {
         super(commandManager);
     }
 
     @Override
     public Command.Builder<? extends CommandSender> assembleCommand(CommandManager<CommandSender> manager, Command.Builder<CommandSender> builder) {
         return builder
-                .senderType(Player.class)
+                .flag(manager.flagBuilder("silent").withAliases("s"))
+                .required("uuid", UUIDParser.uuidParser())
                 .handler(context -> {
-                    BukkitCustomFishingPlugin.getInstance().getBagManager().openBag(context.sender(), context.sender().getUniqueId()).whenComplete((result, e) -> {
-                       if (!result || e != null) {
-                           handleFeedback(context, MessageConstants.COMMAND_DATA_FAILURE_NOT_LOADED);
-                       }
-                    });
+                    UUID uuid = context.get("uuid");
+                    BukkitCustomFishingPlugin.getInstance().getStorageManager().getDataSource().lockOrUnlockPlayerData(uuid, false);
+                    handleFeedback(context, MessageConstants.COMMAND_DATA_UNLOCK_SUCCESS, Component.text(uuid.toString()));
                 });
     }
 
     @Override
     public String getFeatureID() {
-        return "fishingbag";
+        return "data_unlock";
     }
 }

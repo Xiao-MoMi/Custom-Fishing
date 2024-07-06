@@ -200,11 +200,11 @@ public class BukkitMarketManager implements MarketManager, Listener {
      * @param player player
      */
     @Override
-    public void openMarketGUI(Player player) {
+    public boolean openMarketGUI(Player player) {
         Optional<UserData> optionalUserData = plugin.getStorageManager().getOnlineUser(player.getUniqueId());
         if (optionalUserData.isEmpty()) {
             plugin.getPluginLogger().warn("Player " + player.getName() + "'s market data has not been loaded yet.");
-            return;
+            return false;
         }
         Context<Player> context = Context.player(player);
         MarketGUI gui = new MarketGUI(this, context, optionalUserData.get().earningData());
@@ -216,6 +216,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
         }
         gui.build().refresh().show();
         marketGUICache.put(player.getUniqueId(), gui);
+        return true;
     }
 
     /**

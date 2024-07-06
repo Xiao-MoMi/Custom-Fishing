@@ -147,4 +147,9 @@ public interface FishingStatistics {
          */
         FishingStatistics build();
     }
+
+    enum Type {
+        MAX_SIZE,
+        AMOUNT_OF_FISH_CAUGHT
+    }
 }

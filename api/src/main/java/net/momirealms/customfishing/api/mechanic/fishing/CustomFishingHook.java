@@ -434,12 +434,13 @@ public class CustomFishingHook {
         if (!nextLoot.disableStats()) {
             plugin.getStorageManager().getOnlineUser(player.getUniqueId()).ifPresent(
                     userData -> {
-                        userData.statistics().addAmount(id, 1);
+                        userData.statistics().addAmount(nextLoot.statisticKey().amountKey(), 1);
+                        context.arg(ContextKeys.TOTAL_AMOUNT, userData.statistics().getAmount(nextLoot.statisticKey().amountKey()));
                         Optional.ofNullable(context.arg(ContextKeys.SIZE)).ifPresent(size -> {
-                            float max = Math.max(0, userData.statistics().getMaxSize(id));
+                            float max = Math.max(0, userData.statistics().getMaxSize(nextLoot.statisticKey().sizeKey()));
                             context.arg(ContextKeys.RECORD, max);
                             context.arg(ContextKeys.RECORD_FORMATTED, String.format("%.2f", max));
-                            if (userData.statistics().updateSize(id, size)) {
+                            if (userData.statistics().updateSize(nextLoot.statisticKey().sizeKey(), size)) {
                                 plugin.getEventManager().trigger(context, id, type, ActionTrigger.NEW_SIZE_RECORD);
                             }
                         });

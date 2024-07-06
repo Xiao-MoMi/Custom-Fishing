@@ -8,6 +8,7 @@ config-version: "${config_version}"
 #
 
 # A command to reload the plugin
+# Usage: [COMMAND]
 reload:
   enable: true
   permission: customfishing.command.reload
@@ -16,6 +17,7 @@ reload:
     - /cfishing reload
 
 # A command designed for players to sell fish
+# Usage: [COMMAND]
 sellfish:
   enable: true
   permission: customfishing.sellfish
@@ -23,6 +25,7 @@ sellfish:
     - /sellfish
 
 # A command designed for players to open the fishing bag
+# Usage: [COMMAND]
 fishingbag:
   enable: true
   permission: fishingbag.user
@@ -30,6 +33,7 @@ fishingbag:
     - /fishingbag
 
 # A command to get items
+# Usage: [COMMAND] [id]
 get_item:
   enable: true
   permission: customfishing.command.getitem
@@ -38,6 +42,7 @@ get_item:
     - /cfishing items get
 
 # A command to give items
+# Usage: [COMMAND] [id]
 give_item:
   enable: true
   permission: customfishing.command.giveitem
@@ -45,7 +50,17 @@ give_item:
     - /customfishing items give
     - /cfishing items give
 
+# A command to import items
+# Usage: [COMMAND] [type] [id]
+import_item:
+  enable: true
+  permission: customfishing.command.importitem
+  usage:
+    - /customfishing items import
+    - /cfishing items import
+
 # A command to stop the competition
+# Usage: [COMMAND]
 stop_competition:
   enable: true
   permission: customfishing.command.competition
@@ -54,6 +69,7 @@ stop_competition:
     - /cfishing competition stop
 
 # A command to end the competition
+# Usage: [COMMAND] [type] [id]
 end_competition:
   enable: true
   permission: customfishing.command.competition
@@ -62,6 +78,7 @@ end_competition:
     - /cfishing competition end
 
 # A command to start competitions
+# Usage: [COMMAND] [id]
 start_competition:
   enable: true
   permission: customfishing.command.competition
@@ -70,6 +87,7 @@ start_competition:
     - /cfishing competition start
 
 # A command to open market for players
+# Usage: [COMMAND] [player]
 open_market:
   enable: true
   permission: customfishing.command.open.market
@@ -78,6 +96,7 @@ open_market:
     - /cfishing open market
 
 # A command to open bag for players
+# Usage: [COMMAND] [player]
 open_bag:
   enable: true
   permission: customfishing.command.open.bag
@@ -86,6 +105,7 @@ open_bag:
     - /cfishing open bag
 
 # A command to edit bag contents
+# Usage: [COMMAND] [player]
 edit_online_bag:
   enable: true
   permission: customfishing.command.edit.bag
@@ -94,9 +114,73 @@ edit_online_bag:
     - /cfishing fishingbag edit-online
 
 # A command to edit bag contents
+# Usage: [COMMAND] [uuid]
 edit_offline_bag:
   enable: true
   permission: customfishing.command.edit.bag
   usage:
     - /customfishing fishingbag edit-offline
     - /cfishing fishingbag edit-offline
+
+# A command to unlock those locked data
+# Usage: [COMMAND] [uuid]
+data_unlock:
+  enable: true
+  permission: customfishing.command.data
+  usage:
+    - /customfishing data unlock
+    - /cfishing data unlock
+
+# A command to export the data
+# Usage: [COMMAND]
+data_export:
+  enable: true
+  permission: customfishing.command.data
+  usage:
+    - /customfishing data export
+    - /cfishing data export
+
+# A command to import the data
+# Usage: [COMMAND] [file]
+data_import:
+  enable: true
+  permission: customfishing.command.data
+  usage:
+    - /customfishing data import
+    - /cfishing data import
+
+# A command to set a player's fishing statistics
+# Usage: [COMMAND] [player] [id] [type] [value]
+statistics_set:
+  enable: true
+  permission: customfishing.command.statistics
+  usage:
+    - /customfishing statistics set
+    - /cfishing statistics set
+
+# A command to reset a player's fishing statistics
+# Usage: [COMMAND] [player]
+statistics_reset:
+  enable: true
+  permission: customfishing.command.statistics
+  usage:
+    - /customfishing statistics reset
+    - /cfishing statistics reset
+
+# A command to query a player's fishing statistics
+# Usage: [COMMAND] [player] [type]
+statistics_query:
+  enable: true
+  permission: customfishing.command.statistics
+  usage:
+    - /customfishing statistics query
+    - /cfishing statistics query
+
+# A command to manually add a player's fishing statistics
+# Usage: [COMMAND] [player] [id] [type] [value]
+statistics_add:
+  enable: true
+  permission: customfishing.command.statistics
+  usage:
+    - /customfishing statistics add
+    - /cfishing statistics add

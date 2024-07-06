@@ -41,8 +41,11 @@ public class OpenMarketCommand extends BukkitCommandFeature<CommandSender> {
                 .flag(manager.flagBuilder("silent").withAliases("s").build())
                 .handler(context -> {
                     final Player player = context.get("player");
-                    BukkitCustomFishingPlugin.getInstance().getMarketManager().openMarketGUI(player);
-                    handleFeedback(context, MessageConstants.COMMAND_MARKET_OPEN_SUCCESS, Component.text(player.getName()));
+                    if (BukkitCustomFishingPlugin.getInstance().getMarketManager().openMarketGUI(player)) {
+                        handleFeedback(context, MessageConstants.COMMAND_MARKET_OPEN_SUCCESS, Component.text(player.getName()));
+                    } else {
+                        handleFeedback(context, MessageConstants.COMMAND_MARKET_OPEN_FAILURE_NOT_LOADED, Component.text(player.getName()));
+                    }
                 });
     }
 

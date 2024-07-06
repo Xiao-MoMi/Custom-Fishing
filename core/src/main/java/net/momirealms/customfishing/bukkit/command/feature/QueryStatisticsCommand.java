@@ -19,6 +19,7 @@ package net.momirealms.customfishing.bukkit.command.feature;
 
 import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.statistic.FishingStatistics;
 import net.momirealms.customfishing.bukkit.command.BukkitCommandFeature;
 import net.momirealms.customfishing.common.command.CustomFishingCommandManager;
 import net.momirealms.customfishing.common.locale.MessageConstants;
@@ -27,32 +28,35 @@ import org.bukkit.entity.Player;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.bukkit.parser.PlayerParser;
+import org.incendo.cloud.parser.standard.EnumParser;
 
-public class OpenBagCommand extends BukkitCommandFeature<CommandSender> {
+public class QueryStatisticsCommand extends BukkitCommandFeature<CommandSender> {
 
-    public OpenBagCommand(CustomFishingCommandManager<CommandSender> commandManager) {
+    public QueryStatisticsCommand(CustomFishingCommandManager<CommandSender> commandManager) {
         super(commandManager);
     }
 
     @Override
     public Command.Builder<? extends CommandSender> assembleCommand(CommandManager<CommandSender> manager, Command.Builder<CommandSender> builder) {
         return builder
+                .flag(manager.flagBuilder("silent").withAliases("s"))
                 .required("player", PlayerParser.playerParser())
-                .flag(manager.flagBuilder("silent").withAliases("s").build())
+                .required("type", EnumParser.enumParser(FishingStatistics.Type.class))
                 .handler(context -> {
-                    final Player player = context.get("player");
-                    BukkitCustomFishingPlugin.getInstance().getBagManager().openBag(player, player.getUniqueId()).whenComplete((result, e) -> {
-                        if (!result || e != null) {
-                            handleFeedback(context, MessageConstants.COMMAND_BAG_OPEN_FAILURE_NOT_LOADED, Component.text(player.getName()));
-                        } else {
-                            handleFeedback(context, MessageConstants.COMMAND_BAG_OPEN_SUCCESS, Component.text(player.getName()));
+                    Player player = context.get("player");
+                    FishingStatistics.Type type = context.get("type");
+                    BukkitCustomFishingPlugin.getInstance().getStorageManager().getOnlineUser(player.getUniqueId()).ifPresentOrElse(userData -> {
+                        if (type == FishingStatistics.Type.AMOUNT_OF_FISH_CAUGHT) {
+                            handleFeedback(context, MessageConstants.COMMAND_STATISTICS_QUERY_AMOUNT, Component.text(userData.statistics().amountMap().toString()));
+                        } else if (type == FishingStatistics.Type.MAX_SIZE) {
+                            handleFeedback(context, MessageConstants.COMMAND_STATISTICS_QUERY_SIZE, Component.text(userData.statistics().sizeMap().toString()));
                         }
-                    });
+                    }, () -> handleFeedback(context, MessageConstants.COMMAND_STATISTICS_FAILURE_NOT_LOADED));
                 });
     }
 
     @Override
     public String getFeatureID() {
-        return "open_bag";
+        return "statistics_query";
     }
 }
