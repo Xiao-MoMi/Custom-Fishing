@@ -63,6 +63,8 @@ public interface Loot {
      */
     boolean showInFinder();
 
+    boolean preventGrabbing();
+
     /**
      * Get the unique identifier for this loot.
      *
@@ -150,6 +152,8 @@ public interface Loot {
          * @return The builder instance.
          */
         Builder disableGame(boolean disableGame);
+
+        Builder preventGrabbing(boolean preventGrabbing);
 
         /**
          * Specify whether statistics recording is disabled for this loot.

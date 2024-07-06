@@ -52,6 +52,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class BukkitFishingManager implements FishingManager, Listener {
 
@@ -257,12 +258,12 @@ public class BukkitFishingManager implements FishingManager, Listener {
     private void onReelIn(PlayerFishEvent event) {
         Player player = event.getPlayer();
         getFishHook(player).ifPresent(hook -> {
+            event.setCancelled(true);
             Optional<GamingPlayer> gamingPlayer = hook.getGamingPlayer();
             if (gamingPlayer.isPresent()) {
                 ((AbstractGamingPlayer) gamingPlayer.get()).internalRightClick();
                 return;
             }
-            event.setCancelled(true);
             hook.onReelIn();
         });
     }

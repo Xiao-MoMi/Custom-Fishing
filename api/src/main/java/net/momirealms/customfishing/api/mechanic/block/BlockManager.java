@@ -29,7 +29,7 @@ public interface BlockManager extends Reloadable {
 
     boolean registerBlock(@NotNull BlockConfig block);
 
-    @Nullable
+    @NotNull
     FallingBlock summonBlockLoot(@NotNull Context<Player> context);
 
     @NotNull

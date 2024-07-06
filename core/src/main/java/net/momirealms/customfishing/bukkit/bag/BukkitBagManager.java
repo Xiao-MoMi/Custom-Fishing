@@ -19,17 +19,26 @@ package net.momirealms.customfishing.bukkit.bag;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.event.FishingBagPreCollectEvent;
+import net.momirealms.customfishing.api.event.FishingLootSpawnEvent;
 import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.action.ActionManager;
 import net.momirealms.customfishing.api.mechanic.bag.BagManager;
 import net.momirealms.customfishing.api.mechanic.bag.FishingBagHolder;
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
+import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.storage.user.UserData;
+import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.bukkit.config.BukkitConfigManager;
+import net.momirealms.customfishing.bukkit.util.ItemStackUtils;
+import net.momirealms.customfishing.bukkit.util.PlayerUtils;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -51,6 +60,7 @@ public class BukkitBagManager implements BagManager, Listener {
     private Action<Player>[] collectLootActions;
     private Action<Player>[] bagFullActions;
     private boolean bagStoreLoots;
+    private boolean enable;
     private String bagTitle;
     private List<Material> bagWhiteListItems = new ArrayList<>();
     private Requirement<Player>[] collectRequirements;
@@ -77,9 +87,55 @@ public class BukkitBagManager implements BagManager, Listener {
         this.plugin.getStorageManager().getDataSource().updateManyPlayersData(tempEditMap.values(), true);
     }
 
+    @EventHandler
+    public void onLootSpawn(FishingLootSpawnEvent event) {
+        if (!enable || !bagStoreLoots) {
+            return;
+        }
+        if (!event.summonEntity()) {
+            return;
+        }
+        if (!(event.getEntity() instanceof Item itemEntity)) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        Context<Player> context = event.getContext();
+        if (!RequirementManager.isSatisfied(context, collectRequirements)) {
+            return;
+        }
+
+        Optional<UserData> onlineUser = plugin.getStorageManager().getOnlineUser(player.getUniqueId());
+        if (onlineUser.isEmpty()) {
+            return;
+        }
+        UserData userData = onlineUser.get();
+        Inventory inventory = userData.holder().getInventory();
+        ItemStack item = itemEntity.getItemStack();
+        FishingBagPreCollectEvent preCollectEvent = new FishingBagPreCollectEvent(player, item, inventory);
+        if (EventUtils.fireAndCheckCancel(preCollectEvent)) {
+            return;
+        }
+
+        int cannotPut = PlayerUtils.putItemsToInventory(inventory, item, item.getAmount());
+        // some are put into bag
+        if (cannotPut != item.getAmount()) {
+            ActionManager.trigger(context, collectLootActions);
+        }
+        // all are put
+        if (cannotPut == 0) {
+            event.summonEntity(false);
+            return;
+        }
+        item.setAmount(cannotPut);
+        itemEntity.setItemStack(item);
+        ActionManager.trigger(context, bagFullActions);
+    }
+
     private void loadConfig() {
         Section config = BukkitConfigManager.getMainConfig().getSection("mechanics.fishing-bag");
 
+        enable = config.getBoolean("enable", true);
         bagTitle = config.getString("bag-title", "");
         bagStoreLoots = config.getBoolean("can-store-loot", false);
         bagWhiteListItems = config.getStringList("whitelist-items").stream().map(it -> Material.valueOf(it.toUpperCase(Locale.ENGLISH))).toList();
@@ -91,21 +147,25 @@ public class BukkitBagManager implements BagManager, Listener {
     @Override
     public CompletableFuture<Boolean> openBag(Player viewer, UUID owner) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
-        Optional<UserData> onlineUser = plugin.getStorageManager().getOnlineUser(owner);
-        onlineUser.ifPresentOrElse(data -> {
-            viewer.openInventory(data.holder().getInventory());
-            SparrowHeart.getInstance().updateInventoryTitle(viewer, AdventureHelper.componentToJson(AdventureHelper.miniMessage(plugin.getPlaceholderManager().parse(Bukkit.getOfflinePlayer(owner), bagTitle, Map.of("{uuid}", owner.toString(), "{player}", data.name())))));
-            future.complete(true);
-        }, () -> plugin.getStorageManager().getOfflineUserData(owner, true).thenAccept(result -> result.ifPresentOrElse(data -> {
-            if (data.isLocked()) {
-                future.completeExceptionally(new RuntimeException("Data is locked"));
-                return;
-            }
-            this.tempEditMap.put(viewer.getUniqueId(), data);
-            viewer.openInventory(data.holder().getInventory());
-            SparrowHeart.getInstance().updateInventoryTitle(viewer, AdventureHelper.componentToJson(AdventureHelper.miniMessage(plugin.getPlaceholderManager().parse(Bukkit.getOfflinePlayer(owner), bagTitle, Map.of("{uuid}", owner.toString(), "{player}", data.name())))));
-            future.complete(true);
-        }, () -> future.complete(false))));
+        if (enable) {
+            Optional<UserData> onlineUser = plugin.getStorageManager().getOnlineUser(owner);
+            onlineUser.ifPresentOrElse(data -> {
+                viewer.openInventory(data.holder().getInventory());
+                SparrowHeart.getInstance().updateInventoryTitle(viewer, AdventureHelper.componentToJson(AdventureHelper.miniMessage(plugin.getPlaceholderManager().parse(Bukkit.getOfflinePlayer(owner), bagTitle, Map.of("{uuid}", owner.toString(), "{player}", data.name())))));
+                future.complete(true);
+            }, () -> plugin.getStorageManager().getOfflineUserData(owner, true).thenAccept(result -> result.ifPresentOrElse(data -> {
+                if (data.isLocked()) {
+                    future.completeExceptionally(new RuntimeException("Data is locked"));
+                    return;
+                }
+                this.tempEditMap.put(viewer.getUniqueId(), data);
+                viewer.openInventory(data.holder().getInventory());
+                SparrowHeart.getInstance().updateInventoryTitle(viewer, AdventureHelper.componentToJson(AdventureHelper.miniMessage(plugin.getPlaceholderManager().parse(Bukkit.getOfflinePlayer(owner), bagTitle, Map.of("{uuid}", owner.toString(), "{player}", data.name())))));
+                future.complete(true);
+            }, () -> future.complete(false))));
+        } else {
+            future.complete(false);
+        }
         return future;
     }
 

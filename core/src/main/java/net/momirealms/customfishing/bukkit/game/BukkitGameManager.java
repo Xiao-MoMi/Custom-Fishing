@@ -832,8 +832,8 @@ public class BukkitGameManager implements GameManager {
 
                         @Override
                         public void arrangeTask() {
-                            var period = ((double) 10*(200-settings.difficulty()))/((double) (1+4*settings.difficulty()));
-                            this.task = plugin.getScheduler().asyncRepeating(this, 50, (long) period, TimeUnit.MILLISECONDS);
+                            var period = Math.min(200, ((double) 10*(200-settings.difficulty()))/((double) (1+4*settings.difficulty())));
+                            this.task = plugin.getScheduler().asyncRepeating(this, 10, (long) 10, TimeUnit.MILLISECONDS);
                         }
 
                         @Override
@@ -847,6 +847,7 @@ public class BukkitGameManager implements GameManager {
                                 face = !face;
                                 progress = -progress;
                             }
+                            if (!isValid()) return;
                             showUI();
                         }
 
@@ -862,7 +863,7 @@ public class BukkitGameManager implements GameManager {
                                     + OffsetUtils.getOffsetChars(pointerOffset + progress)
                                     + AdventureHelper.surroundWithMiniMessageFont(pointerImage, font)
                                     + OffsetUtils.getOffsetChars(totalWidth - progress - pointerWidth);
-                            SparrowHeart.getInstance().sendTitle(getPlayer(), AdventureHelper.miniMessageToJson(sendTitle.render(hook.getContext())), AdventureHelper.miniMessageToJson(bar), 0, 20, 0);
+                            SparrowHeart.getInstance().sendTitle(getPlayer(), AdventureHelper.miniMessageToJson(sendTitle.render(hook.getContext())), AdventureHelper.miniMessageToJson(bar), 0, 10, 0);
                         }
                     };
                 }

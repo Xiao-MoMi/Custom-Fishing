@@ -215,7 +215,7 @@ public class BukkitBlockManager implements BlockManager, Listener {
     }
 
     @Override
-    @Nullable
+    @NotNull
     public FallingBlock summonBlockLoot(@NotNull Context<Player> context) {
         String id = context.arg(ContextKeys.ID);
         BlockConfig config = requireNonNull(blocks.get(id), "Block " + id + " not found");

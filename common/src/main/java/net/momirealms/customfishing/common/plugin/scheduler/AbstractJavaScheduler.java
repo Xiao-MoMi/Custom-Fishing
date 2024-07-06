@@ -48,7 +48,7 @@ public abstract class AbstractJavaScheduler<T> implements SchedulerAdapter<T> {
     public AbstractJavaScheduler(CustomFishingPlugin plugin) {
         this.plugin = plugin;
 
-        this.scheduler = new ScheduledThreadPoolExecutor(1, r -> {
+        this.scheduler = new ScheduledThreadPoolExecutor(4, r -> {
             Thread thread = Executors.defaultThreadFactory().newThread(r);
             thread.setName("customfishing-scheduler");
             return thread;

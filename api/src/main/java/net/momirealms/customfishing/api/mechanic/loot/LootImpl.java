@@ -34,6 +34,7 @@ public class LootImpl implements Loot {
     private final boolean disableGame;
     private final boolean disableStatistics;
     private final boolean showInFinder;
+    private final boolean preventGrabbing;
     private final String id;
     private final String nick;
     private final StatisticsKeys statisticsKeys;
@@ -41,7 +42,7 @@ public class LootImpl implements Loot {
     private final String[] groups;
     private final LootBaseEffect lootBaseEffect;
 
-    public LootImpl(LootType type, boolean instantGame, boolean disableGame, boolean disableStatistics, boolean showInFinder, String id, String nick, StatisticsKeys statisticsKeys, MathValue<Player> score, String[] groups, LootBaseEffect lootBaseEffect) {
+    public LootImpl(LootType type, boolean instantGame, boolean disableGame, boolean disableStatistics, boolean showInFinder, boolean preventGrabbing, String id, String nick, StatisticsKeys statisticsKeys, MathValue<Player> score, String[] groups, LootBaseEffect lootBaseEffect) {
         this.type = type;
         this.instantGame = instantGame;
         this.disableGame = disableGame;
@@ -53,6 +54,7 @@ public class LootImpl implements Loot {
         this.score = score;
         this.groups = groups;
         this.lootBaseEffect = lootBaseEffect;
+        this.preventGrabbing = preventGrabbing;
     }
 
     @Override
@@ -87,6 +89,11 @@ public class LootImpl implements Loot {
     }
 
     @Override
+    public boolean preventGrabbing() {
+        return preventGrabbing;
+    }
+
+    @Override
     public MathValue<Player> score() {
         return score;
     }
@@ -118,6 +125,7 @@ public class LootImpl implements Loot {
         private boolean disableGame = Loot.DefaultProperties.DEFAULT_DISABLE_GAME;
         private boolean disableStatistics = Loot.DefaultProperties.DEFAULT_DISABLE_STATS;
         private boolean showInFinder = Loot.DefaultProperties.DEFAULT_SHOW_IN_FINDER;
+        private boolean preventGrabbing = false;
         private String id = null;
         private String nick = "UNDEFINED";
         private StatisticsKeys statisticsKeys = null;
@@ -138,6 +146,11 @@ public class LootImpl implements Loot {
         @Override
         public Builder disableGame(boolean disableGame) {
             this.disableGame = disableGame;
+            return this;
+        }
+        @Override
+        public Builder preventGrabbing(boolean preventGrabbing) {
+            this.preventGrabbing = preventGrabbing;
             return this;
         }
         @Override
@@ -188,6 +201,7 @@ public class LootImpl implements Loot {
                     disableGame,
                     disableStatistics,
                     showInFinder,
+                    preventGrabbing,
                     requireNonNull(id),
                     Optional.ofNullable(nick).orElse(id),
                     Optional.ofNullable(statisticsKeys).orElse(new StatisticsKeys(id, id)),

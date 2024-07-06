@@ -47,6 +47,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
+import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -196,12 +197,6 @@ public class BukkitItemManager implements ItemManager, Listener {
         Vector vector = new Vector(d0 * 0.1D, d1 * 0.1D + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08D, d2 * 0.1D);
 
         org.bukkit.entity.Item itemEntity = hookLocation.getWorld().dropItem(hookLocation, itemStack);
-        FishingLootSpawnEvent spawnEvent = new FishingLootSpawnEvent(player, hookLocation, plugin.getLootManager().getLoot(id).orElseThrow(), itemEntity);
-        Bukkit.getPluginManager().callEvent(spawnEvent);
-        if (spawnEvent.isCancelled()) {
-            itemEntity.remove();
-            return itemEntity;
-        }
 
         itemEntity.setInvulnerable(true);
         // prevent from being killed by lava
@@ -338,6 +333,16 @@ public class BukkitItemManager implements ItemManager, Listener {
     @EventHandler (ignoreCancelled = true)
     public void onExplosion(EntityExplodeEvent event) {
         handleExplosion(event.blockList());
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onPickUpItem(PlayerAttemptPickupItemEvent event) {
+        String owner = event.getItem().getPersistentDataContainer().get(requireNonNull(NamespacedKey.fromString("owner", plugin.getBoostrap())), PersistentDataType.STRING);
+        if (owner != null) {
+            if (!owner.equals(event.getPlayer().getName())) {
+                event.setCancelled(true);
+            }
+        }
     }
 
     private void handleExplosion(List<Block> blocks) {

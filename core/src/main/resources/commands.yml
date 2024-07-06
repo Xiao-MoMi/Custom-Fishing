@@ -6,6 +6,8 @@ config-version: "${config_version}"
 #
 # For safety reasons, editing this file requires a restart to apply
 #
+
+# A command to reload the plugin
 reload:
   enable: true
   permission: customfishing.command.reload
@@ -13,18 +15,21 @@ reload:
     - /customfishing reload
     - /cfishing reload
 
+# A command designed for players to sell fish
 sellfish:
   enable: true
   permission: customfishing.sellfish
   usage:
     - /sellfish
 
+# A command designed for players to open the fishing bag
 fishingbag:
   enable: true
   permission: fishingbag.user
   usage:
     - /fishingbag
 
+# A command to get items
 get_item:
   enable: true
   permission: customfishing.command.getitem
@@ -32,6 +37,7 @@ get_item:
     - /customfishing items get
     - /cfishing items get
 
+# A command to give items
 give_item:
   enable: true
   permission: customfishing.command.giveitem
@@ -39,6 +45,7 @@ give_item:
     - /customfishing items give
     - /cfishing items give
 
+# A command to stop the competition
 stop_competition:
   enable: true
   permission: customfishing.command.competition
@@ -46,6 +53,7 @@ stop_competition:
     - /customfishing competition stop
     - /cfishing competition stop
 
+# A command to end the competition
 end_competition:
   enable: true
   permission: customfishing.command.competition
@@ -53,6 +61,7 @@ end_competition:
     - /customfishing competition end
     - /cfishing competition end
 
+# A command to start competitions
 start_competition:
   enable: true
   permission: customfishing.command.competition
@@ -60,6 +69,7 @@ start_competition:
     - /customfishing competition start
     - /cfishing competition start
 
+# A command to open market for players
 open_market:
   enable: true
   permission: customfishing.command.open.market
@@ -67,6 +77,7 @@ open_market:
     - /customfishing open market
     - /cfishing open market
 
+# A command to open bag for players
 open_bag:
   enable: true
   permission: customfishing.command.open.bag
@@ -74,6 +85,7 @@ open_bag:
     - /customfishing open bag
     - /cfishing open bag
 
+# A command to edit bag contents
 edit_online_bag:
   enable: true
   permission: customfishing.command.edit.bag
@@ -81,16 +93,10 @@ edit_online_bag:
     - /customfishing fishingbag edit-online
     - /cfishing fishingbag edit-online
 
+# A command to edit bag contents
 edit_offline_bag:
   enable: true
   permission: customfishing.command.edit.bag
   usage:
     - /customfishing fishingbag edit-offline
     - /cfishing fishingbag edit-offline
-
-browser:
-  enable: true
-  permission: customfishing.command.browser
-  usage:
-    - /customfishing browser
-    - /cfishing browser

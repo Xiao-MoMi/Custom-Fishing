@@ -100,7 +100,7 @@ public class BukkitEntityManager implements EntityManager {
         return entityProviders.remove(id) != null;
     }
 
-    @Nullable
+    @NotNull
     @Override
     public Entity summonEntityLoot(Context<Player> context) {
         String id = context.arg(ContextKeys.ID);

@@ -51,7 +51,6 @@ public interface EventManager extends Reloadable {
      *
      * @param context The context in which the event is triggered.
      * @param id      The unique identifier of the event carrier.
-     * @param type
      * @param trigger The trigger that initiates the event.
      */
     default void trigger(Context<Player> context, String id, MechanicType type, ActionTrigger trigger) {
@@ -63,7 +62,6 @@ public interface EventManager extends Reloadable {
      *
      * @param context       The context in which the event is triggered.
      * @param id            The unique identifier of the event carrier.
-     * @param type
      * @param trigger       The trigger that initiates the event.
      * @param previousTimes The previous times count for the event.
      * @param afterTimes    The after times count for the event.

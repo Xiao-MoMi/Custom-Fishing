@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
 
-//    private final FishingManager manager;
     protected long deadline;
     protected boolean success;
     protected SchedulerTask task;
@@ -130,8 +129,16 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     protected abstract void tick();
 
     protected void endGame() {
-        hook.handleGameResult();
-        valid = false;
+        destroy();
+        boolean success = isSuccessful();
+        BukkitCustomFishingPlugin.getInstance().getScheduler().sync().run(() -> {
+            if (success) {
+                hook.handleSuccessfulFishing();
+            } else {
+                hook.handleFailedFishing();
+            }
+            hook.end();
+        }, hook.getHookEntity().getLocation());
     }
 
     protected void setGameResult(boolean success) {

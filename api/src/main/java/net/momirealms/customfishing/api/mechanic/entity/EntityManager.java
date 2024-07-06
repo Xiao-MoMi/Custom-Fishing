@@ -21,6 +21,7 @@ import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -40,6 +41,6 @@ public interface EntityManager extends Reloadable {
 
     boolean registerEntity(EntityConfig entity);
 
-    @Nullable
+    @NotNull
     Entity summonEntityLoot(Context<Player> context);
 }

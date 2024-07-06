@@ -85,6 +85,7 @@ public class FishingStatisticsImpl implements FishingStatistics {
         float previous = sizeMap.getOrDefault(id, 0f);
         if (previous >= newSize) return false;
         sizeMap.put(id, newSize);
+        System.out.println(sizeMap);
         return true;
     }
 

@@ -780,6 +780,10 @@ public class BukkitConfigManager extends ConfigManager {
 
     private void registerBuiltInLootParser() {
         this.registerLootParser(object -> {
+            boolean value = (boolean) object;
+            return builder -> builder.preventGrabbing(value);
+        }, "prevent-grabbing");
+        this.registerLootParser(object -> {
             String string = (String) object;
             return builder -> builder.nick(string);
         }, "nick");
