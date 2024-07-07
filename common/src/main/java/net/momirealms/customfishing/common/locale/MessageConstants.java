@@ -41,6 +41,8 @@ public interface MessageConstants {
     TranslatableComponent.Builder COMMAND_ITEM_FAILURE_NOT_EXIST = Component.translatable().key("command.item.failure.not_exist");
     TranslatableComponent.Builder COMMAND_ITEM_GIVE_SUCCESS = Component.translatable().key("command.item.give.success");
     TranslatableComponent.Builder COMMAND_ITEM_GET_SUCCESS = Component.translatable().key("command.item.get.success");
+    TranslatableComponent.Builder COMMAND_ITEM_IMPORT_FAILURE_NO_ITEM = Component.translatable().key("command.item.import.failure.no_item");
+    TranslatableComponent.Builder COMMAND_ITEM_IMPORT_SUCCESS = Component.translatable().key("command.item.import.success");
     TranslatableComponent.Builder COMMAND_FISH_FINDER_POSSIBLE_LOOTS = Component.translatable().key("command.fish_finder.possible_loots");
     TranslatableComponent.Builder COMMAND_FISH_FINDER_NO_LOOT = Component.translatable().key("command.fish_finder.no_loot");
     TranslatableComponent.Builder COMMAND_FISH_FINDER_SPLIT_CHAR = Component.translatable().key("command.fish_finder.split_char");

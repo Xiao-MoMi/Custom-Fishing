@@ -50,6 +50,11 @@ public class ItemConfigParser {
         this.id = id;
         this.material = section.getString("material");
         if (!section.contains("tag")) section.set("tag", true);
+        if (!section.contains("nick")) {
+            if (section.contains("display.name")) {
+                section.set("nick", section.getString("display.name"));
+            }
+        }
         analyze(section, functionMap);
     }
 

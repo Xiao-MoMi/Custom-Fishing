@@ -25,6 +25,9 @@ import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.*;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
+import net.momirealms.customfishing.api.mechanic.effect.Effect;
+import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
+import net.momirealms.customfishing.api.mechanic.fishing.FishingGears;
 import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
@@ -783,7 +786,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 return context -> {
                     if (Math.random() > chance) return;
                     Player owner = context.getHolder();
-                    Location location = position ? requireNonNull(context.arg(ContextKeys.HOOK_LOCATION)).clone() : owner.getLocation().clone();
+                    Location location = position ? requireNonNull(context.arg(ContextKeys.OTHER_LOCATION)).clone() : owner.getLocation().clone();
                     location.add(x.evaluate(context), y.evaluate(context) - 1, z.evaluate(context));
                     if (opposite) location.setYaw(-owner.getLocation().getYaw());
                     else location.setYaw((float) yaw.evaluate(context));
@@ -832,7 +835,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 return context -> {
                     if (Math.random() > chance) return;
                     Player owner = context.getHolder();
-                    Location location = position ? requireNonNull(context.arg(ContextKeys.HOOK_LOCATION)).clone() : owner.getLocation().clone();
+                    Location location = position ? requireNonNull(context.arg(ContextKeys.OTHER_LOCATION)).clone() : owner.getLocation().clone();
                     location.add(x.evaluate(context), y.evaluate(context), z.evaluate(context));
                     FakeArmorStand armorStand = SparrowHeart.getInstance().createFakeArmorStand(location);
                     armorStand.invisible(true);
@@ -874,16 +877,27 @@ public class BukkitActionManager implements ActionManager<Player> {
                 if (Math.random() > chance) return;
                 String previous = context.arg(ContextKeys.SURROUNDING);
                 context.arg(ContextKeys.SURROUNDING, surrounding);
-                Collection<String> loots = plugin.getLootManager().getWeightedLoots(context).keySet();
+                Collection<String> loots = plugin.getLootManager().getWeightedLoots(Effect.newInstance(), context).keySet();
                 StringJoiner stringJoiner = new StringJoiner(TranslationManager.miniMessageTranslation(MessageConstants.COMMAND_FISH_FINDER_SPLIT_CHAR.build().key()));
                 for (String loot : loots) {
-                    stringJoiner.add(loot);
+                    plugin.getLootManager().getLoot(loot).ifPresent(lootIns -> {
+                        System.out.println("loot: " + loot + " : " + lootIns.showInFinder());
+                        if (lootIns.showInFinder()) {
+                            if (!lootIns.nick().equals("UNDEFINED")) {
+                                stringJoiner.add(lootIns.nick());
+                            }
+                        }
+                    });
                 }
-                context.arg(ContextKeys.SURROUNDING, previous);
+                if (previous == null) {
+                    context.remove(ContextKeys.SURROUNDING);
+                } else {
+                    context.arg(ContextKeys.SURROUNDING, previous);
+                }
                 if (loots.isEmpty()) {
                     plugin.getSenderFactory().wrap(context.getHolder()).sendMessage(TranslationManager.render(MessageConstants.COMMAND_FISH_FINDER_NO_LOOT.build()));
                 } else {
-                    plugin.getSenderFactory().wrap(context.getHolder()).sendMessage(TranslationManager.render(MessageConstants.COMMAND_FISH_FINDER_POSSIBLE_LOOTS.arguments(Component.text(stringJoiner.toString())).build()));
+                    plugin.getSenderFactory().wrap(context.getHolder()).sendMessage(TranslationManager.render(MessageConstants.COMMAND_FISH_FINDER_POSSIBLE_LOOTS.arguments(AdventureHelper.miniMessage(stringJoiner.toString())).build()));
                 }
             };
         });

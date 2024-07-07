@@ -104,7 +104,7 @@ public class BukkitEntityManager implements EntityManager {
     public Entity summonEntityLoot(Context<Player> context) {
         String id = context.arg(ContextKeys.ID);
         EntityConfig config = requireNonNull(entities.get(id), "Entity " + id + " not found");
-        Location hookLocation = requireNonNull(context.arg(ContextKeys.HOOK_LOCATION));
+        Location hookLocation = requireNonNull(context.arg(ContextKeys.OTHER_LOCATION));
         Location playerLocation = requireNonNull(context.getHolder().getLocation());
         String entityID = config.entityID();
         Entity entity;

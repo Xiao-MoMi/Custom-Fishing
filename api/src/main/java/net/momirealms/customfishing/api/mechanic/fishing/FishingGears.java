@@ -121,8 +121,8 @@ public class FishingGears {
             // set bait if it is
             boolean hasBait = false;
             String anotherItemID = BukkitCustomFishingPlugin.getInstance().getItemManager().getItemID(rodOnMainHand ? offHandItem : mainHandItem);
-            MechanicType type = MechanicType.getTypeByID(anotherItemID);
-            if (type == MechanicType.BAIT) {
+            List<MechanicType> type = MechanicType.getTypeByID(anotherItemID);
+            if (type != null && type.contains(MechanicType.BAIT)) {
                 fishingGears.gears.put(GearType.BAIT, List.of(Pair.of(anotherItemID, rodOnMainHand ? offHandItem : mainHandItem)));
                 context.arg(ContextKeys.BAIT, anotherItemID);
                 BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(anotherItemID, MechanicType.BAIT).ifPresent(fishingGears.modifiers::add);
@@ -140,15 +140,17 @@ public class FishingGears {
                         ItemStack itemInBag = bag.getItem(i);
                         if (itemInBag == null) continue;
                         String bagItemID = BukkitCustomFishingPlugin.getInstance().getItemManager().getItemID(itemInBag);
-                        MechanicType bagItemType = MechanicType.getTypeByID(bagItemID);
-                        if (!hasBait && bagItemType == MechanicType.BAIT) {
-                            fishingGears.gears.put(GearType.BAIT, List.of(Pair.of(bagItemID, itemInBag)));
-                            context.arg(ContextKeys.BAIT, bagItemID);
-                            BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(bagItemID, MechanicType.BAIT).ifPresent(fishingGears.modifiers::add);
-                            hasBait = true;
-                        }
-                        if (bagItemType == MechanicType.UTIL) {
-                            uniqueUtils.put(bagItemID, itemInBag);
+                        List<MechanicType> bagItemType = MechanicType.getTypeByID(bagItemID);
+                        if (bagItemType != null) {
+                            if (!hasBait && bagItemType.contains(MechanicType.BAIT)) {
+                                fishingGears.gears.put(GearType.BAIT, List.of(Pair.of(bagItemID, itemInBag)));
+                                context.arg(ContextKeys.BAIT, bagItemID);
+                                BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(bagItemID, MechanicType.BAIT).ifPresent(fishingGears.modifiers::add);
+                                hasBait = true;
+                            }
+                            if (bagItemType.contains(MechanicType.UTIL)) {
+                                uniqueUtils.put(bagItemID, itemInBag);
+                            }
                         }
                     }
                     if (!uniqueUtils.isEmpty()) {

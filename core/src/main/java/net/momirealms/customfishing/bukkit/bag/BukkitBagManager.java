@@ -59,6 +59,11 @@ public class BukkitBagManager implements BagManager, Listener {
     private Action<Player>[] collectLootActions;
     private Action<Player>[] bagFullActions;
     private boolean bagStoreLoots;
+    private boolean bagStoreRods;
+    private boolean bagStoreBaits;
+    private boolean bagStoreHooks;
+    private boolean bagStoreUtils;
+    private final HashSet<MechanicType> storedTypes = new HashSet<>();
     private boolean enable;
     private String bagTitle;
     private List<Material> bagWhiteListItems = new ArrayList<>();
@@ -78,6 +83,7 @@ public class BukkitBagManager implements BagManager, Listener {
     @Override
     public void unload() {
         HandlerList.unregisterAll(this);
+        storedTypes.clear();
     }
 
     @Override
@@ -137,10 +143,20 @@ public class BukkitBagManager implements BagManager, Listener {
         enable = config.getBoolean("enable", true);
         bagTitle = config.getString("bag-title", "");
         bagStoreLoots = config.getBoolean("can-store-loot", false);
+        bagStoreRods = config.getBoolean("can-store-rod", true);
+        bagStoreBaits = config.getBoolean("can-store-bait", true);
+        bagStoreHooks = config.getBoolean("can-store-hook", true);
+        bagStoreUtils = config.getBoolean("can-store-util", true);
         bagWhiteListItems = config.getStringList("whitelist-items").stream().map(it -> Material.valueOf(it.toUpperCase(Locale.ENGLISH))).toList();
         collectLootActions = plugin.getActionManager().parseActions(config.getSection("collect-actions"));
         bagFullActions = plugin.getActionManager().parseActions(config.getSection("full-actions"));
         collectRequirements = plugin.getRequirementManager().parseRequirements(config.getSection("collect-requirements"), false);
+
+        if (bagStoreLoots) storedTypes.add(MechanicType.LOOT);
+        if (bagStoreRods) storedTypes.add(MechanicType.ROD);
+        if (bagStoreBaits) storedTypes.add(MechanicType.BAIT);
+        if (bagStoreHooks) storedTypes.add(MechanicType.HOOK);
+        if (bagStoreUtils) storedTypes.add(MechanicType.UTIL);
     }
 
     @Override
@@ -205,15 +221,16 @@ public class BukkitBagManager implements BagManager, Listener {
         if (movedItem == null || movedItem.getType() == Material.AIR || bagWhiteListItems.contains(movedItem.getType()))
             return;
         String id = plugin.getItemManager().getItemID(movedItem);
-        MechanicType type = MechanicType.getTypeByID(id);
+        List<MechanicType> type = MechanicType.getTypeByID(id);
         if (type == null) {
             event.setCancelled(true);
             return;
         }
-        if (type == MechanicType.LOOT && bagStoreLoots)
-            return;
-        if (type == MechanicType.BAIT || type == MechanicType.ROD || type == MechanicType.UTIL || type == MechanicType.HOOK)
-            return;
+        for (MechanicType mechanicType : type) {
+            if (storedTypes.contains(mechanicType)) {
+                return;
+            }
+        }
         event.setCancelled(true);
     }
 

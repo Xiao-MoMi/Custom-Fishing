@@ -134,10 +134,10 @@ public class CustomFishingHook {
                             }
                         }
 
-                        context.arg(ContextKeys.HOOK_LOCATION, hook.getLocation());
-                        context.arg(ContextKeys.HOOK_X, hook.getLocation().getBlockX());
-                        context.arg(ContextKeys.HOOK_Y, hook.getLocation().getBlockY());
-                        context.arg(ContextKeys.HOOK_Z, hook.getLocation().getBlockZ());
+                        context.arg(ContextKeys.OTHER_LOCATION, hook.getLocation());
+                        context.arg(ContextKeys.OTHER_X, hook.getLocation().getBlockX());
+                        context.arg(ContextKeys.OTHER_Y, hook.getLocation().getBlockY());
+                        context.arg(ContextKeys.OTHER_Z, hook.getLocation().getBlockZ());
 
                         // get the next loot
                         Loot loot = plugin.getLootManager().getNextLoot(effect, context);
@@ -226,7 +226,7 @@ public class CustomFishingHook {
 
     public void onBite() {
         if (isPlayingGame()) return;
-        plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.getTypeByID(nextLoot.id()), ActionTrigger.BITE);
+        plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.BITE);
         gears.trigger(ActionTrigger.BITE, context);
         if (RequirementManager.isSatisfied(context, ConfigManager.autoFishingRequirements())) {
             handleSuccessfulFishing();
@@ -306,10 +306,10 @@ public class CustomFishingHook {
     public void handleFailedFishing() {
 
         // update the hook location
-        context.arg(ContextKeys.HOOK_LOCATION, hook.getLocation());
-        context.arg(ContextKeys.HOOK_X, hook.getLocation().getBlockX());
-        context.arg(ContextKeys.HOOK_Y, hook.getLocation().getBlockY());
-        context.arg(ContextKeys.HOOK_Z, hook.getLocation().getBlockZ());
+        context.arg(ContextKeys.OTHER_LOCATION, hook.getLocation());
+        context.arg(ContextKeys.OTHER_X, hook.getLocation().getBlockX());
+        context.arg(ContextKeys.OTHER_Y, hook.getLocation().getBlockY());
+        context.arg(ContextKeys.OTHER_Z, hook.getLocation().getBlockZ());
 
         gears.trigger(ActionTrigger.FAILURE, context);
         plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.FAILURE);
@@ -318,10 +318,10 @@ public class CustomFishingHook {
     public void handleSuccessfulFishing() {
 
         // update the hook location
-        context.arg(ContextKeys.HOOK_LOCATION, hook.getLocation());
-        context.arg(ContextKeys.HOOK_X, hook.getLocation().getBlockX());
-        context.arg(ContextKeys.HOOK_Y, hook.getLocation().getBlockY());
-        context.arg(ContextKeys.HOOK_Z, hook.getLocation().getBlockZ());
+        context.arg(ContextKeys.OTHER_LOCATION, hook.getLocation());
+        context.arg(ContextKeys.OTHER_X, hook.getLocation().getBlockX());
+        context.arg(ContextKeys.OTHER_Y, hook.getLocation().getBlockY());
+        context.arg(ContextKeys.OTHER_Z, hook.getLocation().getBlockZ());
 
         LootType lootType = context.arg(ContextKeys.LOOT);
         Objects.requireNonNull(lootType, "Missing loot type");
@@ -429,7 +429,6 @@ public class CustomFishingHook {
 
         String id = context.arg(ContextKeys.ID);
         Player player = context.getHolder();
-        MechanicType type = MechanicType.getTypeByID(id);
 
         if (!nextLoot.disableStats()) {
             plugin.getStorageManager().getOnlineUser(player.getUniqueId()).ifPresent(
@@ -441,14 +440,14 @@ public class CustomFishingHook {
                             context.arg(ContextKeys.RECORD, max);
                             context.arg(ContextKeys.RECORD_FORMATTED, String.format("%.2f", max));
                             if (userData.statistics().updateSize(nextLoot.statisticKey().sizeKey(), size)) {
-                                plugin.getEventManager().trigger(context, id, type, ActionTrigger.NEW_SIZE_RECORD);
+                                plugin.getEventManager().trigger(context, id, MechanicType.LOOT, ActionTrigger.NEW_SIZE_RECORD);
                             }
                         });
                     }
             );
         }
 
-        plugin.getEventManager().trigger(context, id, type, ActionTrigger.SUCCESS);
+        plugin.getEventManager().trigger(context, id, MechanicType.LOOT, ActionTrigger.SUCCESS);
         player.setStatistic(Statistic.FISH_CAUGHT, player.getStatistic(Statistic.FISH_CAUGHT) + 1);
     }
 }

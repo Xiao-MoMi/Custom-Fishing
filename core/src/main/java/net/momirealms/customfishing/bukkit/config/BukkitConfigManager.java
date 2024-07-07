@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.bukkit.config;
 
+import com.saicone.rtag.RtagItem;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
@@ -35,6 +36,7 @@ import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectProperties;
 import net.momirealms.customfishing.api.mechanic.event.EventManager;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
+import net.momirealms.customfishing.api.mechanic.item.tag.TagEditor;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
@@ -52,8 +54,10 @@ import net.momirealms.customfishing.api.mechanic.totem.block.type.TypeCondition;
 import net.momirealms.customfishing.api.util.OffsetUtils;
 import net.momirealms.customfishing.bukkit.totem.particle.DustParticleSetting;
 import net.momirealms.customfishing.bukkit.totem.particle.ParticleSetting;
+import net.momirealms.customfishing.bukkit.util.ItemStackUtils;
 import net.momirealms.customfishing.common.dependency.DependencyProperties;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.item.AbstractItem;
 import net.momirealms.customfishing.common.item.Item;
 import net.momirealms.customfishing.common.util.*;
 import org.bukkit.*;
@@ -65,7 +69,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -94,9 +100,9 @@ public class BukkitConfigManager extends ConfigManager {
     @Override
     public void load() {
         String configVersion = DependencyProperties.getDependencyVersion("config");
-        try {
+        try (InputStream inputStream = new FileInputStream(resolveConfig("config.yml").toFile())) {
             MAIN_CONFIG = YamlDocument.create(
-                    resolveConfig("config.yml").toFile(),
+                    inputStream,
                     plugin.getResourceStream("config.yml"),
                     GeneralSettings.builder()
                             .setRouteSeparator('.')
@@ -287,26 +293,6 @@ public class BukkitConfigManager extends ConfigManager {
     }
 
     private void registerBuiltInItemProperties() {
-        Function<Object, BiConsumer<Item<ItemStack>, Context<Player>>> f2 = arg -> {
-            Section section = (Section) arg;
-            boolean stored = Objects.equals(section.getNameAsString(), "stored-random-enchantments");
-            List<Tuple<Double, String, Short>> enchantments = getPossibleEnchantments(section);
-            return (item, context) -> {
-                HashSet<String> ids = new HashSet<>();
-                for (Tuple<Double, String, Short> pair : enchantments) {
-                    if (Math.random() < pair.left() && !ids.contains(pair.mid())) {
-                        if (stored) {
-                            item.addStoredEnchantment(Key.fromString(pair.mid()), pair.right());
-                        } else {
-                            item.addEnchantment(Key.fromString(pair.mid()), pair.right());
-                        }
-                        ids.add(pair.mid());
-                    }
-                }
-            };
-        };
-        this.registerItemParser(f2, 4850, "random-stored-enchantments");
-        this.registerItemParser(f2, 4750, "random-enchantments");
         Function<Object, BiConsumer<Item<ItemStack>, Context<Player>>> f1 = arg -> {
             Section section = (Section) arg;
             boolean stored = Objects.equals(section.getNameAsString(), "stored-enchantment-pool");
@@ -365,6 +351,26 @@ public class BukkitConfigManager extends ConfigManager {
         };
         this.registerItemParser(f1, 4800, "stored-enchantment-pool");
         this.registerItemParser(f1, 4700, "enchantment-pool");
+        Function<Object, BiConsumer<Item<ItemStack>, Context<Player>>> f2 = arg -> {
+            Section section = (Section) arg;
+            boolean stored = Objects.equals(section.getNameAsString(), "stored-random-enchantments");
+            List<Tuple<Double, String, Short>> enchantments = getPossibleEnchantments(section);
+            return (item, context) -> {
+                HashSet<String> ids = new HashSet<>();
+                for (Tuple<Double, String, Short> pair : enchantments) {
+                    if (Math.random() < pair.left() && !ids.contains(pair.mid())) {
+                        if (stored) {
+                            item.addStoredEnchantment(Key.fromString(pair.mid()), pair.right());
+                        } else {
+                            item.addEnchantment(Key.fromString(pair.mid()), pair.right());
+                        }
+                        ids.add(pair.mid());
+                    }
+                }
+            };
+        };
+        this.registerItemParser(f2, 4850, "random-stored-enchantments");
+        this.registerItemParser(f2, 4750, "random-enchantments");
         this.registerItemParser(arg -> {
             Section section = (Section) arg;
             Map<Key, Short> map = getEnchantments(section);
@@ -432,6 +438,16 @@ public class BukkitConfigManager extends ConfigManager {
                 context.arg(ContextKeys.PRICE_FORMATTED, String.format("%.2f", price));
             };
         }, 1_500, "price");
+        this.registerItemParser(arg -> {
+            Section section = (Section) arg;
+            ArrayList<TagEditor> editors = new ArrayList<>();
+            ItemStackUtils.sectionToEditor(section, editors);
+            return (item, context) -> {
+                for (TagEditor editor : editors) {
+                    editor.apply(((AbstractItem<RtagItem, ItemStack>) item).getRTagItem(), context);
+                }
+            };
+        }, 1_750, "nbt");
     }
 
     private void registerBuiltInEffectModifierParser() {

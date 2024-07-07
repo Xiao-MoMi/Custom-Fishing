@@ -86,6 +86,14 @@ public final class PlayerContextImpl implements Context<Player> {
         return (C) args.get(key);
     }
 
+    @Nullable
+    @SuppressWarnings("unchecked")
+    @Override
+    public <C> C remove(ContextKeys<C> key) {
+        placeholderMap.remove("{" + key.key() + "}");
+        return (C) args.remove(key);
+    }
+
     @Override
     public Player getHolder() {
         return player;

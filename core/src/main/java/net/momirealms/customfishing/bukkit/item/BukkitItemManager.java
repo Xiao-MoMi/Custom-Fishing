@@ -161,18 +161,6 @@ public class BukkitItemManager implements ItemManager, Listener {
 
     @Nullable
     @Override
-    public MechanicType getItemType(@NotNull ItemStack itemStack) {
-        return MechanicType.getTypeByID(getCustomFishingItemID(itemStack));
-    }
-
-    @Nullable
-    @Override
-    public MechanicType getItemType(@NotNull String id) {
-        return MechanicType.getTypeByID(id);
-    }
-
-    @Nullable
-    @Override
     public org.bukkit.entity.Item dropItemLoot(@NotNull Context<Player> context, ItemStack rod, FishHook hook) {
         String id = requireNonNull(context.arg(ContextKeys.ID));
         ItemStack itemStack;
@@ -188,7 +176,7 @@ public class BukkitItemManager implements ItemManager, Listener {
 
         Player player = context.getHolder();
         Location playerLocation = player.getLocation();
-        Location hookLocation = requireNonNull(context.arg(ContextKeys.HOOK_LOCATION));
+        Location hookLocation = requireNonNull(context.arg(ContextKeys.OTHER_LOCATION));
 
         double d0 = playerLocation.getX() - hookLocation.getX();
         double d1 = playerLocation.getY() - hookLocation.getY();

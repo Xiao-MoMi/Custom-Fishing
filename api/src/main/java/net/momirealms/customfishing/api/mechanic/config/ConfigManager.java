@@ -46,6 +46,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -329,9 +330,9 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     @Override
     public YamlDocument loadConfig(String filePath, char routeSeparator) {
-        try {
+        try (InputStream inputStream = new FileInputStream(resolveConfig(filePath).toFile())) {
             return YamlDocument.create(
-                    resolveConfig(filePath).toFile(),
+                    inputStream,
                     plugin.getResourceStream(filePath),
                     GeneralSettings.builder().setRouteSeparator(routeSeparator).build(),
                     LoaderSettings
@@ -352,8 +353,8 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     @Override
     public YamlDocument loadData(File file) {
-        try {
-            return YamlDocument.create(file);
+        try (InputStream inputStream = new FileInputStream(file)) {
+            return YamlDocument.create(inputStream);
         } catch (IOException e) {
             plugin.getPluginLogger().severe("Failed to load config " + file, e);
             throw new RuntimeException(e);
@@ -362,8 +363,8 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     @Override
     public YamlDocument loadData(File file, char routeSeparator) {
-        try {
-            return YamlDocument.create(file, GeneralSettings.builder().setRouteSeparator(routeSeparator).build());
+        try (InputStream inputStream = new FileInputStream(file)) {
+            return YamlDocument.create(inputStream, GeneralSettings.builder().setRouteSeparator(routeSeparator).build());
         } catch (IOException e) {
             plugin.getPluginLogger().severe("Failed to load config " + file, e);
             throw new RuntimeException(e);

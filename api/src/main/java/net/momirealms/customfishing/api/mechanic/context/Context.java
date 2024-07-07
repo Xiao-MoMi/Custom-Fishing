@@ -76,6 +76,9 @@ public interface Context<T> {
     @Nullable
     <C> C arg(ContextKeys<C> key);
 
+    @Nullable
+    <C> C remove(ContextKeys<C> key);
+
     /**
      * Gets the holder of this context.
      *

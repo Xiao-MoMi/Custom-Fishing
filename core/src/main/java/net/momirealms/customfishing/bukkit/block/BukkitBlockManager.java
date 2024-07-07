@@ -227,7 +227,7 @@ public class BukkitBlockManager implements BlockManager, Listener {
         } else {
             blockData = blockProviders.get("vanilla").blockData(context, blockID, config.dataModifier());
         }
-        Location hookLocation = requireNonNull(context.arg(ContextKeys.HOOK_LOCATION));
+        Location hookLocation = requireNonNull(context.arg(ContextKeys.OTHER_LOCATION));
         Location playerLocation = requireNonNull(context.getHolder()).getLocation();
         FallingBlock fallingBlock = hookLocation.getWorld().spawn(hookLocation, FallingBlock.class, (fb -> fb.setBlockData(blockData)));
         fallingBlock.getPersistentDataContainer().set(

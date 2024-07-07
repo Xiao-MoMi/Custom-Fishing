@@ -29,7 +29,7 @@ public interface Loot {
         public static boolean DEFAULT_INSTANT_GAME = false;
         public static boolean DEFAULT_DISABLE_GAME = false;
         public static boolean DEFAULT_DISABLE_STATS = false;
-        public static boolean DEFAULT_SHOW_IN_FINDER = false;
+        public static boolean DEFAULT_SHOW_IN_FINDER = true;
     }
 
     LootType DEFAULT_TYPE = LootType.ITEM;

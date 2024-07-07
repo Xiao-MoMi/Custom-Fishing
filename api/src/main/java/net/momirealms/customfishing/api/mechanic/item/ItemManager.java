@@ -51,12 +51,6 @@ public interface ItemManager extends Reloadable {
     String getCustomFishingItemID(@NotNull ItemStack itemStack);
 
     @Nullable
-    MechanicType getItemType(@NotNull ItemStack itemStack);
-
-    @Nullable
-    MechanicType getItemType(@NotNull String id);
-
-    @Nullable
     Item dropItemLoot(@NotNull Context<Player> context, ItemStack rod, FishHook hook);
 
     void decreaseDurability(ItemStack itemStack, int amount, boolean incorrectUsage);

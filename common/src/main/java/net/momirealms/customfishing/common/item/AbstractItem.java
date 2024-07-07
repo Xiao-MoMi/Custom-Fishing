@@ -150,4 +150,8 @@ public class AbstractItem<R, I> implements Item<I> {
     public void update() {
         factory.update(item);
     }
+
+    public R getRTagItem() {
+        return item;
+    }
 }

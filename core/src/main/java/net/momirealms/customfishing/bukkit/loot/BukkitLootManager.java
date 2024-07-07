@@ -129,8 +129,21 @@ public class BukkitLootManager implements LootManager {
     }
 
     @Override
-    public HashMap<String, Double> getWeightedLoots(Context<Player> context) {
-        return null;
+    public HashMap<String, Double> getWeightedLoots(Effect effect, Context<Player> context) {
+        HashMap<String, Double> lootWeightMap = new HashMap<>();
+        for (ConditionalElement<List<Pair<String, BiFunction<Context<Player>, Double, Double>>>, Player> conditionalElement : lootConditions.values()) {
+            modifyWeightMap(lootWeightMap, context, conditionalElement);
+        }
+        for (Pair<String, BiFunction<Context<Player>, Double, Double>> pair : effect.weightOperations()) {
+            double previous = lootWeightMap.getOrDefault(pair.left(), 0d);
+            if (previous > 0)
+                lootWeightMap.put(pair.left(), pair.right().apply(context, previous));
+        }
+        for (Pair<String, BiFunction<Context<Player>, Double, Double>> pair : effect.weightOperationsIgnored()) {
+            double previous = lootWeightMap.getOrDefault(pair.left(), 0d);
+            lootWeightMap.put(pair.left(), pair.right().apply(context, previous));
+        }
+        return lootWeightMap;
     }
 
     @Nullable

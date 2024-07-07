@@ -20,11 +20,14 @@ package net.momirealms.customfishing.bukkit.event;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.event.EventManager;
 import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -78,14 +81,15 @@ public class BukkitEventManager implements EventManager, Listener {
         if (itemStack.getType() == Material.AIR || itemStack.getAmount() == 0)
             return;
         String id = this.plugin.getItemManager().getItemID(itemStack);
-        Optional.ofNullable(this.carriers.get(id)).ifPresent(carrier -> {
-            carrier.trigger(Context.player(event.getPlayer()), ActionTrigger.INTERACT);
-        });
+        Context<Player> context = Context.player(event.getPlayer());
+        Block clicked = event.getClickedBlock();
+        context.arg(ContextKeys.OTHER_LOCATION, clicked == null ? event.getPlayer().getLocation() : clicked.getLocation());
+        trigger(context, id, MechanicType.UTIL, ActionTrigger.INTERACT);
     }
 
     @EventHandler (ignoreCancelled = true)
     public void onConsumeItem(PlayerItemConsumeEvent event) {
-        Optional.ofNullable(carriers.get(plugin.getItemManager().getItemID(event.getItem())))
-                .ifPresent(carrier -> carrier.trigger(Context.player(event.getPlayer()), ActionTrigger.CONSUME));
+        Context<Player> context = Context.player(event.getPlayer());
+        trigger(context, plugin.getItemManager().getItemID(event.getItem()), MechanicType.LOOT, ActionTrigger.CONSUME);
     }
 }

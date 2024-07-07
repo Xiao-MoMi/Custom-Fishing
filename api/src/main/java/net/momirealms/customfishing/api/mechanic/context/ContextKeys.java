@@ -54,10 +54,10 @@ public class ContextKeys<T> {
     public static final ContextKeys<Double> SCORE = of("score", Double.class);
     public static final ContextKeys<Double> CUSTOM_SCORE = of("custom_score", Double.class);
     public static final ContextKeys<String> RANK = of("rank", String.class);
-    public static final ContextKeys<Location> HOOK_LOCATION = of("hook_location", Location.class);
-    public static final ContextKeys<Integer> HOOK_X = of("hook_x", Integer.class);
-    public static final ContextKeys<Integer> HOOK_Y = of("hook_y", Integer.class);
-    public static final ContextKeys<Integer> HOOK_Z = of("hook_z", Integer.class);
+    public static final ContextKeys<Location> OTHER_LOCATION = of("other_location", Location.class);
+    public static final ContextKeys<Integer> OTHER_X = of("other_x", Integer.class);
+    public static final ContextKeys<Integer> OTHER_Y = of("other_y", Integer.class);
+    public static final ContextKeys<Integer> OTHER_Z = of("other_z", Integer.class);
     public static final ContextKeys<String> MONEY = of("money", String.class);
     public static final ContextKeys<String> MONEY_FORMATTED = of("money_formatted", String.class);
     public static final ContextKeys<String> REST = of("rest", String.class);

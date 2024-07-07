@@ -42,6 +42,8 @@ command.reload.success: "<white>Reloaded. Took <green><arg:0></green> ms.</white
 command.item.failure.not_exist: "<red>Item [<arg:0>] not exists.</red>"
 command.item.give.success: "<white>Successfully given <arg:0> <arg:1>x <arg:2>.</white>"
 command.item.get.success: "<white>Successfully got <arg:0>x <arg:1>.</white>"
+command.item.import.failure.no_item: "<red>You can't import air</red>"
+command.item.import.success: "<white>Item [<arg:0>] has been saved to /plugins/CustomFishing/imported_items.yml</white>"
 command.fish_finder.possible_loots: "<white>Possible loots here: <arg:0></white>"
 command.fish_finder.no_loot: "<white>No loot found here</white>"
 command.fish_finder.split_char: ", "

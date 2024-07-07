@@ -19,6 +19,7 @@ package net.momirealms.customfishing.common.util;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ArrayUtils {
@@ -50,5 +51,11 @@ public class ArrayUtils {
             result.add(chunk);
         }
         return result;
+    }
+
+    public static <T> T[] appendElementToArray(T[] array, T element) {
+        T[] newArray = Arrays.copyOf(array, array.length + 1);
+        newArray[array.length] = element;
+        return newArray;
     }
 }

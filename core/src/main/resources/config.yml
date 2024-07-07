@@ -159,8 +159,12 @@ mechanics:
     # Other whitelist-items
     whitelist-items:
       - fishing_rod
-    # Can fishing bag store fishing loots?
+    # Decide the items that can be stored in bag
     can-store-loot: false
+    can-store-rod: true
+    can-store-bait: true
+    can-store-hook: true
+    can-store-util: true
     # Requirements for automatically collecting
     collect-requirements:
       permission: fishingbag.collectloot
