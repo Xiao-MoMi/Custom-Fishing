@@ -15,16 +15,14 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.api.mechanic.effect;
+package net.momirealms.customfishing.api.mechanic.item;
 
-import net.momirealms.customfishing.api.mechanic.MechanicType;
-import net.momirealms.customfishing.common.plugin.feature.Reloadable;
+import com.saicone.rtag.RtagItem;
+import net.momirealms.customfishing.api.mechanic.context.Context;
+import org.bukkit.entity.Player;
 
-import java.util.Optional;
+@FunctionalInterface
+public interface ItemEditor {
 
-public interface EffectManager extends Reloadable {
-
-    boolean registerEffectModifier(EffectModifier effect, MechanicType type);
-
-    Optional<EffectModifier> getEffectModifier(String id, MechanicType type);
+    void apply(RtagItem item, Context<Player> context);
 }

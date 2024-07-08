@@ -51,6 +51,8 @@ public interface Item<I> {
 
     Item<I> addStoredEnchantment(Key enchantment, int level);
 
+    Item<I> itemFlags(List<String> flags);
+
     Optional<Object> getTag(Object... path);
 
     Item<I> setTag(Object value, Object... path);

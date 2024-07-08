@@ -393,6 +393,8 @@ mechanics:
     allow-multiple-type: true
     # Is it allowed for totems of the same type to take effect cumulatively
     allow-same-type: false
+  # Enable fake bait casting animation
+  bait-animation: true
 
 # Other settings
 other-settings:

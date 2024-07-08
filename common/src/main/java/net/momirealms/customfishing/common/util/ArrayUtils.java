@@ -58,4 +58,10 @@ public class ArrayUtils {
         newArray[array.length] = element;
         return newArray;
     }
+
+    public static String[] splitValue(String value) {
+        return value.substring(value.indexOf('[') + 1, value.lastIndexOf(']'))
+                .replaceAll("\\s", "")
+                .split(",");
+    }
 }

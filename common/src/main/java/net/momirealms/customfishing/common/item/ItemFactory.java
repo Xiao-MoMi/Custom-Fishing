@@ -87,4 +87,6 @@ public abstract class ItemFactory<P extends CustomFishingPlugin, R, I> {
     protected abstract void addEnchantment(R item, Key enchantment, int level);
 
     protected abstract void addStoredEnchantment(R item, Key enchantment, int level);
+
+    protected abstract void itemFlags(R item, List<String> flags);
 }

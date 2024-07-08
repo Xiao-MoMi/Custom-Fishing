@@ -15,10 +15,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.api.mechanic.item;
+package net.momirealms.customfishing.api.mechanic;
 
 import net.kyori.adventure.util.Index;
-import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 

@@ -19,8 +19,8 @@ package net.momirealms.customfishing.bukkit.util;
 
 import com.saicone.rtag.item.ItemTagStream;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import net.momirealms.customfishing.api.mechanic.item.tag.TagEditor;
-import net.momirealms.customfishing.api.mechanic.item.tag.TagListType;
+import net.momirealms.customfishing.api.mechanic.item.ItemEditor;
+import net.momirealms.customfishing.api.mechanic.item.tag.TagMap;
 import net.momirealms.customfishing.api.mechanic.item.tag.TagValueType;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
@@ -37,6 +37,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
+
+import static net.momirealms.customfishing.api.util.TagUtils.toTypeAndData;
+import static net.momirealms.customfishing.common.util.ArrayUtils.splitValue;
 
 public class ItemStackUtils {
 
@@ -90,28 +93,205 @@ public class ItemStackUtils {
         return map;
     }
 
-    // TODO Improve the map parser and refactor this method to make it more readable
-    public static void sectionToEditor(Section section, List<TagEditor> tagEditors, String... route) {
+    private static void sectionToMap(Section section, Map<String, Object> outPut) {
+        for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
+            if (entry.getValue() instanceof Section inner) {
+                HashMap<String, Object> map = new HashMap<>();
+                outPut.put(entry.getKey(), map);
+                sectionToMap(inner, map);
+            } else {
+                outPut.put(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    public static void sectionToComponentEditor(Section section, List<ItemEditor> itemEditors) {
+        for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
+            String component = entry.getKey();
+            Object value = entry.getValue();
+            if (value instanceof Section inner) {
+                Map<String, Object> innerMap = new HashMap<>();
+                sectionToMap(inner, innerMap);
+                TagMap tagMap = TagMap.of(innerMap);
+                itemEditors.add(((item, context) -> {
+                    item.setComponent(component, tagMap.apply(context));
+                }));
+            } else if (value instanceof List<?> list) {
+                Object first = list.get(0);
+                if (first instanceof Map<?,?>) {
+                    ArrayList<TagMap> output = new ArrayList<>();
+                    for (Object o : list) {
+                        Map<String, Object> innerMap = (Map<String, Object>) o;
+                        TagMap tagMap = TagMap.of(innerMap);
+                        output.add(tagMap);
+                    }
+                    itemEditors.add(((item, context) -> {
+                        List<Map<String, Object>> maps = output.stream().map(unparsed -> unparsed.apply(context)).toList();
+                        item.setComponent(component, maps);
+                    }));
+                } else if (first instanceof String str) {
+                    Pair<TagValueType, String> pair = toTypeAndData(str);
+                    switch (pair.left()) {
+                        case INT -> {
+                            List<MathValue<Player>> values = new ArrayList<>();
+                            for (Object o : list) {
+                                values.add(MathValue.auto(toTypeAndData((String) o).right()));
+                            }
+                            itemEditors.add(((item, context) -> {
+                                List<Integer> integers = values.stream().map(unparsed -> (int) unparsed.evaluate(context)).toList();
+                                item.setComponent(component, integers);
+                            }));
+                        }
+                        case BYTE -> {
+                            List<MathValue<Player>> values = new ArrayList<>();
+                            for (Object o : list) {
+                                values.add(MathValue.auto(toTypeAndData((String) o).right()));
+                            }
+                            itemEditors.add(((item, context) -> {
+                                List<Byte> bytes = values.stream().map(unparsed -> (byte) unparsed.evaluate(context)).toList();
+                                item.setComponent(component, bytes);
+                            }));
+                        }
+                        case LONG -> {
+                            List<MathValue<Player>> values = new ArrayList<>();
+                            for (Object o : list) {
+                                values.add(MathValue.auto(toTypeAndData((String) o).right()));
+                            }
+                            itemEditors.add(((item, context) -> {
+                                List<Long> longs = values.stream().map(unparsed -> (long) unparsed.evaluate(context)).toList();
+                                item.setComponent(component, longs);
+                            }));
+                        }
+                        case FLOAT -> {
+                            List<MathValue<Player>> values = new ArrayList<>();
+                            for (Object o : list) {
+                                values.add(MathValue.auto(toTypeAndData((String) o).right()));
+                            }
+                            itemEditors.add(((item, context) -> {
+                                List<Float> floats = values.stream().map(unparsed -> (float) unparsed.evaluate(context)).toList();
+                                item.setComponent(component, floats);
+                            }));
+                        }
+                        case DOUBLE -> {
+                            List<MathValue<Player>> values = new ArrayList<>();
+                            for (Object o : list) {
+                                values.add(MathValue.auto(toTypeAndData((String) o).right()));
+                            }
+                            itemEditors.add(((item, context) -> {
+                                List<Double> doubles = values.stream().map(unparsed -> (double) unparsed.evaluate(context)).toList();
+                                item.setComponent(component, doubles);
+                            }));
+                        }
+                        case STRING -> {
+                            List<TextValue<Player>> values = new ArrayList<>();
+                            for (Object o : list) {
+                                values.add(TextValue.auto(toTypeAndData((String) o).right()));
+                            }
+                            itemEditors.add(((item, context) -> {
+                                List<String> texts = values.stream().map(unparsed -> unparsed.render(context)).toList();
+                                item.setComponent(component, texts);
+                            }));
+                        }
+                    }
+
+                } else {
+                    itemEditors.add(((item, context) -> {
+                        item.setComponent(component, list);
+                    }));
+                }
+            } else if (value instanceof String str) {
+                Pair<TagValueType, String> pair = toTypeAndData(str);
+                switch (pair.left()) {
+                    case INT -> {
+                        MathValue<Player> mathValue = MathValue.auto(pair.right());
+                        itemEditors.add(((item, context) -> {
+                            item.setComponent(component, (int) mathValue.evaluate(context));
+                        }));
+                    }
+                    case BYTE -> {
+                        MathValue<Player> mathValue = MathValue.auto(pair.right());
+                        itemEditors.add(((item, context) -> {
+                            item.setComponent(component, (byte) mathValue.evaluate(context));
+                        }));
+                    }
+                    case FLOAT -> {
+                        MathValue<Player> mathValue = MathValue.auto(pair.right());
+                        itemEditors.add(((item, context) -> {
+                            item.setComponent(component, (float) mathValue.evaluate(context));
+                        }));
+                    }
+                    case LONG -> {
+                        MathValue<Player> mathValue = MathValue.auto(pair.right());
+                        itemEditors.add(((item, context) -> {
+                            item.setComponent(component, (long) mathValue.evaluate(context));
+                        }));
+                    }
+                    case SHORT -> {
+                        MathValue<Player> mathValue = MathValue.auto(pair.right());
+                        itemEditors.add(((item, context) -> {
+                            item.setComponent(component, (short) mathValue.evaluate(context));
+                        }));
+                    }
+                    case DOUBLE -> {
+                        MathValue<Player> mathValue = MathValue.auto(pair.right());
+                        itemEditors.add(((item, context) -> {
+                            item.setComponent(component, (double) mathValue.evaluate(context));
+                        }));
+                    }
+                    case STRING -> {
+                        TextValue<Player> textValue = TextValue.auto(pair.right());
+                        itemEditors.add(((item, context) -> {
+                            item.setComponent(component, textValue.render(context));
+                        }));
+                    }
+                    case INTARRAY -> {
+                        String[] split = splitValue(str);
+                        int[] array = Arrays.stream(split).mapToInt(Integer::parseInt).toArray();
+                        itemEditors.add(((item, context) -> {
+                            item.setComponent(component, array);
+                        }));
+                    }
+                    case BYTEARRAY -> {
+                        String[] split = splitValue(str);
+                        byte[] bytes = new byte[split.length];
+                        for (int i = 0; i < split.length; i++){
+                            bytes[i] = Byte.parseByte(split[i]);
+                        }
+                        itemEditors.add(((item, context) -> {
+                            item.setComponent(component, bytes);
+                        }));
+                    }
+                }
+            } else {
+                itemEditors.add(((item, context) -> {
+                    item.setComponent(component, value);
+                }));
+            }
+        }
+    }
+
+    // ugly codes, remaining improvements
+    public static void sectionToTagEditor(Section section, List<ItemEditor> itemEditors, String... route) {
         for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
             Object value = entry.getValue();
             String key = entry.getKey();
             String[] currentRoute = ArrayUtils.appendElementToArray(route, key);
             if (value instanceof Section inner) {
-                sectionToEditor(inner, tagEditors, currentRoute);
+                sectionToTagEditor(inner, itemEditors, currentRoute);
             } else if (value instanceof List<?> list) {
-                TagListType type = getListType(list);
-                if (type == TagListType.TAG) {
-//                    List<TagMap> maps = new ArrayList<>();
-//                    for (Object o : list) {
-//                        Map<String, Object> map = (Map<String, Object>) o;
-//
-//                    }
-                    tagEditors.add(((item, context) -> {
-//                        List<Map<String, Object>> parsed = maps.stream().map(render -> render.apply(context)).toList();
-                        item.set(list, (Object[]) currentRoute);
+                Object first = list.get(0);
+                if (first instanceof Map<?, ?>) {
+                    List<TagMap> maps = new ArrayList<>();
+                    for (Object o : list) {
+                        Map<String, Object> map = (Map<String, Object>) o;
+                        maps.add(TagMap.of(map));
+                    }
+                    itemEditors.add(((item, context) -> {
+                        List<Map<String, Object>> parsed = maps.stream().map(render -> render.apply(context)).toList();
+                        item.set(parsed, (Object[]) currentRoute);
                     }));
                 } else {
-                    Object first = list.get(0);
                     if (first instanceof String str) {
                         Pair<TagValueType, String> pair = toTypeAndData(str);
                         switch (pair.left()) {
@@ -120,7 +300,7 @@ public class ItemStackUtils {
                                 for (Object o : list) {
                                     values.add(MathValue.auto(toTypeAndData((String) o).right()));
                                 }
-                                tagEditors.add(((item, context) -> {
+                                itemEditors.add(((item, context) -> {
                                     List<Integer> integers = values.stream().map(unparsed -> (int) unparsed.evaluate(context)).toList();
                                     item.set(integers, (Object[]) currentRoute);
                                 }));
@@ -130,7 +310,7 @@ public class ItemStackUtils {
                                 for (Object o : list) {
                                     values.add(MathValue.auto(toTypeAndData((String) o).right()));
                                 }
-                                tagEditors.add(((item, context) -> {
+                                itemEditors.add(((item, context) -> {
                                     List<Byte> bytes = values.stream().map(unparsed -> (byte) unparsed.evaluate(context)).toList();
                                     item.set(bytes, (Object[]) currentRoute);
                                 }));
@@ -140,7 +320,7 @@ public class ItemStackUtils {
                                 for (Object o : list) {
                                     values.add(MathValue.auto(toTypeAndData((String) o).right()));
                                 }
-                                tagEditors.add(((item, context) -> {
+                                itemEditors.add(((item, context) -> {
                                     List<Long> longs = values.stream().map(unparsed -> (long) unparsed.evaluate(context)).toList();
                                     item.set(longs, (Object[]) currentRoute);
                                 }));
@@ -150,7 +330,7 @@ public class ItemStackUtils {
                                 for (Object o : list) {
                                     values.add(MathValue.auto(toTypeAndData((String) o).right()));
                                 }
-                                tagEditors.add(((item, context) -> {
+                                itemEditors.add(((item, context) -> {
                                     List<Float> floats = values.stream().map(unparsed -> (float) unparsed.evaluate(context)).toList();
                                     item.set(floats, (Object[]) currentRoute);
                                 }));
@@ -160,7 +340,7 @@ public class ItemStackUtils {
                                 for (Object o : list) {
                                     values.add(MathValue.auto(toTypeAndData((String) o).right()));
                                 }
-                                tagEditors.add(((item, context) -> {
+                                itemEditors.add(((item, context) -> {
                                     List<Double> doubles = values.stream().map(unparsed -> (double) unparsed.evaluate(context)).toList();
                                     item.set(doubles, (Object[]) currentRoute);
                                 }));
@@ -170,14 +350,14 @@ public class ItemStackUtils {
                                 for (Object o : list) {
                                     values.add(TextValue.auto(toTypeAndData((String) o).right()));
                                 }
-                                tagEditors.add(((item, context) -> {
+                                itemEditors.add(((item, context) -> {
                                     List<String> texts = values.stream().map(unparsed -> unparsed.render(context)).toList();
                                     item.set(texts, (Object[]) currentRoute);
                                 }));
                             }
                         }
                     } else {
-                        tagEditors.add(((item, context) -> {
+                        itemEditors.add(((item, context) -> {
                             item.set(list, (Object[]) currentRoute);
                         }));
                     }
@@ -187,50 +367,50 @@ public class ItemStackUtils {
                 switch (pair.left()) {
                     case INT -> {
                         MathValue<Player> mathValue = MathValue.auto(pair.right());
-                        tagEditors.add(((item, context) -> {
+                        itemEditors.add(((item, context) -> {
                             item.set((int) mathValue.evaluate(context), (Object[]) currentRoute);
                         }));
                     }
                     case BYTE -> {
                         MathValue<Player> mathValue = MathValue.auto(pair.right());
-                        tagEditors.add(((item, context) -> {
+                        itemEditors.add(((item, context) -> {
                             item.set((byte) mathValue.evaluate(context), (Object[]) currentRoute);
                         }));
                     }
                     case LONG -> {
                         MathValue<Player> mathValue = MathValue.auto(pair.right());
-                        tagEditors.add(((item, context) -> {
+                        itemEditors.add(((item, context) -> {
                             item.set((long) mathValue.evaluate(context), (Object[]) currentRoute);
                         }));
                     }
                     case SHORT -> {
                         MathValue<Player> mathValue = MathValue.auto(pair.right());
-                        tagEditors.add(((item, context) -> {
+                        itemEditors.add(((item, context) -> {
                             item.set((short) mathValue.evaluate(context), (Object[]) currentRoute);
                         }));
                     }
                     case DOUBLE -> {
                         MathValue<Player> mathValue = MathValue.auto(pair.right());
-                        tagEditors.add(((item, context) -> {
+                        itemEditors.add(((item, context) -> {
                             item.set((double) mathValue.evaluate(context), (Object[]) currentRoute);
                         }));
                     }
                     case FLOAT -> {
                         MathValue<Player> mathValue = MathValue.auto(pair.right());
-                        tagEditors.add(((item, context) -> {
+                        itemEditors.add(((item, context) -> {
                             item.set((float) mathValue.evaluate(context), (Object[]) currentRoute);
                         }));
                     }
                     case STRING -> {
                         TextValue<Player> textValue = TextValue.auto(pair.right());
-                        tagEditors.add(((item, context) -> {
+                        itemEditors.add(((item, context) -> {
                             item.set(textValue.render(context), (Object[]) currentRoute);
                         }));
                     }
                     case INTARRAY -> {
                         String[] split = splitValue(str);
                         int[] array = Arrays.stream(split).mapToInt(Integer::parseInt).toArray();
-                        tagEditors.add(((item, context) -> {
+                        itemEditors.add(((item, context) -> {
                             item.set(array, (Object[]) currentRoute);
                         }));
                     }
@@ -240,44 +420,16 @@ public class ItemStackUtils {
                         for (int i = 0; i < split.length; i++){
                             bytes[i] = Byte.parseByte(split[i]);
                         }
-                        tagEditors.add(((item, context) -> {
+                        itemEditors.add(((item, context) -> {
                             item.set(bytes, (Object[]) currentRoute);
                         }));
                     }
                 }
             } else {
-                tagEditors.add(((item, context) -> {
+                itemEditors.add(((item, context) -> {
                     item.set(value, (Object[]) currentRoute);
                 }));
             }
         }
-    }
-
-    private static TagListType getListType(List<?> list) {
-        Object o = list.get(0);
-        if (o instanceof Map<?, ?> map) {
-            return TagListType.TAG;
-        } else {
-            return TagListType.VALUE;
-        }
-    }
-
-    public static Pair<TagValueType, String> toTypeAndData(String str) {
-        String[] parts = str.split("\\s+", 2);
-        if (parts.length == 1) {
-            return Pair.of(TagValueType.STRING, parts[0]);
-        }
-        if (parts.length != 2) {
-            throw new IllegalArgumentException("Invalid value format: " + str);
-        }
-        TagValueType type = TagValueType.valueOf(parts[0].substring(1, parts[0].length() - 1).toUpperCase(Locale.ENGLISH));
-        String data = parts[1];
-        return Pair.of(type, data);
-    }
-
-    private static String[] splitValue(String value) {
-        return value.substring(value.indexOf('[') + 1, value.lastIndexOf(']'))
-                .replaceAll("\\s", "")
-                .split(",");
     }
 }

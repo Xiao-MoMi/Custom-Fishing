@@ -1,7 +1,7 @@
 package net.momirealms.customfishing.api.mechanic.effect;
 
+import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.context.Context;
-import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.common.util.TriConsumer;
 import org.bukkit.entity.Player;

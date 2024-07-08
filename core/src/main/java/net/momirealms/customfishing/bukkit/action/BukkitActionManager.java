@@ -26,8 +26,6 @@ import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.*;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
-import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
-import net.momirealms.customfishing.api.mechanic.fishing.FishingGears;
 import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
@@ -881,7 +879,6 @@ public class BukkitActionManager implements ActionManager<Player> {
                 StringJoiner stringJoiner = new StringJoiner(TranslationManager.miniMessageTranslation(MessageConstants.COMMAND_FISH_FINDER_SPLIT_CHAR.build().key()));
                 for (String loot : loots) {
                     plugin.getLootManager().getLoot(loot).ifPresent(lootIns -> {
-                        System.out.println("loot: " + loot + " : " + lootIns.showInFinder());
                         if (lootIns.showInFinder()) {
                             if (!lootIns.nick().equals("UNDEFINED")) {
                                 stringJoiner.add(lootIns.nick());

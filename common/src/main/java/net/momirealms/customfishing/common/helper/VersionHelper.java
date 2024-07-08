@@ -64,7 +64,7 @@ public class VersionHelper {
 
     public static void init(String serverVersion) {
         String[] split = serverVersion.split("\\.");
-        version = Float.parseFloat(split[1] + "." + split[2]);
+        version = Float.parseFloat(split[1] + "." + (split.length == 3 ? split[2] : "0"));
         checkMojMap();
         checkFolia();
     }

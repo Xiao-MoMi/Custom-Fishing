@@ -111,6 +111,12 @@ public class AbstractItem<R, I> implements Item<I> {
     }
 
     @Override
+    public Item<I> itemFlags(List<String> flags) {
+        factory.itemFlags(item, flags);
+        return this;
+    }
+
+    @Override
     public Optional<Object> getTag(Object... path) {
         return factory.getTag(item, path);
     }

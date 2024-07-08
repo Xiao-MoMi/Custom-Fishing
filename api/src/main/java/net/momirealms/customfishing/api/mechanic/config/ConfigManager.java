@@ -94,6 +94,7 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     protected Requirement<Player>[] skipGameRequirements;
     protected Requirement<Player>[] autoFishingRequirements;
     protected boolean enableBag;
+    protected boolean baitAnimation;
     protected List<TriConsumer<Effect, Context<Player>, Integer>> globalEffects;
 
     protected ConfigManager(BukkitCustomFishingPlugin plugin) {
@@ -199,6 +200,10 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     public static boolean enableBag() {
         return instance.enableBag;
+    }
+
+    public static boolean baitAnimation() {
+        return instance.baitAnimation;
     }
 
     public static List<String> durabilityLore() {

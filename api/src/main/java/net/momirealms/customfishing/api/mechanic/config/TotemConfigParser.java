@@ -18,13 +18,13 @@
 package net.momirealms.customfishing.api.mechanic.config;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
+import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.config.function.ConfigParserFunction;
 import net.momirealms.customfishing.api.mechanic.config.function.EffectModifierParserFunction;
 import net.momirealms.customfishing.api.mechanic.config.function.EventParserFunction;
 import net.momirealms.customfishing.api.mechanic.config.function.TotemParserFunction;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
-import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import net.momirealms.customfishing.common.config.node.Node;
 

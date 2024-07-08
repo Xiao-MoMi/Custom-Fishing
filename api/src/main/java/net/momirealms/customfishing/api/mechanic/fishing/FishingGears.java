@@ -18,12 +18,12 @@
 package net.momirealms.customfishing.api.mechanic.fishing;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
-import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.storage.user.UserData;
 import net.momirealms.customfishing.common.util.Pair;

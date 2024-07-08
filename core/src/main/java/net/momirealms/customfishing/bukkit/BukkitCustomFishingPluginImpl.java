@@ -19,8 +19,8 @@ package net.momirealms.customfishing.bukkit;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.CustomFishingReloadEvent;
+import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
-import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.misc.cooldown.CoolDownManager;
 import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.api.util.EventUtils;

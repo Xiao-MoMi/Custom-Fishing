@@ -19,11 +19,11 @@ package net.momirealms.customfishing.bukkit.totem;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.TotemActivateEvent;
+import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
-import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import net.momirealms.customfishing.api.mechanic.totem.TotemManager;

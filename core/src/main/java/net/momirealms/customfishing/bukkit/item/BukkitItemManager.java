@@ -25,7 +25,6 @@ import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.item.CustomFishingItem;
 import net.momirealms.customfishing.api.mechanic.item.ItemManager;
-import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.bukkit.integration.item.CustomFishingItemProvider;
 import net.momirealms.customfishing.bukkit.util.ItemStackUtils;
 import net.momirealms.customfishing.bukkit.util.LocationUtils;
@@ -260,7 +259,7 @@ public class BukkitItemManager implements ItemManager, Listener {
 
         Item<ItemStack> wrapped = factory.wrap(itemStack);
         if (wrapped.hasTag("CustomFishing")) {
-            if (!wrapped.hasTag("CustomFishing", "placeable")) {
+            if (!wrapped.hasTag("CustomFishing", "placeable") || ((int) wrapped.getTag("CustomFishing", "placeable").get()) != 1) {
                 event.setCancelled(true);
                 return;
             }

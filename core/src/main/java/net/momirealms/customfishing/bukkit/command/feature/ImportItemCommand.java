@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.bukkit.command.feature;
 
 import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.bukkit.command.BukkitCommandFeature;
@@ -35,7 +34,6 @@ import org.incendo.cloud.parser.standard.StringParser;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Map;
 
 @SuppressWarnings("DuplicatedCode")

@@ -26,6 +26,7 @@ import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
@@ -35,8 +36,7 @@ import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectProperties;
 import net.momirealms.customfishing.api.mechanic.event.EventManager;
-import net.momirealms.customfishing.api.mechanic.item.MechanicType;
-import net.momirealms.customfishing.api.mechanic.item.tag.TagEditor;
+import net.momirealms.customfishing.api.mechanic.item.ItemEditor;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
@@ -183,6 +183,8 @@ public class BukkitConfigManager extends ConfigManager {
         autoFishingRequirements = plugin.getRequirementManager().parseRequirements(config.getSection("mechanics.auto-fishing-requirements"), true);
 
         enableBag = config.getBoolean("mechanics.fishing-bag.enable", true);
+
+        baitAnimation = config.getBoolean("mechanics.bait-animation", true);
 
         multipleLootSpawnDelay = config.getInt("mechanics.multiple-loot-spawn-delay", 4);
 
@@ -382,6 +384,14 @@ public class BukkitConfigManager extends ConfigManager {
             return (item, context) -> item.enchantments(map);
         }, 4500, "enchantments");
         this.registerItemParser(arg -> {
+            String base64 = (String) arg;
+            return (item, context) -> item.skull(base64);
+        }, 5200, "head");
+        this.registerItemParser(arg -> {
+            List<String> args = ListUtils.toList(arg);
+            return (item, context) -> item.itemFlags(args);
+        }, 5100, "item-flags");
+        this.registerItemParser(arg -> {
             MathValue<Player> mathValue = MathValue.auto(arg);
             return (item, context) -> item.customModelData((int) mathValue.evaluate(context));
         }, 5000, "custom-model-data");
@@ -440,14 +450,24 @@ public class BukkitConfigManager extends ConfigManager {
         }, 1_500, "price");
         this.registerItemParser(arg -> {
             Section section = (Section) arg;
-            ArrayList<TagEditor> editors = new ArrayList<>();
-            ItemStackUtils.sectionToEditor(section, editors);
+            ArrayList<ItemEditor> editors = new ArrayList<>();
+            ItemStackUtils.sectionToTagEditor(section, editors);
             return (item, context) -> {
-                for (TagEditor editor : editors) {
+                for (ItemEditor editor : editors) {
                     editor.apply(((AbstractItem<RtagItem, ItemStack>) item).getRTagItem(), context);
                 }
             };
         }, 1_750, "nbt");
+        this.registerItemParser(arg -> {
+            Section section = (Section) arg;
+            ArrayList<ItemEditor> editors = new ArrayList<>();
+            ItemStackUtils.sectionToComponentEditor(section, editors);
+            return (item, context) -> {
+                for (ItemEditor editor : editors) {
+                    editor.apply(((AbstractItem<RtagItem, ItemStack>) item).getRTagItem(), context);
+                }
+            };
+        }, 1_800, "components");
     }
 
     private void registerBuiltInEffectModifierParser() {

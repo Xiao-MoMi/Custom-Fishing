@@ -20,6 +20,7 @@ package net.momirealms.customfishing.api.mechanic.fishing;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.FishingLootSpawnEvent;
 import net.momirealms.customfishing.api.event.FishingResultEvent;
+import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionGoal;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
@@ -34,7 +35,6 @@ import net.momirealms.customfishing.api.mechanic.fishing.hook.VanillaMechanic;
 import net.momirealms.customfishing.api.mechanic.fishing.hook.VoidFishingMechanic;
 import net.momirealms.customfishing.api.mechanic.game.Game;
 import net.momirealms.customfishing.api.mechanic.game.GamingPlayer;
-import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
@@ -72,6 +72,7 @@ public class CustomFishingHook {
     private HookMechanic hookMechanic;
     private Loot nextLoot;
     private GamingPlayer gamingPlayer;
+    private BaitAnimationTask baitAnimationTask;
 
     private static TriFunction<FishHook, Context<Player>, Effect, List<HookMechanic>> mechanicProviders = defaultMechanicProviders();
 
@@ -103,6 +104,11 @@ public class CustomFishingHook {
                 consumer.accept(effect, context, 0);
             }
         }
+        // enable bait animation
+        if (ConfigManager.baitAnimation() && !gears.getItem(FishingGears.GearType.BAIT).isEmpty()) {
+            this.baitAnimationTask = new BaitAnimationTask(plugin, context.getHolder(), hook, gears.getItem(FishingGears.GearType.BAIT).stream().findAny().get().right());
+        }
+
         List<HookMechanic> enabledMechanics = mechanicProviders.apply(hook, context, effect);
         this.task = plugin.getScheduler().sync().runRepeating(() -> {
             // destroy if hook is invalid
@@ -125,6 +131,13 @@ public class CustomFishingHook {
                     if (this.hookMechanic != mechanic) {
                         if (this.hookMechanic != null) this.hookMechanic.destroy();
                         this.hookMechanic = mechanic;
+
+                        // remove bait animation if there exists
+                        if (this.baitAnimationTask != null) {
+                            this.baitAnimationTask.cancel();
+                            this.baitAnimationTask = null;
+                        }
+
                         // to update some properties
                         mechanic.preStart();
                         Effect tempEffect = effect.copy();
@@ -179,6 +192,10 @@ public class CustomFishingHook {
         if (hook.isValid()) hook.remove();
         if (hookMechanic != null) hookMechanic.destroy();
         if (gamingPlayer != null) gamingPlayer.destroy();
+        if (this.baitAnimationTask != null) {
+            this.baitAnimationTask.cancel();
+            this.baitAnimationTask = null;
+        }
     }
 
     public Context<Player> getContext() {

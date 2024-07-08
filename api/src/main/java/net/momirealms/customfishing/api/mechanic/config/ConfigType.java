@@ -19,8 +19,8 @@ package net.momirealms.customfishing.api.mechanic.config;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.config.function.ConfigParserFunction;
-import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import net.momirealms.customfishing.common.config.node.Node;
 import org.apache.logging.log4j.util.TriConsumer;
 

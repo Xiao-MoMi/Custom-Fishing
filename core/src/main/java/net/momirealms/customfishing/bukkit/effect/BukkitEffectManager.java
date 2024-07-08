@@ -18,9 +18,9 @@
 package net.momirealms.customfishing.bukkit.effect;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.effect.EffectManager;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
-import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 
 import java.util.HashMap;
 import java.util.Optional;

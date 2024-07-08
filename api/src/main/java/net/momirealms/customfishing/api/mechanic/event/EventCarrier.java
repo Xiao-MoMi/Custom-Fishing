@@ -17,10 +17,10 @@
 
 package net.momirealms.customfishing.api.mechanic.event;
 
+import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.context.Context;
-import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

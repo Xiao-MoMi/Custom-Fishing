@@ -181,4 +181,9 @@ public class ComponentItemFactory extends BukkitItemFactory {
         map.put(enchantment.toString(), level);
         item.setComponent(ComponentKeys.STORED_ENCHANTMENTS, map);
     }
+
+    @Override
+    protected void itemFlags(RtagItem item, List<String> flags) {
+        throw new UnsupportedOperationException("This feature is not available on 1.20.5+");
+    }
 }

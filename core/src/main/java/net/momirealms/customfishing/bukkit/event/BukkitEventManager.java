@@ -18,12 +18,12 @@
 package net.momirealms.customfishing.bukkit.event;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.event.EventManager;
-import net.momirealms.customfishing.api.mechanic.item.MechanicType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

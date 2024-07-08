@@ -24,6 +24,7 @@ import com.saicone.rtag.tag.TagList;
 import net.momirealms.customfishing.bukkit.item.BukkitItemFactory;
 import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
 import net.momirealms.customfishing.common.util.Key;
+import org.bukkit.inventory.ItemFlag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -169,5 +170,19 @@ public class UniversalItemFactory extends BukkitItemFactory {
         } else {
             item.set(List.of(Map.of("id", enchantment.toString(), "lvl", (short) level)), "StoredEnchantments");
         }
+    }
+
+    @Override
+    protected void itemFlags(RtagItem item, List<String> flags) {
+        if (flags == null || flags.isEmpty()) {
+            item.remove("HideFlags");
+            return;
+        }
+        int f = 0;
+        for (String flag : flags) {
+            ItemFlag itemFlag = ItemFlag.valueOf(flag);
+            f = f | 1 << itemFlag.ordinal();
+        }
+        item.set(f, "HideFlags");
     }
 }
