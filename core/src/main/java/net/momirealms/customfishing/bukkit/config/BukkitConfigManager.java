@@ -52,6 +52,7 @@ import net.momirealms.customfishing.api.mechanic.totem.block.property.HalfImpl;
 import net.momirealms.customfishing.api.mechanic.totem.block.property.TotemBlockProperty;
 import net.momirealms.customfishing.api.mechanic.totem.block.type.TypeCondition;
 import net.momirealms.customfishing.api.util.OffsetUtils;
+import net.momirealms.customfishing.bukkit.item.damage.CustomDurabilityItem;
 import net.momirealms.customfishing.bukkit.totem.particle.DustParticleSetting;
 import net.momirealms.customfishing.bukkit.totem.particle.ParticleSetting;
 import net.momirealms.customfishing.bukkit.util.ItemStackUtils;
@@ -421,6 +422,13 @@ public class BukkitConfigManager extends ConfigManager {
             };
         }, 2_000, "tag");
         this.registerItemParser(arg -> {
+            boolean enable = (boolean) arg;
+            return (item, context) -> {
+                if (enable) return;
+                item.setTag(UUID.randomUUID(), "CustomFishing", "uuid");
+            };
+        }, 2_222, "stackable");
+        this.registerItemParser(arg -> {
             String sizePair = (String) arg;
             String[] split = sizePair.split("~", 2);
             MathValue<Player> min = MathValue.auto(split[0]);
@@ -449,6 +457,26 @@ public class BukkitConfigManager extends ConfigManager {
             };
         }, 1_500, "price");
         this.registerItemParser(arg -> {
+            boolean random = (boolean) arg;
+            return (item, context) -> {
+                if (!random) return;
+                if (item.hasTag("CustomFishing", "max_dur")) {
+                    CustomDurabilityItem durabilityItem = new CustomDurabilityItem(item);
+                    durabilityItem.damage(RandomUtils.generateRandomInt(0, durabilityItem.maxDamage() - 1));
+                } else {
+                    item.damage(RandomUtils.generateRandomInt(0, item.maxDamage().get() - 1));
+                }
+            };
+        }, 1_795, "random-durability");
+        this.registerItemParser(arg -> {
+            MathValue<Player> mathValue = MathValue.auto(arg);
+            return (item, context) -> {
+                int max = (int) mathValue.evaluate(context);
+                item.setTag(max, "CustomFishing", "max_dur");
+                item.setTag(max, "CustomFishing", "cur_dur");
+            };
+        }, 1_790, "max-durability");
+        this.registerItemParser(arg -> {
             Section section = (Section) arg;
             ArrayList<ItemEditor> editors = new ArrayList<>();
             ItemStackUtils.sectionToTagEditor(section, editors);
@@ -457,7 +485,7 @@ public class BukkitConfigManager extends ConfigManager {
                     editor.apply(((AbstractItem<RtagItem, ItemStack>) item).getRTagItem(), context);
                 }
             };
-        }, 1_750, "nbt");
+        }, 10_050, "nbt");
         this.registerItemParser(arg -> {
             Section section = (Section) arg;
             ArrayList<ItemEditor> editors = new ArrayList<>();
@@ -467,7 +495,7 @@ public class BukkitConfigManager extends ConfigManager {
                     editor.apply(((AbstractItem<RtagItem, ItemStack>) item).getRTagItem(), context);
                 }
             };
-        }, 1_800, "components");
+        }, 10_075, "components");
     }
 
     private void registerBuiltInEffectModifierParser() {

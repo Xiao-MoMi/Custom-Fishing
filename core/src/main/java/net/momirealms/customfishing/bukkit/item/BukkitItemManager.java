@@ -17,6 +17,9 @@
 
 package net.momirealms.customfishing.bukkit.item;
 
+import com.saicone.rtag.RtagItem;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.integration.ExternalProvider;
 import net.momirealms.customfishing.api.integration.ItemProvider;
@@ -25,10 +28,15 @@ import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.item.CustomFishingItem;
 import net.momirealms.customfishing.api.mechanic.item.ItemManager;
+import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.bukkit.integration.item.CustomFishingItemProvider;
+import net.momirealms.customfishing.bukkit.item.damage.CustomDurabilityItem;
+import net.momirealms.customfishing.bukkit.item.damage.DurabilityItem;
+import net.momirealms.customfishing.bukkit.item.damage.VanillaDurabilityItem;
 import net.momirealms.customfishing.bukkit.util.ItemStackUtils;
 import net.momirealms.customfishing.bukkit.util.LocationUtils;
 import net.momirealms.customfishing.common.item.Item;
+import net.momirealms.customfishing.common.util.RandomUtils;
 import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -36,6 +44,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -46,7 +55,10 @@ import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
@@ -236,8 +248,73 @@ public class BukkitItemManager implements ItemManager, Listener {
     }
 
     @Override
-    public void decreaseDurability(ItemStack itemStack, int amount, boolean incorrectUsage) {
+    public boolean hasCustomDurability(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR || itemStack.getAmount() == 0)
+            return false;
+        Item<ItemStack> wrapped = factory.wrap(itemStack);
+        return wrapped.hasTag("CustomFishing", "max_dur");
+    }
 
+    @Override
+    public void decreaseDurability(Player player, ItemStack itemStack, int amount, boolean incorrectUsage) {
+        if (itemStack == null || itemStack.getType() == Material.AIR || itemStack.getAmount() == 0)
+            return;
+        if (!incorrectUsage) {
+            int unBreakingLevel = itemStack.getEnchantmentLevel(Enchantment.DURABILITY);
+            if (Math.random() > (double) 1 / (unBreakingLevel + 1)) {
+                return;
+            }
+        }
+        Item<ItemStack> wrapped = factory.wrap(itemStack.clone());
+        if (wrapped.unbreakable())
+            return;
+
+        ItemMeta previousMeta = itemStack.getItemMeta().clone();
+        PlayerItemDamageEvent itemDamageEvent = new PlayerItemDamageEvent(player, itemStack, amount);
+        if (EventUtils.fireAndCheckCancel(itemDamageEvent)) {
+            plugin.debug("Another plugin modified the item from `PlayerItemDamageEvent` called by CustomFishing");
+            return;
+        }
+        if (!itemStack.getItemMeta().equals(previousMeta)) {
+            return;
+        }
+
+        DurabilityItem durabilityItem = wrapDurabilityItem(wrapped);
+        int damage = durabilityItem.damage();
+        if (damage + amount >= durabilityItem.maxDamage()) {
+            plugin.getSenderFactory().getAudience(player).playSound(Sound.sound(Key.key("minecraft:entity.item.break"), Sound.Source.PLAYER, 1, 1));
+            itemStack.setAmount(0);
+            return;
+        }
+
+        durabilityItem.damage(damage + amount);
+        itemStack.setItemMeta(wrapped.load().getItemMeta());
+    }
+
+    @Override
+    public void setDurability(Player player, ItemStack itemStack, int damage) {
+        if (itemStack == null || itemStack.getType() == Material.AIR || itemStack.getAmount() == 0)
+            return;
+        Item<ItemStack> wrapped = factory.wrap(itemStack);
+        if (wrapped.unbreakable())
+            return;
+        DurabilityItem wrappedDurability = wrapDurabilityItem(wrapped);
+        if (damage >= wrappedDurability.maxDamage()) {
+            if (player != null)
+                plugin.getSenderFactory().getAudience(player).playSound(Sound.sound(Key.key("minecraft:entity.item.break"), Sound.Source.PLAYER, 1, 1));
+            itemStack.setAmount(0);
+            return;
+        }
+        wrappedDurability.damage(damage);
+        wrapped.load();
+    }
+
+    public DurabilityItem wrapDurabilityItem(Item<ItemStack> wrapped) {
+        if (wrapped.hasTag("CustomFishing", "max_dur")) {
+            return new CustomDurabilityItem(wrapped);
+        } else {
+            return new VanillaDurabilityItem(wrapped);
+        }
     }
 
     @EventHandler(ignoreCancelled = true)

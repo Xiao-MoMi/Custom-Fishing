@@ -37,6 +37,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FishHook;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -242,16 +243,29 @@ public class BukkitFishingManager implements FishingManager, Listener {
 
     private void onCaughtEntity(PlayerFishEvent event) {
         final Player player = event.getPlayer();
-        getFishHook(player).ifPresent(hook -> {
+        Optional<CustomFishingHook> hook = getFishHook(player);
+        if (hook.isPresent()) {
             Entity entity = event.getCaught();
             if (entity != null && entity.getPersistentDataContainer().get(
                     Objects.requireNonNull(NamespacedKey.fromString("temp-entity", plugin.getBoostrap())),
                     PersistentDataType.STRING
             ) != null) {
                 event.setCancelled(true);
-                hook.onReelIn();
+                hook.get().onReelIn();
+                return;
             }
-        });
+        }
+
+        if (player.getGameMode() != GameMode.CREATIVE) {
+            ItemStack itemStack = player.getInventory().getItemInMainHand();
+            if (itemStack.getType() != Material.FISHING_ROD) itemStack = player.getInventory().getItemInOffHand();
+            if (plugin.getItemManager().hasCustomDurability(itemStack)) {
+                event.getHook().pullHookedEntity();
+                event.getHook().remove();
+                event.setCancelled(true);
+                plugin.getItemManager().decreaseDurability(player, itemStack, event.getCaught() instanceof Item ? 3 : 5, true);
+            }
+        }
     }
 
     private void onReelIn(PlayerFishEvent event) {
@@ -304,13 +318,16 @@ public class BukkitFishingManager implements FishingManager, Listener {
     }
 
     private void onInGround(PlayerFishEvent event) {
-        if (VersionHelper.isVersionNewerThan1_20_5()) return;
         final Player player = event.getPlayer();
         if (player.getGameMode() != GameMode.CREATIVE) {
             ItemStack itemStack = player.getInventory().getItemInMainHand();
             if (itemStack.getType() != Material.FISHING_ROD) itemStack = player.getInventory().getItemInOffHand();
             if (itemStack.getType() == Material.FISHING_ROD) {
-                plugin.getItemManager().decreaseDurability(itemStack, 5, true);
+                if (plugin.getItemManager().hasCustomDurability(itemStack)) {
+                    event.setCancelled(true);
+                    event.getHook().remove();
+                    plugin.getItemManager().decreaseDurability(player, itemStack, 2, true);
+                }
             }
         }
     }

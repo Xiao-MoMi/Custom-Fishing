@@ -17,6 +17,8 @@
 
 package net.momirealms.customfishing.bukkit.command.feature;
 
+import com.saicone.rtag.RtagItem;
+import com.saicone.rtag.item.ItemObject;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
@@ -27,11 +29,14 @@ import net.momirealms.customfishing.common.locale.MessageConstants;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.parser.standard.StringParser;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -51,9 +56,9 @@ public class ImportItemCommand extends BukkitCommandFeature<CommandSender> {
                 .flag(manager.flagBuilder("silent").withAliases("s").build())
                 .handler(context -> {
                     Player player = context.sender();
-                    ItemStack itemStack = player.getInventory().getItemInMainHand();
+                    ItemStack item = player.getInventory().getItemInMainHand();
                     String id = context.get("id");
-                    if (itemStack.getType() == Material.AIR) {
+                    if (item.getType() == Material.AIR) {
                         handleFeedback(context, MessageConstants.COMMAND_ITEM_IMPORT_FAILURE_NO_ITEM);
                         return;
                     }
@@ -66,7 +71,7 @@ public class ImportItemCommand extends BukkitCommandFeature<CommandSender> {
                         }
                     }
                     YamlDocument document = BukkitCustomFishingPlugin.getInstance().getConfigManager().loadData(saved);
-                    Map<String, Object> map = ItemStackUtils.itemStackToMap(itemStack);
+                    Map<String, Object> map = ItemStackUtils.itemStackToMap(item);
                     document.set(id, map);
                     try {
                         document.save(saved);

@@ -195,11 +195,11 @@ public class FishingGears {
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {
                     if (context.getHolder().getGameMode() != GameMode.CREATIVE)
-                        BukkitCustomFishingPlugin.getInstance().getItemManager().decreaseDurability(itemStack, 1, false);
+                        BukkitCustomFishingPlugin.getInstance().getItemManager().decreaseDurability(context.getHolder(), itemStack, 1, false);
                 }),
                 ((context, itemStack) -> {
                     if (context.getHolder().getGameMode() != GameMode.CREATIVE)
-                        BukkitCustomFishingPlugin.getInstance().getItemManager().decreaseDurability(itemStack, 1, false);
+                        BukkitCustomFishingPlugin.getInstance().getItemManager().decreaseDurability(context.getHolder(), itemStack, 1, false);
                 }),
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {}),

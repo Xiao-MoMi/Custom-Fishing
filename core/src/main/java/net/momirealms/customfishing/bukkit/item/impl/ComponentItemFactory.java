@@ -149,6 +149,26 @@ public class ComponentItemFactory extends BukkitItemFactory {
     }
 
     @Override
+    protected Optional<Integer> maxDamage(RtagItem item) {
+        if (!item.hasComponent(ComponentKeys.MAX_DAMAGE)) return Optional.of((int) item.getItem().getType().getMaxDurability());
+        return Optional.ofNullable(
+                (Integer) ComponentType.encodeJava(
+                        ComponentKeys.MAX_DAMAGE,
+                        item.getComponent(ComponentKeys.MAX_DAMAGE)
+                ).orElse(null)
+        );
+    }
+
+    @Override
+    protected void maxDamage(RtagItem item, Integer damage) {
+        if (damage == null) {
+            item.removeComponent(ComponentKeys.MAX_DAMAGE);
+        } else {
+            item.setComponent(ComponentKeys.MAX_DAMAGE, damage);
+        }
+    }
+
+    @Override
     protected void enchantments(RtagItem item, Map<Key, Short> enchantments) {
         Map<String, Integer> enchants = new HashMap<>();
         for (Map.Entry<Key, Short> entry : enchantments.entrySet()) {

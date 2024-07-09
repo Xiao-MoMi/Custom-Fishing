@@ -123,6 +123,23 @@ public class UniversalItemFactory extends BukkitItemFactory {
     }
 
     @Override
+    protected Optional<Integer> maxDamage(RtagItem item) {
+//        if (!item.hasTag("CustomFishing", "max_dur")) return Optional.empty();
+//        return Optional.of(item.get("CustomFishing", "max_dur"));
+        return Optional.of((int) item.getItem().getType().getMaxDurability());
+    }
+
+    @Override
+    protected void maxDamage(RtagItem item, Integer damage) {
+//        if (damage == null) {
+//            item.remove("CustomFishing", "max_dur");
+//        } else {
+//            item.set(damage, "CustomFishing", "max_dur");
+//        }
+        throw new UnsupportedOperationException("This feature is only available on 1.20.5+");
+    }
+
+    @Override
     protected void enchantments(RtagItem item, Map<Key, Short> enchantments) {
         ArrayList<Object> tags = new ArrayList<>();
         for (Map.Entry<Key, Short> entry : enchantments.entrySet()) {

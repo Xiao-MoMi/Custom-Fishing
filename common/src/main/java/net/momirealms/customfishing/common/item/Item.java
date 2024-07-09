@@ -33,6 +33,10 @@ public interface Item<I> {
 
     Optional<Integer> damage();
 
+    Item<I> maxDamage(Integer data);
+
+    Optional<Integer> maxDamage();
+
     Item<I> displayName(String displayName);
 
     Optional<String> displayName();
@@ -40,6 +44,10 @@ public interface Item<I> {
     Item<I> lore(List<String> lore);
 
     Optional<List<String>> lore();
+
+    Item<I> unbreakable(boolean unbreakable);
+
+    boolean unbreakable();
 
     Item<I> skull(String data);
 
