@@ -112,6 +112,7 @@ public class Migration {
                     .replace("{price}", "{price_formatted}")
                     .replace("{PRICE}", "{price}")
                     .replace("{loot}", "{id}")
+                    .replace("{tension}", "{progress}")
             );
         } catch (IOException e) {
             throw new RuntimeException(e);

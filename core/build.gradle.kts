@@ -5,7 +5,7 @@ plugins {
 }
 
 repositories {
-    maven("https://repo.xenondevs.xyz/releases") // invui
+//    maven("https://repo.xenondevs.xyz/releases") // invui
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // papi
 }
 
@@ -26,9 +26,9 @@ dependencies {
         exclude("com.google.code.gson", "gson")
     }
     // GUI
-    implementation("xyz.xenondevs.invui:invui:${rootProject.properties["invui_version"]}") {
-        exclude("org.jetbrains", "annotations")
-    }
+//    implementation("xyz.xenondevs.invui:invui:${rootProject.properties["invui_version"]}") {
+//        exclude("org.jetbrains", "annotations")
+//    }
     // tag & component
     implementation("com.saicone.rtag:rtag:${rootProject.properties["rtag_version"]}")
     implementation("com.saicone.rtag:rtag-item:${rootProject.properties["rtag_version"]}")
