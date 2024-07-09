@@ -19,85 +19,80 @@ package net.momirealms.customfishing.api.mechanic.block;
 
 import java.util.List;
 
-public class BlockConfig implements BlockSettings {
+/**
+ * Interface representing the configuration for a custom block in the CustomFishing plugin.
+ * Provides methods to access various block properties and modifiers.
+ */
+public interface BlockConfig {
 
-    private String blockID;
-    private List<BlockDataModifier> dataModifierList;
-    private List<BlockStateModifier> stateModifierList;
-    private boolean persist;
-    private double horizontalVector;
-    private double verticalVector;
+    String id();
 
-    @Override
-    public String getBlockID() {
-        return blockID;
+    /**
+     * Gets the unique identifier for the block.
+     *
+     * @return The block's unique identifier.
+     */
+    String blockID();
+
+    /**
+     * Gets the list of data modifiers applied to the block.
+     *
+     * @return A list of {@link BlockDataModifier} objects.
+     */
+    List<BlockDataModifier> dataModifier();
+
+    /**
+     * Gets the list of state modifiers applied to the block.
+     *
+     * @return A list of {@link BlockStateModifier} objects.
+     */
+    List<BlockStateModifier> stateModifiers();
+
+    /**
+     * Creates a new builder instance for constructing a {@link BlockConfig}.
+     *
+     * @return A new {@link Builder} instance.
+     */
+    static Builder builder() {
+        return new BlockConfigImpl.BuilderImpl();
     }
 
-    @Override
-    public List<BlockDataModifier> getDataModifier() {
-        return dataModifierList;
-    }
+    /**
+     * Builder interface for constructing a {@link BlockConfig} instance.
+     */
+    interface Builder {
 
-    @Override
-    public List<BlockStateModifier> getStateModifierList() {
-        return stateModifierList;
-    }
+        Builder id(String id);
 
-    @Override
-    public boolean isPersist() {
-        return persist;
-    }
+        /**
+         * Sets the block ID for the configuration.
+         *
+         * @param blockID The block's unique identifier.
+         * @return The current {@link Builder} instance.
+         */
+        Builder blockID(String blockID);
 
-    @Override
-    public double getHorizontalVector() {
-        return horizontalVector;
-    }
+        /**
+         * Sets the list of data modifiers for the configuration.
+         *
+         * @param dataModifierList A list of {@link BlockDataModifier} objects.
+         * @return The current {@link Builder} instance.
+         */
+        Builder dataModifierList(List<BlockDataModifier> dataModifierList);
 
-    @Override
-    public double getVerticalVector() {
-        return verticalVector;
-    }
+        /**
+         * Sets the list of state modifiers for the configuration.
+         *
+         * @param stateModifierList A list of {@link BlockStateModifier} objects.
+         * @return The current {@link Builder} instance.
+         */
+        Builder stateModifierList(List<BlockStateModifier> stateModifierList);
 
-    public static class Builder {
-
-        private final BlockConfig config;
-
-        public Builder() {
-            this.config = new BlockConfig();
-        }
-
-        public Builder persist(boolean value) {
-            config.persist = value;
-            return this;
-        }
-
-        public Builder horizontalVector(double value) {
-            config.horizontalVector = value;
-            return this;
-        }
-
-        public Builder verticalVector(double value) {
-            config.verticalVector = value;
-            return this;
-        }
-
-        public Builder blockID(String value) {
-            config.blockID = value;
-            return this;
-        }
-
-        public Builder dataModifiers(List<BlockDataModifier> value) {
-            config.dataModifierList = value;
-            return this;
-        }
-
-        public Builder stateModifiers(List<BlockStateModifier> value) {
-            config.stateModifierList = value;
-            return this;
-        }
-
-        public BlockConfig build() {
-            return config;
-        }
+        /**
+         * Builds and returns the configured {@link BlockConfig} instance.
+         *
+         * @return The constructed {@link BlockConfig} instance.
+         */
+        BlockConfig build();
     }
 }

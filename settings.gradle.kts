@@ -1,3 +1,5 @@
 rootProject.name = "CustomFishing"
 include("api")
-include("plugin")
+include("common")
+include("core")
+include("compatibility")

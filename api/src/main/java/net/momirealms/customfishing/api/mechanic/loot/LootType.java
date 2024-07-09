@@ -21,6 +21,10 @@ public enum LootType {
 
     ITEM,
     ENTITY,
-    BLOCK,
-    GLOBAL
+    BLOCK;
+
+    @Override
+    public String toString() {
+        return name();
+    }
 }

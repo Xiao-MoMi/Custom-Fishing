@@ -17,6 +17,8 @@
 
 package net.momirealms.customfishing.api.mechanic.bag;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -35,6 +37,20 @@ public class FishingBagHolder implements InventoryHolder {
 
     @Override
     public @NotNull Inventory getInventory() {
+        Player player = Bukkit.getPlayer(owner);
+        if (player != null) {
+            int rows = BagManager.getBagInventoryRows(player);
+            if (rows * 9 != inventory.getSize()) {
+                Inventory newBag = Bukkit.createInventory(this, rows * 9);
+                ItemStack[] newContents = new ItemStack[rows * 9];
+                ItemStack[] oldContents = inventory.getContents();
+                for (int i = 0; i < rows * 9 && i < oldContents.length; i++) {
+                    newContents[i] = oldContents[i];
+                }
+                newBag.setContents(newContents);
+                this.setInventory(newBag);
+            }
+        }
         return inventory;
     }
 
@@ -48,5 +64,13 @@ public class FishingBagHolder implements InventoryHolder {
 
     public void setInventory(Inventory inventory) {
         this.inventory = inventory;
+    }
+
+    public static FishingBagHolder create(UUID owner, ItemStack[] itemStacks, int size) {
+        FishingBagHolder holder = new FishingBagHolder(owner);
+        Inventory inventory = Bukkit.createInventory(holder, size);
+        holder.setInventory(inventory);
+        holder.setItems(itemStacks);
+        return holder;
     }
 }

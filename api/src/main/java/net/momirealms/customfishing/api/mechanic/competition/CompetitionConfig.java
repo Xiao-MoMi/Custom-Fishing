@@ -18,178 +18,227 @@
 package net.momirealms.customfishing.api.mechanic.competition;
 
 import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.competition.info.ActionBarConfig;
+import net.momirealms.customfishing.api.mechanic.competition.info.BossBarConfig;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 
-public class CompetitionConfig {
+/**
+ * Interface representing the configuration for a fishing competition.
+ */
+public interface CompetitionConfig {
 
-    private final String key;
-    private int duration;
-    private int minPlayers;
-    private BossBarConfig bossBarConfig;
-    private ActionBarConfig actionBarConfig;
-    private Action[] skipActions;
-    private Action[] startActions;
-    private Action[] endActions;
-    private Action[] joinActions;
-    private Requirement[] requirements;
-    private CompetitionGoal goal;
-    private HashMap<String, Action[]> rewards;
+    CompetitionGoal DEFAULT_GOAL = CompetitionGoal.CATCH_AMOUNT;
+    int DEFAULT_DURATION = 300;
+    int DEFAULT_MIN_PLAYERS = 0;
+    Requirement<Player>[] DEFAULT_REQUIREMENTS = null;
+    Action<Player>[] DEFAULT_SKIP_ACTIONS = null;
+    Action<Player>[] DEFAULT_START_ACTIONS = null;
+    Action<Player>[] DEFAULT_END_ACTIONS = null;
+    Action<Player>[] DEFAULT_JOIN_ACTIONS = null;
+    HashMap<String, Action<Player>[]> DEFAULT_REWARDS = new HashMap<>();
 
-    public CompetitionConfig(String key) {
-        this.key = key;
-    }
+    /**
+     * Gets the unique key for the competition.
+     *
+     * @return the key for the competition.
+     */
+    String key();
 
-    public String getKey() {
-        return key;
-    }
+    /**
+     * Gets the duration of the competition in seconds.
+     *
+     * @return the duration in seconds.
+     */
+    int durationInSeconds();
 
-    public int getDurationInSeconds() {
-        return duration;
-    }
+    /**
+     * Gets the minimum number of players required to start the competition.
+     *
+     * @return the minimum number of players.
+     */
+    int minPlayersToStart();
 
-    public int getMinPlayersToStart() {
-        return minPlayers;
-    }
+    /**
+     * Gets the actions to be performed when the competition starts.
+     *
+     * @return an array of start actions.
+     */
+    Action<Player>[] startActions();
 
-    @Nullable
-    public Action[] getStartActions() {
-        return startActions;
-    }
+    /**
+     * Gets the actions to be performed when the competition ends.
+     *
+     * @return an array of end actions.
+     */
+    Action<Player>[] endActions();
 
-    @Nullable
-    public Action[] getEndActions() {
-        return endActions;
+    /**
+     * Gets the actions to be performed when a player joins the competition.
+     *
+     * @return an array of join actions.
+     */
+    Action<Player>[] joinActions();
+
+    /**
+     * Gets the actions to be performed when a player skips the competition.
+     *
+     * @return an array of skip actions.
+     */
+    Action<Player>[] skipActions();
+
+    /**
+     * Gets the requirements that players must meet to join the competition.
+     *
+     * @return an array of join requirements.
+     */
+    Requirement<Player>[] joinRequirements();
+
+    /**
+     * Gets the goal of the competition.
+     *
+     * @return the competition goal.
+     */
+    CompetitionGoal goal();
+
+    /**
+     * Gets the rewards for the competition.
+     *
+     * @return a hashmap where the key is a string identifier and the value is an array of actions.
+     */
+    HashMap<String, Action<Player>[]> rewards();
+
+    /**
+     * Gets the configuration for the boss bar during the competition.
+     *
+     * @return the boss bar configuration.
+     */
+    BossBarConfig bossBarConfig();
+
+    /**
+     * Gets the configuration for the action bar during the competition.
+     *
+     * @return the action bar configuration.
+     */
+    ActionBarConfig actionBarConfig();
+
+    /**
+     * Creates a new builder for the competition configuration.
+     *
+     * @return a new builder instance.
+     */
+    static Builder builder() {
+        return new CompetitionConfigImpl.BuilderImpl();
     }
 
     /**
-     * Get the actions to perform if player joined the competition
-     *
-     * @return actions
+     * Builder interface for constructing a CompetitionConfig instance.
      */
-    @Nullable
-    public Action[] getJoinActions() {
-        return joinActions;
-    }
+    interface Builder {
 
-    /**
-     * Get the actions to perform if the amount of players doesn't meet the requirement
-     *
-     * @return actions
-     */
-    @Nullable
-    public Action[] getSkipActions() {
-        return skipActions;
-    }
+        /**
+         * Sets the unique key for the competition.
+         *
+         * @param key the key for the competition.
+         * @return the builder instance.
+         */
+        Builder key(String key);
 
-    /**
-     * Get the requirements for participating the competition
-     *
-     * @return requirements
-     */
-    @Nullable
-    public Requirement[] getRequirements() {
-        return requirements;
-    }
+        /**
+         * Sets the goal of the competition.
+         *
+         * @param goal the competition goal.
+         * @return the builder instance.
+         */
+        Builder goal(CompetitionGoal goal);
 
-    @NotNull
-    public CompetitionGoal getGoal() {
-        return goal;
-    }
+        /**
+         * Sets the duration of the competition.
+         *
+         * @param duration the duration in seconds.
+         * @return the builder instance.
+         */
+        Builder duration(int duration);
 
-    /**
-     * Get the reward map
-     *
-     * @return reward map
-     */
-    public HashMap<String, Action[]> getRewards() {
-        return rewards;
-    }
+        /**
+         * Sets the minimum number of players required to start the competition.
+         *
+         * @param minPlayers the minimum number of players.
+         * @return the builder instance.
+         */
+        Builder minPlayers(int minPlayers);
 
-    @Nullable
-    public BossBarConfig getBossBarConfig() {
-        return bossBarConfig;
-    }
+        /**
+         * Sets the requirements that players must meet to join the competition.
+         *
+         * @param joinRequirements an array of join requirements.
+         * @return the builder instance.
+         */
+        Builder joinRequirements(Requirement<Player>[] joinRequirements);
 
-    @Nullable
-    public ActionBarConfig getActionBarConfig() {
-        return actionBarConfig;
-    }
+        /**
+         * Sets the actions to be performed when a player skips the competition.
+         *
+         * @param skipActions an array of skip actions.
+         * @return the builder instance.
+         */
+        Builder skipActions(Action<Player>[] skipActions);
 
-    public static Builder builder(String key) {
-        return new Builder(key);
-    }
+        /**
+         * Sets the actions to be performed when the competition starts.
+         *
+         * @param startActions an array of start actions.
+         * @return the builder instance.
+         */
+        Builder startActions(Action<Player>[] startActions);
 
-    public static class Builder {
+        /**
+         * Sets the actions to be performed when the competition ends.
+         *
+         * @param endActions an array of end actions.
+         * @return the builder instance.
+         */
+        Builder endActions(Action<Player>[] endActions);
 
-        private final CompetitionConfig config;
+        /**
+         * Sets the actions to be performed when a player joins the competition.
+         *
+         * @param joinActions an array of join actions.
+         * @return the builder instance.
+         */
+        Builder joinActions(Action<Player>[] joinActions);
 
-        public Builder(String key) {
-            this.config = new CompetitionConfig(key);
-        }
+        /**
+         * Sets the rewards for the competition.
+         *
+         * @param rewards a hashmap where the key is a string identifier and the value is an array of actions.
+         * @return the builder instance.
+         */
+        Builder rewards(HashMap<String, Action<Player>[]> rewards);
 
-        public Builder duration(int duration) {
-            config.duration = duration;
-            return this;
-        }
+        /**
+         * Sets the configuration for the boss bar during the competition.
+         *
+         * @param bossBarConfig the boss bar configuration.
+         * @return the builder instance.
+         */
+        Builder bossBarConfig(BossBarConfig bossBarConfig);
 
-        public Builder minPlayers(int min) {
-            config.minPlayers = min;
-            return this;
-        }
+        /**
+         * Sets the configuration for the action bar during the competition.
+         *
+         * @param actionBarConfig the action bar configuration.
+         * @return the builder instance.
+         */
+        Builder actionBarConfig(ActionBarConfig actionBarConfig);
 
-        public Builder startActions(Action[] startActions) {
-            config.startActions = startActions;
-            return this;
-        }
-
-        public Builder endActions(Action[] endActions) {
-            config.endActions = endActions;
-            return this;
-        }
-
-        public Builder skipActions(Action[] skipActions) {
-            config.skipActions = skipActions;
-            return this;
-        }
-
-        public Builder joinActions(Action[] joinActions) {
-            config.joinActions = joinActions;
-            return this;
-        }
-
-        @SuppressWarnings("UnusedReturnValue")
-        public Builder actionbar(ActionBarConfig actionBarConfig) {
-            config.actionBarConfig = actionBarConfig;
-            return this;
-        }
-
-        @SuppressWarnings("UnusedReturnValue")
-        public Builder bossbar(BossBarConfig bossBarConfig) {
-            config.bossBarConfig = bossBarConfig;
-            return this;
-        }
-
-        public Builder requirements(Requirement[] requirements) {
-            config.requirements = requirements;
-            return this;
-        }
-
-        public Builder goal(CompetitionGoal goal) {
-            config.goal = goal;
-            return this;
-        }
-
-        public Builder rewards(HashMap<String, Action[]> rewards) {
-            config.rewards = rewards;
-            return this;
-        }
-
-        public CompetitionConfig build() {
-            return config;
-        }
+        /**
+         * Builds and returns the CompetitionConfig instance.
+         *
+         * @return the constructed CompetitionConfig instance.
+         */
+        CompetitionConfig build();
     }
 }

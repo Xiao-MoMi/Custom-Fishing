@@ -1,0 +1,33 @@
+name: CustomFishing
+version: '${project_version}'
+main: net.momirealms.customfishing.bukkit.BukkitBootstrap
+api-version: 1.17
+authors: [ XiaoMoMi ]
+folia-supported: true
+softdepend:
+  - Vault
+  - PlaceholderAPI
+  - RealisticSeasons
+  - ItemsAdder
+  - MythicMobs
+  - Oraxen
+  - MMOItems
+  - mcMMO
+  - AureliumSkills
+  - AuraSkills
+  - CustomCrops
+  - MMOCore
+  - EcoSkills
+  - BattlePass
+  - ClueScrolls
+  - BetonQuest
+  - AdvancedEnchantments
+  - EcoJobs
+  - Zaphkiel
+permissions:
+  fishingbag.user:
+    default: true
+  fishingbag.collectloot:
+    default: false
+  customfishing.sellfish:
+    default: true

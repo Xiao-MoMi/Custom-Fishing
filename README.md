@@ -9,7 +9,7 @@
 <img src="https://img.shields.io/badge/docs-gitbook-brightgreen" alt="Gitbook"/>
 </a>
 
-CustomFishing is a Paper plugin that provides minigames and a powerful condition & action library for fishing.
+CustomFishing is a Paper plugin that provides minigames and a powerful condition & action system for fishing.
 With the new concept of weight system, CustomFishing brings unlimited customization possibilities and best performance.
 
 ## How to build

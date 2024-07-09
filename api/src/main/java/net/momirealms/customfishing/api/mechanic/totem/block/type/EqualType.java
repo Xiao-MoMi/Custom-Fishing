@@ -17,7 +17,7 @@
 
 package net.momirealms.customfishing.api.mechanic.totem.block.type;
 
-import net.momirealms.customfishing.api.CustomFishingPlugin;
+import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import org.bukkit.block.Block;
 
 import java.io.Serializable;
@@ -41,7 +41,7 @@ public class EqualType implements TypeCondition, Serializable {
      */
     @Override
     public boolean isMet(Block type) {
-        return this.type.equals(CustomFishingPlugin.get().getBlockManager().getAnyPluginBlockID(type));
+        return this.type.equals(BukkitCustomFishingPlugin.getInstance().getBlockManager().getBlockID(type));
     }
 
     /**

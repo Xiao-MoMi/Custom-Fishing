@@ -1,0 +1,1289 @@
+# Note: These are the default configurations of the plugin
+# and do not necessarily mean that players can have a good
+# gaming experience. We hope that you will create
+# customized configurations based on your own ideas,
+# allowing players to experience the uniqueness of your server.
+
+# https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing/loot/item
+
+# Vanilla loots settings
+vanilla:
+  show-in-fishfinder: false
+  disable-stat: true
+  group:
+    - river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 1~7
+        chance: 1.0
+# Some rubbish
+stick:
+  tag: false
+  nick: '<#EEE685>Useless sticks</#EEE685>'
+  material: stick
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+shoes:
+  tag: false
+  nick: '<#8B814C>Something smells bad</#8B814C>'
+  material: leather_boots
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+  random-durability: true
+seagrass:
+  tag: false
+  nick: '<green>Sea Grass</green>'
+  material: seagrass
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+kelp:
+  tag: false
+  nick: '<green>Kelp</green>'
+  material: kelp
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+nether_brick:
+  tag: false
+  nick: '<gray>Something hard</gray>'
+  material: nether_brick
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+flint:
+  tag: false
+  nick: '<gray>Something hard</gray>'
+  material: flint
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+stone:
+  tag: false
+  nick: '<gray>Something hard</gray>'
+  material: stone
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+netherrack:
+  tag: false
+  nick: '<gray>Something hard</gray>'
+  material: netherrack
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+gold_ingot:
+  tag: false
+  nick: '<yellow>Shining ingots</yellow>'
+  material: gold_ingot
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+gold_nugget:
+  tag: false
+  nick: '<yellow>Shining nuggets</yellow>'
+  material: gold_nugget
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+cobblestone:
+  tag: false
+  nick: '<gray>Something hard</gray>'
+  material: cobblestone
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+obsidian:
+  tag: false
+  nick: '<gray>Something hard</gray>'
+  material: obsidian
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+diamond:
+  tag: false
+  nick: '<#00FFFF>Diamond</#00FFFF>'
+  material: diamond
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+rubbish:
+  material: cod
+  nick: <#00BFFF>Radioactive Fish</#00BFFF>
+  display:
+    name: <#00BFFF>Radioactive Fish</#00BFFF>
+    lore:
+      - <gray>Protect the environment...
+  custom-model-data: 50000
+  show-in-fishfinder: false
+  disable-stat: true
+  disable-game: true
+  instant-game: false
+  prevent-grabbing: false
+rainbow_fish:
+  material: cod
+  nick: <Rainbow>Rainbow Fish</Rainbow>
+  display:
+    name: <Rainbow>Rainbow Fish</Rainbow>
+    lore:
+      - <gray>Bringing a good mood for the day
+  custom-model-data: 50100
+  price:
+    base: 100
+# Enchantments
+enchantment_book:
+  tag: false
+  material: enchanted_book
+  group: enchantments
+  nick: "<lang:item.minecraft.enchanted_book>"
+  show-in-fishfinder: false
+  disable-stat: true
+  stored-enchantment-pool:
+    # max enchantments on the item
+    amount:
+      1: 6
+      2: 3
+      3: 1
+    pool:
+      'minecraft:unbreaking:1': 6
+      'minecraft:unbreaking:2': 3
+      'minecraft:unbreaking:3': 1
+      'minecraft:sharpness:1': 6
+      'minecraft:sharpness:2': 3
+      'minecraft:sharpness:3': 2
+      'minecraft:sharpness:4': 1
+      'minecraft:efficiency:1': 12
+      'minecraft:efficiency:2': 6
+      'minecraft:efficiency:3': 2
+      'minecraft:efficiency:4': 1
+      'minecraft:protection:1': 10
+      'minecraft:protection:2': 6
+      'minecraft:protection:3': 2
+      'minecraft:feather_falling:1': 4
+      'minecraft:feather_falling:2': 3
+      'minecraft:feather_falling:3': 2
+      'minecraft:blast_protection:1': 10
+      'minecraft:blast_protection:2': 6
+      'minecraft:blast_protection:3': 2
+      'minecraft:fire_protection:1': 10
+      'minecraft:fire_protection:2': 6
+      'minecraft:fire_protection:3': 2
+      'minecraft:projectile_protection:1': 10
+      'minecraft:projectile_protection:2': 6
+      'minecraft:projectile_protection:3': 2
+      'minecraft:binding_curse:1': 2
+      'minecraft:vanishing_curse:1': 2
+      'minecraft:depth_strider:1': 8
+      'minecraft:depth_strider:2': 4
+      'minecraft:depth_strider:3': 2
+      'minecraft:fortune:1': 4
+      'minecraft:fortune:2': 3
+      'minecraft:fortune:3': 2
+      'minecraft:flame:1': 12
+      'minecraft:loyalty:1': 8
+      'minecraft:loyalty:2': 5
+      'minecraft:lure:1': 9
+      'minecraft:lure:2': 3
+      'minecraft:lure:3': 1
+      'minecraft:luck_of_the_sea:1': 8
+      'minecraft:luck_of_the_sea:2': 2
+      'minecraft:luck_of_the_sea:3': 1
+      'minecraft:channeling:1': 7
+      'minecraft:frost_walker:1': 7
+      'minecraft:mending:1': 10
+      'minecraft:power:1': 12
+      'minecraft:power:2': 6
+      'minecraft:power:3': 3
+      'minecraft:power:4': 1
+      'minecraft:knockback:1': 8
+      'minecraft:knockback:2': 3
+      'minecraft:silk_touch:1': 12
+      'minecraft:smite:1': 12
+      'minecraft:smite:2': 6
+      'minecraft:smite:3': 3
+      'minecraft:smite:4': 1
+      'minecraft:bane_of_arthropods:1': 12
+      'minecraft:bane_of_arthropods:2': 6
+      'minecraft:bane_of_arthropods:3': 3
+      'minecraft:bane_of_arthropods:4': 1
+      'minecraft:multishot:1': 7
+      'minecraft:punch:1': 8
+      'minecraft:punch:2': 4
+      'minecraft:thorns:1': 8
+      'minecraft:thorns:2': 4
+      'minecraft:looting:1': 12
+      'minecraft:looting:2': 6
+      'minecraft:looting:3': 2
+      'minecraft:soul_speed:1': 8
+      'minecraft:soul_speed:2': 4
+      'minecraft:fire_aspect:1': 10
+      'minecraft:fire_aspect:2': 5
+      'minecraft:quick_charge:1': 9
+      'minecraft:infinity:1': 7
+# Fish
+tuna_fish:
+  material: cod
+  display:
+    name: <gradient:#F0FFFF:#4682B4:#F0FFFF>Tuna Fish</gradient>
+    lore:
+      - <gray>Tuna is a kind of healthy food.
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50001
+  group: ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 5
+        chance: 1.0
+  size: 15~50
+  price:
+    base: 30
+    bonus: 0.6
+tuna_fish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#F0FFFF:#4682B4:#F0FFFF>Tuna Fish</gradient> <#F5F5F5>(Silver
+      Star)</#F5F5F5>
+    lore:
+      - <gray>Tuna is a kind of healthy food.
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50002
+  group:
+    - silver_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 7
+        chance: 1.0
+  size: 30~100
+  price:
+    base: 50
+    bonus: 0.6
+tuna_fish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#F0FFFF:#4682B4:#F0FFFF>Tuna Fish</gradient> <#FFD700>(Golden
+      Star)</#FFD700>
+    lore:
+      - <gray>Tuna is a kind of healthy food.
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50003
+  group:
+    - golden_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 9
+        chance: 1.0
+  size: 80~190
+  price:
+    base: 80
+    bonus: 0.7
+pike_fish:
+  material: cod
+  display:
+    name: <gradient:#F0F8FF:#5F9EA0:#F0F8FF>Pike Fish</gradient>
+    lore:
+      - <gray>It likes to inhabit at the junction
+      - <gray>of salt and fresh water. It can
+      - <gray>survive in seawater, brackish fresh
+      - <gray>water and inland freshwater lakes
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50004
+  group: ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 4
+        chance: 1.0
+  size: 5~15
+  price:
+    base: 30
+    bonus: 1.5
+pike_fish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#F0F8FF:#5F9EA0:#F0F8FF>Pike Fish</gradient> <#F5F5F5>(Silver
+      Star)</#F5F5F5>
+    lore:
+      - <gray>It likes to inhabit at the junction
+      - <gray>of salt and fresh water. It can
+      - <gray>survive in seawater, brackish fresh
+      - <gray>water and inland freshwater lakes
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50005
+  group:
+    - silver_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 5
+        chance: 1.0
+  size: 10~25
+  price:
+    base: 40
+    bonus: 1.5
+pike_fish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#F0F8FF:#5F9EA0:#F0F8FF>Pike Fish</gradient> <#FFD700>(Golden
+      Star)</#FFD700>
+    lore:
+      - <gray>It likes to inhabit at the junction
+      - <gray>of salt and fresh water. It can
+      - <gray>survive in seawater, brackish fresh
+      - <gray>water and inland freshwater lakes
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50006
+  group:
+    - golden_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 7
+        chance: 1.0
+  size: 15~30
+  price:
+    base: 50
+    bonus: 1.5
+gold_fish:
+  material: cod
+  display:
+    name: <gradient:#40E0D0:#FFD700:#F0F8FF>Gold Fish</gradient>
+    lore:
+      - <gray>Goldfish is one of most famous ornamental
+      - <gray>fishes in the world. It originated in China
+      - <gray>and has a history of more than 1700 years
+      - '<white>size: {size_formatted}cm'
+  price:
+    base: 70
+    bonus: 2.6
+  size: 2~3
+  custom-model-data: 50007
+  group: river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 5
+        chance: 1.0
+gold_fish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#40E0D0:#FFD700:#F0F8FF>Gold Fish</gradient> <#F5F5F5>(Silver
+      Star)</#F5F5F5>
+    lore:
+      - <gray>Goldfish is one of most famous ornamental
+      - <gray>fishes in the world. It originated in China
+      - <gray>and has a history of more than 1700 years
+      - '<white>size: {size_formatted}cm'
+  price:
+    base: 80
+    bonus: 3
+  size: 3~4
+  custom-model-data: 50008
+  group:
+    - silver_star
+    - river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 7
+        chance: 1.0
+gold_fish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#40E0D0:#FFD700:#F0F8FF>Gold Fish</gradient> <#FFD700>(Golden
+      Star)</#FFD700>
+    lore:
+      - <gray>Goldfish is one of most famous ornamental
+      - <gray>fishes in the world. It originated in China
+      - <gray>and has a history of more than 1700 years
+      - '<white>size: {size_formatted}cm'
+  price:
+    base: 100
+    bonus: 3.4
+  size: 4~7
+  custom-model-data: 50009
+  group:
+    - golden_star
+    - river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 9
+        chance: 1.0
+perch_fish:
+  material: cod
+  display:
+    name: <gradient:#BDB76B:#2E8B57:#008B8B>Perch Fish</gradient>
+    lore:
+      - <gray>Living in various habitats and
+      - <gray>foraging at dusk and early morning
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50010
+  group: river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 3
+        chance: 1.0
+  size: 5~12
+  price:
+    base: 10
+    bonus: 3
+perch_fish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#BDB76B:#2E8B57:#008B8B>Perch Fish</gradient> <#F5F5F5>(Silver
+      Star)</#F5F5F5>
+    lore:
+      - <gray>Living in various habitats and
+      - <gray>foraging at dusk and early morning
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50011
+  group:
+    - silver_star
+    - river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 6
+        chance: 1.0
+  size: 10~19
+  price:
+    base: 10
+    bonus: 3
+perch_fish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#BDB76B:#2E8B57:#008B8B>Perch Fish</gradient> <#FFD700>(Golden
+      Star)</#FFD700>
+    lore:
+      - <gray>Living in various habitats and
+      - <gray>foraging at dusk and early morning
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50012
+  group:
+    - golden_star
+    - river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 12
+        chance: 1.0
+  size: 20~39
+  price:
+    base: 10
+    bonus: 3
+mullet_fish:
+  material: cod
+  display:
+    name: <gradient:#D4F2E7:#E1FFFF:#D4F2E7>Mullet Fish</gradient>
+    lore:
+      - <gray>Used in traditional Chinese medicine
+      - <gray>to treat spleen and stomach weakness
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50013
+  group: river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 6
+        chance: 1.0
+  size: 1~3
+  price:
+    base: 20
+    bonus: 1.5
+mullet_fish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#D4F2E7:#E1FFFF:#D4F2E7>Mullet Fish</gradient> <#F5F5F5>(Silver
+      Star)</#F5F5F5>
+    lore:
+      - <gray>Used in traditional Chinese medicine
+      - <gray>to treat spleen and stomach weakness
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50014
+  group:
+    - silver_star
+    - river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 8
+        chance: 1.0
+  size: 4~9
+  price:
+    base: 30
+    bonus: 1.5
+mullet_fish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#D4F2E7:#E1FFFF:#D4F2E7>Mullet Fish</gradient> <#FFD700>(Golden
+      Star)</#FFD700>
+    lore:
+      - <gray>Used in traditional Chinese medicine
+      - <gray>to treat spleen and stomach weakness
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50015
+  group:
+    - golden_star
+    - river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 12
+        chance: 1.0
+  size: 10~20
+  price:
+    base: 50
+    bonus: 1.5
+sardine_fish:
+  material: cod
+  display:
+    name: <gradient:#E1FFFF:#5F9EA0>Sardine Fish</gradient>
+    lore:
+      - <gray>Sardine fish is rich in DHA which improves memory
+      - <gray>Therefore, sardine are also called "smart food"
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50016
+  group: ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 7
+        chance: 1.0
+  size: 1~5
+  price:
+    base: 10
+    bonus: 3.4
+sardine_fish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#E1FFFF:#5F9EA0>Sardine Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>
+    lore:
+      - <gray>Sardine fish is rich in DHA which improves memory
+      - <gray>Therefore, sardine are also called "smart food"
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50017
+  group:
+    - silver_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 9
+        chance: 1.0
+  size: 4~8
+  price:
+    base: 13
+    bonus: 3.4
+sardine_fish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#E1FFFF:#5F9EA0>Sardine Fish</gradient> <#FFD700>(Golden Star)</#FFD700>
+    lore:
+      - <gray>Sardine fish is rich in DHA which improves memory
+      - <gray>Therefore, sardine are also called "smart food"
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50018
+  group:
+    - golden_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 14
+        chance: 1.0
+  size: 7~14
+  price:
+    base: 15
+    bonus: 3.4
+carp_fish:
+  material: cod
+  display:
+    name: <gradient:#808000:#556B2F>Carp Fish</gradient>
+    lore:
+      - <gray>One of the most common edible fish
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50019
+  group: river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 6
+        chance: 1.0
+  size: 7~19
+  price:
+    base: 10
+    bonus: 2
+carp_fish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#808000:#556B2F>Carp Fish</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>
+    lore:
+      - <gray>One of the most common edible fish
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50020
+  group:
+    - silver_star
+    - river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 8
+        chance: 1.0
+  size: 15~28
+  price:
+    base: 11
+    bonus: 2.1
+carp_fish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#808000:#556B2F>Carp Fish</gradient> <#FFD700>(Golden Star)</#FFD700>
+    lore:
+      - <gray>One of the most common edible fish
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50021
+  group:
+    - golden_star
+    - river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 10
+        chance: 1.0
+  size: 27~48
+  price:
+    base: 12
+    bonus: 2.2
+cat_fish:
+  material: cod
+  display:
+    name: <#BDB76B>Cat Fish</#BDB76B>
+    lore:
+      - <gray>Catfish is a fierce carnivorous fish with
+      - <gray>sharp jaw teeth, short intestine and stomach
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50022
+  group: river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 6
+        chance: 1.0
+  size: 3~12
+  price:
+    base: 27
+    bonus: 1.8
+cat_fish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <#BDB76B>Cat Fish</#BDB76B> <#F5F5F5>(Silver Star)</#F5F5F5>
+    lore:
+      - <gray>Catfish is a fierce carnivorous fish with
+      - <gray>sharp jaw teeth, short intestine and stomach
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50023
+  group:
+    - silver_star
+    - river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 10
+        chance: 1.0
+  size: 10~28
+  price:
+    base: 14
+    bonus: 2.2
+cat_fish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <#BDB76B>Cat Fish</#BDB76B> <#FFD700>(Golden Star)</#FFD700>
+    lore:
+      - <gray>Catfish is a fierce carnivorous fish with
+      - <gray>sharp jaw teeth, short intestine and stomach
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50024
+  group:
+    - golden_star
+    - river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 13
+        chance: 1.0
+  size: 40~70
+  price:
+    base: 16
+    bonus: 2.2
+octopus:
+  material: cod
+  display:
+    name: <gradient:#D2691E:#FF6347>Octopus</gradient>
+    lore:
+      - <gray>Octopus is crazy about all kinds of utensils
+      - <gray>People often use pots to catch octopus
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50025
+  group: ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 6
+        chance: 1.0
+  size: 1~4
+  price:
+    base: 50
+    bonus: 2.2
+octopus_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#D2691E:#FF6347>Octopus</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>
+    lore:
+      - <gray>Octopus is crazy about all kinds of utensils
+      - <gray>People often use pots to catch octopus
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50026
+  group:
+    - silver_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 7
+        chance: 1.0
+  size: 4~12
+  price:
+    base: 50
+    bonus: 2.2
+octopus_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#D2691E:#FF6347>Octopus</gradient> <#FFD700>(Golden Star)</#FFD700>
+    lore:
+      - <gray>Octopus is crazy about all kinds of utensils
+      - <gray>People often use pots to catch octopus
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50027
+  group:
+    - golden_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 8
+        chance: 1.0
+  size: 12~100
+  price:
+    base: 10
+    bonus: 1.5
+sunfish:
+  material: cod
+  display:
+    name: <#F5DEB3>Sunfish</#F5DEB3>
+    lore:
+      - <gray>It only has one huge head
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50028
+  group: ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 9
+        chance: 1.0
+  size: 5~18
+  price:
+    base: 10
+    bonus: 1.5
+sunfish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <#F5DEB3>Sunfish <#F5F5F5>(Silver Star)</#F5F5F5>
+    lore:
+      - <gray>It only has one huge head
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50029
+  group:
+    - silver_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 10
+        chance: 1.0
+  size: 17~28
+  price:
+    base: 18
+    bonus: 1.5
+sunfish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <#F5DEB3>Sunfish <#FFD700>(Golden Star)</#FFD700>
+    lore:
+      - <gray>It only has one huge head
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50030
+  group:
+    - golden_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 15
+        chance: 1.0
+  size: 26~50
+  price:
+    base: 26
+    bonus: 1.5
+red_snapper_fish:
+  material: cod
+  display:
+    name: <gradient:#FF4500:#FFA07A:#FF4500>Red Snapper Fish</gradient>
+    lore:
+      - <gray>They usually have a large family of ten or twenty
+      - <gray>with a male as the "head of the family"
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50031
+  group: ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 10
+        chance: 1.0
+  size: 1~4
+  price:
+    base: 10
+    bonus: 2.3
+red_snapper_fish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#FF4500:#FFA07A:#FF4500>Red Snapper Fish</gradient> <#F5F5F5>(Silver
+      Star)</#F5F5F5>
+    lore:
+      - <gray>They usually have a large family of ten or twenty
+      - <gray>with a male as the "head of the family"
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50032
+  group:
+    - silver_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 12
+        chance: 1.0
+  size: 3~12
+  price:
+    base: 10
+    bonus: 2.3
+red_snapper_fish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#FF4500:#FFA07A:#FF4500>Red Snapper Fish</gradient> <#FFD700>(Golden
+      Star)</#FFD700>
+    lore:
+      - <gray>They usually have a large family of ten or twenty
+      - <gray>with a male as the "head of the family"
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50033
+  group:
+    - golden_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 14
+        chance: 1.0
+  size: 9~18
+  price:
+    base: 10
+    bonus: 2.3
+salmon_void_fish:
+  material: cod
+  display:
+    name: <gradient:#800000:#800080>Void Salmon</gradient>
+    lore:
+      - <gray>A fish from the hell
+      - <gray>It's looking at you...
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50034
+  group: lava
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 20
+        chance: 1.0
+  size: 8~10
+  price:
+    base: 20
+    bonus: 2.4
+salmon_void_fish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#800000:#800080>Void Salmon</gradient> <#F5F5F5>(Silver Star)</#F5F5F5>
+    lore:
+      - <gray>A fish from the hell
+      - <gray>It's looking at you...
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50035
+  group:
+    - silver_star
+    - lava
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 24
+        chance: 1.0
+  size: 10~14
+  price:
+    base: 50
+    bonus: 2.6
+salmon_void_fish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <gradient:#800000:#800080>Void Salmon</gradient> <#FFD700>(Golden Star)</#FFD700>
+    lore:
+      - <gray>A fish from the hell
+      - <gray>It's looking at you...
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50036
+  group:
+    - golden_star
+    - lava
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 28
+        chance: 1.0
+  size: 12~18
+  price:
+    base: 100
+    bonus: 3
+woodskip_fish:
+  material: cod
+  display:
+    name: <#CD5C5C>Woodskip Fish</#CD5C5C>
+    lore:
+      - <gray>A very sensitive fish that can only
+      - <gray>live in pools deep in the forest
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50037
+  group: river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 6
+        chance: 1.0
+  size: 3~7
+  price:
+    base: 10
+    bonus: 2.3
+woodskip_fish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <#CD5C5C>Woodskip Fish</#CD5C5C> <#F5F5F5>(Silver Star)</#F5F5F5>
+    lore:
+      - <gray>A very sensitive fish that can only
+      - <gray>live in pools deep in the forest
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50038
+  group:
+    - silver_star
+    - river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 9
+        chance: 1.0
+  size: 7~18
+  price:
+    base: 17
+    bonus: 2.5
+woodskip_fish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <#CD5C5C>Woodskip Fish</#CD5C5C> <#FFD700>(Golden Star)</#FFD700>
+    lore:
+      - <gray>A very sensitive fish that can only
+      - <gray>live in pools deep in the forest
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50039
+  group:
+    - golden_star
+    - river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 13
+        chance: 1.0
+  size: 16~29
+  price:
+    base: 25
+    bonus: 2.8
+sturgeon_fish:
+  material: cod
+  display:
+    name: <#48D1CC>Sturgeon Fish</#48D1CC>
+    lore:
+      - <gray>An ancient bottom-feeder with a dwindling
+      - <gray>population. Females can live up to 150 years
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50040
+  group: river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 28
+        chance: 1.0
+  size: 1~5
+  price:
+    base: 200
+    bonus: 10
+sturgeon_fish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <#48D1CC>Sturgeon Fish</#48D1CC> <#F5F5F5>(Silver Star)</#F5F5F5>
+    lore:
+      - <gray>An ancient bottom-feeder with a dwindling
+      - <gray>population. Females can live up to 150 years
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50041
+  group:
+    - silver_star
+    - river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 35
+        chance: 1.0
+  size: 5~15
+  price:
+    base: 250
+    bonus: 10
+sturgeon_fish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <#48D1CC>Sturgeon Fish</#48D1CC> <#FFD700>(Golden Star)</#FFD700>
+    lore:
+      - <gray>An ancient bottom-feeder with a dwindling
+      - <gray>population. Females can live up to 150 years
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50042
+  group:
+    - golden_star
+    - river
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 42
+        chance: 1.0
+  size: 15~30
+  price:
+    base: 300
+    bonus: 10
+blue_jellyfish:
+  material: cod
+  display:
+    name: <#87CEFA>Jellyfish</#87CEFA>
+    lore:
+      - <gray>Looks like a blue umbrella
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50043
+  group: ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 4
+        chance: 1.0
+  size: 1~3
+  price:
+    base: 20
+    bonus: 6.4
+blue_jellyfish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <#87CEFA>Jellyfish</#87CEFA>
+    lore:
+      - <gray>Looks like a blue umbrella
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50044
+  group:
+    - silver_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 6
+        chance: 1.0
+  size: 3~5
+  price:
+    base: 25
+    bonus: 7.2
+blue_jellyfish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <#87CEFA>Jellyfish</#87CEFA>
+    lore:
+      - <gray>Looks like a blue umbrella
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50045
+  group:
+    - golden_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 8
+        chance: 1.0
+  size: 5~10
+  price:
+    base: 30
+    bonus: 8
+pink_jellyfish:
+  material: cod
+  display:
+    name: <#FFC0CB>Jellyfish</#FFC0CB>
+    lore:
+      - <gray>Seems to be sweet
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50046
+  group: ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 4
+        chance: 1.0
+  size: 1~3
+  price:
+    base: 20
+    bonus: 6.4
+pink_jellyfish_silver_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <#FFC0CB>Jellyfish</#FFC0CB>
+    lore:
+      - <gray>Seems to be sweet
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50047
+  group:
+    - silver_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 6
+        chance: 1.0
+  size: 3~5
+  price:
+    base: 25
+    bonus: 7.2
+pink_jellyfish_golden_star:
+  show-in-fishfinder: false
+  material: cod
+  display:
+    name: <#FFC0CB>Jellyfish</#FFC0CB>
+    lore:
+      - <gray>Seems to be sweet
+      - '<white>size: {size_formatted}cm'
+  custom-model-data: 50048
+  group:
+    - golden_star
+    - ocean
+  events:
+    success:
+      action_mending:
+        type: mending
+        value: 8
+        chance: 1.0
+  size: 5~10
+  price:
+    base: 30
+    bonus: 8

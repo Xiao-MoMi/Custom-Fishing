@@ -17,10 +17,14 @@
 
 package net.momirealms.customfishing.api.mechanic.action;
 
-import net.momirealms.customfishing.api.mechanic.condition.Condition;
+import net.momirealms.customfishing.api.mechanic.context.Context;
 
-public interface Action {
+public interface Action<T> {
 
-    void trigger(Condition condition);
-
+    /**
+     * Triggers the action based on the provided condition.
+     *
+     * @param context the context
+     */
+    void trigger(Context<T> context);
 }

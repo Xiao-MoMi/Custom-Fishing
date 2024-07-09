@@ -17,43 +17,46 @@
 
 package net.momirealms.customfishing.api.mechanic.game;
 
-import net.momirealms.customfishing.api.CustomFishingPlugin;
-import net.momirealms.customfishing.api.manager.FishingManager;
-import net.momirealms.customfishing.api.mechanic.effect.Effect;
-import net.momirealms.customfishing.api.scheduler.CancellableTask;
-import org.bukkit.Material;
-import org.bukkit.entity.FishHook;
+import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
+import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
+import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.PlayerInventory;
+import org.jetbrains.annotations.ApiStatus;
+
+import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
 
-    private final FishingManager manager;
     protected long deadline;
     protected boolean success;
-    protected CancellableTask task;
-    protected Player player;
-    protected GameSettings settings;
-    protected FishHook fishHook;
+    protected SchedulerTask task;
+    protected GameSetting settings;
+    protected CustomFishingHook hook;
     protected boolean isTimeOut;
+    private boolean valid = true;
+    private boolean firstFlag = true;
 
-    public AbstractGamingPlayer(Player player, FishHook hook, GameSettings settings) {
-        this.player = player;
-        this.fishHook = hook;
+    public AbstractGamingPlayer(CustomFishingHook hook, GameSetting settings) {
+        this.hook = hook;
         this.settings = settings;
-        this.manager = CustomFishingPlugin.get().getFishingManager();
-        this.deadline = (long) (System.currentTimeMillis() + settings.getTime() * 1000L);
+        this.deadline = (long) (System.currentTimeMillis() + settings.time() * 1000L);
         this.arrangeTask();
     }
 
     public void arrangeTask() {
-        this.task = CustomFishingPlugin.get().getScheduler().runTaskSyncTimer(this, fishHook.getLocation(), 1, 1);
+        this.task = BukkitCustomFishingPlugin.getInstance().getScheduler().asyncRepeating(this, 50, 50, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public void destroy() {
+        if (task != null) task.cancel();
+        valid = false;
     }
 
     @Override
     public void cancel() {
-        if (task != null && !task.isCancelled())
-            task.cancel();
+        destroy();
     }
 
     @Override
@@ -61,45 +64,53 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
         return success;
     }
 
+    @ApiStatus.Internal
+    public void internalRightClick() {
+        firstFlag = true;
+        handleRightClick();
+    }
+
     @Override
-    public boolean onRightClick() {
+    public void handleRightClick() {
         endGame();
-        return true;
+    }
+
+    @ApiStatus.Internal
+    public boolean internalLeftClick() {
+        if (firstFlag) {
+            firstFlag = false;
+            return false;
+        }
+        return handleLeftClick();
     }
 
     @Override
-    public boolean onLeftClick() {
+    public boolean handleLeftClick() {
         return false;
     }
 
     @Override
-    public boolean onChat(String message) {
+    public boolean handleChat(String message) {
         return false;
     }
 
     @Override
-    public boolean onSwapHand() {
+    public void handleSwapHand() {
+    }
+
+    @Override
+    public boolean handleJump() {
         return false;
     }
 
     @Override
-    public boolean onJump() {
-        return false;
-    }
-
-    @Override
-    public boolean onSneak() {
+    public boolean handleSneak() {
         return false;
     }
 
     @Override
     public Player getPlayer() {
-        return player;
-    }
-
-    @Override
-    public Effect getEffectReward() {
-        return null;
+        return hook.getContext().getHolder();
     }
 
     @Override
@@ -107,16 +118,27 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
         if (timeOutCheck()) {
             return;
         }
-        switchItemCheck();
-        onTick();
+        tick();
     }
 
-    public void onTick() {
-
+    @Override
+    public boolean isValid() {
+        return valid;
     }
+
+    protected abstract void tick();
 
     protected void endGame() {
-        this.manager.processGameResult(this);
+        destroy();
+        boolean success = isSuccessful();
+        BukkitCustomFishingPlugin.getInstance().getScheduler().sync().run(() -> {
+            if (success) {
+                hook.handleSuccessfulFishing();
+            } else {
+                hook.handleFailedFishing();
+            }
+            hook.end();
+        }, hook.getHookEntity().getLocation());
     }
 
     protected void setGameResult(boolean success) {
@@ -124,22 +146,13 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     }
 
     protected boolean timeOutCheck() {
-        if (System.currentTimeMillis() > deadline) {
+        long delta = deadline - System.currentTimeMillis();
+        if (delta <= 0) {
             isTimeOut = true;
-            cancel();
             endGame();
             return true;
         }
+        hook.getContext().arg(ContextKeys.TIME_LEFT, String.format("%.1f", (double) delta / 1000));
         return false;
-    }
-
-    protected void switchItemCheck() {
-        PlayerInventory playerInventory = player.getInventory();
-        if (playerInventory.getItemInMainHand().getType() != Material.FISHING_ROD
-            && playerInventory.getItemInOffHand().getType() != Material.FISHING_ROD
-        ) {
-            cancel();
-            endGame();
-        }
     }
 }

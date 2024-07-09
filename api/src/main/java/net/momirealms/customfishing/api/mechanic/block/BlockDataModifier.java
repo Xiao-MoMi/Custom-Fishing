@@ -17,9 +17,12 @@
 
 package net.momirealms.customfishing.api.mechanic.block;
 
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
+@FunctionalInterface
 public interface BlockDataModifier {
-    void apply(Player player, BlockData blockData);
+
+    void apply(Context<Player> context, BlockData blockData);
 }

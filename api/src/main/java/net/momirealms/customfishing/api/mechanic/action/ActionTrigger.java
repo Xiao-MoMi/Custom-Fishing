@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.api.mechanic.action;
 
 public enum ActionTrigger {
-
     SUCCESS,
     FAILURE,
     HOOK,
@@ -26,8 +25,11 @@ public enum ActionTrigger {
     CAST,
     BITE,
     LAND,
+    LURE,
+    ESCAPE,
     ACTIVATE,
     TIMER,
     INTERACT,
+    REEL,
     NEW_SIZE_RECORD
 }

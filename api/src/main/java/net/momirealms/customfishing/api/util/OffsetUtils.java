@@ -17,7 +17,9 @@
 
 package net.momirealms.customfishing.api.util;
 
-import org.bukkit.configuration.ConfigurationSection;
+import dev.dejvokep.boostedyaml.block.implementation.Section;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Utility class for generating offset characters based on a font configuration.
@@ -47,12 +49,8 @@ public class OffsetUtils {
     private static String positive_64;
     private static String positive_128;
 
-    /**
-     * Load font configuration from a given section.
-     *
-     * @param section The configuration section containing font settings.
-     */
-    public static void loadConfig(ConfigurationSection section) {
+    @ApiStatus.Internal
+    public static void load(Section section) {
         if (section != null) {
             font = section.getString("font", "customfishing:offset_chars");
             positive_1 = section.getString("1");
@@ -167,9 +165,9 @@ public class OffsetUtils {
      */
     public static String getOffsetChars(int n) {
         if (n > 0) {
-            return "<font:" + font + ">" + getShortestPosChars(n) + "</font>";
+            return AdventureHelper.surroundWithMiniMessageFont(getShortestPosChars(n), font);
         } else {
-            return "<font:" + font + ">" + getShortestNegChars(-n) + "</font>";
+            return AdventureHelper.surroundWithMiniMessageFont(getShortestNegChars(-n), font);
         }
     }
 }

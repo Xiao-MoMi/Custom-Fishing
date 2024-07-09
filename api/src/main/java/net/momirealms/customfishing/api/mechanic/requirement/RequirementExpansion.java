@@ -21,7 +21,7 @@ package net.momirealms.customfishing.api.mechanic.requirement;
  * An abstract class representing a requirement expansion
  * Requirement expansions are used to define custom requirements for various functionalities.
  */
-public abstract class RequirementExpansion {
+public abstract class RequirementExpansion<T> {
 
     /**
      * Get the version of this requirement expansion.
@@ -49,5 +49,5 @@ public abstract class RequirementExpansion {
      *
      * @return The requirement factory.
      */
-    public abstract RequirementFactory getRequirementFactory();
+    public abstract RequirementFactory<T> getRequirementFactory();
 }

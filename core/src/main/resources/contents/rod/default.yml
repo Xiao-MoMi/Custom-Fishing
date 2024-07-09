@@ -1,0 +1,212 @@
+# Note: These are the default configurations of the plugin
+# and do not necessarily mean that players can have a good
+# gaming experience. We hope that you will create
+# customized configurations based on your own ideas,
+# allowing players to experience the uniqueness of your server.
+
+# Vanilla fishing rod properties
+FISHING_ROD:
+  tag: false
+  material: fishing_rod
+  effects:
+    effect_1:
+      type: wait-time-multiplier
+      value: 1.5
+
+# Custom rods
+beginner_rod:
+  material: fishing_rod
+  display:
+    name: "<b><#EEE9E9>Beginner's Fishing Rod"
+    lore:
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray> - Specially designed for those new to the art '
+      - '<gray> - of fishing, the Beginner''s Fishing Rod is a'
+      - '<gray> - novice angler''s best friend.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Increase the waiting time'
+      - '<gray> - Reduces the challenge of fishing'
+  custom-model-data: 50001
+  max-durability: 64
+  effects:
+    effect_1:
+      type: wait-time-multiplier
+      value: 1.5
+    effect_2:
+      type: difficulty
+      value: -8
+
+silver_rod:
+  material: fishing_rod
+  display:
+    name: "<b><#C0C0C0>Silver Fishing Rod"
+    lore:
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray> - Elegantly crafted with a gleaming finish, the'
+      - '<gray> - Silver Star Fishing Rod is the dream of every'
+      - '<gray> - angler seeking silver-star quality fish.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Increase the chance of getting silver star fish'
+  custom-model-data: 50002
+  max-durability: 96
+  effects:
+    effect_1:
+      type: group-mod
+      value:
+        - silver_star:+8
+
+golden_rod:
+  material: fishing_rod
+  display:
+    name: "<b><#FFD700>Golden Fishing Rod"
+    lore:
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray> - Glistening under the sunlight and exuding an'
+      - '<gray> - aura of luxury, the Golden Fishing Rod is the'
+      - '<gray> - epitome of high-tier angling gear.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Increase the chance of getting golden star fish'
+  custom-model-data: 50003
+  max-durability: 80
+  effects:
+    effect_1:
+      type: group-mod
+      value:
+        - golden_star:+3
+
+star_rod:
+  material: fishing_rod
+  display:
+    name: "<b><#FFFF00>Star Fishing Rod"
+    lore:
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray> - Carved from stardust and bathed in cosmic energy,'
+      - '<gray> - the Star Fishing Rod is a testament to the wonders'
+      - '<gray> - of the universe. Its endless magical reservoir ensures'
+      - '<gray> - that time seems to stand still, granting anglers what'
+      - '<gray> - feels like an eternity to perfect their catch.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - +15s Game Time'
+  custom-model-data: 50004
+  max-durability: 128
+  effects:
+    effect_1:
+      type: game-time
+      value: 15
+
+bone_rod:
+  material: fishing_rod
+  display:
+    name: "<b><#CD2626>Bone Fishing Rod"
+    lore:
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray> - Forged from the bones of age-old skeletons and'
+      - '<gray> - imbued with dark enchantments, the Skeleton Fishing'
+      - '<gray> - Rod is not for the faint-hearted. It allows the '
+      - '<gray> - brave or the mad to fish within the scorching '
+      - '<gray> - confines of lava, defying the usual limitations of'
+      - '<gray> - regular rods.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Fish in lava'
+      - '<gray> - Attract skeletons'
+  custom-model-data: 50005
+  max-durability: 32
+  effects:
+    effect_1:
+      type: lava-fishing
+
+magical_rod:
+  material: fishing_rod
+  display:
+    name: '<b><#7B68EE>Magical Fishing Rod'
+    lore:
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray> - A product of arcane innovation, this unique'
+      - '<gray> - fishing rod uses enchanted books as bait.'
+      - '<gray> - Its intricate reel mechanism and magical '
+      - '<gray> - allure demand the exp level of its user,'
+      - '<gray> - consuming experience levels upon each cast.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Get an enchantment book from fishing.'
+      - '<gray> - The waiting time is very long.'
+      - ''
+      - '<#CD5C5C>Requirements:'
+      - '<gray> - 1x book bait'
+      - '<gray> - 10 exp levels'
+  custom-model-data: 50006
+  max-durability: 16
+  requirements:
+    requirement_1:
+      type: level
+      value: 1
+      not-met-actions:
+        action_1:
+          type: message
+          value:
+            - 'You don''t have enough levels to control the rod.'
+    requirement_2:
+      type: bait
+      value:
+        - BOOK
+      not-met-actions:
+        action_message:
+          type: message
+          value:
+            - 'You have to hold a book as bait.'
+  events:
+    cast:
+      action_level:
+        type: level
+        value: -1
+  effects:
+    effect_1:
+      type: group-mod-ignore-conditions
+      value:
+        - enchantments:+10
+    effect_2:
+      type: wait-time-multiplier
+      value: 3
+
+master_rod:
+  material: fishing_rod
+  display:
+    name: "<b><#FFFF00>Master's Fishing Rod"
+    lore:
+      - ''
+      - '<#7FFFD4>Desciption:'
+      - '<gray> - Wielded only by the most skilled of anglers,'
+      - '<gray> - the Master''s Fishing Rod represents the pinnacle'
+      - '<gray> - of fishing craftsmanship. Meticulously crafted '
+      - '<gray> - for precision, it significantly reduces the '
+      - '<gray> - time it takes for a fish to bite.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Reduce the waiting time'
+      - '<gray> - Increase the challenge of fishing'
+      - '<gray> - Higher chance of getting quality fish'
+  custom-model-data: 50007
+  max-durability: 128
+  effects:
+    effect_1:
+      type: wait-time-multiplier
+      value: 0.95
+    effect_2:
+      type: difficulty
+      value: +10
+    effect_3:
+      type: group-mod
+      value:
+        - silver_star:+5
+        - golden_star:+3
