@@ -267,6 +267,13 @@ public enum Dependency {
             "slf4j-api",
             "maven",
             "slf4j"
+    ),
+    LZ4(
+            "org{}lz4",
+            "lz4-java",
+            "maven",
+            "lz4-java",
+            Relocation.of("jpountz", "net{}jpountz")
     );
 
     private final List<Relocation> relocations;

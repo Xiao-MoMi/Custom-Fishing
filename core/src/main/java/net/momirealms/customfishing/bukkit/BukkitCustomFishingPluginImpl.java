@@ -97,7 +97,8 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
                         Dependency.SQLITE_DRIVER, Dependency.SLF4J_API, Dependency.SLF4J_SIMPLE,
                         Dependency.H2_DRIVER,
                         Dependency.MONGODB_DRIVER_CORE, Dependency.MONGODB_DRIVER_SYNC, Dependency.MONGODB_DRIVER_BSON,
-                        Dependency.HIKARI_CP
+                        Dependency.HIKARI_CP,
+                        Dependency.LZ4
                 )
         );
     }

@@ -55,6 +55,8 @@ dependencies {
     compileOnly("net.objecthunter:exp4j:${rootProject.properties["exp4j_version"]}")
     // placeholder api
     compileOnly("me.clip:placeholderapi:${rootProject.properties["placeholder_api_version"]}")
+    // lz4
+    compileOnly("org.lz4:lz4-java:${rootProject.properties["lz4_version"]}")
 }
 
 tasks {
@@ -76,6 +78,7 @@ tasks {
         relocate ("com.saicone.rtag", "net.momirealms.customfishing.libraries.rtag")
         relocate ("xyz.xenondevs", "net.momirealms.customfishing.libraries")
         relocate ("net.objecthunter.exp4j", "net.momirealms.customfishing.libraries.exp4j")
+        relocate ("net.jpountz", "net.momirealms.customfishing.libraries.jpountz") //lz4
     }
 }
 
