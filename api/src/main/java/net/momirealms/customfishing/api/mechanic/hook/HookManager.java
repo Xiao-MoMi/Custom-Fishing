@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.mechanic.hook;
 
 import net.momirealms.customfishing.common.plugin.feature.Reloadable;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -28,4 +29,6 @@ public interface HookManager extends Reloadable {
 
     @NotNull
     Optional<HookConfig> getHook(String id);
+
+    Optional<String> getHookID(ItemStack rod);
 }

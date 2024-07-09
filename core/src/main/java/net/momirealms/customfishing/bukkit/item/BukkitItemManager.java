@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.bukkit.item;
 
-import com.saicone.rtag.RtagItem;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
@@ -36,7 +35,6 @@ import net.momirealms.customfishing.bukkit.item.damage.VanillaDurabilityItem;
 import net.momirealms.customfishing.bukkit.util.ItemStackUtils;
 import net.momirealms.customfishing.bukkit.util.LocationUtils;
 import net.momirealms.customfishing.common.item.Item;
-import net.momirealms.customfishing.common.util.RandomUtils;
 import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -54,10 +52,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.event.player.PlayerItemMendEvent;
+import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -265,7 +265,7 @@ public class BukkitItemManager implements ItemManager, Listener {
                 return;
             }
         }
-        Item<ItemStack> wrapped = factory.wrap(itemStack.clone());
+        Item<ItemStack> wrapped = factory.wrap(itemStack);
         if (wrapped.unbreakable())
             return;
 
@@ -288,7 +288,7 @@ public class BukkitItemManager implements ItemManager, Listener {
         }
 
         durabilityItem.damage(damage + amount);
-        itemStack.setItemMeta(wrapped.load().getItemMeta());
+        wrapped.load();
     }
 
     @Override
@@ -314,6 +314,41 @@ public class BukkitItemManager implements ItemManager, Listener {
             return new CustomDurabilityItem(wrapped);
         } else {
             return new VanillaDurabilityItem(wrapped);
+        }
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onMending(PlayerItemMendEvent event) {
+        ItemStack itemStack = event.getItem();
+        if (!hasCustomDurability(itemStack)) {
+            return;
+        }
+        event.setCancelled(true);
+        Item<ItemStack> wrapped = factory.wrap(itemStack);
+        if (wrapped.unbreakable())
+            return;
+        DurabilityItem wrappedDurability = wrapDurabilityItem(wrapped);
+        setDurability(event.getPlayer(), itemStack, Math.max(wrappedDurability.damage() - event.getRepairAmount(), 0));
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onAnvil(PrepareAnvilEvent event) {
+        AnvilInventory anvil = event.getInventory();
+        ItemStack first = anvil.getFirstItem();
+        ItemStack second = anvil.getSecondItem();
+        if (first != null && second != null
+                && first.getType() == Material.FISHING_ROD && second.getType() == Material.FISHING_ROD && event.getResult() != null
+                && hasCustomDurability(first)) {
+            Item<ItemStack> wrapped1 = factory.wrap(anvil.getResult());
+            DurabilityItem wrappedDurability1 = wrapDurabilityItem(wrapped1);
+
+            Item<ItemStack> wrapped2 = factory.wrap(second);
+            DurabilityItem wrappedDurability2 = wrapDurabilityItem(wrapped2);
+
+            int durability2 = wrappedDurability2.maxDamage() - wrappedDurability2.damage();
+            int damage1 = Math.max(wrappedDurability1.damage() - durability2, 0);
+            wrappedDurability1.damage(damage1);
+            event.setResult(wrapped1.load());
         }
     }
 

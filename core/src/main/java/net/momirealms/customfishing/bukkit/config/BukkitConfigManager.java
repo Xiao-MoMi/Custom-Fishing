@@ -169,7 +169,7 @@ public class BukkitConfigManager extends ConfigManager {
         logDataSaving = config.getBoolean("other-settings.log-data-saving", true);
         lockData = config.getBoolean("other-settings.lock-data", true);
 
-        durabilityLore = new ArrayList<>(config.getStringList("other-settings.custom-durability-format"));
+        durabilityLore = new ArrayList<>(config.getStringList("other-settings.custom-durability-format").stream().map(it -> "<!i>" + it).toList());
 
         itemDetectOrder = config.getStringList("other-settings.item-detection-order").toArray(new String[0]);
         blockDetectOrder = config.getStringList("other-settings.block-detection-order").toArray(new String[0]);
@@ -232,7 +232,6 @@ public class BukkitConfigManager extends ConfigManager {
                 }
             }
         }
-
     }
 
     private void loadConfigs() {
@@ -699,7 +698,7 @@ public class BukkitConfigManager extends ConfigManager {
     private void registerBuiltInHookParser() {
         this.registerHookParser(object -> {
             List<String> lore = ListUtils.toList(object);
-            return builder -> builder.lore(lore);
+            return builder -> builder.lore(lore.stream().map(it -> "<!i>" + it).toList());
         }, "lore-on-rod");
     }
 

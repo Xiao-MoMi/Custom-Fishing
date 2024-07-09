@@ -1417,7 +1417,7 @@ tension_game_easy:
   game-type: tension
   difficulty: 20~35
   time: 30
-  title: '{tension}'
+  title: '{progress}'
   # Tip would show on the title to guide the player how to play
   tip: '<gray>Press <red><key:key.sneak> <gray>to start'
   subtitle:
@@ -1454,7 +1454,7 @@ tension_game_normal:
   game-type: tension
   difficulty: 35~50
   time: 30
-  title: '{tension}'
+  title: '{progress}'
   # Tip would show on the title to guide the player how to play
   tip: '<gray>Press <red><key:key.sneak> <gray>to start'
   subtitle:
@@ -1491,7 +1491,7 @@ tension_game_hard:
   game-type: tension
   difficulty: 50~65
   time: 30
-  title: '{tension}'
+  title: '{progress}'
   # Tip would show on the title to guide the player how to play
   tip: '<gray>Press <red><key:key.sneak> <gray>to start'
   subtitle:

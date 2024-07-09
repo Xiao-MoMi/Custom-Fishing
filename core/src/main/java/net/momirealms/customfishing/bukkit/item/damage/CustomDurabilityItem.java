@@ -17,8 +17,15 @@
 
 package net.momirealms.customfishing.bukkit.item.damage;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ScoreComponent;
+import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.item.Item;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CustomDurabilityItem implements DurabilityItem {
 
@@ -36,6 +43,24 @@ public class CustomDurabilityItem implements DurabilityItem {
         int fakeDamage = (int) (value * ratio);
         item.damage(fakeDamage);
         item.setTag(customMaxDamage - value, "CustomFishing", "cur_dur");
+        List<String> durabilityLore = ConfigManager.durabilityLore();
+        List<String> previousLore = item.lore().orElse(new ArrayList<>());
+        List<String> newLore = new ArrayList<>();
+        for (String previous : previousLore) {
+            Component component = AdventureHelper.jsonToComponent(previous);
+            if (component instanceof ScoreComponent scoreComponent && scoreComponent.name().equals("cf")) {
+                if (scoreComponent.objective().equals("durability")) {
+                    continue;
+                }
+            }
+            newLore.add(previous);
+        }
+        for (String lore : durabilityLore) {
+            ScoreComponent.Builder builder = Component.score().name("cf").objective("durability");
+            builder.append(AdventureHelper.miniMessage(lore.replace("{dur}", String.valueOf(customMaxDamage - value)).replace("{max}", String.valueOf(customMaxDamage))));
+            newLore.add(AdventureHelper.componentToJson(builder.build()));
+        }
+        item.lore(newLore);
     }
 
     @Override

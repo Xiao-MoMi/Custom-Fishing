@@ -101,6 +101,10 @@ public class AdventureHelper {
         return getInstance().miniMessageStrict.serialize(getInstance().gsonComponentSerializer.deserialize(json));
     }
 
+    public static Component jsonToComponent(String json) {
+        return getInstance().gsonComponentSerializer.deserialize(json);
+    }
+
     public static String legacyToMiniMessage(String legacy) {
         StringBuilder stringBuilder = new StringBuilder();
         char[] chars = legacy.toCharArray();

@@ -30,7 +30,6 @@ import net.momirealms.customfishing.api.mechanic.game.AbstractGamingPlayer;
 import net.momirealms.customfishing.api.mechanic.game.GamingPlayer;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.util.EventUtils;
-import net.momirealms.customfishing.common.helper.VersionHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;

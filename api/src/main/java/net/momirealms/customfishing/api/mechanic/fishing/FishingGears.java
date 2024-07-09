@@ -17,6 +17,10 @@
 
 package net.momirealms.customfishing.api.mechanic.fishing;
 
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ScoreComponent;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
@@ -24,8 +28,11 @@ import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
+import net.momirealms.customfishing.api.mechanic.hook.HookConfig;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.storage.user.UserData;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.item.Item;
 import net.momirealms.customfishing.common.util.Pair;
 import net.momirealms.customfishing.common.util.TriConsumer;
 import net.momirealms.sparrow.heart.feature.inventory.HandSlot;
@@ -105,18 +112,26 @@ public class FishingGears {
             ItemStack offHandItem = playerInventory.getItemInOffHand();
             // set rod
             boolean rodOnMainHand = mainHandItem.getType() == Material.FISHING_ROD;
-            String rodID = BukkitCustomFishingPlugin.getInstance().getItemManager().getItemID(rodOnMainHand ? mainHandItem : offHandItem);
-            fishingGears.gears.put(GearType.ROD, List.of(Pair.of(rodID, rodOnMainHand ? mainHandItem : offHandItem)));
+            ItemStack rodItem = rodOnMainHand ? mainHandItem : offHandItem;
+            String rodID = BukkitCustomFishingPlugin.getInstance().getItemManager().getItemID(rodItem);
+            fishingGears.gears.put(GearType.ROD, List.of(Pair.of(rodID, rodItem)));
             context.arg(ContextKeys.ROD, rodID);
             fishingGears.rodSlot = rodOnMainHand ? HandSlot.MAIN : HandSlot.OFF;
             BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(rodID, MechanicType.ROD).ifPresent(fishingGears.modifiers::add);
 
             // set enchantments
-            List<Pair<String, Short>> enchants = BukkitCustomFishingPlugin.getInstance().getIntegrationManager().getEnchantments(rodOnMainHand ? mainHandItem : offHandItem);
+            List<Pair<String, Short>> enchants = BukkitCustomFishingPlugin.getInstance().getIntegrationManager().getEnchantments(rodItem);
             for (Pair<String, Short> enchantment : enchants) {
                 String effectID = enchantment.left() + ":" + enchantment.right();
                 BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(effectID, MechanicType.ENCHANT).ifPresent(fishingGears.modifiers::add);
             }
+
+            // set hook
+            BukkitCustomFishingPlugin.getInstance().getHookManager().getHookID(rodItem).ifPresent(hookID -> {
+                fishingGears.gears.put(GearType.HOOK, List.of(Pair.of(hookID, rodItem)));
+                context.arg(ContextKeys.HOOK, hookID);
+                BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(hookID, MechanicType.HOOK).ifPresent(fishingGears.modifiers::add);
+            });
 
             // set bait if it is
             boolean hasBait = false;
@@ -224,8 +239,92 @@ public class FishingGears {
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {}),
-                ((context, itemStack) -> {}),
-                ((context, itemStack) -> {}),
+                ((context, itemStack) -> {
+                    if (context.getHolder().getGameMode() != GameMode.CREATIVE) {
+                        Item<ItemStack> wrapped = BukkitCustomFishingPlugin.getInstance().getItemManager().wrap(itemStack.clone());
+                        String hookID = (String) wrapped.getTag("CustomFishing", "hook_id").orElseThrow(() -> new RuntimeException("This error should never occur"));
+                        wrapped.getTag("CustomFishing", "hook_max_damage").ifPresent(max -> {
+                            int maxDamage = (int) max;
+                            int hookDamage = (int) wrapped.getTag("CustomFishing", "hook_damage").orElse(0) + 1;
+                            if (hookDamage >= maxDamage) {
+                                wrapped.removeTag("CustomFishing", "hook_damage");
+                                wrapped.removeTag("CustomFishing", "hook_id");
+                                wrapped.removeTag("CustomFishing", "hook_stack");
+                                wrapped.removeTag("CustomFishing", "hook_max_damage");
+                                BukkitCustomFishingPlugin.getInstance().getSenderFactory().getAudience(context.getHolder()).playSound(Sound.sound(Key.key("minecraft:entity.item.break"), Sound.Source.PLAYER, 1, 1));
+                            } else {
+                                wrapped.setTag(hookDamage, "CustomFishing", "hook_damage");
+                                HookConfig hookConfig = BukkitCustomFishingPlugin.getInstance().getHookManager().getHook(hookID).orElseThrow();
+                                List<String> previousLore = wrapped.lore().orElse(new ArrayList<>());
+                                List<String> newLore = new ArrayList<>();
+                                List<String> durabilityLore = new ArrayList<>();
+                                for (String previous : previousLore) {
+                                    Component component = AdventureHelper.jsonToComponent(previous);
+                                    if (component instanceof ScoreComponent scoreComponent && scoreComponent.name().equals("cf")) {
+                                        if (scoreComponent.objective().equals("hook")) {
+                                            continue;
+                                        } else if (scoreComponent.objective().equals("durability")) {
+                                            durabilityLore.add(previous);
+                                            continue;
+                                        }
+                                    }
+                                    newLore.add(previous);
+                                }
+                                for (String lore : hookConfig.lore()) {
+                                    ScoreComponent.Builder builder = Component.score().name("cf").objective("hook");
+                                    builder.append(AdventureHelper.miniMessage(lore.replace("{dur}", String.valueOf(maxDamage - hookDamage)).replace("{max}", String.valueOf(maxDamage))));
+                                    newLore.add(AdventureHelper.componentToJson(builder.build()));
+                                }
+                                newLore.addAll(durabilityLore);
+                                wrapped.lore(newLore);
+                            }
+                            itemStack.setItemMeta(wrapped.load().getItemMeta());
+                        });
+                    }
+                }),
+                ((context, itemStack) -> {
+                    if (context.getHolder().getGameMode() != GameMode.CREATIVE) {
+                        Item<ItemStack> wrapped = BukkitCustomFishingPlugin.getInstance().getItemManager().wrap(itemStack.clone());
+                        String hookID = (String) wrapped.getTag("CustomFishing", "hook_id").orElseThrow(() -> new RuntimeException("This error should never occur"));
+                        wrapped.getTag("CustomFishing", "hook_max_damage").ifPresent(max -> {
+                            int maxDamage = (int) max;
+                            int hookDamage = (int) wrapped.getTag("CustomFishing", "hook_damage").orElse(0) + 1;
+                            if (hookDamage >= maxDamage) {
+                                wrapped.removeTag("CustomFishing", "hook_damage");
+                                wrapped.removeTag("CustomFishing", "hook_id");
+                                wrapped.removeTag("CustomFishing", "hook_stack");
+                                wrapped.removeTag("CustomFishing", "hook_max_damage");
+                                BukkitCustomFishingPlugin.getInstance().getSenderFactory().getAudience(context.getHolder()).playSound(Sound.sound(Key.key("minecraft:entity.item.break"), Sound.Source.PLAYER, 1, 1));
+                            } else {
+                                wrapped.setTag(hookDamage, "CustomFishing", "hook_damage");
+                                HookConfig hookConfig = BukkitCustomFishingPlugin.getInstance().getHookManager().getHook(hookID).orElseThrow();
+                                List<String> previousLore = wrapped.lore().orElse(new ArrayList<>());
+                                List<String> newLore = new ArrayList<>();
+                                List<String> durabilityLore = new ArrayList<>();
+                                for (String previous : previousLore) {
+                                    Component component = AdventureHelper.jsonToComponent(previous);
+                                    if (component instanceof ScoreComponent scoreComponent && scoreComponent.name().equals("cf")) {
+                                        if (scoreComponent.objective().equals("hook")) {
+                                            continue;
+                                        } else if (scoreComponent.objective().equals("durability")) {
+                                            durabilityLore.add(previous);
+                                            continue;
+                                        }
+                                    }
+                                    newLore.add(previous);
+                                }
+                                for (String lore : hookConfig.lore()) {
+                                    ScoreComponent.Builder builder = Component.score().name("cf").objective("hook");
+                                    builder.append(AdventureHelper.miniMessage(lore.replace("{dur}", String.valueOf(maxDamage - hookDamage)).replace("{max}", String.valueOf(maxDamage))));
+                                    newLore.add(AdventureHelper.componentToJson(builder.build()));
+                                }
+                                newLore.addAll(durabilityLore);
+                                wrapped.lore(newLore);
+                            }
+                            itemStack.setItemMeta(wrapped.load().getItemMeta());
+                        });
+                    }
+                }),
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {})
