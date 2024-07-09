@@ -466,15 +466,17 @@ public class BukkitConfigManager extends ConfigManager {
                     item.damage(RandomUtils.generateRandomInt(0, item.maxDamage().get() - 1));
                 }
             };
-        }, 1_795, "random-durability");
+        }, 3200, "random-durability");
         this.registerItemParser(arg -> {
             MathValue<Player> mathValue = MathValue.auto(arg);
             return (item, context) -> {
                 int max = (int) mathValue.evaluate(context);
                 item.setTag(max, "CustomFishing", "max_dur");
                 item.setTag(max, "CustomFishing", "cur_dur");
+                CustomDurabilityItem customDurabilityItem = new CustomDurabilityItem(item);
+                customDurabilityItem.damage(0);
             };
-        }, 1_790, "max-durability");
+        }, 3100, "max-durability");
         this.registerItemParser(arg -> {
             Section section = (Section) arg;
             ArrayList<ItemEditor> editors = new ArrayList<>();
