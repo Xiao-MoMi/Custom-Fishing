@@ -132,6 +132,7 @@ public class BukkitConfigManager extends ConfigManager {
                             .addIgnoredRoute(configVersion, "other-settings.placeholder-register", '.')
                             .build()
             );
+            MAIN_CONFIG.save(resolveConfig("config.yml").toFile());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -40,6 +40,7 @@ import net.momirealms.customfishing.bukkit.integration.BukkitIntegrationManager;
 import net.momirealms.customfishing.bukkit.item.BukkitItemManager;
 import net.momirealms.customfishing.bukkit.loot.BukkitLootManager;
 import net.momirealms.customfishing.bukkit.market.BukkitMarketManager;
+import net.momirealms.customfishing.bukkit.migration.Migration;
 import net.momirealms.customfishing.bukkit.requirement.BukkitRequirementManager;
 import net.momirealms.customfishing.bukkit.scheduler.BukkitSchedulerAdapter;
 import net.momirealms.customfishing.bukkit.sender.BukkitSenderFactory;
@@ -105,8 +106,9 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
 
     @Override
     public void enable() {
-        this.eventManager = new BukkitEventManager(this);
         this.configManager = new BukkitConfigManager(this);
+        new Migration(this).start();
+        this.eventManager = new BukkitEventManager(this);
         this.requirementManager = new BukkitRequirementManager(this);
         this.actionManager = new BukkitActionManager(this);
         this.senderFactory = new BukkitSenderFactory(this);
