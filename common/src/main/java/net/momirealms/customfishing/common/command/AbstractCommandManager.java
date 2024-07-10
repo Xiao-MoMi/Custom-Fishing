@@ -40,6 +40,8 @@ import org.incendo.cloud.exception.handling.ExceptionContext;
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -138,6 +140,11 @@ public abstract class AbstractCommandManager<C> implements CustomFishingCommandM
     @Override
     public void registerDefaultFeatures() {
         YamlDocument document = plugin.getConfigManager().loadConfig(commandsFile);
+        try {
+            document.save(new File(plugin.getDataDirectory().toFile(), "commands.yml"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         this.getFeatures().values().forEach(feature -> {
             CommandConfig<C> config = getCommandConfig(document, feature.getFeatureID());
             if (config.isEnable()) {

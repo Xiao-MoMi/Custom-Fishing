@@ -46,6 +46,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashSet;
@@ -77,6 +79,11 @@ public class BukkitStorageManager implements StorageManager, Listener {
     @Override
     public void reload() {
         YamlDocument config = plugin.getConfigManager().loadConfig("database.yml");
+        try {
+            config.save(new File(plugin.getDataFolder(), "database.yml"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         this.serverID = config.getString("unique-server-id", "default");
 
         // Check if storage type has changed and reinitialize if necessary
@@ -291,7 +298,7 @@ public class BukkitStorageManager implements StorageManager, Listener {
         if (player == null || !player.isOnline())
             return;
         if (times > 3) {
-            plugin.getPluginLogger().warn("Tried 3 times when getting data for " + uuid + ". Giving up.");
+            plugin.getPluginLogger().warn("Tried 3 times getting data for " + uuid + ". Giving up.");
             return;
         }
         this.dataSource.getPlayerData(uuid, ConfigManager.lockData()).thenAccept(optionalData -> {

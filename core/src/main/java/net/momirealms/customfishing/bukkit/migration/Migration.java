@@ -155,6 +155,7 @@ public class Migration {
         try (BufferedWriter writer = new BufferedWriter(
                 new OutputStreamWriter(new FileOutputStream(outPut), StandardCharsets.UTF_8))) {
             writer.write(sb.toString()
+                    .replace("{sold-item-amount}", "{sold_item_amount}")
                     .replace("{size}", "{size_formatted}")
                     .replace("{record}", "{record_formatted}")
                     .replace("{loot}", "{id}")

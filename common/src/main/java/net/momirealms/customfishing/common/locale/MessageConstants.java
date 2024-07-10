@@ -75,6 +75,9 @@ public interface MessageConstants {
     TranslatableComponent.Builder COMMAND_STATISTICS_RESET_SUCCESS = Component.translatable().key("command.statistics.reset.success");
     TranslatableComponent.Builder COMMAND_STATISTICS_QUERY_AMOUNT = Component.translatable().key("command.statistics.query.amount");
     TranslatableComponent.Builder COMMAND_STATISTICS_QUERY_SIZE = Component.translatable().key("command.statistics.query.size");
+    TranslatableComponent.Builder COMMAND_DEBUG_LOOT_FAILURE_ROD = Component.translatable().key("command.debug.loot.failure.rod");
+    TranslatableComponent.Builder COMMAND_DEBUG_LOOT_SUCCESS = Component.translatable().key("command.debug.loot.success");
+    TranslatableComponent.Builder COMMAND_DEBUG_LOOT_FAILURE_NO_LOOT = Component.translatable().key("command.debug.loot.failure.no_loot");
 
 //    TranslatableComponent.Builder GUI_SELECT_FILE = Component.translatable().key("gui.select_file");
 //    TranslatableComponent.Builder GUI_SELECT_ITEM = Component.translatable().key("gui.select_item");

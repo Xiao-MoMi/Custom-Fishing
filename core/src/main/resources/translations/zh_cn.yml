@@ -76,6 +76,8 @@ command.statistics.modify.success: "<white>成功修改 <arg:0> 的钓鱼统计�
 command.statistics.reset.success: "<white>成功重置 <arg:0> 的钓鱼统计数据</white>"
 command.statistics.query.size: "<white>最长的鱼的长度: <arg:0></white>"
 command.statistics.query.amount: "<white>钓到鱼的数量: <arg:0></white>"
+command.debug.loot.failure.rod: "<red>请手持鱼竿后再执行此命令</red>"
+command.debug.loot.success: "<yellow><b>战利品概率表:</b></yellow> <arg:0>"
 competition.no_score: "暂无得分"
 competition.no_player: "暂无玩家"
 competition.no_rank: "暂无排名"

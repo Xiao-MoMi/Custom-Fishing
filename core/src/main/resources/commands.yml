@@ -184,3 +184,12 @@ statistics_add:
   usage:
     - /customfishing statistics add
     - /cfishing statistics add
+
+# A command to debug the loot table
+# Usage: [COMMAND] [surrounding]
+debug_loot:
+  enable: true
+  permission: customfishing.command.debug
+  usage:
+    - /customfishing debug loot
+    - /cfishing debug loot

@@ -26,6 +26,7 @@ import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
 import net.momirealms.customfishing.common.util.Pair;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,7 +38,7 @@ import java.util.stream.Stream;
 public class TranslationManager {
 
     public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
-    private static final List<String> locales = List.of("en");
+    private static final List<String> locales = List.of("en", "zh_cn");
     private static TranslationManager instance;
 
     private final CustomFishingPlugin plugin;
@@ -57,7 +58,6 @@ public class TranslationManager {
             MiniMessageTranslator.translator().removeSource(this.registry);
             this.installed.clear();
         }
-
         for (String lang : locales) {
             this.plugin.getConfigManager().saveResource("translations/" + lang + ".yml");
         }
@@ -158,6 +158,11 @@ public class TranslationManager {
 
         Map<String, String> bundle = new HashMap<>();
         YamlDocument document = plugin.getConfigManager().loadConfig("translations" + "\\" + translationFile.getFileName(), '@');
+        try {
+            document.save(new File(plugin.getDataDirectory().toFile(), "translations" + "\\" + translationFile.getFileName()));
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not update translation file: " + translationFile.getFileName(), e);
+        }
         Map<String, Object> map = document.getStringRouteMappedValues(false);
         map.remove("config-version");
         for (Map.Entry<String, Object> entry : map.entrySet()) {

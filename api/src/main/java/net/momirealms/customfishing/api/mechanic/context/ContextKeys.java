@@ -53,6 +53,8 @@ public class ContextKeys<T> {
     public static final ContextKeys<String> SCORE_FORMATTED = of("score_formatted", String.class);
     public static final ContextKeys<Double> SCORE = of("score", Double.class);
     public static final ContextKeys<Double> CUSTOM_SCORE = of("custom_score", Double.class);
+    public static final ContextKeys<Double> MIN_SIZE = of("min_size", Double.class);
+    public static final ContextKeys<Double> MAX_SIZE = of("max_size", Double.class);
     public static final ContextKeys<String> RANK = of("rank", String.class);
     public static final ContextKeys<Location> OTHER_LOCATION = of("other_location", Location.class);
     public static final ContextKeys<Integer> OTHER_X = of("other_x", Integer.class);

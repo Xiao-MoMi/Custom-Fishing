@@ -439,6 +439,8 @@ public class BukkitConfigManager extends ConfigManager {
                 float size = (float) RandomUtils.generateRandomDouble(minSize, maxSize);
                 item.setTag(size, "CustomFishing", "size");
                 context.arg(ContextKeys.SIZE, size);
+                context.arg(ContextKeys.MIN_SIZE, minSize);
+                context.arg(ContextKeys.MAX_SIZE, maxSize);
                 context.arg(ContextKeys.SIZE_FORMATTED, String.format("%.2f", size));
             };
         }, 1_000, "size");

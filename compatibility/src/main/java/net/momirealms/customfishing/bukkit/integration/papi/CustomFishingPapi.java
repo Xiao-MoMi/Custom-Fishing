@@ -21,6 +21,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.storage.user.UserData;
+import net.momirealms.customfishing.common.util.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -70,6 +71,9 @@ public class CustomFishingPapi extends PlaceholderExpansion {
         if (player == null)
             return "";
         switch (split[0]) {
+            case "random" -> {
+                return String.valueOf(RandomUtils.generateRandomDouble(0,1));
+            }
             case "market" -> {
                 if (split.length < 2)
                     return null;

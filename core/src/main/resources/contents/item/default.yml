@@ -117,7 +117,7 @@ rubbish:
   display:
     name: <#00BFFF>Radioactive Fish</#00BFFF>
     lore:
-      - <gray>Protect the environment...
+      - <gray>Time to protect the environment
   custom-model-data: 50000
   show-in-fishfinder: false
   disable-stat: true

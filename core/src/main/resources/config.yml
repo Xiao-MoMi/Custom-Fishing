@@ -417,6 +417,7 @@ other-settings:
     '{date}': '%server_time_yyyy-MM-dd-HH:mm:ss%'
     # Requires player expansion
     '{yaw}': '%player_yaw%'
+    '{random}': '%customfishing_random%'
   # CustomFishing supports using items/blocks from other plugins
   # If items share the same id, they would inherit the effects
   # Check the wiki for examples
