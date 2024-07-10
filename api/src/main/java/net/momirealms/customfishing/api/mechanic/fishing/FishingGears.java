@@ -60,6 +60,7 @@ public class FishingGears {
         triggers.put(ActionTrigger.SUCCESS, ((type, context, itemStack) -> type.successFunction.accept(context, itemStack)));
         triggers.put(ActionTrigger.FAILURE, ((type, context, itemStack) -> type.failureFunction.accept(context, itemStack)));
         triggers.put(ActionTrigger.BITE, ((type, context, itemStack) -> type.biteFunction.accept(context, itemStack)));
+        triggers.put(ActionTrigger.HOOK, ((type, context, itemStack) -> type.hookFunction.accept(context, itemStack)));
     }
 
     private static BiConsumer<Context<Player>, FishingGears> fishingGearsConsumers = defaultFishingGearsConsumers();
@@ -84,7 +85,9 @@ public class FishingGears {
         for (Map.Entry<GearType, Collection<Pair<String, ItemStack>>> entry : gears.entrySet()) {
             for (Pair<String, ItemStack> itemPair : entry.getValue()) {
                 BukkitCustomFishingPlugin.getInstance().debug(entry.getKey() + " | " + itemPair.left() + " | " + trigger);
-                triggers.get(trigger).accept(entry.getKey(), context, itemPair.right());
+                Optional.ofNullable(triggers.get(trigger)).ifPresent(tri -> {
+                    tri.accept(entry.getKey(), context, itemPair.right());
+                });
                 BukkitCustomFishingPlugin.getInstance().getEventManager().trigger(context, itemPair.left(), entry.getKey().getType(), trigger);
             }
         }
@@ -218,6 +221,7 @@ public class FishingGears {
                 }),
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
                 ((context, itemStack) -> {})
         );
 
@@ -226,6 +230,7 @@ public class FishingGears {
                     if (context.getHolder().getGameMode() != GameMode.CREATIVE)
                         itemStack.setAmount(itemStack.getAmount() - 1);
                 }),
+                ((context, itemStack) -> {}),
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {}),
@@ -327,10 +332,12 @@ public class FishingGears {
                 }),
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {}),
+                ((context, itemStack) -> {}),
                 ((context, itemStack) -> {})
         );
 
         public static final GearType UTIL = new GearType(MechanicType.UTIL,
+                ((context, itemStack) -> {}),
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {}),
@@ -350,12 +357,14 @@ public class FishingGears {
         private BiConsumer<Context<Player>, ItemStack> lureFunction;
         private BiConsumer<Context<Player>, ItemStack> escapeFunction;
         private BiConsumer<Context<Player>, ItemStack> landFunction;
+        private BiConsumer<Context<Player>, ItemStack> hookFunction;
 
         public GearType(MechanicType type,
                         BiConsumer<Context<Player>, ItemStack> castFunction, BiConsumer<Context<Player>, ItemStack> reelFunction,
                         BiConsumer<Context<Player>, ItemStack> biteFunction, BiConsumer<Context<Player>, ItemStack> successFunction,
                         BiConsumer<Context<Player>, ItemStack> failureFunction, BiConsumer<Context<Player>, ItemStack> lureFunction,
-                        BiConsumer<Context<Player>, ItemStack> escapeFunction, BiConsumer<Context<Player>, ItemStack> landFunction
+                        BiConsumer<Context<Player>, ItemStack> escapeFunction, BiConsumer<Context<Player>, ItemStack> landFunction,
+                        BiConsumer<Context<Player>, ItemStack> hookFunction
         ) {
             this.type = type;
             this.castFunction = castFunction;
@@ -366,6 +375,7 @@ public class FishingGears {
             this.landFunction = landFunction;
             this.lureFunction = lureFunction;
             this.escapeFunction = escapeFunction;
+            this.hookFunction = hookFunction;
         }
 
         public void castFunction(BiConsumer<Context<Player>, ItemStack> castFunction) {
@@ -398,6 +408,10 @@ public class FishingGears {
 
         public void landFunction(BiConsumer<Context<Player>, ItemStack> landFunction) {
             this.landFunction = landFunction;
+        }
+
+        public void hookFunction(BiConsumer<Context<Player>, ItemStack> hookFunction) {
+            this.hookFunction = hookFunction;
         }
 
         @Override
