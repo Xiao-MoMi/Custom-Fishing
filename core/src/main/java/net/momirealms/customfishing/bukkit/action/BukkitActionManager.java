@@ -870,7 +870,12 @@ public class BukkitActionManager implements ActionManager<Player> {
 
     private void registerFishFindAction() {
         registerAction("fish-finder", (args, chance) -> {
-            String surrounding = (String) args;
+            String surrounding;
+            if (args instanceof Boolean b) {
+                surrounding = b ? "lava" : "water";
+            } else {
+                surrounding = (String) args;
+            }
             return context -> {
                 if (Math.random() > chance) return;
                 String previous = context.arg(ContextKeys.SURROUNDING);
