@@ -842,6 +842,11 @@ public class BukkitConfigManager extends ConfigManager {
         this.registerEventParser(object -> {
             Section section = (Section) object;
             Action<Player>[] actions = plugin.getActionManager().parseActions(section);
+            return builder -> builder.action(ActionTrigger.REEL, actions);
+        }, "events", "reel");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            Action<Player>[] actions = plugin.getActionManager().parseActions(section);
             return builder -> builder.action(ActionTrigger.NEW_SIZE_RECORD, actions);
         }, "events", "new_size_record");
     }

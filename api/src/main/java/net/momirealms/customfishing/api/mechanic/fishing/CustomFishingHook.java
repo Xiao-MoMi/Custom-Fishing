@@ -228,6 +228,8 @@ public class CustomFishingHook {
                     handleSuccessfulFishing();
                     end();
                 } else {
+                    plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.HOOK);
+                    gears.trigger(ActionTrigger.HOOK, context);
                     gameStart();
                 }
             }

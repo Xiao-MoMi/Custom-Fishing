@@ -361,7 +361,8 @@ public class BukkitActionManager implements ActionManager<Player> {
             return context -> {
                 if (Math.random() > chance) return;
                 final Player player = context.getHolder();
-                player.getLocation().getWorld().spawn(player.getLocation().clone().add(0,0.5,0), ExperienceOrb.class, e -> e.setExperience((int) value.evaluate(context)));
+                ExperienceOrb entity = player.getLocation().getWorld().spawn(player.getLocation().clone().add(0,0.5,0), ExperienceOrb.class);
+                entity.setExperience((int) value.evaluate(context));
             };
         });
         registerAction("exp", (args, chance) -> {

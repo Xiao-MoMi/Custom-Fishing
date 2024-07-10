@@ -184,6 +184,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         this.registerPluginLevelRequirement();
         this.registerItemInHandRequirement();
         this.registerImpossibleRequirement();
+        this.registerPotionEffectRequirement();
     }
 
     private void registerImpossibleRequirement() {

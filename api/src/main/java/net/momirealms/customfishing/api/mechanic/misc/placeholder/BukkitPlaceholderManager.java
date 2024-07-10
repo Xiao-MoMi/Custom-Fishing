@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.mechanic.misc.placeholder;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.common.util.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
@@ -33,7 +35,7 @@ public class BukkitPlaceholderManager implements PlaceholderManager {
 
     private final BukkitCustomFishingPlugin plugin;
     private boolean hasPapi;
-    private final HashMap<String, String> customPlaceholderMap;
+    private final HashMap<String, Function<OfflinePlayer, String>> customPlaceholderMap;
     private static BukkitPlaceholderManager instance;
 
     public BukkitPlaceholderManager(BukkitCustomFishingPlugin plugin) {
@@ -43,8 +45,14 @@ public class BukkitPlaceholderManager implements PlaceholderManager {
     }
 
     @Override
-    public void reload() {
+    public void load() {
         this.hasPapi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
+        this.customPlaceholderMap.put("{random}", (p) -> String.valueOf(RandomUtils.generateRandomDouble(0, 1)));
+    }
+
+    @Override
+    public void unload() {
+        this.customPlaceholderMap.clear();
     }
 
     public static BukkitPlaceholderManager getInstance() {
@@ -54,7 +62,7 @@ public class BukkitPlaceholderManager implements PlaceholderManager {
     @Override
     public boolean registerCustomPlaceholder(String placeholder, String original) {
         if (this.customPlaceholderMap.containsKey(placeholder)) return false;
-        this.customPlaceholderMap.put(placeholder, original);
+        this.customPlaceholderMap.put(placeholder, (p) -> PlaceholderAPIUtils.parse(p, original));
         return true;
     }
 
@@ -77,7 +85,7 @@ public class BukkitPlaceholderManager implements PlaceholderManager {
             result = replacements.get(placeholder);
         if (result != null)
             return result;
-        String custom = customPlaceholderMap.get(placeholder);
+        String custom = customPlaceholderMap.get(placeholder).apply(player);
         if (custom == null)
             return placeholder;
         return setPlaceholders(player, custom);
@@ -92,7 +100,7 @@ public class BukkitPlaceholderManager implements PlaceholderManager {
                 replacer = replacements.get(papi);
             }
             if (replacer == null) {
-                String custom = customPlaceholderMap.get(papi);
+                String custom = customPlaceholderMap.get(papi).apply(player);
                 if (custom != null)
                     replacer = setPlaceholders(player, parse(player, custom, replacements));
             }

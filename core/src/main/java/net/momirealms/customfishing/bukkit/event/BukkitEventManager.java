@@ -37,6 +37,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 public class BukkitEventManager implements EventManager, Listener {
@@ -84,7 +85,13 @@ public class BukkitEventManager implements EventManager, Listener {
         Context<Player> context = Context.player(event.getPlayer());
         Block clicked = event.getClickedBlock();
         context.arg(ContextKeys.OTHER_LOCATION, clicked == null ? event.getPlayer().getLocation() : clicked.getLocation());
-        trigger(context, id, MechanicType.UTIL, ActionTrigger.INTERACT);
+        List<MechanicType> mechanics = MechanicType.getTypeByID(id);
+        if (mechanics != null) {
+            for (MechanicType type : mechanics) {
+                if (type == MechanicType.ROD) continue;
+                trigger(context, id, type, ActionTrigger.INTERACT);
+            }
+        }
     }
 
     @EventHandler (ignoreCancelled = true)
