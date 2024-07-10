@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.api.event;
 
+import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -25,6 +26,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * This class represents an event that is triggered before an item is collected into the fishing bag.
+ * It can be cancelled to prevent the item from being collected.
+ */
 public class FishingBagPreCollectEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlerList = new HandlerList();
@@ -32,6 +37,13 @@ public class FishingBagPreCollectEvent extends PlayerEvent implements Cancellabl
     private boolean isCancelled;
     private final Inventory bag;
 
+    /**
+     * Constructs a new FishingBagPreCollectEvent.
+     *
+     * @param who The player who is collecting the item
+     * @param itemStack The item that is being collected into the fishing bag
+     * @param bag The inventory of the fishing bag
+     */
     public FishingBagPreCollectEvent(@NotNull Player who, ItemStack itemStack, Inventory bag) {
         super(who);
         this.itemStack = itemStack;
@@ -49,6 +61,11 @@ public class FishingBagPreCollectEvent extends PlayerEvent implements Cancellabl
         isCancelled = cancel;
     }
 
+    /**
+     * Gets the {@link ItemStack} that is being collected into the fishing bag.
+     *
+     * @return The item being collected
+     */
     public ItemStack getItemStack() {
         return itemStack;
     }
@@ -62,6 +79,12 @@ public class FishingBagPreCollectEvent extends PlayerEvent implements Cancellabl
         return handlerList;
     }
 
+    /**
+     * Gets the {@link Inventory} of the fishing bag.
+     *
+     * @return The inventory of the fishing bag
+     */
+    @NotNull
     public Inventory getBagInventory() {
         return bag;
     }

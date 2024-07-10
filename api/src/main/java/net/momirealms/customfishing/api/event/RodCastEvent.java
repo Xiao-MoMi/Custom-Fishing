@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.event;
 
 import net.momirealms.customfishing.api.mechanic.fishing.FishingGears;
+import org.bukkit.entity.FishHook;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
@@ -34,6 +35,12 @@ public class RodCastEvent extends PlayerEvent implements Cancellable {
     private final PlayerFishEvent event;
     private static final HandlerList handlerList = new HandlerList();
 
+    /**
+     * Constructs a new RodCastEvent.
+     *
+     * @param event The original PlayerFishEvent that triggered this event
+     * @param gears The fishing gears used by the player
+     */
     public RodCastEvent(PlayerFishEvent event, FishingGears gears) {
         super(event.getPlayer());
         this.gears = gears;
@@ -47,7 +54,7 @@ public class RodCastEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Cancelling this event would disable CustomFishing mechanics
-     * If you want to prevent players from casting, use {@link #getBukkitPlayerFishEvent()} instead
+     * If you want to prevent players from casting, cancel {@link #getBukkitPlayerFishEvent()} too
      *
      * @param cancel true if you want to cancel this event
      */
@@ -76,7 +83,7 @@ public class RodCastEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Gets the original PlayerFishEvent that triggered the {@link RodCastEvent}.
+     * Gets the original {@link PlayerFishEvent} that triggered the {@link RodCastEvent}.
      *
      * @return The original PlayerFishEvent.
      */

@@ -18,26 +18,47 @@
 package net.momirealms.customfishing.api.event;
 
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
+import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * This class represents an event that occurs during a fishing competition.
+ * It is triggered when the state of a fishing competition changes.
+ */
 public class CompetitionEvent extends Event {
 
     private static final HandlerList handlerList = new HandlerList();
     private final State state;
     private final FishingCompetition competition;
 
+    /**
+     * Constructs a new CompetitionEvent.
+     *
+     * @param state The current state of the competition
+     * @param competition The fishing competition associated with this event
+     */
     public CompetitionEvent(State state, FishingCompetition competition) {
         super(true);
         this.state = state;
         this.competition = competition;
     }
 
+    /**
+     * Gets the current {@link State} of the competition.
+     *
+     * @return The current state of the competition
+     */
     public State getState() {
         return state;
     }
 
+    /**
+     * Gets the {@link FishingCompetition} associated with this event.
+     *
+     * @return The fishing competition associated with this event
+     */
     public FishingCompetition getCompetition() {
         return competition;
     }
@@ -52,7 +73,7 @@ public class CompetitionEvent extends Event {
         return getHandlerList();
     }
 
-    public static enum State {
+    public enum State {
         END,
         STOP,
         START

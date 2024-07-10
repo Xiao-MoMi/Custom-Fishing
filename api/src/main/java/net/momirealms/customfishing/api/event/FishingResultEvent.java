@@ -19,6 +19,7 @@ package net.momirealms.customfishing.api.event;
 
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
+import net.momirealms.customfishing.api.mechanic.fishing.FishingGears;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -29,6 +30,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
+/**
+ * This class represents an event that is triggered when a fishing result is determined.
+ */
 public class FishingResultEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlerList = new HandlerList();
@@ -38,6 +42,14 @@ public class FishingResultEvent extends PlayerEvent implements Cancellable {
     private final FishHook fishHook;
     private Context<Player> context;
 
+    /**
+     * Constructs a new FishingResultEvent.
+     *
+     * @param context The context in which the fishing result occurs
+     * @param result The result of the fishing action
+     * @param fishHook The fish hook involved
+     * @param loot The loot involved
+     */
     public FishingResultEvent(@NotNull Context<Player> context, Result result, FishHook fishHook, Loot loot) {
         super(context.getHolder());
         this.result = result;
@@ -65,26 +77,57 @@ public class FishingResultEvent extends PlayerEvent implements Cancellable {
         isCancelled = cancel;
     }
 
+    /**
+     * Gets the {@link Result} of the fishing action.
+     *
+     * @return The result of the fishing action
+     */
     public Result getResult() {
         return result;
     }
 
+    /**
+     * Gets the {@link FishHook} involved.
+     *
+     * @return The fish hook
+     */
     public FishHook getFishHook() {
         return fishHook;
     }
 
+    /**
+     * Gets the {@link Loot} obtained from the fishing.
+     *
+     * @return The loot
+     */
     public Loot getLoot() {
         return loot;
     }
 
+    /**
+     * Sets the custom score for the fishing action.
+     *
+     * @param score The custom score to set
+     */
     public void setScore(double score) {
         context.arg(ContextKeys.CUSTOM_SCORE, score);
     }
 
+    /**
+     * Gets the {@link Context<Player>}
+     *
+     * @return The context
+     */
     public Context<Player> getContext() {
         return context;
     }
 
+    /**
+     * Gets the amount of loot obtained from the fishing action.
+     * If the result is a failure, the amount is 0.
+     *
+     * @return The amount of loot obtained
+     */
     public int getAmount() {
         if (result == Result.FAILURE) return 0;
         return Optional.ofNullable(context.arg(ContextKeys.AMOUNT)).orElse(1);

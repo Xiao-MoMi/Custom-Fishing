@@ -18,15 +18,24 @@
 package net.momirealms.customfishing.api.event;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * This class represents an event that is triggered when the Custom Fishing plugin is reloaded.
+ */
 public class CustomFishingReloadEvent extends Event {
 
     private static final HandlerList handlerList = new HandlerList();
     private final BukkitCustomFishingPlugin plugin;
 
+    /**
+     * Constructs a new CustomFishingReloadEvent.
+     *
+     * @param plugin The instance of the Custom Fishing plugin that is being reloaded
+     */
     public CustomFishingReloadEvent(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
     }
@@ -41,6 +50,11 @@ public class CustomFishingReloadEvent extends Event {
         return getHandlerList();
     }
 
+    /**
+     * Gets the instance of the {@link BukkitCustomFishingPlugin} that is being reloaded.
+     *
+     * @return The instance of the Custom Fishing plugin
+     */
     public BukkitCustomFishingPlugin getPluginInstance() {
         return plugin;
     }

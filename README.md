@@ -1,6 +1,7 @@
 # Custom-Fishing
 
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/Xiao-MoMi/Custom-Fishing)
+![Code Size](https://img.shields.io/github/languages/code-size/Xiao-MoMi/Custom-Fishing)
 ![bStats Servers](https://img.shields.io/bstats/servers/16648)
 ![bStats Players](https://img.shields.io/bstats/players/16648)
 ![GitHub](https://img.shields.io/github/license/Xiao-MoMi/Custom-Fishing)

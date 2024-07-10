@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -58,7 +59,7 @@ public class TotemActivateEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Gets the configuration of the totem being activated.
+     * Gets the {@link TotemConfig} of the totem being activated.
      *
      * @return The TotemConfig of the totem being activated.
      */
