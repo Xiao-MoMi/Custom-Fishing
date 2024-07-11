@@ -51,6 +51,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
@@ -434,10 +435,14 @@ public class BukkitItemManager implements ItemManager, Listener {
     }
 
     @EventHandler (ignoreCancelled = true)
-    public void onPickUpItem(PlayerAttemptPickupItemEvent event) {
+    public void onPickUpItem(EntityPickupItemEvent event) {
         String owner = event.getItem().getPersistentDataContainer().get(requireNonNull(NamespacedKey.fromString("owner", plugin.getBoostrap())), PersistentDataType.STRING);
         if (owner != null) {
-            if (!owner.equals(event.getPlayer().getName())) {
+            if (!(event.getEntity() instanceof Player player)) {
+                event.setCancelled(true);
+                return;
+            }
+            if (!owner.equals(player.getName())) {
                 event.setCancelled(true);
             }
         }

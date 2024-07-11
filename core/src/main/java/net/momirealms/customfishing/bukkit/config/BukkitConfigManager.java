@@ -424,6 +424,12 @@ public class BukkitConfigManager extends ConfigManager {
         this.registerItemParser(arg -> {
             boolean enable = (boolean) arg;
             return (item, context) -> {
+                item.unbreakable(enable);
+            };
+        }, 2_211, "unbreakable");
+        this.registerItemParser(arg -> {
+            boolean enable = (boolean) arg;
+            return (item, context) -> {
                 if (enable) return;
                 item.setTag(UUID.randomUUID(), "CustomFishing", "uuid");
             };
