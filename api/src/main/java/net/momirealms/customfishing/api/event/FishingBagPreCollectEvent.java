@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.api.event;
 
-import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;

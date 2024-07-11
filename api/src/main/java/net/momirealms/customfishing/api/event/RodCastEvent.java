@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.api.event;
 
 import net.momirealms.customfishing.api.mechanic.fishing.FishingGears;
-import org.bukkit.entity.FishHook;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;

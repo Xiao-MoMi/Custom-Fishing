@@ -28,6 +28,10 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
+/**
+ * This class handles the registration and parsing of custom placeholders,
+ * and integrates with PlaceholderAPI if available.
+ */
 public class BukkitPlaceholderManager implements PlaceholderManager {
 
     private final BukkitCustomFishingPlugin plugin;
@@ -35,23 +39,40 @@ public class BukkitPlaceholderManager implements PlaceholderManager {
     private final HashMap<String, Function<OfflinePlayer, String>> customPlaceholderMap;
     private static BukkitPlaceholderManager instance;
 
+    /**
+     * Constructs a new BukkitPlaceholderManager instance.
+     *
+     * @param plugin the instance of {@link BukkitCustomFishingPlugin}
+     */
     public BukkitPlaceholderManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.customPlaceholderMap = new HashMap<>();
         instance = this;
     }
 
+    /**
+     * Loads the placeholder manager, checking for PlaceholderAPI and registering default placeholders.
+     */
     @Override
     public void load() {
         this.hasPapi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
         this.customPlaceholderMap.put("{random}", (p) -> String.valueOf(RandomUtils.generateRandomDouble(0, 1)));
     }
 
+    /**
+     * Unloads the placeholder manager, clearing all registered placeholders.
+     */
     @Override
     public void unload() {
+        this.hasPapi = false;
         this.customPlaceholderMap.clear();
     }
 
+    /**
+     * Gets the singleton instance of BukkitPlaceholderManager.
+     *
+     * @return the singleton instance
+     */
     public static BukkitPlaceholderManager getInstance() {
         return instance;
     }
@@ -60,6 +81,13 @@ public class BukkitPlaceholderManager implements PlaceholderManager {
     public boolean registerCustomPlaceholder(String placeholder, String original) {
         if (this.customPlaceholderMap.containsKey(placeholder)) return false;
         this.customPlaceholderMap.put(placeholder, (p) -> PlaceholderAPIUtils.parse(p, original));
+        return true;
+    }
+
+    @Override
+    public boolean registerCustomPlaceholder(String placeholder, Function<OfflinePlayer, String> provider) {
+        if (this.customPlaceholderMap.containsKey(placeholder)) return false;
+        this.customPlaceholderMap.put(placeholder, provider);
         return true;
     }
 

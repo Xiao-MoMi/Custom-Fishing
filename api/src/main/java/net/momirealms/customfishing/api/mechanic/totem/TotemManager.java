@@ -24,12 +24,33 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Optional;
 
+/**
+ * Interface for managing totems.
+ */
 public interface TotemManager extends Reloadable {
 
+    /**
+     * Retrieves a collection of activated totems at the specified location.
+     *
+     * @param location the {@link Location} to check for activated totems
+     * @return a collection of activated totem identifiers as strings
+     */
     Collection<String> getActivatedTotems(Location location);
 
+    /**
+     * Registers a new totem configuration.
+     *
+     * @param totem the {@link TotemConfig} to be registered
+     * @return true if the totem was successfully registered, false otherwise
+     */
     boolean registerTotem(TotemConfig totem);
 
+    /**
+     * Retrieves a totem configuration by its unique identifier.
+     *
+     * @param id the unique identifier of the totem
+     * @return an {@link Optional} containing the {@link TotemConfig} if found, or an empty {@link Optional} if not
+     */
     @NotNull
     Optional<TotemConfig> getTotem(String id);
 }

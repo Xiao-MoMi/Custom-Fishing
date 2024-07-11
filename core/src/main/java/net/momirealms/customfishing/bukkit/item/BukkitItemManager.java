@@ -248,7 +248,7 @@ public class BukkitItemManager implements ItemManager, Listener {
     }
 
     @Override
-    public boolean hasCustomDurability(ItemStack itemStack) {
+    public boolean hasCustomMaxDamage(ItemStack itemStack) {
         if (itemStack == null || itemStack.getType() == Material.AIR || itemStack.getAmount() == 0)
             return false;
         Item<ItemStack> wrapped = factory.wrap(itemStack);
@@ -256,7 +256,19 @@ public class BukkitItemManager implements ItemManager, Listener {
     }
 
     @Override
-    public void increaseDurability(Player player, ItemStack itemStack, int amount) {
+    public int getMaxDamage(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR || itemStack.getAmount() == 0)
+            return 0;
+        Item<ItemStack> wrapped = factory.wrap(itemStack);
+        if (wrapped.hasTag("CustomFishing", "max_dur")) {
+            return new CustomDurabilityItem(wrapped).maxDamage();
+        } else {
+            return new VanillaDurabilityItem(wrapped).maxDamage();
+        }
+    }
+
+    @Override
+    public void decreaseDamage(Player player, ItemStack itemStack, int amount) {
         if (itemStack == null || itemStack.getType() == Material.AIR || itemStack.getAmount() == 0)
             return;
         Item<ItemStack> wrapped = factory.wrap(itemStack);
@@ -271,7 +283,7 @@ public class BukkitItemManager implements ItemManager, Listener {
     }
 
     @Override
-    public void decreaseDurability(Player player, ItemStack itemStack, int amount, boolean incorrectUsage) {
+    public void increaseDamage(Player player, ItemStack itemStack, int amount, boolean incorrectUsage) {
         if (itemStack == null || itemStack.getType() == Material.AIR || itemStack.getAmount() == 0)
             return;
         if (!incorrectUsage) {
@@ -307,7 +319,7 @@ public class BukkitItemManager implements ItemManager, Listener {
     }
 
     @Override
-    public void setDurability(Player player, ItemStack itemStack, int damage) {
+    public void setDamage(Player player, ItemStack itemStack, int damage) {
         if (itemStack == null || itemStack.getType() == Material.AIR || itemStack.getAmount() == 0)
             return;
         Item<ItemStack> wrapped = factory.wrap(itemStack);
@@ -335,7 +347,7 @@ public class BukkitItemManager implements ItemManager, Listener {
     @EventHandler (ignoreCancelled = true)
     public void onMending(PlayerItemMendEvent event) {
         ItemStack itemStack = event.getItem();
-        if (!hasCustomDurability(itemStack)) {
+        if (!hasCustomMaxDamage(itemStack)) {
             return;
         }
         event.setCancelled(true);
@@ -343,7 +355,7 @@ public class BukkitItemManager implements ItemManager, Listener {
         if (wrapped.unbreakable())
             return;
         DurabilityItem wrappedDurability = wrapDurabilityItem(wrapped);
-        setDurability(event.getPlayer(), itemStack, Math.max(wrappedDurability.damage() - event.getRepairAmount(), 0));
+        setDamage(event.getPlayer(), itemStack, Math.max(wrappedDurability.damage() - event.getRepairAmount(), 0));
     }
 
     @EventHandler (ignoreCancelled = true)
@@ -353,7 +365,7 @@ public class BukkitItemManager implements ItemManager, Listener {
         ItemStack second = anvil.getSecondItem();
         if (first != null && second != null
                 && first.getType() == Material.FISHING_ROD && second.getType() == Material.FISHING_ROD && event.getResult() != null
-                && hasCustomDurability(first)) {
+                && hasCustomMaxDamage(first)) {
             Item<ItemStack> wrapped1 = factory.wrap(anvil.getResult());
             DurabilityItem wrappedDurability1 = wrapDurabilityItem(wrapped1);
 

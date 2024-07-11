@@ -114,6 +114,13 @@ public interface RequirementManager<T> extends Reloadable {
         return true;
     }
 
+    /**
+     * Checks if all requirements in the provided array are satisfied within the given context.
+     *
+     * @param context      The context in which the requirements are evaluated.
+     * @param requirements A list of requirements to check.
+     * @return True if all requirements are satisfied, otherwise false.
+     */
     static <T> boolean isSatisfied(Context<T> context, @Nullable List<Requirement<T>> requirements) {
         if (requirements == null) return true;
         for (Requirement<T> requirement : requirements) {

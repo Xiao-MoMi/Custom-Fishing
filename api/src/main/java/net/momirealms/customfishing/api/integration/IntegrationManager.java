@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Interface for managing integration providers in the custom fishing API.
+ * Interface for managing integration providers.
  * This allows for the registration and retrieval of various types of providers
  * such as Leveler, Enchantment, and Season providers.
  */

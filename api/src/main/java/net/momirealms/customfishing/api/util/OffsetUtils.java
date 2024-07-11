@@ -24,6 +24,7 @@ import org.jetbrains.annotations.ApiStatus;
 /**
  * Utility class for generating offset characters based on a font configuration.
  */
+@ApiStatus.Internal
 @SuppressWarnings("DuplicatedCode")
 public class OffsetUtils {
 

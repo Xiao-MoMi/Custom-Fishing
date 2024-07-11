@@ -28,8 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Interface for providing custom block data and retrieving block IDs within the CustomFishing plugin.
- * Extends the ExternalProvider interface.
+ * Interface for providing custom block data and retrieving block IDs.
  */
 public interface BlockProvider extends ExternalProvider {
 

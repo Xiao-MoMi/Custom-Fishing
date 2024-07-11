@@ -20,9 +20,24 @@ package net.momirealms.customfishing.api.mechanic.game;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
 
+/**
+ * Represents a mini-game
+ */
 public interface Game {
 
+    /**
+     * Gets the identifier of the game.
+     *
+     * @return the identifier of the game.
+     */
     String id();
-    
+
+    /**
+     * Starts the game with the provided fishing hook and effect.
+     *
+     * @param hook the custom fishing hook.
+     * @param effect the effect to apply.
+     * @return the gaming player instance.
+     */
     GamingPlayer start(CustomFishingHook hook, Effect effect);
 }

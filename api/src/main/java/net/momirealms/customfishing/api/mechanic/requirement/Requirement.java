@@ -20,7 +20,7 @@ package net.momirealms.customfishing.api.mechanic.requirement;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 
 /**
- * Interface representing a requirement that must be met in the custom fishing API.
+ * Interface representing a requirement that must be met.
  * This can be used to define conditions that need to be satisfied within a given context.
  *
  * @param <T> the type parameter for the context

@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * The PlayerContextImpl class implements the Context interface specifically
  * for the Player type. It allows for storing and retrieving arguments related
- * to a player in the custom fishing mechanics.
+ * to a player.
  */
 public final class PlayerContextImpl implements Context<Player> {
 

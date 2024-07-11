@@ -58,6 +58,13 @@ public interface MathValue<T> {
         return new PlainMathValueImpl<>(value);
     }
 
+    /**
+     * Creates a MathValue based on a range of values.
+     *
+     * @param value the ranged value to represent
+     * @param <T> the type of the holder object for the context
+     * @return a MathValue instance representing the given ranged value
+     */
     static <T> MathValue<T> ranged(String value) {
         return new RangedMathValueImpl<>(value);
     }

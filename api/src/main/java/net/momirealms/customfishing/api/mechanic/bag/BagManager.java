@@ -25,7 +25,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * The BagManager interface defines methods for managing fishing bags in the CustomFishing plugin.
+ * The BagManager interface defines methods for managing fishing bags.
  */
 public interface BagManager extends Reloadable {
 

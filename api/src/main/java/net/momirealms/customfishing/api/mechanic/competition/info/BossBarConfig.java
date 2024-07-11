@@ -81,16 +81,16 @@ public interface BossBarConfig {
     boolean enabled();
 
     /**
-     * Creates a new builder instance for constructing {@code BossBarConfig} objects.
+     * Creates a new builder instance for constructing {@link BossBarConfig} objects.
      *
-     * @return A new {@code Builder} instance.
+     * @return A new {@link Builder} instance.
      */
     static Builder builder() {
         return new BossBarConfigImpl.BuilderImpl();
     }
 
     /**
-     * Builder interface for constructing {@code BossBarConfig} objects.
+     * Builder interface for constructing {@link BossBarConfig} objects.
      */
     interface Builder {
 
@@ -98,7 +98,7 @@ public interface BossBarConfig {
          * Sets whether the competition information should be shown to all players.
          *
          * @param showToAll True to show information to all players, false to show only to participants.
-         * @return The current {@code Builder} instance.
+         * @return The current {@link Builder} instance.
          */
         Builder showToAll(boolean showToAll);
 
@@ -106,7 +106,7 @@ public interface BossBarConfig {
          * Sets the refresh rate for updating the competition information.
          *
          * @param rate The refresh rate in ticks.
-         * @return The current {@code Builder} instance.
+         * @return The current {@link Builder} instance.
          */
         Builder refreshRate(int rate);
 
@@ -114,7 +114,7 @@ public interface BossBarConfig {
          * Sets the interval for switching between different competition texts.
          *
          * @param interval The switch interval in ticks.
-         * @return The current {@code Builder} instance.
+         * @return The current {@link Builder} instance.
          */
         Builder switchInterval(int interval);
 
@@ -122,7 +122,7 @@ public interface BossBarConfig {
          * Sets the texts to be displayed on the boss bar during the competition.
          *
          * @param texts An array of competition information texts.
-         * @return The current {@code Builder} instance.
+         * @return The current {@link Builder} instance.
          */
         Builder text(String[] texts);
 
@@ -130,7 +130,7 @@ public interface BossBarConfig {
          * Sets the color of the boss bar.
          *
          * @param color The color of the boss bar.
-         * @return The current {@code Builder} instance.
+         * @return The current {@link Builder} instance.
          */
         Builder color(BossBar.Color color);
 
@@ -138,7 +138,7 @@ public interface BossBarConfig {
          * Sets the overlay style of the boss bar.
          *
          * @param overlay The overlay style of the boss bar.
-         * @return The current {@code Builder} instance.
+         * @return The current {@link Builder} instance.
          */
         Builder overlay(BossBar.Overlay overlay);
 
@@ -146,14 +146,14 @@ public interface BossBarConfig {
          * Sets whether the bossbar is enabled
          *
          * @param enable enable or not
-         * @return The current {@code Builder} instance.
+         * @return The current {@link Builder} instance.
          */
         Builder enable(boolean enable);
 
         /**
-         * Builds the {@code BossBarConfig} object with the configured settings.
+         * Builds the {@link BossBarConfig} object with the configured settings.
          *
-         * @return The constructed {@code BossBarConfig} object.
+         * @return The constructed {@link BossBarConfig} object.
          */
         BossBarConfig build();
     }

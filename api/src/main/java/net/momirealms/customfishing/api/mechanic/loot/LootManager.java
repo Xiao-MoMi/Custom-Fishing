@@ -28,18 +28,53 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Interface for managing loot
+ */
 public interface LootManager extends Reloadable {
 
+    /**
+     * Registers a new loot item.
+     *
+     * @param loot the {@link Loot} to be registered
+     * @return true if the loot was successfully registered, false otherwise
+     */
     boolean registerLoot(@NotNull Loot loot);
 
+    /**
+     * Retrieves the members of a loot group identified by the given key.
+     *
+     * @param key the key identifying the loot group
+     * @return a list of member identifiers as strings
+     */
     @NotNull
     List<String> getGroupMembers(String key);
 
+    /**
+     * Retrieves a loot item by its key.
+     *
+     * @param key the key identifying the loot item
+     * @return an {@link Optional} containing the {@link Loot} if found, or an empty {@link Optional} if not
+     */
     @NotNull
     Optional<Loot> getLoot(String key);
 
+    /**
+     * Retrieves a map of weighted loots based on the given effect and context.
+     *
+     * @param effect  the {@link Effect} influencing the loot selection
+     * @param context the {@link Context} in which the loot selection occurs
+     * @return a map of loot keys to their respective weights
+     */
     Map<String, Double> getWeightedLoots(Effect effect, Context<Player> context);
 
+    /**
+     * Retrieves the next loot item based on the given effect and context.
+     *
+     * @param effect  the {@link Effect} influencing the loot selection
+     * @param context the {@link Context} in which the loot selection occurs
+     * @return the next {@link Loot} item, or null if no suitable loot is found
+     */
     @Nullable
     Loot getNextLoot(Effect effect, Context<Player> context);
 }

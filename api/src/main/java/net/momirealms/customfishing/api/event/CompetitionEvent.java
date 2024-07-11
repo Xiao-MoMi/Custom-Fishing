@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.api.event;
 
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
-import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

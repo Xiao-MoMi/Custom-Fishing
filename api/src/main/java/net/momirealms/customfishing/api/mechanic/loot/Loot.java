@@ -63,6 +63,11 @@ public interface Loot {
      */
     boolean showInFinder();
 
+    /**
+     * Check if players can't grab the loot
+     *
+     * @return True if players can't grab the loot, false otherwise.
+     */
     boolean preventGrabbing();
 
     /**
@@ -153,6 +158,12 @@ public interface Loot {
          */
         Builder disableGame(boolean disableGame);
 
+        /**
+         * Specify whether players are prevented from grabbing the loot
+         *
+         * @param preventGrabbing True if grabbing should be prevented.
+         * @return The builder instance.
+         */
         Builder preventGrabbing(boolean preventGrabbing);
 
         /**

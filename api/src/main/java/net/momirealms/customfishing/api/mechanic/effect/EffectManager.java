@@ -23,7 +23,7 @@ import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import java.util.Optional;
 
 /**
- * Interface for managing effect modifiers in the custom fishing plugin.
+ * Interface for managing effect modifiers.
  */
 public interface EffectManager extends Reloadable {
 

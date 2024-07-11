@@ -34,5 +34,4 @@ public interface SchedulerTask {
      * Cancels the task.
      */
     void cancel();
-
 }

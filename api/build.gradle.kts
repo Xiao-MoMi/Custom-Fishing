@@ -1,5 +1,6 @@
 plugins {
     id("io.github.goooler.shadow") version "8.1.7"
+    id("maven-publish")
 }
 
 repositories {
@@ -44,5 +45,16 @@ tasks {
         relocate("net.kyori", "net.momirealms.customfishing.libraries")
         relocate("dev.dejvokep", "net.momirealms.customfishing.libraries")
         relocate ("com.saicone.rtag", "net.momirealms.customfishing.libraries.rtag")
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            groupId = "net.momirealms"
+            artifactId = "CustomFishing"
+            version = rootProject.version.toString()
+            artifact(tasks.shadowJar)
+        }
     }
 }

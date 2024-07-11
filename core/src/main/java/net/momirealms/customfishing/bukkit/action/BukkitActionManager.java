@@ -31,12 +31,9 @@ import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.bukkit.integration.VaultHook;
-import net.momirealms.customfishing.bukkit.item.damage.DurabilityItem;
-import net.momirealms.customfishing.bukkit.item.damage.VanillaDurabilityItem;
 import net.momirealms.customfishing.bukkit.util.LocationUtils;
 import net.momirealms.customfishing.bukkit.util.PlayerUtils;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
-import net.momirealms.customfishing.common.item.Item;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
@@ -437,9 +434,9 @@ public class BukkitActionManager implements ActionManager<Player> {
                     if (itemStack.getItemMeta() == null)
                         return;
                     if (amount > 0) {
-                        plugin.getItemManager().increaseDurability(context.getHolder(), itemStack, amount);
+                        plugin.getItemManager().decreaseDamage(context.getHolder(), itemStack, amount);
                     } else {
-                        plugin.getItemManager().decreaseDurability(context.getHolder(), itemStack, -amount, true);
+                        plugin.getItemManager().increaseDamage(context.getHolder(), itemStack, -amount, true);
                     }
                 };
             } else {

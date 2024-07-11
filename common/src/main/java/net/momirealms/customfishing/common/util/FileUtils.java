@@ -23,10 +23,20 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Utility class for handling file and directory operations.
+ */
 public class FileUtils {
 
     private FileUtils() {}
 
+    /**
+     * Creates a file if it does not already exist.
+     *
+     * @param path the path to the file
+     * @return the path to the file
+     * @throws IOException if an I/O error occurs
+     */
     public static Path createFileIfNotExists(Path path) throws IOException {
         if (!Files.exists(path)) {
             Files.createFile(path);
@@ -34,6 +44,13 @@ public class FileUtils {
         return path;
     }
 
+    /**
+     * Creates a directory if it does not already exist.
+     *
+     * @param path the path to the directory
+     * @return the path to the directory
+     * @throws IOException if an I/O error occurs
+     */
     public static Path createDirectoryIfNotExists(Path path) throws IOException {
         if (Files.exists(path) && (Files.isDirectory(path) || Files.isSymbolicLink(path))) {
             return path;
@@ -48,6 +65,13 @@ public class FileUtils {
         return path;
     }
 
+    /**
+     * Creates directories if they do not already exist.
+     *
+     * @param path the path to the directories
+     * @return the path to the directories
+     * @throws IOException if an I/O error occurs
+     */
     public static Path createDirectoriesIfNotExists(Path path) throws IOException {
         if (Files.exists(path) && (Files.isDirectory(path) || Files.isSymbolicLink(path))) {
             return path;
@@ -62,6 +86,12 @@ public class FileUtils {
         return path;
     }
 
+    /**
+     * Deletes a directory and all its contents.
+     *
+     * @param path the path to the directory
+     * @throws IOException if an I/O error occurs
+     */
     public static void deleteDirectory(Path path) throws IOException {
         if (!Files.exists(path) || !Files.isDirectory(path)) {
             return;

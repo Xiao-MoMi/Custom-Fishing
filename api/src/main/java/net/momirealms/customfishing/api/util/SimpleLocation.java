@@ -21,6 +21,9 @@ import org.bukkit.Location;
 
 import java.util.Objects;
 
+/**
+ * A simple representation of a location in a Minecraft world, identified by its world name and coordinates.
+ */
 public record SimpleLocation(String worldName, int x, int y, int z) {
 
     @Override
@@ -57,6 +60,12 @@ public record SimpleLocation(String worldName, int x, int y, int z) {
         return hash;
     }
 
+    /**
+     * Creates a {@link SimpleLocation} from a {@link Location} object.
+     *
+     * @param location the {@link Location} object
+     * @return a new {@link SimpleLocation} representing the same location
+     */
     public static SimpleLocation of(Location location) {
         return new SimpleLocation(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }

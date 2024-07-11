@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 /**
- * The EntityConfig interface defines the configuration for an entity used in custom fishing mechanics.
+ * The EntityConfig interface defines the configuration for an entity.
  * It includes methods to retrieve various properties of the entity such as vectors and an ID, as well
  * as a nested Builder interface for constructing instances of EntityConfig.
  */

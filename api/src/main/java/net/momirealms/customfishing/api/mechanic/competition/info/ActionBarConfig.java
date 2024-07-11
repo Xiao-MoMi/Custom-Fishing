@@ -63,16 +63,16 @@ public interface ActionBarConfig {
     boolean enabled();
 
     /**
-     * Creates a new builder instance for constructing {@code ActionBarConfig} objects.
+     * Creates a new builder instance for constructing {@link ActionBarConfig} objects.
      *
-     * @return A new {@code Builder} instance.
+     * @return A new {@link Builder} instance.
      */
     static Builder builder() {
         return new ActionBarConfigImpl.BuilderImpl();
     }
 
     /**
-     * Builder interface for constructing {@code ActionBarConfig} objects.
+     * Builder interface for constructing {@link ActionBarConfig} objects.
      */
     interface Builder {
 
@@ -80,7 +80,7 @@ public interface ActionBarConfig {
          * Sets whether the competition information should be shown to all players.
          *
          * @param showToAll True to show information to all players, false to show only to participants.
-         * @return The current {@code Builder} instance.
+         * @return The current {@link Builder} instance.
          */
         Builder showToAll(boolean showToAll);
 
@@ -88,7 +88,7 @@ public interface ActionBarConfig {
          * Sets the refresh rate for updating the competition information.
          *
          * @param rate The refresh rate in ticks.
-         * @return The current {@code Builder} instance.
+         * @return The current {@link Builder} instance.
          */
         Builder refreshRate(int rate);
 
@@ -96,7 +96,7 @@ public interface ActionBarConfig {
          * Sets the interval for switching between different competition texts.
          *
          * @param interval The switch interval in ticks.
-         * @return The current {@code Builder} instance.
+         * @return The current {@link Builder} instance.
          */
         Builder switchInterval(int interval);
 
@@ -104,7 +104,7 @@ public interface ActionBarConfig {
          * Sets the texts to be displayed on the action bar during the competition.
          *
          * @param texts An array of competition information texts.
-         * @return The current {@code Builder} instance.
+         * @return The current {@link Builder} instance.
          */
         Builder text(String[] texts);
 
@@ -112,14 +112,14 @@ public interface ActionBarConfig {
          * Sets whether the actionbar is enabled
          *
          * @param enable enable or not
-         * @return The current {@code Builder} instance.
+         * @return The current {@link Builder} instance.
          */
         Builder enable(boolean enable);
 
         /**
-         * Builds the {@code ActionBarConfig} object with the configured settings.
+         * Builds the {@link ActionBarConfig} object with the configured settings.
          *
-         * @return The constructed {@code ActionBarConfig} object.
+         * @return The constructed {@link ActionBarConfig} object.
          */
         ActionBarConfig build();
     }

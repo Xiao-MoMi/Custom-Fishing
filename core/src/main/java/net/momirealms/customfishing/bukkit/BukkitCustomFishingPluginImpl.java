@@ -19,7 +19,6 @@ package net.momirealms.customfishing.bukkit;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.CustomFishingReloadEvent;
-import net.momirealms.customfishing.api.event.FishingLootSpawnEvent;
 import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.misc.cooldown.CoolDownManager;
@@ -58,7 +57,6 @@ import net.momirealms.customfishing.common.plugin.logging.JavaPluginLogger;
 import net.momirealms.customfishing.common.plugin.logging.PluginLogger;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Item;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 

@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 /**
- * EffectModifier interface for modifying effects in the CustomFishing plugin.
+ * EffectModifier interface for modifying effects.
  * This interface allows defining conditions and modifications for effects applied to players.
  */
 public interface EffectModifier {

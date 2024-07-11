@@ -41,7 +41,6 @@ import net.momirealms.customfishing.api.storage.StorageManager;
 import net.momirealms.customfishing.common.dependency.DependencyManager;
 import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
-import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import net.momirealms.customfishing.common.plugin.scheduler.AbstractJavaScheduler;
 import net.momirealms.customfishing.common.sender.SenderFactory;
 import org.bukkit.Location;
@@ -51,7 +50,11 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 
-public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin, Reloadable {
+/**
+ * Abstract class representing the main CustomFishing plugin.
+ * This class provides access to various managers and functionalities within the plugin.
+ */
+public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
 
     private static BukkitCustomFishingPlugin instance;
     private final Plugin boostrap;
@@ -82,6 +85,11 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin, 
     protected FishingManager fishingManager;
     protected GameManager gameManager;
 
+    /**
+     * Constructs a new BukkitCustomFishingPlugin instance.
+     *
+     * @param boostrap the plugin instance used to initialize this class
+     */
     public BukkitCustomFishingPlugin(Plugin boostrap) {
         if (!boostrap.getName().equals("CustomFishing")) {
             throw new IllegalArgumentException("CustomFishing plugin requires custom fishing plugin");
@@ -90,6 +98,12 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin, 
         instance = this;
     }
 
+    /**
+     * Retrieves the singleton instance of BukkitCustomFishingPlugin.
+     *
+     * @return the singleton instance
+     * @throws IllegalArgumentException if the plugin is not initialized
+     */
     public static BukkitCustomFishingPlugin getInstance() {
         if (instance == null) {
             throw new IllegalArgumentException("Plugin not initialized");
@@ -97,119 +111,257 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin, 
         return instance;
     }
 
+    /**
+     * Retrieves the EventManager.
+     *
+     * @return the {@link EventManager}
+     */
     public EventManager getEventManager() {
         return eventManager;
     }
 
+    /**
+     * Retrieves the ConfigManager.
+     *
+     * @return the {@link ConfigManager}
+     */
     @Override
     public ConfigManager getConfigManager() {
         return configManager;
     }
 
+    /**
+     * Retrieves the RequirementManager.
+     *
+     * @return the {@link RequirementManager} for {@link Player}
+     */
     public RequirementManager<Player> getRequirementManager() {
         return requirementManager;
     }
 
+    /**
+     * Retrieves the ActionManager.
+     *
+     * @return the {@link ActionManager} for {@link Player}
+     */
     public ActionManager<Player> getActionManager() {
         return actionManager;
     }
 
+    /**
+     * Retrieves the SenderFactory.
+     *
+     * @return the {@link SenderFactory} for {@link BukkitCustomFishingPlugin} and {@link CommandSender}
+     */
     public SenderFactory<BukkitCustomFishingPlugin, CommandSender> getSenderFactory() {
         return senderFactory;
     }
 
+    /**
+     * Retrieves the data folder of the plugin.
+     *
+     * @return the data folder as a {@link File}
+     */
     public File getDataFolder() {
         return boostrap.getDataFolder();
     }
 
+    /**
+     * Retrieves the PlaceholderManager.
+     *
+     * @return the {@link PlaceholderManager}
+     */
     public PlaceholderManager getPlaceholderManager() {
         return placeholderManager;
     }
 
+    /**
+     * Retrieves the ItemManager.
+     *
+     * @return the {@link ItemManager}
+     */
     public ItemManager getItemManager() {
         return itemManager;
     }
 
+    /**
+     * Retrieves the IntegrationManager.
+     *
+     * @return the {@link IntegrationManager}
+     */
     public IntegrationManager getIntegrationManager() {
         return integrationManager;
     }
 
+    /**
+     * Retrieves the Scheduler.
+     *
+     * @return the {@link AbstractJavaScheduler} for {@link Location}
+     */
     @Override
     public AbstractJavaScheduler<Location> getScheduler() {
         return scheduler;
     }
 
+    /**
+     * Retrieves the CompetitionManager.
+     *
+     * @return the {@link CompetitionManager}
+     */
     public CompetitionManager getCompetitionManager() {
         return competitionManager;
     }
 
+    /**
+     * Retrieves the MarketManager.
+     *
+     * @return the {@link MarketManager}
+     */
     public MarketManager getMarketManager() {
         return marketManager;
     }
 
+    /**
+     * Retrieves the StorageManager.
+     *
+     * @return the {@link StorageManager}
+     */
     public StorageManager getStorageManager() {
         return storageManager;
     }
 
+    /**
+     * Retrieves the LootManager.
+     *
+     * @return the {@link LootManager}
+     */
     public LootManager getLootManager() {
         return lootManager;
     }
 
+    /**
+     * Retrieves the EntityManager.
+     *
+     * @return the {@link EntityManager}
+     */
     public EntityManager getEntityManager() {
         return entityManager;
     }
 
+    /**
+     * Retrieves the HookManager.
+     *
+     * @return the {@link HookManager}
+     */
     public HookManager getHookManager() {
         return hookManager;
     }
 
+    /**
+     * Retrieves the BlockManager.
+     *
+     * @return the {@link BlockManager}
+     */
     public BlockManager getBlockManager() {
         return blockManager;
     }
 
+    /**
+     * Retrieves the CoolDownManager.
+     *
+     * @return the {@link CoolDownManager}
+     */
     public CoolDownManager getCoolDownManager() {
         return coolDownManager;
     }
 
+    /**
+     * Retrieves the StatisticsManager.
+     *
+     * @return the {@link StatisticsManager}
+     */
     public StatisticsManager getStatisticsManager() {
         return statisticsManager;
     }
 
+    /**
+     * Retrieves the EffectManager.
+     *
+     * @return the {@link EffectManager}
+     */
     public EffectManager getEffectManager() {
         return effectManager;
     }
 
+    /**
+     * Retrieves the BagManager.
+     *
+     * @return the {@link BagManager}
+     */
     public BagManager getBagManager() {
         return bagManager;
     }
 
+    /**
+     * Retrieves the TotemManager.
+     *
+     * @return the {@link TotemManager}
+     */
     public TotemManager getTotemManager() {
         return totemManager;
     }
 
+    /**
+     * Retrieves the FishingManager.
+     *
+     * @return the {@link FishingManager}
+     */
     public FishingManager getFishingManager() {
         return fishingManager;
     }
 
+    /**
+     * Retrieves the GameManager.
+     *
+     * @return the {@link GameManager}
+     */
     public GameManager getGameManager() {
         return gameManager;
     }
 
+    /**
+     * Retrieves the plugin instance used to initialize this class.
+     *
+     * @return the {@link Plugin} instance
+     */
     public Plugin getBoostrap() {
         return boostrap;
     }
 
+    /**
+     * Retrieves the DependencyManager.
+     *
+     * @return the {@link DependencyManager}
+     */
     @Override
     public DependencyManager getDependencyManager() {
         return dependencyManager;
     }
 
+    /**
+     * Retrieves the TranslationManager.
+     *
+     * @return the {@link TranslationManager}
+     */
     @Override
     public TranslationManager getTranslationManager() {
         return translationManager;
     }
 
-    public abstract void enable();
-
+    /**
+     * Logs a debug message.
+     *
+     * @param message the message to log
+     */
     public abstract void debug(Object message);
 }

@@ -17,6 +17,9 @@
 
 package net.momirealms.customfishing.api.mechanic.item.tag;
 
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.Internal
 public enum TagValueType {
     BYTE,
     INT,

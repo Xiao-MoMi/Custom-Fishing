@@ -17,12 +17,29 @@
 
 package net.momirealms.customfishing.common.util;
 
+/**
+ * Represents a key consisting of a namespace and a value.
+ * This class provides methods for creating and manipulating keys.
+ */
 public record Key(String namespace, String value) {
 
+    /**
+     * Creates a new {@link Key} instance with the specified namespace and value.
+     *
+     * @param namespace the namespace of the key
+     * @param value     the value of the key
+     * @return a new {@link Key} instance
+     */
     public static Key of(String namespace, String value) {
         return new Key(namespace, value);
     }
 
+    /**
+     * Creates a new {@link Key} instance from a string in the format "namespace:value".
+     *
+     * @param key the string representation of the key
+     * @return a new {@link Key} instance
+     */
     public static Key fromString(String key) {
         String[] split = key.split(":", 2);
         return of(split[0], split[1]);

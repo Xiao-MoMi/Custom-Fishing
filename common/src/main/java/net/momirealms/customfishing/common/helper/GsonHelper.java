@@ -20,6 +20,9 @@ package net.momirealms.customfishing.common.helper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+/**
+ * Helper class for managing Gson instances.
+ */
 public class GsonHelper {
 
     private final Gson gson;
@@ -29,14 +32,27 @@ public class GsonHelper {
                 .create();
     }
 
+    /**
+     * Retrieves the Gson instance.
+     *
+     * @return the Gson instance
+     */
     public Gson getGson() {
         return gson;
     }
 
+    /**
+     * Retrieves the singleton Gson instance from GsonHelper.
+     *
+     * @return the singleton Gson instance
+     */
     public static Gson get() {
         return SingletonHolder.INSTANCE.getGson();
     }
 
+    /**
+     * Static inner class for holding the singleton instance of GsonHelper.
+     */
     private static class SingletonHolder {
         private static final GsonHelper INSTANCE = new GsonHelper();
     }

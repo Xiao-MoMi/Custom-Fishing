@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public interface PlaceholderManager extends Reloadable {
@@ -30,13 +31,22 @@ public interface PlaceholderManager extends Reloadable {
     Pattern PATTERN = Pattern.compile("\\{[^{}]+}");
 
     /**
-     * Registers a custom placeholder with its corresponding original string.
+     * Registers a custom placeholder.
      *
-     * @param placeholder the placeholder to register.
-     * @param original    the original string corresponding to the placeholder.
-     * @return true if the placeholder was successfully registered, false if it already exists.
+     * @param placeholder the placeholder to be registered
+     * @param original    the original placeholder string for instance {@code %test_placeholder%}
+     * @return true if the placeholder was successfully registered, false otherwise
      */
     boolean registerCustomPlaceholder(String placeholder, String original);
+
+    /**
+     * Registers a custom placeholder.
+     *
+     * @param placeholder the placeholder to be registered
+     * @param provider    the value provider
+     * @return true if the placeholder was successfully registered, false otherwise
+     */
+    boolean registerCustomPlaceholder(String placeholder, Function<OfflinePlayer, String> provider);
 
     /**
      * Resolves all placeholders within a given text.
@@ -47,32 +57,32 @@ public interface PlaceholderManager extends Reloadable {
     List<String> resolvePlaceholders(String text);
 
     /**
-     * Parses a single placeholder for a specified player, optionally using a map of replacements.
+     * Parses a single placeholder for the specified player, using the provided replacements.
      *
-     * @param player       the player for whom the placeholder should be parsed.
-     * @param placeholder  the placeholder to parse.
-     * @param replacements a map of replacement strings for placeholders.
-     * @return the parsed placeholder string.
+     * @param player        the player for whom the placeholder is being parsed
+     * @param placeholder   the placeholder to be parsed
+     * @param replacements  a map of replacements to be used
+     * @return the parsed placeholder value
      */
     String parseSingle(@Nullable OfflinePlayer player, String placeholder, Map<String, String> replacements);
 
     /**
-     * Parses all placeholders in the given text for a specified player, optionally using a map of replacements.
+     * Parses placeholders in the given text for the specified player, using the provided replacements.
      *
-     * @param player       the player for whom the placeholders should be parsed.
-     * @param text         the text containing placeholders.
-     * @param replacements a map of replacement strings for placeholders.
-     * @return the text with parsed placeholders.
+     * @param player       the player for whom placeholders are being parsed
+     * @param text         the text containing placeholders
+     * @param replacements a map of replacements to be used
+     * @return the text with placeholders replaced
      */
     String parse(@Nullable OfflinePlayer player, String text, Map<String, String> replacements);
 
     /**
-     * Parses all placeholders in a list of strings for a specified player, optionally using a map of replacements.
+     * Parses placeholders in the given list of texts for the specified player, using the provided replacements.
      *
-     * @param player       the player for whom the placeholders should be parsed.
-     * @param list         the list of strings containing placeholders.
-     * @param replacements a map of replacement strings for placeholders.
-     * @return the list of strings with parsed placeholders.
+     * @param player       the player for whom placeholders are being parsed
+     * @param list         the list of texts containing placeholders
+     * @param replacements a map of replacements to be used
+     * @return the list of texts with placeholders replaced
      */
     List<String> parse(@Nullable OfflinePlayer player, List<String> list, Map<String, String> replacements);
 }

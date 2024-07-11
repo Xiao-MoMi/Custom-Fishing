@@ -23,7 +23,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.player.PlayerFishEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**

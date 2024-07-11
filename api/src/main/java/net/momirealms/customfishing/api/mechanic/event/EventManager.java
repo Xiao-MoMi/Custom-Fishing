@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 
 /**
- * EventManager interface for managing events and their associated actions within the custom fishing plugin.
+ * EventManager interface for managing events and their associated actions.
  * It provides methods to register, retrieve, and trigger events based on different conditions.
  */
 public interface EventManager extends Reloadable {

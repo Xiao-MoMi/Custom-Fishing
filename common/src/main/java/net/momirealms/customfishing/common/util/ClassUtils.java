@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+/**
+ * Utility class for handling classes.
+ */
 public class ClassUtils {
 
     private ClassUtils() {}

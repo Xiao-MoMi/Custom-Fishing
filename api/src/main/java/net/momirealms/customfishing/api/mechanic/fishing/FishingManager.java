@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Interface for managing fishing hooks in the custom fishing plugin.
+ * Interface for managing fishing.
  */
 public interface FishingManager extends Reloadable {
 

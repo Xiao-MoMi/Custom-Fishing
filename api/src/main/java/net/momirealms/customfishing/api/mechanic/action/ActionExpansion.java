@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.api.mechanic.action;
 
 /**
- * Abstract class representing an expansion of an action in the custom fishing API.
+ * Abstract class representing an expansion of an action.
  * This class should be extended to provide specific implementations of actions.
  *
  * @param <T> the type parameter for the action factory

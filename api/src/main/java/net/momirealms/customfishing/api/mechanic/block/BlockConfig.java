@@ -20,8 +20,7 @@ package net.momirealms.customfishing.api.mechanic.block;
 import java.util.List;
 
 /**
- * Interface representing the configuration for a custom block in the CustomFishing plugin.
- * Provides methods to access various block properties and modifiers.
+ * Interface representing the configuration for a block loot.
  */
 public interface BlockConfig {
 

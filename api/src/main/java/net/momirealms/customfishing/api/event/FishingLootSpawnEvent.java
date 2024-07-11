@@ -19,7 +19,6 @@ package net.momirealms.customfishing.api.event;
 
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
-import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

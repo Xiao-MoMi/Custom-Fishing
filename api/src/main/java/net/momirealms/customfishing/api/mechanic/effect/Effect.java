@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 /**
- * Represents an effect applied in the custom fishing mechanic.
+ * Represents an effect applied in the fishing.
  */
 public interface Effect {
 

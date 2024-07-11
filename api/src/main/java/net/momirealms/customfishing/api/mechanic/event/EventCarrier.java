@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.TreeMap;
 
 /**
- * The EventCarrier interface represents an object that carries events in the custom fishing system.
+ * The EventCarrier interface represents an object that carries events.
  * It defines methods to trigger actions based on specific triggers and contexts.
  */
 public interface EventCarrier {

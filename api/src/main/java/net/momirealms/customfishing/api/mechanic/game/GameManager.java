@@ -25,6 +25,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
+/**
+ * Interface for managing games.
+ */
 public interface GameManager extends Reloadable {
 
     /**
@@ -48,15 +51,34 @@ public interface GameManager extends Reloadable {
      * Retrieves the game factory associated with the specified game type.
      *
      * @param type The type identifier of the game.
-     * @return The {@code GameFactory} for the specified game type, or {@code null} if not found.
+     * @return The {@link GameFactory} for the specified game type, or {@code null} if not found.
      */
     @Nullable
     GameFactory getGameFactory(String type);
 
+    /**
+     * Retrieves a game instance by its identifier.
+     *
+     * @param id The identifier of the game.
+     * @return An {@link Optional} containing the game if found, or an empty {@link Optional} if not found.
+     */
     Optional<Game> getGame(String id);
 
+    /**
+     * Registers a game instance.
+     *
+     * @param game The game instance to register.
+     * @return {@code true} if the game was successfully registered, {@code false} otherwise.
+     */
     boolean registerGame(Game game);
 
+    /**
+     * Retrieves the next game to be played based on the specified effect and context.
+     *
+     * @param effect  The effect influencing the game selection.
+     * @param context The context of the player.
+     * @return The next game to be played, or {@code null} if no suitable game is found.
+     */
     @Nullable
     Game getNextGame(Effect effect, Context<Player> context);
 }

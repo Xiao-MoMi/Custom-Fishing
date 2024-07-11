@@ -19,7 +19,17 @@ package net.momirealms.customfishing.api.mechanic.game;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 
+/**
+ * Factory interface for creating game instances.
+ */
 public interface GameFactory {
 
+    /**
+     * Creates a new game instance with the specified identifier and configuration section.
+     *
+     * @param id the identifier of the game.
+     * @param section the configuration section for the game.
+     * @return the created game instance.
+     */
     Game create(String id, Section section);
 }

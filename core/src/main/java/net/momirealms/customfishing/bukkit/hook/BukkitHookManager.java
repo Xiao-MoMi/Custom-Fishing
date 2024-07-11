@@ -129,7 +129,7 @@ public class BukkitHookManager implements HookManager, Listener {
             } else {
                 itemStack = plugin.getItemManager().buildInternal(Context.player(player), id);
             }
-            plugin.getItemManager().setDurability(player, itemStack, damage);
+            plugin.getItemManager().setDamage(player, itemStack, damage);
 
             wrapped.removeTag("CustomFishing", "hook_id");
             wrapped.removeTag("CustomFishing", "hook_stack");
@@ -185,7 +185,7 @@ public class BukkitHookManager implements HookManager, Listener {
                 previousItemStack = plugin.getItemManager().buildInternal(Context.player(player), previousHookID);
             }
             if (previousItemStack != null) {
-                plugin.getItemManager().setDurability(player, previousItemStack, previousHookDamage);
+                plugin.getItemManager().setDamage(player, previousItemStack, previousHookDamage);
                 if (cursor.getAmount() == 0) {
                     event.setCursor(previousItemStack);
                 } else {

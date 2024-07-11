@@ -26,6 +26,10 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Represents an abstract gaming player.
+ * Provides the basic structure and functionalities for a gaming player.
+ */
 public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
 
     protected long deadline;
@@ -37,6 +41,12 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     private boolean valid = true;
     private boolean firstFlag = true;
 
+    /**
+     * Constructs an AbstractGamingPlayer instance.
+     *
+     * @param hook the custom fishing hook.
+     * @param settings the game settings.
+     */
     public AbstractGamingPlayer(CustomFishingHook hook, GameSetting settings) {
         this.hook = hook;
         this.settings = settings;
@@ -44,37 +54,62 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
         this.arrangeTask();
     }
 
+    /**
+     * Arranges the task for the gaming player.
+     */
     public void arrangeTask() {
         this.task = BukkitCustomFishingPlugin.getInstance().getScheduler().asyncRepeating(this, 50, 50, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Destroys the gaming player, canceling any ongoing tasks.
+     */
     @Override
     public void destroy() {
         if (task != null) task.cancel();
         valid = false;
     }
 
+    /**
+     * Cancels the gaming player, it defaults to {@link AbstractGamingPlayer#destroy()}
+     */
     @Override
     public void cancel() {
         destroy();
     }
 
+    /**
+     * Checks if the gaming player has successfully completed the game.
+     *
+     * @return true if successful, false otherwise.
+     */
     @Override
     public boolean isSuccessful() {
         return success;
     }
 
+    /**
+     * Handles internal right-click actions.
+     */
     @ApiStatus.Internal
     public void internalRightClick() {
         firstFlag = true;
         handleRightClick();
     }
 
+    /**
+     * Handles right-click actions.
+     */
     @Override
     public void handleRightClick() {
         endGame();
     }
 
+    /**
+     * Handles internal left-click actions.
+     *
+     * @return true if cancel the event, false otherwise.
+     */
     @ApiStatus.Internal
     public boolean internalLeftClick() {
         if (firstFlag) {
@@ -84,35 +119,67 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
         return handleLeftClick();
     }
 
+    /**
+     * Handles left-click actions.
+     *
+     * @return true if cancel the event, false otherwise.
+     */
     @Override
     public boolean handleLeftClick() {
         return false;
     }
 
+    /**
+     * Handles chat input during the game.
+     *
+     * @param message the chat message.
+     * @return true if cancel the event, false otherwise.
+     */
     @Override
     public boolean handleChat(String message) {
         return false;
     }
 
+    /**
+     * Handles the swap hand action during the game.
+     */
     @Override
     public void handleSwapHand() {
     }
 
+    /**
+     * Handles the jump action during the game.
+     *
+     * @return true if cancel the event, false otherwise.
+     */
     @Override
     public boolean handleJump() {
         return false;
     }
 
+    /**
+     * Handles the sneak action during the game.
+     *
+     * @return true if cancel the event, false otherwise.
+     */
     @Override
     public boolean handleSneak() {
         return false;
     }
 
+    /**
+     * Gets the player associated with the gaming player.
+     *
+     * @return the player.
+     */
     @Override
     public Player getPlayer() {
         return hook.getContext().getHolder();
     }
 
+    /**
+     * Runs the gaming player's task.
+     */
     @Override
     public void run() {
         if (timeOutCheck()) {
@@ -121,13 +188,24 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
         tick();
     }
 
+    /**
+     * Checks if the game is valid.
+     *
+     * @return true if valid, false otherwise.
+     */
     @Override
     public boolean isValid() {
         return valid;
     }
 
+    /**
+     * Defines the tick behavior for the gaming player.
+     */
     protected abstract void tick();
 
+    /**
+     * Ends the game for the gaming player.
+     */
     protected void endGame() {
         destroy();
         boolean success = isSuccessful();
@@ -141,10 +219,20 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
         }, hook.getHookEntity().getLocation());
     }
 
+    /**
+     * Sets the game result.
+     *
+     * @param success true if the game was successful, false otherwise.
+     */
     protected void setGameResult(boolean success) {
         this.success = success;
     }
 
+    /**
+     * Checks if the game has timed out.
+     *
+     * @return true if the game has timed out, false otherwise.
+     */
     protected boolean timeOutCheck() {
         long delta = deadline - System.currentTimeMillis();
         if (delta <= 0) {

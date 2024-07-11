@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Interface representing a provider for custom items in the Custom Fishing plugin.
+ * Interface representing a provider for custom items.
  * This interface allows for building items for players and retrieving item IDs from item stacks.
  */
 public interface ItemProvider extends ExternalProvider {

@@ -19,9 +19,11 @@ package net.momirealms.customfishing.api.mechanic.item.tag;
 
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
 
+@ApiStatus.Internal
 public interface TagMap {
 
     Map<String, Object> apply(Context<Player> context);

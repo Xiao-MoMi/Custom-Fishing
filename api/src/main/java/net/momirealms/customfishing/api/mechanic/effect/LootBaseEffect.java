@@ -22,7 +22,7 @@ import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import org.bukkit.entity.Player;
 
 /**
- * Represents the base effect applied to loot in the custom fishing mechanic.
+ * Represents the base effect applied to loot.
  */
 public interface LootBaseEffect {
 

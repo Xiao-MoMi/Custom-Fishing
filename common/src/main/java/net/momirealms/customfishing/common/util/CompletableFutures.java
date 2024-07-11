@@ -24,6 +24,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+/**
+ * Utility class for handling operations with {@link CompletableFuture}.
+ */
 public class CompletableFutures {
 
     private CompletableFutures() {}

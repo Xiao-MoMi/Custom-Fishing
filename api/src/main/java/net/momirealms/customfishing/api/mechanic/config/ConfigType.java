@@ -27,7 +27,7 @@ import net.momirealms.customfishing.common.util.TriConsumer;
 import java.util.Map;
 
 /**
- * Configuration types for various mechanics in the CustomFishing plugin.
+ * Configuration types for various mechanics.
  */
 public class ConfigType {
 

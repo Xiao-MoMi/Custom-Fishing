@@ -27,6 +27,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+/**
+ * Interface representing a custom fishing item
+ */
 public interface CustomFishingItem {
 
     String DEFAULT_MATERIAL = "PAPER";
@@ -38,56 +41,74 @@ public interface CustomFishingItem {
      */
     String material();
 
+    /**
+     * Returns the unique identifier of the custom fishing item.
+     *
+     * @return the unique identifier as a String.
+     */
     String id();
 
     /**
-     * Returns a list of tag consumers which are functions that take an item and context as parameters
-     * and perform some operation on them.
+     * Returns a list of tag consumers. Tag consumers are functions that take an {@link Item} and a {@link Context}
+     * as parameters and perform some operation on them.
      *
-     * @return a list of BiConsumer instances.
+     * @return a list of {@link BiConsumer} instances.
      */
     List<BiConsumer<Item<ItemStack>, Context<Player>>> tagConsumers();
 
+    /**
+     * Builds the custom fishing item using the given context.
+     *
+     * @param context the {@link Context} in which the item is built.
+     * @return the built {@link ItemStack}.
+     */
     default ItemStack build(Context<Player> context) {
         return BukkitCustomFishingPlugin.getInstance().getItemManager().build(context, this);
     }
 
     /**
-     * Creates a new Builder instance to construct a CustomFishingItem.
+     * Creates a new {@link Builder} instance to construct a {@link CustomFishingItem}.
      *
-     * @return a new Builder instance.
+     * @return a new {@link Builder} instance.
      */
     static Builder builder() {
         return new CustomFishingItemImpl.BuilderImpl();
     }
 
     /**
-     * Builder interface for constructing instances of CustomFishingItem.
+     * Builder interface for constructing instances of {@link CustomFishingItem}.
      */
     interface Builder {
 
+        /**
+         * Sets the unique identifier for the {@link CustomFishingItem} being built.
+         *
+         * @param id the unique identifier as a String.
+         * @return the {@link Builder} instance for method chaining.
+         */
         Builder id(String id);
 
         /**
-         * Sets the material type for the CustomFishingItem being built.
+         * Sets the material type for the {@link CustomFishingItem} being built.
          *
          * @param material the material type as a String.
-         * @return the Builder instance for method chaining.
+         * @return the {@link Builder} instance for method chaining.
          */
         Builder material(String material);
 
         /**
-         * Sets the list of tag consumers for the CustomFishingItem being built.
+         * Sets the list of tag consumers for the {@link CustomFishingItem} being built.
+         * Tag consumers are functions that take an {@link Item} and a {@link Context} as parameters and perform some operation on them.
          *
-         * @param tagConsumers a list of BiConsumer instances.
-         * @return the Builder instance for method chaining.
+         * @param tagConsumers a list of {@link PriorityFunction} instances wrapping {@link BiConsumer} functions.
+         * @return the {@link Builder} instance for method chaining.
          */
         Builder tagConsumers(List<PriorityFunction<BiConsumer<Item<ItemStack>, Context<Player>>>> tagConsumers);
 
         /**
-         * Builds and returns a new CustomFishingItem instance.
+         * Builds and returns a new {@link CustomFishingItem} instance.
          *
-         * @return a new CustomFishingItem instance.
+         * @return a new {@link CustomFishingItem} instance.
          */
         CustomFishingItem build();
     }

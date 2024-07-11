@@ -22,8 +22,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Interface for managing statistics
+ */
 public interface StatisticsManager extends Reloadable {
 
+    /**
+     * Retrieves the members of a statistics category identified by the given key.
+     *
+     * @param key the key identifying the statistics category
+     * @return a list of category member identifiers as strings
+     */
     @NotNull
     List<String> getCategoryMembers(String key);
 }

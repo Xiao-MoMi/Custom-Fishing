@@ -19,7 +19,6 @@ package net.momirealms.customfishing.api.event;
 
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
-import net.momirealms.customfishing.api.mechanic.fishing.FishingGears;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;

@@ -19,27 +19,78 @@ package net.momirealms.customfishing.api.mechanic.game;
 
 import org.bukkit.entity.Player;
 
+/**
+ * Represents a gaming player.
+ */
 public interface GamingPlayer {
 
+    /**
+     * Checks if the gaming player is valid.
+     *
+     * @return {@code true} if the gaming player is valid, {@code false} otherwise
+     */
     boolean isValid();
 
+    /**
+     * Destroys the gaming player, performing any necessary cleanup
+     */
     void destroy();
 
+    /**
+     * Cancels the game
+     */
     void cancel();
 
+    /**
+     * Checks if the gaming player has successfully completed the game.
+     *
+     * @return true if successful, false otherwise.
+     */
     boolean isSuccessful();
 
-    void handleRightClick();
-
-    void handleSwapHand();
-
+    /**
+     * Handles left-click actions.
+     *
+     * @return true if cancel the event, false otherwise.
+     */
     boolean handleLeftClick();
 
+    /**
+     * Handles right-click actions.
+     */
+    void handleRightClick();
+
+    /**
+     * Handles the swap hand action during the game.
+     */
+    void handleSwapHand();
+
+    /**
+     * Handles chat input during the game.
+     *
+     * @param message the chat message.
+     * @return true if cancel the event, false otherwise.
+     */
     boolean handleChat(String message);
 
+    /**
+     * Handles the jump action during the game.
+     *
+     * @return true if cancel the event, false otherwise.
+     */
     boolean handleJump();
 
+    /**
+     * Handles the sneak action during the game.
+     *
+     * @return true if cancel the event, false otherwise.
+     */
     boolean handleSneak();
 
+    /**
+     * Gets the player associated with the gaming player.
+     *
+     * @return the player.
+     */
     Player getPlayer();
 }

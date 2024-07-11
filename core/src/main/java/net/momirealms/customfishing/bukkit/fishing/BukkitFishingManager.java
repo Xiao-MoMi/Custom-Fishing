@@ -258,11 +258,11 @@ public class BukkitFishingManager implements FishingManager, Listener {
         if (player.getGameMode() != GameMode.CREATIVE) {
             ItemStack itemStack = player.getInventory().getItemInMainHand();
             if (itemStack.getType() != Material.FISHING_ROD) itemStack = player.getInventory().getItemInOffHand();
-            if (plugin.getItemManager().hasCustomDurability(itemStack)) {
+            if (plugin.getItemManager().hasCustomMaxDamage(itemStack)) {
                 event.getHook().pullHookedEntity();
                 event.getHook().remove();
                 event.setCancelled(true);
-                plugin.getItemManager().decreaseDurability(player, itemStack, event.getCaught() instanceof Item ? 3 : 5, true);
+                plugin.getItemManager().increaseDamage(player, itemStack, event.getCaught() instanceof Item ? 3 : 5, true);
             }
         }
     }
@@ -322,10 +322,10 @@ public class BukkitFishingManager implements FishingManager, Listener {
             ItemStack itemStack = player.getInventory().getItemInMainHand();
             if (itemStack.getType() != Material.FISHING_ROD) itemStack = player.getInventory().getItemInOffHand();
             if (itemStack.getType() == Material.FISHING_ROD) {
-                if (plugin.getItemManager().hasCustomDurability(itemStack)) {
+                if (plugin.getItemManager().hasCustomMaxDamage(itemStack)) {
                     event.setCancelled(true);
                     event.getHook().remove();
-                    plugin.getItemManager().decreaseDurability(player, itemStack, 2, true);
+                    plugin.getItemManager().increaseDamage(player, itemStack, 2, true);
                 }
             }
         }

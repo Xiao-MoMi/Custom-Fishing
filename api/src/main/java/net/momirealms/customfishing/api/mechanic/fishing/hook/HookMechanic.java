@@ -20,7 +20,7 @@ package net.momirealms.customfishing.api.mechanic.fishing.hook;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 
 /**
- * Interface for managing the mechanics of a fishing hook in the custom fishing plugin.
+ * Interface for managing the mechanics of a fishing hook.
  */
 public interface HookMechanic {
 

@@ -20,7 +20,7 @@ package net.momirealms.customfishing.api.mechanic.effect;
 import java.util.Objects;
 
 /**
- * Represents properties for effects in the custom fishing plugin.
+ * Represents properties for effects.
  *
  * @param <T> the type of the property value.
  */

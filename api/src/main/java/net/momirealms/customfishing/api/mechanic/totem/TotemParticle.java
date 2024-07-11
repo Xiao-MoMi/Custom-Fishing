@@ -20,6 +20,9 @@ package net.momirealms.customfishing.api.mechanic.totem;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import org.bukkit.Location;
 
+/**
+ * Interface representing the particle effect for a totem.
+ */
 public interface TotemParticle {
 
     /**

@@ -23,8 +23,7 @@ import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
 import java.util.function.BiFunction;
 
 /**
- * Represents an abstract game in the custom fishing plugin.
- * Provides the basic structure and functionalities for a game.
+ * Represents an abstract game which provides the basic structure and functionalities for a game.
  */
 public abstract class AbstractGame implements Game {
 
