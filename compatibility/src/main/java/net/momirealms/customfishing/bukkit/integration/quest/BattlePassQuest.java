@@ -46,6 +46,7 @@ public class BattlePassQuest implements Listener {
     }
 
     private static class BPFishingQuest extends ActionQuestExecutor {
+
         public BPFishingQuest(JavaPlugin plugin) {
             super(plugin, "customfishing");
         }

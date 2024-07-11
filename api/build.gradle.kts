@@ -42,6 +42,7 @@ tasks.withType<JavaCompile> {
 
 tasks {
     shadowJar {
+        archiveFileName = "CustomFishing-${rootProject.properties["project_version"]}.jar"
         relocate("net.kyori", "net.momirealms.customfishing.libraries")
         relocate("dev.dejvokep", "net.momirealms.customfishing.libraries")
         relocate ("com.saicone.rtag", "net.momirealms.customfishing.libraries.rtag")
