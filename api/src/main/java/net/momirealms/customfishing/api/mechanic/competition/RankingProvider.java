@@ -22,6 +22,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 
+/**
+ * Interface for managing and providing rankings for fishing competitions.
+ */
 public interface RankingProvider {
 
     /**

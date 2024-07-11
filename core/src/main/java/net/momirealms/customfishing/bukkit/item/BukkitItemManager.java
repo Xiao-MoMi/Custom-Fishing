@@ -54,7 +54,6 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
-import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.inventory.AnvilInventory;
@@ -220,7 +219,7 @@ public class BukkitItemManager implements ItemManager, Listener {
         } else {
             String[] split = material.split(":", 2);
             ItemProvider provider = requireNonNull(itemProviders.get(split[0]), "Item provider: " + split[0] + " not found");
-            return requireNonNull(provider.buildItem(player, split[0]), "Item: " + split[0] + " not found");
+            return requireNonNull(provider.buildItem(player, split[1]), "Item: " + split[0] + " not found");
         }
     }
 
@@ -254,6 +253,21 @@ public class BukkitItemManager implements ItemManager, Listener {
             return false;
         Item<ItemStack> wrapped = factory.wrap(itemStack);
         return wrapped.hasTag("CustomFishing", "max_dur");
+    }
+
+    @Override
+    public void increaseDurability(Player player, ItemStack itemStack, int amount) {
+        if (itemStack == null || itemStack.getType() == Material.AIR || itemStack.getAmount() == 0)
+            return;
+        Item<ItemStack> wrapped = factory.wrap(itemStack);
+        DurabilityItem durabilityItem;
+        if (wrapped.hasTag("CustomFishing", "max_dur")) {
+            durabilityItem = new CustomDurabilityItem(wrapped);
+        } else {
+            durabilityItem = new VanillaDurabilityItem(wrapped);
+        }
+        durabilityItem.damage(Math.max(0, durabilityItem.damage() - amount));
+        wrapped.load();
     }
 
     @Override

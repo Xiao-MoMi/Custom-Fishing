@@ -17,6 +17,12 @@
 
 package net.momirealms.customfishing.api.integration;
 
+/**
+ * The ExternalProvider interface serves as a base interface for various external
+ * providers in the CustomFishing plugin. It defines a method to retrieve the
+ * identification string of the provider, which can be used to distinguish between
+ * different providers.
+ */
 public interface ExternalProvider {
 
     /**

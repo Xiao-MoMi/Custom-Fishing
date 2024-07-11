@@ -38,8 +38,20 @@ public interface EntityManager extends Reloadable {
      */
     Optional<EntityConfig> getEntity(String id);
 
+    /**
+     * Registers a custom entity configuration.
+     *
+     * @param entity The entity configuration to register.
+     * @return True if the entity was registered successfully, false otherwise.
+     */
     boolean registerEntity(EntityConfig entity);
 
+    /**
+     * Summons an entity as loot based on the given context.
+     *
+     * @param context The context of the player.
+     * @return The summoned entity.
+     */
     @NotNull
     Entity summonEntityLoot(Context<Player> context);
 }

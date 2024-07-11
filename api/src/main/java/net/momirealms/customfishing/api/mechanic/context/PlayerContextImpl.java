@@ -36,11 +36,6 @@ public final class PlayerContextImpl implements Context<Player> {
     private final Map<ContextKeys<?>, Object> args;
     private final Map<String, String> placeholderMap;
 
-    /**
-     * Constructs a new PlayerContextImpl with the specified player.
-     *
-     * @param player the player to be associated with this context.
-     */
     public PlayerContextImpl(@Nullable Player player, boolean sync) {
         this.player = player;
         this.args = sync ? new ConcurrentHashMap<>() : new HashMap<>();

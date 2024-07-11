@@ -37,6 +37,12 @@ public interface Effect {
      */
     Map<EffectProperties<?>, Object> properties();
 
+    /**
+     * Put the properties into the effect
+     *
+     * @param properties properties to add
+     * @return the effect instance
+     */
     Effect properties(Map<EffectProperties<?>, Object> properties);
 
     /**
@@ -69,7 +75,7 @@ public interface Effect {
      * Sets the chance of multiple loots.
      *
      * @param multipleLootChance the new multiple loot chance
-     * @return the effect instance with the updated multiple loot chance
+     * @return the effect instance
      */
     Effect multipleLootChance(double multipleLootChance);
 
@@ -84,7 +90,7 @@ public interface Effect {
      * Sets the size adder.
      *
      * @param sizeAdder the new size adder
-     * @return the effect instance with the updated size adder
+     * @return the effect instance
      */
     Effect sizeAdder(double sizeAdder);
 
@@ -99,7 +105,7 @@ public interface Effect {
      * Sets the size multiplier.
      *
      * @param sizeMultiplier the new size multiplier
-     * @return the effect instance with the updated size multiplier
+     * @return the effect instance
      */
     Effect sizeMultiplier(double sizeMultiplier);
 
@@ -114,7 +120,7 @@ public interface Effect {
      * Sets the score adder.
      *
      * @param scoreAdder the new score adder
-     * @return the effect instance with the updated score adder
+     * @return the effect instance
      */
     Effect scoreAdder(double scoreAdder);
 
@@ -129,7 +135,7 @@ public interface Effect {
      * Sets the score multiplier.
      *
      * @param scoreMultiplier the new score multiplier
-     * @return the effect instance with the updated score multiplier
+     * @return the effect instance
      */
     Effect scoreMultiplier(double scoreMultiplier);
 
@@ -144,7 +150,7 @@ public interface Effect {
      * Sets the wait time adder.
      *
      * @param waitTimeAdder the new wait time adder
-     * @return the effect instance with the updated wait time adder
+     * @return the effect instance
      */
     Effect waitTimeAdder(double waitTimeAdder);
 
@@ -159,7 +165,7 @@ public interface Effect {
      * Sets the wait time multiplier.
      *
      * @param waitTimeMultiplier the new wait time multiplier
-     * @return the effect instance with the updated wait time multiplier
+     * @return the effect instance
      */
     Effect waitTimeMultiplier(double waitTimeMultiplier);
 
@@ -174,7 +180,7 @@ public interface Effect {
      * Sets the game time adder.
      *
      * @param gameTimeAdder the new game time adder
-     * @return the effect instance with the updated game time adder
+     * @return the effect instance
      */
     Effect gameTimeAdder(double gameTimeAdder);
 
@@ -189,7 +195,7 @@ public interface Effect {
      * Sets the game time multiplier.
      *
      * @param gameTimeMultiplier the new game time multiplier
-     * @return the effect instance with the updated game time multiplier
+     * @return the effect instance
      */
     Effect gameTimeMultiplier(double gameTimeMultiplier);
 
@@ -204,7 +210,7 @@ public interface Effect {
      * Sets the difficulty adder.
      *
      * @param difficultyAdder the new difficulty adder
-     * @return the effect instance with the updated difficulty adder
+     * @return the effect instance
      */
     Effect difficultyAdder(double difficultyAdder);
 
@@ -219,7 +225,7 @@ public interface Effect {
      * Sets the difficulty multiplier.
      *
      * @param difficultyMultiplier the new difficulty multiplier
-     * @return the effect instance with the updated difficulty multiplier
+     * @return the effect instance
      */
     Effect difficultyMultiplier(double difficultyMultiplier);
 
@@ -234,7 +240,7 @@ public interface Effect {
      * Adds the list of weight operations.
      *
      * @param weightOperations the list of weight operations to add
-     * @return the effect instance with the updated weight operations
+     * @return the effect instance
      */
     Effect weightOperations(List<Pair<String, BiFunction<Context<Player>, Double, Double>>> weightOperations);
 
@@ -249,7 +255,7 @@ public interface Effect {
      * Adds the list of weight operations that are conditions ignored.
      *
      * @param weightOperations the list of weight operations that are conditions ignored
-     * @return the effect instance with the updated ignored weight operations
+     * @return the effect instance
      */
     Effect weightOperationsIgnored(List<Pair<String, BiFunction<Context<Player>, Double, Double>>> weightOperations);
 
@@ -260,6 +266,11 @@ public interface Effect {
      */
     void combine(Effect effect);
 
+    /**
+     * Get a copy of the effect
+     *
+     * @return the copied effect
+     */
     Effect copy();
 
     /**

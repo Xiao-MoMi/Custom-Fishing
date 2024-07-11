@@ -23,6 +23,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * The EnchantmentProvider interface defines methods to interact with external
+ * enchantment systems, allowing retrieval of enchantments for specific items.
+ * Implementations of this interface should provide the logic to fetch enchantments
+ * and their respective levels for a given item.
+ */
 public interface EnchantmentProvider extends ExternalProvider {
 
     /**

@@ -14,6 +14,11 @@ import java.util.List;
  */
 public interface EffectModifier {
 
+    /**
+     * Gets the ID
+     *
+     * @return the ID.
+     */
     String id();
 
     /**
@@ -39,6 +44,11 @@ public interface EffectModifier {
         return new EffectModifierImpl.BuilderImpl();
     }
 
+    /**
+     * Get the type of the mechanic
+     *
+     * @return the type of the mechanic
+     */
     MechanicType type();
 
     /**
@@ -46,6 +56,11 @@ public interface EffectModifier {
      */
     interface Builder {
 
+        /**
+         * Sets the ID
+         *
+         * @return the current Builder instance
+         */
         Builder id(String id);
 
         /**

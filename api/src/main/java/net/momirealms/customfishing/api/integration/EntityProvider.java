@@ -24,6 +24,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The EntityProvider interface defines methods to interact with external entity
+ * spawning systems, allowing the spawning of entities at specified locations with
+ * given properties. Implementations of this interface should provide the logic
+ * for spawning entities and managing their properties.
+ */
 public interface EntityProvider extends ExternalProvider {
 
     /**

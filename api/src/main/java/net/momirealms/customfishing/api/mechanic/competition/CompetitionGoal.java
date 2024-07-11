@@ -21,12 +21,15 @@ import net.kyori.adventure.util.Index;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.util.RandomUtils;
-import org.apache.logging.log4j.util.Supplier;
-import org.apache.logging.log4j.util.TriConsumer;
+import net.momirealms.customfishing.common.util.TriConsumer;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
+/**
+ * Represents different goals for a fishing competition.
+ */
 public final class CompetitionGoal {
 
     public static final CompetitionGoal CATCH_AMOUNT = new CompetitionGoal(
@@ -120,6 +123,13 @@ public final class CompetitionGoal {
         return key;
     }
 
+    /**
+     * Refreshes the score for the player in the ranking provider.
+     *
+     * @param ranking the ranking provider.
+     * @param player the player.
+     * @param score the score.
+     */
     public void refreshScore(RankingProvider ranking, Player player, Double score) {
         scoreConsumer.accept(ranking, player.getName(), score);
     }

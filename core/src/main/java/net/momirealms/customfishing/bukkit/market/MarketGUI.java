@@ -132,12 +132,10 @@ public class MarketGUI {
 
         MarketDynamicGUIElement sellAllElement = (MarketDynamicGUIElement) getElement(manager.sellAllSlot);
         if (sellAllElement != null && !sellAllElement.getSlots().isEmpty()) {
-
-
-            List<ItemStack> itemStacksToSell = storageContentsToList(context.getHolder().getInventory().getStorageContents());
+            List<ItemStack> itemStacksToSell = manager.storageContentsToList(context.getHolder().getInventory().getStorageContents());
             if (manager.sellFishingBag) {
                 Optional<UserData> optionalUserData = BukkitCustomFishingPlugin.getInstance().getStorageManager().getOnlineUser(context.getHolder().getUniqueId());
-                optionalUserData.ifPresent(userData -> itemStacksToSell.addAll(storageContentsToList(userData.holder().getInventory().getStorageContents())));
+                optionalUserData.ifPresent(userData -> itemStacksToSell.addAll(manager.storageContentsToList(userData.holder().getInventory().getStorageContents())));
             }
             Pair<Integer, Double> pair = manager.getItemsToSell(context, itemStacksToSell);
             double totalWorth = pair.right();
@@ -196,17 +194,5 @@ public class MarketGUI {
                 inventory.setItem(slot, new ItemStack(Material.AIR));
             }
         }
-    }
-
-    private List<ItemStack> storageContentsToList(ItemStack[] itemStacks) {
-        ArrayList<ItemStack> list = new ArrayList<>();
-        if (itemStacks != null) {
-            for (ItemStack itemStack : itemStacks) {
-                if (itemStack != null && itemStack.getType() != Material.AIR) {
-                    list.add(itemStack);
-                }
-            }
-        }
-        return list;
     }
 }

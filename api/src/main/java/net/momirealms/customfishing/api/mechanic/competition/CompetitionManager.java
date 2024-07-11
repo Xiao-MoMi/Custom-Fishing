@@ -22,19 +22,59 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
+/**
+ * Interface for managing fishing competitions.
+ */
 public interface CompetitionManager extends Reloadable {
 
+    /**
+     * Starts a competition by its name.
+     *
+     * @param competition the name of the competition to start.
+     * @param force whether to force start the competition.
+     * @param serverGroup the server group, may be null.
+     * @return true if the competition started successfully, false otherwise.
+     */
     boolean startCompetition(String competition, boolean force, @Nullable String serverGroup);
 
+    /**
+     * Starts a competition with a given configuration.
+     *
+     * @param config the configuration of the competition to start.
+     * @param force whether to force start the competition.
+     * @param serverGroup the server group, may be null.
+     * @return true if the competition started successfully, false otherwise.
+     */
     boolean startCompetition(CompetitionConfig config, boolean force, @Nullable String serverGroup);
 
+    /**
+     * Gets the ongoing competition, if any.
+     *
+     * @return the ongoing competition, or null if there is none.
+     */
     @Nullable
     FishingCompetition getOnGoingCompetition();
 
+    /**
+     * Gets the time until the next competition starts, in seconds.
+     *
+     * @return the time until the next competition starts, in seconds.
+     */
     int getNextCompetitionInSeconds();
 
+    /**
+     * Gets the configuration for a competition by its key.
+     *
+     * @param key the key of the competition configuration.
+     * @return the competition configuration, or null if not found.
+     */
     @Nullable
     CompetitionConfig getCompetition(String key);
 
+    /**
+     * Gets the IDs of all available competitions.
+     *
+     * @return a collection of competition IDs.
+     */
     Collection<String> getCompetitionIDs();
 }

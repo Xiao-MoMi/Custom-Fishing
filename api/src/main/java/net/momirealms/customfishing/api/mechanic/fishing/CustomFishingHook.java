@@ -53,6 +53,7 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,6 +62,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Represents a custom fishing hook.
+ */
 public class CustomFishingHook {
 
     private final BukkitCustomFishingPlugin plugin;
@@ -76,6 +80,11 @@ public class CustomFishingHook {
 
     private static TriFunction<FishHook, Context<Player>, Effect, List<HookMechanic>> mechanicProviders = defaultMechanicProviders();
 
+    /**
+     * Provides the default mechanic providers for the custom fishing hook.
+     *
+     * @return a TriFunction that provides a list of HookMechanic instances.
+     */
     public static TriFunction<FishHook, Context<Player>, Effect, List<HookMechanic>> defaultMechanicProviders() {
         return (h, c, e) -> {
             ArrayList<HookMechanic> mechanics = new ArrayList<>();
@@ -86,10 +95,23 @@ public class CustomFishingHook {
         };
     }
 
+    /**
+     * Sets the mechanic providers for the custom fishing hook.
+     *
+     * @param mechanicProviders the TriFunction to set.
+     */
     public static void mechanicProviders(TriFunction<FishHook, Context<Player>, Effect, List<HookMechanic>> mechanicProviders) {
         CustomFishingHook.mechanicProviders = mechanicProviders;
     }
 
+    /**
+     * Constructs a new CustomFishingHook.
+     *
+     * @param plugin  the BukkitCustomFishingPlugin instance.
+     * @param hook    the FishHook entity.
+     * @param gears   the FishingGears instance.
+     * @param context the context of the player.
+     */
     public CustomFishingHook(BukkitCustomFishingPlugin plugin, FishHook hook, FishingGears gears, Context<Player> context) {
         this.gears = gears;
         this.gears.trigger(ActionTrigger.CAST, context);
@@ -113,7 +135,7 @@ public class CustomFishingHook {
         this.task = plugin.getScheduler().sync().runRepeating(() -> {
             // destroy if hook is invalid
             if (!hook.isValid()) {
-                plugin.getFishingManager().destroy(hook.getOwnerUniqueId());
+                plugin.getFishingManager().destroyHook(hook.getOwnerUniqueId());
                 return;
             }
             if (isPlayingGame()) {
@@ -187,7 +209,11 @@ public class CustomFishingHook {
         }, 1, 1, hook.getLocation());
     }
 
-    public void destroy() {
+    /**
+     * stops the custom fishing hook. In most cases, you should use {@link CustomFishingHook#destroy()} instead
+     */
+    @ApiStatus.Internal
+    public void stop() {
         if (task != null) task.cancel();
         if (hook.isValid()) hook.remove();
         if (hookMechanic != null) hookMechanic.destroy();
@@ -198,71 +224,64 @@ public class CustomFishingHook {
         }
     }
 
+    /**
+     * Ends the life of the custom fishing hook.
+     */
+    public void destroy() {
+        plugin.getFishingManager().destroyHook(context.getHolder().getUniqueId());
+    }
+
+    /**
+     * Gets the context of the player.
+     *
+     * @return the context.
+     */
     public Context<Player> getContext() {
         return context;
     }
 
+    /**
+     * Gets the FishHook entity.
+     *
+     * @return the FishHook entity.
+     */
     @NotNull
     public FishHook getHookEntity() {
         return hook;
     }
 
+    /**
+     * Gets the current hook mechanic.
+     *
+     * @return the current HookMechanic, or null if none.
+     */
     @Nullable
     public HookMechanic getCurrentHookMechanic() {
         return hookMechanic;
     }
 
+    /**
+     * Gets the next loot.
+     *
+     * @return the next Loot, or null if none.
+     */
     @Nullable
     public Loot getNextLoot() {
         return nextLoot;
     }
 
-    public void onReelIn() {
-        if (isPlayingGame()) return;
-        if (hookMechanic != null) {
-            if (!hookMechanic.isHooked()) {
-                gears.trigger(ActionTrigger.REEL, context);
-                end();
-            } else {
-                if (nextLoot.disableGame() || RequirementManager.isSatisfied(context, ConfigManager.skipGameRequirements())) {
-                    handleSuccessfulFishing();
-                    end();
-                } else {
-                    plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.HOOK);
-                    gears.trigger(ActionTrigger.HOOK, context);
-                    gameStart();
-                }
-            }
-        } else {
-            gears.trigger(ActionTrigger.REEL, context);
-            end();
-        }
-    }
-
-    public void end() {
-        plugin.getFishingManager().destroy(context.getHolder().getUniqueId());
-    }
-
-    public void onBite() {
-        if (isPlayingGame()) return;
-        plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.BITE);
-        gears.trigger(ActionTrigger.BITE, context);
-        if (RequirementManager.isSatisfied(context, ConfigManager.autoFishingRequirements())) {
-            handleSuccessfulFishing();
-            SparrowHeart.getInstance().swingHand(context.getHolder(), gears.getRodSlot());
-            end();
-            scheduleNextFishing();
-            return;
-        }
-        if (nextLoot.instantGame()) {
-            gameStart();
-        }
-    }
-
+    /**
+     * Checks if the player is currently playing a game.
+     *
+     * @return true if the player is playing a game, false otherwise.
+     */
     public boolean isPlayingGame() {
         return gamingPlayer != null && gamingPlayer.isValid();
     }
 
+    /**
+     * Cancels the current game.
+     */
     public void cancelCurrentGame() {
         if (gamingPlayer == null || !gamingPlayer.isValid()) {
             throw new RuntimeException("You can't call this method if the player is not playing the game");
@@ -274,6 +293,9 @@ public class CustomFishingHook {
         }
     }
 
+    /**
+     * Starts a game.
+     */
     public void gameStart() {
         if (isPlayingGame())
             return;
@@ -287,14 +309,20 @@ public class CustomFishingHook {
         } else {
             plugin.debug("Next game: " + "`null`");
             handleSuccessfulFishing();
-            end();
+            destroy();
         }
     }
 
+    /**
+     * Gets the gaming player.
+     *
+     * @return an Optional containing the GamingPlayer if present, otherwise empty.
+     */
     public Optional<GamingPlayer> getGamingPlayer() {
         return Optional.ofNullable(gamingPlayer);
     }
 
+    // auto fishing
     private void scheduleNextFishing() {
         final Player player = context.getHolder();
         plugin.getScheduler().sync().runLater(() -> {
@@ -308,20 +336,77 @@ public class CustomFishingHook {
         }, 20, player.getLocation());
     }
 
+    /**
+     * Handles the reel-in action.
+     */
+    public void onReelIn() {
+        if (isPlayingGame()) return;
+        if (hookMechanic != null) {
+            if (!hookMechanic.isHooked()) {
+                gears.trigger(ActionTrigger.REEL, context);
+                destroy();
+            } else {
+                if (nextLoot.disableGame() || RequirementManager.isSatisfied(context, ConfigManager.skipGameRequirements())) {
+                    handleSuccessfulFishing();
+                    destroy();
+                } else {
+                    plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.HOOK);
+                    gears.trigger(ActionTrigger.HOOK, context);
+                    gameStart();
+                }
+            }
+        } else {
+            gears.trigger(ActionTrigger.REEL, context);
+            destroy();
+        }
+    }
+
+
+    /**
+     * Handles the bite action.
+     */
+    public void onBite() {
+        if (isPlayingGame()) return;
+        plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.BITE);
+        gears.trigger(ActionTrigger.BITE, context);
+        if (RequirementManager.isSatisfied(context, ConfigManager.autoFishingRequirements())) {
+            handleSuccessfulFishing();
+            SparrowHeart.getInstance().swingHand(context.getHolder(), gears.getRodSlot());
+            destroy();
+            scheduleNextFishing();
+            return;
+        }
+        if (nextLoot.instantGame()) {
+            gameStart();
+        }
+    }
+
+    /**
+     * Handles the landing action.
+     */
     public void onLand() {
         gears.trigger(ActionTrigger.LAND, context);
     }
 
+    /**
+     * Handles the escape action.
+     */
     public void onEscape() {
         plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.ESCAPE);
         gears.trigger(ActionTrigger.ESCAPE, context);
     }
 
+    /**
+     * Handles the lure action.
+     */
     public void onLure() {
         plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.LURE);
         gears.trigger(ActionTrigger.LURE, context);
     }
 
+    /**
+     * Handles a failed fishing attempt.
+     */
     public void handleFailedFishing() {
 
         // update the hook location
@@ -334,6 +419,9 @@ public class CustomFishingHook {
         plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.FAILURE);
     }
 
+    /**
+     * Handles a successful fishing attempt.
+     */
     public void handleSuccessfulFishing() {
 
         // update the hook location

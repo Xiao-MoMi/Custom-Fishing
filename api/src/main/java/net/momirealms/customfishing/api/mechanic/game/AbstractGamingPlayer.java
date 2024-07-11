@@ -137,7 +137,7 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
             } else {
                 hook.handleFailedFishing();
             }
-            hook.end();
+            hook.destroy();
         }, hook.getHookEntity().getLocation());
     }
 

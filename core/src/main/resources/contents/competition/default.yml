@@ -8,6 +8,7 @@ weekend_competition:
   # TOTAL_SCORE
   # CATCH_AMOUNT
   # MAX_SIZE
+  # MIN_SIZE
   # TOTAL_SIZE
   # RANDOM
   goal: CATCH_AMOUNT

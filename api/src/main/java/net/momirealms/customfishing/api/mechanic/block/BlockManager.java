@@ -24,13 +24,34 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Interface for managing custom block loots.
+ */
 public interface BlockManager extends Reloadable {
 
+    /**
+     * Registers a block loot.
+     *
+     * @param block the block configuration to register.
+     * @return true if registration is successful, false otherwise.
+     */
     boolean registerBlock(@NotNull BlockConfig block);
 
+    /**
+     * Summons block loot based on the context.
+     *
+     * @param context the context of the player.
+     * @return the summoned falling block.
+     */
     @NotNull
     FallingBlock summonBlockLoot(@NotNull Context<Player> context);
 
+    /**
+     * Retrieves the ID of a block.
+     *
+     * @param block the block to get the ID from.
+     * @return the block ID.
+     */
     @NotNull
     String getBlockID(@NotNull Block block);
 }

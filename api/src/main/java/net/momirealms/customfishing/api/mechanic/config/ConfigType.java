@@ -22,10 +22,13 @@ import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.config.function.ConfigParserFunction;
 import net.momirealms.customfishing.common.config.node.Node;
-import org.apache.logging.log4j.util.TriConsumer;
+import net.momirealms.customfishing.common.util.TriConsumer;
 
 import java.util.Map;
 
+/**
+ * Configuration types for various mechanics in the CustomFishing plugin.
+ */
 public class ConfigType {
 
     public static final ConfigType ITEM = of(
@@ -139,6 +142,11 @@ public class ConfigType {
 
     private static final ConfigType[] values = new ConfigType[] {ITEM, ENTITY, BLOCK, HOOK, ROD, BAIT, UTIL, TOTEM, ENCHANT, MINI_GAME};
 
+    /**
+     * Gets an array of all configuration types.
+     *
+     * @return An array of all configuration types.
+     */
     public static ConfigType[] values() {
         return values;
     }
@@ -146,23 +154,53 @@ public class ConfigType {
     private final String path;
     private TriConsumer<String, Section, Map<String, Node<ConfigParserFunction>>> argumentConsumer;
 
+    /**
+     * Creates a new ConfigType with the specified path and argument consumer.
+     *
+     * @param path the configuration path.
+     * @param argumentConsumer the argument consumer.
+     */
     public ConfigType(String path, TriConsumer<String, Section, Map<String, Node<ConfigParserFunction>>> argumentConsumer) {
         this.path = path;
         this.argumentConsumer = argumentConsumer;
     }
 
+    /**
+     * Set the argument consumer.
+     *
+     * @param argumentConsumer the argument consumer
+     */
     public void argumentConsumer(TriConsumer<String, Section, Map<String, Node<ConfigParserFunction>>> argumentConsumer) {
         this.argumentConsumer = argumentConsumer;
     }
 
+    /**
+     * Creates a new ConfigType with the specified path and argument consumer.
+     *
+     * @param path the configuration path.
+     * @param argumentConsumer the argument consumer.
+     * @return A new ConfigType instance.
+     */
     public static ConfigType of(String path, TriConsumer<String, Section, Map<String, Node<ConfigParserFunction>>> argumentConsumer) {
         return new ConfigType(path, argumentConsumer);
     }
 
+    /**
+     * Parses the configuration for this type.
+     *
+     * @param id the identifier.
+     * @param section the configuration section.
+     * @param functions the configuration functions.
+     */
     public void parse(String id, Section section, Map<String, Node<ConfigParserFunction>> functions) {
         argumentConsumer.accept(id, section, functions);
     }
 
+    /**
+     * Gets the configuration path.
+     *
+     * @return The configuration path.
+     */
     public String path() {
         return path;
     }

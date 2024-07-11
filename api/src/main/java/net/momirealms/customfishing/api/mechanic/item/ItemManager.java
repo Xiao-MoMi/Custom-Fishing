@@ -55,6 +55,8 @@ public interface ItemManager extends Reloadable {
 
     boolean hasCustomDurability(ItemStack itemStack);
 
+    void increaseDurability(Player player, ItemStack itemStack, int amount);
+
     void decreaseDurability(Player player, ItemStack itemStack, int amount, boolean incorrectUsage);
 
     void setDurability(Player player, ItemStack itemStack, int damage);

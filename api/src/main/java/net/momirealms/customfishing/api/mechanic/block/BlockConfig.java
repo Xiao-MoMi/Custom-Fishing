@@ -25,6 +25,11 @@ import java.util.List;
  */
 public interface BlockConfig {
 
+    /**
+     * Gets the ID
+     *
+     * @return the ID.
+     */
     String id();
 
     /**
@@ -62,6 +67,11 @@ public interface BlockConfig {
      */
     interface Builder {
 
+        /**
+         * Sets the ID
+         *
+         * @return the current Builder instance
+         */
         Builder id(String id);
 
         /**

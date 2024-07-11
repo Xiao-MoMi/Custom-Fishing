@@ -22,6 +22,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Interface for managing fishing competitions.
+ */
 public interface FishingCompetition {
 
     /**

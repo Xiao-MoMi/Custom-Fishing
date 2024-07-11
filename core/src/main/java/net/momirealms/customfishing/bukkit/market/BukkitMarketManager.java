@@ -361,10 +361,10 @@ public class BukkitMarketManager implements MarketManager, Listener {
                     ActionManager.trigger(gui.context, sellDenyActions);
                 }
             } else if (element.getSymbol() == sellAllSlot) {
-                ArrayList<ItemStack> itemStacksToSell = new ArrayList<>(List.of(gui.context.getHolder().getInventory().getStorageContents()));
+                List<ItemStack> itemStacksToSell = storageContentsToList(gui.context.getHolder().getInventory().getStorageContents());
                 if (sellFishingBag) {
                     Optional<UserData> optionalUserData = BukkitCustomFishingPlugin.getInstance().getStorageManager().getOnlineUser(gui.context.getHolder().getUniqueId());
-                    optionalUserData.ifPresent(userData -> itemStacksToSell.addAll(List.of(userData.holder().getInventory().getStorageContents())));
+                    optionalUserData.ifPresent(userData -> itemStacksToSell.addAll(storageContentsToList(userData.holder().getInventory().getStorageContents())));
                 }
                 Pair<Integer, Double> pair = getItemsToSell(gui.context, itemStacksToSell);
                 double totalWorth = pair.right();
@@ -524,5 +524,17 @@ public class BukkitMarketManager implements MarketManager, Listener {
     protected String money(double money) {
         String str = String.format("%.2f", money);
         return str.replace(",", ".");
+    }
+
+    protected List<ItemStack> storageContentsToList(ItemStack[] itemStacks) {
+        ArrayList<ItemStack> list = new ArrayList<>();
+        if (itemStacks != null) {
+            for (ItemStack itemStack : itemStacks) {
+                if (itemStack != null && itemStack.getType() != Material.AIR) {
+                    list.add(itemStack);
+                }
+            }
+        }
+        return list;
     }
 }

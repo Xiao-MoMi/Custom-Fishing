@@ -79,8 +79,20 @@ public interface IntegrationManager extends Reloadable {
      */
     boolean unregisterSeasonProvider();
 
+    /**
+     * Registers an EntityProvider.
+     *
+     * @param entityProvider the EntityProvider to register
+     * @return true if registration is successful, false otherwise.
+     */
     boolean registerEntityProvider(@NotNull EntityProvider entityProvider);
 
+    /**
+     * Unregisters an EntityProvider by its ID.
+     *
+     * @param id the ID of the EntityProvider to unregister
+     * @return true if unregistration is successful, false otherwise.
+     */
     boolean unregisterEntityProvider(@NotNull String id);
 
     /**
@@ -109,13 +121,43 @@ public interface IntegrationManager extends Reloadable {
     @Nullable
     SeasonProvider getSeasonProvider();
 
+    /**
+     * Retrieves the list of enchantments for a given ItemStack using the registered EnchantmentProviders.
+     *
+     * @param itemStack the ItemStack for which to retrieve the enchantments
+     * @return a list of enchantments and their levels
+     */
     List<Pair<String, Short>> getEnchantments(ItemStack itemStack);
 
+    /**
+     * Registers an ItemProvider.
+     *
+     * @param itemProvider the ItemProvider to register
+     * @return true if registration is successful, false otherwise.
+     */
     boolean registerItemProvider(@NotNull ItemProvider itemProvider);
 
+    /**
+     * Unregisters an ItemProvider by its ID.
+     *
+     * @param id the ID of the ItemProvider to unregister
+     * @return true if unregistration is successful, false otherwise.
+     */
     boolean unregisterItemProvider(@NotNull String id);
 
+    /**
+     * Registers a BlockProvider.
+     *
+     * @param block the BlockProvider to register
+     * @return true if registration is successful, false otherwise.
+     */
     boolean registerBlockProvider(@NotNull BlockProvider block);
 
+    /**
+     * Unregisters a BlockProvider by its ID.
+     *
+     * @param id the ID of the BlockProvider to unregister
+     * @return true if unregistration is successful, false otherwise.
+     */
     boolean unregisterBlockProvider(@NotNull String id);
 }

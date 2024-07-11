@@ -19,6 +19,9 @@ package net.momirealms.customfishing.api.mechanic.competition.info;
 
 import net.kyori.adventure.bossbar.BossBar;
 
+/**
+ * Configuration interface for competition bossbars.
+ */
 public interface BossBarConfig {
 
     int DEFAULT_REFRESH_RATE = 20;
@@ -139,6 +142,12 @@ public interface BossBarConfig {
          */
         Builder overlay(BossBar.Overlay overlay);
 
+        /**
+         * Sets whether the bossbar is enabled
+         *
+         * @param enable enable or not
+         * @return The current {@code Builder} instance.
+         */
         Builder enable(boolean enable);
 
         /**

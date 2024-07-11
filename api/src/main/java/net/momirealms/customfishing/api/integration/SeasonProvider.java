@@ -21,6 +21,12 @@ import net.momirealms.customfishing.api.mechanic.misc.season.Season;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The SeasonProvider interface defines methods to interact with external seasonal
+ * systems, allowing the retrieval of the current season for a specific world.
+ * Implementations of this interface should provide the logic for determining the
+ * season based on the world context.
+ */
 public interface SeasonProvider extends ExternalProvider {
 
     /**

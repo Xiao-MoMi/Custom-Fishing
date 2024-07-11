@@ -48,6 +48,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -160,7 +161,7 @@ public class BukkitBagManager implements BagManager, Listener {
     }
 
     @Override
-    public CompletableFuture<Boolean> openBag(Player viewer, UUID owner) {
+    public CompletableFuture<Boolean> openBag(@NotNull Player viewer, @NotNull UUID owner) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         if (enable) {
             Optional<UserData> onlineUser = plugin.getStorageManager().getOnlineUser(owner);

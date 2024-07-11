@@ -31,9 +31,12 @@ import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.bukkit.integration.VaultHook;
+import net.momirealms.customfishing.bukkit.item.damage.DurabilityItem;
+import net.momirealms.customfishing.bukkit.item.damage.VanillaDurabilityItem;
 import net.momirealms.customfishing.bukkit.util.LocationUtils;
 import net.momirealms.customfishing.bukkit.util.PlayerUtils;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.item.Item;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
@@ -45,6 +48,7 @@ import net.momirealms.sparrow.heart.SparrowHeart;
 import net.momirealms.sparrow.heart.feature.armorstand.FakeArmorStand;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
@@ -428,11 +432,15 @@ public class BukkitActionManager implements ActionManager<Player> {
                     if (Math.random() > chance) return;
                     Player player = context.getHolder();
                     ItemStack itemStack = player.getInventory().getItem(slot);
-//                    if (amount > 0) {
-//                        ItemUtils.increaseDurability(itemStack, amount, true);
-//                    } else {
-//                        ItemUtils.decreaseDurability(context.getHolder(), itemStack, -amount, true);
-//                    }
+                    if (itemStack.getType() == Material.AIR || itemStack.getAmount() == 0)
+                        return;
+                    if (itemStack.getItemMeta() == null)
+                        return;
+                    if (amount > 0) {
+                        plugin.getItemManager().increaseDurability(context.getHolder(), itemStack, amount);
+                    } else {
+                        plugin.getItemManager().decreaseDurability(context.getHolder(), itemStack, -amount, true);
+                    }
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at durability action which is expected to be `Section`");
@@ -447,14 +455,16 @@ public class BukkitActionManager implements ActionManager<Player> {
                     if (Math.random() > chance) return;
                     Player player = context.getHolder();
                     ItemStack itemStack = plugin.getItemManager().buildAny(context, id);
-                    int maxStack = itemStack.getType().getMaxStackSize();
-                    int amountToGive = amount;
-                    while (amountToGive > 0) {
-                        int perStackSize = Math.min(maxStack, amountToGive);
-                        amountToGive -= perStackSize;
-                        ItemStack more = itemStack.clone();
-                        more.setAmount(perStackSize);
-                        PlayerUtils.dropItem(player, itemStack, true, true, false);
+                    if (itemStack != null) {
+                        int maxStack = itemStack.getType().getMaxStackSize();
+                        int amountToGive = amount;
+                        while (amountToGive > 0) {
+                            int perStackSize = Math.min(maxStack, amountToGive);
+                            amountToGive -= perStackSize;
+                            ItemStack more = itemStack.clone();
+                            more.setAmount(perStackSize);
+                            PlayerUtils.dropItem(player, itemStack, true, true, false);
+                        }
                     }
                 };
             } else {

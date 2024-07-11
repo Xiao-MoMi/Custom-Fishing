@@ -23,6 +23,11 @@ import org.bukkit.Location;
 
 import java.util.Objects;
 
+/**
+ * Represents keys for accessing context values with specific types.
+ *
+ * @param <T> the type of the value associated with the context key.
+ */
 public class ContextKeys<T> {
 
     public static final ContextKeys<Location> LOCATION = of("location", Location.class);
@@ -83,14 +88,32 @@ public class ContextKeys<T> {
         this.type = type;
     }
 
+    /**
+     * Gets the key.
+     *
+     * @return the key.
+     */
     public String key() {
         return key;
     }
 
+    /**
+     * Gets the type associated with the key.
+     *
+     * @return the type.
+     */
     public Class<T> type() {
         return type;
     }
 
+    /**
+     * Creates a new context key.
+     *
+     * @param key the key.
+     * @param type the type.
+     * @param <T> the type of the value.
+     * @return a new ContextKeys instance.
+     */
     public static <T> ContextKeys<T> of(String key, Class<T> type) {
         return new ContextKeys<T>(key, type);
     }

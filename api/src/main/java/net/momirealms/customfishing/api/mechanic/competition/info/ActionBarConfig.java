@@ -17,6 +17,9 @@
 
 package net.momirealms.customfishing.api.mechanic.competition.info;
 
+/**
+ * Configuration interface for competition actionbars.
+ */
 public interface ActionBarConfig {
 
     int DEFAULT_REFRESH_RATE = 20;
@@ -105,6 +108,12 @@ public interface ActionBarConfig {
          */
         Builder text(String[] texts);
 
+        /**
+         * Sets whether the actionbar is enabled
+         *
+         * @param enable enable or not
+         * @return The current {@code Builder} instance.
+         */
         Builder enable(boolean enable);
 
         /**

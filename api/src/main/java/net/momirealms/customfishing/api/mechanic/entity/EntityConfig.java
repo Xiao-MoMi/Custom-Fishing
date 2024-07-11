@@ -35,6 +35,11 @@ public interface EntityConfig {
     String DEFAULT_ENTITY_ID = "COD";
     Map<String, Object> DEFAULT_PROPERTY_MAP = Map.of();
 
+    /**
+     * Gets the ID
+     *
+     * @return the ID.
+     */
     String id();
 
     /**
@@ -81,6 +86,11 @@ public interface EntityConfig {
      */
     interface Builder {
 
+        /**
+         * Sets the ID
+         *
+         * @return the current Builder instance
+         */
         Builder id(String id);
 
         /**

@@ -19,11 +19,15 @@ package net.momirealms.customfishing.api.mechanic.effect;
 
 import java.util.Objects;
 
+/**
+ * Represents properties for effects in the custom fishing plugin.
+ *
+ * @param <T> the type of the property value.
+ */
 public class EffectProperties<T> {
 
     public static final EffectProperties<Boolean> LAVA_FISHING = of("lava", Boolean.class);
     public static final EffectProperties<Boolean> VOID_FISHING = of("void", Boolean.class);
-    // It's not actually used because it's a vanilla mechanic
     public static final EffectProperties<Boolean> WATER_FISHING = of("water", Boolean.class);
 
     private final String key;
@@ -34,14 +38,32 @@ public class EffectProperties<T> {
         this.type = type;
     }
 
+    /**
+     * Gets the key of the property.
+     *
+     * @return the key.
+     */
     public String key() {
         return key;
     }
 
+    /**
+     * Gets the type of the property value.
+     *
+     * @return the type.
+     */
     public Class<T> type() {
         return type;
     }
 
+    /**
+     * Creates a new effect property.
+     *
+     * @param key the key of the property.
+     * @param type the type of the property value.
+     * @param <T> the type of the property value.
+     * @return a new EffectProperties instance.
+     */
     public static <T> EffectProperties<T> of(String key, Class<T> type) {
         return new EffectProperties<T>(key, type);
     }

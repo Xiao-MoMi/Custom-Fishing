@@ -76,6 +76,13 @@ public interface Context<T> {
     @Nullable
     <C> C arg(ContextKeys<C> key);
 
+    /**
+     * Remove the key from the context
+     *
+     * @param key the ContextKeys key
+     * @return the removed value
+     * @param <C> the type of the value being removed.
+     */
     @Nullable
     <C> C remove(ContextKeys<C> key);
 
@@ -96,6 +103,13 @@ public interface Context<T> {
         return new PlayerContextImpl(player, false);
     }
 
+    /**
+     * Creates a player-specific context.
+     *
+     * @param player the player to be used as the holder of the context.
+     * @param threadSafe is the created map thread safe
+     * @return a new Context instance with the specified player as the holder.
+     */
     static Context<Player> player(@Nullable Player player, boolean threadSafe) {
         return new PlayerContextImpl(player, threadSafe);
     }

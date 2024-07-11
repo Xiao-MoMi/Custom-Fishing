@@ -84,6 +84,12 @@ public interface LootBaseEffect {
         return new LootBaseEffectImpl.BuilderImpl();
     }
 
+    /**
+     * Convert the base effect to an effect instance
+     *
+     * @param context player context
+     * @return the effect instance
+     */
     Effect toEffect(Context<Player> context);
 
     /**

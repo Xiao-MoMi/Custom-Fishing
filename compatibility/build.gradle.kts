@@ -36,9 +36,9 @@ dependencies {
     // leveler
     compileOnly(files("libs/mcMMO-api.jar"))
     compileOnly("net.Indyuce:MMOCore-API:1.12.1-SNAPSHOT")
-    compileOnly("dev.aurelium:auraskills-api-bukkit:2.0.7")
+    compileOnly("dev.aurelium:auraskills-api-bukkit:2.1.5")
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
-    compileOnly("com.github.Zrips:Jobs:4.17.2")
+    compileOnly("com.github.Zrips:Jobs:v5.2.2.3")
     // quest
     compileOnly(files("libs/BattlePass-4.0.6-api.jar"))
     compileOnly(files("libs/ClueScrolls-4.8.7-api.jar"))

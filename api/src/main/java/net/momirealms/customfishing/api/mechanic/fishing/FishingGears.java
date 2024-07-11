@@ -47,6 +47,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.BiConsumer;
 
+/**
+ * Represents the fishing gears used by a player.
+ */
 public class FishingGears {
 
     private static final Map<ActionTrigger, TriConsumer<GearType, Context<Player>, ItemStack>> triggers = new HashMap<>();
@@ -69,18 +72,39 @@ public class FishingGears {
     private boolean canFish = true;
     private HandSlot rodSlot;
 
+    /**
+     * Sets the fishing gears consumers.
+     *
+     * @param fishingGearsConsumers the BiConsumer to set.
+     */
     public static void fishingGearsConsumers(BiConsumer<Context<Player>, FishingGears> fishingGearsConsumers) {
         FishingGears.fishingGearsConsumers = fishingGearsConsumers;
     }
 
+    /**
+     * Constructs a new FishingGears instance.
+     *
+     * @param context the context of the player.
+     */
     public FishingGears(Context<Player> context) {
         fishingGearsConsumers.accept(context, this);
     }
 
+    /**
+     * Checks if the player can fish.
+     *
+     * @return true if the player can fish, false otherwise.
+     */
     public boolean canFish() {
         return canFish;
     }
 
+    /**
+     * Triggers an action based on the specified trigger.
+     *
+     * @param trigger the ActionTrigger.
+     * @param context the context of the player.
+     */
     public void trigger(ActionTrigger trigger, Context<Player> context) {
         for (Map.Entry<GearType, Collection<Pair<String, ItemStack>>> entry : gears.entrySet()) {
             for (Pair<String, ItemStack> itemPair : entry.getValue()) {
@@ -93,20 +117,41 @@ public class FishingGears {
         }
     }
 
+    /**
+     * Gets the list of effect modifiers.
+     *
+     * @return the list of effect modifiers.
+     */
     @NotNull
     public List<EffectModifier> effectModifiers() {
         return modifiers;
     }
 
+    /**
+     * Gets the hand slot of the fishing rod.
+     *
+     * @return the hand slot of the fishing rod.
+     */
     public HandSlot getRodSlot() {
         return rodSlot;
     }
 
+    /**
+     * Gets the items for the specified gear type.
+     *
+     * @param type the gear type.
+     * @return the collection of items for the specified gear type.
+     */
     @NotNull
     public Collection<Pair<String, ItemStack>> getItem(GearType type) {
         return gears.getOrDefault(type, List.of());
     }
 
+    /**
+     * Provides the default fishing gears consumers.
+     *
+     * @return the BiConsumer for default fishing gears consumers.
+     */
     public static BiConsumer<Context<Player>, FishingGears> defaultFishingGearsConsumers() {
         return (context, fishingGears) -> {
             Player player = context.getHolder();

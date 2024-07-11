@@ -39,6 +39,11 @@ public interface EventCarrier {
      */
     MechanicType type();
 
+    /**
+     * Gets the ID
+     *
+     * @return the ID.
+     */
     String id();
 
     /**
@@ -80,6 +85,11 @@ public interface EventCarrier {
      */
     interface Builder {
 
+        /**
+         * Sets the ID
+         *
+         * @return the current Builder instance
+         */
         Builder id(String id);
 
         /**
@@ -90,6 +100,13 @@ public interface EventCarrier {
          */
         Builder actionMap(HashMap<ActionTrigger, Action<Player>[]> actionMap);
 
+        /**
+         * Associates an array of actions with a specific trigger.
+         *
+         * @param trigger the trigger that activates the actions.
+         * @param actions the array of actions to be triggered.
+         * @return the Builder instance.
+         */
         Builder action(ActionTrigger trigger, Action<Player>[] actions);
 
         /**
@@ -100,6 +117,13 @@ public interface EventCarrier {
          */
         Builder actionTimesMap(HashMap<ActionTrigger, TreeMap<Integer, Action<Player>[]>> actionTimesMap);
 
+        /**
+         * Associates a TreeMap of actions with a specific trigger and occurrence times.
+         *
+         * @param trigger the trigger that activates the actions.
+         * @param actions the TreeMap of actions to be triggered at specific occurrence times.
+         * @return the Builder instance.
+         */
         Builder actionTimes(ActionTrigger trigger, TreeMap<Integer, Action<Player>[]> actions);
 
         /**

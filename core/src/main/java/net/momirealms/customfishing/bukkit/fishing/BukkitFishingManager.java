@@ -129,7 +129,7 @@ public class BukkitFishingManager implements FishingManager, Listener {
     @EventHandler(ignoreCancelled = true)
     public void onItemHeldChange(PlayerItemHeldEvent event) {
         if (getFishHook(event.getPlayer()).isPresent()) {
-            this.destroy(event.getPlayer().getUniqueId());
+            this.destroyHook(event.getPlayer().getUniqueId());
         }
     }
 
@@ -141,7 +141,7 @@ public class BukkitFishingManager implements FishingManager, Listener {
                 optionalGamingPlayer.get().handleSwapHand();
                 event.setCancelled(true);
             } else {
-                this.destroy(event.getPlayer().getUniqueId());
+                this.destroyHook(event.getPlayer().getUniqueId());
             }
         });
     }
@@ -160,7 +160,7 @@ public class BukkitFishingManager implements FishingManager, Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        this.destroy(event.getPlayer().getUniqueId());
+        this.destroyHook(event.getPlayer().getUniqueId());
     }
 
     @EventHandler (ignoreCancelled = false)
@@ -301,7 +301,7 @@ public class BukkitFishingManager implements FishingManager, Listener {
         Context<Player> context = Context.player(player);
         FishingGears gears = new FishingGears(context);
         if (!RequirementManager.isSatisfied(context, ConfigManager.mechanicRequirements())) {
-            this.destroy(player.getUniqueId());
+            this.destroyHook(player.getUniqueId());
             return;
         }
         if (!gears.canFish()) {
@@ -345,9 +345,9 @@ public class BukkitFishingManager implements FishingManager, Listener {
     }
 
     @Override
-    public void destroy(UUID uuid) {
+    public void destroyHook(UUID uuid) {
         this.getFishHook(uuid).ifPresent(hook -> {
-            hook.destroy();
+            hook.stop();
             this.castHooks.remove(uuid);
         });
     }

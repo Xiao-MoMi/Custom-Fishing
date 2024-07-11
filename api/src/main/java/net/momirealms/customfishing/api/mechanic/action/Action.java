@@ -19,6 +19,11 @@ package net.momirealms.customfishing.api.mechanic.action;
 
 import net.momirealms.customfishing.api.mechanic.context.Context;
 
+/**
+ * The Action interface defines a generic action that can be triggered based on a provided context.
+ *
+ * @param <T> the type of the object that is used in the context for triggering the action.
+ */
 public interface Action<T> {
 
     /**
