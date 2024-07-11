@@ -23,10 +23,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -85,7 +82,7 @@ public class BukkitPlaceholderManager implements PlaceholderManager {
             result = replacements.get(placeholder);
         if (result != null)
             return result;
-        String custom = customPlaceholderMap.get(placeholder).apply(player);
+        String custom = Optional.ofNullable(customPlaceholderMap.get(placeholder)).map(supplier -> supplier.apply(player)).orElse(null);
         if (custom == null)
             return placeholder;
         return setPlaceholders(player, custom);
@@ -100,7 +97,7 @@ public class BukkitPlaceholderManager implements PlaceholderManager {
                 replacer = replacements.get(papi);
             }
             if (replacer == null) {
-                String custom = customPlaceholderMap.get(papi).apply(player);
+                String custom = Optional.ofNullable(customPlaceholderMap.get(papi)).map(supplier -> supplier.apply(player)).orElse(null);
                 if (custom != null)
                     replacer = setPlaceholders(player, parse(player, custom, replacements));
             }

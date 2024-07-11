@@ -52,6 +52,7 @@ public class FishingResultEvent extends PlayerEvent implements Cancellable {
      */
     public FishingResultEvent(@NotNull Context<Player> context, Result result, FishHook fishHook, Loot loot) {
         super(context.getHolder());
+        this.context = context;
         this.result = result;
         this.loot = loot;
         this.fishHook = fishHook;
