@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.bukkit.fishing;
 
+import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.FishingHookStateEvent;
 import net.momirealms.customfishing.api.event.RodCastEvent;
@@ -147,15 +148,13 @@ public class BukkitFishingManager implements FishingManager, Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onJump(PlayerMoveEvent event) {
+    public void onJump(PlayerJumpEvent event) {
         final Player player = event.getPlayer();
-        if (event.getFrom().getY() < event.getTo().getY() && player.isOnGround()) {
-            getFishHook(player).flatMap(CustomFishingHook::getGamingPlayer).ifPresent(gamingPlayer -> {
-                if (gamingPlayer.handleJump()) {
-                    event.setCancelled(true);
-                }
-            });
-        }
+        getFishHook(player).flatMap(CustomFishingHook::getGamingPlayer).ifPresent(gamingPlayer -> {
+            if (gamingPlayer.handleJump()) {
+                event.setCancelled(true);
+            }
+        });
     }
 
     @EventHandler
