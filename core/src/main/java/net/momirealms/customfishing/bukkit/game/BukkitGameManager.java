@@ -790,7 +790,7 @@ public class BukkitGameManager implements GameManager {
                                             }
                                         }
                                     }
-                                    SparrowHeart.getInstance().sendTitle(getPlayer(), AdventureHelper.miniMessageToJson(sb.toString()), subtitle.render(hook.getContext()), 0, 20, 0);
+                                    SparrowHeart.getInstance().sendTitle(getPlayer(), AdventureHelper.miniMessageToJson(sb.toString()), AdventureHelper.miniMessageToJson(subtitle.render(hook.getContext())), 0, 20, 0);
                                 }
                             } catch (Exception e) {
                                 plugin.getPluginLogger().warn("Failed to show `dance` UI", e);
