@@ -64,7 +64,9 @@ public class ActionBarSender {
 
     @SuppressWarnings("DuplicatedCode")
     private void updatePrivatePlaceholders() {
-        this.privateContext.arg(ContextKeys.SCORE_FORMATTED, String.format("%.2f", competition.getRanking().getPlayerScore(player.getName())));
+        double score = competition.getRanking().getPlayerScore(player.getName());
+        this.privateContext.arg(ContextKeys.SCORE_FORMATTED, String.format("%.2f", score));
+        this.privateContext.arg(ContextKeys.SCORE, score);
         int rank = competition.getRanking().getPlayerRank(player.getName());
         this.privateContext.arg(ContextKeys.RANK, rank != -1 ? String.valueOf(rank) : TranslationManager.miniMessageTranslation(MessageConstants.COMPETITION_NO_RANK.build().key()));
         this.privateContext.combine(competition.getPublicContext());

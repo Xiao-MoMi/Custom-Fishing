@@ -72,7 +72,7 @@ public final class CompetitionGoal {
     );
 
     private static final CompetitionGoal[] values = new CompetitionGoal[] {
-        CATCH_AMOUNT, TOTAL_SCORE, MAX_SIZE, TOTAL_SIZE, RANDOM
+        CATCH_AMOUNT, TOTAL_SCORE, MAX_SIZE, MIN_SIZE, TOTAL_SIZE, RANDOM
     };
 
     private static final Index<String, CompetitionGoal> index = Index.create(CompetitionGoal::key, values());

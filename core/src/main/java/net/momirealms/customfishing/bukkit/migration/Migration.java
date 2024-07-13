@@ -107,6 +107,7 @@ public class Migration {
         try (BufferedWriter writer = new BufferedWriter(
                 new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
             writer.write(sb.toString()
+                    .replace("{score}", "{score_formatted}")
                     .replace("{size}", "{size_formatted}")
                     .replace("{SIZE}", "{size}")
                     .replace("{price}", "{price_formatted}")
