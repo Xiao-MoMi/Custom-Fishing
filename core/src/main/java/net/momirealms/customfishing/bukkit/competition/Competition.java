@@ -137,7 +137,7 @@ public class Competition implements FishingCompetition {
             while (iterator.hasNext()) {
                 Pair<String, Double> competitionPlayer = iterator.next();
                 this.publicContext.arg(ContextKeys.of(i + "_player", String.class), competitionPlayer.left());
-                this.publicContext.arg(ContextKeys.of(i + "_score", String.class), String.format("%.2f", competitionPlayer.right()));
+                this.publicContext.arg(ContextKeys.of(i + "_score", String.class), String.format("%.2f", goal.isReversed() ? -competitionPlayer.right() : competitionPlayer.right()));
                 if (i < rewardsMap.size()) {
                     Player player = Bukkit.getPlayer(competitionPlayer.left());
                     if (player != null) {
@@ -187,7 +187,7 @@ public class Competition implements FishingCompetition {
             Optional<String> player = Optional.ofNullable(this.rankingProvider.getPlayerAt(i));
             if (player.isPresent()) {
                 this.publicContext.arg(ContextKeys.of(i + "_player", String.class), player.get());
-                this.publicContext.arg(ContextKeys.of(i + "_score", String.class), String.format("%.2f", this.rankingProvider.getScoreAt(i)));
+                this.publicContext.arg(ContextKeys.of(i + "_score", String.class), String.format("%.2f", goal.isReversed() ? -this.rankingProvider.getScoreAt(i) : this.rankingProvider.getScoreAt(i)));
             } else {
                 this.publicContext.arg(ContextKeys.of(i + "_player", String.class), TranslationManager.miniMessageTranslation(MessageConstants.COMPETITION_NO_PLAYER.build().key()));
                 this.publicContext.arg(ContextKeys.of(i + "_score", String.class), TranslationManager.miniMessageTranslation(MessageConstants.COMPETITION_NO_SCORE.build().key()));

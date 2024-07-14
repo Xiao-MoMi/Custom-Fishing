@@ -249,6 +249,11 @@ public class BukkitFishingManager implements FishingManager, Listener {
                     PersistentDataType.STRING
             ) != null) {
                 event.setCancelled(true);
+                Optional<GamingPlayer> gamingPlayer = hook.get().getGamingPlayer();
+                if (gamingPlayer.isPresent()) {
+                    ((AbstractGamingPlayer) gamingPlayer.get()).internalRightClick();
+                    return;
+                }
                 hook.get().onReelIn();
                 return;
             }

@@ -33,17 +33,17 @@ import java.util.function.Supplier;
 public final class CompetitionGoal {
 
     public static final CompetitionGoal CATCH_AMOUNT = new CompetitionGoal(
-            "catch_amount",
+            "catch_amount", false,
             ((rankingProvider, player, score) -> rankingProvider.refreshData(player, 1)),
             () -> Optional.ofNullable(TranslationManager.miniMessageTranslation(MessageConstants.GOAL_CATCH_AMOUNT.build().key())).orElse("catch_amount")
     );
     public static final CompetitionGoal TOTAL_SCORE = new CompetitionGoal(
-          "total_score",
+          "total_score", false,
             (RankingProvider::refreshData),
             () -> Optional.ofNullable(TranslationManager.miniMessageTranslation(MessageConstants.GOAL_TOTAL_SCORE.build().key())).orElse("total_score")
     );
     public static final CompetitionGoal MAX_SIZE = new CompetitionGoal(
-            "max_size",
+            "max_size", false,
             ((rankingProvider, player, score) -> {
                 if (rankingProvider.getPlayerScore(player) < score) {
                     rankingProvider.setData(player, score);
@@ -52,21 +52,21 @@ public final class CompetitionGoal {
             () -> Optional.ofNullable(TranslationManager.miniMessageTranslation(MessageConstants.GOAL_MAX_SIZE.build().key())).orElse("max_size")
     );
     public static final CompetitionGoal MIN_SIZE = new CompetitionGoal(
-            "min_size",
+            "min_size", true,
             ((rankingProvider, player, score) -> {
-                if (rankingProvider.getPlayerScore(player) > score) {
-                    rankingProvider.setData(player, score);
+                if (-rankingProvider.getPlayerScore(player) > score) {
+                    rankingProvider.setData(player, -score);
                 }
             }),
             () -> Optional.ofNullable(TranslationManager.miniMessageTranslation(MessageConstants.GOAL_MIN_SIZE.build().key())).orElse("min_size")
     );
     public static final CompetitionGoal TOTAL_SIZE = new CompetitionGoal(
-           "total_size",
+           "total_size", false,
             (RankingProvider::refreshData),
             () -> Optional.ofNullable(TranslationManager.miniMessageTranslation(MessageConstants.GOAL_TOTAL_SIZE.build().key())).orElse("total_size")
     );
     public static final CompetitionGoal RANDOM = new CompetitionGoal(
-           "random",
+           "random", false,
             (rankingProvider, player, score) -> {},
             () -> "random"
     );
@@ -107,9 +107,11 @@ public final class CompetitionGoal {
     private final String key;
     private final TriConsumer<RankingProvider, String, Double> scoreConsumer;
     private final Supplier<String> nameSupplier;
+    private final boolean reversed;
 
-    private CompetitionGoal(String key, TriConsumer<RankingProvider, String, Double> scoreConsumer, Supplier<String> nameSupplier) {
+    private CompetitionGoal(String key, boolean reversed, TriConsumer<RankingProvider, String, Double> scoreConsumer, Supplier<String> nameSupplier) {
         this.key = key;
+        this.reversed = reversed;
         this.scoreConsumer = scoreConsumer;
         this.nameSupplier = nameSupplier;
     }
@@ -121,6 +123,15 @@ public final class CompetitionGoal {
      */
     public String key() {
         return key;
+    }
+
+    /**
+     * Is the score reversed
+     *
+     * @return reversed or not
+     */
+    public boolean isReversed() {
+        return reversed;
     }
 
     /**
