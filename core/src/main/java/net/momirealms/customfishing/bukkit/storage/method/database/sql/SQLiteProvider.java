@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.bukkit.storage.method.database.sql;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
@@ -25,6 +26,7 @@ import net.momirealms.customfishing.api.storage.data.PlayerData;
 import net.momirealms.customfishing.api.storage.user.UserData;
 import net.momirealms.customfishing.common.dependency.Dependency;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -34,12 +36,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SQLiteProvider extends AbstractSQLDatabase {
 
     private Connection connection;
     private File databaseFile;
     private Constructor<?> connectionConstructor;
+    ExecutorService executor;
 
     public SQLiteProvider(BukkitCustomFishingPlugin plugin) {
         super(plugin);
@@ -55,6 +60,8 @@ public class SQLiteProvider extends AbstractSQLDatabase {
             throw new RuntimeException(e);
         }
 
+        this.executor = Executors.newFixedThreadPool(1, new ThreadFactoryBuilder().setNameFormat("cf-sqlite-%d").build());
+
         this.databaseFile = new File(plugin.getDataFolder(), config.getString("SQLite.file", "data") + ".db");
         super.tablePrefix = config.getString("SQLite.table-prefix", "customfishing");
         super.createTableIfNotExist();
@@ -62,6 +69,9 @@ public class SQLiteProvider extends AbstractSQLDatabase {
 
     @Override
     public void disable() {
+        if (executor != null) {
+            executor.shutdown();
+        }
         try {
             if (connection != null && !connection.isClosed())
                 connection.close();
@@ -105,7 +115,7 @@ public class SQLiteProvider extends AbstractSQLDatabase {
     @Override
     public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock) {
         var future = new CompletableFuture<Optional<PlayerData>>();
-        plugin.getScheduler().async().execute(() -> {
+        executor.execute(() -> {
         try (
             Connection connection = getConnection();
             PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_SELECT_BY_UUID, getTableName("data")))
@@ -128,7 +138,7 @@ public class SQLiteProvider extends AbstractSQLDatabase {
             } else if (Bukkit.getPlayer(uuid) != null) {
                 var data = PlayerData.empty();
                 data.uuid(uuid);
-                insertPlayerData(uuid, data, lock);
+                insertPlayerData(uuid, data, lock, connection);
                 future.complete(Optional.of(data));
             } else {
                 future.complete(Optional.empty());
@@ -142,9 +152,42 @@ public class SQLiteProvider extends AbstractSQLDatabase {
     }
 
     @Override
+    public CompletableFuture<Boolean> updateOrInsertPlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
+        var future = new CompletableFuture<Boolean>();
+        executor.execute(() -> {
+            try (
+                    Connection connection = getConnection();
+                    PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_SELECT_BY_UUID, getTableName("data")))
+            ) {
+                statement.setString(1, uuid.toString());
+                ResultSet rs = statement.executeQuery();
+                if (rs.next()) {
+                    try (
+                        PreparedStatement statement2 = connection.prepareStatement(String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data")))
+                    ) {
+                        statement2.setInt(1, unlock ? 0 : getCurrentSeconds());
+                        statement2.setBytes(2, plugin.getStorageManager().toBytes(playerData));
+                        statement2.setString(3, uuid.toString());
+                        statement2.executeUpdate();
+                    } catch (SQLException e) {
+                        plugin.getPluginLogger().warn("Failed to update " + uuid + "'s data.", e);
+                    }
+                    future.complete(true);
+                } else {
+                    insertPlayerData(uuid, playerData, !unlock, connection);
+                    future.complete(true);
+                }
+            } catch (SQLException e) {
+                plugin.getPluginLogger().warn("Failed to get " + uuid + "'s data.", e);
+            }
+        });
+        return future;
+    }
+
+    @Override
     public CompletableFuture<Boolean> updatePlayerData(UUID uuid, PlayerData playerData, boolean unlock) {
         var future = new CompletableFuture<Boolean>();
-        plugin.getScheduler().async().execute(() -> {
+        executor.execute(() -> {
         try (
             Connection connection = getConnection();
             PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data")))
@@ -186,9 +229,9 @@ public class SQLiteProvider extends AbstractSQLDatabase {
     }
 
     @Override
-    public void insertPlayerData(UUID uuid, PlayerData playerData, boolean lock) {
+    protected void insertPlayerData(UUID uuid, PlayerData playerData, boolean lock, @Nullable Connection previous) {
         try (
-            Connection connection = getConnection();
+            Connection connection = previous == null ? getConnection() : previous;
             PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_INSERT_DATA_BY_UUID, getTableName("data")))
         ) {
             statement.setString(1, uuid.toString());

@@ -24,6 +24,7 @@ import net.momirealms.customfishing.api.storage.user.UserData;
 import net.momirealms.customfishing.bukkit.storage.method.AbstractStorage;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -145,7 +146,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
                 // the player is online
                 var data = PlayerData.empty();
                 data.uuid(uuid);
-                insertPlayerData(uuid, data, lock);
+                insertPlayerData(uuid, data, lock, connection);
                 future.complete(Optional.of(data));
             } else {
                 future.complete(Optional.empty());
@@ -202,9 +203,9 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
         }
     }
 
-    public void insertPlayerData(UUID uuid, PlayerData playerData, boolean lock) {
+    protected void insertPlayerData(UUID uuid, PlayerData playerData, boolean lock, @Nullable Connection previous) {
         try (
-            Connection connection = getConnection();
+            Connection connection = previous == null ? getConnection() : previous;
             PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_INSERT_DATA_BY_UUID, getTableName("data")))
         ) {
             statement.setString(1, uuid.toString());
@@ -241,9 +242,19 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
                 statement.setString(1, uuid.toString());
                 ResultSet rs = statement.executeQuery();
                 if (rs.next()) {
-                    updatePlayerData(uuid, playerData, unlock).thenRun(() -> future.complete(true));
+                    try (
+                        PreparedStatement statement2 = connection.prepareStatement(String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data")))
+                    ) {
+                        statement2.setInt(1, unlock ? 0 : getCurrentSeconds());
+                        statement2.setBlob(2, new ByteArrayInputStream(plugin.getStorageManager().toBytes(playerData)));
+                        statement2.setString(3, uuid.toString());
+                        statement2.executeUpdate();
+                    } catch (SQLException e) {
+                        plugin.getPluginLogger().warn("Failed to update " + uuid + "'s data.", e);
+                    }
+                    future.complete(true);
                 } else {
-                    insertPlayerData(uuid, playerData, !unlock);
+                    insertPlayerData(uuid, playerData, !unlock, connection);
                     future.complete(true);
                 }
             } catch (SQLException e) {
