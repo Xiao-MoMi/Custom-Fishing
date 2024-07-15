@@ -291,7 +291,7 @@ public class FishingGears {
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {
                     if (context.getHolder().getGameMode() != GameMode.CREATIVE) {
-                        Item<ItemStack> wrapped = BukkitCustomFishingPlugin.getInstance().getItemManager().wrap(itemStack.clone());
+                        Item<ItemStack> wrapped = BukkitCustomFishingPlugin.getInstance().getItemManager().wrap(itemStack);
                         String hookID = (String) wrapped.getTag("CustomFishing", "hook_id").orElseThrow(() -> new RuntimeException("This error should never occur"));
                         wrapped.getTag("CustomFishing", "hook_max_damage").ifPresent(max -> {
                             int maxDamage = (int) max;
@@ -328,13 +328,13 @@ public class FishingGears {
                                 newLore.addAll(durabilityLore);
                                 wrapped.lore(newLore);
                             }
-                            itemStack.setItemMeta(wrapped.load().getItemMeta());
+                            wrapped.load();
                         });
                     }
                 }),
                 ((context, itemStack) -> {
                     if (context.getHolder().getGameMode() != GameMode.CREATIVE) {
-                        Item<ItemStack> wrapped = BukkitCustomFishingPlugin.getInstance().getItemManager().wrap(itemStack.clone());
+                        Item<ItemStack> wrapped = BukkitCustomFishingPlugin.getInstance().getItemManager().wrap(itemStack);
                         String hookID = (String) wrapped.getTag("CustomFishing", "hook_id").orElseThrow(() -> new RuntimeException("This error should never occur"));
                         wrapped.getTag("CustomFishing", "hook_max_damage").ifPresent(max -> {
                             int maxDamage = (int) max;
@@ -371,7 +371,7 @@ public class FishingGears {
                                 newLore.addAll(durabilityLore);
                                 wrapped.lore(newLore);
                             }
-                            itemStack.setItemMeta(wrapped.load().getItemMeta());
+                            wrapped.load();
                         });
                     }
                 }),

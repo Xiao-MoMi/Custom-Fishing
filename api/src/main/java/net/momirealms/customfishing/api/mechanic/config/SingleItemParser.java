@@ -33,13 +33,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-public class GUIItemParser {
+public class SingleItemParser {
 
     private final String id;
     private final String material;
     private final List<PriorityFunction<BiConsumer<Item<ItemStack>, Context<Player>>>> tagConsumers = new ArrayList<>();
 
-    public GUIItemParser(String id, Section section, Map<String, Node<ConfigParserFunction>> functionMap) {
+    public SingleItemParser(String id, Section section, Map<String, Node<ConfigParserFunction>> functionMap) {
         this.id = id;
         this.material = section.getString("material");
         analyze(section, functionMap);

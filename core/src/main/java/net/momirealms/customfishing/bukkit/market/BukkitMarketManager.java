@@ -21,7 +21,7 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionManager;
-import net.momirealms.customfishing.api.mechanic.config.GUIItemParser;
+import net.momirealms.customfishing.api.mechanic.config.SingleItemParser;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.item.CustomFishingItem;
@@ -146,9 +146,9 @@ public class BukkitMarketManager implements MarketManager, Listener {
             this.sellAllSlot = sellAllSection.getString("symbol", "S").charAt(0);
             this.sellFishingBag = sellAllSection.getBoolean("fishingbag", true);
 
-            this.sellAllIconAllowItem = new GUIItemParser("allow", sellAllSection.getSection("allow-icon"), plugin.getConfigManager().getFormatFunctions()).getItem();
-            this.sellAllIconDenyItem = new GUIItemParser("deny", sellAllSection.getSection("deny-icon"), plugin.getConfigManager().getFormatFunctions()).getItem();
-            this.sellAllIconLimitItem = new GUIItemParser("limit", sellAllSection.getSection("limit-icon"), plugin.getConfigManager().getFormatFunctions()).getItem();
+            this.sellAllIconAllowItem = new SingleItemParser("allow", sellAllSection.getSection("allow-icon"), plugin.getConfigManager().getFormatFunctions()).getItem();
+            this.sellAllIconDenyItem = new SingleItemParser("deny", sellAllSection.getSection("deny-icon"), plugin.getConfigManager().getFormatFunctions()).getItem();
+            this.sellAllIconLimitItem = new SingleItemParser("limit", sellAllSection.getSection("limit-icon"), plugin.getConfigManager().getFormatFunctions()).getItem();
 
             this.sellAllAllowActions = plugin.getActionManager().parseActions(sellAllSection.getSection("allow-icon.action"));
             this.sellAllDenyActions = plugin.getActionManager().parseActions(sellAllSection.getSection("deny-icon.action"));
@@ -163,9 +163,9 @@ public class BukkitMarketManager implements MarketManager, Listener {
         if (sellSection != null) {
             this.sellSlot = sellSection.getString("symbol", "B").charAt(0);
 
-            this.sellIconAllowItem = new GUIItemParser("allow", sellSection.getSection("allow-icon"), plugin.getConfigManager().getFormatFunctions()).getItem();
-            this.sellIconDenyItem = new GUIItemParser("deny", sellSection.getSection("deny-icon"), plugin.getConfigManager().getFormatFunctions()).getItem();
-            this.sellIconLimitItem = new GUIItemParser("limit", sellSection.getSection("limit-icon"), plugin.getConfigManager().getFormatFunctions()).getItem();
+            this.sellIconAllowItem = new SingleItemParser("allow", sellSection.getSection("allow-icon"), plugin.getConfigManager().getFormatFunctions()).getItem();
+            this.sellIconDenyItem = new SingleItemParser("deny", sellSection.getSection("deny-icon"), plugin.getConfigManager().getFormatFunctions()).getItem();
+            this.sellIconLimitItem = new SingleItemParser("limit", sellSection.getSection("limit-icon"), plugin.getConfigManager().getFormatFunctions()).getItem();
 
             this.sellAllowActions = plugin.getActionManager().parseActions(sellSection.getSection("allow-icon.action"));
             this.sellDenyActions = plugin.getActionManager().parseActions(sellSection.getSection("deny-icon.action"));
@@ -188,7 +188,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
             for (Map.Entry<String, Object> entry : decorativeSection.getStringRouteMappedValues(false).entrySet()) {
                 if (entry.getValue() instanceof Section innerSection) {
                     char symbol = Objects.requireNonNull(innerSection.getString("symbol")).charAt(0);
-                    decorativeIcons.put(symbol, new GUIItemParser("gui", innerSection, plugin.getConfigManager().getFormatFunctions()).getItem());
+                    decorativeIcons.put(symbol, new SingleItemParser("gui", innerSection, plugin.getConfigManager().getFormatFunctions()).getItem());
                 }
             }
         }
