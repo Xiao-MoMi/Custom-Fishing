@@ -21,10 +21,13 @@ import com.saicone.rtag.RtagItem;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
+import dev.dejvokep.boostedyaml.libs.org.snakeyaml.engine.v2.common.ScalarStyle;
+import dev.dejvokep.boostedyaml.libs.org.snakeyaml.engine.v2.nodes.Tag;
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
+import dev.dejvokep.boostedyaml.utils.format.NodeRole;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.action.Action;
@@ -113,7 +116,15 @@ public class BukkitConfigManager extends ConfigManager {
                             .builder()
                             .setAutoUpdate(true)
                             .build(),
-                    DumperSettings.DEFAULT,
+                    DumperSettings.builder()
+                            .setScalarFormatter((tag, value, role, def) -> {
+                                if (role == NodeRole.KEY) {
+                                    return ScalarStyle.PLAIN;
+                                } else {
+                                    return tag == Tag.STR ? ScalarStyle.DOUBLE_QUOTED : ScalarStyle.PLAIN;
+                                }
+                            })
+                            .build(),
                     UpdaterSettings
                             .builder()
                             .setVersioning(new BasicVersioning("config-version"))
@@ -138,6 +149,20 @@ public class BukkitConfigManager extends ConfigManager {
         }
         this.loadSettings();
         this.loadConfigs();
+        this.loadGlobalEffects();
+    }
+
+    private void loadGlobalEffects() {
+        YamlDocument config = getMainConfig();
+        globalEffects = new ArrayList<>();
+        Section globalEffectSection = config.getSection("mechanics.global-effects");
+        if (globalEffectSection != null) {
+            for (Map.Entry<String, Object> entry : globalEffectSection.getStringRouteMappedValues(false).entrySet()) {
+                if (entry.getValue() instanceof Section innerSection) {
+                    globalEffects.add(parseEffect(innerSection));
+                }
+            }
+        }
     }
 
     private void loadSettings() {
@@ -205,16 +230,6 @@ public class BukkitConfigManager extends ConfigManager {
         }
 
         OffsetUtils.load(config.getSection("other-settings.offset-characters"));
-
-        globalEffects = new ArrayList<>();
-        Section globalEffectSection = config.getSection("mechanics.global-effects");
-        if (globalEffectSection != null) {
-            for (Map.Entry<String, Object> entry : globalEffectSection.getStringRouteMappedValues(false).entrySet()) {
-                if (entry.getValue() instanceof Section innerSection) {
-                    globalEffects.add(parseEffect(innerSection));
-                }
-            }
-        }
 
         EventManager.GLOBAL_ACTIONS.clear();
         EventManager.GLOBAL_TIMES_ACTION.clear();

@@ -19,10 +19,13 @@ package net.momirealms.customfishing.api.mechanic.config;
 
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
+import dev.dejvokep.boostedyaml.libs.org.snakeyaml.engine.v2.common.ScalarStyle;
+import dev.dejvokep.boostedyaml.libs.org.snakeyaml.engine.v2.nodes.Tag;
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
+import dev.dejvokep.boostedyaml.utils.format.NodeRole;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.config.function.*;
 import net.momirealms.customfishing.api.mechanic.context.Context;
@@ -344,7 +347,15 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
                             .builder()
                             .setAutoUpdate(true)
                             .build(),
-                    DumperSettings.DEFAULT,
+                    DumperSettings.builder()
+                            .setScalarFormatter((tag, value, role, def) -> {
+                                if (role == NodeRole.KEY) {
+                                    return ScalarStyle.PLAIN;
+                                } else {
+                                    return tag == Tag.STR ? ScalarStyle.DOUBLE_QUOTED : ScalarStyle.PLAIN;
+                                }
+                            })
+                            .build(),
                     UpdaterSettings
                             .builder()
                             .setVersioning(new BasicVersioning("config-version"))

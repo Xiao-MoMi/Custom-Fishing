@@ -140,9 +140,10 @@ public class BukkitLootManager implements LootManager {
             modifyWeightMap(lootWeightMap, context, conditionalElement);
         }
         for (Pair<String, BiFunction<Context<Player>, Double, Double>> pair : effect.weightOperations()) {
-            double previous = lootWeightMap.getOrDefault(pair.left(), 0d);
-            if (previous > 0)
+            Double previous = lootWeightMap.get(pair.left());
+            if (previous != null) {
                 lootWeightMap.put(pair.left(), pair.right().apply(context, previous));
+            }
         }
         for (Pair<String, BiFunction<Context<Player>, Double, Double>> pair : effect.weightOperationsIgnored()) {
             double previous = lootWeightMap.getOrDefault(pair.left(), 0d);
@@ -159,8 +160,8 @@ public class BukkitLootManager implements LootManager {
             modifyWeightMap(lootWeightMap, context, conditionalElement);
         }
         for (Pair<String, BiFunction<Context<Player>, Double, Double>> pair : effect.weightOperations()) {
-            double previous = lootWeightMap.getOrDefault(pair.left(), 0d);
-            if (previous > 0) {
+            Double previous = lootWeightMap.get(pair.left());
+            if (previous != null) {
                 lootWeightMap.put(pair.left(), pair.right().apply(context, previous));
             }
         }
