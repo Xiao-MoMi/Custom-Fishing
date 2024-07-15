@@ -231,4 +231,24 @@ public class EffectImpl implements Effect {
                 .properties(this.properties);
 
     }
+
+    @Override
+    public String toString() {
+        return "Effect{" +
+                "properties=" + properties +
+                ", multipleLootChance=" + multipleLootChance +
+                ", sizeAdder=" + sizeAdder +
+                ", sizeMultiplier=" + sizeMultiplier +
+                ", scoreAdder=" + scoreAdder +
+                ", scoreMultiplier=" + scoreMultiplier +
+                ", gameTimeAdder=" + gameTimeAdder +
+                ", gameTimeMultiplier=" + gameTimeMultiplier +
+                ", waitTimeAdder=" + waitTimeAdder +
+                ", waitTimeMultiplier=" + waitTimeMultiplier +
+                ", difficultyAdder=" + difficultyAdder +
+                ", difficultyMultiplier=" + difficultyMultiplier +
+                ", weightOperations=" + weightOperations +
+                ", weightOperationsIgnored=" + weightOperationsIgnored +
+                '}';
+    }
 }

@@ -163,6 +163,7 @@ public class CustomFishingHook {
                         // to update some properties
                         mechanic.preStart();
                         Effect tempEffect = effect.copy();
+
                         for (EffectModifier modifier : gears.effectModifiers()) {
                             for (TriConsumer<Effect, Context<Player>, Integer> consumer : modifier.modifiers()) {
                                 consumer.accept(tempEffect, context, 1);
@@ -175,7 +176,7 @@ public class CustomFishingHook {
                         context.arg(ContextKeys.OTHER_Z, hook.getLocation().getBlockZ());
 
                         // get the next loot
-                        Loot loot = plugin.getLootManager().getNextLoot(effect, context);
+                        Loot loot = plugin.getLootManager().getNextLoot(tempEffect, context);
                         if (loot != null) {
                             this.nextLoot = loot;
 
@@ -517,7 +518,7 @@ public class CustomFishingHook {
                     competition.refreshData(context.getHolder(), score);
                 } else if (competition.getGoal() == CompetitionGoal.MAX_SIZE || competition.getGoal() == CompetitionGoal.MIN_SIZE) {
                     Float size = context.arg(ContextKeys.SIZE);
-                    if (size != null) {
+                    if (size != null && size > 0) {
                         competition.refreshData(context.getHolder(), size);
                     }
                 } else if (competition.getGoal() == CompetitionGoal.TOTAL_SCORE) {

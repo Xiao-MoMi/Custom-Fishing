@@ -916,6 +916,7 @@ red_snapper_fish:
     base: 10
     bonus: 2.3
 red_snapper_fish_silver_star:
+  amount: 7~9
   show-in-fishfinder: false
   material: cod
   display:

@@ -369,7 +369,9 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     @Override
     public YamlDocument loadData(File file, char routeSeparator) {
         try (InputStream inputStream = new FileInputStream(file)) {
-            return YamlDocument.create(inputStream, GeneralSettings.builder().setRouteSeparator(routeSeparator).build());
+            return YamlDocument.create(inputStream, GeneralSettings.builder()
+                    .setRouteSeparator(routeSeparator)
+                    .build());
         } catch (IOException e) {
             plugin.getPluginLogger().severe("Failed to load config " + file, e);
             throw new RuntimeException(e);

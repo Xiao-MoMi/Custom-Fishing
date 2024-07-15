@@ -54,7 +54,8 @@ public final class CompetitionGoal {
     public static final CompetitionGoal MIN_SIZE = new CompetitionGoal(
             "min_size", true,
             ((rankingProvider, player, score) -> {
-                if (-rankingProvider.getPlayerScore(player) > score) {
+                double previousScore = -rankingProvider.getPlayerScore(player);
+                if (previousScore == 0 || previousScore > score) {
                     rankingProvider.setData(player, -score);
                 }
             }),

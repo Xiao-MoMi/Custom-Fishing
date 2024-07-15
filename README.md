@@ -1,14 +1,14 @@
 # Custom-Fishing
 
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/Xiao-MoMi/Custom-Fishing)
-![Code Size](https://img.shields.io/github/languages/code-size/Xiao-MoMi/Custom-Fishing)
-![bStats Servers](https://img.shields.io/bstats/servers/16648)
-![bStats Players](https://img.shields.io/bstats/players/16648)
-![GitHub](https://img.shields.io/github/license/Xiao-MoMi/Custom-Fishing)
 [![](https://jitpack.io/v/Xiao-MoMi/Custom-Fishing.svg)](https://jitpack.io/#Xiao-MoMi/Custom-Fishing)
 <a href="https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing" alt="GitBook">
 <img src="https://img.shields.io/badge/docs-gitbook-brightgreen" alt="Gitbook"/>
 </a>
+![GitHub](https://img.shields.io/github/license/Xiao-MoMi/Custom-Fishing)
+![Code Size](https://img.shields.io/github/languages/code-size/Xiao-MoMi/Custom-Fishing)
+![bStats Servers](https://img.shields.io/bstats/servers/16648)
+![bStats Players](https://img.shields.io/bstats/players/16648)
 
 CustomFishing is a Paper plugin that provides minigames and a powerful condition & action system for fishing.
 With the new concept of weight system, CustomFishing brings unlimited customization possibilities and best performance.
@@ -33,7 +33,7 @@ If you are using a proxy, configurate the proxy in gradle.properties. Otherwise 
 Polymart: https://polymart.org/resource/customfishing.2723 \
 Afdian: https://afdian.net/@xiaomomi
 
-## Use CustomFishing API
+## CustomFishing API
 
 ### Maven
 
@@ -50,7 +50,7 @@ Afdian: https://afdian.net/@xiaomomi
   <dependency>
     <groupId>com.github.Xiao-MoMi</groupId>
     <artifactId>Custom-Fishing</artifactId>
-    <version>{LATEST}</version>
+    <version>{VERSION}</version>
     <scope>provided</scope>
   </dependency>
 </dependencies>
@@ -64,7 +64,7 @@ repositories {
 ```
 ```
 dependencies {
-    compileOnly 'com.github.Xiao-MoMi:Custom-Fishing:{LATEST}'
+    compileOnly 'com.github.Xiao-MoMi:Custom-Fishing:{VERSION}'
 }
 ```
 ### Gradle (Kotlin)
@@ -76,6 +76,6 @@ repositories {
 ```
 ```
 dependencies {
-    compileOnly("com.github.Xiao-MoMi:Custom-Fishing:{LATEST}")
+    compileOnly("com.github.Xiao-MoMi:Custom-Fishing:{VERSION}")
 }
 ```

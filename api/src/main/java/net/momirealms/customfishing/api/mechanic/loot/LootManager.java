@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,6 +41,13 @@ public interface LootManager extends Reloadable {
      * @return true if the loot was successfully registered, false otherwise
      */
     boolean registerLoot(@NotNull Loot loot);
+
+    /**
+     * Get all the registered loots
+     *
+     * @return registered loots
+     */
+    Collection<Loot> getRegisteredLoots();
 
     /**
      * Retrieves the members of a loot group identified by the given key.

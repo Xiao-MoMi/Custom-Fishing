@@ -106,6 +106,11 @@ public class BukkitLootManager implements LootManager {
         return true;
     }
 
+    @Override
+    public Collection<Loot> getRegisteredLoots() {
+        return lootMap.values();
+    }
+
     private void addGroupMember(String group, String member) {
         List<String> members = groupMembersMap.get(group);
         if (members == null) {
@@ -155,13 +160,16 @@ public class BukkitLootManager implements LootManager {
         }
         for (Pair<String, BiFunction<Context<Player>, Double, Double>> pair : effect.weightOperations()) {
             double previous = lootWeightMap.getOrDefault(pair.left(), 0d);
-            if (previous > 0)
+            if (previous > 0) {
                 lootWeightMap.put(pair.left(), pair.right().apply(context, previous));
+            }
         }
         for (Pair<String, BiFunction<Context<Player>, Double, Double>> pair : effect.weightOperationsIgnored()) {
             double previous = lootWeightMap.getOrDefault(pair.left(), 0d);
             lootWeightMap.put(pair.left(), pair.right().apply(context, previous));
         }
+
+        plugin.debug(lootWeightMap);
         String lootID = WeightUtils.getRandom(lootWeightMap);
         return Optional.ofNullable(lootID)
                 .map(id -> getLoot(lootID).orElseThrow(() -> new RuntimeException("Could not find loot " + lootID)))
