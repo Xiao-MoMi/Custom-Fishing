@@ -155,7 +155,10 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.effectManager.unload();
         this.hookManager.unload();
         this.totemManager.unload();
-        this.gameManager.unload();
+
+        this.actionManager.reload();
+        this.requirementManager.reload();
+        this.gameManager.reload();
 
         // before ConfigManager
         this.placeholderManager.reload();
@@ -163,8 +166,6 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         // after ConfigManager
         this.debugger = ConfigManager.debug() ? (s) -> logger.info("[DEBUG] " + s.toString()) : (s) -> {};
 
-        this.actionManager.reload();
-        this.requirementManager.reload();
         this.coolDownManager.reload();
         this.translationManager.reload();
         this.marketManager.reload();
@@ -182,7 +183,6 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.effectManager.load();
         this.hookManager.load();
         this.totemManager.load();
-        this.gameManager.load();
 
         EventUtils.fireAndForget(new CustomFishingReloadEvent(this));
     }
