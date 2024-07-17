@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.api.mechanic.fishing.hook;
 
-import io.papermc.paper.block.fluid.FluidData;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.FishingHookStateEvent;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
@@ -28,6 +27,8 @@ import net.momirealms.customfishing.api.mechanic.effect.EffectProperties;
 import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import net.momirealms.customfishing.common.util.RandomUtils;
+import net.momirealms.sparrow.heart.SparrowHeart;
+import net.momirealms.sparrow.heart.feature.fluid.FluidData;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
@@ -71,7 +72,7 @@ public class LavaFishingMechanic implements HookMechanic {
             return true;
         }
         float lavaHeight = 0F;
-        FluidData fluidData = this.hook.getWorld().getFluidData(this.hook.getLocation());
+        FluidData fluidData = SparrowHeart.getInstance().getFluidData(this.hook.getLocation());
         if (fluidData.getFluidType() == Fluid.LAVA || fluidData.getFluidType() == Fluid.FLOWING_LAVA) {
             lavaHeight = (float) (fluidData.getLevel() * 0.125);
         }
@@ -97,7 +98,7 @@ public class LavaFishingMechanic implements HookMechanic {
         this.setWaitTime(finalEffect);
         this.task = BukkitCustomFishingPlugin.getInstance().getScheduler().sync().runRepeating(() -> {
             float lavaHeight = 0F;
-            FluidData fluidData = this.hook.getWorld().getFluidData(this.hook.getLocation());
+            FluidData fluidData = SparrowHeart.getInstance().getFluidData(this.hook.getLocation());
             if (fluidData.getFluidType() == Fluid.LAVA || fluidData.getFluidType() == Fluid.FLOWING_LAVA) {
                 lavaHeight = (float) (fluidData.getLevel() * 0.125);
             }
