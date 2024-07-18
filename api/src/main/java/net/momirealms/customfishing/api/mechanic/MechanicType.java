@@ -40,8 +40,6 @@ public class MechanicType {
     public static final MechanicType BAIT = of("bait");
     public static final MechanicType HOOK = of("hook");
     public static final MechanicType TOTEM = of("totem");
-    public static final MechanicType ENTITY = of("entity");
-    public static final MechanicType BLOCK = of("block");
     public static final MechanicType ENCHANT = of("enchant");
 
     private final String type;
@@ -74,7 +72,7 @@ public class MechanicType {
         return new MechanicType(type);
     }
 
-    private static final MechanicType[] VALUES = new MechanicType[]{LOOT, ROD, UTIL, BAIT, HOOK, TOTEM, ENCHANT, ENTITY, BLOCK};
+    private static final MechanicType[] VALUES = new MechanicType[]{LOOT, ROD, UTIL, BAIT, HOOK, TOTEM, ENCHANT};
 
     /**
      * Retrieves an array of all predefined mechanic types.

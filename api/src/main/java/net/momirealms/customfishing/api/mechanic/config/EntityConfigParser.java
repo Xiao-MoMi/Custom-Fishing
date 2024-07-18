@@ -114,7 +114,7 @@ public class EntityConfigParser {
     public EventCarrier getEventCarrier() {
         EventCarrier.Builder builder = EventCarrier.builder()
                 .id(id)
-                .type(MechanicType.ENTITY);
+                .type(MechanicType.LOOT);
         for (Consumer<EventCarrier.Builder> consumer : eventBuilderConsumers) {
             consumer.accept(builder);
         }

@@ -59,8 +59,10 @@ import net.momirealms.customfishing.bukkit.item.damage.CustomDurabilityItem;
 import net.momirealms.customfishing.bukkit.totem.particle.DustParticleSetting;
 import net.momirealms.customfishing.bukkit.totem.particle.ParticleSetting;
 import net.momirealms.customfishing.bukkit.util.ItemStackUtils;
+import net.momirealms.customfishing.bukkit.util.ParticleUtils;
 import net.momirealms.customfishing.common.dependency.DependencyProperties;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.item.AbstractItem;
 import net.momirealms.customfishing.common.item.Item;
 import net.momirealms.customfishing.common.util.*;
@@ -84,6 +86,7 @@ import java.util.function.Function;
 public class BukkitConfigManager extends ConfigManager {
 
     private static YamlDocument MAIN_CONFIG;
+    private static Particle dustParticle;
 
     public static YamlDocument getMainConfig() {
         return MAIN_CONFIG;
@@ -99,6 +102,7 @@ public class BukkitConfigManager extends ConfigManager {
         this.registerBuiltInEffectModifierParser();
         this.registerBuiltInTotemParser();
         this.registerBuiltInHookParser();
+        dustParticle = VersionHelper.isVersionNewerThan1_20_5() ? Particle.valueOf("DUST") : Particle.valueOf("REDSTONE");
     }
 
     @Override
@@ -543,6 +547,9 @@ public class BukkitConfigManager extends ConfigManager {
     }
 
     private TriConsumer<Effect, Context<Player>, Integer> parseEffect(Section section) {
+        if (!section.contains("type")) {
+            throw new RuntimeException(section.getRouteAsString());
+        }
         switch (section.getString("type")) {
             case "lava-fishing" -> {
                 return (((effect, context, phase) -> {
@@ -934,7 +941,7 @@ public class BukkitConfigManager extends ConfigManager {
     }
 
     private ParticleSetting getParticleSetting(Section section) {
-        Particle particle = Particle.valueOf(section.getString("type","REDSTONE"));
+        Particle particle = ParticleUtils.getParticle(section.getString("type","REDSTONE").toUpperCase(Locale.ENGLISH));
         String formulaHorizontal = section.getString("polar-coordinates-formula.horizontal");
         String formulaVertical = section.getString("polar-coordinates-formula.vertical");
         List<Pair<Double, Double>> ranges = section.getStringList("theta.range")
@@ -942,29 +949,15 @@ public class BukkitConfigManager extends ConfigManager {
                     String[] split = it.split("~");
                     return Pair.of(Double.parseDouble(split[0]) * Math.PI / 180, Double.parseDouble(split[1]) * Math.PI / 180);
                 }).toList();
-
         double interval = section.getDouble("theta.draw-interval", 3d);
         int delay = section.getInt("task.delay", 0);
         int period = section.getInt("task.period", 0);
-        if (particle == Particle.REDSTONE) {
+        if (particle == dustParticle) {
             String color = section.getString("options.color","0,0,0");
             String[] colorSplit = color.split(",");
             return new DustParticleSetting(
-                    formulaHorizontal,
-                    formulaVertical,
-                    particle,
-                    interval,
-                    ranges,
-                    delay,
-                    period,
-                    new Particle.DustOptions(
-                            Color.fromRGB(
-                                    Integer.parseInt(colorSplit[0]),
-                                    Integer.parseInt(colorSplit[1]),
-                                    Integer.parseInt(colorSplit[2])
-                            ),
-                            section.getDouble("options.scale", 1.0).floatValue()
-                    )
+                    formulaHorizontal, formulaVertical, particle, interval, ranges, delay, period,
+                    new Particle.DustOptions(Color.fromRGB(Integer.parseInt(colorSplit[0]), Integer.parseInt(colorSplit[1]), Integer.parseInt(colorSplit[2])), section.getDouble("options.scale", 1.0).floatValue())
             );
         } else if (particle == Particle.DUST_COLOR_TRANSITION) {
             String color = section.getString("options.from","0,0,0");
@@ -972,37 +965,15 @@ public class BukkitConfigManager extends ConfigManager {
             String toColor = section.getString("options.to","255,255,255");
             String[] toColorSplit = toColor.split(",");
             return new DustParticleSetting(
-                    formulaHorizontal,
-                    formulaVertical,
-                    particle,
-                    interval,
-                    ranges,
-                    delay,
-                    period,
+                    formulaHorizontal, formulaVertical, particle, interval, ranges, delay, period,
                     new Particle.DustTransition(
-                            Color.fromRGB(
-                                    Integer.parseInt(colorSplit[0]),
-                                    Integer.parseInt(colorSplit[1]),
-                                    Integer.parseInt(colorSplit[2])
-                            ),
-                            Color.fromRGB(
-                                    Integer.parseInt(toColorSplit[0]),
-                                    Integer.parseInt(toColorSplit[1]),
-                                    Integer.parseInt(toColorSplit[2])
-                            ),
+                            Color.fromRGB(Integer.parseInt(colorSplit[0]), Integer.parseInt(colorSplit[1]), Integer.parseInt(colorSplit[2])),
+                            Color.fromRGB(Integer.parseInt(toColorSplit[0]), Integer.parseInt(toColorSplit[1]), Integer.parseInt(toColorSplit[2])),
                             section.getDouble("options.scale", 1.0).floatValue()
                     )
             );
         } else {
-            return new ParticleSetting(
-                    formulaHorizontal,
-                    formulaVertical,
-                    particle,
-                    interval,
-                    ranges,
-                    delay,
-                    period
-            );
+            return new ParticleSetting(formulaHorizontal, formulaVertical, particle, interval, ranges, delay, period);
         }
     }
 
