@@ -106,6 +106,9 @@ public interface ItemManager extends Reloadable {
     @Nullable
     Item dropItemLoot(@NotNull Context<Player> context, ItemStack rod, FishHook hook);
 
+    @Nullable
+    ItemStack getItemLoot(@NotNull Context<Player> context, ItemStack rod, FishHook hook);
+
     /**
      * Checks if the given item stack has custom durability.
      *

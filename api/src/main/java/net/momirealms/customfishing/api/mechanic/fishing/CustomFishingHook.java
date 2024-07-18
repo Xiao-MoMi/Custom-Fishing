@@ -456,18 +456,19 @@ public class CustomFishingHook {
             case ITEM -> {
                 for (int i = 0; i < amount; i++) {
                     plugin.getScheduler().sync().runLater(() -> {
-                        Item item = plugin.getItemManager().dropItemLoot(context, gears.getItem(FishingGears.GearType.ROD).stream().findAny().orElseThrow().right(), hook);
+                        ItemStack item = plugin.getItemManager().getItemLoot(context, gears.getItem(FishingGears.GearType.ROD).stream().findAny().orElseThrow().right(), hook);
                         if (item != null && Objects.equals(context.arg(ContextKeys.NICK), "UNDEFINED")) {
-                            ItemStack stack = item.getItemStack();
-                            Optional<String> displayName = plugin.getItemManager().wrap(stack).displayName();
+
+                            Optional<String> displayName = plugin.getItemManager().wrap(item.clone()).displayName();
                             if (displayName.isPresent()) {
                                 context.arg(ContextKeys.NICK, AdventureHelper.jsonToMiniMessage(displayName.get()));
                             } else {
-                                context.arg(ContextKeys.NICK, "<lang:" + stack.getType().translationKey() + ">");
+                                context.arg(ContextKeys.NICK, "<lang:" + item.getType().translationKey() + ">");
                             }
+                            gamingPlayer.getPlayer().getInventory().addItem(item.clone());
                         }
 
-                        FishingLootSpawnEvent spawnEvent = new FishingLootSpawnEvent(context, hook.getLocation(), nextLoot, item);
+                        /*FishingLootSpawnEvent spawnEvent = new FishingLootSpawnEvent(context, hook.getLocation(), nextLoot, item);
                         Bukkit.getPluginManager().callEvent(spawnEvent);
                         if (item != null && !spawnEvent.summonEntity())
                             item.remove();
@@ -475,7 +476,7 @@ public class CustomFishingHook {
                             return;
                         if (item != null && item.isValid() && nextLoot.preventGrabbing()) {
                             item.getPersistentDataContainer().set(Objects.requireNonNull(NamespacedKey.fromString("owner", plugin.getBoostrap())), PersistentDataType.STRING, context.getHolder().getName());
-                        }
+                        }*/
                         doSuccessActions();
                     }, (long) ConfigManager.multipleLootSpawnDelay() * i, hook.getLocation());
                 }

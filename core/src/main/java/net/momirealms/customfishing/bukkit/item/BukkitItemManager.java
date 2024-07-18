@@ -208,6 +208,24 @@ public class BukkitItemManager implements ItemManager, Listener {
         return itemEntity;
     }
 
+    @Nullable
+    @Override
+    public ItemStack getItemLoot(@NotNull Context<Player> context, ItemStack rod, FishHook hook) {
+        String id = requireNonNull(context.arg(ContextKeys.ID));
+        ItemStack itemStack;
+        if (id.equals("vanilla")) {
+            itemStack = SparrowHeart.getInstance().getFishingLoot(context.getHolder(), hook, rod).stream().findAny().orElseThrow(() -> new RuntimeException("new EntityItem would throw if for whatever reason (mostly shitty datapacks) the fishing loot turns out to be empty"));
+        } else {
+            itemStack = requireNonNull(buildInternal(context, id));
+        }
+
+        if (itemStack.getType() == Material.AIR) {
+            return null;
+        }
+
+        return itemStack.clone();
+    }
+
     private ItemStack getOriginalStack(Player player, String material) {
         if (!material.contains(":")) {
             try {
