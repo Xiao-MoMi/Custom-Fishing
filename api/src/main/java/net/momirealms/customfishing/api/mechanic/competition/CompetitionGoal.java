@@ -102,7 +102,7 @@ public final class CompetitionGoal {
      * @return A randomly selected competition goal.
      */
     public static CompetitionGoal getRandom() {
-        return CompetitionGoal.values()[RandomUtils.generateRandomInt(0, values.length - 1)];
+        return CompetitionGoal.values()[RandomUtils.generateRandomInt(0, values.length - 1 - 1)];
     }
 
     private final String key;

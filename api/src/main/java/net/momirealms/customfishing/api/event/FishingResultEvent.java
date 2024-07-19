@@ -39,7 +39,7 @@ public class FishingResultEvent extends PlayerEvent implements Cancellable {
     private final Result result;
     private final Loot loot;
     private final FishHook fishHook;
-    private Context<Player> context;
+    private final Context<Player> context;
 
     /**
      * Constructs a new FishingResultEvent.
