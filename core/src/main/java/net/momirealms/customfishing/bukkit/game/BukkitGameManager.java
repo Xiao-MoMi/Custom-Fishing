@@ -310,7 +310,7 @@ public class BukkitGameManager implements GameManager {
                                     + AdventureHelper.surroundWithMiniMessageFont(pointerImage, font)
                                     + OffsetUtils.getOffsetChars((int) (barEffectiveWidth - fish_position - pointerIconWidth + 1));
                             customFishingHook.getContext().arg(ContextKeys.PROGRESS, progress[(int) ((hold_time / time_requirement) * progress.length)]);
-                            SparrowHeart.getInstance().sendTitle(super.getPlayer(), AdventureHelper.miniMessageToJson(tip != null && !played ? tip : title.render(customFishingHook.getContext())), AdventureHelper.jsonToMiniMessage(bar), 0, 20, 0);
+                            SparrowHeart.getInstance().sendTitle(super.getPlayer(), AdventureHelper.miniMessageToJson(tip != null && !played ? tip : title.render(customFishingHook.getContext())), AdventureHelper.miniMessageToJson(bar), 0, 20, 0);
                         }
                     };
                 }

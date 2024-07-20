@@ -135,7 +135,7 @@ public class CustomFishingHook {
         this.task = plugin.getScheduler().sync().runRepeating(() -> {
             // destroy if hook is invalid
             if (!hook.isValid()) {
-                plugin.getFishingManager().destroyHook(hook.getOwnerUniqueId());
+                plugin.getFishingManager().destroyHook(context.getHolder().getUniqueId());
                 return;
             }
             if (isPlayingGame()) {
