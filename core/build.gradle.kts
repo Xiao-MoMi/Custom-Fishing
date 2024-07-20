@@ -79,6 +79,7 @@ tasks {
         relocate ("xyz.xenondevs", "net.momirealms.customfishing.libraries")
         relocate ("net.objecthunter.exp4j", "net.momirealms.customfishing.libraries.exp4j")
         relocate ("net.jpountz", "net.momirealms.customfishing.libraries.jpountz") //lz4
+        relocate ("redis.clients.jedis", "net.momirealms.customfishing.libraries.jedis")
     }
 }
 
