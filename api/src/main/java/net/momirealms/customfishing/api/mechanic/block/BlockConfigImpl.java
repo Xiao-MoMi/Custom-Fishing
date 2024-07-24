@@ -77,8 +77,8 @@ public class BlockConfigImpl implements BlockConfig {
         private String blockID;
         private final List<BlockDataModifier> dataModifierList = new ArrayList<>();
         private final List<BlockStateModifier> stateModifierList = new ArrayList<>();
-        private MathValue<Player> horizontalVector;
-        private MathValue<Player> verticalVector;
+        private MathValue<Player> horizontalVector = BlockConfig.DEFAULT_HORIZONTAL_VECTOR;
+        private MathValue<Player> verticalVector = BlockConfig.DEFAULT_VERTICAL_VECTOR;
         private String id;
         @Override
         public Builder id(String id) {

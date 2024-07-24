@@ -25,10 +25,7 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionManager;
-import net.momirealms.customfishing.api.mechanic.competition.CompetitionConfig;
-import net.momirealms.customfishing.api.mechanic.competition.CompetitionGoal;
-import net.momirealms.customfishing.api.mechanic.competition.CompetitionManager;
-import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
+import net.momirealms.customfishing.api.mechanic.competition.*;
 import net.momirealms.customfishing.api.mechanic.competition.info.ActionBarConfig;
 import net.momirealms.customfishing.api.mechanic.competition.info.BossBarConfig;
 import net.momirealms.customfishing.api.mechanic.context.Context;
@@ -60,7 +57,6 @@ public class BukkitCompetitionManager implements CompetitionManager {
     }
 
     public void load() {
-        loadConfig();
         this.timerCheckTask = plugin.getScheduler().asyncRepeating(
                 this::timerCheck,
                 1,
@@ -88,106 +84,16 @@ public class BukkitCompetitionManager implements CompetitionManager {
         this.timeConfigMap.clear();
     }
 
-    @SuppressWarnings("DuplicatedCode")
-    private void loadConfig() {
-        Deque<File> fileDeque = new ArrayDeque<>();
-        for (String type : List.of("competition")) {
-            File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + type);
-            if (!typeFolder.exists()) {
-                if (!typeFolder.mkdirs()) return;
-                plugin.getBoostrap().saveResource("contents" + File.separator + type + File.separator + "default.yml", false);
-            }
-            fileDeque.push(typeFolder);
-            while (!fileDeque.isEmpty()) {
-                File file = fileDeque.pop();
-                File[] files = file.listFiles();
-                if (files == null) continue;
-                for (File subFile : files) {
-                    if (subFile.isDirectory()) {
-                        fileDeque.push(subFile);
-                    } else if (subFile.isFile() && subFile.getName().endsWith(".yml")) {
-                        this.loadSingleFileCompetition(subFile);
-                    }
-                }
-            }
+    @Override
+    public boolean registerCompetition(CompetitionConfig competitionConfig) {
+        if (commandConfigMap.containsKey(competitionConfig.id())) {
+            return false;
         }
-    }
-
-    private void loadSingleFileCompetition(File file) {
-        YamlDocument document = plugin.getConfigManager().loadData(file);
-        for (Map.Entry<String, Object> entry : document.getStringRouteMappedValues(false).entrySet()) {
-            if (entry.getValue() instanceof Section section) {
-                CompetitionConfig.Builder builder = CompetitionConfig.builder()
-                        .key(entry.getKey())
-                        .goal(CompetitionGoal.index().value(section.getString("goal", "TOTAL_SCORE").toLowerCase(Locale.ENGLISH)))
-                        .minPlayers(section.getInt("min-players", 0))
-                        .duration(section.getInt("duration", 300))
-                        .rewards(getPrizeActions(section.getSection("rewards")))
-                        .joinRequirements(plugin.getRequirementManager().parseRequirements(section.getSection("participate-requirements"), false))
-                        .joinActions(plugin.getActionManager().parseActions(section.getSection("participate-actions")))
-                        .startActions(plugin.getActionManager().parseActions(section.getSection("start-actions")))
-                        .endActions(plugin.getActionManager().parseActions(section.getSection("end-actions")))
-                        .skipActions(plugin.getActionManager().parseActions(section.getSection("skip-actions")));;
-                if (section.getBoolean("bossbar.enable", false)) {
-                    builder.bossBarConfig(
-                            BossBarConfig.builder()
-                                .enable(true)
-                                .color(BossBar.Color.valueOf(section.getString("bossbar.color", "WHITE").toUpperCase(Locale.ENGLISH)))
-                                .overlay(BossBar.Overlay.valueOf(section.getString("bossbar.overlay", "PROGRESS").toUpperCase(Locale.ENGLISH)))
-                                .refreshRate(section.getInt("bossbar.refresh-rate", 20))
-                                .switchInterval(section.getInt("bossbar.switch-interval", 200))
-                                .showToAll(!section.getBoolean("bossbar.only-show-to-participants", true))
-                                .text(section.getStringList("bossbar.text").toArray(new String[0]))
-                                .build()
-                    );
-                }
-                if (section.getBoolean("actionbar.enable", false)) {
-                    builder.actionBarConfig(
-                            ActionBarConfig.builder()
-                                .enable(true)
-                                .refreshRate(section.getInt("actionbar.refresh-rate", 5))
-                                .switchInterval(section.getInt("actionbar.switch-interval", 200))
-                                .showToAll(!section.getBoolean("actionbar.only-show-to-participants", true))
-                                .text(section.getStringList("actionbar.text").toArray(new String[0]))
-                                .build()
-                    );
-                }
-                CompetitionConfig competitionConfig = builder.build();
-                List<Pair<Integer, Integer>> timePairs = section.getStringList("start-time")
-                        .stream().map(it -> {
-                            String[] split = it.split(":");
-                            return Pair.of(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-                        }).toList();
-                List<Integer> weekdays = section.getIntList("start-weekday");
-                if (weekdays.isEmpty()) {
-                    weekdays.addAll(List.of(1,2,3,4,5,6,7));
-                }
-                for (Integer weekday : weekdays) {
-                    for (Pair<Integer, Integer> timePair : timePairs) {
-                        CompetitionSchedule schedule = new CompetitionSchedule(weekday, timePair.left(), timePair.right(), 0);
-                        timeConfigMap.put(schedule, competitionConfig);
-                    }
-                }
-                commandConfigMap.put(entry.getKey(), competitionConfig);
-            }
+        for (CompetitionSchedule schedule : competitionConfig.schedules()) {
+            timeConfigMap.put(schedule, competitionConfig);
         }
-    }
-
-    /**
-     * Gets prize actions from a configuration section.
-     *
-     * @param section The configuration section containing prize actions.
-     * @return A HashMap where keys are action names and values are arrays of Action objects.
-     */
-    public HashMap<String, Action<Player>[]> getPrizeActions(Section section) {
-        HashMap<String, Action<Player>[]> map = new HashMap<>();
-        if (section == null) return map;
-        for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
-            if (entry.getValue() instanceof Section innerSection) {
-                map.put(entry.getKey(), plugin.getActionManager().parseActions(innerSection));
-            }
-        }
-        return map;
+        commandConfigMap.put(competitionConfig.id(), competitionConfig);
+        return true;
     }
 
     /**
@@ -252,7 +158,7 @@ public class BukkitCompetitionManager implements CompetitionManager {
             out.writeUTF(serverGroup);
             out.writeUTF("competition");
             out.writeUTF("start");
-            out.writeUTF(config.key());
+            out.writeUTF(config.id());
             RedisManager.getInstance().publishRedisMessage(Arrays.toString(out.toByteArray()));
             return true;
         }

@@ -24,6 +24,7 @@ import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Interface representing the configuration for a fishing competition.
@@ -45,7 +46,7 @@ public interface CompetitionConfig {
      *
      * @return the key for the competition.
      */
-    String key();
+    String id();
 
     /**
      * Gets the duration of the competition in seconds.
@@ -125,6 +126,13 @@ public interface CompetitionConfig {
     ActionBarConfig actionBarConfig();
 
     /**
+     * Get the time to start competition
+     *
+     * @return schedules
+     */
+    List<CompetitionSchedule> schedules();
+
+    /**
      * Creates a new builder for the competition configuration.
      *
      * @return a new builder instance.
@@ -144,7 +152,7 @@ public interface CompetitionConfig {
          * @param key the key for the competition.
          * @return the builder instance.
          */
-        Builder key(String key);
+        Builder id(String key);
 
         /**
          * Sets the goal of the competition.
@@ -233,6 +241,14 @@ public interface CompetitionConfig {
          * @return the builder instance.
          */
         Builder actionBarConfig(ActionBarConfig actionBarConfig);
+
+        /**
+         * Sets the configuration for schedules of the competition.
+         *
+         * @param schedules the schedules
+         * @return the builder instance.
+         */
+        Builder schedules(List<CompetitionSchedule> schedules);
 
         /**
          * Builds and returns the CompetitionConfig instance.

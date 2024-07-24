@@ -206,7 +206,16 @@ public class ConfigType {
             }
     );
 
-    private static final ConfigType[] values = new ConfigType[] {ITEM, ENTITY, BLOCK, HOOK, ROD, BAIT, UTIL, TOTEM, ENCHANT, MINI_GAME};
+    public static final ConfigType COMPETITION = of(
+            "competition",
+            HashMap::new,
+            (id, section, functions) -> {
+                CompetitionConfigParser config = new CompetitionConfigParser(id, section);
+                BukkitCustomFishingPlugin.getInstance().getCompetitionManager().registerCompetition(config.getCompetition());
+            }
+    );
+
+    private static final ConfigType[] values = new ConfigType[] {ITEM, ENTITY, BLOCK, HOOK, ROD, BAIT, UTIL, TOTEM, ENCHANT, MINI_GAME, COMPETITION};
 
     /**
      * Gets an array of all configuration types.

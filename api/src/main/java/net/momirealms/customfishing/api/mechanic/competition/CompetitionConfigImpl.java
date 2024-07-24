@@ -23,7 +23,9 @@ import net.momirealms.customfishing.api.mechanic.competition.info.BossBarConfig;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class CompetitionConfigImpl implements CompetitionConfig {
 
@@ -39,8 +41,9 @@ public class CompetitionConfigImpl implements CompetitionConfig {
     private final HashMap<String, Action<Player>[]> rewards;
     private final BossBarConfig bossBarConfig;
     private final ActionBarConfig actionBarConfig;
+    private final List<CompetitionSchedule> schedules;
 
-    public CompetitionConfigImpl(String key, CompetitionGoal goal, int duration, int minPlayers, Requirement<Player>[] joinRequirements, Action<Player>[] skipActions, Action<Player>[] startActions, Action<Player>[] endActions, Action<Player>[] joinActions, HashMap<String, Action<Player>[]> rewards, BossBarConfig bossBarConfig, ActionBarConfig actionBarConfig) {
+    public CompetitionConfigImpl(String key, CompetitionGoal goal, int duration, int minPlayers, Requirement<Player>[] joinRequirements, Action<Player>[] skipActions, Action<Player>[] startActions, Action<Player>[] endActions, Action<Player>[] joinActions, HashMap<String, Action<Player>[]> rewards, BossBarConfig bossBarConfig, ActionBarConfig actionBarConfig, List<CompetitionSchedule> schedules) {
         this.key = key;
         this.goal = goal;
         this.duration = duration;
@@ -53,10 +56,11 @@ public class CompetitionConfigImpl implements CompetitionConfig {
         this.rewards = rewards;
         this.bossBarConfig = bossBarConfig;
         this.actionBarConfig = actionBarConfig;
+        this.schedules = schedules;
     }
 
     @Override
-    public String key() {
+    public String id() {
         return key;
     }
 
@@ -115,6 +119,11 @@ public class CompetitionConfigImpl implements CompetitionConfig {
         return actionBarConfig;
     }
 
+    @Override
+    public List<CompetitionSchedule> schedules() {
+        return schedules;
+    }
+
     public static class BuilderImpl implements Builder {
         private String key;
         private CompetitionGoal goal = DEFAULT_GOAL;
@@ -128,8 +137,9 @@ public class CompetitionConfigImpl implements CompetitionConfig {
         private HashMap<String, Action<Player>[]> rewards = DEFAULT_REWARDS;
         private BossBarConfig bossBarConfig;
         private ActionBarConfig actionBarConfig;
+        private final List<CompetitionSchedule> schedules = new ArrayList<>();
         @Override
-        public Builder key(String key) {
+        public Builder id(String key) {
             this.key = key;
             return this;
         }
@@ -189,8 +199,13 @@ public class CompetitionConfigImpl implements CompetitionConfig {
             return this;
         }
         @Override
+        public Builder schedules(List<CompetitionSchedule> schedules) {
+            this.schedules.addAll(schedules);
+            return this;
+        }
+        @Override
         public CompetitionConfig build() {
-            return new CompetitionConfigImpl(key, goal, duration, minPlayers, joinRequirements, skipActions, startActions, endActions, joinActions, rewards, bossBarConfig, actionBarConfig);
+            return new CompetitionConfigImpl(key, goal, duration, minPlayers, joinRequirements, skipActions, startActions, endActions, joinActions, rewards, bossBarConfig, actionBarConfig, schedules);
         }
     }
 }

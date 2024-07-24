@@ -154,6 +154,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.blockManager.unload();
         this.effectManager.unload();
         this.hookManager.unload();
+        this.competitionManager.unload();
         this.totemManager.unload();
 
         this.actionManager.reload();
@@ -169,7 +170,6 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.coolDownManager.reload();
         this.translationManager.reload();
         this.marketManager.reload();
-        this.competitionManager.reload();
         this.statisticsManager.reload();
         this.bagManager.reload();
         this.storageManager.reload();
@@ -183,6 +183,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.effectManager.load();
         this.hookManager.load();
         this.totemManager.load();
+        this.competitionManager.load();
 
         EventUtils.fireAndForget(new CustomFishingReloadEvent(this));
     }

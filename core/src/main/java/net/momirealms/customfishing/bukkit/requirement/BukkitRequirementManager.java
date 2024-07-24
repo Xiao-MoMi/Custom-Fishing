@@ -208,7 +208,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                         FishingCompetition competition = plugin.getCompetitionManager().getOnGoingCompetition();
                         if (onCompetition) {
                             if (competition != null)
-                                if (ids.contains(competition.getConfig().key()))
+                                if (ids.contains(competition.getConfig().id()))
                                     return true;
                         } else {
                             if (competition == null)

@@ -516,7 +516,7 @@ public class CustomFishingHook {
                 if (competition.getGoal() == CompetitionGoal.CATCH_AMOUNT) {
                     score = 1;
                     competition.refreshData(context.getHolder(), score);
-                } else if (competition.getGoal() == CompetitionGoal.MAX_SIZE || competition.getGoal() == CompetitionGoal.MIN_SIZE) {
+                } else if (competition.getGoal() == CompetitionGoal.MAX_SIZE || competition.getGoal() == CompetitionGoal.MIN_SIZE || competition.getGoal() == CompetitionGoal.TOTAL_SIZE) {
                     Float size = context.arg(ContextKeys.SIZE);
                     if (size != null && size > 0) {
                         competition.refreshData(context.getHolder(), size);

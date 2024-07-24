@@ -38,7 +38,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.block.data.type.NoteBlock;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -270,16 +269,22 @@ public class BukkitBlockManager implements BlockManager, Listener {
     }
 
     private void registerDirectional() {
+        this.registerBlockDataModifierBuilder("directional", (args) -> (context, blockData) -> {
+            boolean arg = (boolean) args;
+            if (arg && blockData instanceof Directional directional) {
+                directional.setFacing(BlockFace.values()[RandomUtils.generateRandomInt(0, 3)]);
+            }
+        });
         this.registerBlockDataModifierBuilder("directional-4", (args) -> (context, blockData) -> {
             boolean arg = (boolean) args;
             if (arg && blockData instanceof Directional directional) {
-                directional.setFacing(BlockFace.values()[ThreadLocalRandom.current().nextInt(0, 4)]);
+                directional.setFacing(BlockFace.values()[RandomUtils.generateRandomInt(0, 3)]);
             }
         });
         this.registerBlockDataModifierBuilder("directional-6", (args) -> (context, blockData) -> {
             boolean arg = (boolean) args;
             if (arg && blockData instanceof Directional directional) {
-                directional.setFacing(BlockFace.values()[ThreadLocalRandom.current().nextInt(0, 6)]);
+                directional.setFacing(BlockFace.values()[RandomUtils.generateRandomInt(0, 5)]);
             }
         });
     }
@@ -318,7 +323,7 @@ public class BukkitBlockManager implements BlockManager, Listener {
             if (args instanceof Section section) {
                 List<Tuple<MathValue<Player>, String, Pair<MathValue<Player>, MathValue<Player>>>> contents = new ArrayList<>();
                 for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
-                    if (entry.getValue() instanceof ConfigurationSection inner) {
+                    if (entry.getValue() instanceof Section inner) {
                         String item = inner.getString("item");
                         String[] split = inner.getString("amount","1~1").split("~");
                         Pair<MathValue<Player>, MathValue<Player>> amountPair = Pair.of(MathValue.auto(split[0]), MathValue.auto(split[1]));

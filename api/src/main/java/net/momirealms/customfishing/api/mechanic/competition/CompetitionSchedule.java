@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.bukkit.competition;
+package net.momirealms.customfishing.api.mechanic.competition;
 
 public class CompetitionSchedule {
 

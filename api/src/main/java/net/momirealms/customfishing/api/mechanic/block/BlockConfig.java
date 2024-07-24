@@ -27,6 +27,9 @@ import java.util.List;
  */
 public interface BlockConfig {
 
+    MathValue<Player> DEFAULT_HORIZONTAL_VECTOR = MathValue.plain(1.1);
+    MathValue<Player> DEFAULT_VERTICAL_VECTOR = MathValue.plain(1.2);
+
     /**
      * Gets the ID
      *

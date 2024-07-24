@@ -28,6 +28,13 @@ import java.util.Collection;
 public interface CompetitionManager extends Reloadable {
 
     /**
+     * Register a competition
+     *
+     * @param competitionConfig the config
+     */
+    boolean registerCompetition(CompetitionConfig competitionConfig);
+
+    /**
      * Starts a competition by its name.
      *
      * @param competition the name of the competition to start.
