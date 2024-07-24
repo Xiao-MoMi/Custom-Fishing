@@ -353,7 +353,7 @@ mechanics:
         display:
           name: ' '
         components:
-          minecraft:hide_tooltip: true
+          minecraft:hide_tooltip: {}
   # This section would take effect if you set "override-vanilla" to true
   # That also means vanilla mechanics for example lure enchantment
   # would no longer take effect, so you have to configure its effect in CustomFishing
