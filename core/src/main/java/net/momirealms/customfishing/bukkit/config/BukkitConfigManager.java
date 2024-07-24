@@ -523,16 +523,18 @@ public class BukkitConfigManager extends ConfigManager {
                 }
             };
         }, 10_050, "nbt");
-        this.registerItemParser(arg -> {
-            Section section = (Section) arg;
-            ArrayList<ItemEditor> editors = new ArrayList<>();
-            ItemStackUtils.sectionToComponentEditor(section, editors);
-            return (item, context) -> {
-                for (ItemEditor editor : editors) {
-                    editor.apply(((AbstractItem<RtagItem, ItemStack>) item).getRTagItem(), context);
-                }
-            };
-        }, 10_075, "components");
+        if (VersionHelper.isVersionNewerThan1_20_5()) {
+            this.registerItemParser(arg -> {
+                Section section = (Section) arg;
+                ArrayList<ItemEditor> editors = new ArrayList<>();
+                ItemStackUtils.sectionToComponentEditor(section, editors);
+                return (item, context) -> {
+                    for (ItemEditor editor : editors) {
+                        editor.apply(((AbstractItem<RtagItem, ItemStack>) item).getRTagItem(), context);
+                    }
+                };
+            }, 10_075, "components");
+        }
     }
 
     private void registerBuiltInEffectModifierParser() {
