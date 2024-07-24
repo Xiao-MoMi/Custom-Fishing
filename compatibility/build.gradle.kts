@@ -43,7 +43,7 @@ dependencies {
     compileOnly(files("libs/BattlePass-4.0.6-api.jar"))
     compileOnly(files("libs/ClueScrolls-4.8.7-api.jar"))
     compileOnly(files("libs/notquests-5.17.1.jar"))
-    compileOnly("org.betonquest:betonquest:2.0.1")
+    compileOnly("org.betonquest:betonquest:2.1.2")
     // item
     compileOnly(files("libs/zaphkiel-2.0.24.jar"))
     compileOnly("com.github.LoneDev6:API-ItemsAdder:3.6.1")

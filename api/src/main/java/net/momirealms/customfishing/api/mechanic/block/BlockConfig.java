@@ -17,6 +17,9 @@
 
 package net.momirealms.customfishing.api.mechanic.block;
 
+import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
+import org.bukkit.entity.Player;
+
 import java.util.List;
 
 /**
@@ -37,6 +40,20 @@ public interface BlockConfig {
      * @return The block's unique identifier.
      */
     String blockID();
+
+    /**
+     * Retrieves the horizontal vector value for the block.
+     *
+     * @return the horizontal vector value as a double
+     */
+    MathValue<Player> horizontalVector();
+
+    /**
+     * Retrieves the vertical vector value for the block.
+     *
+     * @return the vertical vector value as a double
+     */
+    MathValue<Player> verticalVector();
 
     /**
      * Gets the list of data modifiers applied to the block.
@@ -80,6 +97,22 @@ public interface BlockConfig {
          * @return The current {@link Builder} instance.
          */
         Builder blockID(String blockID);
+
+        /**
+         * Sets the vertical vector value for the BlockConfig being built.
+         *
+         * @param value the vertical vector value as a double
+         * @return the current Builder instance
+         */
+        Builder verticalVector(MathValue<Player> value);
+
+        /**
+         * Sets the horizontal vector value for the BlockConfig being built.
+         *
+         * @param value the horizontal vector value as a double
+         * @return the current Builder instance
+         */
+        Builder horizontalVector(MathValue<Player> value);
 
         /**
          * Sets the list of data modifiers for the configuration.

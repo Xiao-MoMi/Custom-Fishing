@@ -23,11 +23,30 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface for managing custom block loots.
  */
 public interface BlockManager extends Reloadable {
+
+    /**
+     * Get the {@link BlockDataModifierFactory} by ID
+     *
+     * @param id the id of the factory
+     * @return the factory instance
+     */
+    @Nullable
+    BlockDataModifierFactory getBlockDataModifierFactory(@NotNull String id);
+
+    /**
+     * Get the {@link BlockStateModifierFactory} by ID
+     *
+     * @param id the id of the factory
+     * @return the factory instance
+     */
+    @Nullable
+    BlockStateModifierFactory getBlockStateModifierFactory(@NotNull String id);
 
     /**
      * Registers a block loot.

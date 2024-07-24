@@ -24,7 +24,9 @@ import net.momirealms.customfishing.api.mechanic.config.function.ConfigParserFun
 import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.util.TriConsumer;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Configuration types for various mechanics.
@@ -33,6 +35,13 @@ public class ConfigType {
 
     public static final ConfigType ITEM = of(
             "item",
+            () -> {
+                HashMap<String, Node<ConfigParserFunction>> parsers = new HashMap<>();
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getLootFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getItemFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEventFormatFunctions());
+                return parsers;
+            },
             (id, section, functions) -> {
                 MechanicType.register(id, MechanicType.LOOT);
                 ItemConfigParser config = new ItemConfigParser(id, section, functions);
@@ -44,6 +53,13 @@ public class ConfigType {
 
     public static final ConfigType ENTITY = of(
             "entity",
+            () -> {
+                HashMap<String, Node<ConfigParserFunction>> parsers = new HashMap<>();
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getLootFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEntityFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEventFormatFunctions());
+                return parsers;
+            },
             (id, section, functions) -> {
                 MechanicType.register(id, MechanicType.LOOT);
                 EntityConfigParser config = new EntityConfigParser(id, section, functions);
@@ -55,6 +71,13 @@ public class ConfigType {
 
     public static final ConfigType BLOCK = of(
             "block",
+            () -> {
+                HashMap<String, Node<ConfigParserFunction>> parsers = new HashMap<>();
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getLootFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getBlockFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEventFormatFunctions());
+                return parsers;
+            },
             (id, section, functions) -> {
                 MechanicType.register(id, MechanicType.LOOT);
                 BlockConfigParser config = new BlockConfigParser(id, section, functions);
@@ -66,6 +89,13 @@ public class ConfigType {
 
     public static final ConfigType ROD = of(
             "rod",
+            () -> {
+                HashMap<String, Node<ConfigParserFunction>> parsers = new HashMap<>();
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getItemFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEffectModifierFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEventFormatFunctions());
+                return parsers;
+            },
             (id, section, functions) -> {
                 MechanicType.register(id, MechanicType.ROD);
                 RodConfigParser config = new RodConfigParser(id, section, functions);
@@ -78,6 +108,13 @@ public class ConfigType {
 
     public static final ConfigType BAIT = of(
             "bait",
+            () -> {
+                HashMap<String, Node<ConfigParserFunction>> parsers = new HashMap<>();
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getItemFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEffectModifierFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEventFormatFunctions());
+                return parsers;
+            },
             (id, section, functions) -> {
                 MechanicType.register(id, MechanicType.BAIT);
                 BaitConfigParser config = new BaitConfigParser(id, section, functions);
@@ -90,6 +127,14 @@ public class ConfigType {
 
     public static final ConfigType HOOK = of(
             "hook",
+            () -> {
+                HashMap<String, Node<ConfigParserFunction>> parsers = new HashMap<>();
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getItemFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEffectModifierFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEventFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getHookFormatFunctions());
+                return parsers;
+            },
             (id, section, functions) -> {
                 MechanicType.register(id, MechanicType.HOOK);
                 HookConfigParser config = new HookConfigParser(id, section, functions);
@@ -103,6 +148,13 @@ public class ConfigType {
 
     public static final ConfigType UTIL = of(
             "util",
+            () -> {
+                HashMap<String, Node<ConfigParserFunction>> parsers = new HashMap<>();
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getItemFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEffectModifierFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEventFormatFunctions());
+                return parsers;
+            },
             (id, section, functions) -> {
                 MechanicType.register(id, MechanicType.UTIL);
                 UtilConfigParser config = new UtilConfigParser(id, section, functions);
@@ -115,6 +167,13 @@ public class ConfigType {
 
     public static final ConfigType TOTEM = of(
             "totem",
+            () -> {
+                HashMap<String, Node<ConfigParserFunction>> parsers = new HashMap<>();
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getTotemFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEffectModifierFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEventFormatFunctions());
+                return parsers;
+            },
             (id, section, functions) -> {
                 TotemConfigParser config = new TotemConfigParser(id, section, functions);
                 BukkitCustomFishingPlugin.getInstance().getEffectManager().registerEffectModifier(config.getEffectModifier(), MechanicType.TOTEM);
@@ -125,6 +184,12 @@ public class ConfigType {
 
     public static final ConfigType ENCHANT = of(
             "enchant",
+            () -> {
+                HashMap<String, Node<ConfigParserFunction>> parsers = new HashMap<>();
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEventFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEffectModifierFormatFunctions());
+                return parsers;
+            },
             (id, section, functions) -> {
                 EnchantConfigParser config = new EnchantConfigParser(id, section, functions);
                 BukkitCustomFishingPlugin.getInstance().getEffectManager().registerEffectModifier(config.getEffectModifier(), MechanicType.ENCHANT);
@@ -134,6 +199,7 @@ public class ConfigType {
 
     public static final ConfigType MINI_GAME = of(
         "minigame",
+            HashMap::new,
             (id, section, functions) -> {
                 MiniGameConfigParser config = new MiniGameConfigParser(id, section);
                 BukkitCustomFishingPlugin.getInstance().getGameManager().registerGame(config.getGame());
@@ -153,6 +219,7 @@ public class ConfigType {
 
     private final String path;
     private TriConsumer<String, Section, Map<String, Node<ConfigParserFunction>>> argumentConsumer;
+    private Supplier<Map<String, Node<ConfigParserFunction>>> parserSupplier;
 
     /**
      * Creates a new ConfigType with the specified path and argument consumer.
@@ -160,9 +227,10 @@ public class ConfigType {
      * @param path the configuration path.
      * @param argumentConsumer the argument consumer.
      */
-    public ConfigType(String path, TriConsumer<String, Section, Map<String, Node<ConfigParserFunction>>> argumentConsumer) {
+    public ConfigType(String path, Supplier<Map<String, Node<ConfigParserFunction>>> parserSupplier, TriConsumer<String, Section, Map<String, Node<ConfigParserFunction>>> argumentConsumer) {
         this.path = path;
         this.argumentConsumer = argumentConsumer;
+        this.parserSupplier = parserSupplier;
     }
 
     /**
@@ -181,8 +249,8 @@ public class ConfigType {
      * @param argumentConsumer the argument consumer.
      * @return A new ConfigType instance.
      */
-    public static ConfigType of(String path, TriConsumer<String, Section, Map<String, Node<ConfigParserFunction>>> argumentConsumer) {
-        return new ConfigType(path, argumentConsumer);
+    public static ConfigType of(String path, Supplier<Map<String, Node<ConfigParserFunction>>> parserSupplier, TriConsumer<String, Section, Map<String, Node<ConfigParserFunction>>> argumentConsumer) {
+        return new ConfigType(path, parserSupplier, argumentConsumer);
     }
 
     /**
@@ -203,5 +271,14 @@ public class ConfigType {
      */
     public String path() {
         return path;
+    }
+
+    /**
+     * Get the config parsers
+     *
+     * @return config parsers
+     */
+    public Map<String, Node<ConfigParserFunction>> parser() {
+        return parserSupplier.get();
     }
 }

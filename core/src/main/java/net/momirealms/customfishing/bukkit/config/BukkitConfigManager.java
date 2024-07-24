@@ -32,8 +32,13 @@ import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
+import net.momirealms.customfishing.api.mechanic.block.BlockDataModifier;
+import net.momirealms.customfishing.api.mechanic.block.BlockDataModifierFactory;
+import net.momirealms.customfishing.api.mechanic.block.BlockStateModifier;
+import net.momirealms.customfishing.api.mechanic.block.BlockStateModifierFactory;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.config.ConfigType;
+import net.momirealms.customfishing.api.mechanic.config.function.ConfigParserFunction;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
@@ -60,6 +65,7 @@ import net.momirealms.customfishing.bukkit.totem.particle.DustParticleSetting;
 import net.momirealms.customfishing.bukkit.totem.particle.ParticleSetting;
 import net.momirealms.customfishing.bukkit.util.ItemStackUtils;
 import net.momirealms.customfishing.bukkit.util.ParticleUtils;
+import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.dependency.DependencyProperties;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.helper.VersionHelper;
@@ -102,6 +108,7 @@ public class BukkitConfigManager extends ConfigManager {
         this.registerBuiltInEffectModifierParser();
         this.registerBuiltInTotemParser();
         this.registerBuiltInHookParser();
+        this.registerBuiltInBlockParser();
         dustParticle = VersionHelper.isVersionNewerThan1_20_5() ? Particle.valueOf("DUST") : Particle.valueOf("REDSTONE");
     }
 
@@ -262,6 +269,7 @@ public class BukkitConfigManager extends ConfigManager {
                 if (!typeFolder.mkdirs()) return;
                 plugin.getBoostrap().saveResource("contents" + File.separator + type.path() + File.separator + "default.yml", false);
             }
+            Map<String, Node<ConfigParserFunction>> nodes = type.parser();
             fileDeque.push(typeFolder);
             while (!fileDeque.isEmpty()) {
                 File file = fileDeque.pop();
@@ -274,7 +282,7 @@ public class BukkitConfigManager extends ConfigManager {
                         YamlDocument document = plugin.getConfigManager().loadData(subFile);
                         for (Map.Entry<String, Object> entry : document.getStringRouteMappedValues(false).entrySet()) {
                             if (entry.getValue() instanceof Section section) {
-                                type.parse(entry.getKey(), section, formatFunctions);
+                                type.parse(entry.getKey(), section, nodes);
                             }
                         }
                     }
@@ -781,6 +789,41 @@ public class BukkitConfigManager extends ConfigManager {
             MathValue<Player> mathValue = MathValue.auto(object);
             return builder -> builder.waitTimeMultiplier(mathValue);
         }, "base-effects", "wait-time-multiplier");
+    }
+
+    private void registerBuiltInBlockParser() {
+        this.registerBlockParser(object -> {
+            String block = (String) object;
+            return builder -> builder.blockID(block);
+        }, "block");
+        this.registerBlockParser(object -> {
+            Section section = (Section) object;
+            List<BlockDataModifier> dataModifiers = new ArrayList<>();
+            List<BlockStateModifier> stateModifiers = new ArrayList<>();
+            for (Map.Entry<String, Object> innerEntry : section.getStringRouteMappedValues(false).entrySet()) {
+                BlockDataModifierFactory dataModifierFactory = plugin.getBlockManager().getBlockDataModifierFactory(innerEntry.getKey());
+                if (dataModifierFactory != null) {
+                    dataModifiers.add(dataModifierFactory.process(innerEntry.getValue()));
+                    continue;
+                }
+                BlockStateModifierFactory stateModifierFactory = plugin.getBlockManager().getBlockStateModifierFactory(innerEntry.getKey());
+                if (stateModifierFactory != null) {
+                    stateModifiers.add(stateModifierFactory.process(innerEntry.getValue()));
+                }
+            }
+            return builder -> {
+                builder.dataModifierList(dataModifiers);
+                builder.stateModifierList(stateModifiers);
+            };
+        }, "properties");
+        this.registerBlockParser(object -> {
+            MathValue<Player> mathValue = MathValue.auto(object);
+            return builder -> builder.horizontalVector(mathValue);
+        }, "velocity", "horizontal");
+        this.registerBlockParser(object -> {
+            MathValue<Player> mathValue = MathValue.auto(object);
+            return builder -> builder.verticalVector(mathValue);
+        }, "velocity", "vertical");
     }
 
     private void registerBuiltInEntityParser() {

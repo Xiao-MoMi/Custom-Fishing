@@ -62,6 +62,7 @@ public final class PlayerContextImpl implements Context<Player> {
 
     @Override
     public <C> PlayerContextImpl arg(ContextKeys<C> key, C value) {
+        if (key == null || value == null) return this;
         this.args.put(key, value);
         this.placeholderMap.put("{" + key.key() + "}", value.toString());
         return this;

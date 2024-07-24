@@ -27,6 +27,7 @@ import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import dev.dejvokep.boostedyaml.utils.format.NodeRole;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.mechanic.block.BlockConfig;
 import net.momirealms.customfishing.api.mechanic.config.function.*;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
@@ -66,7 +67,15 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     private static ConfigManager instance;
     protected final BukkitCustomFishingPlugin plugin;
-    protected final HashMap<String, Node<ConfigParserFunction>> formatFunctions = new HashMap<>();
+    protected final HashMap<String, Node<ConfigParserFunction>> entityFormatFunctions = new HashMap<>();
+    protected final HashMap<String, Node<ConfigParserFunction>> blockFormatFunctions = new HashMap<>();
+    protected final HashMap<String, Node<ConfigParserFunction>> totemFormatFunctions = new HashMap<>();
+    protected final HashMap<String, Node<ConfigParserFunction>> hookFormatFunctions = new HashMap<>();
+    protected final HashMap<String, Node<ConfigParserFunction>> eventFormatFunctions = new HashMap<>();
+    protected final HashMap<String, Node<ConfigParserFunction>> baseEffectFormatFunctions = new HashMap<>();
+    protected final HashMap<String, Node<ConfigParserFunction>> effectModifierFormatFunctions = new HashMap<>();
+    protected final HashMap<String, Node<ConfigParserFunction>> itemFormatFunctions = new HashMap<>();
+    protected final HashMap<String, Node<ConfigParserFunction>> lootFormatFunctions = new HashMap<>();
     protected int placeholderLimit;
     protected boolean redisRanking;
     protected String serverGroup;
@@ -234,39 +243,42 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     }
 
     public void registerHookParser(Function<Object, Consumer<HookConfig.Builder>> function, String... nodes) {
-        registerNodeFunction(nodes, new HookParserFunction(function));
+        registerNodeFunction(nodes, new HookParserFunction(function), hookFormatFunctions);
     }
 
     public void registerTotemParser(Function<Object, Consumer<TotemConfig.Builder>> function, String... nodes) {
-        registerNodeFunction(nodes, new TotemParserFunction(function));
+        registerNodeFunction(nodes, new TotemParserFunction(function), totemFormatFunctions);
     }
 
     public void registerLootParser(Function<Object, Consumer<Loot.Builder>> function, String... nodes) {
-        registerNodeFunction(nodes, new LootParserFunction(function));
+        registerNodeFunction(nodes, new LootParserFunction(function), lootFormatFunctions);
     }
 
     public void registerItemParser(Function<Object, BiConsumer<Item<ItemStack>, Context<Player>>> function, int priority, String... nodes) {
-        registerNodeFunction(nodes, new ItemParserFunction(priority, function));
+        registerNodeFunction(nodes, new ItemParserFunction(priority, function), itemFormatFunctions);
     }
 
     public void registerEffectModifierParser(Function<Object, Consumer<EffectModifier.Builder>> function, String... nodes) {
-        registerNodeFunction(nodes, new EffectModifierParserFunction(function));
+        registerNodeFunction(nodes, new EffectModifierParserFunction(function), effectModifierFormatFunctions);
     }
 
     public void registerEntityParser(Function<Object, Consumer<EntityConfig.Builder>> function, String... nodes) {
-        registerNodeFunction(nodes, new EntityParserFunction(function));
+        registerNodeFunction(nodes, new EntityParserFunction(function), entityFormatFunctions);
+    }
+
+    public void registerBlockParser(Function<Object, Consumer<BlockConfig.Builder>> function, String... nodes) {
+        registerNodeFunction(nodes, new BlockParserFunction(function), blockFormatFunctions);
     }
 
     public void registerEventParser(Function<Object, Consumer<EventCarrier.Builder>> function, String... nodes) {
-        registerNodeFunction(nodes, new EventParserFunction(function));
+        registerNodeFunction(nodes, new EventParserFunction(function), eventFormatFunctions);
     }
 
     public void registerBaseEffectParser(Function<Object, Consumer<LootBaseEffect.Builder>> function, String... nodes) {
-        registerNodeFunction(nodes, new BaseEffectParserFunction(function));
+        registerNodeFunction(nodes, new BaseEffectParserFunction(function), baseEffectFormatFunctions);
     }
 
-    public void unregisterNodeFunction(String... nodes) {
-        Map<String, Node<ConfigParserFunction>> functionMap = formatFunctions;
+    public void unregisterNodeFunction(Map<String, Node<ConfigParserFunction>> functionMap, String... nodes) {
         for (int i = 0; i < nodes.length; i++) {
             if (functionMap.containsKey(nodes[i])) {
                 Node<ConfigParserFunction> functionNode = functionMap.get(nodes[i]);
@@ -285,8 +297,7 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
         }
     }
 
-    public void registerNodeFunction(String[] nodes, ConfigParserFunction configParserFunction) {
-        Map<String, Node<ConfigParserFunction>> functionMap = formatFunctions;
+    public void registerNodeFunction(String[] nodes, ConfigParserFunction configParserFunction, Map<String, Node<ConfigParserFunction>> functionMap) {
         for (int i = 0; i < nodes.length; i++) {
             if (functionMap.containsKey(nodes[i])) {
                 Node<ConfigParserFunction> functionNode = functionMap.get(nodes[i]);
@@ -389,11 +400,48 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
         }
     }
 
-    public Map<String, Node<ConfigParserFunction>> getFormatFunctions() {
-        return formatFunctions;
+    public HashMap<String, Node<ConfigParserFunction>> getBlockFormatFunctions() {
+        return blockFormatFunctions;
+    }
+
+    public HashMap<String, Node<ConfigParserFunction>> getEntityFormatFunctions() {
+        return entityFormatFunctions;
+    }
+
+    public HashMap<String, Node<ConfigParserFunction>> getTotemFormatFunctions() {
+        return totemFormatFunctions;
+    }
+
+    public HashMap<String, Node<ConfigParserFunction>> getHookFormatFunctions() {
+        return hookFormatFunctions;
+    }
+
+    public HashMap<String, Node<ConfigParserFunction>> getEventFormatFunctions() {
+        return eventFormatFunctions;
+    }
+
+    public HashMap<String, Node<ConfigParserFunction>> getBaseEffectFormatFunctions() {
+        return baseEffectFormatFunctions;
+    }
+
+    public HashMap<String, Node<ConfigParserFunction>> getEffectModifierFormatFunctions() {
+        return effectModifierFormatFunctions;
+    }
+
+    public HashMap<String, Node<ConfigParserFunction>> getItemFormatFunctions() {
+        return itemFormatFunctions;
+    }
+
+    public HashMap<String, Node<ConfigParserFunction>> getLootFormatFunctions() {
+        return lootFormatFunctions;
     }
 
     public abstract List<Pair<String, BiFunction<Context<Player>, Double, Double>>> parseWeightOperation(List<String> ops);
 
     public abstract List<Pair<String, BiFunction<Context<Player>, Double, Double>>> parseGroupWeightOperation(List<String> gops);
+
+    @Deprecated
+    public Map<String, Node<ConfigParserFunction>> getDefaultFormatFunctions() {
+        return getItemFormatFunctions();
+    }
 }

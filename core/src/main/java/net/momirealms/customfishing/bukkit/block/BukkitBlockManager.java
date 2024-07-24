@@ -50,6 +50,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -86,6 +87,18 @@ public class BukkitBlockManager implements BlockManager, Listener {
                 return block.getType().name();
             }
         });
+    }
+
+    @Nullable
+    @Override
+    public BlockDataModifierFactory getBlockDataModifierFactory(@NotNull String id) {
+        return dataFactories.get(id);
+    }
+
+    @Nullable
+    @Override
+    public BlockStateModifierFactory getBlockStateModifierFactory(@NotNull String id) {
+        return stateFactories.get(id);
     }
 
     @Override
@@ -235,8 +248,12 @@ public class BukkitBlockManager implements BlockManager, Listener {
                 PersistentDataType.STRING,
                 id + ";" + context.getHolder().getName()
         );
-        Vector vector = playerLocation.subtract(hookLocation).toVector().multiply(1.2 - 1);
-        vector = vector.setY((vector.getY() + 0.2) * 1.2);
+        double d0 = playerLocation.getX() - hookLocation.getX();
+        double d1 = playerLocation.getY() - hookLocation.getY();
+        double d2 = playerLocation.getZ() - hookLocation.getZ();
+        double d3 = config.horizontalVector().evaluate(context);
+        double d4 = config.verticalVector().evaluate(context);
+        Vector vector = new Vector(d0 * 0.1D * d3, d1 * 0.1D + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08D * d4, d2 * 0.1D * d3);
         fallingBlock.setVelocity(vector);
         return fallingBlock;
     }

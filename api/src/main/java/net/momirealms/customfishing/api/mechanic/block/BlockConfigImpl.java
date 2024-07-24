@@ -17,20 +17,29 @@
 
 package net.momirealms.customfishing.api.mechanic.block;
 
+import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Objects.requireNonNull;
 
 public class BlockConfigImpl implements BlockConfig {
 
     private final String blockID;
+    private final MathValue<Player> horizontalVector;
+    private final MathValue<Player> verticalVector;
     private final List<BlockDataModifier> dataModifierList;
     private final List<BlockStateModifier> stateModifierList;
     private final String id;
 
-    public BlockConfigImpl(String id, String blockID, List<BlockDataModifier> dataModifierList, List<BlockStateModifier> stateModifierList) {
+    public BlockConfigImpl(String id, String blockID, MathValue<Player> horizontalVector, MathValue<Player> verticalVector, List<BlockDataModifier> dataModifierList, List<BlockStateModifier> stateModifierList) {
         this.blockID = blockID;
         this.dataModifierList = dataModifierList;
         this.stateModifierList = stateModifierList;
+        this.horizontalVector = horizontalVector;
+        this.verticalVector = verticalVector;
         this.id = id;
     }
 
@@ -42,6 +51,16 @@ public class BlockConfigImpl implements BlockConfig {
     @Override
     public String blockID() {
         return blockID;
+    }
+
+    @Override
+    public MathValue<Player> horizontalVector() {
+        return horizontalVector;
+    }
+
+    @Override
+    public MathValue<Player> verticalVector() {
+        return verticalVector;
     }
 
     @Override
@@ -58,6 +77,8 @@ public class BlockConfigImpl implements BlockConfig {
         private String blockID;
         private final List<BlockDataModifier> dataModifierList = new ArrayList<>();
         private final List<BlockStateModifier> stateModifierList = new ArrayList<>();
+        private MathValue<Player> horizontalVector;
+        private MathValue<Player> verticalVector;
         private String id;
         @Override
         public Builder id(String id) {
@@ -67,6 +88,16 @@ public class BlockConfigImpl implements BlockConfig {
         @Override
         public Builder blockID(String blockID) {
             this.blockID = blockID;
+            return this;
+        }
+        @Override
+        public Builder verticalVector(MathValue<Player> value) {
+            this.verticalVector = value;
+            return this;
+        }
+        @Override
+        public Builder horizontalVector(MathValue<Player> value) {
+            this.horizontalVector = value;
             return this;
         }
         @Override
@@ -81,7 +112,7 @@ public class BlockConfigImpl implements BlockConfig {
         }
         @Override
         public BlockConfig build() {
-            return new BlockConfigImpl(id, blockID, dataModifierList, stateModifierList);
+            return new BlockConfigImpl(id, requireNonNull(blockID, "Block id should not be null"), horizontalVector, verticalVector, dataModifierList, stateModifierList);
         }
     }
 }
