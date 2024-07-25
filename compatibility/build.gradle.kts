@@ -28,7 +28,7 @@ dependencies {
     // vault
     compileOnly("com.github.MilkBowl:VaultAPI:${rootProject.properties["vault_version"]}")
     // season
-    compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.4.8")
+    compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.5.7")
     compileOnly(files("libs/RealisticSeasons-api.jar"))
     compileOnly(files("libs/AdvancedSeasons-API.jar"))
     // enchantment
