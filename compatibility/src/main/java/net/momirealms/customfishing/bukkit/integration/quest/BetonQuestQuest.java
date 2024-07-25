@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.bukkit.integration.quest;
 
+import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.FishingResultEvent;
 import org.betonquest.betonquest.BetonQuest;
 import org.betonquest.betonquest.Instruction;
@@ -41,8 +42,19 @@ import java.util.HashSet;
 public class BetonQuestQuest {
 
     public static void register() {
-        BetonQuest.getInstance().registerObjectives("customfishing_loot", IDObjective.class);
-        BetonQuest.getInstance().registerObjectives("customfishing_group", GroupObjective.class);
+        BetonQuest ins1 = BetonQuest.getInstance();
+        if (ins1 != null) {
+            ins1.registerObjectives("customfishing_loot", IDObjective.class);
+            ins1.registerObjectives("customfishing_group", GroupObjective.class);
+        } else {
+            Bukkit.getScheduler().runTaskLater(BukkitCustomFishingPlugin.getInstance().getBoostrap(), () -> {
+                BetonQuest ins2 = BetonQuest.getInstance();
+                if (ins2 != null) {
+                    ins2.registerObjectives("customfishing_loot", IDObjective.class);
+                    ins2.registerObjectives("customfishing_group", GroupObjective.class);
+                }
+            }, 1);
+        }
     }
 
     public static class IDObjective extends CountingObjective implements Listener {
