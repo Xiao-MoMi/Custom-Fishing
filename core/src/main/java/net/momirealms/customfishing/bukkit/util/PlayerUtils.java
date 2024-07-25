@@ -38,6 +38,7 @@ public class PlayerUtils {
         Location location = player.getLocation().clone();
         Item item = player.getWorld().dropItem(player.getEyeLocation().clone().subtract(new Vector(0,0.3,0)), itemStack);
         item.setPickupDelay(noPickUpDelay ? 0 : 40);
+        item.setOwner(player.getUniqueId());
         if (retainOwnership) {
             item.setThrower(player.getUniqueId());
         }

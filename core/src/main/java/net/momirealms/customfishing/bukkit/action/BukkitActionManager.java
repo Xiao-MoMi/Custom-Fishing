@@ -448,6 +448,7 @@ public class BukkitActionManager implements ActionManager<Player> {
             if (args instanceof Section section) {
                 String id = section.getString("item");
                 int amount = section.getInt("amount", 1);
+                boolean toInventory = section.getBoolean("to-inventory", false);
                 return context -> {
                     if (Math.random() > chance) return;
                     Player player = context.getHolder();
@@ -460,7 +461,11 @@ public class BukkitActionManager implements ActionManager<Player> {
                             amountToGive -= perStackSize;
                             ItemStack more = itemStack.clone();
                             more.setAmount(perStackSize);
-                            PlayerUtils.dropItem(player, itemStack, true, true, false);
+                            if (toInventory) {
+                                PlayerUtils.giveItem(player, itemStack, itemStack.getAmount());
+                            } else {
+                                PlayerUtils.dropItem(player, itemStack, true, true, false);
+                            }
                         }
                     }
                 };

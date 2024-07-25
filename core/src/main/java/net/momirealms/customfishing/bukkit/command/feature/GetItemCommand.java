@@ -59,8 +59,10 @@ public class GetItemCommand extends BukkitCommandFeature<CommandSender> {
                 }))
                 .optional("amount", IntegerParser.integerParser(1, 6400))
                 .flag(manager.flagBuilder("silent").withAliases("s").build())
+                .flag(manager.flagBuilder("to-inventory").withAliases("t").build())
                 .handler(context -> {
                     final int amount = context.getOrDefault("amount", 1);
+                    boolean toInv = context.flags().hasFlag("to-inventory");
                     final String id = context.get("id");
                     final Player player = context.sender();
                     try {
@@ -75,7 +77,11 @@ public class GetItemCommand extends BukkitCommandFeature<CommandSender> {
                             amountToGive -= perStackSize;
                             ItemStack more = itemStack.clone();
                             more.setAmount(perStackSize);
-                            PlayerUtils.dropItem(player, more, false, true, false);
+                            if (toInv) {
+                                PlayerUtils.putItemsToInventory(player.getInventory(), more, more.getAmount());
+                            } else {
+                                PlayerUtils.dropItem(player, more, false, true, false);
+                            }
                         }
                         handleFeedback(context, MessageConstants.COMMAND_ITEM_GET_SUCCESS, Component.text(amount), Component.text(id));
                     } catch (NullPointerException e) {

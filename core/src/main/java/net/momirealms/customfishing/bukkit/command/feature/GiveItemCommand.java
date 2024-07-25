@@ -60,10 +60,12 @@ public class GiveItemCommand extends BukkitCommandFeature<CommandSender> {
                 }))
                 .optional("amount", IntegerParser.integerParser(1, 6400))
                 .flag(manager.flagBuilder("silent").withAliases("s").build())
+                .flag(manager.flagBuilder("to-inventory").withAliases("t").build())
                 .handler(context -> {
                     final Player player = context.get("player");
                     final int amount = context.getOrDefault("amount", 1);
                     final String id = context.get("id");
+                    boolean toInv = context.flags().hasFlag("to-inventory");
                     try {
                         ItemStack itemStack = BukkitCustomFishingPlugin.getInstance().getItemManager().buildInternal(Context.player(player).arg(ContextKeys.ID, id), id);
                         if (itemStack == null) {
@@ -76,7 +78,11 @@ public class GiveItemCommand extends BukkitCommandFeature<CommandSender> {
                             amountToGive -= perStackSize;
                             ItemStack more = itemStack.clone();
                             more.setAmount(perStackSize);
-                            PlayerUtils.dropItem(player, more, false, true, false);
+                            if (toInv) {
+                                PlayerUtils.putItemsToInventory(player.getInventory(), more, more.getAmount());
+                            } else {
+                                PlayerUtils.dropItem(player, more, false, true, false);
+                            }
                         }
                         handleFeedback(context, MessageConstants.COMMAND_ITEM_GIVE_SUCCESS, Component.text(player.getName()), Component.text(amount), Component.text(id));
                     } catch (NullPointerException e) {
