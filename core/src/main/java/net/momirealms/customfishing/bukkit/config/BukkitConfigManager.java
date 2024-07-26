@@ -202,7 +202,7 @@ public class BukkitConfigManager extends ConfigManager {
         redisRanking = config.getBoolean("mechanics.competition.redis-ranking", false);
 
         AdventureHelper.legacySupport = config.getBoolean("other-settings.legacy-color-code-support", true);
-        dataSaveInterval = config.getInt("other-settings.data-save-interval", 600);
+        dataSaveInterval = config.getInt("other-settings.data-saving-interval", 600);
         logDataSaving = config.getBoolean("other-settings.log-data-saving", true);
         lockData = config.getBoolean("other-settings.lock-data", true);
 
