@@ -72,7 +72,7 @@ public class GiveItemCommand extends BukkitCommandFeature<CommandSender> {
                             throw new RuntimeException("Unrecognized item id: " + id);
                         }
                         int amountToGive = amount;
-                        int maxStack = itemStack.getType().getMaxStackSize();
+                        int maxStack = itemStack.getMaxStackSize();
                         while (amountToGive > 0) {
                             int perStackSize = Math.min(maxStack, amountToGive);
                             amountToGive -= perStackSize;

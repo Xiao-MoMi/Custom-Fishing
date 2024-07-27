@@ -20,6 +20,7 @@ package net.momirealms.customfishing.bukkit.integration.item;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.integration.ItemProvider;
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +46,7 @@ public class CustomFishingItemProvider implements ItemProvider {
             // CustomFishing:TYPE:ID
             finalID = split[1];
         }
-        ItemStack itemStack = BukkitCustomFishingPlugin.getInstance().getItemManager().buildInternal(Context.player(player), finalID);
+        ItemStack itemStack = BukkitCustomFishingPlugin.getInstance().getItemManager().buildInternal(Context.player(player).arg(ContextKeys.ID, finalID), finalID);
         return requireNonNull(itemStack);
     }
 

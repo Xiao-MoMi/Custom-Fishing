@@ -301,6 +301,23 @@ public class FishingGears {
                                 wrapped.removeTag("CustomFishing", "hook_id");
                                 wrapped.removeTag("CustomFishing", "hook_stack");
                                 wrapped.removeTag("CustomFishing", "hook_max_damage");
+                                List<String> durabilityLore = new ArrayList<>();
+                                List<String> newLore = new ArrayList<>();
+                                List<String> previousLore = wrapped.lore().orElse(new ArrayList<>());
+                                for (String previous : previousLore) {
+                                    Component component = AdventureHelper.jsonToComponent(previous);
+                                    if (component instanceof ScoreComponent scoreComponent && scoreComponent.name().equals("cf")) {
+                                        if (scoreComponent.objective().equals("hook")) {
+                                            continue;
+                                        } else if (scoreComponent.objective().equals("durability")) {
+                                            durabilityLore.add(previous);
+                                            continue;
+                                        }
+                                    }
+                                    newLore.add(previous);
+                                }
+                                newLore.addAll(durabilityLore);
+                                wrapped.lore(newLore);
                                 BukkitCustomFishingPlugin.getInstance().getSenderFactory().getAudience(context.getHolder()).playSound(Sound.sound(Key.key("minecraft:entity.item.break"), Sound.Source.PLAYER, 1, 1));
                             } else {
                                 wrapped.setTag(hookDamage, "CustomFishing", "hook_damage");

@@ -383,7 +383,7 @@ public class BukkitConfigManager extends ConfigManager {
         this.registerItemParser(f1, 4700, "enchantment-pool");
         Function<Object, BiConsumer<Item<ItemStack>, Context<Player>>> f2 = arg -> {
             Section section = (Section) arg;
-            boolean stored = Objects.equals(section.getNameAsString(), "stored-random-enchantments");
+            boolean stored = Objects.equals(section.getNameAsString(), "random-stored-enchantments");
             List<Tuple<Double, String, Short>> enchantments = getPossibleEnchantments(section);
             return (item, context) -> {
                 HashSet<String> ids = new HashSet<>();

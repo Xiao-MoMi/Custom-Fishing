@@ -454,7 +454,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     Player player = context.getHolder();
                     ItemStack itemStack = plugin.getItemManager().buildAny(context, id);
                     if (itemStack != null) {
-                        int maxStack = itemStack.getType().getMaxStackSize();
+                        int maxStack = itemStack.getMaxStackSize();
                         int amountToGive = amount;
                         while (amountToGive > 0) {
                             int perStackSize = Math.min(maxStack, amountToGive);
@@ -462,9 +462,9 @@ public class BukkitActionManager implements ActionManager<Player> {
                             ItemStack more = itemStack.clone();
                             more.setAmount(perStackSize);
                             if (toInventory) {
-                                PlayerUtils.giveItem(player, itemStack, itemStack.getAmount());
+                                PlayerUtils.giveItem(player, more, itemStack.getAmount());
                             } else {
-                                PlayerUtils.dropItem(player, itemStack, true, true, false);
+                                PlayerUtils.dropItem(player, more, true, true, false);
                             }
                         }
                     }

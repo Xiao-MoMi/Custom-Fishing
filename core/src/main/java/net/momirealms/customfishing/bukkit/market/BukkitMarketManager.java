@@ -411,17 +411,17 @@ public class BukkitMarketManager implements MarketManager, Listener {
                     ItemStack itemStack = gui.inventory.getItem(slot);
                     if (itemStack != null && itemStack.getType() != Material.AIR) {
                         if (current.getType() == itemStack.getType()
-                                && itemStack.getAmount() != itemStack.getType().getMaxStackSize()
+                                && itemStack.getAmount() != itemStack.getMaxStackSize()
                                 && current.getItemMeta().equals(itemStack.getItemMeta())
                         ) {
-                            int left = itemStack.getType().getMaxStackSize() - itemStack.getAmount();
+                            int left = itemStack.getMaxStackSize() - itemStack.getAmount();
                             if (current.getAmount() <= left) {
                                 itemStack.setAmount(itemStack.getAmount() + current.getAmount());
                                 current.setAmount(0);
                                 break;
                             } else {
                                 current.setAmount(current.getAmount() - left);
-                                itemStack.setAmount(itemStack.getType().getMaxStackSize());
+                                itemStack.setAmount(itemStack.getMaxStackSize());
                             }
                         }
                     } else {
