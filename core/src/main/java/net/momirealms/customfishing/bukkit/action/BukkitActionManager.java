@@ -462,7 +462,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                             ItemStack more = itemStack.clone();
                             more.setAmount(perStackSize);
                             if (toInventory) {
-                                PlayerUtils.giveItem(player, more, itemStack.getAmount());
+                                PlayerUtils.giveItem(player, more, more.getAmount());
                             } else {
                                 PlayerUtils.dropItem(player, more, true, true, false);
                             }
