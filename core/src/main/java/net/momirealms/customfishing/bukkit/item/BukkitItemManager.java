@@ -131,7 +131,7 @@ public class BukkitItemManager implements ItemManager, Listener {
 //        CustomFishingItem item = requireNonNull(items.get(id), () -> "No item found for " + id);
         CustomFishingItem item = items.get(id);
         if (item == null) return null;
-        return build(context, item);
+        return build(context.arg(ContextKeys.ID, id), item);
     }
 
     @NotNull
