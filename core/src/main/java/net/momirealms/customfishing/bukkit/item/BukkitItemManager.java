@@ -36,10 +36,7 @@ import net.momirealms.customfishing.bukkit.util.ItemStackUtils;
 import net.momirealms.customfishing.bukkit.util.LocationUtils;
 import net.momirealms.customfishing.common.item.Item;
 import net.momirealms.sparrow.heart.SparrowHeart;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.enchantments.Enchantment;
@@ -131,7 +128,7 @@ public class BukkitItemManager implements ItemManager, Listener {
 //        CustomFishingItem item = requireNonNull(items.get(id), () -> "No item found for " + id);
         CustomFishingItem item = items.get(id);
         if (item == null) return null;
-        return build(context.arg(ContextKeys.ID, id), item);
+        return build(context, item);
     }
 
     @NotNull
@@ -417,13 +414,17 @@ public class BukkitItemManager implements ItemManager, Listener {
     @EventHandler (ignoreCancelled = true)
     public void onBreakBlock(BlockBreakEvent event) {
         final Block block = event.getBlock();
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE)
+            return;
         if (block.getState() instanceof Skull) {
             PersistentDataContainer pdc = block.getChunk().getPersistentDataContainer();
-            String base64 = pdc.get(new NamespacedKey(plugin.getBoostrap(), LocationUtils.toChunkPosString(block.getLocation())), PersistentDataType.STRING);
+            NamespacedKey key = new NamespacedKey(plugin.getBoostrap(), LocationUtils.toChunkPosString(block.getLocation()));
+            String base64 = pdc.get(key, PersistentDataType.STRING);
             if (base64 != null) {
                 ItemStack itemStack = ItemStackUtils.fromBase64(base64);
                 event.setDropItems(false);
                 block.getLocation().getWorld().dropItemNaturally(block.getLocation(), itemStack);
+                pdc.remove(key);
             }
         }
     }

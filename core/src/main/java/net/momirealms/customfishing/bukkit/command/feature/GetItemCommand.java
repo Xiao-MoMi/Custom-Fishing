@@ -66,7 +66,7 @@ public class GetItemCommand extends BukkitCommandFeature<CommandSender> {
                     final String id = context.get("id");
                     final Player player = context.sender();
                     try {
-                        ItemStack itemStack = BukkitCustomFishingPlugin.getInstance().getItemManager().buildInternal(Context.player(player), id);
+                        ItemStack itemStack = BukkitCustomFishingPlugin.getInstance().getItemManager().buildInternal(Context.player(player).arg(ContextKeys.ID, id), id);
                         if (itemStack == null) {
                             throw new RuntimeException("Unrecognized item id: " + id);
                         }

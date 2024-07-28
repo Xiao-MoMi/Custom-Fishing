@@ -67,7 +67,7 @@ public class GiveItemCommand extends BukkitCommandFeature<CommandSender> {
                     final String id = context.get("id");
                     boolean toInv = context.flags().hasFlag("to-inventory");
                     try {
-                        ItemStack itemStack = BukkitCustomFishingPlugin.getInstance().getItemManager().buildInternal(Context.player(player), id);
+                        ItemStack itemStack = BukkitCustomFishingPlugin.getInstance().getItemManager().buildInternal(Context.player(player).arg(ContextKeys.ID, id), id);
                         if (itemStack == null) {
                             throw new RuntimeException("Unrecognized item id: " + id);
                         }

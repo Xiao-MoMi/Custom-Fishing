@@ -414,7 +414,7 @@ public class BukkitConfigManager extends ConfigManager {
         this.registerItemParser(arg -> {
             String base64 = (String) arg;
             return (item, context) -> item.skull(base64);
-        }, 5200, "head");
+        }, 5200, "head64");
         this.registerItemParser(arg -> {
             List<String> args = ListUtils.toList(arg);
             return (item, context) -> item.itemFlags(args);
@@ -461,6 +461,10 @@ public class BukkitConfigManager extends ConfigManager {
                 item.setTag(UUID.randomUUID(), "CustomFishing", "uuid");
             };
         }, 2_222, "stackable");
+        this.registerItemParser(arg -> {
+            boolean enable = (boolean) arg;
+            return (item, context) -> item.setTag(enable ? 1 : 0, "CustomFishing", "placeable");
+        }, 2_335, "placeable");
         this.registerItemParser(arg -> {
             String sizePair = (String) arg;
             String[] split = sizePair.split("~", 2);

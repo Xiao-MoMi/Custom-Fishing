@@ -244,7 +244,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     for (String text : replaced) {
                         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), text);
                     }
-                }, context.arg(ContextKeys.LOCATION));
+                }, null);
             };
         });
         registerAction("player-command", (args, chance) -> {
