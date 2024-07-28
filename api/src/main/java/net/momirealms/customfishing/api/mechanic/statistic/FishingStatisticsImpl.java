@@ -47,7 +47,7 @@ public class FishingStatisticsImpl implements FishingStatistics {
 
     @Override
     public int getAmount(String id) {
-        return amountMap.getOrDefault(id, -1);
+        return amountMap.getOrDefault(id, 0);
     }
 
     @Override
@@ -70,12 +70,12 @@ public class FishingStatisticsImpl implements FishingStatistics {
 
     @Override
     public float getMaxSize(String id) {
-        return sizeMap.getOrDefault(id, -1f);
+        return sizeMap.getOrDefault(id, 0f);
     }
 
     @Override
     public void setMaxSize(String id, float maxSize) {
-        if (maxSize < 0) maxSize = 0;
+        if (maxSize < 0) return;
         sizeMap.put(id, maxSize);
     }
 

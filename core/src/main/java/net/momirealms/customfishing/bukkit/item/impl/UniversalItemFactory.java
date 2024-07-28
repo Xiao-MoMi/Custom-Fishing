@@ -22,14 +22,13 @@ import com.saicone.rtag.tag.TagBase;
 import com.saicone.rtag.tag.TagCompound;
 import com.saicone.rtag.tag.TagList;
 import net.momirealms.customfishing.bukkit.item.BukkitItemFactory;
+import net.momirealms.customfishing.bukkit.util.SkullUtils;
 import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
 import net.momirealms.customfishing.common.util.Key;
 import org.bukkit.inventory.ItemFlag;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 public class UniversalItemFactory extends BukkitItemFactory {
 
@@ -72,7 +71,11 @@ public class UniversalItemFactory extends BukkitItemFactory {
         if (skullData == null) {
             item.remove("SkullOwner");
         } else {
-            item.set(List.of(Map.of("Value", skullData)), "SkullOwner", "Properties", "textures");
+            item.set(UUID.nameUUIDFromBytes(SkullUtils.identifierFromBase64(skullData).getBytes(StandardCharsets.UTF_8)), "SkullOwner", "Id");
+            item.set(
+                    List.of(Map.of("Value", skullData)),
+                    "SkullOwner", "Properties", "textures"
+            );
         }
     }
 

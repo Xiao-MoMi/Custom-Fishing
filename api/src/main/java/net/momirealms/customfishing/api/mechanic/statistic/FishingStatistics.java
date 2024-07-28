@@ -45,7 +45,7 @@ public interface FishingStatistics {
      * Retrieves the amount of fish caught with the specified ID.
      *
      * @param id the ID of the fish.
-     * @return the amount of fish caught with the specified ID. -1 if not exist.
+     * @return the amount of fish caught with the specified ID. 0 if not exist.
      */
     int getAmount(String id);
 
