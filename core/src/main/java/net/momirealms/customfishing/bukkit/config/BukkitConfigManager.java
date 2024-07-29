@@ -724,6 +724,10 @@ public class BukkitConfigManager extends ConfigManager {
         List<Pair<String, BiFunction<Context<Player>, Double, Double>>> result = new ArrayList<>();
         for (String op : ops) {
             String[] split = op.split(":", 2);
+            if (split.length < 2) {
+                plugin.getPluginLogger().warn("Illegal weight operation: " + op);
+                continue;
+            }
             result.add(Pair.of(split[0], parseWeightOperation(split[1])));
         }
         return result;
@@ -734,6 +738,10 @@ public class BukkitConfigManager extends ConfigManager {
         List<Pair<String, BiFunction<Context<Player>, Double, Double>>> result = new ArrayList<>();
         for (String gop : gops) {
             String[] split = gop.split(":", 2);
+            if (split.length < 2) {
+                plugin.getPluginLogger().warn("Illegal weight operation: " + gop);
+                continue;
+            }
             BiFunction<Context<Player>, Double, Double> operation = parseWeightOperation(split[1]);
             for (String member : plugin.getLootManager().getGroupMembers(split[0])) {
                 result.add(Pair.of(member, operation));

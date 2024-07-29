@@ -18,6 +18,8 @@
 package net.momirealms.customfishing.api.mechanic.misc.value;
 
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.misc.placeholder.PlaceholderAPIUtils;
+import org.bukkit.OfflinePlayer;
 
 import java.util.regex.Pattern;
 
@@ -39,6 +41,18 @@ public interface TextValue<T> {
      * @return the rendered text as a String
      */
     String render(Context<T> context);
+
+    /**
+     * Renders the text value within the given context.
+     *
+     * @param context the context in which the text value is rendered
+     * @param parseRawPlaceholders whether to parse raw placeholders for instance %xxx%
+     * @return the rendered text as a String
+     */
+    default String render(Context<T> context, boolean parseRawPlaceholders) {
+        if (!parseRawPlaceholders || !(context.getHolder() instanceof OfflinePlayer player)) return render(context);
+        return PlaceholderAPIUtils.parse(player, render(context));
+    }
 
     /**
      * Creates a TextValue based on a placeholder text.

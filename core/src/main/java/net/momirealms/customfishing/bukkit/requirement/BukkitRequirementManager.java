@@ -198,7 +198,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         registerRequirement("competition", (args, actions, runActions) -> {
             if (args instanceof Section section) {
                 boolean onCompetition = section.getBoolean("ongoing", true);
-                List<String> ids = ListUtils.toList(section.get("id"));
+                List<String> ids = section.contains("id") ? ListUtils.toList(section.get("id")) : List.of();
                 return context -> {
                     if (ids.isEmpty()) {
                         if (plugin.getCompetitionManager().getOnGoingCompetition() != null == onCompetition) {
@@ -691,7 +691,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 int current = context.getHolder().getLevel();
-                if (current >= value.evaluate(context))
+                if (current >= value.evaluate(context, true))
                     return true;
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
@@ -704,7 +704,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 double current = VaultHook.getBalance(context.getHolder());
-                if (current >= value.evaluate(context))
+                if (current >= value.evaluate(context, true))
                     return true;
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
@@ -716,7 +716,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         registerRequirement("random", (args, actions, runActions) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
-                if (Math.random() < value.evaluate(context))
+                if (Math.random() < value.evaluate(context, true))
                     return true;
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
@@ -892,7 +892,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
                 return context -> {
-                    if (v1.evaluate(context) < v2.evaluate(context)) return true;
+                    if (v1.evaluate(context, true) < v2.evaluate(context, true)) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -906,7 +906,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
                 return context -> {
-                    if (v1.evaluate(context) <= v2.evaluate(context)) return true;
+                    if (v1.evaluate(context, true) <= v2.evaluate(context, true)) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -920,7 +920,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
                 return context -> {
-                    if (v1.evaluate(context) != v2.evaluate(context)) return true;
+                    if (v1.evaluate(context, true) != v2.evaluate(context, true)) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -934,7 +934,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
                 return context -> {
-                    if (v1.evaluate(context) == v2.evaluate(context)) return true;
+                    if (v1.evaluate(context, true) == v2.evaluate(context, true)) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -948,7 +948,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
                 return context -> {
-                    if (v1.evaluate(context) >= v2.evaluate(context)) return true;
+                    if (v1.evaluate(context, true) >= v2.evaluate(context, true)) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -962,7 +962,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
                 return context -> {
-                    if (v1.evaluate(context) > v2.evaluate(context)) return true;
+                    if (v1.evaluate(context, true) > v2.evaluate(context, true)) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -976,7 +976,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 TextValue<Player> v1 = TextValue.auto(section.getString("papi", ""));
                 String v2 = section.getString("regex", "");
                 return context -> {
-                    if (v1.render(context).matches(v2)) return true;
+                    if (v1.render(context, true).matches(v2)) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -990,7 +990,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
                 return context -> {
-                    if (v1.render(context).startsWith(v2.render(context))) return true;
+                    if (v1.render(context, true).startsWith(v2.render(context, true))) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -1004,7 +1004,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
                 return context -> {
-                    if (!v1.render(context).startsWith(v2.render(context))) return true;
+                    if (!v1.render(context, true).startsWith(v2.render(context, true))) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -1018,7 +1018,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
                 return context -> {
-                    if (v1.render(context).endsWith(v2.render(context))) return true;
+                    if (v1.render(context, true).endsWith(v2.render(context, true))) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -1032,7 +1032,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
                 return context -> {
-                    if (!v1.render(context).endsWith(v2.render(context))) return true;
+                    if (!v1.render(context, true).endsWith(v2.render(context, true))) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -1046,7 +1046,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
                 return context -> {
-                    if (v1.render(context).contains(v2.render(context))) return true;
+                    if (v1.render(context, true).contains(v2.render(context, true))) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -1060,7 +1060,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
                 return context -> {
-                    if (!v1.render(context).contains(v2.render(context))) return true;
+                    if (!v1.render(context, true).contains(v2.render(context, true))) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -1074,7 +1074,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 TextValue<Player> papi = TextValue.auto(section.getString("papi", ""));
                 List<String> values = ListUtils.toList(section.get("values"));
                 return context -> {
-                    if (values.contains(papi.render(context))) return true;
+                    if (values.contains(papi.render(context, true))) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -1088,7 +1088,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 TextValue<Player> papi = TextValue.auto(section.getString("papi", ""));
                 List<String> values = ListUtils.toList(section.get("values"));
                 return context -> {
-                    if (!values.contains(papi.render(context))) return true;
+                    if (!values.contains(papi.render(context, true))) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -1101,8 +1101,9 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
+
                 return context -> {
-                    if (v1.render(context).equals(v2.render(context))) return true;
+                    if (v1.render(context, true).equals(v2.render(context, true))) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -1116,7 +1117,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
                 return context -> {
-                    if (!v1.render(context).equals(v2.render(context))) return true;
+                    if (!v1.render(context, true).equals(v2.render(context, true))) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };

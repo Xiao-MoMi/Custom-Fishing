@@ -256,7 +256,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     for (String text : replaced) {
                         context.getHolder().performCommand(text);
                     }
-                }, context.arg(ContextKeys.LOCATION));
+                }, context.getHolder().getLocation());
             };
         });
         registerAction("random-command", (args, chance) -> {
@@ -268,7 +268,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 String finalRandom = random;
                 plugin.getScheduler().sync().run(() -> {
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), finalRandom);
-                }, context.arg(ContextKeys.LOCATION));
+                }, null);
             };
         });
         registerAction("command-nearby", (args, chance) -> {
@@ -291,7 +291,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                                 }
                             }
                         }
-                    }, location);
+                    }, null);
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at command-nearby action which should be Section");

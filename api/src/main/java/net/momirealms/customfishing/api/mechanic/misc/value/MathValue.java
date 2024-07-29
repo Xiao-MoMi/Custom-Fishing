@@ -37,6 +37,17 @@ public interface MathValue<T> {
     double evaluate(Context<T> context);
 
     /**
+     * Evaluates the mathematical value within the given context.
+     *
+     * @param context the context in which the value is evaluated
+     * @param parseRawPlaceholders whether to parse raw placeholders for instance %xxx%
+     * @return the evaluated value as a double
+     */
+    default double evaluate(Context<T> context, boolean parseRawPlaceholders) {
+        return evaluate(context);
+    }
+
+    /**
      * Creates a MathValue based on a mathematical expression.
      *
      * @param expression the mathematical expression to evaluate

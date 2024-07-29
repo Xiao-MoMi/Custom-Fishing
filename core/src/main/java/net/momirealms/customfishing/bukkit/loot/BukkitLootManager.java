@@ -174,7 +174,7 @@ public class BukkitLootManager implements LootManager {
         String lootID = WeightUtils.getRandom(lootWeightMap);
         return Optional.ofNullable(lootID)
                 .map(id -> getLoot(lootID).orElseThrow(() -> new RuntimeException("Could not find loot " + lootID)))
-                .orElseThrow(() -> new RuntimeException("No loot available. " + context));
+                .orElse(null);
     }
 
     private void modifyWeightMap(Map<String, Double> weightMap, Context<Player> context, ConditionalElement<List<Pair<String, BiFunction<Context<Player>, Double, Double>>>, Player> conditionalElement) {
