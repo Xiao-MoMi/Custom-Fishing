@@ -24,6 +24,7 @@ softdepend:
   - AdvancedEnchantments
   - EcoJobs
   - Zaphkiel
+  - WorldGuard
 permissions:
   fishingbag.user:
     default: true

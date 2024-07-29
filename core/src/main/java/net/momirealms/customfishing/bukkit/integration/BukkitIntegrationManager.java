@@ -35,6 +35,7 @@ import net.momirealms.customfishing.bukkit.integration.papi.StatisticsPapi;
 import net.momirealms.customfishing.bukkit.integration.quest.BattlePassQuest;
 import net.momirealms.customfishing.bukkit.integration.quest.BetonQuestQuest;
 import net.momirealms.customfishing.bukkit.integration.quest.ClueScrollsQuest;
+import net.momirealms.customfishing.bukkit.integration.region.WorldGuardRegion;
 import net.momirealms.customfishing.bukkit.integration.season.AdvancedSeasonsProvider;
 import net.momirealms.customfishing.bukkit.integration.season.CustomCropsSeasonProvider;
 import net.momirealms.customfishing.bukkit.integration.season.RealisticSeasonsProvider;
@@ -42,6 +43,7 @@ import net.momirealms.customfishing.bukkit.item.BukkitItemManager;
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,7 +80,7 @@ public class BukkitIntegrationManager implements IntegrationManager {
         if (isHooked("MMOItems")) {
             registerItemProvider(new MMOItemsItemProvider());
         }
-        if (isHooked("Oraxen")) {
+        if (isHooked("Oraxen", "1")) {
             registerItemProvider(new OraxenItemProvider());
             registerBlockProvider(new OraxenBlockProvider());
         }
@@ -139,8 +141,11 @@ public class BukkitIntegrationManager implements IntegrationManager {
             ClueScrollsQuest clueScrollsQuest = new ClueScrollsQuest();
             clueScrollsQuest.register();
         }
-        if (isHooked("BetonQuest")) {
+        if (isHooked("BetonQuest", "2")) {
             BetonQuestQuest.register();
+        }
+        if (isHooked("WorldGuard", "7")) {
+            WorldGuardRegion.register();
         }
         if (isHooked("PlaceholderAPI")) {
             new CustomFishingPapi(plugin).load();
@@ -153,6 +158,17 @@ public class BukkitIntegrationManager implements IntegrationManager {
         if (Bukkit.getPluginManager().getPlugin(hooked) != null) {
             plugin.getPluginLogger().info(hooked + " hooked!");
             return true;
+        }
+        return false;
+    }
+
+    private boolean isHooked(String hooked, String versionPrefix) {
+        Plugin p = Bukkit.getPluginManager().getPlugin(hooked);
+        if (p != null) {
+            if (p.getDescription().getVersion().startsWith(versionPrefix)) {
+                plugin.getPluginLogger().info(hooked + " hooked!");
+                return true;
+            }
         }
         return false;
     }

@@ -1,5 +1,6 @@
 repositories {
-    maven("https://jitpack.io/") // itemsadder
+    maven("https://maven.enginehub.org/repo/") // worldguard worldedit
+    maven("https://jitpack.io/") // itemsadder customcrops
     maven("https://mvn.lumine.io/repository/maven-public/") // mythicmobs
     maven("https://nexus.phoenixdevt.fr/repository/maven-public/") // mmoitems
     maven("https://papermc.io/repo/repository/maven-public/")
@@ -9,12 +10,12 @@ repositories {
     maven("https://repo.auxilor.io/repository/maven-public/") // eco
     maven("https://nexus.betonquest.org/repository/betonquest/") // betonquest
     maven("https://repo.dmulloy2.net/repository/public/") // betonquest needs packet wrapper?
-    maven("https://maven.enginehub.org/repo/") // worldguard
 }
 
 dependencies {
     compileOnly(project(":common"))
     compileOnly(project(":api"))
+    compileOnly("dev.dejvokep:boosted-yaml:${rootProject.properties["boosted_yaml_version"]}")
     compileOnly("net.kyori:adventure-api:${rootProject.properties["adventure_bundle_version"]}") {
         exclude(module = "adventure-bom")
         exclude(module = "checker-qual")
@@ -58,6 +59,8 @@ dependencies {
     compileOnly("com.willfp:EcoJobs:3.56.1")
     compileOnly("com.willfp:EcoSkills:3.46.1")
     compileOnly("com.willfp:libreforge:4.58.1")
+    // wg we
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9")
 }
 
 java {

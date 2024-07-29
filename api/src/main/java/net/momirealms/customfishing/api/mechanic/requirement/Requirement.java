@@ -34,4 +34,8 @@ public interface Requirement<T> {
      * @return true if the requirement is met, false otherwise
      */
     boolean isSatisfied(Context<T> context);
+
+    static Requirement<?> empty() {
+        return EmptyRequirement.INSTANCE;
+    }
 }

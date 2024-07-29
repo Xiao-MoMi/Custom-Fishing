@@ -32,4 +32,8 @@ public interface Action<T> {
      * @param context the context
      */
     void trigger(Context<T> context);
+
+    static Action<?> empty() {
+        return EmptyAction.INSTANCE;
+    }
 }
