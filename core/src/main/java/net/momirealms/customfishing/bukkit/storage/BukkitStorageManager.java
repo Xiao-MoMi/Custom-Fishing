@@ -274,6 +274,7 @@ public class BukkitStorageManager implements StorageManager, Listener {
             }
             if (triedTimes >= 6) {
                 waitLock(uuid, 3);
+                task.cancel();
                 return;
             }
             redisManager.getPlayerData(uuid, false).thenAccept(optionalData -> {
