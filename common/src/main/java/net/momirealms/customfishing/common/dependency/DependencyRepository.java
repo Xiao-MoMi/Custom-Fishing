@@ -32,7 +32,9 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Represents a repository which contains {@link Dependency}s.
@@ -74,6 +76,10 @@ public enum DependencyRepository {
             if (id.equals(repository.id)) {
                 repositories.add(repository);
             }
+        }
+        // 中国大陆优先使用阿里云镜像
+        if (Locale.getDefault() == Locale.SIMPLIFIED_CHINESE) {
+            Collections.reverse(repositories);
         }
         return repositories;
     }
