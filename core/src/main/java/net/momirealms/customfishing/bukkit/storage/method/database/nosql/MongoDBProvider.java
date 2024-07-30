@@ -152,7 +152,7 @@ public class MongoDBProvider extends AbstractStorage {
             Document query = new Document("uuid", uuid);
             Bson updates = Updates.combine(
                     Updates.set("lock", unlock ? 0 : getCurrentSeconds()),
-                    Updates.set("data", new Binary(plugin.getStorageManager().toBytes(playerData))));
+                    Updates.set("data", new Binary(playerData.toBytes())));
             UpdateOptions options = new UpdateOptions().upsert(true);
             UpdateResult result = collection.updateOne(query, updates, options);
             future.complete(result.wasAcknowledged());

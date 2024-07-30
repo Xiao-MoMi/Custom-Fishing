@@ -193,7 +193,7 @@ public class SQLiteProvider extends AbstractSQLDatabase {
             PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data")))
         ) {
             statement.setInt(1, unlock ? 0 : getCurrentSeconds());
-            statement.setBytes(2, plugin.getStorageManager().toBytes(playerData));
+            statement.setBytes(2, playerData.toBytes());
             statement.setString(3, uuid.toString());
             statement.executeUpdate();
             future.complete(true);

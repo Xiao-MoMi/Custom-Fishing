@@ -168,7 +168,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
             PreparedStatement statement = connection.prepareStatement(String.format(SqlConstants.SQL_UPDATE_BY_UUID, getTableName("data")))
         ) {
             statement.setInt(1, unlock ? 0 : getCurrentSeconds());
-            statement.setBlob(2, new ByteArrayInputStream(plugin.getStorageManager().toBytes(playerData)));
+            statement.setBlob(2, new ByteArrayInputStream(playerData.toBytes()));
             statement.setString(3, uuid.toString());
             statement.executeUpdate();
             future.complete(true);

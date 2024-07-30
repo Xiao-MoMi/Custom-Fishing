@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.storage.data;
 
 import com.google.gson.annotations.SerializedName;
+import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,6 +47,7 @@ public class PlayerData {
     protected EarningData earningData;
     transient private UUID uuid;
     transient private boolean locked;
+    transient private byte[] jsonBytes;
 
     public PlayerData(UUID uuid, String name, StatisticData statisticsData, InventoryData bagData, EarningData earningData, boolean isLocked) {
         this.name = name;
@@ -124,6 +126,13 @@ public class PlayerData {
         }
     }
 
+    public byte[] toBytes() {
+        if (jsonBytes == null) {
+            jsonBytes = BukkitCustomFishingPlugin.getInstance().getStorageManager().toBytes(this);
+        }
+        return jsonBytes;
+    }
+
     /**
      * Gets the statistics data for the player.
      *
@@ -169,6 +178,11 @@ public class PlayerData {
         return locked;
     }
 
+    /**
+     * Set if the data is locked
+     *
+     * @param locked locked or not
+     */
     public void locked(boolean locked) {
         this.locked = locked;
     }
@@ -182,6 +196,11 @@ public class PlayerData {
         return uuid;
     }
 
+    /**
+     * Set the uuid of the data
+     *
+     * @param uuid uuid
+     */
     public void uuid(UUID uuid) {
         this.uuid = uuid;
     }

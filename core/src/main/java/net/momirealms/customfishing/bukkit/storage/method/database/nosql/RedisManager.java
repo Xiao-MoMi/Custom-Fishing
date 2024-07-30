@@ -296,7 +296,7 @@ public class RedisManager extends AbstractStorage {
             jedis.setex(
                     getRedisKey("cf_data", uuid),
                     10,
-                    plugin.getStorageManager().toBytes(playerData)
+                    playerData.toBytes()
             );
             future.complete(true);
         } catch (Exception e) {
