@@ -97,6 +97,6 @@ java {
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
-    options.release.set(17)
+    options.release.set(21)
     dependsOn(tasks.clean)
 }

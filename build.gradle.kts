@@ -37,12 +37,6 @@ subprojects {
     }
 }
 
-configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-}
-
-
 fun versionBanner(): String {
     val os = ByteArrayOutputStream()
     project.exec {
