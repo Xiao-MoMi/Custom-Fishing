@@ -37,7 +37,8 @@ import java.util.stream.Stream;
 
 public class TranslationManager {
 
-    public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
+    private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
+    private static Locale FORCE_LOCALE = null;
     private static final List<String> locales = List.of("en", "zh_cn");
     private static TranslationManager instance;
 
@@ -50,6 +51,10 @@ public class TranslationManager {
         this.plugin = plugin;
         this.translationsDirectory = this.plugin.getConfigDirectory().resolve("translations");
         instance = this;
+    }
+
+    public static void forceLocale(Locale locale) {
+        FORCE_LOCALE = locale;
     }
 
     public void reload() {
@@ -73,6 +78,9 @@ public class TranslationManager {
     }
 
     public static String miniMessageTranslation(String key, @Nullable Locale locale) {
+        if (FORCE_LOCALE != null) {
+            return instance.registry.miniMessageTranslation(key, FORCE_LOCALE);
+        }
         if (locale == null) {
             locale = Locale.getDefault();
             if (locale == null) {
@@ -87,6 +95,9 @@ public class TranslationManager {
     }
 
     public static Component render(Component component, @Nullable Locale locale) {
+        if (FORCE_LOCALE != null) {
+            return MiniMessageTranslator.render(component, FORCE_LOCALE);
+        }
         if (locale == null) {
             locale = Locale.getDefault();
             if (locale == null) {
@@ -134,7 +145,7 @@ public class TranslationManager {
 
         Locale localLocale = Locale.getDefault();
         if (!this.installed.contains(localLocale)) {
-            plugin.getPluginLogger().warn(localLocale.toString().toLowerCase(Locale.ENGLISH) + ".yml not exists, using en.yml as default locale.");
+            plugin.getPluginLogger().warn(localLocale.toString().toLowerCase(Locale.ENGLISH) + ".yml not exists, using " + DEFAULT_LOCALE.toString().toLowerCase(Locale.ENGLISH) + ".yml as default locale.");
         }
     }
 
@@ -185,6 +196,6 @@ public class TranslationManager {
     }
 
     public static @Nullable Locale parseLocale(@Nullable String locale) {
-        return locale == null ? null : Translator.parseLocale(locale);
+        return locale == null || locale.isEmpty() ? null : Translator.parseLocale(locale);
     }
 }

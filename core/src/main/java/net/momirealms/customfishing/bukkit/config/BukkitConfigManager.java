@@ -22,6 +22,7 @@ import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
 import dev.dejvokep.boostedyaml.libs.org.snakeyaml.engine.v2.common.ScalarStyle;
+import dev.dejvokep.boostedyaml.libs.org.snakeyaml.engine.v2.exceptions.ConstructorException;
 import dev.dejvokep.boostedyaml.libs.org.snakeyaml.engine.v2.nodes.Tag;
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
@@ -71,6 +72,7 @@ import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.item.AbstractItem;
 import net.momirealms.customfishing.common.item.Item;
+import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.util.*;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
@@ -259,6 +261,8 @@ public class BukkitConfigManager extends ConfigManager {
                 }
             }
         }
+
+        TranslationManager.forceLocale(TranslationManager.parseLocale(config.getString("force-locale", "")));
     }
 
     private void loadConfigs() {
@@ -279,11 +283,15 @@ public class BukkitConfigManager extends ConfigManager {
                     if (subFile.isDirectory()) {
                         fileDeque.push(subFile);
                     } else if (subFile.isFile() && subFile.getName().endsWith(".yml")) {
-                        YamlDocument document = plugin.getConfigManager().loadData(subFile);
-                        for (Map.Entry<String, Object> entry : document.getStringRouteMappedValues(false).entrySet()) {
-                            if (entry.getValue() instanceof Section section) {
-                                type.parse(entry.getKey(), section, nodes);
+                        try {
+                            YamlDocument document = plugin.getConfigManager().loadData(subFile);
+                            for (Map.Entry<String, Object> entry : document.getStringRouteMappedValues(false).entrySet()) {
+                                if (entry.getValue() instanceof Section section) {
+                                    type.parse(entry.getKey(), section, nodes);
+                                }
                             }
+                        } catch (ConstructorException e) {
+                            plugin.getPluginLogger().warn("Could not load config file: " + subFile.getAbsolutePath() + ". Is it a corrupted file?");
                         }
                     }
                 }

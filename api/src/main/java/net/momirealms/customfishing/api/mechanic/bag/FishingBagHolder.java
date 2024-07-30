@@ -24,6 +24,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -40,7 +41,7 @@ public class FishingBagHolder implements InventoryHolder {
      * @param owner the UUID of the player who owns this fishing bag.
      */
     public FishingBagHolder(UUID owner) {
-        this.owner = owner;
+        this.owner = Objects.requireNonNull(owner, "uuid should be nonnull");
     }
 
     /**

@@ -7,6 +7,8 @@ debug: false
 metrics: true
 # Check updates
 update-checker: true
+# Force locale, for instance zh_cn
+force-locale: ''
 
 # Mechanic settings
 mechanics:

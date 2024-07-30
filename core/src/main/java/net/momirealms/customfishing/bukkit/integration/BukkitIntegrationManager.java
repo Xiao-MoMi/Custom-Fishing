@@ -90,7 +90,7 @@ public class BukkitIntegrationManager implements IntegrationManager {
         if (isHooked("NeigeItems")) {
             registerItemProvider(new NeigeItemsItemProvider());
         }
-        if (isHooked("MythicMobs")) {
+        if (isHooked("MythicMobs", "5")) {
             registerItemProvider(new MythicMobsItemProvider());
             registerEntityProvider(new MythicEntityProvider());
         }
@@ -127,7 +127,7 @@ public class BukkitIntegrationManager implements IntegrationManager {
             registerSeasonProvider(new RealisticSeasonsProvider());
         } else if (isHooked("AdvancedSeasons")) {
             registerSeasonProvider(new AdvancedSeasonsProvider());
-        } else if (isHooked("CustomCrops")) {
+        } else if (isHooked("CustomCrops", "3.4", "3.5", "3.6")) {
             registerSeasonProvider(new CustomCropsSeasonProvider());
         }
         if (isHooked("Vault")) {
@@ -162,12 +162,15 @@ public class BukkitIntegrationManager implements IntegrationManager {
         return false;
     }
 
-    private boolean isHooked(String hooked, String versionPrefix) {
+    private boolean isHooked(String hooked, String... versionPrefix) {
         Plugin p = Bukkit.getPluginManager().getPlugin(hooked);
         if (p != null) {
-            if (p.getDescription().getVersion().startsWith(versionPrefix)) {
-                plugin.getPluginLogger().info(hooked + " hooked!");
-                return true;
+            String ver = p.getDescription().getVersion();
+            for (String prefix : versionPrefix) {
+                if (ver.startsWith(prefix)) {
+                    plugin.getPluginLogger().info(hooked + " hooked!");
+                    return true;
+                }
             }
         }
         return false;
