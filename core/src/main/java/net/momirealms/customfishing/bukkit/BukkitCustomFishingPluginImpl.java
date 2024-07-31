@@ -116,9 +116,9 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.senderFactory = new BukkitSenderFactory(this);
         this.placeholderManager = new BukkitPlaceholderManager(this);
         this.itemManager = new BukkitItemManager(this);
-        this.competitionManager = new BukkitCompetitionManager(this);
         this.marketManager = new BukkitMarketManager(this);
         this.storageManager = new BukkitStorageManager(this);
+        this.competitionManager = new BukkitCompetitionManager(this);
         this.lootManager = new BukkitLootManager(this);
         this.coolDownManager = new CoolDownManager(this);
         this.entityManager = new BukkitEntityManager(this);

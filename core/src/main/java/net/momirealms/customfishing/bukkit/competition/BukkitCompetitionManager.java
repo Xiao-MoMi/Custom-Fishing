@@ -35,6 +35,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class BukkitCompetitionManager implements CompetitionManager {
@@ -45,14 +46,22 @@ public class BukkitCompetitionManager implements CompetitionManager {
     private Competition currentCompetition;
     private SchedulerTask timerCheckTask;
     private int nextCompetitionSeconds;
+    private boolean hasRedis;
+    private int interval;
+    private final UUID identifier;
+    private final HashMap<UUID, PlayerCount> playerCountMap;
 
     public BukkitCompetitionManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
+        this.identifier = UUID.randomUUID();
         this.timeConfigMap = new HashMap<>();
         this.commandConfigMap = new HashMap<>();
+        this.playerCountMap = new HashMap<>();
     }
 
     public void load() {
+        this.interval = 10;
+        this.hasRedis = plugin.getStorageManager().isRedisEnabled();
         this.timerCheckTask = plugin.getScheduler().asyncRepeating(
                 this::timerCheck,
                 1,
@@ -60,6 +69,10 @@ public class BukkitCompetitionManager implements CompetitionManager {
                 TimeUnit.SECONDS
         );
         plugin.debug("Loaded " + commandConfigMap.size() + " competitions");
+
+        if (hasRedis) {
+            new RedisPlayerCount(this.interval);
+        }
     }
 
     public void unload() {
@@ -139,7 +152,7 @@ public class BukkitCompetitionManager implements CompetitionManager {
     @Override
     public boolean startCompetition(CompetitionConfig config, boolean force, @Nullable String serverGroup) {
         if (!force) {
-            int players = Bukkit.getOnlinePlayers().size();
+            int players = onlinePlayerCountProvider();
             if (players < config.minPlayersToStart()) {
                 ActionManager.trigger(Context.player(null), config.skipActions());
                 return false;
@@ -197,5 +210,51 @@ public class BukkitCompetitionManager implements CompetitionManager {
     @Override
     public Collection<String> getCompetitionIDs() {
         return commandConfigMap.keySet();
+    }
+
+    @Override
+    public int onlinePlayerCountProvider() {
+        int count = Bukkit.getOnlinePlayers().size();
+        if (hasRedis) {
+            for (UUID uuid : playerCountMap.keySet()) {
+                PlayerCount playerCount = playerCountMap.get(uuid);
+                if ((System.currentTimeMillis() - playerCount.time) < interval * 1000L + 1000L) {
+                    count += playerCount.count;
+                } else {
+                    playerCountMap.remove(uuid);
+                }
+            }
+        }
+        return count;
+    }
+
+    @Override
+    public void updatePlayerCount(UUID uuid, int count) {
+        playerCountMap.put(uuid, new PlayerCount(count, System.currentTimeMillis()));
+    }
+
+    private class RedisPlayerCount implements Runnable {
+        public RedisPlayerCount(int interval) {
+            plugin.getScheduler().asyncRepeating(this, 0, interval, TimeUnit.SECONDS);
+        }
+
+        @Override
+        public void run() {
+            ByteArrayDataOutput out = ByteStreams.newDataOutput();
+            out.writeUTF("online");
+            out.writeUTF(String.valueOf(identifier));
+            out.writeUTF(String.valueOf(Bukkit.getOnlinePlayers().size()));
+            RedisManager.getInstance().publishRedisMessage(Arrays.toString(out.toByteArray()));
+        }
+    }
+
+    private static class PlayerCount {
+        int count;
+        long time;
+
+        public PlayerCount(int count, long time) {
+            this.count = count;
+            this.time = time;
+        }
     }
 }

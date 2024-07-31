@@ -205,6 +205,12 @@ public class RedisManager extends AbstractStorage {
                 }
             }
         }
+        if (type.equals("online")) {
+            plugin.getCompetitionManager().updatePlayerCount(
+                    UUID.fromString(input.readUTF()),
+                    Integer.parseInt(input.readUTF())
+            );
+        }
     }
 
     @Override

@@ -21,6 +21,7 @@ import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.UUID;
 
 /**
  * Interface for managing fishing competitions.
@@ -84,4 +85,17 @@ public interface CompetitionManager extends Reloadable {
      * @return a collection of competition IDs.
      */
     Collection<String> getCompetitionIDs();
+
+    /**
+     * Count the online players.
+     */
+    int onlinePlayerCountProvider();
+
+    /**
+     * Updates the player count for a specific UUID.
+     *
+     * @param uuid the UUID of the server.
+     * @param count the new player count.
+     */
+    void updatePlayerCount(UUID uuid, int count);
 }
