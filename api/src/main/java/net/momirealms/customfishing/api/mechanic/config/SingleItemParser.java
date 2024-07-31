@@ -41,6 +41,10 @@ public class SingleItemParser {
 
     public SingleItemParser(String id, Section section, Map<String, Node<ConfigParserFunction>> functionMap) {
         this.id = id;
+        if (section == null) {
+            this.material = "AIR";
+            return;
+        }
         this.material = section.getString("material");
         analyze(section, functionMap);
     }

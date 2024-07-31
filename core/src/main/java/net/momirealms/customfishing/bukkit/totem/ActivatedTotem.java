@@ -41,15 +41,16 @@ public class ActivatedTotem {
     private final double radius;
 
     public ActivatedTotem(Player activator, Location coreLocation, TotemConfig config) {
+        this.coreLocation = coreLocation.clone().add(0.5,0.5,0.5);
         this.context = Context.player(activator, true)
-                .arg(ContextKeys.LOCATION, coreLocation)
+                .arg(ContextKeys.LOCATION, this.coreLocation)
+                .arg(ContextKeys.OTHER_LOCATION, this.coreLocation)
                 .arg(ContextKeys.X, coreLocation.getBlockX())
                 .arg(ContextKeys.Y, coreLocation.getBlockY())
                 .arg(ContextKeys.Z, coreLocation.getBlockZ())
                 .arg(ContextKeys.ID, config.id());
         this.subTasks = new ArrayList<>();
         this.expireTime = (long) (System.currentTimeMillis() + config.duration().evaluate(context) * 1000L);
-        this.coreLocation = coreLocation.clone().add(0.5,0,0.5);
         this.totemConfig = config;
         this.radius = config.radius().evaluate(context);
         for (TotemParticle particleSetting : config.particleSettings()) {
