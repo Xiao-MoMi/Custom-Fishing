@@ -364,7 +364,7 @@ public class RedisManager extends AbstractStorage {
         public BlockingThreadTask() {
             Thread thread = new Thread(() -> {
                 var map = new HashMap<String, StreamEntryID>();
-                map.put(getStream(), StreamEntryID.LAST_ENTRY);
+                map.put(getStream(), StreamEntryID.XREAD_NEW_ENTRY);
                 while (!this.stopped) {
                     try {
                         var connection = getJedis();
