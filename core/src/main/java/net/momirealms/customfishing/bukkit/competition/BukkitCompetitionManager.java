@@ -81,6 +81,8 @@ public class BukkitCompetitionManager implements CompetitionManager {
             this.timerCheckTask.cancel();
         if (currentCompetition != null && currentCompetition.isOnGoing())
             this.currentCompetition.stop(true);
+        if (this.redisPlayerCount != null)
+            this.redisPlayerCount.cancel();
         this.commandConfigMap.clear();
         this.timeConfigMap.clear();
     }
@@ -91,7 +93,8 @@ public class BukkitCompetitionManager implements CompetitionManager {
         if (currentCompetition != null && currentCompetition.isOnGoing())
             this.currentCompetition.stop(false);
         if (this.redisPlayerCount != null)
-            this.commandConfigMap.clear();
+            this.redisPlayerCount.cancel();
+        this.commandConfigMap.clear();
         this.timeConfigMap.clear();
     }
 
