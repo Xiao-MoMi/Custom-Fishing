@@ -71,9 +71,16 @@ public class BukkitCompetitionManager implements CompetitionManager {
         );
         plugin.debug("Loaded " + commandConfigMap.size() + " competitions");
 
-        this.redisPlayerCount = hasRedis ?
-                (this.redisPlayerCount == null ? new RedisPlayerCount(this.interval) : this.redisPlayerCount) :
-                (this.redisPlayerCount != null ? (this.redisPlayerCount.cancel(), null) : null);
+        if (hasRedis) {
+            this.redisPlayerCount = this.redisPlayerCount == null ?
+                                    new RedisPlayerCount(this.interval) :
+                                    this.redisPlayerCount;
+        } else {
+            if (this.redisPlayerCount != null) {
+                this.redisPlayerCount.cancel();
+                this.redisPlayerCount = null;
+            }
+        }
     }
 
     public void unload() {
