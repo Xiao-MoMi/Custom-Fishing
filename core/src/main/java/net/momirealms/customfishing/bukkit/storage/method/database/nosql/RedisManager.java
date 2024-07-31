@@ -17,8 +17,6 @@
 
 package net.momirealms.customfishing.bukkit.storage.method.database.nosql;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteStreams;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
@@ -32,6 +30,9 @@ import redis.clients.jedis.exceptions.JedisException;
 import redis.clients.jedis.params.XReadParams;
 import redis.clients.jedis.resps.StreamEntry;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.*;
@@ -175,7 +176,11 @@ public class RedisManager extends AbstractStorage {
                         if (!channel.equals(getStream())) {
                             return;
                         }
-                        handleMessage(message);
+                        try {
+                            handleMessage(message);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, getStream());
             }
@@ -183,8 +188,8 @@ public class RedisManager extends AbstractStorage {
         thread.start();
     }
 
-    private void handleMessage(String message) {
-        ByteArrayDataInput input = ByteStreams.newDataInput(message.getBytes(StandardCharsets.UTF_8));
+    private void handleMessage(String message) throws IOException {
+        DataInputStream input = new DataInputStream(new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8)));
         String server = input.readUTF();
         if (!ConfigManager.serverGroup().equals(server))
             return;
@@ -209,7 +214,7 @@ public class RedisManager extends AbstractStorage {
             case "online" -> {
                 plugin.getCompetitionManager().updatePlayerCount(
                         UUID.fromString(input.readUTF()),
-                        Integer.parseInt(input.readUTF())
+                        input.readInt()
                 );
             }
         }
@@ -375,7 +380,11 @@ public class RedisManager extends AbstractStorage {
                                 for (Map.Entry<String, List<StreamEntry>> message : messages) {
                                     if (message.getKey().equals(getStream())) {
                                         var value = message.getValue().get(0).getFields().get("value");
-                                        handleMessage(value);
+                                        try {
+                                            handleMessage(value);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
                                     }
                                 }
                             }

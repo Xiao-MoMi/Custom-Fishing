@@ -17,8 +17,6 @@
 
 package net.momirealms.customfishing.bukkit.competition;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.ActionManager;
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionConfig;
@@ -32,6 +30,10 @@ import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,6 +62,7 @@ public class BukkitCompetitionManager implements CompetitionManager {
         this.redisPlayerCount = null;
     }
 
+    @Override
     public void load() {
         this.interval = 10;
         this.hasRedis = plugin.getStorageManager().isRedisEnabled();
@@ -72,9 +75,9 @@ public class BukkitCompetitionManager implements CompetitionManager {
         plugin.debug("Loaded " + commandConfigMap.size() + " competitions");
 
         if (hasRedis) {
-            this.redisPlayerCount = this.redisPlayerCount == null ?
-                                    new RedisPlayerCount(this.interval) :
-                                    this.redisPlayerCount;
+            if (this.redisPlayerCount == null) {
+                this.redisPlayerCount = new RedisPlayerCount(this.interval);
+            }
         } else {
             if (this.redisPlayerCount != null) {
                 this.redisPlayerCount.cancel();
@@ -83,6 +86,7 @@ public class BukkitCompetitionManager implements CompetitionManager {
         }
     }
 
+    @Override
     public void unload() {
         if (this.timerCheckTask != null)
             this.timerCheckTask.cancel();
@@ -94,13 +98,16 @@ public class BukkitCompetitionManager implements CompetitionManager {
         this.timeConfigMap.clear();
     }
 
+    @Override
     public void disable() {
         if (this.timerCheckTask != null)
             this.timerCheckTask.cancel();
         if (currentCompetition != null && currentCompetition.isOnGoing())
             this.currentCompetition.stop(false);
-        if (this.redisPlayerCount != null)
+        if (this.redisPlayerCount != null) {
             this.redisPlayerCount.cancel();
+            this.redisPlayerCount = null;
+        }
         this.commandConfigMap.clear();
         this.timeConfigMap.clear();
     }
@@ -175,13 +182,18 @@ public class BukkitCompetitionManager implements CompetitionManager {
             start(config);
             return true;
         } else {
-            ByteArrayDataOutput out = ByteStreams.newDataOutput();
-            out.writeUTF(serverGroup);
-            out.writeUTF("competition");
-            out.writeUTF("start");
-            out.writeUTF(config.id());
-            RedisManager.getInstance().publishRedisMessage(Arrays.toString(out.toByteArray()));
-            return true;
+            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                 DataOutputStream out = new DataOutputStream(byteArrayOutputStream)) {
+                out.writeUTF(serverGroup);
+                out.writeUTF("competition");
+                out.writeUTF("start");
+                out.writeUTF(config.id());
+                RedisManager.getInstance().publishRedisMessage(byteArrayOutputStream.toString(StandardCharsets.UTF_8));
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
         }
     }
 
@@ -226,12 +238,12 @@ public class BukkitCompetitionManager implements CompetitionManager {
 
     @Override
     public int onlinePlayerCountProvider() {
-        int count = Bukkit.getOnlinePlayers().size();
         if (hasRedis) {
+            int count = 0;
             List<UUID> toRemove = new ArrayList<>();
             for (Map.Entry<UUID, PlayerCount> entry : playerCountMap.entrySet()) {
                 PlayerCount playerCount = entry.getValue();
-                if ((System.currentTimeMillis() - playerCount.time) < interval * 1000L + 1000L) {
+                if ((System.currentTimeMillis() - playerCount.time) < interval * 1000L + 2333L) {
                     count += playerCount.count;
                 } else {
                     toRemove.add(entry.getKey());
@@ -240,10 +252,11 @@ public class BukkitCompetitionManager implements CompetitionManager {
             for (UUID uuid : toRemove) {
                 playerCountMap.remove(uuid);
             }
+            return count;
+        } else {
+            return Bukkit.getOnlinePlayers().size();
         }
-        return count;
     }
-
 
     @Override
     public void updatePlayerCount(UUID uuid, int count) {
@@ -254,17 +267,21 @@ public class BukkitCompetitionManager implements CompetitionManager {
         private final SchedulerTask task;
 
         public RedisPlayerCount(int interval) {
-            task = plugin.getScheduler().asyncRepeating(this, 0, interval, TimeUnit.SECONDS);
+            task = plugin.getScheduler().asyncRepeating(this, interval, interval, TimeUnit.SECONDS);
         }
 
         @Override
         public void run() {
-            ByteArrayDataOutput out = ByteStreams.newDataOutput();
-            out.writeUTF(ConfigManager.serverGroup());
-            out.writeUTF("online");
-            out.writeUTF(String.valueOf(identifier));
-            out.writeUTF(String.valueOf(Bukkit.getOnlinePlayers().size()));
-            RedisManager.getInstance().publishRedisMessage(Arrays.toString(out.toByteArray()));
+            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                 DataOutputStream out = new DataOutputStream(byteArrayOutputStream)) {
+                out.writeUTF(ConfigManager.serverGroup());
+                out.writeUTF("online");
+                out.writeUTF(String.valueOf(identifier));
+                out.writeInt(Bukkit.getOnlinePlayers().size());
+                RedisManager.getInstance().publishRedisMessage(byteArrayOutputStream.toString(StandardCharsets.UTF_8));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         public void cancel() {
