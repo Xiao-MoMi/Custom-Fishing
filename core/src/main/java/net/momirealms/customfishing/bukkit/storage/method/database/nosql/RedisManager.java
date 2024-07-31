@@ -189,20 +189,28 @@ public class RedisManager extends AbstractStorage {
         if (!ConfigManager.serverGroup().equals(server))
             return;
         String type = input.readUTF();
-        if (type.equals("competition")) {
-            String action = input.readUTF();
-            switch (action) {
-                case "start" -> {
-                    plugin.getCompetitionManager().startCompetition(input.readUTF(), true, null);
+        switch (type) {
+            case "competition" -> {
+                String action = input.readUTF();
+                switch (action) {
+                    case "start" -> {
+                        plugin.getCompetitionManager().startCompetition(input.readUTF(), true, null);
+                    }
+                    case "end" -> {
+                        if (plugin.getCompetitionManager().getOnGoingCompetition() != null)
+                            plugin.getCompetitionManager().getOnGoingCompetition().end(true);
+                    }
+                    case "stop" -> {
+                        if (plugin.getCompetitionManager().getOnGoingCompetition() != null)
+                            plugin.getCompetitionManager().getOnGoingCompetition().stop(true);
+                    }
                 }
-                case "end" -> {
-                    if (plugin.getCompetitionManager().getOnGoingCompetition() != null)
-                        plugin.getCompetitionManager().getOnGoingCompetition().end(true);
-                }
-                case "stop" -> {
-                    if (plugin.getCompetitionManager().getOnGoingCompetition() != null)
-                        plugin.getCompetitionManager().getOnGoingCompetition().stop(true);
-                }
+            }
+            case "online" -> {
+                plugin.getCompetitionManager().updatePlayerCount(
+                        UUID.fromString(input.readUTF()),
+                        Integer.parseInt(input.readUTF())
+                );
             }
         }
     }
