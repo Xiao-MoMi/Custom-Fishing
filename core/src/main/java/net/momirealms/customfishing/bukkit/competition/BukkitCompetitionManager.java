@@ -47,7 +47,6 @@ public class BukkitCompetitionManager implements CompetitionManager {
     private Competition currentCompetition;
     private SchedulerTask timerCheckTask;
     private int nextCompetitionSeconds;
-    private boolean hasRedis;
     private int interval;
     private final UUID identifier;
     private final ConcurrentHashMap<UUID, PlayerCount> playerCountMap;
@@ -65,7 +64,6 @@ public class BukkitCompetitionManager implements CompetitionManager {
     @Override
     public void load() {
         this.interval = 10;
-        this.hasRedis = plugin.getStorageManager().isRedisEnabled();
         this.timerCheckTask = plugin.getScheduler().asyncRepeating(
                 this::timerCheck,
                 1,
@@ -74,7 +72,7 @@ public class BukkitCompetitionManager implements CompetitionManager {
         );
         plugin.debug("Loaded " + commandConfigMap.size() + " competitions");
 
-        if (hasRedis) {
+        if (ConfigManager.redisRanking()) {
             if (this.redisPlayerCount == null) {
                 this.redisPlayerCount = new RedisPlayerCount(this.interval);
             }
@@ -238,7 +236,7 @@ public class BukkitCompetitionManager implements CompetitionManager {
 
     @Override
     public int onlinePlayerCountProvider() {
-        if (hasRedis) {
+        if (ConfigManager.redisRanking()) {
             int count = 0;
             List<UUID> toRemove = new ArrayList<>();
             for (Map.Entry<UUID, PlayerCount> entry : playerCountMap.entrySet()) {
