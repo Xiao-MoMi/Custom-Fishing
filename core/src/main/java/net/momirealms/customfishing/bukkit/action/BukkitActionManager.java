@@ -209,23 +209,20 @@ public class BukkitActionManager implements ActionManager<Player> {
                     double realRange = range.evaluate(context);
                     Player owner = context.getHolder();
                     Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
-                    plugin.getScheduler().sync().run(() -> {
-                        for (Entity player : location.getWorld().getNearbyEntities(location, realRange, realRange, realRange, entity -> entity instanceof Player)) {
-                            double distance = LocationUtils.getDistance(player.getLocation(), location);
-                            if (distance <= realRange) {
-                                context.arg(ContextKeys.TEMP_NEAR_PLAYER, player.getName());
-                                List<String> replaced = BukkitPlaceholderManager.getInstance().parse(
-                                        owner,
-                                        messages,
-                                        context.placeholderMap()
-                                );
-                                Audience audience = plugin.getSenderFactory().getAudience(player);
-                                for (String text : replaced) {
-                                    audience.sendMessage(AdventureHelper.miniMessage(text));
-                                }
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        if (LocationUtils.getDistance(player.getLocation(), location) <= realRange) {
+                            context.arg(ContextKeys.TEMP_NEAR_PLAYER, player.getName());
+                            List<String> replaced = BukkitPlaceholderManager.getInstance().parse(
+                                    owner,
+                                    messages,
+                                    context.placeholderMap()
+                            );
+                            Audience audience = plugin.getSenderFactory().getAudience(player);
+                            for (String text : replaced) {
+                                audience.sendMessage(AdventureHelper.miniMessage(text));
                             }
                         }
-                    }, location);
+                    }
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at message-nearby action which should be Section");
@@ -280,18 +277,15 @@ public class BukkitActionManager implements ActionManager<Player> {
                     Player owner = context.getHolder();
                     double realRange = range.evaluate(context);
                     Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
-                    plugin.getScheduler().sync().run(() -> {
-                        for (Entity player : location.getWorld().getNearbyEntities(location, realRange, realRange, realRange, entity -> entity instanceof Player)) {
-                            double distance = LocationUtils.getDistance(player.getLocation(), location);
-                            if (distance <= realRange) {
-                                context.arg(ContextKeys.TEMP_NEAR_PLAYER, player.getName());
-                                List<String> replaced = BukkitPlaceholderManager.getInstance().parse(owner, cmd, context.placeholderMap());
-                                for (String text : replaced) {
-                                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), text);
-                                }
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        if (LocationUtils.getDistance(player.getLocation(), location) <= realRange) {
+                            context.arg(ContextKeys.TEMP_NEAR_PLAYER, player.getName());
+                            List<String> replaced = BukkitPlaceholderManager.getInstance().parse(owner, cmd, context.placeholderMap());
+                            for (String text : replaced) {
+                                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), text);
                             }
                         }
-                    }, null);
+                    }
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at command-nearby action which should be Section");
@@ -336,18 +330,14 @@ public class BukkitActionManager implements ActionManager<Player> {
                     Player owner = context.getHolder();
                     Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
                     double realRange = range.evaluate(context);
-                    plugin.getScheduler().sync().run(() -> {
-                                for (Entity player : location.getWorld().getNearbyEntities(location, realRange, realRange, realRange, entity -> entity instanceof Player)) {
-                                    double distance = LocationUtils.getDistance(player.getLocation(), location);
-                                    if (distance <= realRange) {
-                                        context.arg(ContextKeys.TEMP_NEAR_PLAYER, player.getName());
-                                        String replaced = plugin.getPlaceholderManager().parse(owner, actionbar, context.placeholderMap());
-                                        Audience audience = plugin.getSenderFactory().getAudience(player);
-                                        audience.sendActionBar(AdventureHelper.miniMessage(replaced));
-                                    }
-                                }
-                            }, location
-                    );
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        if (LocationUtils.getDistance(player.getLocation(), location) <= realRange) {
+                            context.arg(ContextKeys.TEMP_NEAR_PLAYER, player.getName());
+                            String replaced = plugin.getPlaceholderManager().parse(owner, actionbar, context.placeholderMap());
+                            Audience audience = plugin.getSenderFactory().getAudience(player);
+                            audience.sendActionBar(AdventureHelper.miniMessage(replaced));
+                        }
+                    }
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at actionbar-nearby action which should be Section");
@@ -756,21 +746,17 @@ public class BukkitActionManager implements ActionManager<Player> {
                 return context -> {
                     if (Math.random() > chance) return;
                     Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
-                    plugin.getScheduler().sync().run(() -> {
-                            for (Entity player : location.getWorld().getNearbyEntities(location, range, range, range, entity -> entity instanceof Player)) {
-                                double distance = LocationUtils.getDistance(player.getLocation(), location);
-                                if (distance <= range) {
-                                    context.arg(ContextKeys.TEMP_NEAR_PLAYER, player.getName());
-                                    Audience audience = plugin.getSenderFactory().getAudience(player);
-                                    AdventureHelper.sendTitle(audience,
-                                            AdventureHelper.miniMessage(title.render(context)),
-                                            AdventureHelper.miniMessage(subtitle.render(context)),
-                                            fadeIn, stay, fadeOut
-                                    );
-                                }
-                            }
-                        }, location
-                    );
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        if (LocationUtils.getDistance(player.getLocation(), location) <= range) {
+                            context.arg(ContextKeys.TEMP_NEAR_PLAYER, player.getName());
+                            Audience audience = plugin.getSenderFactory().getAudience(player);
+                            AdventureHelper.sendTitle(audience,
+                                    AdventureHelper.miniMessage(title.render(context)),
+                                    AdventureHelper.miniMessage(subtitle.render(context)),
+                                    fadeIn, stay, fadeOut
+                            );
+                        }
+                    }
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at title-nearby action which is expected to be `Section`");
@@ -806,10 +792,9 @@ public class BukkitActionManager implements ActionManager<Player> {
                     armorStand.equipment(EquipmentSlot.HEAD, plugin.getItemManager().buildInternal(context, finalItemID));
                     ArrayList<Player> viewers = new ArrayList<>();
                     if (range > 0) {
-                        for (Entity player : location.getWorld().getNearbyEntities(location, range, range, range, entity -> entity instanceof Player)) {
-                            double distance = LocationUtils.getDistance(player.getLocation(), location);
-                            if (distance <= range) {
-                                viewers.add((Player) player);
+                        for (Player player : Bukkit.getOnlinePlayers()) {
+                            if (LocationUtils.getDistance(player.getLocation(), location) <= range) {
+                                viewers.add(player);
                             }
                         }
                     } else {
@@ -854,10 +839,9 @@ public class BukkitActionManager implements ActionManager<Player> {
                     armorStand.name(AdventureHelper.miniMessageToJson(text.render(context)));
                     ArrayList<Player> viewers = new ArrayList<>();
                     if (range > 0) {
-                        for (Entity player : location.getWorld().getNearbyEntities(location, range, range, range, entity -> entity instanceof Player)) {
-                            double distance = LocationUtils.getDistance(player.getLocation(), location);
-                            if (distance <= range) {
-                                viewers.add((Player) player);
+                        for (Player player : Bukkit.getOnlinePlayers()) {
+                            if (LocationUtils.getDistance(player.getLocation(), location) <= range) {
+                                viewers.add(player);
                             }
                         }
                     } else {

@@ -60,7 +60,8 @@ public class MongoDBProvider extends AbstractStorage {
         var settings = MongoClientSettings.builder().uuidRepresentation(UuidRepresentation.STANDARD);
         if (!section.getString("connection-uri", "").equals("")) {
             settings.applyConnectionString(new ConnectionString(section.getString("connection-uri", "")));
-            mongoClient = MongoClients.create(settings.build());
+            this.mongoClient = MongoClients.create(settings.build());
+            this.database = mongoClient.getDatabase(section.getString("database", "minecraft"));
             return;
         }
 
