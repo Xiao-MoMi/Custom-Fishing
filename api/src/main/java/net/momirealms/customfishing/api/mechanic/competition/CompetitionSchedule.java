@@ -17,7 +17,9 @@
 
 package net.momirealms.customfishing.api.mechanic.competition;
 
-public class CompetitionSchedule {
+import org.jetbrains.annotations.NotNull;
+
+public class CompetitionSchedule implements Comparable<CompetitionSchedule> {
 
     private final int weekday;
     private final int hour;
@@ -121,5 +123,20 @@ public class CompetitionSchedule {
         if (minute != other.minute)
             return false;
         return true;
+    }
+
+    @Override
+    public int compareTo(CompetitionSchedule other) {
+        int result = Integer.compare(weekday, other.weekday);
+        if (result == 0) {
+            result = Integer.compare(hour, other.hour);
+        }
+        if (result == 0) {
+            result = Integer.compare(minute, other.minute);
+        }
+        if (result == 0) {
+            result = Integer.compare(second, other.second);
+        }
+        return result;
     }
 }

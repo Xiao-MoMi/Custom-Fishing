@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 public class BukkitCompetitionManager implements CompetitionManager {
 
     private final BukkitCustomFishingPlugin plugin;
-    private final HashMap<CompetitionSchedule, CompetitionConfig> timeConfigMap;
+    private final NavigableMap<CompetitionSchedule, CompetitionConfig> timeConfigMap;
     private final HashMap<String, CompetitionConfig> commandConfigMap;
     private Competition currentCompetition;
     private SchedulerTask timerCheckTask;
@@ -55,7 +55,7 @@ public class BukkitCompetitionManager implements CompetitionManager {
     public BukkitCompetitionManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.identifier = UUID.randomUUID();
-        this.timeConfigMap = new HashMap<>();
+        this.timeConfigMap = new TreeMap<>();
         this.commandConfigMap = new HashMap<>();
         this.playerCountMap = new ConcurrentHashMap<>();
         this.redisPlayerCount = null;
@@ -135,9 +135,17 @@ public class BukkitCompetitionManager implements CompetitionManager {
         );
         int seconds = competitionSchedule.getTotalSeconds();
         int nextCompetitionTime = 7 * 24 * 60 * 60;
-        for (CompetitionSchedule schedule : timeConfigMap.keySet()) {
-            nextCompetitionTime = Math.min(nextCompetitionTime, schedule.getTimeDelta(seconds));
+
+        Map.Entry<CompetitionSchedule, CompetitionConfig> floorEntry = timeConfigMap.floorEntry(competitionSchedule);
+        Map.Entry<CompetitionSchedule, CompetitionConfig> ceilingEntry = timeConfigMap.ceilingEntry(competitionSchedule);
+
+        if (floorEntry != null) {
+            nextCompetitionTime = Math.min(nextCompetitionTime, floorEntry.getKey().getTimeDelta(seconds));
         }
+        if (ceilingEntry != null) {
+            nextCompetitionTime = Math.min(nextCompetitionTime, ceilingEntry.getKey().getTimeDelta(seconds));
+        }
+
         this.nextCompetitionSeconds = nextCompetitionTime;
         CompetitionConfig config = timeConfigMap.get(competitionSchedule);
         if (config != null) {
