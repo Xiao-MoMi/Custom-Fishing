@@ -414,17 +414,17 @@ public class BukkitItemManager implements ItemManager, Listener {
     @EventHandler (ignoreCancelled = true)
     public void onBreakBlock(BlockBreakEvent event) {
         final Block block = event.getBlock();
-        if (event.getPlayer().getGameMode() == GameMode.CREATIVE)
-            return;
         if (block.getState() instanceof Skull) {
             PersistentDataContainer pdc = block.getChunk().getPersistentDataContainer();
             NamespacedKey key = new NamespacedKey(plugin.getBoostrap(), LocationUtils.toChunkPosString(block.getLocation()));
             String base64 = pdc.get(key, PersistentDataType.STRING);
             if (base64 != null) {
+                pdc.remove(key);
+                if (event.getPlayer().getGameMode() == GameMode.CREATIVE)
+                    return;
                 ItemStack itemStack = ItemStackUtils.fromBase64(base64);
                 event.setDropItems(false);
                 block.getLocation().getWorld().dropItemNaturally(block.getLocation(), itemStack);
-                pdc.remove(key);
             }
         }
     }

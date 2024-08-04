@@ -241,7 +241,8 @@ public class BukkitBlockManager implements BlockManager, Listener {
         }
         Location hookLocation = requireNonNull(context.arg(ContextKeys.OTHER_LOCATION));
         Location playerLocation = requireNonNull(context.getHolder()).getLocation();
-        FallingBlock fallingBlock = hookLocation.getWorld().spawn(hookLocation, FallingBlock.class, (fb -> fb.setBlockData(blockData)));
+        FallingBlock fallingBlock = hookLocation.getWorld().spawn(hookLocation, FallingBlock.class);
+        fallingBlock.setBlockData(blockData);
         fallingBlock.getPersistentDataContainer().set(
                 requireNonNull(NamespacedKey.fromString("block", plugin.getBoostrap())),
                 PersistentDataType.STRING,
