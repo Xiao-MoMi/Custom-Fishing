@@ -46,7 +46,6 @@ import net.momirealms.sparrow.heart.feature.armorstand.FakeArmorStand;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -403,7 +402,12 @@ public class BukkitActionManager implements ActionManager<Player> {
                 return context -> {
                     if (Math.random() > chance) return;
                     Player player = context.getHolder();
-                    ItemStack itemStack = mainOrOff ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
+                    boolean tempHand = mainOrOff;
+                    EquipmentSlot hand = context.arg(ContextKeys.SLOT);
+                    if (hand == EquipmentSlot.OFF_HAND || hand == EquipmentSlot.HAND) {
+                        tempHand = hand == EquipmentSlot.HAND;
+                    }
+                    ItemStack itemStack = tempHand ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
                     itemStack.setAmount(Math.max(0, itemStack.getAmount() + amount));
                 };
             } else {
@@ -413,12 +417,22 @@ public class BukkitActionManager implements ActionManager<Player> {
         });
         registerAction("durability", (args, chance) -> {
             if (args instanceof Section section) {
-                EquipmentSlot slot = EquipmentSlot.valueOf(section.getString("slot", "hand").toUpperCase(Locale.ENGLISH));
+                EquipmentSlot slot = Optional.ofNullable(section.getString("slot"))
+                        .map(hand -> EquipmentSlot.valueOf(hand.toUpperCase(Locale.ENGLISH)))
+                        .orElse(null);
                 int amount = section.getInt("amount", 1);
                 return context -> {
                     if (Math.random() > chance) return;
                     Player player = context.getHolder();
-                    ItemStack itemStack = player.getInventory().getItem(slot);
+                    EquipmentSlot tempSlot = slot;
+                    EquipmentSlot equipmentSlot = context.arg(ContextKeys.SLOT);
+                    if (equipmentSlot != null) {
+                        tempSlot = equipmentSlot;
+                    }
+                    if (tempSlot == null) {
+                        return;
+                    }
+                    ItemStack itemStack = player.getInventory().getItem(tempSlot);
                     if (itemStack.getType() == Material.AIR || itemStack.getAmount() == 0)
                         return;
                     if (itemStack.getItemMeta() == null)

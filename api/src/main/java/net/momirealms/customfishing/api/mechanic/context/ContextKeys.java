@@ -20,6 +20,7 @@ package net.momirealms.customfishing.api.mechanic.context;
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionGoal;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
 import org.bukkit.Location;
+import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.Objects;
 
@@ -79,6 +80,7 @@ public class ContextKeys<T> {
     public static final ContextKeys<String> RECORD_FORMATTED = of("record_formatted", String.class);
     public static final ContextKeys<Integer> CLICKS_LEFT = of("left_clicks", Integer.class);
     public static final ContextKeys<Integer> REQUIRED_TIMES = of("clicks", Integer.class);
+    public static final ContextKeys<EquipmentSlot> SLOT = of("hand", EquipmentSlot.class);
 
     private final String key;
     private final Class<T> type;

@@ -74,17 +74,20 @@ public class BukkitEventManager implements EventManager, Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        if (event.getHand() != EquipmentSlot.HAND)
-            return;
         if (event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_AIR && event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK)
             return;
-        ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
+        EquipmentSlot slot = event.getHand();
+        if (slot == null) {
+            return;
+        }
+        ItemStack itemStack = event.getPlayer().getInventory().getItem(slot);
         if (itemStack.getType() == Material.AIR || itemStack.getAmount() == 0)
             return;
         String id = this.plugin.getItemManager().getItemID(itemStack);
         Context<Player> context = Context.player(event.getPlayer());
         Block clicked = event.getClickedBlock();
         context.arg(ContextKeys.OTHER_LOCATION, clicked == null ? event.getPlayer().getLocation() : clicked.getLocation());
+        context.arg(ContextKeys.SLOT, event.getHand());
         List<MechanicType> mechanics = MechanicType.getTypeByID(id);
         if (mechanics != null) {
             for (MechanicType type : mechanics) {
