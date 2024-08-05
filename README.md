@@ -16,12 +16,13 @@ With the new concept of weight system, CustomFishing brings unlimited customizat
 ## How to build
 
 #### Command Line
-Install JDK 17 and set the JDK installation path to JAVA_HOME as an environment variable.\
+Install JDK 17 & 21. \
 Start terminal and change directory to the project folder.\
-Execute ".\gradlew build" and get the artifact under the /target folder
+Execute ".\gradlew build" and get the artifact under /target folder
 
 #### IDE
-Import the project and execute gradle build action.
+Import the project and execute gradle build action. \
+Get the artifact under /target folder
 
 ## Support the developer
 
