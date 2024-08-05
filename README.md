@@ -17,8 +17,8 @@ With the new concept of weight system, CustomFishing brings unlimited customizat
 
 #### Command Line
 Install JDK 17 and set the JDK installation path to JAVA_HOME as an environment variable.\
-Start powershell and change directory to the project folder.\
-Execute ".\gradlew build" and get the jar at /target/CustomFishing-plugin-version.jar.
+Start terminal and change directory to the project folder.\
+Execute ".\gradlew build" and get the artifact under the /target folder
 
 #### IDE
 Import the project and execute gradle build action.
