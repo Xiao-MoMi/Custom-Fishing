@@ -51,8 +51,8 @@ public class VersionHelper {
                 }
                 updateFuture.complete(true);
             } catch (Exception exception) {
-                plugin.getPluginLogger().warn("Error occurred when checking update.", exception);
-                updateFuture.complete(false);
+                plugin.getPluginLogger().warn("Error occurred when checking update.");
+                updateFuture.completeExceptionally(exception);
             }
         });
         return updateFuture;

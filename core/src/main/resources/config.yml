@@ -257,13 +257,13 @@ mechanics:
           message_action:
             type: message
             value: 'You earned {money_formatted} coins from the fish! You can get {rest_formatted} more coins from market today'
-          command_action:
-            type: command
-            value: 'money give {player} {money}'
-      # Requires Vault and any economy plugin
-      #      money_action:
-      #        type: give-money
-      #        value: '{money}'
+          # Requires Vault and any economy plugin
+          money_action:
+            type: give-money
+            value: '{money}'
+#          command_action:
+#            type: command
+#            value: 'money give {player} {money}'
       deny-icon:
         material: REDSTONE_BLOCK
         display:
@@ -312,13 +312,12 @@ mechanics:
           message_action:
             type: message
             value: 'You earned {money_formatted} coins from the fish! You can get {rest_formatted} more coins from market today'
-          command_action:
-            type: command
-            value: 'money give {player} {money}'
-      # Requires Vault and any economy plugin
-      #      money_action:
-      #        type: give-money
-      #        value: '{money}'
+          money_action:
+            type: give-money
+            value: '{money}'
+#          command_action:
+#            type: command
+#            value: 'money give {player} {money}'
       deny-icon:
         material: REDSTONE_BLOCK
         display:

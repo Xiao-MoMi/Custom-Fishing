@@ -131,7 +131,7 @@ public class BukkitIntegrationManager implements IntegrationManager {
             registerSeasonProvider(new CustomCropsSeasonProvider());
         }
         if (isHooked("Vault")) {
-            VaultHook.initialize();
+            VaultHook.init();
         }
         if (isHooked("BattlePass")){
             BattlePassQuest battlePassQuest = new BattlePassQuest();

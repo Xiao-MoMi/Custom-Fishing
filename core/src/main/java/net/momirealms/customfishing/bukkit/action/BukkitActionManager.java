@@ -628,6 +628,7 @@ public class BukkitActionManager implements ActionManager<Player> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (Math.random() > chance) return;
+                if (!VaultHook.isHooked()) return;
                 VaultHook.deposit(context.getHolder(), value.evaluate(context));
             };
         });
@@ -635,6 +636,7 @@ public class BukkitActionManager implements ActionManager<Player> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (Math.random() > chance) return;
+                if (!VaultHook.isHooked()) return;
                 VaultHook.withdraw(context.getHolder(), value.evaluate(context));
             };
         });
