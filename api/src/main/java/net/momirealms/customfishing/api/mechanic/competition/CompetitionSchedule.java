@@ -17,8 +17,6 @@
 
 package net.momirealms.customfishing.api.mechanic.competition;
 
-import org.jetbrains.annotations.NotNull;
-
 public class CompetitionSchedule implements Comparable<CompetitionSchedule> {
 
     private final int weekday;

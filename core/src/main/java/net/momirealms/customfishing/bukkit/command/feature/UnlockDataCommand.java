@@ -23,9 +23,14 @@ import net.momirealms.customfishing.bukkit.command.BukkitCommandFeature;
 import net.momirealms.customfishing.common.command.CustomFishingCommandManager;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.bukkit.parser.PlayerParser;
+import org.incendo.cloud.parser.standard.EitherParser;
 import org.incendo.cloud.parser.standard.UUIDParser;
+import org.incendo.cloud.type.Either;
 
 import java.util.UUID;
 
@@ -39,9 +44,10 @@ public class UnlockDataCommand extends BukkitCommandFeature<CommandSender> {
     public Command.Builder<? extends CommandSender> assembleCommand(CommandManager<CommandSender> manager, Command.Builder<CommandSender> builder) {
         return builder
                 .flag(manager.flagBuilder("silent").withAliases("s"))
-                .required("uuid", UUIDParser.uuidParser())
+                .required("uuid", EitherParser.eitherParser(UUIDParser.uuidParser(), PlayerParser.playerParser()))
                 .handler(context -> {
-                    UUID uuid = context.get("uuid");
+                    Either<UUID, Player> either = context.get("uuid");
+                    UUID uuid = either.primaryOrMapFallback(Entity::getUniqueId);
                     BukkitCustomFishingPlugin.getInstance().getStorageManager().getDataSource().lockOrUnlockPlayerData(uuid, false);
                     handleFeedback(context, MessageConstants.COMMAND_DATA_UNLOCK_SUCCESS, Component.text(uuid.toString()));
                 });

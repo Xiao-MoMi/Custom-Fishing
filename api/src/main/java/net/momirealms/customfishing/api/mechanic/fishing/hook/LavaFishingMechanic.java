@@ -119,9 +119,13 @@ public class LavaFishingMechanic implements HookMechanic {
                     this.currentState = 0;
                 }
             } else {
-                if (this.hook.getY() % 1 <= lavaHeight || this.hook.isInLava()) {
+                double hookY = this.hook.getY();
+                if (hookY < 0) {
+                    hookY += Math.abs(Math.floor(hookY));
+                }
+                if (hookY % 1 <= lavaHeight || this.hook.isInLava()) {
                     Vector previousVector = this.hook.getVelocity();
-                    this.hook.setVelocity(new Vector(previousVector.getX() * 0.6, Math.min(0.1, Math.max(-0.1, previousVector.getY() + 0.1)), previousVector.getZ() * 0.6));
+                    this.hook.setVelocity(new Vector(previousVector.getX() * 0.6, Math.min(0.1, Math.max(-0.1, previousVector.getY() + 0.07)), previousVector.getZ() * 0.6));
                     this.currentState = 1;
                 } else {
                     if (currentState == 1) {

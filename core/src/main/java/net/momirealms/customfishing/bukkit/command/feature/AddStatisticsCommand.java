@@ -25,12 +25,19 @@ import net.momirealms.customfishing.common.command.CustomFishingCommandManager;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.bukkit.parser.PlayerParser;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.parser.standard.DoubleParser;
 import org.incendo.cloud.parser.standard.EnumParser;
 import org.incendo.cloud.parser.standard.StringParser;
+import org.incendo.cloud.suggestion.Suggestion;
+import org.incendo.cloud.suggestion.SuggestionProvider;
+
+import java.util.concurrent.CompletableFuture;
 
 public class AddStatisticsCommand extends BukkitCommandFeature<CommandSender> {
 
@@ -43,8 +50,18 @@ public class AddStatisticsCommand extends BukkitCommandFeature<CommandSender> {
         return builder
                 .flag(manager.flagBuilder("silent").withAliases("s"))
                 .required("player", PlayerParser.playerParser())
-                .required("id", StringParser.stringParser())
                 .required("type", EnumParser.enumParser(FishingStatistics.Type.class))
+                .required("id", StringParser.stringComponent().suggestionProvider(new SuggestionProvider<>() {
+                    @Override
+                    public @NonNull CompletableFuture<? extends @NonNull Iterable<? extends @NonNull Suggestion>> suggestionsFuture(@NonNull CommandContext<Object> context, @NonNull CommandInput input) {
+                        return CompletableFuture.completedFuture(
+                                BukkitCustomFishingPlugin.getInstance().getLootManager().getRegisteredLoots().stream()
+                                .filter(loot -> !loot.disableStats())
+                                .map(loot -> Suggestion.suggestion(loot.id()))
+                                .toList()
+                        );
+                    }
+                }))
                 .required("value", DoubleParser.doubleParser(0))
                 .handler(context -> {
                     Player player = context.get("player");

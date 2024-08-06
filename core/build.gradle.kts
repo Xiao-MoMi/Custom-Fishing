@@ -5,8 +5,8 @@ plugins {
 }
 
 repositories {
-//    maven("https://repo.xenondevs.xyz/releases") // invui
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // papi
+    maven("https://libraries.minecraft.net") // brigadier
 }
 
 dependencies {
@@ -25,16 +25,11 @@ dependencies {
     implementation("net.kyori:adventure-text-serializer-gson:${rootProject.properties["adventure_bundle_version"]}") {
         exclude("com.google.code.gson", "gson")
     }
-    // GUI
-//    implementation("xyz.xenondevs.invui:invui:${rootProject.properties["invui_version"]}") {
-//        exclude("org.jetbrains", "annotations")
-//    }
     // tag & component
     implementation("com.saicone.rtag:rtag:${rootProject.properties["rtag_version"]}")
     implementation("com.saicone.rtag:rtag-item:${rootProject.properties["rtag_version"]}")
     // nms util
     implementation("com.github.Xiao-MoMi:Sparrow-Heart:${rootProject.properties["sparrow_heart_version"]}")
-//    implementation(files("libs/Sparrow-Heart-${rootProject.properties["sparrow_heart_version"]}.jar"))
     // bstats
     compileOnly("org.bstats:bstats-bukkit:${rootProject.properties["bstats_version"]}")
     // config
@@ -51,6 +46,8 @@ dependencies {
     compileOnly("org.incendo:cloud-core:${rootProject.properties["cloud_core_version"]}")
     compileOnly("org.incendo:cloud-minecraft-extras:${rootProject.properties["cloud_minecraft_extras_version"]}")
     compileOnly("org.incendo:cloud-paper:${rootProject.properties["cloud_paper_version"]}")
+    // brigadier
+    compileOnly("com.mojang:brigadier:${rootProject.properties["mojang_brigadier_version"]}")
     // expression
     compileOnly("net.objecthunter:exp4j:${rootProject.properties["exp4j_version"]}")
     // placeholder api
