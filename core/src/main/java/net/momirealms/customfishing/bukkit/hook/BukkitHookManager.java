@@ -58,7 +58,7 @@ public class BukkitHookManager implements HookManager, Listener {
 
     private final BukkitCustomFishingPlugin plugin;
     private final HashMap<String, HookConfig> hooks = new HashMap<>();
-    private LZ4Factory factory;
+    private final LZ4Factory factory;
 
     public BukkitHookManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
@@ -68,6 +68,7 @@ public class BukkitHookManager implements HookManager, Listener {
     @Override
     public void unload() {
         HandlerList.unregisterAll(this);
+        hooks.clear();
     }
 
     @Override
