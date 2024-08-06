@@ -7,7 +7,7 @@
 fishfinder:
   material: PAPER
   display:
-    name: '<#1E90FF>Fish Finder'
+    name: '<b><#1E90FF>Fish Finder'
     lore:
       - ''
       - '<#7FFFD4>Desciption:'

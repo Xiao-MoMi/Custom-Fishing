@@ -7,7 +7,7 @@
 delicate_hook:
   material: SHEARS
   display:
-    name: '<#1E90FF>Delicate hook'
+    name: '<b><#1E90FF>Delicate hook'
     lore:
       - ''
       - '<#7FFFD4>Desciption:'

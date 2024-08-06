@@ -1,3 +1,9 @@
+# Note: These are the default configurations of the plugin
+# and do not necessarily mean that players can have a good
+# gaming experience. We hope that you will create
+# customized configurations based on your own ideas,
+# allowing players to experience the uniqueness of your server.
+
 double_loot_totem:
   radius: 8
   duration: 300
@@ -27,7 +33,7 @@ double_loot_totem:
         action_1:
           type: message
           value:
-            - '<#BA55D3>[TotemActivation]</#BA55D3> <#F5FFFA>Hold a nautilus shell in main hand to activate the totem.'
+            - '<#BA55D3>[Totem]</#BA55D3> <#F5FFFA>Hold a nautilus shell in main hand to activate the totem.'
   events:
     timer:
       actionbar_action:
@@ -65,7 +71,7 @@ double_loot_totem:
         type: message-nearby
         value:
           message:
-            - '<#BA55D3>[TotemActivation]</#BA55D3> <#F5FFFA>{player}</#F5FFFA> <#F5F5F5>activated a totem nearby!</#F5F5F5>'
+            - '<#BA55D3>[Totem]</#BA55D3> <#F5FFFA>{player}</#F5FFFA> <#F5F5F5>activated a totem nearby!</#F5F5F5>'
           range: 32
   particles:
     particle_01:

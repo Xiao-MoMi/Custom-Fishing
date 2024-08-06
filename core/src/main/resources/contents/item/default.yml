@@ -4,8 +4,6 @@
 # customized configurations based on your own ideas,
 # allowing players to experience the uniqueness of your server.
 
-# https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing/loot/item
-
 # Vanilla loots settings
 vanilla:
   show-in-fishfinder: false
@@ -1185,7 +1183,7 @@ blue_jellyfish_silver_star:
   show-in-fishfinder: false
   material: cod
   display:
-    name: <#87CEFA>Jellyfish</#87CEFA>
+    name: <#87CEFA>Jellyfish</#87CEFA> <#F5F5F5>(Silver Star)</#F5F5F5>
     lore:
       - <gray>Looks like a blue umbrella
       - '<white>size: {size_formatted}cm'
@@ -1207,7 +1205,7 @@ blue_jellyfish_golden_star:
   show-in-fishfinder: false
   material: cod
   display:
-    name: <#87CEFA>Jellyfish</#87CEFA>
+    name: <#87CEFA>Jellyfish</#87CEFA> <#FFD700>(Golden Star)</#FFD700>
     lore:
       - <gray>Looks like a blue umbrella
       - '<white>size: {size_formatted}cm'
@@ -1248,7 +1246,7 @@ pink_jellyfish_silver_star:
   show-in-fishfinder: false
   material: cod
   display:
-    name: <#FFC0CB>Jellyfish</#FFC0CB>
+    name: <#FFC0CB>Jellyfish</#FFC0CB> <#F5F5F5>(Silver Star)</#F5F5F5>
     lore:
       - <gray>Seems to be sweet
       - '<white>size: {size_formatted}cm'
@@ -1270,7 +1268,7 @@ pink_jellyfish_golden_star:
   show-in-fishfinder: false
   material: cod
   display:
-    name: <#FFC0CB>Jellyfish</#FFC0CB>
+    name: <#FFC0CB>Jellyfish</#FFC0CB> <#FFD700>(Golden Star)</#FFD700>
     lore:
       - <gray>Seems to be sweet
       - '<white>size: {size_formatted}cm'

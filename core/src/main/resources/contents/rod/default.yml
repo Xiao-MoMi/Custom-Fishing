@@ -144,13 +144,13 @@ magical_rod:
       - ''
       - '<#CD5C5C>Requirements:'
       - '<gray> - 1x book bait'
-      - '<gray> - 10 exp levels'
+      - '<gray> - 30 exp levels'
   custom-model-data: 50006
   max-durability: 16
   requirements:
     requirement_1:
       type: level
-      value: 1
+      value: 30
       not-met-actions:
         action_1:
           type: message
@@ -177,7 +177,7 @@ magical_rod:
         - enchantments:+10
     effect_2:
       type: wait-time-multiplier
-      value: 3
+      value: 2.5
 
 master_rod:
   material: fishing_rod
