@@ -261,9 +261,9 @@ mechanics:
           money_action:
             type: give-money
             value: '{money}'
-#          command_action:
-#            type: command
-#            value: 'money give {player} {money}'
+          # command_action:
+          #   type: command
+          #   value: 'money give {player} {money}'
       deny-icon:
         material: REDSTONE_BLOCK
         display:
@@ -315,9 +315,9 @@ mechanics:
           money_action:
             type: give-money
             value: '{money}'
-#          command_action:
-#            type: command
-#            value: 'money give {player} {money}'
+          # command_action:
+          #   type: command
+          #   value: 'money give {player} {money}'
       deny-icon:
         material: REDSTONE_BLOCK
         display:
