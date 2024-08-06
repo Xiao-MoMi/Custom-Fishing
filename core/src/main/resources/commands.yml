@@ -150,7 +150,7 @@ data_import:
     - /cfishing data import
 
 # A command to set a player's fishing statistics
-# Usage: [COMMAND] [player] [id] [type] [value]
+# Usage: [COMMAND] [player] [type] [id] [value]
 statistics_set:
   enable: true
   permission: customfishing.command.statistics
@@ -177,7 +177,7 @@ statistics_query:
     - /cfishing statistics query
 
 # A command to manually add a player's fishing statistics
-# Usage: [COMMAND] [player] [id] [type] [value]
+# Usage: [COMMAND] [player] [type] [id] [value]
 statistics_add:
   enable: true
   permission: customfishing.command.statistics

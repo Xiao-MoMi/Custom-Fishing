@@ -15,7 +15,6 @@ global-group:
         - seagrass:+5
         - vanilla:+60
       sub-groups:
-        # parent ocean group
         ocean_fish:
           conditions:
             biome:
@@ -53,7 +52,6 @@ global-group:
             - red_snapper_fish_silver_star:+5
             - red_snapper_fish_golden_star:+2
           sub-groups:
-            # sub warm ocean group
             warm_ocean_fish:
               conditions:
                 biome:
