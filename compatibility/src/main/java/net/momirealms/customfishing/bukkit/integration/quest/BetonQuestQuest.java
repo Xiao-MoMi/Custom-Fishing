@@ -21,14 +21,15 @@ import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.FishingResultEvent;
 import org.betonquest.betonquest.BetonQuest;
 import org.betonquest.betonquest.Instruction;
-import org.betonquest.betonquest.VariableNumber;
 import org.betonquest.betonquest.api.CountingObjective;
 import org.betonquest.betonquest.api.config.quest.QuestPackage;
 import org.betonquest.betonquest.api.profiles.OnlineProfile;
 import org.betonquest.betonquest.api.profiles.Profile;
 import org.betonquest.betonquest.exceptions.InstructionParseException;
+import org.betonquest.betonquest.exceptions.QuestRuntimeException;
+import org.betonquest.betonquest.instruction.variable.VariableNumber;
+import org.betonquest.betonquest.instruction.variable.location.VariableLocation;
 import org.betonquest.betonquest.utils.PlayerConverter;
-import org.betonquest.betonquest.utils.location.CompoundLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -43,23 +44,13 @@ public class BetonQuestQuest {
 
     public static void register() {
         BetonQuest ins1 = BetonQuest.getInstance();
-        if (ins1 != null) {
-            ins1.registerObjectives("customfishing_loot", IDObjective.class);
-            ins1.registerObjectives("customfishing_group", GroupObjective.class);
-        } else {
-            Bukkit.getScheduler().runTaskLater(BukkitCustomFishingPlugin.getInstance().getBoostrap(), () -> {
-                BetonQuest ins2 = BetonQuest.getInstance();
-                if (ins2 != null) {
-                    ins2.registerObjectives("customfishing_loot", IDObjective.class);
-                    ins2.registerObjectives("customfishing_group", GroupObjective.class);
-                }
-            }, 1);
-        }
+        ins1.registerObjectives("customfishing_loot", IDObjective.class);
+        ins1.registerObjectives("customfishing_group", GroupObjective.class);
     }
 
     public static class IDObjective extends CountingObjective implements Listener {
 
-        private final CompoundLocation playerLocation;
+        private final VariableLocation playerLocation;
         private final VariableNumber rangeVar;
         private final HashSet<String> loot_ids;
 
@@ -67,14 +58,13 @@ public class BetonQuestQuest {
             super(instruction, "loot_to_fish");
             loot_ids = new HashSet<>();
             Collections.addAll(loot_ids, instruction.getArray());
-            targetAmount = instruction.getVarNum();
-            preCheckAmountNotLessThanOne(targetAmount);
+            targetAmount = instruction.getVarNum(VariableNumber.NOT_LESS_THAN_ONE_CHECKER);
             final QuestPackage pack = instruction.getPackage();
             final String loc = instruction.getOptional("playerLocation");
             final String range = instruction.getOptional("range");
             if (loc != null && range != null) {
-                playerLocation = new CompoundLocation(pack, loc);
-                rangeVar = new VariableNumber(pack, range);
+                playerLocation = new VariableLocation(BetonQuest.getInstance().getVariableProcessor(), pack, loc);
+                rangeVar = new VariableNumber(BetonQuest.getInstance().getVariableProcessor(), pack, range);
             } else {
                 playerLocation = null;
                 rangeVar = null;
@@ -105,12 +95,17 @@ public class BetonQuestQuest {
 
             final Location targetLocation;
             try {
-                targetLocation = playerLocation.getLocation(profile);
+                targetLocation = playerLocation.getValue(profile);
             } catch (final org.betonquest.betonquest.exceptions.QuestRuntimeException e) {
                 e.printStackTrace();
                 return true;
             }
-            final int range = rangeVar.getInt(profile);
+            int range;
+            try {
+                range = rangeVar.getValue(profile).intValue();
+            } catch (QuestRuntimeException e) {
+                throw new RuntimeException(e);
+            }
             final Location playerLoc = event.getPlayer().getLocation();
             return !playerLoc.getWorld().equals(targetLocation.getWorld()) || targetLocation.distanceSquared(playerLoc) > range * range;
         }
@@ -128,7 +123,7 @@ public class BetonQuestQuest {
 
     public static class GroupObjective extends CountingObjective implements Listener {
 
-        private final CompoundLocation playerLocation;
+        private final VariableLocation playerLocation;
         private final VariableNumber rangeVar;
         private final HashSet<String> loot_groups;
 
@@ -136,14 +131,13 @@ public class BetonQuestQuest {
             super(instruction, "group_to_fish");
             loot_groups = new HashSet<>();
             Collections.addAll(loot_groups, instruction.getArray());
-            targetAmount = instruction.getVarNum();
-            preCheckAmountNotLessThanOne(targetAmount);
+            targetAmount = instruction.getVarNum(VariableNumber.NOT_LESS_THAN_ONE_CHECKER);
             final QuestPackage pack = instruction.getPackage();
             final String loc = instruction.getOptional("playerLocation");
             final String range = instruction.getOptional("range");
             if (loc != null && range != null) {
-                playerLocation = new CompoundLocation(pack, loc);
-                rangeVar = new VariableNumber(pack, range);
+                playerLocation = new VariableLocation(BetonQuest.getInstance().getVariableProcessor(), pack, loc);
+                rangeVar = new VariableNumber(BetonQuest.getInstance().getVariableProcessor(), pack, range);
             } else {
                 playerLocation = null;
                 rangeVar = null;
@@ -179,12 +173,17 @@ public class BetonQuestQuest {
 
             final Location targetLocation;
             try {
-                targetLocation = playerLocation.getLocation(profile);
+                targetLocation = playerLocation.getValue(profile);
             } catch (final org.betonquest.betonquest.exceptions.QuestRuntimeException e) {
                 e.printStackTrace();
                 return true;
             }
-            final int range = rangeVar.getInt(profile);
+            int range;
+            try {
+                range = rangeVar.getValue(profile).intValue();
+            } catch (QuestRuntimeException e) {
+                throw new RuntimeException(e);
+            }
             final Location playerLoc = event.getPlayer().getLocation();
             return !playerLoc.getWorld().equals(targetLocation.getWorld()) || targetLocation.distanceSquared(playerLoc) > range * range;
         }

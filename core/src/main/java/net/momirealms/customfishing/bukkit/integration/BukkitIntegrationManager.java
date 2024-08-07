@@ -60,7 +60,11 @@ public class BukkitIntegrationManager implements IntegrationManager {
 
     public BukkitIntegrationManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
-        this.load();
+        try {
+            this.load();
+        } catch (Exception e) {
+            plugin.getPluginLogger().warn("Failed to load integrations", e);
+        }
     }
 
     @Override
@@ -125,7 +129,7 @@ public class BukkitIntegrationManager implements IntegrationManager {
         }
         if (isHooked("RealisticSeasons")) {
             registerSeasonProvider(new RealisticSeasonsProvider());
-        } else if (isHooked("AdvancedSeasons")) {
+        } else if (isHooked("AdvancedSeasons", "1.4", "1.5", "1.6")) {
             registerSeasonProvider(new AdvancedSeasonsProvider());
         } else if (isHooked("CustomCrops", "3.4", "3.5", "3.6")) {
             registerSeasonProvider(new CustomCropsSeasonProvider());
