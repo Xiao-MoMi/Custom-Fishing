@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.bukkit.integration.quest;
 
-import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.FishingResultEvent;
 import org.betonquest.betonquest.BetonQuest;
 import org.betonquest.betonquest.Instruction;

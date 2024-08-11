@@ -38,7 +38,7 @@ public class ItemsAdderItemProvider implements ItemProvider {
     @Override
     public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
         CustomStack stack = requireNonNull(CustomStack.getInstance(id));
-        return stack.getItemStack();
+        return stack.getItemStack().clone();
     }
 
     @Override
