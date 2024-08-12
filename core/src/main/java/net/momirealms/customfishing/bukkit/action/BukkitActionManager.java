@@ -191,7 +191,7 @@ public class BukkitActionManager implements ActionManager<Player> {
             return context -> {
                 if (Math.random() > chance) return;
                 List<String> replaced = plugin.getPlaceholderManager().parse(context.getHolder(), messages, context.placeholderMap());
-                for (Player player : Bukkit.getOnlinePlayers()) {
+                for (Player player : location.getWorld().getPlayers()) {
                     Audience audience = plugin.getSenderFactory().getAudience(player);
                     for (String text : replaced) {
                         audience.sendMessage(AdventureHelper.miniMessage(text));
@@ -208,7 +208,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     double realRange = range.evaluate(context);
                     Player owner = context.getHolder();
                     Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
-                    for (Player player : Bukkit.getOnlinePlayers()) {
+                    for (Player player : location.getWorld().getPlayers()) {
                         if (LocationUtils.getDistance(player.getLocation(), location) <= realRange) {
                             context.arg(ContextKeys.TEMP_NEAR_PLAYER, player.getName());
                             List<String> replaced = BukkitPlaceholderManager.getInstance().parse(
@@ -276,7 +276,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     Player owner = context.getHolder();
                     double realRange = range.evaluate(context);
                     Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
-                    for (Player player : Bukkit.getOnlinePlayers()) {
+                    for (Player player : location.getWorld().getPlayers()) {
                         if (LocationUtils.getDistance(player.getLocation(), location) <= realRange) {
                             context.arg(ContextKeys.TEMP_NEAR_PLAYER, player.getName());
                             List<String> replaced = BukkitPlaceholderManager.getInstance().parse(owner, cmd, context.placeholderMap());
@@ -329,7 +329,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     Player owner = context.getHolder();
                     Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
                     double realRange = range.evaluate(context);
-                    for (Player player : Bukkit.getOnlinePlayers()) {
+                    for (Player player : location.getWorld().getPlayers()) {
                         if (LocationUtils.getDistance(player.getLocation(), location) <= realRange) {
                             context.arg(ContextKeys.TEMP_NEAR_PLAYER, player.getName());
                             String replaced = plugin.getPlaceholderManager().parse(owner, actionbar, context.placeholderMap());
@@ -762,7 +762,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 return context -> {
                     if (Math.random() > chance) return;
                     Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
-                    for (Player player : Bukkit.getOnlinePlayers()) {
+                    for (Player player : location.getWorld().getPlayers()) {
                         if (LocationUtils.getDistance(player.getLocation(), location) <= range) {
                             context.arg(ContextKeys.TEMP_NEAR_PLAYER, player.getName());
                             Audience audience = plugin.getSenderFactory().getAudience(player);
@@ -808,7 +808,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     armorStand.equipment(EquipmentSlot.HEAD, plugin.getItemManager().buildInternal(context, finalItemID));
                     ArrayList<Player> viewers = new ArrayList<>();
                     if (range > 0) {
-                        for (Player player : Bukkit.getOnlinePlayers()) {
+                        for (Player player : location.getWorld().getPlayers()) {
                             if (LocationUtils.getDistance(player.getLocation(), location) <= range) {
                                 viewers.add(player);
                             }
@@ -855,7 +855,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     armorStand.name(AdventureHelper.miniMessageToJson(text.render(context)));
                     ArrayList<Player> viewers = new ArrayList<>();
                     if (range > 0) {
-                        for (Player player : Bukkit.getOnlinePlayers()) {
+                        for (Player player : location.getWorld().getPlayers()) {
                             if (LocationUtils.getDistance(player.getLocation(), location) <= range) {
                                 viewers.add(player);
                             }
