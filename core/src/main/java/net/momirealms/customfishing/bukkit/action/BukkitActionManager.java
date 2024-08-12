@@ -191,7 +191,7 @@ public class BukkitActionManager implements ActionManager<Player> {
             return context -> {
                 if (Math.random() > chance) return;
                 List<String> replaced = plugin.getPlaceholderManager().parse(context.getHolder(), messages, context.placeholderMap());
-                for (Player player : location.getWorld().getPlayers()) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
                     Audience audience = plugin.getSenderFactory().getAudience(player);
                     for (String text : replaced) {
                         audience.sendMessage(AdventureHelper.miniMessage(text));
