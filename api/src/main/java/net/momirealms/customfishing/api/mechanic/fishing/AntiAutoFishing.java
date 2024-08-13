@@ -38,7 +38,7 @@ public class AntiAutoFishing {
                         1f
                 ), hook.getX(), hook.getY(), hook.getZ());
         double motion = -0.4 * RandomUtils.generateRandomDouble(0.6, 1.0);
-        SparrowHeart.getInstance().sendClientSideEntityMotion(player, new Vector(0, motion,0), hook.getEntityId());
-        SparrowHeart.getInstance().sendClientSideEntityMotion(player, new Vector(0, 0,0), hook.getEntityId());
+        SparrowHeart.getInstance().sendClientSideEntityMotion(player, new Vector(0, motion, 0), hook.getEntityId());
+        SparrowHeart.getInstance().sendClientSideEntityMotion(player, new Vector(0, 0, 0), hook.getEntityId());
     }
 }
