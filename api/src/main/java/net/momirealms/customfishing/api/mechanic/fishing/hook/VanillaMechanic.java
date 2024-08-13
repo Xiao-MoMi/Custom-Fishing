@@ -24,8 +24,10 @@ import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectProperties;
+import net.momirealms.customfishing.api.mechanic.fishing.AntiAutoFishing;
 import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
+import net.momirealms.customfishing.common.util.RandomUtils;
 import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -79,7 +81,7 @@ public class VanillaMechanic implements HookMechanic {
     }
 
     private void setWaitTime(FishHook hook, Effect effect) {
-        BukkitCustomFishingPlugin.getInstance().getScheduler().sync().runLater(() -> {
+        BukkitCustomFishingPlugin.getInstance().getScheduler().sync().run(() -> {
             if (!ConfigManager.overrideVanillaWaitTime()) {
                 int before = Math.max(hook.getWaitTime(), 0);
                 int after = (int) Math.max(100, before * effect.waitTimeMultiplier() + effect.waitTimeAdder());
@@ -91,7 +93,17 @@ public class VanillaMechanic implements HookMechanic {
                 hook.setWaitTime(after);
                 BukkitCustomFishingPlugin.getInstance().debug("Wait time: " + before + " -> " + after + " ticks");
             }
-        }, 1, hook.getLocation());
+            int lureTime = RandomUtils.generateRandomInt(20, 80);
+            hook.setLureTime(lureTime, lureTime);
+            if (ConfigManager.antiAutoFishingMod()) {
+                BukkitCustomFishingPlugin.getInstance().getScheduler().sync().runLater(() -> {
+                    Player player = context.getHolder();
+                    if (player.isOnline() && hook.isValid()) {
+                        AntiAutoFishing.prevent(player, hook);
+                    }
+                },  RandomUtils.generateRandomInt(20, hook.getWaitTime() + lureTime - 5), hook.getLocation());
+            }
+        }, hook.getLocation());
     }
 
     @Override

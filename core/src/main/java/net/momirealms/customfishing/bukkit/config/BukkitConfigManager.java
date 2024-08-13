@@ -218,6 +218,8 @@ public class BukkitConfigManager extends ConfigManager {
 
         eventPriority = EventPriority.valueOf(config.getString("other-settings.event-priority", "NORMAL").toUpperCase(Locale.ENGLISH));
 
+        antiAutoFishingMod = config.getBoolean("other-settings.anti-auto-fishing-mod", false);
+
         mechanicRequirements = plugin.getRequirementManager().parseRequirements(config.getSection("mechanics.mechanic-requirements"), true);
         skipGameRequirements = plugin.getRequirementManager().parseRequirements(config.getSection("mechanics.skip-game-requirements"), true);
         autoFishingRequirements = plugin.getRequirementManager().parseRequirements(config.getSection("mechanics.auto-fishing-requirements"), true);
