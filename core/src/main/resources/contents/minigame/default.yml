@@ -1390,6 +1390,7 @@ hold_game_easy:
     pulling-strength: 0.35
     loosening-strength-loss: 0.25
     elasticity: false
+    elasticity-power: 0.7
   hold-time-requirements:
     - 3
     - 3
@@ -1427,6 +1428,7 @@ hold_game_normal:
     pulling-strength: 0.35
     loosening-strength-loss: 0.25
     elasticity: false
+    elasticity-power: 0.7
   hold-time-requirements:
     - 3
     - 3
