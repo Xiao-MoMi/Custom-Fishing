@@ -26,6 +26,7 @@ import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.item.CustomFishingItem;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
+import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.item.Item;
 import org.bukkit.entity.Player;
@@ -41,6 +42,7 @@ public class ItemConfigParser {
 
     private final String id;
     private final String material;
+    private final MathValue<Player> amount;
     private final List<PriorityFunction<BiConsumer<Item<ItemStack>, Context<Player>>>> tagConsumers = new ArrayList<>();
     private final List<Consumer<LootBaseEffect.Builder>> effectBuilderConsumers = new ArrayList<>();
     private final List<Consumer<Loot.Builder>> lootBuilderConsumers = new ArrayList<>();
@@ -49,6 +51,7 @@ public class ItemConfigParser {
     public ItemConfigParser(String id, Section section, Map<String, Node<ConfigParserFunction>> functionMap) {
         this.id = id;
         this.material = section.getString("material");
+        this.amount = MathValue.auto(section.get("amount", 1), true);
         if (!section.contains("tag")) section.set("tag", true);
         if (!section.contains("nick")) {
             if (section.contains("display.name")) {
@@ -100,6 +103,7 @@ public class ItemConfigParser {
         return CustomFishingItem.builder()
                 .material(material)
                 .id(id)
+                .amount(amount)
                 .tagConsumers(tagConsumers)
                 .build();
     }

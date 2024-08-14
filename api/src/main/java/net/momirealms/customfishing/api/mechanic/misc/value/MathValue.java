@@ -76,8 +76,19 @@ public interface MathValue<T> {
      * @param <T> the type of the holder object for the context
      * @return a MathValue instance representing the given ranged value
      */
-    static <T> MathValue<T> ranged(String value) {
-        return new RangedMathValueImpl<>(value);
+    static <T> MathValue<T> rangedDouble(String value) {
+        return new RangedDoubleValueImpl<>(value);
+    }
+
+    /**
+     * Creates a MathValue based on a range of values.
+     *
+     * @param value the ranged value to represent
+     * @param <T> the type of the holder object for the context
+     * @return a MathValue instance representing the given ranged value
+     */
+    static <T> MathValue<T> rangedInt(String value) {
+        return new RangedIntValueImpl<>(value);
     }
 
     /**
@@ -91,9 +102,13 @@ public interface MathValue<T> {
      * @throws IllegalArgumentException if the object type is not supported
      */
     static <T> MathValue<T> auto(Object o) {
+        return auto(o, false);
+    }
+
+    static <T> MathValue<T> auto(Object o, boolean intFirst) {
         if (o instanceof String s) {
             if (s.contains("~")) {
-                return ranged(s);
+                return intFirst ? (s.contains(".") ? rangedDouble(s) : rangedInt(s)) : rangedDouble(s);
             }
             try {
                 return plain(Double.parseDouble(s));

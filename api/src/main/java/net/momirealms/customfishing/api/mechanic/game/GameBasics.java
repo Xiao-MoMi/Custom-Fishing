@@ -17,7 +17,10 @@
 
 package net.momirealms.customfishing.api.mechanic.game;
 
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
+import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,32 +29,18 @@ import org.jetbrains.annotations.NotNull;
 public interface GameBasics {
 
     /**
-     * Gets the minimum time for the game.
+     * Gets the time for the game.
      *
      * @return the minimum time in seconds.
      */
-    int minTime();
+    MathValue<Player> time();
 
     /**
-     * Gets the maximum time for the game.
-     *
-     * @return the maximum time in seconds.
-     */
-    int maxTime();
-
-    /**
-     * Gets the minimum difficulty for the game.
+     * Gets the difficulty for the game.
      *
      * @return the minimum difficulty level.
      */
-    int minDifficulty();
-
-    /**
-     * Gets the maximum difficulty for the game.
-     *
-     * @return the maximum difficulty level.
-     */
-    int maxDifficulty();
+    MathValue<Player> difficulty();
 
     /**
      * Creates a new builder for constructing {@link GameBasics} instances.
@@ -65,11 +54,11 @@ public interface GameBasics {
     /**
      * Converts the game basics to a {@link GameSetting} instance based on the provided effect.
      *
-     * @param effect the effect to apply.
+     * @param context the context.
+     * @param effect  the effect to apply.
      * @return the generated {@link GameSetting} instance.
      */
-    @NotNull
-    GameSetting toGameSetting(Effect effect);
+    @NotNull GameSetting toGameSetting(Context<Player> context, Effect effect);
 
     /**
      * Builder interface for constructing {@link GameBasics} instances.
@@ -82,16 +71,7 @@ public interface GameBasics {
          * @param value the difficulty level.
          * @return the current {@link Builder} instance.
          */
-        Builder difficulty(int value);
-
-        /**
-         * Sets the difficulty range for the game.
-         *
-         * @param min the minimum difficulty level.
-         * @param max the maximum difficulty level.
-         * @return the current {@link Builder} instance.
-         */
-        Builder difficulty(int min, int max);
+        Builder difficulty(MathValue<Player> value);
 
         /**
          * Sets the time for the game.
@@ -99,16 +79,7 @@ public interface GameBasics {
          * @param value the time in seconds.
          * @return the current {@link Builder} instance.
          */
-        Builder time(int value);
-
-        /**
-         * Sets the time range for the game.
-         *
-         * @param min the minimum time in seconds.
-         * @param max the maximum time in seconds.
-         * @return the current {@link Builder} instance.
-         */
-        Builder time(int min, int max);
+        Builder time(MathValue<Player> value);
 
         /**
          * Builds and returns the {@link GameBasics} instance.

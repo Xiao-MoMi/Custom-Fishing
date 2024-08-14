@@ -20,6 +20,7 @@ package net.momirealms.customfishing.api.mechanic.item;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.config.function.PriorityFunction;
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.common.item.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -47,6 +48,13 @@ public interface CustomFishingItem {
      * @return the unique identifier as a String.
      */
     String id();
+
+    /**
+     * Returns the amount of the item
+     *
+     * @return the amount of the item
+     */
+    MathValue<Player> amount();
 
     /**
      * Returns a list of tag consumers. Tag consumers are functions that take an {@link Item} and a {@link Context}
@@ -95,6 +103,14 @@ public interface CustomFishingItem {
          * @return the {@link Builder} instance for method chaining.
          */
         Builder material(String material);
+
+        /**
+         * Sets the amount of the item
+         *
+         * @param amount amount
+         * @return the {@link Builder} instance for method chaining.
+         */
+        Builder amount(MathValue<Player> amount);
 
         /**
          * Sets the list of tag consumers for the {@link CustomFishingItem} being built.

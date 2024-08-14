@@ -20,6 +20,8 @@ rainbow_1:
     pointer-offset: -119
     pointer-width: 5
     width-per-section: 16
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 1
     2: 0
@@ -39,6 +41,8 @@ rainbow_2:
     pointer-offset: -119
     pointer-width: 5
     width-per-section: 16
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 1
@@ -58,6 +62,8 @@ rainbow_3:
     pointer-offset: -119
     pointer-width: 5
     width-per-section: 16
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -77,6 +83,8 @@ rainbow_4:
     pointer-offset: -119
     pointer-width: 5
     width-per-section: 16
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -96,6 +104,8 @@ rainbow_5:
     pointer-offset: -119
     pointer-width: 5
     width-per-section: 16
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -115,6 +125,8 @@ rainbow_6:
     pointer-offset: -119
     pointer-width: 5
     width-per-section: 16
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -134,6 +146,8 @@ rainbow_7:
     pointer-offset: -119
     pointer-width: 5
     width-per-section: 16
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -158,6 +172,8 @@ accurate_click_bar_1_easy:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 16
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -186,6 +202,8 @@ accurate_click_bar_1_normal:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 16
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -214,6 +232,8 @@ accurate_click_bar_1_hard:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 16
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -242,6 +262,8 @@ accurate_click_bar_2_easy:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 16
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0.2
@@ -270,6 +292,8 @@ accurate_click_bar_2_normal:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 16
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0.2
@@ -298,6 +322,8 @@ accurate_click_bar_2_hard:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 16
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0.2
@@ -326,6 +352,8 @@ accurate_click_bar_3_easy:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 16
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -354,6 +382,8 @@ accurate_click_bar_3_normal:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 16
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -382,6 +412,8 @@ accurate_click_bar_3_hard:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 16
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -410,6 +442,8 @@ accurate_click_bar_4_easy:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 8
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -449,6 +483,8 @@ accurate_click_bar_4_normal:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 8
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -488,6 +524,8 @@ accurate_click_bar_4_hard:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 8
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -527,6 +565,8 @@ accurate_click_bar_5_easy:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 8
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 1
     2: 0
@@ -566,6 +606,8 @@ accurate_click_bar_5_normal:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 8
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 1
     2: 0
@@ -605,6 +647,8 @@ accurate_click_bar_5_hard:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 8
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 1
     2: 0
@@ -644,6 +688,8 @@ accurate_click_bar_6_easy:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 8
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0.1
     2: 0.1
@@ -683,6 +729,8 @@ accurate_click_bar_6_normal:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 8
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0.1
     2: 0.1
@@ -722,6 +770,8 @@ accurate_click_bar_6_hard:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 8
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0.1
     2: 0.1
@@ -761,6 +811,8 @@ accurate_click_bar_7_easy:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 4
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -822,6 +874,8 @@ accurate_click_bar_7_normal:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 4
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -883,6 +937,8 @@ accurate_click_bar_7_hard:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 4
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -944,6 +1000,8 @@ accurate_click_bar_8_easy:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 4
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -1005,6 +1063,8 @@ accurate_click_bar_8_normal:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 4
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -1066,6 +1126,8 @@ accurate_click_bar_8_hard:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 4
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 0
     2: 0
@@ -1127,6 +1189,8 @@ accurate_click_bar_9_easy:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 4
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 1
     2: 0
@@ -1188,6 +1252,8 @@ accurate_click_bar_9_normal:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 4
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 1
     2: 0
@@ -1249,6 +1315,8 @@ accurate_click_bar_9_hard:
     pointer-offset: -183
     pointer-width: 5
     width-per-section: 4
+    max-speed: 150
+    min-speed: 15
   success-rate-sections:
     1: 1
     2: 0
@@ -1321,6 +1389,7 @@ hold_game_easy:
     water-resistance: 0.15
     pulling-strength: 0.35
     loosening-strength-loss: 0.25
+    elasticity: false
   hold-time-requirements:
     - 3
     - 3
@@ -1357,6 +1426,7 @@ hold_game_normal:
     water-resistance: 0.15
     pulling-strength: 0.35
     loosening-strength-loss: 0.25
+    elasticity: false
   hold-time-requirements:
     - 3
     - 3
@@ -1395,6 +1465,8 @@ hold_game_hard:
     water-resistance: 0.15
     pulling-strength: 0.35
     loosening-strength-loss: 0.25
+    elasticity: false
+    elasticity-power: 0.7
   hold-time-requirements:
     - 3
     - 4
@@ -1445,6 +1517,8 @@ tension_game_easy:
     normal-pull-tension-increase: 1
     struggling-tension-increase: 2
     loosening-tension-loss: 2
+    elasticity: false
+    elasticity-power: 0.7
   tension:
     - '<font:customfishing:icons>뀑</font>'
     - '<font:customfishing:icons>뀒</font>'
@@ -1482,6 +1556,8 @@ tension_game_normal:
     normal-pull-tension-increase: 1
     struggling-tension-increase: 2
     loosening-tension-loss: 2
+    elasticity: false
+    elasticity-power: 0.7
   tension:
     - '<font:customfishing:icons>뀑</font>'
     - '<font:customfishing:icons>뀒</font>'

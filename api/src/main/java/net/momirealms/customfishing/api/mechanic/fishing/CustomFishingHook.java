@@ -305,6 +305,7 @@ public class CustomFishingHook {
             plugin.debug("Next game: " + nextGame.id());
             gamingPlayer = nextGame.start(this, tempFinalEffect);
             if (this.hookMechanic != null) {
+                BukkitCustomFishingPlugin.getInstance().debug("Freezing current mechanic");
                 this.hookMechanic.freeze();
             }
         } else {
@@ -393,8 +394,10 @@ public class CustomFishingHook {
      * Handles the escape action.
      */
     public void onEscape() {
-        plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.ESCAPE);
-        gears.trigger(ActionTrigger.ESCAPE, context);
+        if (!isPlayingGame()) {
+            plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.ESCAPE);
+            gears.trigger(ActionTrigger.ESCAPE, context);
+        }
     }
 
     /**

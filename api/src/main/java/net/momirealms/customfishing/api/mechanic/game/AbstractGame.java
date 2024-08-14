@@ -60,7 +60,7 @@ public abstract class AbstractGame implements Game {
      */
     @Override
     public GamingPlayer start(CustomFishingHook hook, Effect effect) {
-        return gamingPlayerProvider().apply(hook, basics.toGameSetting(effect));
+        return gamingPlayerProvider().apply(hook, basics.toGameSetting(hook.getContext(), effect));
     }
 
     /**

@@ -23,6 +23,7 @@ import net.momirealms.customfishing.api.mechanic.config.function.ItemParserFunct
 import net.momirealms.customfishing.api.mechanic.config.function.PriorityFunction;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.item.CustomFishingItem;
+import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.item.Item;
 import org.bukkit.entity.Player;
@@ -37,14 +38,17 @@ public class SingleItemParser {
 
     private final String id;
     private final String material;
+    private final MathValue<Player> amount;
     private final List<PriorityFunction<BiConsumer<Item<ItemStack>, Context<Player>>>> tagConsumers = new ArrayList<>();
 
     public SingleItemParser(String id, Section section, Map<String, Node<ConfigParserFunction>> functionMap) {
         this.id = id;
         if (section == null) {
             this.material = "AIR";
+            this.amount = MathValue.plain(1);
             return;
         }
+        this.amount = MathValue.auto(section.get("amount", 1), true);
         this.material = section.getString("material");
         analyze(section, functionMap);
     }
@@ -73,6 +77,7 @@ public class SingleItemParser {
         return CustomFishingItem.builder()
                 .material(material)
                 .id(id)
+                .amount(amount)
                 .tagConsumers(tagConsumers)
                 .build();
     }

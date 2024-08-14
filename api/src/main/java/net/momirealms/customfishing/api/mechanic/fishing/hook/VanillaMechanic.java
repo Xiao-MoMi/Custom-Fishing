@@ -41,6 +41,7 @@ public class VanillaMechanic implements HookMechanic {
     private SchedulerTask task;
     private boolean isHooked = false;
     private int tempWaitTime;
+    private boolean freeze = false;
 
     public VanillaMechanic(FishHook hook, Context<Player> context) {
         this.hook = hook;
@@ -82,6 +83,10 @@ public class VanillaMechanic implements HookMechanic {
 
     private void setWaitTime(FishHook hook, Effect effect) {
         BukkitCustomFishingPlugin.getInstance().getScheduler().sync().run(() -> {
+            if (freeze) {
+                hook.setWaitTime(Integer.MAX_VALUE);
+                return;
+            }
             if (!ConfigManager.overrideVanillaWaitTime()) {
                 int before = Math.max(hook.getWaitTime(), 0);
                 int after = (int) Math.max(100, before * effect.waitTimeMultiplier() + effect.waitTimeAdder());
@@ -119,6 +124,7 @@ public class VanillaMechanic implements HookMechanic {
 
     @Override
     public void freeze() {
+        freeze = true;
         if (hook.getWaitTime() > 0) {
             this.tempWaitTime = hook.getWaitTime();
         }
@@ -127,6 +133,7 @@ public class VanillaMechanic implements HookMechanic {
 
     @Override
     public void unfreeze(Effect effect) {
+        freeze = false;
         if (this.tempWaitTime != 0) {
             hook.setWaitTime(this.tempWaitTime);
             this.tempWaitTime = 0;

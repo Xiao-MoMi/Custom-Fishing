@@ -23,5 +23,5 @@ package net.momirealms.customfishing.api.mechanic.game;
  * @param time       The time allocated for the game, in seconds.
  * @param difficulty The difficulty level of the game. (1~100)
  */
-public record GameSetting(double time, int difficulty) {
+public record GameSetting(double time, double difficulty) {
 }

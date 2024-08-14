@@ -136,6 +136,7 @@ public class BukkitItemManager implements ItemManager, Listener {
     public ItemStack build(@NotNull Context<Player> context, @NotNull CustomFishingItem item) {
         ItemStack itemStack = getOriginalStack(context.getHolder(), item.material());
         if (itemStack.getType() == Material.AIR) return itemStack;
+        itemStack.setAmount(Math.max(1, (int) item.amount().evaluate(context)));
         Item<ItemStack> wrappedItemStack = factory.wrap(itemStack);
         for (BiConsumer<Item<ItemStack>, Context<Player>> consumer : item.tagConsumers()) {
             consumer.accept(wrappedItemStack, context);

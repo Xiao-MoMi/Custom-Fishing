@@ -19,6 +19,7 @@ package net.momirealms.customfishing.api.mechanic.item;
 
 import net.momirealms.customfishing.api.mechanic.config.function.PriorityFunction;
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.common.item.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -34,13 +35,15 @@ public class CustomFishingItemImpl implements CustomFishingItem {
 
     private final String material;
     private final String id;
+    private final MathValue<Player> amount;
 
     private final List<BiConsumer<Item<ItemStack>, Context<Player>>> tagConsumers;
 
-    public CustomFishingItemImpl(String id, String material, List<BiConsumer<Item<ItemStack>, Context<Player>>> tagConsumers) {
+    public CustomFishingItemImpl(String id, String material, MathValue<Player> amount, List<BiConsumer<Item<ItemStack>, Context<Player>>> tagConsumers) {
         this.material = material;
         this.id = id;
         this.tagConsumers = tagConsumers;
+        this.amount = amount;
     }
 
     @Override
@@ -54,6 +57,11 @@ public class CustomFishingItemImpl implements CustomFishingItem {
     }
 
     @Override
+    public MathValue<Player> amount() {
+        return amount == null ? MathValue.plain(1) : amount;
+    }
+
+    @Override
     public List<BiConsumer<Item<ItemStack>, Context<Player>>> tagConsumers() {
         return tagConsumers;
     }
@@ -62,6 +70,7 @@ public class CustomFishingItemImpl implements CustomFishingItem {
 
         private String material = DEFAULT_MATERIAL;
         private String id;
+        private MathValue<Player> amount;
         private final TreeSet<PriorityFunction<BiConsumer<Item<ItemStack>, Context<Player>>>> tagConsumers = new TreeSet<>();
 
         @Override
@@ -77,6 +86,12 @@ public class CustomFishingItemImpl implements CustomFishingItem {
         }
 
         @Override
+        public Builder amount(MathValue<Player> amount) {
+            this.amount = requireNonNull(amount);
+            return this;
+        }
+
+        @Override
         public Builder tagConsumers(List<PriorityFunction<BiConsumer<Item<ItemStack>, Context<Player>>>> tagConsumers) {
             this.tagConsumers.addAll(tagConsumers);
             return this;
@@ -84,7 +99,7 @@ public class CustomFishingItemImpl implements CustomFishingItem {
 
         @Override
         public CustomFishingItem build() {
-            return new CustomFishingItemImpl(requireNonNull(id), material, tagConsumers.stream().map(PriorityFunction::get).toList());
+            return new CustomFishingItemImpl(requireNonNull(id), material, amount, tagConsumers.stream().map(PriorityFunction::get).toList());
         }
     }
 }

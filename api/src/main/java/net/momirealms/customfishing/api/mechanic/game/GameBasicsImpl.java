@@ -17,51 +17,42 @@
 
 package net.momirealms.customfishing.api.mechanic.game;
 
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
-import net.momirealms.customfishing.common.util.RandomUtils;
+import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public record GameBasicsImpl(int minTime, int maxTime, int minDifficulty, int maxDifficulty) implements GameBasics {
+public record GameBasicsImpl(MathValue<Player> time, MathValue<Player> difficulty) implements GameBasics {
 
     public static class BuilderImpl implements Builder {
-        private int minTime;
-        private int maxTime;
-        private int minDifficulty;
-        private int maxDifficulty;
+        private MathValue<Player> time;
+        private MathValue<Player> difficulty;
+
         @Override
-        public Builder difficulty(int value) {
-            minDifficulty = (maxDifficulty = value);
+        public Builder difficulty(MathValue<Player> value) {
+            this.difficulty = value;
             return this;
         }
+
         @Override
-        public Builder difficulty(int min, int max) {
-            minDifficulty = min;
-            maxDifficulty = max;
+        public Builder time(MathValue<Player> value) {
+            this.time = value;
             return this;
         }
-        @Override
-        public Builder time(int value) {
-            minTime = (maxTime = value);
-            return this;
-        }
-        @Override
-        public Builder time(int min, int max) {
-            minTime = min;
-            maxTime = max;
-            return this;
-        }
+
         @Override
         public GameBasics build() {
-            return new GameBasicsImpl(minTime, maxTime, minDifficulty, maxDifficulty);
+            return new GameBasicsImpl(time, difficulty);
         }
     }
 
-    @Override
     @NotNull
-    public GameSetting toGameSetting(Effect effect) {
+    @Override
+    public GameSetting toGameSetting(Context<Player> context, Effect effect) {
         return new GameSetting(
-                RandomUtils.generateRandomInt(minTime, maxTime) * effect.gameTimeMultiplier() + effect.gameTimeAdder(),
-                (int) Math.min(100, Math.max(1, RandomUtils.generateRandomInt(minDifficulty, maxDifficulty) * effect.difficultyMultiplier() + effect.difficultyAdder()))
+                time.evaluate(context) * effect.gameTimeMultiplier() + effect.gameTimeAdder(),
+                Math.min(100, Math.max(1, difficulty.evaluate(context) * effect.difficultyMultiplier() + effect.difficultyAdder()))
         );
     }
 }
