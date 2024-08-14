@@ -34,7 +34,7 @@ Afdian: https://afdian.net/@xiaomomi
 
 ### Maven
 
-```
+```html
 <repositories>
   <repository>
     <id>jitpack</id>
@@ -42,7 +42,7 @@ Afdian: https://afdian.net/@xiaomomi
   </repository>
 </repositories>
 ```
-```
+```html
 <dependencies>
   <dependency>
     <groupId>com.github.Xiao-MoMi</groupId>
@@ -54,24 +54,24 @@ Afdian: https://afdian.net/@xiaomomi
 ```
 ### Gradle (Groovy)
 
-```
+```groovy
 repositories {
     maven { url 'https://jitpack.io' }
 }
 ```
-```
+```groovy
 dependencies {
     compileOnly 'com.github.Xiao-MoMi:Custom-Fishing:{VERSION}'
 }
 ```
 ### Gradle (Kotlin)
 
-```
+```kotlin
 repositories {
     maven("https://jitpack.io/")
 }
 ```
-```
+```kotlin
 dependencies {
     compileOnly("com.github.Xiao-MoMi:Custom-Fishing:{VERSION}")
 }
