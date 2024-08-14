@@ -5,10 +5,11 @@
 <a href="https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing" alt="GitBook">
 <img src="https://img.shields.io/badge/docs-gitbook-brightgreen" alt="Gitbook"/>
 </a>
-![GitHub](https://img.shields.io/github/license/Xiao-MoMi/Custom-Fishing)
+[![Scc Count Badge](https://sloc.xyz/github/Xiao-MoMi/Custom-Fishing/?category=codes)](https://github.com/Xiao-MoMi/Custom-Fishing/)
 ![Code Size](https://img.shields.io/github/languages/code-size/Xiao-MoMi/Custom-Fishing)
 ![bStats Servers](https://img.shields.io/bstats/servers/16648)
 ![bStats Players](https://img.shields.io/bstats/players/16648)
+![GitHub](https://img.shields.io/github/license/Xiao-MoMi/Custom-Fishing)
 
 CustomFishing is a Paper plugin that provides minigames and a powerful condition & action system for fishing.
 With the new concept of weight system, CustomFishing brings unlimited customization possibilities and best performance.
