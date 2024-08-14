@@ -987,20 +987,30 @@ public class BukkitGameManager implements GameManager {
                 private final int judgementAreaOffset = section.getInt("arguments.judgment-area-offset");
                 private final int pointerIconWidth = section.getInt("arguments.pointer-icon-width");
                 private final int pointerOffset = section.getInt("arguments.pointer-offset");
+                private final int maxSpeed = section.getInt("arguments.max-speed", 150);
+                private final int minSpeed = section.getInt("arguments.min-speed", 15);
 
                 @Override
                 public BiFunction<CustomFishingHook, GameSetting, AbstractGamingPlayer> gamingPlayerProvider() {
                     return (customFishingHook, gameSetting) -> new AbstractGamingPlayer(customFishingHook, gameSetting) {
+
+                        private static final int MIN_VALUE = 1;
+                        private static final int MAX_VALUE = 100;
 
                         private int progress = -1;
                         private boolean face = true;
                         private final int judgement_position = RandomUtils.generateRandomInt(0, barEffectiveWidth - judgementAreaWidth);
                         private final TextValue<Player> title = TextValue.auto(titles.get(RandomUtils.generateRandomInt(0, titles.size() - 1)));
 
+                        private long mapValueToIntervalMicroseconds(int value) {
+                            double frequency = minSpeed + ((double) (value - MIN_VALUE) / (MAX_VALUE - MIN_VALUE)) * (maxSpeed - minSpeed);
+                            return (long) (1_000_000 / frequency);
+                        }
+
                         @Override
                         public void arrangeTask() {
-                            var period = ((double) 10*(200-settings.difficulty()))/((double) (1+4*settings.difficulty()));
-                            this.task = plugin.getScheduler().asyncRepeating(this, 50, (long) period, TimeUnit.MILLISECONDS);
+                            long period = mapValueToIntervalMicroseconds((int) settings.difficulty());
+                            this.task = plugin.getScheduler().asyncRepeating(this, period, period, TimeUnit.MICROSECONDS);
                         }
 
                         @Override
