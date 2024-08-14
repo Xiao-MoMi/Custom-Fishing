@@ -339,6 +339,8 @@ public class BukkitGameManager implements GameManager {
                 private final String barImage = section.getString("subtitle.bar");
                 private final String tip = section.getString("tip");
                 private final boolean left = section.getBoolean("left-click", false);
+                private final boolean elasticity = section.getBoolean("arguments.elasticity", false);
+                private final double elasticityPower = section.getDouble("arguments.elasticity-power", 0.7);
 
                 @Override
                 public BiFunction<CustomFishingHook, GameSetting, AbstractGamingPlayer> gamingPlayerProvider() {
@@ -411,11 +413,19 @@ public class BukkitGameManager implements GameManager {
                         private void calibrate() {
                             if (fish_position < 0) {
                                 fish_position = 0;
-                                fish_velocity = 0;
+                                if (elasticity) {
+                                    fish_velocity = -fish_velocity * elasticityPower;
+                                } else {
+                                    fish_velocity = 0;
+                                }
                             }
                             if (fish_position + pointerIconWidth > barEffectiveWidth) {
                                 fish_position = barEffectiveWidth - pointerIconWidth;
-                                fish_velocity = 0;
+                                if (elasticity) {
+                                    fish_velocity = -fish_velocity * elasticityPower;
+                                } else {
+                                    fish_velocity = 0;
+                                }
                             }
                             if (judgement_position < 0) {
                                 judgement_position = 0;
