@@ -484,6 +484,19 @@ public class BukkitConfigManager extends ConfigManager {
                 double minSize = min.evaluate(context);
                 double maxSize = max.evaluate(context);
                 float size = (float) RandomUtils.generateRandomDouble(minSize, maxSize);
+                Double sm = context.arg(ContextKeys.SIZE_MULTIPLIER);
+                if (sm == null) sm = 1.0;
+                Double sa = context.arg(ContextKeys.SIZE_ADDER);
+                if (sa == null) sa = 0.0;
+                size = (float) (sm * size + sa);
+                if (restrictedSizeRange()) {
+                    if (size > maxSize) {
+                        size = (float) maxSize;
+                    }
+                    if (size < minSize) {
+                        size = (float) minSize;
+                    }
+                }
                 item.setTag(size, "CustomFishing", "size");
                 context.arg(ContextKeys.SIZE, size);
                 context.arg(ContextKeys.MIN_SIZE, minSize);

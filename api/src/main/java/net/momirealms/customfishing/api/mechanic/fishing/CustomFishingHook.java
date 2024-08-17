@@ -457,6 +457,8 @@ public class CustomFishingHook {
 
         switch (lootType) {
             case ITEM -> {
+                context.arg(ContextKeys.SIZE_MULTIPLIER, tempFinalEffect.sizeMultiplier());
+                context.arg(ContextKeys.SIZE_ADDER, tempFinalEffect.sizeAdder());
                 for (int i = 0; i < amount; i++) {
                     plugin.getScheduler().sync().runLater(() -> {
                         Item item = plugin.getItemManager().dropItemLoot(context, gears.getItem(FishingGears.GearType.ROD).stream().findAny().orElseThrow().right(), hook);
@@ -526,6 +528,7 @@ public class CustomFishingHook {
                     }
                 } else if (competition.getGoal() == CompetitionGoal.TOTAL_SCORE) {
                     score = nextLoot.score().evaluate(context);
+                    score = score * tempFinalEffect.scoreMultiplier() + tempFinalEffect.scoreAdder();
                     if (score != 0) {
                         competition.refreshData(context.getHolder(), score);
                     }
