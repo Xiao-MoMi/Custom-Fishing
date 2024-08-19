@@ -446,7 +446,6 @@ public class BukkitGameManager implements GameManager {
                             }
                             played = true;
                             fish_velocity = pullingStrength;
-                            return;
                         }
 
                         @Override
@@ -482,6 +481,7 @@ public class BukkitGameManager implements GameManager {
 
                 private final TextValue<Player> title = TextValue.auto(section.getString("title","<red>{progress}"));
                 private final TextValue<Player> subtitle = TextValue.auto(section.getString("subtitle", "<gray>Click <white>{clicks} <gray>times to win. Time left <white>{time_left}s"));
+                private final boolean left = section.getBoolean("left-click", false);
 
                 @Override
                 public BiFunction<CustomFishingHook, GameSetting, AbstractGamingPlayer> gamingPlayerProvider() {
@@ -502,12 +502,16 @@ public class BukkitGameManager implements GameManager {
 
                         @Override
                         public void handleRightClick() {
-                            handleClicks();
+                            if (!left) {
+                                handleClicks();
+                            }
                         }
 
                         @Override
-                        public boolean internalLeftClick() {
-                            handleClicks();
+                        public boolean handleLeftClick() {
+                            if (left) {
+                                handleClicks();
+                            }
                             return true;
                         }
 
@@ -522,8 +526,13 @@ public class BukkitGameManager implements GameManager {
 
                         private void showUI() {
                             hook.getContext().arg(ContextKeys.CLICKS_LEFT, requiredTimes - clickedTimes);
+                            hook.getContext().arg(ContextKeys.REQUIRED_TIMES, requiredTimes);
                             hook.getContext().arg(ContextKeys.PROGRESS, String.valueOf(clickedTimes));
-                            SparrowHeart.getInstance().sendTitle(getPlayer(), AdventureHelper.miniMessageToJson(title.render(hook.getContext())), AdventureHelper.miniMessageToJson(subtitle.render(hook.getContext())), 0, 20, 0);
+                            SparrowHeart.getInstance().sendTitle(
+                                    getPlayer(),
+                                    AdventureHelper.miniMessageToJson(title.render(hook.getContext())),
+                                    AdventureHelper.miniMessageToJson(subtitle.render(hook.getContext())),
+                                    0, 20, 0);
                         }
                     };
                 }
