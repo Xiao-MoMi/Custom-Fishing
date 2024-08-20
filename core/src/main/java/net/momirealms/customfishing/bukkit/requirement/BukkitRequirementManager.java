@@ -126,12 +126,12 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         String type = section.getString("type");
         if (type == null) {
             plugin.getPluginLogger().warn("No requirement type found at " + section.getRouteAsString());
-            return EmptyRequirement.INSTANCE;
+            return Requirement.empty();
         }
         var factory = getRequirementFactory(type);
         if (factory == null) {
             plugin.getPluginLogger().warn("Requirement type: " + type + " not exists");
-            return EmptyRequirement.INSTANCE;
+            return Requirement.empty();
         }
         return factory.process(section.get("value"), actionList, runActions);
     }
@@ -142,7 +142,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         RequirementFactory<Player> factory = getRequirementFactory(type);
         if (factory == null) {
             plugin.getPluginLogger().warn("Requirement type: " + type + " doesn't exist.");
-            return EmptyRequirement.INSTANCE;
+            return Requirement.empty();
         }
         return factory.process(value);
     }
@@ -220,7 +220,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at competition requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
     }
@@ -254,7 +254,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at item-in-hand requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
     }
@@ -278,7 +278,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at plugin-level requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
     }
@@ -334,7 +334,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at || requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
     }
@@ -355,7 +355,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at && requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
     }
@@ -635,7 +635,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             for (String e : ListUtils.toList(args)) {
                 plugin.getPluginLogger().warn(" - " + e);
             }
-            return EmptyRequirement.INSTANCE;
+            return Requirement.empty();
         });
     }
 
@@ -827,7 +827,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at cooldown requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
     }
@@ -898,7 +898,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at < requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
         registerRequirement("<=", (args, actions, runActions) -> {
@@ -912,7 +912,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at <= requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
         registerRequirement("!=", (args, actions, runActions) -> {
@@ -926,7 +926,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at != requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
         registerRequirement("==", (args, actions, runActions) -> {
@@ -940,7 +940,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at == requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
         registerRequirement(">=", (args, actions, runActions) -> {
@@ -954,7 +954,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at >= requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
         registerRequirement(">", (args, actions, runActions) -> {
@@ -968,7 +968,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at > requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
         registerRequirement("regex", (args, actions, runActions) -> {
@@ -982,7 +982,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at regex requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
         registerRequirement("startsWith", (args, actions, runActions) -> {
@@ -996,7 +996,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at startsWith requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
         registerRequirement("!startsWith", (args, actions, runActions) -> {
@@ -1010,7 +1010,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at !startsWith requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
         registerRequirement("endsWith", (args, actions, runActions) -> {
@@ -1024,7 +1024,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at endsWith requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
         registerRequirement("!endsWith", (args, actions, runActions) -> {
@@ -1038,7 +1038,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at !endsWith requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
         registerRequirement("contains", (args, actions, runActions) -> {
@@ -1052,7 +1052,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at contains requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
         registerRequirement("!contains", (args, actions, runActions) -> {
@@ -1066,7 +1066,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at !contains requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
         registerRequirement("in-list", (args, actions, runActions) -> {
@@ -1080,7 +1080,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at in-list requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
         registerRequirement("!in-list", (args, actions, runActions) -> {
@@ -1094,7 +1094,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at !in-list requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
         registerRequirement("equals", (args, actions, runActions) -> {
@@ -1109,7 +1109,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at equals requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
         registerRequirement("!equals", (args, actions, runActions) -> {
@@ -1123,7 +1123,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at !equals requirement which is expected be `Section`");
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
         });
     }
@@ -1135,7 +1135,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             PotionEffectType type = PotionEffectType.getByName(split[0]);
             if (type == null) {
                 plugin.getPluginLogger().warn("Potion effect doesn't exist: " + split[0]);
-                return EmptyRequirement.INSTANCE;
+                return Requirement.empty();
             }
             int required = Integer.parseInt(split[1]);
             String operator = potions.substring(split[0].length(), potions.length() - split[1].length());

@@ -57,7 +57,7 @@ public class WorldGuardRegion {
                     }
                 } else {
                     BukkitCustomFishingPlugin.getInstance().getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at region requirement which is expected be `Section` or `StringList`");
-                    return EmptyRequirement.INSTANCE;
+                    return EmptyRequirement.instance();
                 }
             }
             int finalMode = mode;

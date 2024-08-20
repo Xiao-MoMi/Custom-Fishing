@@ -33,7 +33,7 @@ public interface Action<T> {
      */
     void trigger(Context<T> context);
 
-    static Action<?> empty() {
-        return EmptyAction.INSTANCE;
+    static <T> Action<T> empty() {
+        return EmptyAction.instance();
     }
 }

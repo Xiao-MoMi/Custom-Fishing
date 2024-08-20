@@ -110,11 +110,11 @@ public class BukkitActionManager implements ActionManager<Player> {
 
     @Override
     public Action<Player> parseAction(Section section) {
-        if (section == null) return EmptyAction.INSTANCE;
+        if (section == null) return Action.empty();
         ActionFactory<Player> factory = getActionFactory(section.getString("type"));
         if (factory == null) {
             plugin.getPluginLogger().warn("Action type: " + section.getString("type") + " doesn't exist.");
-            return EmptyAction.INSTANCE;
+            return Action.empty();
         }
         return factory.process(section.get("value"), section.getDouble("chance", 1d));
     }
@@ -140,7 +140,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         ActionFactory<Player> factory = getActionFactory(type);
         if (factory == null) {
             plugin.getPluginLogger().warn("Action type: " + type + " doesn't exist.");
-            return EmptyAction.INSTANCE;
+            return Action.empty();
         }
         return factory.process(args, 1);
     }
@@ -225,7 +225,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at message-nearby action which should be Section");
-                return EmptyAction.INSTANCE;
+                return Action.empty();
             }
         });
     }
@@ -288,7 +288,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at command-nearby action which should be Section");
-                return EmptyAction.INSTANCE;
+                return Action.empty();
             }
         });
     }
@@ -340,7 +340,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at actionbar-nearby action which should be Section");
-                return EmptyAction.INSTANCE;
+                return Action.empty();
             }
         });
     }
@@ -412,7 +412,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at item-amount action which is expected to be `Section`");
-                return EmptyAction.INSTANCE;
+                return Action.empty();
             }
         });
         registerAction("durability", (args, chance) -> {
@@ -445,7 +445,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at durability action which is expected to be `Section`");
-                return EmptyAction.INSTANCE;
+                return Action.empty();
             }
         });
         registerAction("give-item", (args, chance) -> {
@@ -475,7 +475,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at give-item action which is expected to be `Section`");
-                return EmptyAction.INSTANCE;
+                return Action.empty();
             }
         });
     }
@@ -586,7 +586,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at conditional action which is expected to be `Section`");
-                return EmptyAction.INSTANCE;
+                return Action.empty();
             }
         });
         registerAction("priority", (args, chance) -> {
@@ -618,7 +618,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at priority action which is expected to be `Section`");
-                return EmptyAction.INSTANCE;
+                return Action.empty();
             }
         });
     }
@@ -656,7 +656,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at potion-effect action which is expected to be `Section`");
-                return EmptyAction.INSTANCE;
+                return Action.empty();
             }
         });
     }
@@ -677,7 +677,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at sound action which is expected to be `Section`");
-                return EmptyAction.INSTANCE;
+                return Action.empty();
             }
         });
     }
@@ -697,7 +697,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at plugin-exp action which is expected to be `Section`");
-                return EmptyAction.INSTANCE;
+                return Action.empty();
             }
         });
     }
@@ -722,7 +722,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at title action which is expected to be `Section`");
-                return EmptyAction.INSTANCE;
+                return Action.empty();
             }
         });
         registerAction("random-title", (args, chance) -> {
@@ -748,7 +748,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at random-title action which is expected to be `Section`");
-                return EmptyAction.INSTANCE;
+                return Action.empty();
             }
         });
         registerAction("title-nearby", (args, chance) -> {
@@ -776,7 +776,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at title-nearby action which is expected to be `Section`");
-                return EmptyAction.INSTANCE;
+                return Action.empty();
             }
         });
     }
@@ -829,7 +829,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at fake-item action which is expected to be `Section`");
-                return EmptyAction.INSTANCE;
+                return Action.empty();
             }
         }));
     }
@@ -876,7 +876,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at hologram action which is expected to be `Section`");
-                return EmptyAction.INSTANCE;
+                return Action.empty();
             }
         }));
     }

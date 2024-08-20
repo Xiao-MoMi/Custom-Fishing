@@ -35,7 +35,7 @@ public interface Requirement<T> {
      */
     boolean isSatisfied(Context<T> context);
 
-    static Requirement<?> empty() {
-        return EmptyRequirement.INSTANCE;
+    static <T> Requirement<T> empty() {
+        return EmptyRequirement.instance();
     }
 }

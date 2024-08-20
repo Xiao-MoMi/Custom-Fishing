@@ -23,12 +23,14 @@ import org.bukkit.entity.Player;
 /**
  * Represents an empty requirement that always returns true when checking conditions.
  */
-public class EmptyRequirement implements Requirement<Player> {
+public class EmptyRequirement<T> implements Requirement<T> {
 
-    public static final EmptyRequirement INSTANCE = new EmptyRequirement();
+    public static <T> EmptyRequirement<T> instance() {
+        return new EmptyRequirement<>();
+    }
 
     @Override
-    public boolean isSatisfied(Context<Player> context) {
+    public boolean isSatisfied(Context<T> context) {
         return true;
     }
 }
