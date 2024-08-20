@@ -44,7 +44,7 @@ public class SQLiteProvider extends AbstractSQLDatabase {
     private Connection connection;
     private File databaseFile;
     private Constructor<?> connectionConstructor;
-    ExecutorService executor;
+    private ExecutorService executor;
 
     public SQLiteProvider(BukkitCustomFishingPlugin plugin) {
         super(plugin);

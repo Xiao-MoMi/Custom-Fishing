@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.api.mechanic.requirement;
 
 import net.momirealms.customfishing.api.mechanic.context.Context;
-import org.bukkit.entity.Player;
 
 /**
  * Represents an empty requirement that always returns true when checking conditions.
