@@ -38,7 +38,7 @@ public class TagUtils {
      * @throws IllegalArgumentException if the input string is in an invalid format
      */
     public static Pair<TagValueType, String> toTypeAndData(String str) {
-        String[] parts = str.split("\\s+", 2);
+        String[] parts = str.split(" ", 2);
         if (parts.length == 1) {
             return Pair.of(TagValueType.STRING, str);
         }
