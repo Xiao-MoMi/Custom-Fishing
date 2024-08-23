@@ -307,7 +307,7 @@ public enum Dependency {
     }
 
     public String getVersion() {
-        return DependencyProperties.getDependencyVersion(customArtifactID);
+        return CustomFishingProperties.getValue(customArtifactID);
     }
 
     private static String rewriteEscaping(String s) {

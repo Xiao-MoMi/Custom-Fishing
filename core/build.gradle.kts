@@ -1,4 +1,4 @@
-val commitID: String by project
+val git_version: String by project
 
 plugins {
     id("io.github.goooler.shadow") version "8.1.8"
@@ -58,7 +58,7 @@ dependencies {
 
 tasks {
     shadowJar {
-        archiveFileName = "CustomFishing-${rootProject.properties["project_version"]}-${commitID}.jar"
+        archiveFileName = "CustomFishing-${rootProject.properties["project_version"]}-${git_version}.jar"
         destinationDirectory.set(file("$rootDir/target"))
         relocate("net.kyori", "net.momirealms.customfishing.libraries")
         relocate("org.incendo", "net.momirealms.customfishing.libraries")

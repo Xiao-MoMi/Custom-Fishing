@@ -67,7 +67,7 @@ import net.momirealms.customfishing.bukkit.totem.particle.ParticleSetting;
 import net.momirealms.customfishing.bukkit.util.ItemStackUtils;
 import net.momirealms.customfishing.bukkit.util.ParticleUtils;
 import net.momirealms.customfishing.common.config.node.Node;
-import net.momirealms.customfishing.common.dependency.DependencyProperties;
+import net.momirealms.customfishing.common.dependency.CustomFishingProperties;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.item.AbstractItem;
@@ -116,7 +116,7 @@ public class BukkitConfigManager extends ConfigManager {
 
     @Override
     public void load() {
-        String configVersion = DependencyProperties.getDependencyVersion("config");
+        String configVersion = CustomFishingProperties.getValue("config");
         try (InputStream inputStream = new FileInputStream(resolveConfig("config.yml").toFile())) {
             MAIN_CONFIG = YamlDocument.create(
                     inputStream,

@@ -23,27 +23,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class DependencyProperties {
+public class CustomFishingProperties {
 
-    private final HashMap<String, String> versionMap;
+    private final HashMap<String, String> propertyMap;
 
-    private DependencyProperties(HashMap<String, String> versionMap) {
-        this.versionMap = versionMap;
+    private CustomFishingProperties(HashMap<String, String> propertyMap) {
+        this.propertyMap = propertyMap;
     }
 
-    public static String getDependencyVersion(String dependencyID) {
-        if (!SingletonHolder.INSTANCE.versionMap.containsKey(dependencyID)) {
-            throw new RuntimeException("Unknown dependency: " + dependencyID);
+    public static String getValue(String key) {
+        if (!SingletonHolder.INSTANCE.propertyMap.containsKey(key)) {
+            throw new RuntimeException("Unknown key: " + key);
         }
-        return SingletonHolder.INSTANCE.versionMap.get(dependencyID);
+        return SingletonHolder.INSTANCE.propertyMap.get(key);
     }
 
     private static class SingletonHolder {
 
-        private static final DependencyProperties INSTANCE = getInstance();
+        private static final CustomFishingProperties INSTANCE = getInstance();
 
-        private static DependencyProperties getInstance() {
-             try (InputStream inputStream = DependencyProperties.class.getClassLoader().getResourceAsStream("library-version.properties")) {
+        private static CustomFishingProperties getInstance() {
+             try (InputStream inputStream = CustomFishingProperties.class.getClassLoader().getResourceAsStream("custom-fishing.properties")) {
                  HashMap<String, String> versionMap = new HashMap<>();
                  Properties properties = new Properties();
                  properties.load(inputStream);
@@ -52,7 +52,7 @@ public class DependencyProperties {
                          versionMap.put(key, value);
                      }
                  }
-                 return new DependencyProperties(versionMap);
+                 return new CustomFishingProperties(versionMap);
              } catch (IOException e) {
                  throw new RuntimeException(e);
              }

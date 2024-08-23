@@ -4,8 +4,10 @@ plugins {
     id("java")
 }
 
-val commitID : String = versionBanner()
-ext["commitID"] = commitID
+val git : String = versionBanner()
+val builder : String = builder()
+ext["git_version"] = git
+ext["builder"] = builder
 
 subprojects {
 
@@ -23,13 +25,15 @@ subprojects {
     tasks.processResources {
         filteringCharset = "UTF-8"
 
-        filesMatching(arrayListOf("library-version.properties")) {
+        filesMatching(arrayListOf("custom-fishing.properties")) {
             expand(rootProject.properties)
+            expand(Pair("builder", builder), Pair("git_version", git))
         }
 
         filesMatching(arrayListOf("plugin.yml", "*.yml", "*/*.yml")) {
             expand(
-                Pair("git_version", commitID),
+                Pair("git_version", git),
+                Pair("builder", builder),
                 Pair("project_version", rootProject.properties["project_version"]),
                 Pair("config_version", rootProject.properties["config_version"])
             )
@@ -41,6 +45,15 @@ fun versionBanner(): String {
     val os = ByteArrayOutputStream()
     project.exec {
         commandLine = "git rev-parse --short=8 HEAD".split(" ")
+        standardOutput = os
+    }
+    return String(os.toByteArray()).trim()
+}
+
+fun builder(): String {
+    val os = ByteArrayOutputStream()
+    project.exec {
+        commandLine = "git config user.name".split(" ")
         standardOutput = os
     }
     return String(os.toByteArray()).trim()

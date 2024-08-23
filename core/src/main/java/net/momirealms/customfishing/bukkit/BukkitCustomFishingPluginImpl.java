@@ -47,6 +47,7 @@ import net.momirealms.customfishing.bukkit.sender.BukkitSenderFactory;
 import net.momirealms.customfishing.bukkit.statistic.BukkitStatisticsManager;
 import net.momirealms.customfishing.bukkit.storage.BukkitStorageManager;
 import net.momirealms.customfishing.bukkit.totem.BukkitTotemManager;
+import net.momirealms.customfishing.common.dependency.CustomFishingProperties;
 import net.momirealms.customfishing.common.dependency.Dependency;
 import net.momirealms.customfishing.common.dependency.DependencyManagerImpl;
 import net.momirealms.customfishing.common.helper.VersionHelper;
@@ -148,7 +149,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         if (downloadFromPolymart || downloadFromBBB) {
             this.getPluginLogger().info("License holder: " + username + "." + user);
         } else {
-            this.debug("You are using a compiled version from Github.");
+            this.getPluginLogger().info("You are using a compiled version. Built by: " + CustomFishingProperties.getValue("builder") + " Commit ID: " + CustomFishingProperties.getValue("git"));
         }
 
         if (ConfigManager.checkUpdate()) {
