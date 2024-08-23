@@ -40,13 +40,17 @@ public class TagUtils {
     public static Pair<TagValueType, String> toTypeAndData(String str) {
         String[] parts = str.split("\\s+", 2);
         if (parts.length == 1) {
-            return Pair.of(TagValueType.STRING, parts[0]);
+            return Pair.of(TagValueType.STRING, str);
         }
         if (parts.length != 2) {
             throw new IllegalArgumentException("Invalid value format: " + str);
         }
-        TagValueType type = TagValueType.valueOf(parts[0].substring(1, parts[0].length() - 1).toUpperCase(Locale.ENGLISH));
-        String data = parts[1];
-        return Pair.of(type, data);
+        if (parts[0].startsWith("(") && parts[0].endsWith(")")) {
+            TagValueType type = TagValueType.valueOf(parts[0].substring(1, parts[0].length() - 1).toUpperCase(Locale.ENGLISH));
+            String data = parts[1];
+            return Pair.of(type, data);
+        } else {
+            return Pair.of(TagValueType.STRING, str);
+        }
     }
 }
