@@ -73,11 +73,11 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
     private final PluginLogger logger;
     private BukkitCommandManager commandManager;
     private Consumer<Object> debugger;
-    private String user = "%%__USER__%%";
-    private String username = "%%__USERNAME__%%";
     private String buildByBit = "%%__BUILTBYBIT__%%";
     private String polymart = "%%__POLYMART__%%";
     private String time = "%%__TIMESTAMP__%%";
+    private String user = "%%__USER__%%";
+    private String username = "%%__USERNAME__%%";
 
     public BukkitCustomFishingPluginImpl(Plugin boostrap) {
         super(boostrap);
@@ -146,11 +146,6 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
 
         boolean downloadFromPolymart = polymart.equals("1");
         boolean downloadFromBBB = buildByBit.equals("true");
-        if (downloadFromPolymart || downloadFromBBB) {
-            this.getPluginLogger().info("License holder: " + username + "." + user);
-        } else {
-            this.getPluginLogger().info("You are using a compiled version. Built by: " + CustomFishingProperties.getValue("builder") + " Commit ID: " + CustomFishingProperties.getValue("git"));
-        }
 
         if (ConfigManager.checkUpdate()) {
             VersionHelper.UPDATE_CHECKER.apply(this).thenAccept(result -> {
