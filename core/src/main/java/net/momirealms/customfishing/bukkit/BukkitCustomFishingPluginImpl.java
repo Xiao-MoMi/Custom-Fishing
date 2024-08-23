@@ -72,6 +72,11 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
     private final PluginLogger logger;
     private BukkitCommandManager commandManager;
     private Consumer<Object> debugger;
+    private String user = "%%__USER__%%";
+    private String username = "%%__USERNAME__%%";
+    private String buildByBit = "%%__BUILTBYBIT__%%";
+    private String polymart = "%%__POLYMART__%%";
+    private String time = "%%__TIMESTAMP__%%";
 
     public BukkitCustomFishingPluginImpl(Plugin boostrap) {
         super(boostrap);
@@ -137,10 +142,30 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
 
         this.reload();
         if (ConfigManager.metrics()) new Metrics((JavaPlugin) getBoostrap(), 16648);
+
+        boolean downloadFromPolymart = polymart.equals("1");
+        boolean downloadFromBBB = buildByBit.equals("true");
+        if (downloadFromPolymart || downloadFromBBB) {
+            this.getPluginLogger().info("License holder: " + username + "." + user);
+        } else {
+            this.debug("You are using a compiled version from Github.");
+        }
+
         if (ConfigManager.checkUpdate()) {
             VersionHelper.UPDATE_CHECKER.apply(this).thenAccept(result -> {
-                if (!result) this.getPluginLogger().info("You are using the latest version.");
-                else this.getPluginLogger().warn("Update is available: https://polymart.org/resource/2723");
+                String link;
+                if (downloadFromPolymart) {
+                    link = "https://polymart.org/resource/2723/";
+                } else if (downloadFromBBB) {
+                    link = "https://builtbybit.com/resources/36361/";
+                } else {
+                    link = "https://github.com/Xiao-MoMi/Custom-Fishing/";
+                }
+                if (!result) {
+                    this.getPluginLogger().info("You are using the latest version.");
+                } else {
+                    this.getPluginLogger().warn("Update is available: " + link);
+                }
             });
         }
     }
