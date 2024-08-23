@@ -29,7 +29,7 @@ subprojects {
             expand(rootProject.properties)
         }
 
-        filesMatching(arrayListOf("plugin.yml", "*.yml", "*/*.yml")) {
+        filesMatching(arrayListOf("*.yml", "*/*.yml")) {
             expand(
                 Pair("git_version", git),
                 Pair("builder", builder),
