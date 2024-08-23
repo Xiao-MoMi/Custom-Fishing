@@ -479,7 +479,7 @@ public class BukkitConfigManager extends ConfigManager {
             String sizePair = (String) arg;
             String[] split = sizePair.split("~", 2);
             MathValue<Player> min = MathValue.auto(split[0]);
-            MathValue<Player> max = MathValue.auto(split[1]);
+            MathValue<Player> max = split.length == 2 ? MathValue.auto(split[1]) : MathValue.auto(split[0]);
             return (item, context) -> {
                 double minSize = min.evaluate(context);
                 double maxSize = max.evaluate(context);

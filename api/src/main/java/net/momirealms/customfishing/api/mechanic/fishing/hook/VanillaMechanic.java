@@ -26,6 +26,7 @@ import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectProperties;
 import net.momirealms.customfishing.api.mechanic.fishing.AntiAutoFishing;
 import net.momirealms.customfishing.api.util.EventUtils;
+import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import net.momirealms.customfishing.common.util.RandomUtils;
 import net.momirealms.sparrow.heart.SparrowHeart;
@@ -99,7 +100,12 @@ public class VanillaMechanic implements HookMechanic {
                 BukkitCustomFishingPlugin.getInstance().debug("Wait time: " + before + " -> " + after + " ticks");
             }
             int lureTime = RandomUtils.generateRandomInt(20, 80);
-            hook.setLureTime(lureTime, lureTime);
+            if (VersionHelper.isVersionNewerThan1_19_4()) {
+                hook.setLureTime(lureTime, lureTime);
+            } else {
+                // the lowest value
+                lureTime = 20;
+            }
             if (ConfigManager.antiAutoFishingMod()) {
                 BukkitCustomFishingPlugin.getInstance().getScheduler().sync().runLater(() -> {
                     Player player = context.getHolder();
