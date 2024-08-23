@@ -31,8 +31,6 @@ subprojects {
 
         filesMatching(arrayListOf("*.yml", "*/*.yml")) {
             expand(
-                Pair("git_version", git),
-                Pair("builder", builder),
                 Pair("project_version", rootProject.properties["project_version"]),
                 Pair("config_version", rootProject.properties["config_version"])
             )
