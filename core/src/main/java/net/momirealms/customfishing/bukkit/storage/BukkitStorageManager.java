@@ -143,12 +143,13 @@ public class BukkitStorageManager implements StorageManager, Listener {
     @Override
     public void disable() {
         HandlerList.unregisterAll(this);
-        this.dataSource.updateManyPlayersData(onlineUserMap.values(), true);
-        this.onlineUserMap.clear();
+        if (this.dataSource != null && !onlineUserMap.isEmpty())
+            this.dataSource.updateManyPlayersData(onlineUserMap.values(), true);
         if (this.dataSource != null)
             this.dataSource.disable();
         if (this.redisManager != null)
             this.redisManager.disable();
+        this.onlineUserMap.clear();
     }
 
     @NotNull
