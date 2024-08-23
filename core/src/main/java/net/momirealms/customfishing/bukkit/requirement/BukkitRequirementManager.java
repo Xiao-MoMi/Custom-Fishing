@@ -1131,6 +1131,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         });
     }
 
+    @SuppressWarnings("deprecation")
     private void registerPotionEffectRequirement() {
         registerRequirement("potion-effect", (args, actions, runActions) -> {
             String potions = (String) args;

@@ -89,6 +89,7 @@ public abstract class AbstractCommandManager<C> implements CustomFishingCommandM
         injectExceptionHandler(CommandExecutionException.class, MinecraftExceptionHandler.createDefaultCommandExecutionHandler(), StandardCaptionKeys.EXCEPTION_UNEXPECTED);
     }
 
+    @SuppressWarnings("unchecked")
     private void injectExceptionHandler(Class<? extends Throwable> type, MinecraftExceptionHandler.MessageFactory<C, ?> factory, Caption key) {
         getCommandManager().exceptionController().registerHandler(type, ctx -> {
             final @Nullable ComponentLike message = factory.message(captionFormatter, (ExceptionContext) ctx);

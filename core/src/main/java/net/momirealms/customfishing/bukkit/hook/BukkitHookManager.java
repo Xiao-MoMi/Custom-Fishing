@@ -99,6 +99,7 @@ public class BukkitHookManager implements HookManager, Listener {
         return wrapped.getTag("CustomFishing", "hook_id").map(o -> (String) o);
     }
 
+    @SuppressWarnings("deprecation")
     @EventHandler (ignoreCancelled = true)
     public void onDragDrop(InventoryClickEvent event) {
         final Player player = (Player) event.getWhoClicked();
@@ -137,6 +138,7 @@ public class BukkitHookManager implements HookManager, Listener {
             wrapped.removeTag("CustomFishing", "hook_damage");
             wrapped.removeTag("CustomFishing", "hook_max_damage");
 
+            // unsafe but have to use this
             event.setCursor(itemStack);
 
             List<String> previousLore = wrapped.lore().orElse(new ArrayList<>());

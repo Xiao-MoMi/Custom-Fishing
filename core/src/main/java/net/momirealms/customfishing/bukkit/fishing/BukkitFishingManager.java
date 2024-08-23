@@ -193,6 +193,8 @@ public class BukkitFishingManager implements FishingManager, Listener {
         });
     }
 
+    // It's not necessary to get component from the event
+    @SuppressWarnings("deprecation")
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) return;

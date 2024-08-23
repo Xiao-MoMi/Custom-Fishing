@@ -166,6 +166,7 @@ public class BukkitIntegrationManager implements IntegrationManager {
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     private boolean isHooked(String hooked, String... versionPrefix) {
         Plugin p = Bukkit.getPluginManager().getPlugin(hooked);
         if (p != null) {

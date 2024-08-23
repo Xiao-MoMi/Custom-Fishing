@@ -105,7 +105,7 @@ public class ItemStackUtils {
         }
     }
 
-    @SuppressWarnings("UnstableApiUsage")
+    @SuppressWarnings({"unchecked", "UnstableApiUsage"})
     public static void sectionToComponentEditor(Section section, List<ItemEditor> itemEditors) {
         for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
             String component = entry.getKey();
@@ -272,6 +272,7 @@ public class ItemStackUtils {
     }
 
     // ugly codes, remaining improvements
+    @SuppressWarnings("unchecked")
     public static void sectionToTagEditor(Section section, List<ItemEditor> itemEditors, String... route) {
         for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
             Object value = entry.getValue();

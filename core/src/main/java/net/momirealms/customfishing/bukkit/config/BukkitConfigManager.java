@@ -332,6 +332,7 @@ public class BukkitConfigManager extends ConfigManager {
         return Pair.of(Key.of(split[0], split[1]), Short.parseShort(split[2]));
     }
 
+    @SuppressWarnings("unchecked")
     private void registerBuiltInItemProperties() {
         Function<Object, BiConsumer<Item<ItemStack>, Context<Player>>> f1 = arg -> {
             Section section = (Section) arg;

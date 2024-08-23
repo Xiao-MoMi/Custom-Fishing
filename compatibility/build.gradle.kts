@@ -1,6 +1,7 @@
 repositories {
     maven("https://maven.enginehub.org/repo/") // worldguard worldedit
     maven("https://jitpack.io/") // itemsadder customcrops
+    maven("https://papermc.io/repo/repository/maven-public/") // paper
     maven("https://mvn.lumine.io/repository/maven-public/") // mythicmobs
     maven("https://nexus.phoenixdevt.fr/repository/maven-public/") // mmoitems
     maven("https://papermc.io/repo/repository/maven-public/")
@@ -10,6 +11,7 @@ repositories {
     maven("https://repo.auxilor.io/repository/maven-public/") // eco
     maven("https://nexus.betonquest.org/repository/betonquest/") // betonquest
     maven("https://repo.dmulloy2.net/repository/public/") // betonquest needs packet wrapper?
+    maven("https://oss.sonatype.org/content/repositories/snapshots")
 }
 
 dependencies {

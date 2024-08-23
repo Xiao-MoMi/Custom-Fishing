@@ -1,5 +1,3 @@
-val git_version: String by project
-
 plugins {
     id("io.github.goooler.shadow") version "8.1.8"
 }
@@ -7,6 +5,10 @@ plugins {
 repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // papi
     maven("https://libraries.minecraft.net") // brigadier
+    maven("https://jitpack.io/") // sparrow-heart, rtag
+    maven("https://papermc.io/repo/repository/maven-public/") // paper
+    maven("https://oss.sonatype.org/content/repositories/snapshots")
+    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") // spigot
 }
 
 dependencies {
@@ -58,7 +60,7 @@ dependencies {
 
 tasks {
     shadowJar {
-        archiveFileName = "CustomFishing-${rootProject.properties["project_version"]}-${git_version}.jar"
+        archiveFileName = "CustomFishing-${rootProject.properties["project_version"]}.jar"
         destinationDirectory.set(file("$rootDir/target"))
         relocate("net.kyori", "net.momirealms.customfishing.libraries")
         relocate("org.incendo", "net.momirealms.customfishing.libraries")

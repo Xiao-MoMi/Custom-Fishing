@@ -28,6 +28,7 @@ import java.util.*;
 import static net.momirealms.customfishing.api.util.TagUtils.toTypeAndData;
 import static net.momirealms.customfishing.common.util.ArrayUtils.splitValue;
 
+@SuppressWarnings("unchecked")
 public class TagMapImpl implements TagMap {
 
     private final Map<String, Object> convertedMap = new HashMap<>();

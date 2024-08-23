@@ -47,6 +47,7 @@ public class BattlePassQuest implements Listener {
 
     private static class BPFishingQuest extends ActionQuestExecutor {
 
+        @SuppressWarnings("deprecation")
         public BPFishingQuest(JavaPlugin plugin) {
             super(plugin, "customfishing");
         }

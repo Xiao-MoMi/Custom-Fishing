@@ -280,6 +280,7 @@ public class BukkitItemManager implements ItemManager, Listener {
         wrapped.load();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void increaseDamage(Player player, ItemStack itemStack, int amount, boolean incorrectUsage) {
         if (itemStack == null || itemStack.getType() == Material.AIR || itemStack.getAmount() == 0)
@@ -295,6 +296,7 @@ public class BukkitItemManager implements ItemManager, Listener {
             return;
 
         ItemMeta previousMeta = itemStack.getItemMeta().clone();
+        // use event from Spigot for compatibility
         PlayerItemDamageEvent itemDamageEvent = new PlayerItemDamageEvent(player, itemStack, amount);
         if (EventUtils.fireAndCheckCancel(itemDamageEvent)) {
             plugin.debug("Another plugin modified the item from `PlayerItemDamageEvent` called by CustomFishing");
