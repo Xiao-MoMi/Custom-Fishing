@@ -49,7 +49,6 @@ import net.momirealms.sparrow.heart.feature.armorstand.FakeArmorStand;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Registry;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
