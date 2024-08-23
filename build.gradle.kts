@@ -27,7 +27,6 @@ subprojects {
 
         filesMatching(arrayListOf("custom-fishing.properties")) {
             expand(rootProject.properties)
-            expand(Pair("builder", builder), Pair("git_version", git))
         }
 
         filesMatching(arrayListOf("plugin.yml", "*.yml", "*/*.yml")) {
