@@ -134,7 +134,7 @@ public class BukkitItemManager implements ItemManager, Listener {
     @NotNull
     @Override
     public ItemStack build(@NotNull Context<Player> context, @NotNull CustomFishingItem item) {
-        ItemStack itemStack = getOriginalStack(context.getHolder(), item.material());
+        ItemStack itemStack = getOriginalStack(context.holder(), item.material());
         if (itemStack.getType() == Material.AIR) return itemStack;
         itemStack.setAmount(Math.max(1, (int) item.amount().evaluate(context)));
         Item<ItemStack> wrappedItemStack = factory.wrap(itemStack);
@@ -146,7 +146,7 @@ public class BukkitItemManager implements ItemManager, Listener {
 
     @Override
     public ItemStack buildAny(@NotNull Context<Player> context, @NotNull String item) {
-        return getOriginalStack(context.getHolder(), item);
+        return getOriginalStack(context.holder(), item);
     }
 
     @NotNull
@@ -174,7 +174,7 @@ public class BukkitItemManager implements ItemManager, Listener {
         String id = requireNonNull(context.arg(ContextKeys.ID));
         ItemStack itemStack;
         if (id.equals("vanilla")) {
-            itemStack = SparrowHeart.getInstance().getFishingLoot(context.getHolder(), hook, rod).stream().findAny().orElseThrow(() -> new RuntimeException("new EntityItem would throw if for whatever reason (mostly shitty datapacks) the fishing loot turns out to be empty"));
+            itemStack = SparrowHeart.getInstance().getFishingLoot(context.holder(), hook, rod).stream().findAny().orElseThrow(() -> new RuntimeException("new EntityItem would throw if for whatever reason (mostly shitty datapacks) the fishing loot turns out to be empty"));
         } else {
             itemStack = requireNonNull(buildInternal(context, id));
         }
@@ -183,7 +183,7 @@ public class BukkitItemManager implements ItemManager, Listener {
             return null;
         }
 
-        Player player = context.getHolder();
+        Player player = context.holder();
         Location playerLocation = player.getLocation();
         Location hookLocation = requireNonNull(context.arg(ContextKeys.OTHER_LOCATION));
 

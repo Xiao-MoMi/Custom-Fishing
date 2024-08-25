@@ -79,7 +79,7 @@ public class VoidFishingMechanic implements HookMechanic {
 
     @Override
     public void start(Effect finalEffect) {
-        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.LAND));
+        EventUtils.fireAndForget(new FishingHookStateEvent(context.holder(), hook, FishingHookStateEvent.State.LAND));
         this.setWaitTime(finalEffect);
         this.tempEntity = hook.getWorld().spawn(hook.getLocation().clone().subtract(0,1,0), ArmorStand.class);
         this.setTempEntityProperties(this.tempEntity);
@@ -103,7 +103,7 @@ public class VoidFishingMechanic implements HookMechanic {
                     this.timeUntilLured = 0;
                     this.timeUntilHooked = 0;
                     this.hooked = false;
-                    EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.ESCAPE));
+                    EventUtils.fireAndForget(new FishingHookStateEvent(context.holder(), hook, FishingHookStateEvent.State.ESCAPE));
                 }
             } else {
                 float f;
@@ -134,7 +134,7 @@ public class VoidFishingMechanic implements HookMechanic {
                         this.nibble = RandomUtils.generateRandomInt(20, 40);
                         this.hooked = true;
                         hook.getWorld().playSound(hook.getLocation(), Sound.ITEM_TRIDENT_THUNDER, 0.25F, 1.0F + (RandomUtils.generateRandomFloat(0,1)-RandomUtils.generateRandomFloat(0,1)) * 0.4F);
-                        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.BITE));
+                        EventUtils.fireAndForget(new FishingHookStateEvent(context.holder(), hook, FishingHookStateEvent.State.BITE));
                     }
                 } else if (timeUntilLured > 0) {
                     if (!freeze) {
@@ -159,7 +159,7 @@ public class VoidFishingMechanic implements HookMechanic {
                     if (this.timeUntilLured <= 0) {
                         this.fishAngle = RandomUtils.generateRandomFloat(0F, 360F);
                         this.timeUntilHooked = RandomUtils.generateRandomInt(20, 80);
-                        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.LURE));
+                        EventUtils.fireAndForget(new FishingHookStateEvent(context.holder(), hook, FishingHookStateEvent.State.LURE));
                     }
                 } else {
                     setWaitTime(finalEffect);

@@ -91,7 +91,7 @@ public interface Context<T> {
      *
      * @return the holder object of type T.
      */
-    T getHolder();
+    T holder();
 
     /**
      * Creates a player-specific context.

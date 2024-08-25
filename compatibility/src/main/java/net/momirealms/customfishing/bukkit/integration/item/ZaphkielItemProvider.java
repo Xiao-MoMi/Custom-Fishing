@@ -48,7 +48,7 @@ public class ZaphkielItemProvider implements ItemProvider {
 
     @Override
     public String itemID(@NotNull ItemStack itemStack) {
-        if (itemStack == null || itemStack.getType() == Material.AIR) return null;
+        if (itemStack.getType() == Material.AIR) return null;
         return zapAPI.getItemHandler().getItemId(itemStack);
     }
 }

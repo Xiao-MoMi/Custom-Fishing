@@ -361,9 +361,9 @@ public class BukkitMarketManager implements MarketManager, Listener {
                     ActionManager.trigger(gui.context, sellDenyActions);
                 }
             } else if (element.getSymbol() == sellAllSlot) {
-                List<ItemStack> itemStacksToSell = storageContentsToList(gui.context.getHolder().getInventory().getStorageContents());
+                List<ItemStack> itemStacksToSell = storageContentsToList(gui.context.holder().getInventory().getStorageContents());
                 if (sellFishingBag) {
-                    Optional<UserData> optionalUserData = BukkitCustomFishingPlugin.getInstance().getStorageManager().getOnlineUser(gui.context.getHolder().getUniqueId());
+                    Optional<UserData> optionalUserData = BukkitCustomFishingPlugin.getInstance().getStorageManager().getOnlineUser(gui.context.holder().getUniqueId());
                     optionalUserData.ifPresent(userData -> itemStacksToSell.addAll(storageContentsToList(userData.holder().getInventory().getStorageContents())));
                 }
                 Pair<Integer, Double> pair = getItemsToSell(gui.context, itemStacksToSell);

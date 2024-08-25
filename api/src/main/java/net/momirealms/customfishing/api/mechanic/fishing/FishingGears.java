@@ -154,7 +154,7 @@ public class FishingGears {
      */
     public static BiConsumer<Context<Player>, FishingGears> defaultFishingGearsConsumers() {
         return (context, fishingGears) -> {
-            Player player = context.getHolder();
+            Player player = context.holder();
             PlayerInventory playerInventory = player.getInventory();
             ItemStack mainHandItem = playerInventory.getItemInMainHand();
             ItemStack offHandItem = playerInventory.getItemInOffHand();
@@ -257,12 +257,12 @@ public class FishingGears {
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {
-                    if (context.getHolder().getGameMode() != GameMode.CREATIVE)
-                        BukkitCustomFishingPlugin.getInstance().getItemManager().increaseDamage(context.getHolder(), itemStack, 1, false);
+                    if (context.holder().getGameMode() != GameMode.CREATIVE)
+                        BukkitCustomFishingPlugin.getInstance().getItemManager().increaseDamage(context.holder(), itemStack, 1, false);
                 }),
                 ((context, itemStack) -> {
-                    if (context.getHolder().getGameMode() != GameMode.CREATIVE)
-                        BukkitCustomFishingPlugin.getInstance().getItemManager().increaseDamage(context.getHolder(), itemStack, 1, false);
+                    if (context.holder().getGameMode() != GameMode.CREATIVE)
+                        BukkitCustomFishingPlugin.getInstance().getItemManager().increaseDamage(context.holder(), itemStack, 1, false);
                 }),
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {}),
@@ -272,7 +272,7 @@ public class FishingGears {
 
         public static final GearType BAIT = new GearType(MechanicType.BAIT,
                 ((context, itemStack) -> {
-                    if (context.getHolder().getGameMode() != GameMode.CREATIVE)
+                    if (context.holder().getGameMode() != GameMode.CREATIVE)
                         itemStack.setAmount(itemStack.getAmount() - 1);
                 }),
                 ((context, itemStack) -> {}),
@@ -290,7 +290,7 @@ public class FishingGears {
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {
-                    if (context.getHolder().getGameMode() != GameMode.CREATIVE) {
+                    if (context.holder().getGameMode() != GameMode.CREATIVE) {
                         Item<ItemStack> wrapped = BukkitCustomFishingPlugin.getInstance().getItemManager().wrap(itemStack);
                         String hookID = (String) wrapped.getTag("CustomFishing", "hook_id").orElseThrow(() -> new RuntimeException("This error should never occur"));
                         wrapped.getTag("CustomFishing", "hook_max_damage").ifPresent(max -> {
@@ -318,7 +318,7 @@ public class FishingGears {
                                 }
                                 newLore.addAll(durabilityLore);
                                 wrapped.lore(newLore);
-                                BukkitCustomFishingPlugin.getInstance().getSenderFactory().getAudience(context.getHolder()).playSound(Sound.sound(Key.key("minecraft:entity.item.break"), Sound.Source.PLAYER, 1, 1));
+                                BukkitCustomFishingPlugin.getInstance().getSenderFactory().getAudience(context.holder()).playSound(Sound.sound(Key.key("minecraft:entity.item.break"), Sound.Source.PLAYER, 1, 1));
                             } else {
                                 wrapped.setTag(hookDamage, "CustomFishing", "hook_damage");
                                 HookConfig hookConfig = BukkitCustomFishingPlugin.getInstance().getHookManager().getHook(hookID).orElseThrow();
@@ -350,7 +350,7 @@ public class FishingGears {
                     }
                 }),
                 ((context, itemStack) -> {
-                    if (context.getHolder().getGameMode() != GameMode.CREATIVE) {
+                    if (context.holder().getGameMode() != GameMode.CREATIVE) {
                         Item<ItemStack> wrapped = BukkitCustomFishingPlugin.getInstance().getItemManager().wrap(itemStack);
                         String hookID = (String) wrapped.getTag("CustomFishing", "hook_id").orElseThrow(() -> new RuntimeException("This error should never occur"));
                         wrapped.getTag("CustomFishing", "hook_max_damage").ifPresent(max -> {
@@ -361,7 +361,7 @@ public class FishingGears {
                                 wrapped.removeTag("CustomFishing", "hook_id");
                                 wrapped.removeTag("CustomFishing", "hook_stack");
                                 wrapped.removeTag("CustomFishing", "hook_max_damage");
-                                BukkitCustomFishingPlugin.getInstance().getSenderFactory().getAudience(context.getHolder()).playSound(Sound.sound(Key.key("minecraft:entity.item.break"), Sound.Source.PLAYER, 1, 1));
+                                BukkitCustomFishingPlugin.getInstance().getSenderFactory().getAudience(context.holder()).playSound(Sound.sound(Key.key("minecraft:entity.item.break"), Sound.Source.PLAYER, 1, 1));
                             } else {
                                 wrapped.setTag(hookDamage, "CustomFishing", "hook_damage");
                                 HookConfig hookConfig = BukkitCustomFishingPlugin.getInstance().getHookManager().getHook(hookID).orElseThrow();

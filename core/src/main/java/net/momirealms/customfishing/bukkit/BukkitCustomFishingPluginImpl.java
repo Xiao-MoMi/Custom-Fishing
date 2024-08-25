@@ -47,7 +47,6 @@ import net.momirealms.customfishing.bukkit.sender.BukkitSenderFactory;
 import net.momirealms.customfishing.bukkit.statistic.BukkitStatisticsManager;
 import net.momirealms.customfishing.bukkit.storage.BukkitStorageManager;
 import net.momirealms.customfishing.bukkit.totem.BukkitTotemManager;
-import net.momirealms.customfishing.common.dependency.CustomFishingProperties;
 import net.momirealms.customfishing.common.dependency.Dependency;
 import net.momirealms.customfishing.common.dependency.DependencyManagerImpl;
 import net.momirealms.customfishing.common.helper.VersionHelper;

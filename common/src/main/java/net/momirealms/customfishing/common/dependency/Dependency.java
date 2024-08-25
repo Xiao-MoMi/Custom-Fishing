@@ -26,6 +26,7 @@
 package net.momirealms.customfishing.common.dependency;
 
 import net.momirealms.customfishing.common.dependency.relocation.Relocation;
+import net.momirealms.customfishing.common.plugin.CustomFishingProperties;
 import org.jetbrains.annotations.Nullable;
 
 import java.security.MessageDigest;

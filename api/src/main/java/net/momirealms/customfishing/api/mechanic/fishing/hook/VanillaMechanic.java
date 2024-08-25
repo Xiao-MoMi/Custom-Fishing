@@ -66,7 +66,7 @@ public class VanillaMechanic implements HookMechanic {
 
     @Override
     public void start(Effect finalEffect) {
-        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.LAND));
+        EventUtils.fireAndForget(new FishingHookStateEvent(context.holder(), hook, FishingHookStateEvent.State.LAND));
         setWaitTime(hook, finalEffect);
         this.task = BukkitCustomFishingPlugin.getInstance().getScheduler().sync().runRepeating(() -> {
             if (isHooked) {
@@ -108,7 +108,7 @@ public class VanillaMechanic implements HookMechanic {
             }
             if (ConfigManager.antiAutoFishingMod()) {
                 BukkitCustomFishingPlugin.getInstance().getScheduler().sync().runLater(() -> {
-                    Player player = context.getHolder();
+                    Player player = context.holder();
                     if (player.isOnline() && hook.isValid()) {
                         AntiAutoFishing.prevent(player, hook);
                     }
@@ -149,10 +149,10 @@ public class VanillaMechanic implements HookMechanic {
     }
 
     public void onBite() {
-        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.BITE));
+        EventUtils.fireAndForget(new FishingHookStateEvent(context.holder(), hook, FishingHookStateEvent.State.BITE));
     }
 
     public void onFailedAttempt() {
-        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.ESCAPE));
+        EventUtils.fireAndForget(new FishingHookStateEvent(context.holder(), hook, FishingHookStateEvent.State.ESCAPE));
     }
 }

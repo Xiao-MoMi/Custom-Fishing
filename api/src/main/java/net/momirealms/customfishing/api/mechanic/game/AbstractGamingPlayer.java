@@ -174,7 +174,7 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
      */
     @Override
     public Player getPlayer() {
-        return hook.getContext().getHolder();
+        return hook.getContext().holder();
     }
 
     /**

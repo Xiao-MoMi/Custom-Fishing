@@ -50,7 +50,7 @@ public interface TextValue<T> {
      * @return the rendered text as a String
      */
     default String render(Context<T> context, boolean parseRawPlaceholders) {
-        if (!parseRawPlaceholders || !(context.getHolder() instanceof OfflinePlayer player)) return render(context);
+        if (!parseRawPlaceholders || !(context.holder() instanceof OfflinePlayer player)) return render(context);
         return PlaceholderAPIUtils.parse(player, render(context));
     }
 

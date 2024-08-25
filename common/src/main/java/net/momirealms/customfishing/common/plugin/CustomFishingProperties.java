@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customfishing.common.dependency;
+package net.momirealms.customfishing.common.plugin;
 
 import java.io.IOException;
 import java.io.InputStream;

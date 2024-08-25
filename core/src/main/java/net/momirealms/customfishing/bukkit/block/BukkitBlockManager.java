@@ -239,13 +239,13 @@ public class BukkitBlockManager implements BlockManager, Listener {
             blockData = blockProviders.get("vanilla").blockData(context, blockID, config.dataModifier());
         }
         Location hookLocation = requireNonNull(context.arg(ContextKeys.OTHER_LOCATION));
-        Location playerLocation = requireNonNull(context.getHolder()).getLocation();
+        Location playerLocation = requireNonNull(context.holder()).getLocation();
         FallingBlock fallingBlock = hookLocation.getWorld().spawn(hookLocation, FallingBlock.class);
         fallingBlock.setBlockData(blockData);
         fallingBlock.getPersistentDataContainer().set(
                 requireNonNull(NamespacedKey.fromString("block", plugin.getBoostrap())),
                 PersistentDataType.STRING,
-                id + ";" + context.getHolder().getName()
+                id + ";" + context.holder().getName()
         );
         double d0 = playerLocation.getX() - hookLocation.getX();
         double d1 = playerLocation.getY() - hookLocation.getY();

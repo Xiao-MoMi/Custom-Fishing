@@ -64,9 +64,9 @@ public class WorldGuardRegion {
             return context -> {
                 Location location;
                 if (other) {
-                    location = Optional.ofNullable(context.arg(ContextKeys.OTHER_LOCATION)).orElse(context.getHolder().getLocation());
+                    location = Optional.ofNullable(context.arg(ContextKeys.OTHER_LOCATION)).orElse(context.holder().getLocation());
                 } else {
-                    location = context.getHolder().getLocation();
+                    location = context.holder().getLocation();
                 }
                 RegionManager regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(location.getWorld()));
                 if (regionManager != null) {

@@ -161,7 +161,7 @@ public class DependencyManagerImpl implements DependencyManager {
             int i = 0;
             while (i < repository.size()) {
                 try {
-                    plugin.getPluginLogger().info("Downloading dependency(" + fileName + ") from " + repository.get(i).getUrl() + dependency.getMavenRepoPath());
+                    plugin.getPluginLogger().info("Downloading dependency(" + fileName + ")[" + repository.get(i).getUrl() + dependency.getMavenRepoPath() + "]");
                     repository.get(i).download(dependency, file);
                     plugin.getPluginLogger().info("Successfully downloaded " + fileName);
                     return file;

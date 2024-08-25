@@ -35,7 +35,7 @@ public class PlaceholderTextValueImpl<T> implements TextValue<T> {
     public String render(Context<T> context) {
         Map<String, String> replacements = context.placeholderMap();
         String text;
-        if (context.getHolder() instanceof OfflinePlayer player) text = BukkitPlaceholderManager.getInstance().parse(player, raw, replacements);
+        if (context.holder() instanceof OfflinePlayer player) text = BukkitPlaceholderManager.getInstance().parse(player, raw, replacements);
         else text = BukkitPlaceholderManager.getInstance().parse(null, raw, replacements);
         return text;
     }

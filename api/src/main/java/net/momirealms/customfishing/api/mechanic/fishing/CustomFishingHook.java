@@ -128,14 +128,14 @@ public class CustomFishingHook {
         }
         // enable bait animation
         if (ConfigManager.baitAnimation() && !gears.getItem(FishingGears.GearType.BAIT).isEmpty()) {
-            this.baitAnimationTask = new BaitAnimationTask(plugin, context.getHolder(), hook, gears.getItem(FishingGears.GearType.BAIT).stream().findAny().get().right());
+            this.baitAnimationTask = new BaitAnimationTask(plugin, context.holder(), hook, gears.getItem(FishingGears.GearType.BAIT).stream().findAny().get().right());
         }
 
         List<HookMechanic> enabledMechanics = mechanicProviders.apply(hook, context, effect);
         this.task = plugin.getScheduler().sync().runRepeating(() -> {
             // destroy if hook is invalid
             if (!hook.isValid()) {
-                plugin.getFishingManager().destroyHook(context.getHolder().getUniqueId());
+                plugin.getFishingManager().destroyHook(context.holder().getUniqueId());
                 return;
             }
             if (isPlayingGame()) {
@@ -229,7 +229,7 @@ public class CustomFishingHook {
      * Ends the life of the custom fishing hook.
      */
     public void destroy() {
-        plugin.getFishingManager().destroyHook(context.getHolder().getUniqueId());
+        plugin.getFishingManager().destroyHook(context.holder().getUniqueId());
     }
 
     /**
@@ -326,13 +326,13 @@ public class CustomFishingHook {
 
     // auto fishing
     private void scheduleNextFishing() {
-        final Player player = context.getHolder();
+        final Player player = context.holder();
         plugin.getScheduler().sync().runLater(() -> {
             if (player.isOnline()) {
                 ItemStack item = player.getInventory().getItem(gears.getRodSlot() == HandSlot.MAIN ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND);
                 if (item.getType() == Material.FISHING_ROD) {
                     SparrowHeart.getInstance().useItem(player, gears.getRodSlot(), item);
-                    SparrowHeart.getInstance().swingHand(context.getHolder(), gears.getRodSlot());
+                    SparrowHeart.getInstance().swingHand(context.holder(), gears.getRodSlot());
                 }
             }
         }, 20, player.getLocation());
@@ -373,7 +373,7 @@ public class CustomFishingHook {
         gears.trigger(ActionTrigger.BITE, context);
         if (RequirementManager.isSatisfied(context, ConfigManager.autoFishingRequirements())) {
             handleSuccessfulFishing();
-            SparrowHeart.getInstance().swingHand(context.getHolder(), gears.getRodSlot());
+            SparrowHeart.getInstance().swingHand(context.holder(), gears.getRodSlot());
             destroy();
             scheduleNextFishing();
             return;
@@ -479,7 +479,7 @@ public class CustomFishingHook {
                         if (spawnEvent.skipActions())
                             return;
                         if (item != null && item.isValid() && nextLoot.preventGrabbing()) {
-                            item.getPersistentDataContainer().set(Objects.requireNonNull(NamespacedKey.fromString("owner", plugin.getBoostrap())), PersistentDataType.STRING, context.getHolder().getName());
+                            item.getPersistentDataContainer().set(Objects.requireNonNull(NamespacedKey.fromString("owner", plugin.getBoostrap())), PersistentDataType.STRING, context.holder().getName());
                         }
                         doSuccessActions();
                     }, (long) ConfigManager.multipleLootSpawnDelay() * i, hook.getLocation());
@@ -513,24 +513,24 @@ public class CustomFishingHook {
         if (competition != null && RequirementManager.isSatisfied(context, competition.getConfig().joinRequirements())) {
             Double customScore = context.arg(ContextKeys.CUSTOM_SCORE);
             if (customScore != null) {
-                competition.refreshData(context.getHolder(), customScore);
+                competition.refreshData(context.holder(), customScore);
                 context.arg(ContextKeys.SCORE_FORMATTED, String.format("%.2f", customScore));
                 context.arg(ContextKeys.SCORE, customScore);
             } else {
                 double score = 0;
                 if (competition.getGoal() == CompetitionGoal.CATCH_AMOUNT) {
                     score = 1;
-                    competition.refreshData(context.getHolder(), score);
+                    competition.refreshData(context.holder(), score);
                 } else if (competition.getGoal() == CompetitionGoal.MAX_SIZE || competition.getGoal() == CompetitionGoal.MIN_SIZE || competition.getGoal() == CompetitionGoal.TOTAL_SIZE) {
                     Float size = context.arg(ContextKeys.SIZE);
                     if (size != null && size > 0) {
-                        competition.refreshData(context.getHolder(), size);
+                        competition.refreshData(context.holder(), size);
                     }
                 } else if (competition.getGoal() == CompetitionGoal.TOTAL_SCORE) {
                     score = nextLoot.score().evaluate(context);
                     score = score * tempFinalEffect.scoreMultiplier() + tempFinalEffect.scoreAdder();
                     if (score != 0) {
-                        competition.refreshData(context.getHolder(), score);
+                        competition.refreshData(context.holder(), score);
                     }
                 }
                 context.arg(ContextKeys.SCORE_FORMATTED, String.format("%.2f", score));
@@ -542,7 +542,7 @@ public class CustomFishingHook {
         }
 
         String id = context.arg(ContextKeys.ID);
-        Player player = context.getHolder();
+        Player player = context.holder();
 
         if (!nextLoot.disableStats()) {
             plugin.getStorageManager().getOnlineUser(player.getUniqueId()).ifPresent(

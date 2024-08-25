@@ -248,8 +248,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 List<String> items = ListUtils.toList(section.get("item"));
                 return context -> {
                     ItemStack itemStack = mainOrOff ?
-                            context.getHolder().getInventory().getItemInMainHand()
-                            : context.getHolder().getInventory().getItemInOffHand();
+                            context.holder().getInventory().getItemInMainHand()
+                            : context.holder().getInventory().getItemInOffHand();
                     String id = plugin.getItemManager().getItemID(itemStack);
                     if (items.contains(id) && itemStack.getAmount() >= amount) return true;
                     if (runActions) ActionManager.trigger(context, actions);
@@ -274,7 +274,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                         plugin.getPluginLogger().warn("Plugin (" + pluginName + "'s) level is not compatible. Please double check if it's a problem caused by pronunciation.");
                         return true;
                     }
-                    if (levelerProvider.getLevel(context.getHolder(), target) >= level)
+                    if (levelerProvider.getLevel(context.holder(), target) >= level)
                         return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
@@ -693,7 +693,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         registerRequirement("level", (args, actions, runActions) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
-                int current = context.getHolder().getLevel();
+                int current = context.holder().getLevel();
                 if (current >= value.evaluate(context, true))
                     return true;
                 if (runActions) ActionManager.trigger(context, actions);
@@ -706,7 +706,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         registerRequirement("money", (args, actions, runActions) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
-                double current = VaultHook.getBalance(context.getHolder());
+                double current = VaultHook.getBalance(context.holder());
                 if (current >= value.evaluate(context, true))
                     return true;
                 if (runActions) ActionManager.trigger(context, actions);
@@ -823,7 +823,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 String key = section.getString("key");
                 int time = section.getInt("time");
                 return context -> {
-                    if (!plugin.getCoolDownManager().isCoolDown(context.getHolder().getUniqueId(), key, time))
+                    if (!plugin.getCoolDownManager().isCoolDown(context.holder().getUniqueId(), key, time))
                         return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
@@ -854,7 +854,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             List<String> perms = ListUtils.toList(args);
             return context -> {
                 for (String perm : perms)
-                    if (context.getHolder().hasPermission(perm))
+                    if (context.holder().hasPermission(perm))
                         return true;
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
@@ -864,7 +864,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             List<String> perms = ListUtils.toList(args);
             return context -> {
                 for (String perm : perms)
-                    if (context.getHolder().hasPermission(perm)) {
+                    if (context.holder().hasPermission(perm)) {
                         if (runActions) ActionManager.trigger(context, actions);
                         return false;
                     }
@@ -1145,7 +1145,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             String operator = potions.substring(split[0].length(), potions.length() - split[1].length());
             return context -> {
                 int level = -1;
-                PotionEffect potionEffect = context.getHolder().getPotionEffect(type);
+                PotionEffect potionEffect = context.holder().getPotionEffect(type);
                 if (potionEffect != null) {
                     level = potionEffect.getAmplifier();
                 }

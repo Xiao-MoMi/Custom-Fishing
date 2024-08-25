@@ -67,7 +67,7 @@ import net.momirealms.customfishing.bukkit.totem.particle.ParticleSetting;
 import net.momirealms.customfishing.bukkit.util.ItemStackUtils;
 import net.momirealms.customfishing.bukkit.util.ParticleUtils;
 import net.momirealms.customfishing.common.config.node.Node;
-import net.momirealms.customfishing.common.dependency.CustomFishingProperties;
+import net.momirealms.customfishing.common.plugin.CustomFishingProperties;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.item.AbstractItem;

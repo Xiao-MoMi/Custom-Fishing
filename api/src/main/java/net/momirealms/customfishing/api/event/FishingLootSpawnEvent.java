@@ -49,7 +49,7 @@ public class FishingLootSpawnEvent extends PlayerEvent {
      * @param entity The entity associated with the loot, if any
      */
     public FishingLootSpawnEvent(@NotNull Context<Player> context, Location location, Loot loot, @Nullable Entity entity) {
-        super(context.getHolder());
+        super(context.holder());
         this.entity = entity;
         this.loot = loot;
         this.location = location;

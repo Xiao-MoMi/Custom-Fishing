@@ -91,7 +91,7 @@ public final class PlayerContextImpl implements Context<Player> {
     }
 
     @Override
-    public Player getHolder() {
+    public Player holder() {
         return player;
     }
 

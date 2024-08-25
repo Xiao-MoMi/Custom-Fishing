@@ -94,7 +94,7 @@ public class LavaFishingMechanic implements HookMechanic {
 
     @Override
     public void start(Effect finalEffect) {
-        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.LAND));
+        EventUtils.fireAndForget(new FishingHookStateEvent(context.holder(), hook, FishingHookStateEvent.State.LAND));
         this.setWaitTime(finalEffect);
         this.task = BukkitCustomFishingPlugin.getInstance().getScheduler().sync().runRepeating(() -> {
             float lavaHeight = 0F;
@@ -135,7 +135,7 @@ public class LavaFishingMechanic implements HookMechanic {
                         this.setTempEntityProperties(this.tempEntity);
                         this.hook.setHookedEntity(this.tempEntity);
                         if (!firstTime) {
-                            EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.ESCAPE));
+                            EventUtils.fireAndForget(new FishingHookStateEvent(context.holder(), hook, FishingHookStateEvent.State.ESCAPE));
                         }
                         firstTime = false;
                     }
@@ -168,7 +168,7 @@ public class LavaFishingMechanic implements HookMechanic {
                         this.nibble = RandomUtils.generateRandomInt(20, 40);
                         this.hooked = true;
                         hook.getWorld().playSound(hook.getLocation(), Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.25F, 1.0F + (RandomUtils.generateRandomFloat(0,1)-RandomUtils.generateRandomFloat(0,1)) * 0.4F);
-                        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.BITE));
+                        EventUtils.fireAndForget(new FishingHookStateEvent(context.holder(), hook, FishingHookStateEvent.State.BITE));
                         if (this.tempEntity != null && this.tempEntity.isValid()) {
                             this.tempEntity.remove();
                         }
@@ -180,7 +180,7 @@ public class LavaFishingMechanic implements HookMechanic {
                     if (this.timeUntilLured <= 0) {
                         this.fishAngle = RandomUtils.generateRandomFloat(0F, 360F);
                         this.timeUntilHooked = RandomUtils.generateRandomInt(20, 80);
-                        EventUtils.fireAndForget(new FishingHookStateEvent(context.getHolder(), hook, FishingHookStateEvent.State.LURE));
+                        EventUtils.fireAndForget(new FishingHookStateEvent(context.holder(), hook, FishingHookStateEvent.State.LURE));
                     }
                 } else {
                     setWaitTime(finalEffect);
