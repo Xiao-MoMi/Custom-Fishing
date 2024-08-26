@@ -11,7 +11,7 @@
 ![bStats Players](https://img.shields.io/bstats/players/16648)
 ![GitHub](https://img.shields.io/github/license/Xiao-MoMi/Custom-Fishing)
 
-CustomFishing is a Paper plugin designed to offer an extensive range of minigames and a robust condition and action system for fishing. Introducing a novel weight system concept, CustomFishing provides unparalleled customization opportunities while ensuring optimal performance. The plugin goes beyond standard features by allowing developers to register custom mechanics, actions, conditions, games, and even parsers for configuration file formats. This flexibility makes it a powerful API for developers, enabling the creation of innovative fishing experiences, such as lava fishing or void fishing, tailored to their specific needs.
+CustomFishing is a Paper plugin designed to offer an extensive range of minigames and a robust condition and action system for fishing. Introducing a novel weight system concept, CustomFishing provides unparalleled customization opportunities while ensuring optimal performance. The plugin goes beyond standard features by allowing you to register custom mechanics, actions, conditions, games, and even parsers for configuration file formats. This flexibility makes it a powerful API for developers, enabling the creation of innovative fishing experiences, such as lava fishing or void fishing, tailored to your specific needs.
 ## How to build
 
 #### Command Line
