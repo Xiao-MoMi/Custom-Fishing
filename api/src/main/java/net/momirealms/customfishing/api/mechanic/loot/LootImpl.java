@@ -24,7 +24,6 @@ import net.momirealms.customfishing.api.mechanic.statistic.StatisticsKeys;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;

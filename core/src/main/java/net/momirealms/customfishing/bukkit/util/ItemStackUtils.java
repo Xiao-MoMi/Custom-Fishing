@@ -392,7 +392,6 @@ public class ItemStackUtils {
                     }
                     case DOUBLE -> {
                         MathValue<Player> mathValue = MathValue.auto(pair.right());
-                        System.out.println(pair.right());
                         itemEditors.add(((item, context) -> {
                             item.set(mathValue.evaluate(context), (Object[]) currentRoute);
                         }));
