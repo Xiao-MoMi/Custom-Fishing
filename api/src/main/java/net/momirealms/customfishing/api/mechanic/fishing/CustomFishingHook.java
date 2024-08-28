@@ -37,6 +37,7 @@ import net.momirealms.customfishing.api.mechanic.game.Game;
 import net.momirealms.customfishing.api.mechanic.game.GamingPlayer;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
+import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.api.util.PlayerUtils;
@@ -58,10 +59,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Represents a custom fishing hook.
@@ -185,7 +183,13 @@ public class CustomFishingHook {
                             context.arg(ContextKeys.NICK, loot.nick());
                             context.arg(ContextKeys.LOOT, loot.type());
 
+                            context.clearCustomData();
+                            for (Map.Entry<String, TextValue<Player>> entry : loot.customData().entrySet()) {
+                                context.arg(ContextKeys.of("data_" + entry.getKey(), String.class), entry.getValue().render(context));
+                            }
+
                             plugin.debug("Next loot: " + loot.id());
+                            plugin.debug(context);
                             // get its basic properties
                             Effect baseEffect = loot.baseEffect().toEffect(context);
                             tempEffect.combine(baseEffect);

@@ -24,6 +24,7 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -36,7 +37,7 @@ public class BukkitPlaceholderManager implements PlaceholderManager {
 
     private final BukkitCustomFishingPlugin plugin;
     private boolean hasPapi;
-    private final HashMap<String, Function<OfflinePlayer, String>> customPlaceholderMap;
+    private final HashMap<String, BiFunction<OfflinePlayer, Map<String, String>, String>> customPlaceholderMap;
     private static BukkitPlaceholderManager instance;
 
     /**
@@ -56,7 +57,7 @@ public class BukkitPlaceholderManager implements PlaceholderManager {
     @Override
     public void load() {
         this.hasPapi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
-        this.customPlaceholderMap.put("{random}", (p) -> String.valueOf(RandomUtils.generateRandomDouble(0, 1)));
+        this.customPlaceholderMap.put("{random}", (p, map) -> String.valueOf(RandomUtils.generateRandomDouble(0, 1)));
     }
 
     /**
@@ -80,12 +81,12 @@ public class BukkitPlaceholderManager implements PlaceholderManager {
     @Override
     public boolean registerCustomPlaceholder(String placeholder, String original) {
         if (this.customPlaceholderMap.containsKey(placeholder)) return false;
-        this.customPlaceholderMap.put(placeholder, (p) -> PlaceholderAPIUtils.parse(p, original));
+        this.customPlaceholderMap.put(placeholder, (p, map) -> PlaceholderAPIUtils.parse(p, parse(p, original, map)));
         return true;
     }
 
     @Override
-    public boolean registerCustomPlaceholder(String placeholder, Function<OfflinePlayer, String> provider) {
+    public boolean registerCustomPlaceholder(String placeholder, BiFunction<OfflinePlayer, Map<String, String>, String> provider) {
         if (this.customPlaceholderMap.containsKey(placeholder)) return false;
         this.customPlaceholderMap.put(placeholder, provider);
         return true;
@@ -110,7 +111,7 @@ public class BukkitPlaceholderManager implements PlaceholderManager {
             result = replacements.get(placeholder);
         if (result != null)
             return result;
-        String custom = Optional.ofNullable(customPlaceholderMap.get(placeholder)).map(supplier -> supplier.apply(player)).orElse(null);
+        String custom = Optional.ofNullable(customPlaceholderMap.get(placeholder)).map(supplier -> supplier.apply(player, replacements)).orElse(null);
         if (custom == null)
             return placeholder;
         return setPlaceholders(player, custom);
@@ -125,12 +126,13 @@ public class BukkitPlaceholderManager implements PlaceholderManager {
                 replacer = replacements.get(papi);
             }
             if (replacer == null) {
-                String custom = Optional.ofNullable(customPlaceholderMap.get(papi)).map(supplier -> supplier.apply(player)).orElse(null);
+                String custom = Optional.ofNullable(customPlaceholderMap.get(papi)).map(supplier -> supplier.apply(player, replacements)).orElse(null);
                 if (custom != null)
                     replacer = setPlaceholders(player, parse(player, custom, replacements));
             }
-            if (replacer != null)
+            if (replacer != null) {
                 text = text.replace(papi, replacer);
+            }
         }
         return text;
     }

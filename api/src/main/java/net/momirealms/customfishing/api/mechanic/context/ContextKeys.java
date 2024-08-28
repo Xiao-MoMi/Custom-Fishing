@@ -83,6 +83,8 @@ public class ContextKeys<T> {
     public static final ContextKeys<Integer> CLICKS_LEFT = of("left_clicks", Integer.class);
     public static final ContextKeys<Integer> REQUIRED_TIMES = of("clicks", Integer.class);
     public static final ContextKeys<EquipmentSlot> SLOT = of("hand", EquipmentSlot.class);
+    public static final ContextKeys<Double> BONUS = of("bonus", Double.class);
+    public static final ContextKeys<Double> BASE = of("base", Double.class);
 
     private final String key;
     private final Class<T> type;

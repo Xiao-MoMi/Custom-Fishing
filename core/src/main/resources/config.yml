@@ -123,7 +123,7 @@ mechanics:
           value:
             priority_1:
               conditions:
-                lava-fishing: true
+                in-lava: true
               actions:
                 fake_item_action:
                   type: fake-item
@@ -133,7 +133,7 @@ mechanics:
                     item: lava_effect
             priority_2:
               conditions:
-                lava-fishing: false
+                in-water: true
               actions:
                 fake_item_action:
                   type: fake-item

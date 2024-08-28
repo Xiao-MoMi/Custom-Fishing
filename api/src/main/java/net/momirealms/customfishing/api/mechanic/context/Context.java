@@ -94,6 +94,11 @@ public interface Context<T> {
     T holder();
 
     /**
+     * Reset the custom data
+     */
+    void clearCustomData();
+
+    /**
      * Creates a player-specific context.
      *
      * @param player the player to be used as the holder of the context.

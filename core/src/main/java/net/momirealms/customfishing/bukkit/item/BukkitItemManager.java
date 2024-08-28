@@ -27,6 +27,8 @@ import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.item.CustomFishingItem;
 import net.momirealms.customfishing.api.mechanic.item.ItemManager;
+import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.bukkit.integration.item.CustomFishingItemProvider;
 import net.momirealms.customfishing.bukkit.item.damage.CustomDurabilityItem;
@@ -136,6 +138,11 @@ public class BukkitItemManager implements ItemManager, Listener {
     public ItemStack build(@NotNull Context<Player> context, @NotNull CustomFishingItem item) {
         ItemStack itemStack = getOriginalStack(context.holder(), item.material());
         if (itemStack.getType() == Material.AIR) return itemStack;
+        plugin.getLootManager().getLoot(item.id()).ifPresent(loot -> {
+            for (Map.Entry<String, TextValue<Player>> entry : loot.customData().entrySet()) {
+                context.arg(ContextKeys.of("data_" + entry.getKey(), String.class), entry.getValue().render(context));
+            }
+        });
         itemStack.setAmount(Math.max(1, (int) item.amount().evaluate(context)));
         Item<ItemStack> wrappedItemStack = factory.wrap(itemStack);
         for (BiConsumer<Item<ItemStack>, Context<Player>> consumer : item.tagConsumers()) {

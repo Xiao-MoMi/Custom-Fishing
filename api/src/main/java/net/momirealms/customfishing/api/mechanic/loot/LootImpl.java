@@ -19,10 +19,14 @@ package net.momirealms.customfishing.api.mechanic.loot;
 
 import net.momirealms.customfishing.api.mechanic.effect.LootBaseEffect;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
+import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.mechanic.statistic.StatisticsKeys;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -42,8 +46,9 @@ public class LootImpl implements Loot {
     private final String[] groups;
     private final LootBaseEffect lootBaseEffect;
     private final MathValue<Player> toInventory;
+    private final Map<String, TextValue<Player>> customData;
 
-    public LootImpl(LootType type, boolean instantGame, boolean disableGame, boolean disableStatistics, boolean showInFinder, boolean preventGrabbing, String id, String nick, StatisticsKeys statisticsKeys, MathValue<Player> score, String[] groups, LootBaseEffect lootBaseEffect, MathValue<Player> toInventory) {
+    public LootImpl(LootType type, boolean instantGame, boolean disableGame, boolean disableStatistics, boolean showInFinder, boolean preventGrabbing, String id, String nick, StatisticsKeys statisticsKeys, MathValue<Player> score, String[] groups, LootBaseEffect lootBaseEffect, MathValue<Player> toInventory, Map<String, TextValue<Player>> customData) {
         this.type = type;
         this.instantGame = instantGame;
         this.disableGame = disableGame;
@@ -57,6 +62,7 @@ public class LootImpl implements Loot {
         this.lootBaseEffect = lootBaseEffect;
         this.preventGrabbing = preventGrabbing;
         this.toInventory = toInventory;
+        this.customData = customData;
     }
 
     @Override
@@ -125,6 +131,11 @@ public class LootImpl implements Loot {
         return lootBaseEffect;
     }
 
+    @Override
+    public Map<String, TextValue<Player>> customData() {
+        return customData;
+    }
+
     public static class BuilderImpl implements Builder {
 
         private LootType type = DEFAULT_TYPE;
@@ -140,6 +151,7 @@ public class LootImpl implements Loot {
         private String[] groups = new String[0];
         private LootBaseEffect lootBaseEffect = null;
         private MathValue<Player> toInventory = MathValue.plain(0);
+        private Map<String, TextValue<Player>> customData = new LinkedHashMap<>();
 
         @Override
         public Builder type(LootType type) {
@@ -202,6 +214,11 @@ public class LootImpl implements Loot {
             return this;
         }
         @Override
+        public Builder customData(Map<String, TextValue<Player>> customData) {
+            this.customData.putAll(customData);
+            return this;
+        }
+        @Override
         public Builder toInventory(MathValue<Player> toInventory) {
             this.toInventory = toInventory;
             return this;
@@ -221,7 +238,8 @@ public class LootImpl implements Loot {
                     score,
                     groups,
                     requireNonNull(lootBaseEffect),
-                    toInventory
+                    toInventory,
+                    customData
             );
         }
     }

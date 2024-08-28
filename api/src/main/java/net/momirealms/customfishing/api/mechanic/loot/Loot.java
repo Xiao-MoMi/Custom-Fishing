@@ -19,9 +19,12 @@ package net.momirealms.customfishing.api.mechanic.loot;
 
 import net.momirealms.customfishing.api.mechanic.effect.LootBaseEffect;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
+import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.mechanic.statistic.StatisticsKeys;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 public interface Loot {
 
@@ -126,6 +129,13 @@ public interface Loot {
      * @return The base effect for the loot.
      */
     LootBaseEffect baseEffect();
+
+    /**
+     * Get the custom data
+     *
+     * @return custom data
+     */
+    Map<String, TextValue<Player>> customData();
 
     /**
      * Create a new builder for constructing a Loot instance.
@@ -236,6 +246,14 @@ public interface Loot {
          * @return The builder instance.
          */
         Builder lootBaseEffect(LootBaseEffect lootBaseEffect);
+
+        /**
+         * Set the custom data
+         *
+         * @param customData the custom data
+         * @return The builder instance.
+         */
+        Builder customData(Map<String, TextValue<Player>> customData);
 
         /**
          * Set if the loot go directly into inventory

@@ -68,6 +68,7 @@ import net.momirealms.customfishing.bukkit.util.ItemStackUtils;
 import net.momirealms.customfishing.bukkit.util.ParticleUtils;
 import net.momirealms.customfishing.common.config.node.Node;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.helper.ExpressionHelper;
 import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.item.AbstractItem;
 import net.momirealms.customfishing.common.item.Item;
@@ -511,9 +512,17 @@ public class BukkitConfigManager extends ConfigManager {
             MathValue<Player> bonus = MathValue.auto(section.get("bonus", "0"));
             return (item, context) -> {
                 double basePrice = base.evaluate(context);
+                context.arg(ContextKeys.BASE, basePrice);
                 double bonusPrice = bonus.evaluate(context);
-                float size = Optional.ofNullable(context.arg(ContextKeys.SIZE)).orElse(0f);
-                double price = basePrice + bonusPrice * size;
+                context.arg(ContextKeys.BONUS, bonusPrice);
+                String formula = plugin.getMarketManager().getFormula();
+                TextValue<Player> playerTextValue = TextValue.auto(formula);
+                String rendered = playerTextValue.render(context);
+                List<String> unparsed = plugin.getPlaceholderManager().resolvePlaceholders(rendered);
+                for (String unparsedValue : unparsed) {
+                    rendered = rendered.replace(unparsedValue, "0");
+                }
+                double price = ExpressionHelper.evaluate(rendered);
                 item.setTag(price, "Price");
                 context.arg(ContextKeys.PRICE, price);
                 context.arg(ContextKeys.PRICE_FORMATTED, String.format("%.2f", price));
@@ -961,6 +970,20 @@ public class BukkitConfigManager extends ConfigManager {
     }
 
     private void registerBuiltInLootParser() {
+        this.registerLootParser(object -> {
+            Section section = (Section) object;
+            Map<String, TextValue<Player>> data = new LinkedHashMap<>();
+            for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
+                if (entry.getValue() instanceof String str) {
+                    data.put(entry.getKey(), TextValue.auto(str));
+                } else {
+                    data.put(entry.getKey(), TextValue.auto(entry.getValue().toString()));
+                }
+            }
+            return builder -> {
+                builder.customData(data);
+            };
+        }, "custom-data");
         this.registerLootParser(object -> {
             if (object instanceof Boolean b) {
                 return builder -> builder.toInventory(MathValue.plain(b ? 1 : 0));

@@ -342,7 +342,7 @@ public class ItemStackUtils {
                                     values.add(MathValue.auto(toTypeAndData((String) o).right()));
                                 }
                                 itemEditors.add(((item, context) -> {
-                                    List<Double> doubles = values.stream().map(unparsed -> (double) unparsed.evaluate(context)).toList();
+                                    List<Double> doubles = values.stream().map(unparsed -> unparsed.evaluate(context)).toList();
                                     item.set(doubles, (Object[]) currentRoute);
                                 }));
                             }
@@ -392,8 +392,9 @@ public class ItemStackUtils {
                     }
                     case DOUBLE -> {
                         MathValue<Player> mathValue = MathValue.auto(pair.right());
+                        System.out.println(pair.right());
                         itemEditors.add(((item, context) -> {
-                            item.set((double) mathValue.evaluate(context), (Object[]) currentRoute);
+                            item.set(mathValue.evaluate(context), (Object[]) currentRoute);
                         }));
                     }
                     case FLOAT -> {

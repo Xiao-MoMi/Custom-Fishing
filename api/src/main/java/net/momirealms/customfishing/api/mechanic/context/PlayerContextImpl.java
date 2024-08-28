@@ -21,7 +21,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -93,6 +95,20 @@ public final class PlayerContextImpl implements Context<Player> {
     @Override
     public Player holder() {
         return player;
+    }
+
+    @Override
+    public void clearCustomData() {
+        List<ContextKeys<?>> toRemove = new ArrayList<>();
+        for (Map.Entry<ContextKeys<?>, Object> entry : args.entrySet()) {
+            if (entry.getKey().key().startsWith("data_")) {
+                toRemove.add(entry.getKey());
+            }
+        }
+        for (ContextKeys<?> key : toRemove) {
+            args.remove(key);
+            placeholderMap.remove("{" + key.key() + "}");
+        }
     }
 
     @Override
