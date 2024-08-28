@@ -1,3 +1,4 @@
+import org.gradle.process.internal.ExecException
 import java.io.ByteArrayOutputStream
 
 plugins {
@@ -45,9 +46,13 @@ fun versionBanner(): String {
 
 fun builder(): String {
     val os = ByteArrayOutputStream()
-    project.exec {
-        commandLine = "git config user.name".split(" ")
-        standardOutput = os
+    try {
+        project.exec {
+            commandLine = "git config user.name".split(" ")
+            standardOutput = os
+        }
+    } catch (e: ExecException) {
+        return "Unknown"
     }
     return String(os.toByteArray()).trim()
 }
