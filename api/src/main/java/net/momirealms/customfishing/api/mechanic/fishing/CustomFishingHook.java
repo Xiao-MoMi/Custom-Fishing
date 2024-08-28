@@ -466,11 +466,13 @@ public class CustomFishingHook {
                         if (directlyToInventory) {
                             ItemStack stack = plugin.getItemManager().getItemLoot(context, gears.getItem(FishingGears.GearType.ROD).stream().findAny().orElseThrow().right(), hook);
                             if (stack.getType() != Material.AIR) {
-                                Optional<String> displayName = plugin.getItemManager().wrap(stack).displayName();
-                                if (displayName.isPresent()) {
-                                    context.arg(ContextKeys.NICK, AdventureHelper.jsonToMiniMessage(displayName.get()));
-                                } else {
-                                    context.arg(ContextKeys.NICK, "<lang:" + stack.getType().translationKey() + ">");
+                                if (Objects.equals(context.arg(ContextKeys.NICK), "UNDEFINED")) {
+                                    Optional<String> displayName = plugin.getItemManager().wrap(stack).displayName();
+                                    if (displayName.isPresent()) {
+                                        context.arg(ContextKeys.NICK, AdventureHelper.jsonToMiniMessage(displayName.get()));
+                                    } else {
+                                        context.arg(ContextKeys.NICK, "<lang:" + stack.getType().translationKey() + ">");
+                                    }
                                 }
                                 PlayerUtils.giveItem(context.holder(), stack, stack.getAmount());
                             }
