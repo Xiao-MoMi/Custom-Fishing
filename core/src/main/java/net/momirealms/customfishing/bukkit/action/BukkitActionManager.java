@@ -35,7 +35,7 @@ import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.bukkit.integration.VaultHook;
 import net.momirealms.customfishing.bukkit.util.LocationUtils;
-import net.momirealms.customfishing.bukkit.util.PlayerUtils;
+import net.momirealms.customfishing.api.util.PlayerUtils;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import net.momirealms.customfishing.common.locale.TranslationManager;

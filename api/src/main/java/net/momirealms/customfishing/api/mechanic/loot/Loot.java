@@ -71,6 +71,13 @@ public interface Loot {
     boolean preventGrabbing();
 
     /**
+     * If the loot item should go directly into inventory
+     *
+     * @return True if loot go directly into inventory
+     */
+    MathValue<Player> toInventory();
+
+    /**
      * Get the unique identifier for this loot.
      *
      * @return The unique ID of the loot.
@@ -229,6 +236,14 @@ public interface Loot {
          * @return The builder instance.
          */
         Builder lootBaseEffect(LootBaseEffect lootBaseEffect);
+
+        /**
+         * Set if the loot go directly into inventory
+         *
+         * @param toInventory go directly into the inventory
+         * @return The builder instance.
+         */
+        Builder toInventory(MathValue<Player> toInventory);
 
         /**
          * Build and return the Loot instance.

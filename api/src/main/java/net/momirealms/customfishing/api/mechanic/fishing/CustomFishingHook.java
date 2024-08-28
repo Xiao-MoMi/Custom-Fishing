@@ -39,6 +39,7 @@ import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.util.EventUtils;
+import net.momirealms.customfishing.api.util.PlayerUtils;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import net.momirealms.customfishing.common.util.TriConsumer;
@@ -459,27 +460,42 @@ public class CustomFishingHook {
             case ITEM -> {
                 context.arg(ContextKeys.SIZE_MULTIPLIER, tempFinalEffect.sizeMultiplier());
                 context.arg(ContextKeys.SIZE_ADDER, tempFinalEffect.sizeAdder());
+                boolean directlyToInventory = nextLoot.toInventory().evaluate(context) != 0;
                 for (int i = 0; i < amount; i++) {
                     plugin.getScheduler().sync().runLater(() -> {
-                        Item item = plugin.getItemManager().dropItemLoot(context, gears.getItem(FishingGears.GearType.ROD).stream().findAny().orElseThrow().right(), hook);
-                        if (item != null && Objects.equals(context.arg(ContextKeys.NICK), "UNDEFINED")) {
-                            ItemStack stack = item.getItemStack();
-                            Optional<String> displayName = plugin.getItemManager().wrap(stack).displayName();
-                            if (displayName.isPresent()) {
-                                context.arg(ContextKeys.NICK, AdventureHelper.jsonToMiniMessage(displayName.get()));
-                            } else {
-                                context.arg(ContextKeys.NICK, "<lang:" + stack.getType().translationKey() + ">");
+                        if (directlyToInventory) {
+                            ItemStack stack = plugin.getItemManager().getItemLoot(context, gears.getItem(FishingGears.GearType.ROD).stream().findAny().orElseThrow().right(), hook);
+                            if (stack.getType() != Material.AIR) {
+                                Optional<String> displayName = plugin.getItemManager().wrap(stack).displayName();
+                                if (displayName.isPresent()) {
+                                    context.arg(ContextKeys.NICK, AdventureHelper.jsonToMiniMessage(displayName.get()));
+                                } else {
+                                    context.arg(ContextKeys.NICK, "<lang:" + stack.getType().translationKey() + ">");
+                                }
+                                PlayerUtils.giveItem(context.holder(), stack, stack.getAmount());
                             }
-                        }
-
-                        FishingLootSpawnEvent spawnEvent = new FishingLootSpawnEvent(context, hook.getLocation(), nextLoot, item);
-                        Bukkit.getPluginManager().callEvent(spawnEvent);
-                        if (item != null && !spawnEvent.summonEntity())
-                            item.remove();
-                        if (spawnEvent.skipActions())
-                            return;
-                        if (item != null && item.isValid() && nextLoot.preventGrabbing()) {
-                            item.getPersistentDataContainer().set(Objects.requireNonNull(NamespacedKey.fromString("owner", plugin.getBoostrap())), PersistentDataType.STRING, context.holder().getName());
+                        } else {
+                            Item item = plugin.getItemManager().dropItemLoot(context, gears.getItem(FishingGears.GearType.ROD).stream().findAny().orElseThrow().right(), hook);
+                            if (item != null && Objects.equals(context.arg(ContextKeys.NICK), "UNDEFINED")) {
+                                ItemStack stack = item.getItemStack();
+                                Optional<String> displayName = plugin.getItemManager().wrap(stack).displayName();
+                                if (displayName.isPresent()) {
+                                    context.arg(ContextKeys.NICK, AdventureHelper.jsonToMiniMessage(displayName.get()));
+                                } else {
+                                    context.arg(ContextKeys.NICK, "<lang:" + stack.getType().translationKey() + ">");
+                                }
+                            }
+                            if (item != null) {
+                                FishingLootSpawnEvent spawnEvent = new FishingLootSpawnEvent(context, hook.getLocation(), nextLoot, item);
+                                Bukkit.getPluginManager().callEvent(spawnEvent);
+                                if (!spawnEvent.summonEntity())
+                                    item.remove();
+                                if (spawnEvent.skipActions())
+                                    return;
+                                if (item.isValid() && nextLoot.preventGrabbing()) {
+                                    item.getPersistentDataContainer().set(Objects.requireNonNull(NamespacedKey.fromString("owner", plugin.getBoostrap())), PersistentDataType.STRING, context.holder().getName());
+                                }
+                            }
                         }
                         doSuccessActions();
                     }, (long) ConfigManager.multipleLootSpawnDelay() * i, hook.getLocation());

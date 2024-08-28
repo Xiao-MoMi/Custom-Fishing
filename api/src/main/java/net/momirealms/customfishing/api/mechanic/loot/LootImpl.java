@@ -41,8 +41,9 @@ public class LootImpl implements Loot {
     private final MathValue<Player> score;
     private final String[] groups;
     private final LootBaseEffect lootBaseEffect;
+    private final MathValue<Player> toInventory;
 
-    public LootImpl(LootType type, boolean instantGame, boolean disableGame, boolean disableStatistics, boolean showInFinder, boolean preventGrabbing, String id, String nick, StatisticsKeys statisticsKeys, MathValue<Player> score, String[] groups, LootBaseEffect lootBaseEffect) {
+    public LootImpl(LootType type, boolean instantGame, boolean disableGame, boolean disableStatistics, boolean showInFinder, boolean preventGrabbing, String id, String nick, StatisticsKeys statisticsKeys, MathValue<Player> score, String[] groups, LootBaseEffect lootBaseEffect, MathValue<Player> toInventory) {
         this.type = type;
         this.instantGame = instantGame;
         this.disableGame = disableGame;
@@ -55,6 +56,7 @@ public class LootImpl implements Loot {
         this.groups = groups;
         this.lootBaseEffect = lootBaseEffect;
         this.preventGrabbing = preventGrabbing;
+        this.toInventory = toInventory;
     }
 
     @Override
@@ -91,6 +93,11 @@ public class LootImpl implements Loot {
     @Override
     public boolean preventGrabbing() {
         return preventGrabbing;
+    }
+
+    @Override
+    public MathValue<Player> toInventory() {
+        return toInventory;
     }
 
     @Override
@@ -132,6 +139,7 @@ public class LootImpl implements Loot {
         private MathValue<Player> score = DEFAULT_SCORE;
         private String[] groups = new String[0];
         private LootBaseEffect lootBaseEffect = null;
+        private MathValue<Player> toInventory = MathValue.plain(0);
 
         @Override
         public Builder type(LootType type) {
@@ -194,6 +202,11 @@ public class LootImpl implements Loot {
             return this;
         }
         @Override
+        public Builder toInventory(MathValue<Player> toInventory) {
+            this.toInventory = toInventory;
+            return this;
+        }
+        @Override
         public Loot build() {
             return new LootImpl(
                     type,
@@ -207,7 +220,8 @@ public class LootImpl implements Loot {
                     Optional.ofNullable(statisticsKeys).orElse(new StatisticsKeys(id, id)),
                     score,
                     groups,
-                    requireNonNull(lootBaseEffect)
+                    requireNonNull(lootBaseEffect),
+                    toInventory
             );
         }
     }

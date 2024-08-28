@@ -962,6 +962,13 @@ public class BukkitConfigManager extends ConfigManager {
 
     private void registerBuiltInLootParser() {
         this.registerLootParser(object -> {
+            if (object instanceof Boolean b) {
+                return builder -> builder.toInventory(MathValue.plain(b ? 1 : 0));
+            } else {
+                return builder -> builder.toInventory(MathValue.auto(object));
+            }
+        }, "to-inventory");
+        this.registerLootParser(object -> {
             boolean value = (boolean) object;
             return builder -> builder.preventGrabbing(value);
         }, "prevent-grabbing");

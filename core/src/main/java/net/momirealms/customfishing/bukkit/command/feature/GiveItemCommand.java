@@ -22,7 +22,7 @@ import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.bukkit.command.BukkitCommandFeature;
-import net.momirealms.customfishing.bukkit.util.PlayerUtils;
+import net.momirealms.customfishing.api.util.PlayerUtils;
 import net.momirealms.customfishing.common.command.CustomFishingCommandManager;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import org.bukkit.command.CommandSender;

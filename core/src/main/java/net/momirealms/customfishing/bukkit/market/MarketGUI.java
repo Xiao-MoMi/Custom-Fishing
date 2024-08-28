@@ -23,7 +23,7 @@ import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.market.MarketGUIHolder;
 import net.momirealms.customfishing.api.storage.data.EarningData;
 import net.momirealms.customfishing.api.storage.user.UserData;
-import net.momirealms.customfishing.bukkit.util.PlayerUtils;
+import net.momirealms.customfishing.api.util.PlayerUtils;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.util.Pair;
 import net.momirealms.sparrow.heart.SparrowHeart;

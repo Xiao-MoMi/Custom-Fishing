@@ -33,7 +33,7 @@ import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.bukkit.item.damage.CustomDurabilityItem;
 import net.momirealms.customfishing.bukkit.item.damage.DurabilityItem;
 import net.momirealms.customfishing.bukkit.item.damage.VanillaDurabilityItem;
-import net.momirealms.customfishing.bukkit.util.PlayerUtils;
+import net.momirealms.customfishing.api.util.PlayerUtils;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.item.Item;
 import org.bukkit.Bukkit;

@@ -168,9 +168,8 @@ public class BukkitItemManager implements ItemManager, Listener {
         return (String) factory.wrap(itemStack).getTag("CustomFishing", "id").orElse(null);
     }
 
-    @Nullable
     @Override
-    public org.bukkit.entity.Item dropItemLoot(@NotNull Context<Player> context, ItemStack rod, FishHook hook) {
+    public ItemStack getItemLoot(@NotNull Context<Player> context, ItemStack rod, FishHook hook) {
         String id = requireNonNull(context.arg(ContextKeys.ID));
         ItemStack itemStack;
         if (id.equals("vanilla")) {
@@ -178,7 +177,13 @@ public class BukkitItemManager implements ItemManager, Listener {
         } else {
             itemStack = requireNonNull(buildInternal(context, id));
         }
+        return itemStack;
+    }
 
+    @Nullable
+    @Override
+    public org.bukkit.entity.Item dropItemLoot(@NotNull Context<Player> context, ItemStack rod, FishHook hook) {
+        ItemStack itemStack = getItemLoot(context, rod, hook);
         if (itemStack.getType() == Material.AIR) {
             return null;
         }
