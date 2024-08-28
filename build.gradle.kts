@@ -51,7 +51,7 @@ fun builder(): String {
             commandLine = "git config user.name".split(" ")
             standardOutput = os
         }
-    } catch (e: ExecException) {
+    } catch (e: Exception) {
         return "Unknown"
     }
     return String(os.toByteArray()).trim()
