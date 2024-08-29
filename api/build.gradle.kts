@@ -13,11 +13,6 @@ repositories {
 dependencies {
     implementation(project(":common"))
     implementation(files("libs/boosted-yaml-${rootProject.properties["boosted_yaml_version"]}.jar"))
-    implementation("net.kyori:adventure-api:${rootProject.properties["adventure_bundle_version"]}") {
-        exclude(module = "adventure-bom")
-        exclude(module = "checker-qual")
-        exclude(module = "annotations")
-    }
     implementation("com.saicone.rtag:rtag:${rootProject.properties["rtag_version"]}")
     implementation("com.saicone.rtag:rtag-item:${rootProject.properties["rtag_version"]}")
     compileOnly("dev.folia:folia-api:${rootProject.properties["paper_version"]}-R0.1-SNAPSHOT")
