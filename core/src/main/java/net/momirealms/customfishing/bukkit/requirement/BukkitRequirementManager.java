@@ -45,6 +45,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -80,9 +81,13 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
     }
 
     @Override
-    public boolean registerRequirement(@NotNull String type, @NotNull RequirementFactory<Player> requirementFactory) {
-        if (this.requirementFactoryMap.containsKey(type)) return false;
-        this.requirementFactoryMap.put(type, requirementFactory);
+    public boolean registerRequirement(@NotNull RequirementFactory<Player> requirementFactory, @NotNull String... types) {
+        for (String type : types) {
+            if (this.requirementFactoryMap.containsKey(type)) return false;
+        }
+        for (String type : types) {
+            this.requirementFactoryMap.put(type, requirementFactory);
+        }
         return true;
     }
 
@@ -188,17 +193,20 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         this.registerItemInHandRequirement();
         this.registerImpossibleRequirement();
         this.registerPotionEffectRequirement();
+        this.registerSneakRequirement();
+        this.registerGameModeRequirement();
+        this.registerEquipmentRequirement();
     }
 
     private void registerImpossibleRequirement() {
-        registerRequirement("impossible", ((args, actions, runActions) -> context -> {
+        registerRequirement(((args, actions, runActions) -> context -> {
             if (runActions) ActionManager.trigger(context, actions);
             return false;
-        }));
+        }), "impossible");
     }
 
     private void registerCompetitionRequirement() {
-        registerRequirement("competition", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 boolean onCompetition = section.getBoolean("ongoing", true);
                 List<String> ids = section.contains("id") ? ListUtils.toList(section.get("id")) : List.of();
@@ -225,11 +233,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at competition requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
+        }, "competition");
     }
 
     private void registerInBagRequirement() {
-        registerRequirement("in-fishingbag", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             boolean arg = (boolean) args;
             return context -> {
                 boolean inBag = Optional.ofNullable(context.arg(ContextKeys.IN_BAG)).orElse(false);
@@ -237,11 +245,30 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "in-fishingbag");
+    }
+
+    private void registerEquipmentRequirement() {
+        registerRequirement((args, actions, runActions) -> {
+            if (args instanceof Section section) {
+                EquipmentSlot slot = EquipmentSlot.valueOf(section.getString("slot","HEAD").toUpperCase(Locale.ENGLISH));
+                List<String> items = ListUtils.toList(section.get("item"));
+                return context -> {
+                    ItemStack itemStack = context.holder().getInventory().getItem(slot);
+                    String id = plugin.getItemManager().getItemID(itemStack);
+                    if (items.contains(id)) return true;
+                    if (runActions) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at equipment requirement which is expected be `Section`");
+                return Requirement.empty();
+            }
+        }, "equipment");
     }
 
     private void registerItemInHandRequirement() {
-        registerRequirement("item-in-hand", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 boolean mainOrOff = section.getString("hand","main").equalsIgnoreCase("main");
                 int amount = section.getInt("amount", 1);
@@ -259,11 +286,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at item-in-hand requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
+        }, "item-in-hand");
     }
 
     private void registerPluginLevelRequirement() {
-        registerRequirement("plugin-level", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 String pluginName = section.getString("plugin");
                 int level = section.getInt("level");
@@ -283,11 +310,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at plugin-level requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
+        }, "plugin-level");
     }
 
     private void registerTimeRequirement() {
-        registerRequirement("time", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             List<String> list = ListUtils.toList(args);
             List<Pair<Integer, Integer>> timePairs = list.stream().map(line -> {
                 String[] split = line.split("~");
@@ -302,11 +329,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "time");
     }
 
     private void registerYRequirement() {
-        registerRequirement("ypos", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             List<String> list = ListUtils.toList(args);
             List<Pair<Double, Double>> posPairs = list.stream().map(line -> {
                 String[] split = line.split("~");
@@ -321,11 +348,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "ypos");
     }
 
     private void registerOrRequirement() {
-        registerRequirement("||", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 Requirement<Player>[] requirements = parseRequirements(section, runActions);
                 return context -> {
@@ -339,11 +366,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at || requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
+        }, "||");
     }
 
     private void registerAndRequirement() {
-        registerRequirement("&&", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 Requirement<Player>[] requirements = parseRequirements(section, runActions);
                 return context -> {
@@ -360,11 +387,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at && requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
+        }, "&&");
     }
 
     private void registerInWaterRequirement() {
-        registerRequirement("in-water", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             boolean inWater = (boolean) args;
             return context -> {
                 boolean in_water = Optional.ofNullable(context.arg(ContextKeys.SURROUNDING)).orElse("").equals(EffectProperties.WATER_FISHING.key());
@@ -372,11 +399,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "in-water");
     }
 
     private void registerInVoidRequirement() {
-        registerRequirement("in-void", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             boolean inVoid = (boolean) args;
             return context -> {
                 boolean in_void = Optional.ofNullable(context.arg(ContextKeys.SURROUNDING)).orElse("").equals(EffectProperties.VOID_FISHING.key());
@@ -384,12 +411,12 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "in-void");
     }
 
     private void registerInLavaRequirement() {
         // Deprecated requirement type
-        registerRequirement("lava-fishing", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             boolean inLava = (boolean) args;
             if (!inLava) {
                 // in water
@@ -407,8 +434,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
-        registerRequirement("in-lava", (args, actions, runActions) -> {
+        }, "lava-fishing");
+        registerRequirement((args, actions, runActions) -> {
             boolean inLava = (boolean) args;
             return context -> {
                 boolean in_lava = Optional.ofNullable(context.arg(ContextKeys.SURROUNDING)).orElse("").equals(EffectProperties.LAVA_FISHING.key());
@@ -416,11 +443,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "in-lava");
     }
 
     private void registerRodRequirement() {
-        registerRequirement("rod", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> rods = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 String id = context.arg(ContextKeys.ROD);
@@ -428,8 +455,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
-        registerRequirement("!rod", (args, actions, runActions) -> {
+        }, "rod");
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> rods = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 String id = context.arg(ContextKeys.ROD);
@@ -437,11 +464,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "!rod");
     }
 
     private void registerGroupRequirement() {
-        registerRequirement("group", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> groups = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 String lootID = context.arg(ContextKeys.ID);
@@ -455,8 +482,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
-        registerRequirement("!group", (args, actions, runActions) -> {
+        }, "group");
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> groups = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 String lootID = context.arg(ContextKeys.ID);
@@ -474,11 +501,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "!group");
     }
 
     private void registerLootRequirement() {
-        registerRequirement("loot", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> arg = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 String lootID = context.arg(ContextKeys.ID);
@@ -486,8 +513,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
-        registerRequirement("!loot", (args, actions, runActions) -> {
+        }, "loot");
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> arg = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 String lootID = context.arg(ContextKeys.ID);
@@ -495,11 +522,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "!loot");
     }
 
     private void registerHookRequirement() {
-        registerRequirement("hook", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> hooks = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 String id = context.arg(ContextKeys.HOOK);
@@ -507,8 +534,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
-        registerRequirement("!hook", (args, actions, runActions) -> {
+        }, "hook");
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> hooks = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 String id = context.arg(ContextKeys.HOOK);
@@ -516,8 +543,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
-        registerRequirement("has-hook", (args, actions, runActions) -> {
+        }, "!hook");
+        registerRequirement((args, actions, runActions) -> {
             boolean has = (boolean) args;
             return context -> {
                 String id = context.arg(ContextKeys.HOOK);
@@ -526,11 +553,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "has-hook");
     }
 
     private void registerBaitRequirement() {
-        registerRequirement("bait", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> arg = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 String id = context.arg(ContextKeys.BAIT);
@@ -538,8 +565,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
-        registerRequirement("!bait", (args, actions, runActions) -> {
+        }, "bait");
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> arg = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 String id = context.arg(ContextKeys.BAIT);
@@ -547,8 +574,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
-        registerRequirement("has-bait", (args, actions, runActions) -> {
+        }, "!bait");
+        registerRequirement((args, actions, runActions) -> {
             boolean has = (boolean) args;
             return context -> {
                 String id = context.arg(ContextKeys.BAIT);
@@ -557,11 +584,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "has-bait");
     }
 
     private void registerSizeRequirement() {
-        registerRequirement("has-size", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             boolean has = (boolean) args;
             return context -> {
                 float size = Optional.ofNullable(context.arg(ContextKeys.SIZE)).orElse(-1f);
@@ -570,11 +597,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "has-size");
     }
 
     private void registerOpenWaterRequirement() {
-        registerRequirement("open-water", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             boolean openWater = (boolean) args;
             return context -> {
                 boolean current = Optional.ofNullable(context.arg(ContextKeys.OPEN_WATER)).orElse(false);
@@ -583,11 +610,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "open-water");
     }
 
     private void registerHasStatsRequirement() {
-        registerRequirement("has-stats", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             boolean has = (boolean) args;
             return context -> {
                 String loot = context.arg(ContextKeys.ID);
@@ -599,11 +626,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "has-stats");
     }
 
     private void registerLootTypeRequirement() {
-        registerRequirement("loot-type", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             List<String> types = ListUtils.toList(args);
             return context -> {
                 String loot = context.arg(ContextKeys.ID);
@@ -615,8 +642,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
-        registerRequirement("!loot-type", (args, actions, runActions) -> {
+        }, "loot-type");
+        registerRequirement((args, actions, runActions) -> {
             List<String> types = ListUtils.toList(args);
             return context -> {
                 String loot = context.arg(ContextKeys.ID);
@@ -628,22 +655,22 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "!loot-type");
     }
 
     private void registerListRequirement() {
-        registerRequirement("list", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             plugin.getPluginLogger().severe("It seems that you made a mistake where you put \"list\" into \"conditions\" section.");
             plugin.getPluginLogger().warn("list:");
             for (String e : ListUtils.toList(args)) {
                 plugin.getPluginLogger().warn(" - " + e);
             }
             return Requirement.empty();
-        });
+        }, "list");
     }
 
     private void registerEnvironmentRequirement() {
-        registerRequirement("environment", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             List<String> environments = ListUtils.toList(args);
             return context -> {
                 Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
@@ -652,8 +679,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
-        registerRequirement("!environment", (args, actions, runActions) -> {
+        }, "environment");
+        registerRequirement((args, actions, runActions) -> {
             List<String> environments = ListUtils.toList(args);
             return context -> {
                 Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
@@ -662,11 +689,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "!environment");
     }
 
     private void registerIceFishingRequirement() {
-        registerRequirement("ice-fishing", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             boolean iceFishing = (boolean) args;
             return context -> {
                 Location location = requireNonNull(context.arg(ContextKeys.OTHER_LOCATION));
@@ -686,11 +713,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "ice-fishing");
     }
 
     private void registerLevelRequirement() {
-        registerRequirement("level", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 int current = context.holder().getLevel();
@@ -699,11 +726,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "level");
     }
 
     private void registerMoneyRequirement() {
-        registerRequirement("money", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 double current = VaultHook.getBalance(context.holder());
@@ -712,11 +739,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "money");
     }
 
     private void registerRandomRequirement() {
-        registerRequirement("random", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (Math.random() < value.evaluate(context, true))
@@ -724,11 +751,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "random");
     }
 
     private void registerBiomeRequirement() {
-        registerRequirement("biome", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> biomes = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 Location location = requireNonNull(Optional.ofNullable(context.arg(ContextKeys.OTHER_LOCATION)).orElse(context.arg(ContextKeys.LOCATION)));
@@ -738,8 +765,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
-        registerRequirement("!biome", (args, actions, runActions) -> {
+        }, "biome");
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> biomes = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 Location location = requireNonNull(Optional.ofNullable(context.arg(ContextKeys.OTHER_LOCATION)).orElse(context.arg(ContextKeys.LOCATION)));
@@ -749,11 +776,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "!biome");
     }
 
     private void registerMoonPhaseRequirement() {
-        registerRequirement("moon-phase", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> moonPhases = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
@@ -763,8 +790,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
-        registerRequirement("!moon-phase", (args, actions, runActions) -> {
+        }, "moon-phase");
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> moonPhases = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
@@ -774,11 +801,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "!moon-phase");
     }
 
     private void registerWorldRequirement() {
-        registerRequirement("world", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> worlds = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
@@ -787,8 +814,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
-        registerRequirement("!world", (args, actions, runActions) -> {
+        }, "world");
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> worlds = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
@@ -797,11 +824,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "!world");
     }
 
     private void registerWeatherRequirement() {
-        registerRequirement("weather", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> weathers = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 String currentWeather;
@@ -814,11 +841,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "weather");
     }
 
     private void registerCoolDownRequirement() {
-        registerRequirement("cooldown", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 String key = section.getString("key");
                 int time = section.getInt("time");
@@ -832,11 +859,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at cooldown requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
+        }, "cooldown");
     }
 
     private void registerDateRequirement() {
-        registerRequirement("date", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             HashSet<String> dates = new HashSet<>(ListUtils.toList(args));
             return context -> {
                 Calendar calendar = Calendar.getInstance();
@@ -846,11 +873,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "date");
     }
 
     private void registerPermissionRequirement() {
-        registerRequirement("permission", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             List<String> perms = ListUtils.toList(args);
             return context -> {
                 for (String perm : perms)
@@ -859,8 +886,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
-        registerRequirement("!permission", (args, actions, runActions) -> {
+        }, "permission");
+        registerRequirement((args, actions, runActions) -> {
             List<String> perms = ListUtils.toList(args);
             return context -> {
                 for (String perm : perms)
@@ -870,11 +897,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                     }
                 return true;
             };
-        });
+        }, "!permission");
     }
 
     private void registerSeasonRequirement() {
-        registerRequirement("season", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             List<String> seasons = ListUtils.toList(args);
             return context -> {
                 SeasonProvider seasonProvider = plugin.getIntegrationManager().getSeasonProvider();
@@ -886,11 +913,11 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "season");
     }
 
     private void registerPAPIRequirement() {
-        registerRequirement("<", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
@@ -903,8 +930,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at < requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
-        registerRequirement("<=", (args, actions, runActions) -> {
+        }, "<");
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
@@ -917,8 +944,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at <= requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
-        registerRequirement("!=", (args, actions, runActions) -> {
+        }, "<=");
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
@@ -931,8 +958,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at != requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
-        registerRequirement("==", (args, actions, runActions) -> {
+        }, "!=");
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
@@ -945,8 +972,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at == requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
-        registerRequirement(">=", (args, actions, runActions) -> {
+        }, "==");
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
@@ -959,8 +986,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at >= requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
-        registerRequirement(">", (args, actions, runActions) -> {
+        }, ">=");
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
                 MathValue<Player> v2 = MathValue.auto(section.get("value2"));
@@ -973,8 +1000,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at > requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
-        registerRequirement("regex", (args, actions, runActions) -> {
+        }, ">");
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("papi", ""));
                 String v2 = section.getString("regex", "");
@@ -987,8 +1014,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at regex requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
-        registerRequirement("startsWith", (args, actions, runActions) -> {
+        }, "regex");
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
@@ -1001,8 +1028,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at startsWith requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
-        registerRequirement("!startsWith", (args, actions, runActions) -> {
+        }, "startsWith");
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
@@ -1015,8 +1042,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at !startsWith requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
-        registerRequirement("endsWith", (args, actions, runActions) -> {
+        }, "!startsWith");
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
@@ -1029,8 +1056,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at endsWith requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
-        registerRequirement("!endsWith", (args, actions, runActions) -> {
+        }, "endsWith");
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
@@ -1043,8 +1070,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at !endsWith requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
-        registerRequirement("contains", (args, actions, runActions) -> {
+        }, "!endsWith");
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
@@ -1057,8 +1084,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at contains requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
-        registerRequirement("!contains", (args, actions, runActions) -> {
+        }, "contains");
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
@@ -1071,8 +1098,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at !contains requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
-        registerRequirement("in-list", (args, actions, runActions) -> {
+        }, "!contains");
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 TextValue<Player> papi = TextValue.auto(section.getString("papi", ""));
                 List<String> values = ListUtils.toList(section.get("values"));
@@ -1085,8 +1112,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at in-list requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
-        registerRequirement("!in-list", (args, actions, runActions) -> {
+        }, "in-list");
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 TextValue<Player> papi = TextValue.auto(section.getString("papi", ""));
                 List<String> values = ListUtils.toList(section.get("values"));
@@ -1099,8 +1126,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at !in-list requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
-        registerRequirement("equals", (args, actions, runActions) -> {
+        }, "!in-list");
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
@@ -1114,8 +1141,8 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at equals requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
-        registerRequirement("!equals", (args, actions, runActions) -> {
+        }, "equals");
+        registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
@@ -1128,12 +1155,12 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at !equals requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        });
+        }, "!equals");
     }
 
     @SuppressWarnings("deprecation")
     private void registerPotionEffectRequirement() {
-        registerRequirement("potion-effect", (args, actions, runActions) -> {
+        registerRequirement((args, actions, runActions) -> {
             String potions = (String) args;
             String[] split = potions.split("(<=|>=|<|>|==)", 2);
             PotionEffectType type = PotionEffectType.getByName(split[0]);
@@ -1176,7 +1203,40 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        });
+        }, "potion-effect");
+    }
+
+    private void registerSneakRequirement() {
+        registerRequirement((args, actions, advanced) -> {
+            boolean sneak = (boolean) args;
+            return context -> {
+                if (context.holder() == null) return false;
+                if (sneak) {
+                    if (context.holder().isSneaking())
+                        return true;
+                } else {
+                    if (!context.holder().isSneaking())
+                        return true;
+                }
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        }, "sneak");
+    }
+
+    protected void registerGameModeRequirement() {
+        registerRequirement((args, actions, advanced) -> {
+            List<String> modes = ListUtils.toList(args);
+            return context -> {
+                if (context.holder() == null) return false;
+                var name = context.holder().getGameMode().name().toLowerCase(Locale.ENGLISH);
+                if (modes.contains(name)) {
+                    return true;
+                }
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        }, "gamemode");
     }
 
     /**
@@ -1206,7 +1266,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             for (Class<? extends RequirementExpansion<Player>> expansionClass : classes) {
                 RequirementExpansion<Player> expansion = expansionClass.getDeclaredConstructor().newInstance();
                 unregisterRequirement(expansion.getRequirementType());
-                registerRequirement(expansion.getRequirementType(), expansion.getRequirementFactory());
+                registerRequirement(expansion.getRequirementFactory(), expansion.getRequirementType());
                 plugin.getPluginLogger().info("Loaded requirement expansion: " + expansion.getRequirementType() + "[" + expansion.getVersion() + "]" + " by " + expansion.getAuthor());
             }
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {

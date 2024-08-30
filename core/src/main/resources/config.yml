@@ -131,6 +131,7 @@ mechanics:
                     duration: 35
                     position: other
                     item: lava_effect
+                    use-item-display: true
             priority_2:
               conditions:
                 in-water: true
@@ -141,6 +142,7 @@ mechanics:
                     duration: 35
                     position: other
                     item: water_effect
+                    use-item-display: true
   # Global properties which would help you reduce duplicated lines
   global-loot-property:
     show-in-fishfinder: true

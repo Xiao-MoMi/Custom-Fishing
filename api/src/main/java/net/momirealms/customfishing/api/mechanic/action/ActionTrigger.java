@@ -31,5 +31,6 @@ public enum ActionTrigger {
     TIMER,
     INTERACT,
     REEL,
-    NEW_SIZE_RECORD
+    NEW_SIZE_RECORD,
+    END
 }

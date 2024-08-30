@@ -23,11 +23,13 @@ import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import net.momirealms.customfishing.api.mechanic.totem.TotemManager;
 import net.momirealms.customfishing.api.mechanic.totem.block.TotemBlock;
+import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.api.util.SimpleLocation;
 import net.momirealms.customfishing.bukkit.util.LocationUtils;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
@@ -91,6 +93,7 @@ public class BukkitTotemManager implements TotemManager, Listener {
         if (this.timerCheckTask != null)
             this.timerCheckTask.cancel();
         this.block2Totem.clear();
+        this.id2Totem.clear();
     }
 
     @Override
@@ -162,9 +165,17 @@ public class BukkitTotemManager implements TotemManager, Listener {
         if (config == null)
             return;
 
+        Location location = block.getLocation();
+        SimpleLocation simpleLocation = SimpleLocation.of(location);
+        ActivatedTotem previous = this.activatedTotems.get(simpleLocation);
+        if (previous != null) {
+            return;
+        }
+
         String totemID = config.id();
         final Player player = event.getPlayer();;
         Context<Player> context = Context.player(player);
+        context.arg(ContextKeys.SLOT, event.getHand());
         Optional<EffectModifier> optionalEffectModifier = plugin.getEffectManager().getEffectModifier(totemID, MechanicType.TOTEM);
         if (optionalEffectModifier.isPresent()) {
             if (!RequirementManager.isSatisfied(context, optionalEffectModifier.get().requirements())) {
@@ -172,21 +183,13 @@ public class BukkitTotemManager implements TotemManager, Listener {
             }
         }
 
-        TotemActivateEvent totemActivateEvent = new TotemActivateEvent(player, block.getLocation(), config);
-        Bukkit.getPluginManager().callEvent(totemActivateEvent);
-        if (totemActivateEvent.isCancelled()) {
+        if (EventUtils.fireAndCheckCancel(new TotemActivateEvent(player, block.getLocation(), config))) {
             return;
         }
 
         plugin.getEventManager().trigger(context, totemID, MechanicType.TOTEM, ActionTrigger.ACTIVATE);
-
-        Location location = block.getLocation();
         ActivatedTotem activatedTotem = new ActivatedTotem(player, location, config);
-        SimpleLocation simpleLocation = SimpleLocation.of(location);
-        ActivatedTotem previous = this.activatedTotems.put(simpleLocation, activatedTotem);
-        if (previous != null) {
-            previous.cancel();
-        }
+        this.activatedTotems.put(simpleLocation, activatedTotem);
     }
 
     @Override

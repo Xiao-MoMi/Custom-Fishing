@@ -207,6 +207,7 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
      * Ends the game for the gaming player.
      */
     protected void endGame() {
+        if (!isValid()) return;
         destroy();
         boolean success = isSuccessful();
         BukkitCustomFishingPlugin.getInstance().getScheduler().sync().run(() -> {

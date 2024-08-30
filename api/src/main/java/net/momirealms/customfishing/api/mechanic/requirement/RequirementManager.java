@@ -35,11 +35,11 @@ public interface RequirementManager<T> extends Reloadable {
     /**
      * Registers a custom requirement type with its corresponding factory.
      *
-     * @param type               The type identifier of the requirement.
      * @param requirementFactory The factory responsible for creating instances of the requirement.
+     * @param type               The type identifier of the requirement.
      * @return True if registration was successful, false if the type is already registered.
      */
-    boolean registerRequirement(@NotNull String type, @NotNull RequirementFactory<T> requirementFactory);
+    boolean registerRequirement(@NotNull RequirementFactory<T> requirementFactory, @NotNull String... type);
 
     /**
      * Unregisters a custom requirement type.

@@ -71,6 +71,7 @@ public class ActivatedTotem {
             task.cancel();
         }
         this.subTasks.clear();
+        this.doEndAction();
     }
 
     public long getExpireTime() {
@@ -85,5 +86,10 @@ public class ActivatedTotem {
         this.context.arg(ContextKeys.TIME_LEFT, String.valueOf((expireTime - System.currentTimeMillis())/1000));
         BukkitCustomFishingPlugin.getInstance().getEventManager().getEventCarrier(totemConfig.id(), MechanicType.TOTEM)
                 .ifPresent(carrier -> carrier.trigger(context, ActionTrigger.TIMER));
+    }
+
+    public void doEndAction() {
+        BukkitCustomFishingPlugin.getInstance().getEventManager().getEventCarrier(totemConfig.id(), MechanicType.TOTEM)
+                .ifPresent(carrier -> carrier.trigger(context, ActionTrigger.END));
     }
 }

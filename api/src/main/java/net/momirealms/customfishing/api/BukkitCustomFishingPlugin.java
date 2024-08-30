@@ -33,6 +33,7 @@ import net.momirealms.customfishing.api.mechanic.item.ItemManager;
 import net.momirealms.customfishing.api.mechanic.loot.LootManager;
 import net.momirealms.customfishing.api.mechanic.market.MarketManager;
 import net.momirealms.customfishing.api.mechanic.misc.cooldown.CoolDownManager;
+import net.momirealms.customfishing.api.mechanic.misc.hologram.HologramManager;
 import net.momirealms.customfishing.api.mechanic.misc.placeholder.PlaceholderManager;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.statistic.StatisticsManager;
@@ -84,6 +85,7 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
     protected TotemManager totemManager;
     protected FishingManager fishingManager;
     protected GameManager gameManager;
+    protected HologramManager hologramManager;
 
     /**
      * Constructs a new BukkitCustomFishingPlugin instance.
@@ -356,6 +358,15 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
     @Override
     public TranslationManager getTranslationManager() {
         return translationManager;
+    }
+
+    /**
+     * Retrieves the HologramManager.
+     *
+     * @return the {@link HologramManager}
+     */
+    public HologramManager getHologramManager() {
+        return hologramManager;
     }
 
     /**

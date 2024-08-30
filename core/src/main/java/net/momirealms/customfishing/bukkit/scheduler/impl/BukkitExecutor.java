@@ -41,6 +41,10 @@ public class BukkitExecutor implements RegionExecutor<Location> {
 
     @Override
     public void run(Runnable r, Location l) {
+        if (Bukkit.isPrimaryThread()) {
+            r.run();
+            return;
+        }
         Bukkit.getScheduler().runTask(plugin, r);
     }
 

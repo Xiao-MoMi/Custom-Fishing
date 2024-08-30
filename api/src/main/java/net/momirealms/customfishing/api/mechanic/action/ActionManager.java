@@ -35,11 +35,11 @@ public interface ActionManager<T> extends Reloadable {
     /**
      * Registers a custom action type with its corresponding factory.
      *
-     * @param type           The type identifier of the action.
-     * @param actionFactory  The factory responsible for creating instances of the action.
+     * @param actionFactory The factory responsible for creating instances of the action.
+     * @param type          The type identifier of the action.
      * @return True if registration was successful, false if the type is already registered.
      */
-    boolean registerAction(String type, ActionFactory<T> actionFactory);
+    boolean registerAction(ActionFactory<T> actionFactory, String... type);
 
     /**
      * Unregisters a custom action type.

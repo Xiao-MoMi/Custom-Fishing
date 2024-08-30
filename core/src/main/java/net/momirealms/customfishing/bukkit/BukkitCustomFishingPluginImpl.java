@@ -22,6 +22,7 @@ import net.momirealms.customfishing.api.event.CustomFishingReloadEvent;
 import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.misc.cooldown.CoolDownManager;
+import net.momirealms.customfishing.api.mechanic.misc.hologram.HologramManager;
 import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.bukkit.action.BukkitActionManager;
@@ -137,6 +138,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.translationManager = new TranslationManager(this);
         this.integrationManager = new BukkitIntegrationManager(this);
         this.gameManager = new BukkitGameManager(this);
+        this.hologramManager = new HologramManager(this);
         this.commandManager = new BukkitCommandManager(this);
         this.commandManager.registerDefaultFeatures();
 
@@ -196,6 +198,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.bagManager.reload();
         this.storageManager.reload();
         this.fishingManager.reload();
+        this.hologramManager.reload();
 
         this.itemManager.load();
         this.eventManager.load();
@@ -230,6 +233,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.bagManager.disable();
         this.integrationManager.disable();
         this.storageManager.disable();
+        this.hologramManager.disable();
         this.commandManager.unregisterFeatures();
     }
 

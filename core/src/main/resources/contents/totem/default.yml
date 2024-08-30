@@ -26,7 +26,6 @@ double_loot_totem:
     requirement_1:
       type: item-in-hand
       value:
-        hand: main
         item: NAUTILUS_SHELL
         amount: 1
       not-met-actions:
@@ -48,6 +47,8 @@ double_loot_totem:
           text: '<#BA55D3>[Double Loot Totem]</#BA55D3>'
           position: other
           range: 16
+          use-text-display: true
+          rgba: 147,112,219,50
           y: 3.3
           x: 0
           z: 0
@@ -58,6 +59,7 @@ double_loot_totem:
           text: 'Time Left: {time_left} seconds'
           position: other
           range: 16
+          use-text-display: true
           y: 2.8
           x: 0
           z: 0
@@ -65,7 +67,6 @@ double_loot_totem:
       remove_item_action:
         type: item-amount
         value:
-          hand: main
           amount: -1
       broadcast_action:
         type: message-nearby
@@ -256,7 +257,6 @@ golden_star_totem:
     requirement_1:
       type: item-in-hand
       value:
-        hand: main
         item: GOLD_INGOT
         amount: 1
       not-met-actions:
@@ -278,6 +278,8 @@ golden_star_totem:
           text: '<#FFFF00>[Golden Star Totem]</#FFFF00>'
           position: other
           range: 16
+          use-text-display: true
+          rgba: 255,215,0,50
           y: 1
           x: 0
           z: 0
@@ -287,6 +289,7 @@ golden_star_totem:
           duration: 20
           text: 'Time Left: {time_left} seconds'
           position: other
+          use-text-display: true
           range: 16
           y: 0.5
           x: 0
@@ -295,7 +298,6 @@ golden_star_totem:
       remove_item_action:
         type: item-amount
         value:
-          hand: main
           amount: -1
       broadcast_action:
         type: message-nearby

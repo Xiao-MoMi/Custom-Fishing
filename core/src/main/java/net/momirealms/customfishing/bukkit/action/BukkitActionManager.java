@@ -37,6 +37,7 @@ import net.momirealms.customfishing.api.util.PlayerUtils;
 import net.momirealms.customfishing.bukkit.integration.VaultHook;
 import net.momirealms.customfishing.bukkit.util.LocationUtils;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
+import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
@@ -45,7 +46,9 @@ import net.momirealms.customfishing.common.util.ListUtils;
 import net.momirealms.customfishing.common.util.Pair;
 import net.momirealms.customfishing.common.util.RandomUtils;
 import net.momirealms.sparrow.heart.SparrowHeart;
-import net.momirealms.sparrow.heart.feature.armorstand.FakeArmorStand;
+import net.momirealms.sparrow.heart.feature.entity.FakeEntity;
+import net.momirealms.sparrow.heart.feature.entity.armorstand.FakeArmorStand;
+import net.momirealms.sparrow.heart.feature.entity.display.FakeItemDisplay;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -89,9 +92,13 @@ public class BukkitActionManager implements ActionManager<Player> {
     }
 
     @Override
-    public boolean registerAction(String type, ActionFactory<Player> actionFactory) {
-        if (this.actionFactoryMap.containsKey(type)) return false;
-        this.actionFactoryMap.put(type, actionFactory);
+    public boolean registerAction(ActionFactory<Player> actionFactory, String... types) {
+        for (String type : types) {
+            if (this.actionFactoryMap.containsKey(type)) return false;
+        }
+        for (String type : types) {
+            this.actionFactoryMap.put(type, actionFactory);
+        }
         return true;
     }
 
@@ -155,7 +162,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         this.registerCloseInvAction();
         this.registerExpAction();
         this.registerFoodAction();
-        this.registerChainAction();
+        this.registerBuildAction();
         this.registerMoneyAction();
         this.registerItemAction();
         this.registerPotionAction();
@@ -168,7 +175,7 @@ public class BukkitActionManager implements ActionManager<Player> {
     }
 
     private void registerMessageAction() {
-        registerAction("message", (args, chance) -> {
+        registerAction((args, chance) -> {
             List<String> messages = ListUtils.toList(args);
             return context -> {
                 if (Math.random() > chance) return;
@@ -178,8 +185,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                     audience.sendMessage(AdventureHelper.miniMessage(text));
                 }
             };
-        });
-        registerAction("random-message", (args, chance) -> {
+        }, "message");
+        registerAction((args, chance) -> {
             List<String> messages = ListUtils.toList(args);
             return context -> {
                 if (Math.random() > chance) return;
@@ -188,8 +195,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                 Audience audience = plugin.getSenderFactory().getAudience(context.holder());
                 audience.sendMessage(AdventureHelper.miniMessage(random));
             };
-        });
-        registerAction("broadcast", (args, chance) -> {
+        }, "random-message");
+        registerAction((args, chance) -> {
             List<String> messages = ListUtils.toList(args);
             return context -> {
                 if (Math.random() > chance) return;
@@ -201,8 +208,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                     }
                 }
             };
-        });
-        registerAction("message-nearby", (args, chance) -> {
+        }, "broadcast");
+        registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 List<String> messages = ListUtils.toList(section.get("message"));
                 MathValue<Player> range = MathValue.auto(section.get("range"));
@@ -230,11 +237,11 @@ public class BukkitActionManager implements ActionManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at message-nearby action which should be Section");
                 return Action.empty();
             }
-        });
+        }, "message-nearby");
     }
 
     private void registerCommandAction() {
-        registerAction("command", (args, chance) -> {
+        registerAction((args, chance) -> {
             List<String> commands = ListUtils.toList(args);
             return context -> {
                 if (Math.random() > chance) return;
@@ -245,8 +252,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                     }
                 }, null);
             };
-        });
-        registerAction("player-command", (args, chance) -> {
+        }, "command");
+        registerAction((args, chance) -> {
             List<String> commands = ListUtils.toList(args);
             return context -> {
                 if (Math.random() > chance) return;
@@ -257,8 +264,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                     }
                 }, context.holder().getLocation());
             };
-        });
-        registerAction("random-command", (args, chance) -> {
+        }, "player-command");
+        registerAction((args, chance) -> {
             List<String> commands = ListUtils.toList(args);
             return context -> {
                 if (Math.random() > chance) return;
@@ -269,8 +276,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), finalRandom);
                 }, null);
             };
-        });
-        registerAction("command-nearby", (args, chance) -> {
+        }, "random-command");
+        registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 List<String> cmd = ListUtils.toList(section.get("command"));
                 MathValue<Player> range = MathValue.auto(section.get("range"));
@@ -293,18 +300,18 @@ public class BukkitActionManager implements ActionManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at command-nearby action which should be Section");
                 return Action.empty();
             }
-        });
+        }, "command-nearby");
     }
 
     private void registerCloseInvAction() {
-        registerAction("close-inv", (args, chance) -> condition -> {
+        registerAction((args, chance) -> condition -> {
             if (Math.random() > chance) return;
             condition.holder().closeInventory();
-        });
+        }, "close-inv");
     }
 
     private void registerActionBarAction() {
-        registerAction("actionbar", (args, chance) -> {
+        registerAction((args, chance) -> {
             String text = (String) args;
             return context -> {
                 if (Math.random() > chance) return;
@@ -312,8 +319,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                 Component component = AdventureHelper.miniMessage(plugin.getPlaceholderManager().parse(context.holder(), text, context.placeholderMap()));
                 audience.sendActionBar(component);
             };
-        });
-        registerAction("random-actionbar", (args, chance) -> {
+        }, "actionbar");
+        registerAction((args, chance) -> {
             List<String> texts = ListUtils.toList(args);
             return context -> {
                 if (Math.random() > chance) return;
@@ -322,8 +329,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                 Audience audience = plugin.getSenderFactory().getAudience(context.holder());
                 audience.sendActionBar(AdventureHelper.miniMessage(random));
             };
-        });
-        registerAction("actionbar-nearby", (args, chance) -> {
+        }, "random-actionbar");
+        registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 String actionbar = section.getString("actionbar");
                 MathValue<Player> range = MathValue.auto(section.get("range"));
@@ -345,11 +352,11 @@ public class BukkitActionManager implements ActionManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at actionbar-nearby action which should be Section");
                 return Action.empty();
             }
-        });
+        }, "actionbar-nearby");
     }
 
     private void registerExpAction() {
-        registerAction("mending", (args, chance) -> {
+        registerAction((args, chance) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (Math.random() > chance) return;
@@ -357,8 +364,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                 ExperienceOrb entity = player.getLocation().getWorld().spawn(player.getLocation().clone().add(0,0.5,0), ExperienceOrb.class);
                 entity.setExperience((int) value.evaluate(context));
             };
-        });
-        registerAction("exp", (args, chance) -> {
+        }, "mending");
+        registerAction((args, chance) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (Math.random() > chance) return;
@@ -367,38 +374,38 @@ public class BukkitActionManager implements ActionManager<Player> {
                 Audience audience = plugin.getSenderFactory().getAudience(player);
                 AdventureHelper.playSound(audience, Sound.sound(Key.key("minecraft:entity.experience_orb.pickup"), Sound.Source.PLAYER, 1, 1));
             };
-        });
-        registerAction("level", (args, chance) -> {
+        }, "exp");
+        registerAction((args, chance) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (Math.random() > chance) return;
                 Player player = context.holder();
                 player.setLevel((int) Math.max(0, player.getLevel() + value.evaluate(context)));
             };
-        });
+        }, "level");
     }
 
     private void registerFoodAction() {
-        registerAction("food", (args, chance) -> {
+        registerAction((args, chance) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (Math.random() > chance) return;
                 Player player = context.holder();
                 player.setFoodLevel((int) (player.getFoodLevel() + value.evaluate(context)));
             };
-        });
-        registerAction("saturation", (args, chance) -> {
+        }, "food");
+        registerAction((args, chance) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (Math.random() > chance) return;
                 Player player = context.holder();
                 player.setSaturation((float) (player.getSaturation() + value.evaluate(context)));
             };
-        });
+        }, "saturation");
     }
 
     private void registerItemAction() {
-        registerAction("item-amount", (args, chance) -> {
+        registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 boolean mainOrOff = section.getString("hand", "main").equalsIgnoreCase("main");
                 int amount = section.getInt("amount", 1);
@@ -417,8 +424,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at item-amount action which is expected to be `Section`");
                 return Action.empty();
             }
-        });
-        registerAction("durability", (args, chance) -> {
+        }, "item-amount");
+        registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 EquipmentSlot slot = Optional.ofNullable(section.getString("slot"))
                         .map(hand -> EquipmentSlot.valueOf(hand.toUpperCase(Locale.ENGLISH)))
@@ -450,8 +457,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at durability action which is expected to be `Section`");
                 return Action.empty();
             }
-        });
-        registerAction("give-item", (args, chance) -> {
+        }, "durability");
+        registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 String id = section.getString("item");
                 int amount = section.getInt("amount", 1);
@@ -480,11 +487,11 @@ public class BukkitActionManager implements ActionManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at give-item action which is expected to be `Section`");
                 return Action.empty();
             }
-        });
+        }, "give-item");
     }
 
-    private void registerChainAction() {
-        registerAction("chain", (args, chance) -> {
+    private void registerBuildAction() {
+        registerAction((args, chance) -> {
             List<Action<Player>> actions = new ArrayList<>();
             if (args instanceof Section section) {
                 for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
@@ -499,8 +506,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                     action.trigger(context);
                 }
             };
-        });
-        registerAction("delay", (args, chance) -> {
+        }, "chain");
+        registerAction((args, chance) -> {
             List<Action<Player>> actions = new ArrayList<>();
             int delay;
             boolean async;
@@ -531,8 +538,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                     }, delay, location);
                 }
             };
-        });
-        registerAction("timer", (args, chance) -> {
+        }, "delay");
+        registerAction((args, chance) -> {
             List<Action<Player>> actions = new ArrayList<>();
             int delay, duration, period;
             boolean async;
@@ -571,8 +578,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                 }
                 plugin.getScheduler().asyncLater(task::cancel, duration * 50L, TimeUnit.MILLISECONDS);
             };
-        });
-        registerAction("conditional", (args, chance) -> {
+        }, "timer");
+        registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 Action<Player>[] actions = parseActions(section.getSection("actions"));
                 Requirement<Player>[] requirements = plugin.getRequirementManager().parseRequirements(section.getSection("conditions"), true);
@@ -591,8 +598,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at conditional action which is expected to be `Section`");
                 return Action.empty();
             }
-        });
-        registerAction("priority", (args, chance) -> {
+        }, "conditional");
+        registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 List<Pair<Requirement<Player>[], Action<Player>[]>> conditionActionPairList = new ArrayList<>();
                 for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
@@ -623,32 +630,32 @@ public class BukkitActionManager implements ActionManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at priority action which is expected to be `Section`");
                 return Action.empty();
             }
-        });
+        }, "priority");
     }
 
     private void registerMoneyAction() {
-        registerAction("give-money", (args, chance) -> {
+        registerAction((args, chance) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (Math.random() > chance) return;
                 if (!VaultHook.isHooked()) return;
                 VaultHook.deposit(context.holder(), value.evaluate(context));
             };
-        });
-        registerAction("take-money", (args, chance) -> {
+        }, "give-money");
+        registerAction((args, chance) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (Math.random() > chance) return;
                 if (!VaultHook.isHooked()) return;
                 VaultHook.withdraw(context.holder(), value.evaluate(context));
             };
-        });
+        }, "take-money");
     }
 
     // The registry name changes a lot
     @SuppressWarnings("deprecation")
     private void registerPotionAction() {
-        registerAction("potion-effect", (args, chance) -> {
+        registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 PotionEffect potionEffect = new PotionEffect(
                         Objects.requireNonNull(PotionEffectType.getByName(section.getString("type", "BLINDNESS").toUpperCase(Locale.ENGLISH))),
@@ -663,11 +670,11 @@ public class BukkitActionManager implements ActionManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at potion-effect action which is expected to be `Section`");
                 return Action.empty();
             }
-        });
+        }, "potion-effect");
     }
 
     private void registerSoundAction() {
-        registerAction("sound", (args, chance) -> {
+        registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 Sound sound = Sound.sound(
                         Key.key(section.getString("key")),
@@ -684,12 +691,11 @@ public class BukkitActionManager implements ActionManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at sound action which is expected to be `Section`");
                 return Action.empty();
             }
-        });
+        }, "sound");
     }
 
-
     private void registerPluginExpAction() {
-        registerAction("plugin-exp", (args, chance) -> {
+        registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 String pluginName = section.getString("plugin");
                 MathValue<Player> value = MathValue.auto(section.get("exp"));
@@ -704,11 +710,11 @@ public class BukkitActionManager implements ActionManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at plugin-exp action which is expected to be `Section`");
                 return Action.empty();
             }
-        });
+        }, "plugin-exp");
     }
 
     private void registerTitleAction() {
-        registerAction("title", (args, chance) -> {
+        registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 TextValue<Player> title = TextValue.auto(section.getString("title", ""));
                 TextValue<Player> subtitle = TextValue.auto(section.getString("subtitle", ""));
@@ -729,8 +735,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at title action which is expected to be `Section`");
                 return Action.empty();
             }
-        });
-        registerAction("random-title", (args, chance) -> {
+        }, "title");
+        registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 List<String> titles = section.getStringList("titles");
                 if (titles.isEmpty()) titles.add("");
@@ -755,8 +761,8 @@ public class BukkitActionManager implements ActionManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at random-title action which is expected to be `Section`");
                 return Action.empty();
             }
-        });
-        registerAction("title-nearby", (args, chance) -> {
+        }, "random-title");
+        registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 TextValue<Player> title = TextValue.auto(section.getString("title"));
                 TextValue<Player> subtitle = TextValue.auto(section.getString("subtitle"));
@@ -783,11 +789,11 @@ public class BukkitActionManager implements ActionManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at title-nearby action which is expected to be `Section`");
                 return Action.empty();
             }
-        });
+        }, "title-nearby");
     }
 
     private void registerFakeItemAction() {
-        registerAction("fake-item", ((args, chance) -> {
+        registerAction(((args, chance) -> {
             if (args instanceof Section section) {
                 String itemID = section.getString("item", "");
                 String[] split = itemID.split(":");
@@ -800,17 +806,28 @@ public class BukkitActionManager implements ActionManager<Player> {
                 MathValue<Player> yaw = MathValue.auto(section.get("yaw", 0));
                 int range = section.getInt("range", 0);
                 boolean opposite = section.getBoolean("opposite-yaw", false);
+                boolean useItemDisplay = section.getBoolean("use-item-display", false);
                 String finalItemID = itemID;
                 return context -> {
                     if (Math.random() > chance) return;
                     Player owner = context.holder();
                     Location location = position ? requireNonNull(context.arg(ContextKeys.OTHER_LOCATION)).clone() : owner.getLocation().clone();
                     location.add(x.evaluate(context), y.evaluate(context) - 1, z.evaluate(context));
+                    location.setPitch(0);
                     if (opposite) location.setYaw(-owner.getLocation().getYaw());
                     else location.setYaw((float) yaw.evaluate(context));
-                    FakeArmorStand armorStand = SparrowHeart.getInstance().createFakeArmorStand(location);
-                    armorStand.invisible(true);
-                    armorStand.equipment(EquipmentSlot.HEAD, plugin.getItemManager().buildInternal(context, finalItemID));
+                    FakeEntity fakeEntity;
+                    if (useItemDisplay && VersionHelper.isVersionNewerThan1_19_4()) {
+                        location.add(0,1.5,0);
+                        FakeItemDisplay itemDisplay = SparrowHeart.getInstance().createFakeItemDisplay(location);
+                        itemDisplay.item(plugin.getItemManager().buildInternal(context, finalItemID));
+                        fakeEntity = itemDisplay;
+                    } else {
+                        FakeArmorStand armorStand = SparrowHeart.getInstance().createFakeArmorStand(location);
+                        armorStand.invisible(true);
+                        armorStand.equipment(EquipmentSlot.HEAD, plugin.getItemManager().buildInternal(context, finalItemID));
+                        fakeEntity = armorStand;
+                    }
                     ArrayList<Player> viewers = new ArrayList<>();
                     if (range > 0) {
                         for (Player player : location.getWorld().getPlayers()) {
@@ -822,12 +839,12 @@ public class BukkitActionManager implements ActionManager<Player> {
                         viewers.add(owner);
                     }
                     for (Player player : viewers) {
-                        armorStand.spawn(player);
+                        fakeEntity.spawn(player);
                     }
                     plugin.getScheduler().asyncLater(() -> {
                         for (Player player : viewers) {
                             if (player.isOnline() && player.isValid()) {
-                                armorStand.destroy(player);
+                                fakeEntity.destroy(player);
                             }
                         }
                     }, (long) (duration.evaluate(context) * 50), TimeUnit.MILLISECONDS);
@@ -836,11 +853,11 @@ public class BukkitActionManager implements ActionManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at fake-item action which is expected to be `Section`");
                 return Action.empty();
             }
-        }));
+        }), "fake-item");
     }
 
     private void registerHologramAction() {
-        registerAction("hologram", ((args, chance) -> {
+        registerAction(((args, chance) -> {
             if (args instanceof Section section) {
                 TextValue<Player> text = TextValue.auto(section.getString("text", ""));
                 MathValue<Player> duration = MathValue.auto(section.get("duration", 20));
@@ -848,17 +865,20 @@ public class BukkitActionManager implements ActionManager<Player> {
                 MathValue<Player> x = MathValue.auto(section.get("x", 0));
                 MathValue<Player> y = MathValue.auto(section.get("y", 0));
                 MathValue<Player> z = MathValue.auto(section.get("z", 0));
+                String rgbaStr = section.getString("rgba", "0,0,0,0");
+                int[] rgba = new int[4];
+                String[] split = rgbaStr.split(",");
+                for (int i = 0; i < split.length; i++) {
+                    rgba[i] = Integer.parseInt(split[i]);
+                }
                 int range = section.getInt("range", 16);
+                boolean useTextDisplay = section.getBoolean("use-text-display", false);
                 return context -> {
                     if (Math.random() > chance) return;
                     Player owner = context.holder();
                     Location location = position ? requireNonNull(context.arg(ContextKeys.OTHER_LOCATION)).clone() : owner.getLocation().clone();
                     location.add(x.evaluate(context), y.evaluate(context), z.evaluate(context));
-                    FakeArmorStand armorStand = SparrowHeart.getInstance().createFakeArmorStand(location);
-                    armorStand.invisible(true);
-                    armorStand.small(true);
-                    armorStand.name(AdventureHelper.miniMessageToJson(text.render(context)));
-                    ArrayList<Player> viewers = new ArrayList<>();
+                    HashSet<Player> viewers = new HashSet<>();
                     if (range > 0) {
                         for (Player player : location.getWorld().getPlayers()) {
                             if (LocationUtils.getDistance(player.getLocation(), location) <= range) {
@@ -868,26 +888,17 @@ public class BukkitActionManager implements ActionManager<Player> {
                     } else {
                         viewers.add(owner);
                     }
-                    for (Player player : viewers) {
-                        armorStand.spawn(player);
-                    }
-                    plugin.getScheduler().asyncLater(() -> {
-                        for (Player player : viewers) {
-                            if (player.isOnline() && player.isValid()) {
-                                armorStand.destroy(player);
-                            }
-                        }
-                    }, (long) (duration.evaluate(context) * 50), TimeUnit.MILLISECONDS);
+                    plugin.getHologramManager().createHologram(location, AdventureHelper.miniMessageToJson(text.render(context)), (int) duration.evaluate(context), useTextDisplay, rgba, viewers);
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at hologram action which is expected to be `Section`");
                 return Action.empty();
             }
-        }));
+        }), "hologram");
     }
 
     private void registerFishFindAction() {
-        registerAction("fish-finder", (args, chance) -> {
+        registerAction((args, chance) -> {
             String surrounding;
             if (args instanceof Boolean b) {
                 surrounding = b ? "lava" : "water";
@@ -920,7 +931,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     plugin.getSenderFactory().wrap(context.holder()).sendMessage(TranslationManager.render(MessageConstants.COMMAND_FISH_FINDER_POSSIBLE_LOOTS.arguments(AdventureHelper.miniMessage(stringJoiner.toString())).build()));
                 }
             };
-        });
+        }, "fish-finder");
     }
 
     /**
@@ -951,7 +962,7 @@ public class BukkitActionManager implements ActionManager<Player> {
             for (Class<? extends ActionExpansion<Player>> expansionClass : classes) {
                 ActionExpansion<Player> expansion = expansionClass.getDeclaredConstructor().newInstance();
                 unregisterAction(expansion.getActionType());
-                registerAction(expansion.getActionType(), expansion.getActionFactory());
+                registerAction(expansion.getActionFactory(), expansion.getActionType());
                 plugin.getPluginLogger().info("Loaded action expansion: " + expansion.getActionType() + "[" + expansion.getVersion() + "]" + " by " + expansion.getAuthor() );
             }
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {

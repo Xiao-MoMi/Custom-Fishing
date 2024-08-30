@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 public class WorldGuardRegion {
 
     public static void register() {
-        BukkitCustomFishingPlugin.getInstance().getRequirementManager().registerRequirement("region", (args, notSatisfiedActions, runActions) -> {
+        BukkitCustomFishingPlugin.getInstance().getRequirementManager().registerRequirement((args, notSatisfiedActions, runActions) -> {
             HashSet<String> regions = new HashSet<>();
             boolean other;
             int mode = 1;
@@ -92,6 +92,6 @@ public class WorldGuardRegion {
                 if (runActions) ActionManager.trigger(context, notSatisfiedActions);
                 return false;
             };
-        });
+        }, "region");
     }
 }
