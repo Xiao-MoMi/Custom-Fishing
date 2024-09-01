@@ -86,7 +86,7 @@ public class ItemStackUtils {
         map.remove("id");
         map.put("material", itemStack.getType().name().toLowerCase(Locale.ENGLISH));
         map.put("amount", itemStack.getAmount());
-        Object tag = map.remove("tags");
+        Object tag = map.remove("tag");
         if (tag != null) {
             map.put("nbt", tag);
         }
