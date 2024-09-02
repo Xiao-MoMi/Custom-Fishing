@@ -247,8 +247,8 @@ public class EffectImpl implements Effect {
                 ", waitTimeMultiplier=" + waitTimeMultiplier +
                 ", difficultyAdder=" + difficultyAdder +
                 ", difficultyMultiplier=" + difficultyMultiplier +
-                ", weightOperations=" + weightOperations +
-                ", weightOperationsIgnored=" + weightOperationsIgnored +
+                ", weightOperations=" + weightOperations.size() +
+                ", weightOperationsIgnored=" + weightOperationsIgnored.size() +
                 '}';
     }
 }

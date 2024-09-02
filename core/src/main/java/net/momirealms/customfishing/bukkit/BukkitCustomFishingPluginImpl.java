@@ -66,6 +66,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
 
@@ -271,5 +272,10 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
     @Override
     public void debug(Object message) {
         this.debugger.accept(message);
+    }
+
+    @Override
+    public void debug(Supplier<String> messageSupplier) {
+        this.debugger.accept(messageSupplier.get());
     }
 }

@@ -40,6 +40,7 @@ public class ConfigType {
                 parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getLootFormatFunctions());
                 parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getItemFormatFunctions());
                 parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEventFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getBaseEffectFormatFunctions());
                 return parsers;
             },
             (id, section, functions) -> {
@@ -58,6 +59,7 @@ public class ConfigType {
                 parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getLootFormatFunctions());
                 parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEntityFormatFunctions());
                 parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEventFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getBaseEffectFormatFunctions());
                 return parsers;
             },
             (id, section, functions) -> {
@@ -76,6 +78,7 @@ public class ConfigType {
                 parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getLootFormatFunctions());
                 parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getBlockFormatFunctions());
                 parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEventFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getBaseEffectFormatFunctions());
                 return parsers;
             },
             (id, section, functions) -> {

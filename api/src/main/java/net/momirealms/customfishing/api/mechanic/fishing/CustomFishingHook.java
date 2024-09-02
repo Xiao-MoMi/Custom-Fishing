@@ -192,6 +192,7 @@ public class CustomFishingHook {
                             plugin.debug(context);
                             // get its basic properties
                             Effect baseEffect = loot.baseEffect().toEffect(context);
+                            plugin.debug(baseEffect);
                             tempEffect.combine(baseEffect);
                             // apply the gears' effects
                             for (EffectModifier modifier : gears.effectModifiers()) {

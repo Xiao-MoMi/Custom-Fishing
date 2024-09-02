@@ -50,6 +50,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
+import java.util.function.Supplier;
 
 /**
  * Abstract class representing the main CustomFishing plugin.
@@ -375,4 +376,6 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
      * @param message the message to log
      */
     public abstract void debug(Object message);
+
+    public abstract void debug(Supplier<String> messageSupplier);
 }
