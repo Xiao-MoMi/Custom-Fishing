@@ -85,18 +85,18 @@ public class VanillaMechanic implements HookMechanic {
     private void setWaitTime(FishHook hook, Effect effect) {
         BukkitCustomFishingPlugin.getInstance().getScheduler().sync().run(() -> {
             if (freeze) {
-                hook.setWaitTime(Integer.MAX_VALUE);
+                SparrowHeart.getInstance().setWaitTime(hook, Integer.MAX_VALUE);
                 return;
             }
             if (!ConfigManager.overrideVanillaWaitTime()) {
-                int before = Math.max(hook.getWaitTime(), 0);
+                int before = Math.max(SparrowHeart.getInstance().getWaitTime(hook), 0);
                 int after = (int) Math.max(100, before * effect.waitTimeMultiplier() + effect.waitTimeAdder());
                 BukkitCustomFishingPlugin.getInstance().debug("Wait time: " + before + " -> " + after + " ticks");
-                hook.setWaitTime(after);
+                SparrowHeart.getInstance().setWaitTime(hook, after);
             } else {
                 int before = ThreadLocalRandom.current().nextInt(ConfigManager.waterMaxTime() - ConfigManager.waterMinTime() + 1) + ConfigManager.waterMinTime();
                 int after = Math.max(ConfigManager.waterMinTime(), (int) (before * effect.waitTimeMultiplier() + effect.waitTimeAdder()));
-                hook.setWaitTime(after);
+                SparrowHeart.getInstance().setWaitTime(hook, after);
                 BukkitCustomFishingPlugin.getInstance().debug("Wait time: " + before + " -> " + after + " ticks");
             }
             int lureTime = RandomUtils.generateRandomInt(20, 80);
@@ -112,7 +112,7 @@ public class VanillaMechanic implements HookMechanic {
                     if (player.isOnline() && hook.isValid()) {
                         AntiAutoFishing.prevent(player, hook);
                     }
-                },  RandomUtils.generateRandomInt(20, hook.getWaitTime() + lureTime - 5), hook.getLocation());
+                },  RandomUtils.generateRandomInt(20, SparrowHeart.getInstance().getWaitTime(hook) + lureTime - 5), hook.getLocation());
             }
         }, hook.getLocation());
     }
@@ -131,17 +131,18 @@ public class VanillaMechanic implements HookMechanic {
     @Override
     public void freeze() {
         freeze = true;
-        if (hook.getWaitTime() > 0) {
-            this.tempWaitTime = hook.getWaitTime();
+        int waitTime = SparrowHeart.getInstance().getWaitTime(hook);
+        if (waitTime > 0) {
+            this.tempWaitTime = waitTime;
         }
-        hook.setWaitTime(Integer.MAX_VALUE);
+        SparrowHeart.getInstance().setWaitTime(hook, Integer.MAX_VALUE);
     }
 
     @Override
     public void unfreeze(Effect effect) {
         freeze = false;
         if (this.tempWaitTime != 0) {
-            hook.setWaitTime(this.tempWaitTime);
+            SparrowHeart.getInstance().setWaitTime(hook, tempWaitTime);
             this.tempWaitTime = 0;
         } else {
             setWaitTime(hook, effect);
