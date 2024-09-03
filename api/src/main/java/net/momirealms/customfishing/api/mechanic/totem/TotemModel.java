@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.api.mechanic.totem;
 
 import net.momirealms.customfishing.api.mechanic.totem.block.TotemBlock;
-import org.apache.commons.lang3.SerializationUtils;
+import net.momirealms.customfishing.common.util.SerializationUtils;
 import org.bukkit.Axis;
 import org.bukkit.Location;
 
