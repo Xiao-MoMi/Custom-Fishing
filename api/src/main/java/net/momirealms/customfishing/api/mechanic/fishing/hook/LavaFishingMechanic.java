@@ -72,11 +72,12 @@ public class LavaFishingMechanic implements HookMechanic {
             return true;
         }
         float lavaHeight = 0F;
-        FluidData fluidData = SparrowHeart.getInstance().getFluidData(this.hook.getLocation());
+        Location location = this.hook.getLocation();
+        FluidData fluidData = SparrowHeart.getInstance().getFluidData(location);
         if (fluidData.getFluidType() == Fluid.LAVA || fluidData.getFluidType() == Fluid.FLOWING_LAVA) {
             lavaHeight = (float) (fluidData.getLevel() * 0.125);
         }
-        return lavaHeight > 0 && this.hook.getY() % 1 <= lavaHeight;
+        return lavaHeight > 0 && location.getY() % 1 <= lavaHeight;
     }
 
     @Override
@@ -97,14 +98,15 @@ public class LavaFishingMechanic implements HookMechanic {
         EventUtils.fireAndForget(new FishingHookStateEvent(context.holder(), hook, FishingHookStateEvent.State.LAND));
         this.setWaitTime(finalEffect);
         this.task = BukkitCustomFishingPlugin.getInstance().getScheduler().sync().runRepeating(() -> {
+            Location location = this.hook.getLocation();
             float lavaHeight = 0F;
-            FluidData fluidData = SparrowHeart.getInstance().getFluidData(this.hook.getLocation());
+            FluidData fluidData = SparrowHeart.getInstance().getFluidData(location);
             if (fluidData.getFluidType() == Fluid.LAVA || fluidData.getFluidType() == Fluid.FLOWING_LAVA) {
                 lavaHeight = (float) (fluidData.getLevel() * 0.125);
             }
             if (this.nibble > 0) {
                 --this.nibble;
-                if (this.hook.getY() % 1 <= lavaHeight) {
+                if (location.getY() % 1 <= lavaHeight) {
                     this.jumpTimer++;
                     if (this.jumpTimer >= 4) {
                         this.jumpTimer = 0;
@@ -119,7 +121,7 @@ public class LavaFishingMechanic implements HookMechanic {
                     this.currentState = 0;
                 }
             } else {
-                double hookY = this.hook.getY();
+                double hookY = location.getY();
                 if (hookY < 0) {
                     hookY += Math.abs(Math.floor(hookY));
                 }
@@ -131,7 +133,7 @@ public class LavaFishingMechanic implements HookMechanic {
                     if (currentState == 1) {
                         this.currentState = 0;
                         // set temp entity
-                        this.tempEntity = this.hook.getWorld().spawn(this.hook.getLocation().clone().subtract(0,1,0), ArmorStand.class);
+                        this.tempEntity = this.hook.getWorld().spawn(location.clone().subtract(0,1,0), ArmorStand.class);
                         this.setTempEntityProperties(this.tempEntity);
                         this.hook.setHookedEntity(this.tempEntity);
                         if (!firstTime) {
@@ -153,9 +155,9 @@ public class LavaFishingMechanic implements HookMechanic {
                         f = this.fishAngle * 0.017453292F;
                         f1 = (float) Math.sin(f);
                         f2 = (float) Math.cos(f);
-                        d0 = hook.getX() + (double) (f1 * (float) this.timeUntilHooked * 0.1F);
-                        d1 = hook.getY();
-                        d2 = hook.getZ() + (double) (f2 * (float) this.timeUntilHooked * 0.1F);
+                        d0 = location.getX() + (double) (f1 * (float) this.timeUntilHooked * 0.1F);
+                        d1 = location.getY();
+                        d2 = location.getZ() + (double) (f2 * (float) this.timeUntilHooked * 0.1F);
                         if (RandomUtils.generateRandomFloat(0,1) < 0.15F) {
                             hook.getWorld().spawnParticle(Particle.FLAME, d0, d1 - 0.10000000149011612D, d2, 1, f1, 0.1D, f2, 0.0D);
                         }
@@ -164,10 +166,10 @@ public class LavaFishingMechanic implements HookMechanic {
                         hook.getWorld().spawnParticle(Particle.FLAME, d0, d1, d2, 0, f4, 0.01D, -f3, 1.0D);
                     } else {
                         double d3 = hook.getY() + 0.5D;
-                        hook.getWorld().spawnParticle(Particle.FLAME, hook.getX(), d3, hook.getZ(), (int) (1.0F + 0.3 * 20.0F), 0.3, 0.0D, 0.3, 0.20000000298023224D);
+                        hook.getWorld().spawnParticle(Particle.FLAME, location.getX(), d3, location.getZ(), (int) (1.0F + 0.3 * 20.0F), 0.3, 0.0D, 0.3, 0.20000000298023224D);
                         this.nibble = RandomUtils.generateRandomInt(20, 40);
                         this.hooked = true;
-                        hook.getWorld().playSound(hook.getLocation(), Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.25F, 1.0F + (RandomUtils.generateRandomFloat(0,1)-RandomUtils.generateRandomFloat(0,1)) * 0.4F);
+                        hook.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.25F, 1.0F + (RandomUtils.generateRandomFloat(0,1)-RandomUtils.generateRandomFloat(0,1)) * 0.4F);
                         EventUtils.fireAndForget(new FishingHookStateEvent(context.holder(), hook, FishingHookStateEvent.State.BITE));
                         if (this.tempEntity != null && this.tempEntity.isValid()) {
                             this.tempEntity.remove();

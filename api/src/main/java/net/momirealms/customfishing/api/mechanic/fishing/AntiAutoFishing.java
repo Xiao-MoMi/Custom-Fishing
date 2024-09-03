@@ -22,6 +22,7 @@ import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.common.util.RandomUtils;
 import net.momirealms.sparrow.heart.SparrowHeart;
+import org.bukkit.Location;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -29,6 +30,7 @@ import org.bukkit.util.Vector;
 public class AntiAutoFishing {
 
     public static void prevent(Player player, FishHook hook) {
+        Location loc = hook.getLocation();
         BukkitCustomFishingPlugin.getInstance().debug("Try preventing player " + player.getName() + " from auto fishing");
         BukkitCustomFishingPlugin.getInstance().getSenderFactory().getAudience(player)
                 .playSound(Sound.sound(
@@ -36,7 +38,7 @@ public class AntiAutoFishing {
                         Sound.Source.NEUTRAL,
                         0f,
                         1f
-                ), hook.getX(), hook.getY(), hook.getZ());
+                ), loc.getX(), loc.getY(), loc.getZ());
         double motion = -0.4 * RandomUtils.generateRandomDouble(0.6, 1.0);
         SparrowHeart.getInstance().sendClientSideEntityMotion(player, new Vector(0, motion, 0), hook.getEntityId());
         SparrowHeart.getInstance().sendClientSideEntityMotion(player, new Vector(0, 0, 0), hook.getEntityId());
