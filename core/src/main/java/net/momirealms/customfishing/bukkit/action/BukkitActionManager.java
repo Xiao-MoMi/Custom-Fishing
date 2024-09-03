@@ -478,7 +478,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                             if (toInventory) {
                                 PlayerUtils.giveItem(player, more, more.getAmount());
                             } else {
-                                PlayerUtils.dropItem(player, more, true, true, false);
+                                PlayerUtils.dropItem(player, more, false, true, false);
                             }
                         }
                     }
