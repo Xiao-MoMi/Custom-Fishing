@@ -67,7 +67,7 @@ public class FishingGears {
     }
 
     private static BiConsumer<Context<Player>, FishingGears> fishingGearsConsumers = defaultFishingGearsConsumers();
-    private final HashMap<GearType, Collection<Pair<String, ItemStack>>> gears = new HashMap<>();
+    private final HashMap<GearType, List<Pair<String, ItemStack>>> gears = new HashMap<>();
     private final ArrayList<EffectModifier> modifiers = new ArrayList<>();
     private boolean canFish = true;
     private HandSlot rodSlot;
@@ -106,7 +106,7 @@ public class FishingGears {
      * @param context the context of the player.
      */
     public void trigger(ActionTrigger trigger, Context<Player> context) {
-        for (Map.Entry<GearType, Collection<Pair<String, ItemStack>>> entry : gears.entrySet()) {
+        for (Map.Entry<GearType, List<Pair<String, ItemStack>>> entry : gears.entrySet()) {
             for (Pair<String, ItemStack> itemPair : entry.getValue()) {
                 BukkitCustomFishingPlugin.getInstance().debug(entry.getKey() + " | " + itemPair.left() + " | " + trigger);
                 Optional.ofNullable(triggers.get(trigger)).ifPresent(tri -> {
@@ -143,7 +143,7 @@ public class FishingGears {
      * @return the collection of items for the specified gear type.
      */
     @NotNull
-    public Collection<Pair<String, ItemStack>> getItem(GearType type) {
+    public List<Pair<String, ItemStack>> getItem(GearType type) {
         return gears.getOrDefault(type, List.of());
     }
 

@@ -113,6 +113,10 @@ public class CustomFishingHook {
      */
     public CustomFishingHook(BukkitCustomFishingPlugin plugin, FishHook hook, FishingGears gears, Context<Player> context) {
         this.gears = gears;
+        // enable bait animation
+        if (ConfigManager.baitAnimation() && !gears.getItem(FishingGears.GearType.BAIT).isEmpty()) {
+            this.baitAnimationTask = new BaitAnimationTask(plugin, context.holder(), hook, gears.getItem(FishingGears.GearType.BAIT).get(0).right());
+        }
         this.gears.trigger(ActionTrigger.CAST, context);
         this.plugin = plugin;
         this.hook = hook;
@@ -125,11 +129,6 @@ public class CustomFishingHook {
                 consumer.accept(effect, context, 0);
             }
         }
-        // enable bait animation
-        if (ConfigManager.baitAnimation() && !gears.getItem(FishingGears.GearType.BAIT).isEmpty()) {
-            this.baitAnimationTask = new BaitAnimationTask(plugin, context.holder(), hook, gears.getItem(FishingGears.GearType.BAIT).stream().findAny().get().right());
-        }
-
         List<HookMechanic> enabledMechanics = mechanicProviders.apply(hook, context, effect);
         this.task = plugin.getScheduler().sync().runRepeating(() -> {
             // destroy if hook is invalid
