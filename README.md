@@ -74,3 +74,5 @@ dependencies {
     compileOnly("com.github.Xiao-MoMi:Custom-Fishing:{VERSION}")
 }
 ```
+#### Fun facts
+I misspelled mechanism as mechanic. I should have realized this earlier XD
