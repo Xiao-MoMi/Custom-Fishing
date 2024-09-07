@@ -79,7 +79,7 @@ public class BukkitStorageManager implements StorageManager, Listener {
 
     @Override
     public void reload() {
-        YamlDocument config = plugin.getConfigManager().loadConfig("database.yml", '.', UpdaterSettings.DEFAULT);
+        YamlDocument config = plugin.getConfigManager().loadConfig("database.yml");
         this.serverID = config.getString("unique-server-id", "default");
 
         // Check if storage type has changed and reinitialize if necessary

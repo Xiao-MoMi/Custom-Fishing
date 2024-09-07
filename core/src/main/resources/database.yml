@@ -1,3 +1,5 @@
+config-version: '${config_version}'
+
 # file:
 #   JSON
 #   YAML
@@ -67,7 +69,7 @@ MongoDB:
 Redis:
   enable: false
   host: localhost
-  #password: "123456"
+  password: ""
   port: 6379
   use-ssl: false
   MaxTotal: 10
