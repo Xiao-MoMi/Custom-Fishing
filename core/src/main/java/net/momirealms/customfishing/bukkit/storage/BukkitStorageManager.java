@@ -81,7 +81,11 @@ public class BukkitStorageManager implements StorageManager, Listener {
     public void reload() {
         YamlDocument config = plugin.getConfigManager().loadConfig("database.yml");
         this.serverID = config.getString("unique-server-id", "default");
-
+        try {
+            config.save(new File(plugin.getBoostrap().getDataFolder(), "database.yml"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         // Check if storage type has changed and reinitialize if necessary
         StorageType storageType = StorageType.valueOf(config.getString("data-storage-method", "H2"));
         if (storageType != previousType) {
@@ -102,13 +106,14 @@ public class BukkitStorageManager implements StorageManager, Listener {
 
         // Handle Redis configuration
         if (!this.hasRedis && config.getBoolean("Redis.enable", false)) {
-            this.hasRedis = true;
             this.redisManager = new RedisManager(plugin);
             this.redisManager.initialize(config);
+            this.hasRedis = true;
         }
 
         // Disable Redis if it was enabled but is now disabled
         if (this.hasRedis && !config.getBoolean("Redis.enable", false) && this.redisManager != null) {
+            this.hasRedis = false;
             this.redisManager.disable();
             this.redisManager = null;
         }
