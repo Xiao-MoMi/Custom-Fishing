@@ -1,5 +1,3 @@
-config-version: '${config_version}'
-
 # file:
 #   JSON
 #   YAML

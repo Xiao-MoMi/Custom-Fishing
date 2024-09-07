@@ -19,6 +19,7 @@ package net.momirealms.customfishing.bukkit.storage;
 
 import com.google.gson.JsonSyntaxException;
 import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.storage.DataStorageProvider;
@@ -78,12 +79,7 @@ public class BukkitStorageManager implements StorageManager, Listener {
 
     @Override
     public void reload() {
-        YamlDocument config = plugin.getConfigManager().loadConfig("database.yml");
-        try {
-            config.save(new File(plugin.getBoostrap().getDataFolder(), "database.yml"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        YamlDocument config = plugin.getConfigManager().loadConfig("database.yml", '.', UpdaterSettings.DEFAULT);
         this.serverID = config.getString("unique-server-id", "default");
 
         // Check if storage type has changed and reinitialize if necessary

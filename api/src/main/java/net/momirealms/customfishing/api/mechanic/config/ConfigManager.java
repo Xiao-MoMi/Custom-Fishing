@@ -384,6 +384,34 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     }
 
     @Override
+    public YamlDocument loadConfig(String filePath, char routeSeparator, UpdaterSettings settings) {
+        try (InputStream inputStream = new FileInputStream(resolveConfig(filePath).toFile())) {
+            return YamlDocument.create(
+                    inputStream,
+                    plugin.getResourceStream(filePath),
+                    GeneralSettings.builder().setRouteSeparator(routeSeparator).build(),
+                    LoaderSettings
+                            .builder()
+                            .setAutoUpdate(true)
+                            .build(),
+                    DumperSettings.builder()
+                            .setScalarFormatter((tag, value, role, def) -> {
+                                if (role == NodeRole.KEY) {
+                                    return ScalarStyle.PLAIN;
+                                } else {
+                                    return tag == Tag.STR ? ScalarStyle.DOUBLE_QUOTED : ScalarStyle.PLAIN;
+                                }
+                            })
+                            .build(),
+                    settings
+            );
+        } catch (IOException e) {
+            plugin.getPluginLogger().severe("Failed to load config " + filePath, e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public YamlDocument loadData(File file) {
         try (InputStream inputStream = new FileInputStream(file)) {
             return YamlDocument.create(inputStream);
