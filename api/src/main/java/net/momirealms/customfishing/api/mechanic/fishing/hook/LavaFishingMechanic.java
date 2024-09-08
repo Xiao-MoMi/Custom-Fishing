@@ -165,7 +165,7 @@ public class LavaFishingMechanic implements HookMechanic {
                         float f4 = f2 * 0.04F;
                         hook.getWorld().spawnParticle(Particle.FLAME, d0, d1, d2, 0, f4, 0.01D, -f3, 1.0D);
                     } else {
-                        double d3 = hook.getY() + 0.5D;
+                        double d3 = location.getY() + 0.5D;
                         hook.getWorld().spawnParticle(Particle.FLAME, location.getX(), d3, location.getZ(), (int) (1.0F + 0.3 * 20.0F), 0.3, 0.0D, 0.3, 0.20000000298023224D);
                         this.nibble = RandomUtils.generateRandomInt(20, 40);
                         this.hooked = true;
