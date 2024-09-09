@@ -287,70 +287,70 @@ mechanics:
               source: 'player'
               volume: 1
               pitch: 1
-      # Sell icon for individual transactions
-      sell-icons:
-        symbol: 'B'
-        allow-icon:
-          material: IRON_BLOCK
-          display:
-            name: '<#00CED1><b>● <!b>Sell the fish'
-            lore:
-              - '<font:uniform><gradient:#E6E6FA:#48D1CC:#E6E6FA>You will earn <green>{money_formatted} coins</green> from the fish</gradient></font>'
-          action:
-            sound_action:
-              type: sound
-              value:
-                key: 'minecraft:block.amethyst_block.place'
-                source: 'player'
-                volume: 1
-                pitch: 1
-            message_action:
-              type: message
-              value: 'You earned {money_formatted} coins from the fish! You can still earn {rest_formatted} more coins from the market today.'
-            money_action:
-              type: give-money
-              value: '{money}'
-            # Uncomment the command_action if needed
-            # command_action:
-            #   type: command
-            #   value: 'money give {player} {money}'
-        deny-icon:
-          material: REDSTONE_BLOCK
-          display:
-            name: '<red><b>● <!b>Trade Denied'
-            lore:
-              - '<font:uniform><gradient:#E6E6FA:red:#E6E6FA>No items available to sell!</gradient></font>'
-          action:
-            sound_action:
-              type: sound
-              value:
-                key: 'minecraft:entity.villager.no'
-                source: 'player'
-                volume: 1
-                pitch: 1
-        limit-icon:
-          material: REDSTONE_BLOCK
-          display:
-            name: '<red><b>● <!b>Trade Denied'
-            lore:
-              - '<font:uniform><gradient:#E6E6FA:red:#E6E6FA>The total value exceeds the daily limit for earnings!</gradient></font>'
-          action:
-            sound_action:
-              type: sound
-              value:
-                key: 'minecraft:block.anvil.land'
-                source: 'player'
-                volume: 1
-                pitch: 1
-      # Decorative icons for visual enhancement
-      decorative-icons:
-        glass-pane:
-          symbol: 'A'
-          material: BLACK_STAINED_GLASS_PANE
-          display:
-            name: ' '
-          components:
-            minecraft:hide_tooltip: {}
+    # Sell icon for individual transactions
+    sell-icons:
+      symbol: 'B'
+      allow-icon:
+        material: IRON_BLOCK
+        display:
+          name: '<#00CED1><b>● <!b>Sell the fish'
+          lore:
+            - '<font:uniform><gradient:#E6E6FA:#48D1CC:#E6E6FA>You will earn <green>{money_formatted} coins</green> from the fish</gradient></font>'
+        action:
+          sound_action:
+            type: sound
+            value:
+              key: 'minecraft:block.amethyst_block.place'
+              source: 'player'
+              volume: 1
+              pitch: 1
+          message_action:
+            type: message
+            value: 'You earned {money_formatted} coins from the fish! You can still earn {rest_formatted} more coins from the market today.'
+          money_action:
+            type: give-money
+            value: '{money}'
+          # Uncomment the command_action if needed
+          # command_action:
+          #   type: command
+          #   value: 'money give {player} {money}'
+      deny-icon:
+        material: REDSTONE_BLOCK
+        display:
+          name: '<red><b>● <!b>Trade Denied'
+          lore:
+            - '<font:uniform><gradient:#E6E6FA:red:#E6E6FA>No items available to sell!</gradient></font>'
+        action:
+          sound_action:
+            type: sound
+            value:
+              key: 'minecraft:entity.villager.no'
+              source: 'player'
+              volume: 1
+              pitch: 1
+      limit-icon:
+        material: REDSTONE_BLOCK
+        display:
+          name: '<red><b>● <!b>Trade Denied'
+          lore:
+            - '<font:uniform><gradient:#E6E6FA:red:#E6E6FA>The total value exceeds the daily limit for earnings!</gradient></font>'
+        action:
+          sound_action:
+            type: sound
+            value:
+              key: 'minecraft:block.anvil.land'
+              source: 'player'
+              volume: 1
+              pitch: 1
+    # Decorative icons for visual enhancement
+    decorative-icons:
+      glass-pane:
+        symbol: 'A'
+        material: BLACK_STAINED_GLASS_PANE
+        display:
+          name: ' '
+        components:
+          minecraft:hide_tooltip: {}
   # This section is only effective if "override-vanilla" is set to true
   # Meaning vanilla mechanics, such as lure enchantment, will no longer apply
   # You must configure their effects in CustomFishing instead

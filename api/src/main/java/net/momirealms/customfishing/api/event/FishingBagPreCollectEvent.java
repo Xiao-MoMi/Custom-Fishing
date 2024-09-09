@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 public class FishingBagPreCollectEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlerList = new HandlerList();
+
     private final ItemStack itemStack;
     private boolean isCancelled;
     private final Inventory bag;
@@ -69,15 +70,6 @@ public class FishingBagPreCollectEvent extends PlayerEvent implements Cancellabl
         return itemStack;
     }
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return handlerList;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlerList;
-    }
-
     /**
      * Gets the {@link Inventory} of the fishing bag.
      *
@@ -86,5 +78,14 @@ public class FishingBagPreCollectEvent extends PlayerEvent implements Cancellabl
     @NotNull
     public Inventory getBagInventory() {
         return bag;
+    }
+
+    @Override
+    public @NotNull HandlerList getHandlers() {
+        return handlerList;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlerList;
     }
 }

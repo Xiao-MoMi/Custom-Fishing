@@ -62,16 +62,6 @@ public class RodCastEvent extends PlayerEvent implements Cancellable {
         this.isCancelled = cancel;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlerList;
-    }
-
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return getHandlerList();
-    }
-
     /**
      * Get the {@link FishingGears}
      *
@@ -88,5 +78,15 @@ public class RodCastEvent extends PlayerEvent implements Cancellable {
      */
     public PlayerFishEvent getBukkitPlayerFishEvent() {
         return event;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlerList;
+    }
+
+    @NotNull
+    @Override
+    public HandlerList getHandlers() {
+        return getHandlerList();
     }
 }

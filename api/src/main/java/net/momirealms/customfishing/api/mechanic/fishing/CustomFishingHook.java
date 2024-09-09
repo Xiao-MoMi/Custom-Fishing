@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.mechanic.fishing;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.event.FishingEffectApplyEvent;
 import net.momirealms.customfishing.api.event.FishingLootSpawnEvent;
 import net.momirealms.customfishing.api.event.FishingResultEvent;
 import net.momirealms.customfishing.api.mechanic.MechanicType;
@@ -129,6 +130,10 @@ public class CustomFishingHook {
                 consumer.accept(effect, context, 0);
             }
         }
+
+        // trigger event
+        EventUtils.fireAndForget(new FishingEffectApplyEvent(this, effect, FishingEffectApplyEvent.Stage.CAST));
+
         List<HookMechanic> enabledMechanics = mechanicProviders.apply(hook, context, effect);
         this.task = plugin.getScheduler().sync().runRepeating(() -> {
             // destroy if hook is invalid
@@ -168,6 +173,9 @@ public class CustomFishingHook {
                             }
                         }
 
+                        // trigger event
+                        EventUtils.fireAndForget(new FishingEffectApplyEvent(this, tempEffect, FishingEffectApplyEvent.Stage.LOOT));
+
                         context.arg(ContextKeys.OTHER_LOCATION, hook.getLocation());
                         context.arg(ContextKeys.OTHER_X, hook.getLocation().getBlockX());
                         context.arg(ContextKeys.OTHER_Y, hook.getLocation().getBlockY());
@@ -199,6 +207,10 @@ public class CustomFishingHook {
                                     consumer.accept(tempEffect, context, 2);
                                 }
                             }
+
+                            // trigger event
+                            EventUtils.fireAndForget(new FishingEffectApplyEvent(this, tempEffect, FishingEffectApplyEvent.Stage.FISHING));
+
                             // start the mechanic
                             mechanic.start(tempEffect);
 
@@ -290,7 +302,7 @@ public class CustomFishingHook {
      */
     public void cancelCurrentGame() {
         if (gamingPlayer == null || !gamingPlayer.isValid()) {
-            throw new RuntimeException("You can't call this method if the player is not playing the game");
+            return;
         }
         gamingPlayer.cancel();
         gamingPlayer = null;
@@ -303,7 +315,7 @@ public class CustomFishingHook {
      * Starts a game.
      */
     public void gameStart() {
-        if (isPlayingGame())
+        if (isPlayingGame() || !hook.isValid())
             return;
         Game nextGame = plugin.getGameManager().getNextGame(tempFinalEffect, context);
         if (nextGame != null) {
@@ -347,7 +359,7 @@ public class CustomFishingHook {
      * Handles the reel-in action.
      */
     public void onReelIn() {
-        if (isPlayingGame()) return;
+        if (isPlayingGame() || !hook.isValid()) return;
         if (hookMechanic != null) {
             if (!hookMechanic.isHooked()) {
                 gears.trigger(ActionTrigger.REEL, context);
@@ -373,7 +385,7 @@ public class CustomFishingHook {
      * Handles the bite action.
      */
     public void onBite() {
-        if (isPlayingGame()) return;
+        if (isPlayingGame() || !hook.isValid()) return;
         plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.BITE);
         gears.trigger(ActionTrigger.BITE, context);
         if (RequirementManager.isSatisfied(context, ConfigManager.autoFishingRequirements())) {
@@ -392,6 +404,7 @@ public class CustomFishingHook {
      * Handles the landing action.
      */
     public void onLand() {
+        if (!hook.isValid()) return;
         gears.trigger(ActionTrigger.LAND, context);
     }
 
@@ -399,16 +412,16 @@ public class CustomFishingHook {
      * Handles the escape action.
      */
     public void onEscape() {
-        if (!isPlayingGame()) {
-            plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.ESCAPE);
-            gears.trigger(ActionTrigger.ESCAPE, context);
-        }
+        if (isPlayingGame() || !hook.isValid()) return;
+        plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.ESCAPE);
+        gears.trigger(ActionTrigger.ESCAPE, context);
     }
 
     /**
      * Handles the lure action.
      */
     public void onLure() {
+        if (isPlayingGame() || !hook.isValid()) return;
         plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.LURE);
         gears.trigger(ActionTrigger.LURE, context);
     }

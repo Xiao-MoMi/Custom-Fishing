@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 public class FishingHookStateEvent extends PlayerEvent {
 
     private static final HandlerList handlerList = new HandlerList();
+
     private final FishHook fishHook;
     private final State state;
 
@@ -44,10 +45,6 @@ public class FishingHookStateEvent extends PlayerEvent {
         super(who);
         this.fishHook = hook;
         this.state = state;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlerList;
     }
 
     /**
@@ -72,6 +69,10 @@ public class FishingHookStateEvent extends PlayerEvent {
     @Override
     public HandlerList getHandlers() {
         return getHandlerList();
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlerList;
     }
 
     public enum State {

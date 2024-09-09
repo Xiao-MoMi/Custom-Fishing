@@ -593,7 +593,7 @@ public class BukkitConfigManager extends ConfigManager {
         }, "effects");
     }
 
-    private TriConsumer<Effect, Context<Player>, Integer> parseEffect(Section section) {
+    public TriConsumer<Effect, Context<Player>, Integer> parseEffect(Section section) {
         if (!section.contains("type")) {
             throw new RuntimeException(section.getRouteAsString());
         }

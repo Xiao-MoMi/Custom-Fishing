@@ -84,4 +84,12 @@ public class EffectProperties<T> {
     public final int hashCode() {
         return Objects.hashCode(this.key);
     }
+
+    @Override
+    public String toString() {
+        return "EffectProperties{" +
+                "key='" + key + '\'' +
+                ", type=" + type.getSimpleName() +
+                '}';
+    }
 }

@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 public class CompetitionEvent extends Event {
 
     private static final HandlerList handlerList = new HandlerList();
+
     private final State state;
     private final FishingCompetition competition;
 

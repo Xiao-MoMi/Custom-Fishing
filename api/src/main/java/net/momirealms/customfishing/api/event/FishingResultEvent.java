@@ -57,16 +57,6 @@ public class FishingResultEvent extends PlayerEvent implements Cancellable {
         this.fishHook = fishHook;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlerList;
-    }
-
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return getHandlerList();
-    }
-
     @Override
     public boolean isCancelled() {
         return isCancelled;
@@ -131,6 +121,16 @@ public class FishingResultEvent extends PlayerEvent implements Cancellable {
     public int getAmount() {
         if (result == Result.FAILURE) return 0;
         return Optional.ofNullable(context.arg(ContextKeys.AMOUNT)).orElse(1);
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlerList;
+    }
+
+    @NotNull
+    @Override
+    public HandlerList getHandlers() {
+        return getHandlerList();
     }
 
     public enum Result {

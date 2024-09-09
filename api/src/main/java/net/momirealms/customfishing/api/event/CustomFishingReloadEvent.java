@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 public class CustomFishingReloadEvent extends Event {
 
     private static final HandlerList handlerList = new HandlerList();
+
     private final BukkitCustomFishingPlugin plugin;
 
     /**
@@ -39,6 +40,15 @@ public class CustomFishingReloadEvent extends Event {
         this.plugin = plugin;
     }
 
+    /**
+     * Gets the instance of the {@link BukkitCustomFishingPlugin} that is being reloaded.
+     *
+     * @return The instance of the Custom Fishing plugin
+     */
+    public BukkitCustomFishingPlugin getPluginInstance() {
+        return plugin;
+    }
+
     public static HandlerList getHandlerList() {
         return handlerList;
     }
@@ -47,14 +57,5 @@ public class CustomFishingReloadEvent extends Event {
     @Override
     public HandlerList getHandlers() {
         return getHandlerList();
-    }
-
-    /**
-     * Gets the instance of the {@link BukkitCustomFishingPlugin} that is being reloaded.
-     *
-     * @return The instance of the Custom Fishing plugin
-     */
-    public BukkitCustomFishingPlugin getPluginInstance() {
-        return plugin;
     }
 }
