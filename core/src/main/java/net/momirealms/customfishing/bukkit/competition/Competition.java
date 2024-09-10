@@ -39,6 +39,7 @@ import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
@@ -187,7 +188,7 @@ public class Competition implements FishingCompetition {
             Optional<String> player = Optional.ofNullable(this.rankingProvider.getPlayerAt(i));
             if (player.isPresent()) {
                 this.publicContext.arg(ContextKeys.of(i + "_player", String.class), player.get());
-                this.publicContext.arg(ContextKeys.of(i + "_score", String.class), String.format("%.2f", goal.isReversed() ? -this.rankingProvider.getScoreAt(i) : this.rankingProvider.getScoreAt(i)));
+                this.publicContext.arg(ContextKeys.of(i + "_score", String.class), String.format("%.2f", getScore(i)));
             } else {
                 this.publicContext.arg(ContextKeys.of(i + "_player", String.class), TranslationManager.miniMessageTranslation(MessageConstants.COMPETITION_NO_PLAYER.build().key()));
                 this.publicContext.arg(ContextKeys.of(i + "_score", String.class), TranslationManager.miniMessageTranslation(MessageConstants.COMPETITION_NO_SCORE.build().key()));
@@ -197,6 +198,17 @@ public class Competition implements FishingCompetition {
         this.publicContext.arg(ContextKeys.MINUTE, remainingTime < 60 ? "" : (remainingTime % 3600) / 60 + TranslationManager.miniMessageTranslation(MessageConstants.FORMAT_MINUTE.build().key()));
         this.publicContext.arg(ContextKeys.SECOND, remainingTime == 0 ? "" : remainingTime % 60 + TranslationManager.miniMessageTranslation(MessageConstants.FORMAT_SECOND.build().key()));
         this.publicContext.arg(ContextKeys.SECONDS, remainingTime);
+    }
+
+    @ApiStatus.Internal
+    public double getScore(String player) {
+        double score = this.rankingProvider.getPlayerScore(player);
+        return goal.isReversed() ? -score : score;
+    }
+
+    @ApiStatus.Internal
+    public double getScore(int rank) {
+        return goal.isReversed() ? -this.rankingProvider.getScoreAt(rank) : this.rankingProvider.getScoreAt(rank);
     }
 
     @Override
@@ -219,6 +231,11 @@ public class Competition implements FishingCompetition {
 
     @Override
     public void refreshData(Player player, double score) {
+        refreshScore(player, score);
+    }
+
+    @Override
+    public void refreshScore(Player player, double score) {
         // if player join for the first time, trigger join actions
         if (!hasPlayerJoined(player)) {
             ActionManager.trigger(Context.player(player).combine(publicContext), config.joinActions());

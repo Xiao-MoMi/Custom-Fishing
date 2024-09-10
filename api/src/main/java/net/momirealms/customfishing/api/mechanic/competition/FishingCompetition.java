@@ -54,9 +54,19 @@ public interface FishingCompetition {
      * actions if it's their first time joining the competition.
      *
      * @param player The player whose data needs to be refreshed.
-     * @param score The player's current score in the competition.
+     * @param score The score to add or refresh
      */
+    @Deprecated(forRemoval = false)
     void refreshData(Player player, double score);
+
+    /**
+     * Refreshes the score for a player in the fishing competition, including updating their score and triggering
+     * actions if it's their first time joining the competition.
+     *
+     * @param player The player whose score needs to be refreshed.
+     * @param score The score to add or refresh
+     */
+    void refreshScore(Player player, double score);
 
     /**
      * Checks if a player has joined the fishing competition based on their name.

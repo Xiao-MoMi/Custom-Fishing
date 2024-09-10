@@ -129,11 +129,13 @@ public class CompetitionPapi extends PlaceholderExpansion {
             case "score" -> {
                 FishingCompetition competition = plugin.getCompetitionManager().getOnGoingCompetition();
                 if (competition == null) return "";
+                double score;
                 if (split.length == 1) {
-                    return String.format("%.2f", competition.getRanking().getPlayerScore(player.getName()));
+                    score = competition.getRanking().getPlayerScore(player.getName());
                 } else {
-                    return String.format("%.2f", competition.getRanking().getScoreAt(Integer.parseInt(split[1])));
+                    score = competition.getRanking().getScoreAt(Integer.parseInt(split[1]));
                 }
+                return String.format("%.2f", competition.getGoal().isReversed() ? -score : score);
             }
             case "player" -> {
                 FishingCompetition competition = plugin.getCompetitionManager().getOnGoingCompetition();
