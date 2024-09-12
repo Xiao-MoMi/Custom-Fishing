@@ -212,9 +212,9 @@ mechanics:
     # Price formula for custom fishing loot
     price-formula: '{base} + {bonus} * {size}'
     # Allow players to sell fish in bundles
-    allow-bundle: true
+    allow-bundle: false
     # Allow players to sell fish in shulker boxes
-    allow-shulker-box: true
+    allow-shulker-box: false
     # Prices for vanilla and other plugin items with CustomModelData
     item-price:
       # Vanilla items
