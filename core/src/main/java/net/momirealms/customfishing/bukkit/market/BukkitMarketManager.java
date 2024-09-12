@@ -505,6 +505,11 @@ public class BukkitMarketManager implements MarketManager, Listener {
             if (price > 0 && itemStack != null) {
                 if (allowBundle && itemStack.getItemMeta() instanceof BundleMeta bundleMeta) {
                     clearWorthyItems(context, bundleMeta.getItems());
+                    List<ItemStack> newItems = new ArrayList<>(bundleMeta.getItems());
+                    newItems.removeIf(item -> {
+                        return item.getAmount() == 0 || item.getType() == Material.AIR;
+                    });
+                    bundleMeta.setItems(newItems);
                     itemStack.setItemMeta(bundleMeta);
                     continue;
                 }
