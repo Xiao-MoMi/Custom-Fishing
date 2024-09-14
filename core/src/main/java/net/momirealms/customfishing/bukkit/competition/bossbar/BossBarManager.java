@@ -47,7 +47,7 @@ public class BossBarManager implements Listener {
      * Loads the boss bar manager, registering events and showing boss bars to online players.
      */
     public void load() {
-        Bukkit.getPluginManager().registerEvents(this, BukkitCustomFishingPlugin.getInstance().getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, BukkitCustomFishingPlugin.getInstance().getBootstrap());
         if (bossBarConfig.showToAll()) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 BossBarSender sender = new BossBarSender(player, bossBarConfig, competition);

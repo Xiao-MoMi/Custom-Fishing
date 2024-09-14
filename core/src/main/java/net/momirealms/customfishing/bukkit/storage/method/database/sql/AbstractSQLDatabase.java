@@ -80,7 +80,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
      * @throws IOException If there is an error reading the schema resource.
      */
     private String[] getSchema(@NotNull String fileName) throws IOException {
-        return replaceSchemaPlaceholder(new String(Objects.requireNonNull(plugin.getBoostrap().getResource("schema/" + fileName + ".sql"))
+        return replaceSchemaPlaceholder(new String(Objects.requireNonNull(plugin.getBootstrap().getResource("schema/" + fileName + ".sql"))
                .readAllBytes(), StandardCharsets.UTF_8)).split(";");
     }
 

@@ -32,12 +32,12 @@ public class ClueScrollsQuest implements Listener {
     private final CustomClue groupClue;
 
     public ClueScrollsQuest() {
-        idClue = ClueScrollsAPI.getInstance().registerCustomClue(BukkitCustomFishingPlugin.getInstance().getBoostrap(), "loot", new ClueConfigData("id", DataType.STRING));
-        groupClue = ClueScrollsAPI.getInstance().registerCustomClue(BukkitCustomFishingPlugin.getInstance().getBoostrap(), "group", new ClueConfigData("group", DataType.STRING));
+        idClue = ClueScrollsAPI.getInstance().registerCustomClue(BukkitCustomFishingPlugin.getInstance().getBootstrap(), "loot", new ClueConfigData("id", DataType.STRING));
+        groupClue = ClueScrollsAPI.getInstance().registerCustomClue(BukkitCustomFishingPlugin.getInstance().getBootstrap(), "group", new ClueConfigData("group", DataType.STRING));
     }
 
     public void register() {
-        Bukkit.getPluginManager().registerEvents(this, BukkitCustomFishingPlugin.getInstance().getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, BukkitCustomFishingPlugin.getInstance().getBootstrap());
     }
 
     @EventHandler

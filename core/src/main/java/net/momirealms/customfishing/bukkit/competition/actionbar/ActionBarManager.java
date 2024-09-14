@@ -47,7 +47,7 @@ public class ActionBarManager implements Listener {
      * Loads the ActionBar manager, registering events and showing ActionBar messages to online players.
      */
     public void load() {
-        Bukkit.getPluginManager().registerEvents(this, BukkitCustomFishingPlugin.getInstance().getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, BukkitCustomFishingPlugin.getInstance().getBootstrap());
         if (actionBarConfig.showToAll()) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 ActionBarSender sender = new ActionBarSender(player, actionBarConfig, competition);

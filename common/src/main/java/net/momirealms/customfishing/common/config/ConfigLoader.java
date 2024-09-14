@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.common.config;
 
 import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 
 import java.io.File;
 

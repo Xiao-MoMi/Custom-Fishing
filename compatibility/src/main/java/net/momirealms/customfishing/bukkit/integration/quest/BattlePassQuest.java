@@ -32,7 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class BattlePassQuest implements Listener {
 
     public BattlePassQuest() {
-        Bukkit.getPluginManager().registerEvents(this, BukkitCustomFishingPlugin.getInstance().getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, BukkitCustomFishingPlugin.getInstance().getBootstrap());
     }
 
     public void register() {

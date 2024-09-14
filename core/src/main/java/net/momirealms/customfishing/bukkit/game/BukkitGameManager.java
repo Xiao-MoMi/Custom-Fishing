@@ -72,7 +72,7 @@ public class BukkitGameManager implements GameManager {
         this.loadExpansions();
         File file = new File(plugin.getDataFolder(), "game-conditions.yml");
         if (!file.exists()) {
-            plugin.getBoostrap().saveResource("game-conditions.yml", false);
+            plugin.getBootstrap().saveResource("game-conditions.yml", false);
         }
         YamlDocument lootConditionsConfig = plugin.getConfigManager().loadData(file);
         for (Map.Entry<String, Object> entry : lootConditionsConfig.getStringRouteMappedValues(false).entrySet()) {

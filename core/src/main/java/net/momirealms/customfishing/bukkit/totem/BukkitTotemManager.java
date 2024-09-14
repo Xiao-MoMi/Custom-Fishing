@@ -65,7 +65,7 @@ public class BukkitTotemManager implements TotemManager, Listener {
 
     @Override
     public void load() {
-        Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, plugin.getBootstrap());
         this.timerCheckTask = plugin.getScheduler().asyncRepeating(() -> {
             long time = System.currentTimeMillis();
             ArrayList<SimpleLocation> removed = new ArrayList<>();

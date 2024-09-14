@@ -59,7 +59,7 @@ import java.util.function.Supplier;
 public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
 
     private static BukkitCustomFishingPlugin instance;
-    private final Plugin boostrap;
+    private final Plugin bootstrap;
 
     protected EventManager eventManager;
     protected ConfigManager configManager;
@@ -91,13 +91,13 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
     /**
      * Constructs a new BukkitCustomFishingPlugin instance.
      *
-     * @param boostrap the plugin instance used to initialize this class
+     * @param bootstrap the plugin instance used to initialize this class
      */
-    public BukkitCustomFishingPlugin(Plugin boostrap) {
-        if (!boostrap.getName().equals("CustomFishing")) {
+    public BukkitCustomFishingPlugin(Plugin bootstrap) {
+        if (!bootstrap.getName().equals("CustomFishing")) {
             throw new IllegalArgumentException("CustomFishing plugin requires custom fishing plugin");
         }
-        this.boostrap = boostrap;
+        this.bootstrap = bootstrap;
         instance = this;
     }
 
@@ -166,7 +166,7 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
      * @return the data folder as a {@link File}
      */
     public File getDataFolder() {
-        return boostrap.getDataFolder();
+        return bootstrap.getDataFolder();
     }
 
     /**
@@ -337,8 +337,8 @@ public abstract class BukkitCustomFishingPlugin implements CustomFishingPlugin {
      *
      * @return the {@link Plugin} instance
      */
-    public Plugin getBoostrap() {
-        return boostrap;
+    public Plugin getBootstrap() {
+        return bootstrap;
     }
 
     /**

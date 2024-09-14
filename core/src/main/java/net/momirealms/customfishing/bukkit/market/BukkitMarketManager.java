@@ -104,7 +104,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
     @Override
     public void load() {
         this.loadConfig();
-        Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, plugin.getBootstrap());
         this.resetEarningsTask = plugin.getScheduler().asyncRepeating(() -> {
             int now = getRealTimeDate();
             if (this.cachedDate != now) {

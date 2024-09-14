@@ -62,7 +62,7 @@ public class BukkitCommandManager extends AbstractCommandManager<CommandSender> 
 
     public BukkitCommandManager(BukkitCustomFishingPlugin plugin) {
         super(plugin, new LegacyPaperCommandManager<>(
-                plugin.getBoostrap(),
+                plugin.getBootstrap(),
                 ExecutionCoordinator.simpleCoordinator(),
                 SenderMapper.identity()
         ));

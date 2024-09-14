@@ -57,7 +57,7 @@ public class BukkitEventManager implements EventManager, Listener {
 
     @Override
     public void load() {
-        Bukkit.getPluginManager().registerEvents(this, this.plugin.getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, this.plugin.getBootstrap());
     }
 
     @Override

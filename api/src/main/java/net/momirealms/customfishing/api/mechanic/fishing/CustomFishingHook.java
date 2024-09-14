@@ -512,7 +512,7 @@ public class CustomFishingHook {
                                 if (spawnEvent.skipActions())
                                     return;
                                 if (item.isValid() && nextLoot.preventGrabbing()) {
-                                    item.getPersistentDataContainer().set(Objects.requireNonNull(NamespacedKey.fromString("owner", plugin.getBoostrap())), PersistentDataType.STRING, context.holder().getName());
+                                    item.getPersistentDataContainer().set(Objects.requireNonNull(NamespacedKey.fromString("owner", plugin.getBootstrap())), PersistentDataType.STRING, context.holder().getName());
                                 }
                             }
                         }

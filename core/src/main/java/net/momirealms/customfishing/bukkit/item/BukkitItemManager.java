@@ -107,7 +107,7 @@ public class BukkitItemManager implements ItemManager, Listener {
 
     @Override
     public void load() {
-        Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, plugin.getBootstrap());
         this.resetItemDetectionOrder();
         for (ItemProvider provider : itemProviders.values()) {
             plugin.debug("Registered ItemProvider: " + provider.identifier());
@@ -418,7 +418,7 @@ public class BukkitItemManager implements ItemManager, Listener {
                 PersistentDataContainer pdc = block.getChunk().getPersistentDataContainer();
                 ItemStack cloned = itemStack.clone();
                 cloned.setAmount(1);
-                pdc.set(new NamespacedKey(plugin.getBoostrap(), LocationUtils.toChunkPosString(block.getLocation())), PersistentDataType.STRING, ItemStackUtils.toBase64(cloned));
+                pdc.set(new NamespacedKey(plugin.getBootstrap(), LocationUtils.toChunkPosString(block.getLocation())), PersistentDataType.STRING, ItemStackUtils.toBase64(cloned));
             } else {
                 event.setCancelled(true);
             }
@@ -430,7 +430,7 @@ public class BukkitItemManager implements ItemManager, Listener {
         final Block block = event.getBlock();
         if (block.getState() instanceof Skull) {
             PersistentDataContainer pdc = block.getChunk().getPersistentDataContainer();
-            NamespacedKey key = new NamespacedKey(plugin.getBoostrap(), LocationUtils.toChunkPosString(block.getLocation()));
+            NamespacedKey key = new NamespacedKey(plugin.getBootstrap(), LocationUtils.toChunkPosString(block.getLocation()));
             String base64 = pdc.get(key, PersistentDataType.STRING);
             if (base64 != null) {
                 pdc.remove(key);
@@ -457,7 +457,7 @@ public class BukkitItemManager implements ItemManager, Listener {
         for (Block block : blockList) {
             if (block.getState() instanceof Skull) {
                 PersistentDataContainer pdc = block.getChunk().getPersistentDataContainer();
-                if (pdc.has(new NamespacedKey(plugin.getBoostrap(), LocationUtils.toChunkPosString(block.getLocation())), PersistentDataType.STRING)) {
+                if (pdc.has(new NamespacedKey(plugin.getBootstrap(), LocationUtils.toChunkPosString(block.getLocation())), PersistentDataType.STRING)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -477,7 +477,7 @@ public class BukkitItemManager implements ItemManager, Listener {
 
     @EventHandler (ignoreCancelled = true)
     public void onPickUpItem(EntityPickupItemEvent event) {
-        String owner = event.getItem().getPersistentDataContainer().get(requireNonNull(NamespacedKey.fromString("owner", plugin.getBoostrap())), PersistentDataType.STRING);
+        String owner = event.getItem().getPersistentDataContainer().get(requireNonNull(NamespacedKey.fromString("owner", plugin.getBootstrap())), PersistentDataType.STRING);
         if (owner != null) {
             if (!(event.getEntity() instanceof Player player)) {
                 event.setCancelled(true);
@@ -494,7 +494,7 @@ public class BukkitItemManager implements ItemManager, Listener {
         for (Block block : blocks) {
             if (block.getState() instanceof Skull) {
                 PersistentDataContainer pdc = block.getChunk().getPersistentDataContainer();
-                var nk = new NamespacedKey(plugin.getBoostrap(), LocationUtils.toChunkPosString(block.getLocation()));
+                var nk = new NamespacedKey(plugin.getBootstrap(), LocationUtils.toChunkPosString(block.getLocation()));
                 String base64 = pdc.get(nk, PersistentDataType.STRING);
                 if (base64 != null) {
                     ItemStack itemStack = ItemStackUtils.fromBase64(base64);

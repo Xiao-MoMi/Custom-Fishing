@@ -19,7 +19,6 @@ package net.momirealms.customfishing.bukkit.storage;
 
 import com.google.gson.JsonSyntaxException;
 import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.storage.DataStorageProvider;
@@ -74,7 +73,7 @@ public class BukkitStorageManager implements StorageManager, Listener {
         this.plugin = plugin;
         this.locked = new HashSet<>();
         this.onlineUserMap = new ConcurrentHashMap<>();
-        Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, plugin.getBootstrap());
     }
 
     @Override
@@ -82,7 +81,7 @@ public class BukkitStorageManager implements StorageManager, Listener {
         YamlDocument config = plugin.getConfigManager().loadConfig("database.yml");
         this.serverID = config.getString("unique-server-id", "default");
         try {
-            config.save(new File(plugin.getBoostrap().getDataFolder(), "database.yml"));
+            config.save(new File(plugin.getBootstrap().getDataFolder(), "database.yml"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

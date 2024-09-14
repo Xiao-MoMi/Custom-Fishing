@@ -76,7 +76,7 @@ public class Migration {
             File typeFolder = new File(plugin.getDataFolder(), "contents" + File.separator + type.path());
             if (!typeFolder.exists()) {
                 if (!typeFolder.mkdirs()) return;
-                plugin.getBoostrap().saveResource("contents" + File.separator + type.path() + File.separator + "default.yml", false);
+                plugin.getBootstrap().saveResource("contents" + File.separator + type.path() + File.separator + "default.yml", false);
             }
             fileDeque.push(typeFolder);
             while (!fileDeque.isEmpty()) {

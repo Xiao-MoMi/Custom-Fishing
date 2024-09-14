@@ -63,7 +63,7 @@ public class BukkitLootManager implements LootManager {
         }
         File file = new File(plugin.getDataFolder(), "loot-conditions.yml");
         if (!file.exists()) {
-            plugin.getBoostrap().saveResource("loot-conditions.yml", false);
+            plugin.getBootstrap().saveResource("loot-conditions.yml", false);
         }
         YamlDocument lootConditionsConfig = plugin.getConfigManager().loadData(file);
         for (Map.Entry<String, Object> entry : lootConditionsConfig.getStringRouteMappedValues(false).entrySet()) {

@@ -274,7 +274,7 @@ public class BukkitConfigManager extends ConfigManager {
             File typeFolder = new File(plugin.getDataFolder(), "contents" + File.separator + type.path());
             if (!typeFolder.exists()) {
                 if (!typeFolder.mkdirs()) return;
-                plugin.getBoostrap().saveResource("contents" + File.separator + type.path() + File.separator + "default.yml", false);
+                plugin.getBootstrap().saveResource("contents" + File.separator + type.path() + File.separator + "default.yml", false);
             }
             Map<String, Node<ConfigParserFunction>> nodes = type.parser();
             fileDeque.push(typeFolder);
@@ -1036,7 +1036,7 @@ public class BukkitConfigManager extends ConfigManager {
     @Override
     public void saveResource(String filePath) {
         if (!new File(plugin.getDataFolder(), filePath).exists()) {
-            plugin.getBoostrap().saveResource(filePath, false);
+            plugin.getBootstrap().saveResource(filePath, false);
         }
     }
 

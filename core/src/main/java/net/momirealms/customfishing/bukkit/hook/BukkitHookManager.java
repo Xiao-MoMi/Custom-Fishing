@@ -73,7 +73,7 @@ public class BukkitHookManager implements HookManager, Listener {
 
     @Override
     public void load() {
-        Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, plugin.getBootstrap());
         plugin.debug("Loaded " + hooks.size() + " hooks");
     }
 

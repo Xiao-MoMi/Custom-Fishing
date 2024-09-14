@@ -101,7 +101,7 @@ public class BukkitBlockManager implements BlockManager, Listener {
 
     @Override
     public void load() {
-        Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, plugin.getBootstrap());
         this.resetBlockDetectionOrder();
         for (BlockProvider provider : blockProviders.values()) {
             plugin.debug("Registered BlockProvider: " + provider.identifier());
@@ -149,7 +149,7 @@ public class BukkitBlockManager implements BlockManager, Listener {
 
         // Retrieve a custom string value stored in the entity's persistent data container.
         String temp = event.getEntity().getPersistentDataContainer().get(
-                requireNonNull(NamespacedKey.fromString("block", plugin.getBoostrap())),
+                requireNonNull(NamespacedKey.fromString("block", plugin.getBootstrap())),
                 PersistentDataType.STRING
         );
 
@@ -243,7 +243,7 @@ public class BukkitBlockManager implements BlockManager, Listener {
         FallingBlock fallingBlock = hookLocation.getWorld().spawn(hookLocation, FallingBlock.class);
         fallingBlock.setBlockData(blockData);
         fallingBlock.getPersistentDataContainer().set(
-                requireNonNull(NamespacedKey.fromString("block", plugin.getBoostrap())),
+                requireNonNull(NamespacedKey.fromString("block", plugin.getBootstrap())),
                 PersistentDataType.STRING,
                 id + ";" + context.holder().getName()
         );

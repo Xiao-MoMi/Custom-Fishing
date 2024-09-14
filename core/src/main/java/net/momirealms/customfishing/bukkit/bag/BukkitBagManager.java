@@ -78,7 +78,7 @@ public class BukkitBagManager implements BagManager, Listener {
     @Override
     public void load() {
         this.loadConfig();
-        Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, plugin.getBootstrap());
     }
 
     @Override

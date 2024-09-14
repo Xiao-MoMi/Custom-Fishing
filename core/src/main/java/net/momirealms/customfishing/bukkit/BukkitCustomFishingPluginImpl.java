@@ -80,12 +80,12 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
     private String user = "%%__USER__%%";
     private String username = "%%__USERNAME__%%";
 
-    public BukkitCustomFishingPluginImpl(Plugin boostrap) {
-        super(boostrap);
+    public BukkitCustomFishingPluginImpl(Plugin bootstrap) {
+        super(bootstrap);
         VersionHelper.init(getServerVersion());
         this.scheduler = new BukkitSchedulerAdapter(this);
         this.classPathAppender = new ReflectionClassPathAppender(this);
-        this.logger = new JavaPluginLogger(getBoostrap().getLogger());
+        this.logger = new JavaPluginLogger(getBootstrap().getLogger());
         this.dependencyManager = new DependencyManagerImpl(this);
     }
 
@@ -144,7 +144,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.commandManager.registerDefaultFeatures();
 
         this.reload();
-        if (ConfigManager.metrics()) new Metrics((JavaPlugin) getBoostrap(), 16648);
+        if (ConfigManager.metrics()) new Metrics((JavaPlugin) getBootstrap(), 16648);
 
         boolean downloadFromPolymart = polymart.equals("1");
         boolean downloadFromBBB = buildByBit.equals("true");
@@ -240,7 +240,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
 
     @Override
     public InputStream getResourceStream(String filePath) {
-        return getBoostrap().getResource(filePath);
+        return getBootstrap().getResource(filePath);
     }
 
     @Override
@@ -255,7 +255,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
 
     @Override
     public Path getDataDirectory() {
-        return getBoostrap().getDataFolder().toPath().toAbsolutePath();
+        return getBootstrap().getDataFolder().toPath().toAbsolutePath();
     }
 
     @Override
@@ -266,7 +266,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
     @SuppressWarnings("deprecation")
     @Override
     public String getPluginVersion() {
-        return getBoostrap().getDescription().getVersion();
+        return getBootstrap().getDescription().getVersion();
     }
 
     @Override
