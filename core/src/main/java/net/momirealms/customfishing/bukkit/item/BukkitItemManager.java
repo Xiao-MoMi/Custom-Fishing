@@ -84,7 +84,11 @@ public class BukkitItemManager implements ItemManager, Listener {
             @NotNull
             @Override
             public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
-                return new ItemStack(Material.valueOf(id.toUpperCase(Locale.ENGLISH)));
+                try {
+                    return new ItemStack(Material.valueOf(id.toUpperCase(Locale.ENGLISH)));
+                } catch (IllegalArgumentException e) {
+                    return new ItemStack(requireNonNull(Registry.MATERIAL.get(new NamespacedKey("minecraft", id.toLowerCase(Locale.ENGLISH)))));
+                }
             }
             @NotNull
             @Override
@@ -222,6 +226,10 @@ public class BukkitItemManager implements ItemManager, Listener {
             try {
                 return new ItemStack(Material.valueOf(material.toUpperCase(Locale.ENGLISH)));
             } catch (IllegalArgumentException e) {
+                Material another = Registry.MATERIAL.get(new NamespacedKey("minecraft", material.toLowerCase(Locale.ENGLISH)));
+                if (another != null) {
+                    return new ItemStack(another);
+                }
                 plugin.getPluginLogger().severe("material " + material + " not exists", e);
                 return new ItemStack(Material.PAPER);
             }

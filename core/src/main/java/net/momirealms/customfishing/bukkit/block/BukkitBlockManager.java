@@ -74,7 +74,16 @@ public class BukkitBlockManager implements BlockManager, Listener {
             }
             @Override
             public BlockData blockData(@NotNull Context<Player> context, @NotNull String id, List<BlockDataModifier> modifiers) {
-                BlockData blockData = Material.valueOf(id.toUpperCase(Locale.ENGLISH)).createBlockData();
+                Material material;
+                try {
+                    material = Material.valueOf(id.toUpperCase(Locale.ENGLISH));
+                } catch (IllegalArgumentException e) {
+                    material = Registry.MATERIAL.get(new NamespacedKey("minecraft", id.toLowerCase(Locale.ENGLISH)));
+                }
+                if (material == null) {
+                    throw new IllegalArgumentException("Material " + id + " is not a valid material");
+                }
+                BlockData blockData = material.createBlockData();
                 for (BlockDataModifier modifier : modifiers)
                     modifier.apply(context, blockData);
                 return blockData;
