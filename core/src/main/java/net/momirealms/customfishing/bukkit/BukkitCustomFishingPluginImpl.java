@@ -240,7 +240,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
 
     @Override
     public InputStream getResourceStream(String filePath) {
-        return getBootstrap().getResource(filePath);
+        return getBootstrap().getResource(filePath.replace("\\", "/"));
     }
 
     @Override
