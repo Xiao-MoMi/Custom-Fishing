@@ -73,7 +73,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
     private final ClassPathAppender classPathAppender;
     private final PluginLogger logger;
     private BukkitCommandManager commandManager;
-    private Consumer<Object> debugger;
+    private Consumer<Supplier<String>> debugger = (supplier -> {});
     private String buildByBit = "%%__BUILTBYBIT__%%";
     private String polymart = "%%__POLYMART__%%";
     private String time = "%%__TIMESTAMP__%%";
@@ -190,7 +190,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.placeholderManager.reload();
         this.configManager.reload();
         // after ConfigManager
-        this.debugger = ConfigManager.debug() ? (s) -> logger.info("[DEBUG] " + s.toString()) : (s) -> {};
+        this.debugger = ConfigManager.debug() ? (s) -> logger.info("[DEBUG] " + s.get()) : (s) -> {};
 
         this.coolDownManager.reload();
         this.translationManager.reload();
@@ -271,11 +271,11 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
 
     @Override
     public void debug(Object message) {
-        this.debugger.accept(message);
+        this.debugger.accept(message::toString);
     }
 
     @Override
     public void debug(Supplier<String> messageSupplier) {
-        this.debugger.accept(messageSupplier.get());
+        this.debugger.accept(messageSupplier);
     }
 }
