@@ -45,7 +45,7 @@ public class StatisticsPapi extends PlaceholderExpansion {
     public StatisticsPapi(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
         this.offlineDataCache = Caffeine.newBuilder()
-                .expireAfterWrite(5, TimeUnit.MINUTES)
+                .expireAfterWrite(3, TimeUnit.MINUTES)
                 .build();
     }
 
@@ -82,51 +82,48 @@ public class StatisticsPapi extends PlaceholderExpansion {
         Optional<UserData> onlineUser = plugin.getStorageManager().getOnlineUser(player.getUniqueId());
         String[] split = params.split("_", 2);
         if (onlineUser.isPresent()) {
-            return onlineUser.map(
-                    data -> {
-                        FishingStatistics statistics = data.statistics();
-                        switch (split[0]) {
-                            case "total" -> {
-                                return String.valueOf(statistics.amountOfFishCaught());
-                            }
-                            case "hascaught" -> {
-                                if (split.length == 1) return "Invalid format";
-                                return String.valueOf(statistics.getAmount(split[1]) != 0);
-                            }
-                            case "amount" -> {
-                                if (split.length == 1) return "Invalid format";
-                                return String.valueOf(statistics.getAmount(split[1]));
-                            }
-                            case "size-record" -> {
-                                float size = statistics.getMaxSize(split[1]);
-                                return String.format("%.2f", size < 0 ? 0 : size);
-                            }
-                            case "category" -> {
-                                if (split.length == 1) return "Invalid format";
-                                String[] categorySplit = split[1].split("_", 2);
-                                if (categorySplit.length == 1) return "Invalid format";
-                                List<String> category = plugin.getStatisticsManager().getCategoryMembers(categorySplit[1]);
-                                if (categorySplit[0].equals("total")) {
-                                    int total = 0;
-                                    for (String loot : category) {
-                                        total += statistics.getAmount(loot);
-                                    }
-                                    return String.valueOf(total);
-                                } else if (categorySplit[0].equals("progress")) {
-                                    int size = category.size();
-                                    int unlocked = 0;
-                                    for (String loot : category) {
-                                        if (statistics.getAmount(loot) != 0) unlocked++;
-                                    }
-                                    double percent = ((double) unlocked * 100) / size;
-                                    String progress = String.format("%.1f", percent);
-                                    return progress.equals("100.0") ? "100" : progress;
-                                }
-                            }
+            UserData data = onlineUser.get();
+            FishingStatistics statistics = data.statistics();
+            switch (split[0]) {
+                case "total" -> {
+                    return String.valueOf(statistics.amountOfFishCaught());
+                }
+                case "hascaught" -> {
+                    if (split.length == 1) return "Invalid format";
+                    return String.valueOf(statistics.getAmount(split[1]) != 0);
+                }
+                case "amount" -> {
+                    if (split.length == 1) return "Invalid format";
+                    return String.valueOf(statistics.getAmount(split[1]));
+                }
+                case "size-record" -> {
+                    float size = statistics.getMaxSize(split[1]);
+                    return String.format("%.2f", size < 0 ? 0 : size);
+                }
+                case "category" -> {
+                    if (split.length == 1) return "Invalid format";
+                    String[] categorySplit = split[1].split("_", 2);
+                    if (categorySplit.length == 1) return "Invalid format";
+                    List<String> category = plugin.getStatisticsManager().getCategoryMembers(categorySplit[1]);
+                    if (categorySplit[0].equals("total")) {
+                        int total = 0;
+                        for (String loot : category) {
+                            total += statistics.getAmount(loot);
                         }
-                        return null;
+                        return String.valueOf(total);
+                    } else if (categorySplit[0].equals("progress")) {
+                        int size = category.size();
+                        int unlocked = 0;
+                        for (String loot : category) {
+                            if (statistics.getAmount(loot) != 0) unlocked++;
+                        }
+                        double percent = ((double) unlocked * 100) / size;
+                        String progress = String.format("%.1f", percent);
+                        return progress.equals("100.0") ? "100" : progress;
                     }
-            ).orElse("");
+                }
+            }
+            return null;
         } else {
             Optional<PlayerData> optional = offlineDataCache.get(player.getUniqueId(), (uuid) -> {
                 CompletableFuture<Optional<PlayerData>> data = plugin.getStorageManager().getDataSource().getPlayerData(player.getUniqueId(), false, Runnable::run);
