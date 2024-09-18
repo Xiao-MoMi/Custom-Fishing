@@ -17,8 +17,8 @@
 
 package net.momirealms.customfishing.bukkit.integration.papi;
 
-import io.lumine.mythic.bukkit.utils.caffeine.cache.Cache;
-import io.lumine.mythic.bukkit.utils.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.statistic.FishingStatistics;
