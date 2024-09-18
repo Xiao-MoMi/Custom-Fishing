@@ -37,6 +37,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public class RedisManager extends AbstractStorage {
 
@@ -271,25 +272,29 @@ public class RedisManager extends AbstractStorage {
     /**
      * Asynchronously retrieve player data from Redis.
      *
-     * @param uuid The UUID of the player.
-     * @param lock Flag indicating whether to lock the data.
+     * @param uuid     The UUID of the player.
+     * @param lock     Flag indicating whether to lock the data.
+     * @param executor The executor, can be null
      * @return A CompletableFuture with an optional PlayerData.
      */
     @Override
-    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock) {
+    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock, Executor executor) {
         var future = new CompletableFuture<Optional<PlayerData>>();
-        try (Jedis jedis = jedisPool.getResource()) {
-            byte[] key = getRedisKey("cf_data", uuid);
-            byte[] data = jedis.get(key);
-            jedis.del(key);
-            if (data != null) {
-                future.complete(Optional.of(plugin.getStorageManager().fromBytes(data)));
-            } else {
+        if (executor == null) executor = plugin.getScheduler().async();
+        executor.execute(() -> {
+            try (Jedis jedis = jedisPool.getResource()) {
+                byte[] key = getRedisKey("cf_data", uuid);
+                byte[] data = jedis.get(key);
+                jedis.del(key);
+                if (data != null) {
+                    future.complete(Optional.of(plugin.getStorageManager().fromBytes(data)));
+                } else {
+                    future.complete(Optional.empty());
+                }
+            } catch (Exception e) {
                 future.complete(Optional.empty());
             }
-        } catch (Exception e) {
-            future.complete(Optional.empty());
-        }
+        });
         return future;
     }
 

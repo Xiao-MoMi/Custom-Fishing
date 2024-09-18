@@ -174,7 +174,7 @@ public class BukkitStorageManager implements StorageManager, Listener {
 
     @Override
     public CompletableFuture<Optional<UserData>> getOfflineUserData(UUID uuid, boolean lock) {
-        CompletableFuture<Optional<PlayerData>> optionalDataFuture = dataSource.getPlayerData(uuid, lock);
+        CompletableFuture<Optional<PlayerData>> optionalDataFuture = dataSource.getPlayerData(uuid, lock, null);
         return optionalDataFuture.thenCompose(optionalUser -> {
             if (optionalUser.isEmpty()) {
                 return CompletableFuture.completedFuture(Optional.empty());
@@ -280,7 +280,7 @@ public class BukkitStorageManager implements StorageManager, Listener {
                 task.cancel();
                 return;
             }
-            redisManager.getPlayerData(uuid, false).thenAccept(optionalData -> {
+            redisManager.getPlayerData(uuid, false, null).thenAccept(optionalData -> {
                 if (optionalData.isPresent()) {
                     addOnlineUser(player, optionalData.get());
                     task.cancel();
@@ -305,7 +305,7 @@ public class BukkitStorageManager implements StorageManager, Listener {
             plugin.getPluginLogger().warn("Tried 3 times getting data for " + uuid + ". Giving up.");
             return;
         }
-        this.dataSource.getPlayerData(uuid, ConfigManager.lockData()).thenAccept(optionalData -> {
+        this.dataSource.getPlayerData(uuid, ConfigManager.lockData(), null).thenAccept(optionalData -> {
             // Data should not be empty
             if (optionalData.isEmpty()) {
                 plugin.getPluginLogger().severe("Unexpected error: Data is null");

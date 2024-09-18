@@ -48,10 +48,7 @@ import net.momirealms.customfishing.common.util.TriConsumer;
 import net.momirealms.customfishing.common.util.TriFunction;
 import net.momirealms.sparrow.heart.SparrowHeart;
 import net.momirealms.sparrow.heart.feature.inventory.HandSlot;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Statistic;
+import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -447,10 +444,11 @@ public class CustomFishingHook {
     public void handleSuccessfulFishing() {
 
         // update the hook location
-        context.arg(ContextKeys.OTHER_LOCATION, hook.getLocation());
-        context.arg(ContextKeys.OTHER_X, hook.getLocation().getBlockX());
-        context.arg(ContextKeys.OTHER_Y, hook.getLocation().getBlockY());
-        context.arg(ContextKeys.OTHER_Z, hook.getLocation().getBlockZ());
+        Location hookLocation = hook.getLocation();
+        context.arg(ContextKeys.OTHER_LOCATION, hookLocation);
+        context.arg(ContextKeys.OTHER_X, hookLocation.getBlockX());
+        context.arg(ContextKeys.OTHER_Y, hookLocation.getBlockY());
+        context.arg(ContextKeys.OTHER_Z, hookLocation.getBlockZ());
 
         LootType lootType = context.arg(ContextKeys.LOOT);
         Objects.requireNonNull(lootType, "Missing loot type");
@@ -505,7 +503,7 @@ public class CustomFishingHook {
                                 }
                             }
                             if (item != null) {
-                                FishingLootSpawnEvent spawnEvent = new FishingLootSpawnEvent(context, hook.getLocation(), nextLoot, item);
+                                FishingLootSpawnEvent spawnEvent = new FishingLootSpawnEvent(context, hookLocation, nextLoot, item);
                                 Bukkit.getPluginManager().callEvent(spawnEvent);
                                 if (!spawnEvent.summonEntity())
                                     item.remove();
@@ -517,7 +515,7 @@ public class CustomFishingHook {
                             }
                         }
                         doSuccessActions();
-                    }, (long) ConfigManager.multipleLootSpawnDelay() * i, hook.getLocation());
+                    }, (long) ConfigManager.multipleLootSpawnDelay() * i, hookLocation);
                 }
             }
             case BLOCK -> {

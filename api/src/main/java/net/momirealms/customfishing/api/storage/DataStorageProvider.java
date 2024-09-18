@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 /**
  * Interface representing a provider for data storage.
@@ -54,11 +55,12 @@ public interface DataStorageProvider {
     /**
      * Retrieves the player data for the specified UUID.
      *
-     * @param uuid the UUID of the player
-     * @param lock whether to lock the player data for exclusive access
+     * @param uuid     the UUID of the player
+     * @param lock     whether to lock the player data for exclusive access
+     * @param executor The executor, can be null
      * @return a {@link CompletableFuture} containing an {@link Optional} with the player data, or empty if not found
      */
-    CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock);
+    CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock, Executor executor);
 
     /**
      * Updates the player data for the specified UUID.

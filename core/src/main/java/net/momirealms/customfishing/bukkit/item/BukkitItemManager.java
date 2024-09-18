@@ -64,7 +64,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 import static java.util.Objects.requireNonNull;
@@ -211,10 +210,10 @@ public class BukkitItemManager implements ItemManager, Listener {
 
         itemEntity.setInvulnerable(true);
         // prevent from being killed by lava
-        plugin.getScheduler().asyncLater(() -> {
+        plugin.getScheduler().sync().runLater(() -> {
             if (itemEntity.isValid())
                 itemEntity.setInvulnerable(false);
-        }, 1, TimeUnit.SECONDS);
+        }, 20, hookLocation);
 
         itemEntity.setVelocity(vector);
 

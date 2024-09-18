@@ -144,6 +144,6 @@ public class CompetitionPapi extends PlaceholderExpansion {
                 return Optional.ofNullable(competition.getRanking().getPlayerAt(Integer.parseInt(split[1]))).orElse("");
             }
         }
-        return "null";
+        return null;
     }
 }

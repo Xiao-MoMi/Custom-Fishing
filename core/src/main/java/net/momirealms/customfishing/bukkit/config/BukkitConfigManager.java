@@ -32,6 +32,7 @@ import dev.dejvokep.boostedyaml.utils.format.NodeRole;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.action.Action;
+import net.momirealms.customfishing.api.mechanic.action.ActionManager;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.block.BlockDataModifier;
 import net.momirealms.customfishing.api.mechanic.block.BlockDataModifierFactory;
@@ -597,105 +598,157 @@ public class BukkitConfigManager extends ConfigManager {
         if (!section.contains("type")) {
             throw new RuntimeException(section.getRouteAsString());
         }
+        Action<Player>[] actions = plugin.getActionManager().parseActions(section.getSection("actions"));
         switch (section.getString("type")) {
             case "lava-fishing" -> {
                 return (((effect, context, phase) -> {
-                    if (phase == 0) effect.properties().put(EffectProperties.LAVA_FISHING, true);
+                    if (phase == 0) {
+                        effect.properties().put(EffectProperties.LAVA_FISHING, true);
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "void-fishing" -> {
                 return (((effect, context, phase) -> {
-                    if (phase == 0) effect.properties().put(EffectProperties.VOID_FISHING, true);
+                    if (phase == 0) {
+                        effect.properties().put(EffectProperties.VOID_FISHING, true);
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "weight-mod" -> {
                 var op = parseWeightOperation(section.getStringList("value"));
                 return (((effect, context, phase) -> {
-                    if (phase == 1) effect.weightOperations(op);
+                    if (phase == 1) {
+                        effect.weightOperations(op);
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "weight-mod-ignore-conditions" -> {
                 var op = parseWeightOperation(section.getStringList("value"));
                 return (((effect, context, phase) -> {
-                    if (phase == 1) effect.weightOperationsIgnored(op);
+                    if (phase == 1) {
+                        effect.weightOperationsIgnored(op);
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "group-mod" -> {
                 var op = parseGroupWeightOperation(section.getStringList("value"));
                 return (((effect, context, phase) -> {
-                    if (phase == 1) effect.weightOperations(op);
+                    if (phase == 1) {
+                        effect.weightOperations(op);
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "group-mod-ignore-conditions" -> {
                 var op = parseGroupWeightOperation(section.getStringList("value"));
                 return (((effect, context, phase) -> {
-                    if (phase == 1) effect.weightOperationsIgnored(op);
+                    if (phase == 1) {
+                        effect.weightOperationsIgnored(op);
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "wait-time" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
                 return (((effect, context, phase) -> {
-                    if (phase == 2) effect.waitTimeAdder(effect.waitTimeAdder() + value.evaluate(context));
+                    if (phase == 2) {
+                        effect.waitTimeAdder(effect.waitTimeAdder() + value.evaluate(context));
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "hook-time", "wait-time-multiplier" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
                 return (((effect, context, phase) -> {
-                    if (phase == 2) effect.waitTimeMultiplier(effect.waitTimeMultiplier() - 1 + value.evaluate(context));
+                    if (phase == 2) {
+                        effect.waitTimeMultiplier(effect.waitTimeMultiplier() - 1 + value.evaluate(context));
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "difficulty" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
                 return (((effect, context, phase) -> {
-                    if (phase == 2) effect.difficultyAdder(effect.difficultyAdder() + value.evaluate(context));
+                    if (phase == 2) {
+                        effect.difficultyAdder(effect.difficultyAdder() + value.evaluate(context));
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "difficulty-multiplier", "difficulty-bonus" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
                 return (((effect, context, phase) -> {
-                    if (phase == 2) effect.difficultyMultiplier(effect.difficultyMultiplier() - 1 + value.evaluate(context));
+                    if (phase == 2) {
+                        effect.difficultyMultiplier(effect.difficultyMultiplier() - 1 + value.evaluate(context));
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "size" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
                 return (((effect, context, phase) -> {
-                    if (phase == 2) effect.sizeAdder(effect.sizeAdder() + value.evaluate(context));
+                    if (phase == 2) {
+                        effect.sizeAdder(effect.sizeAdder() + value.evaluate(context));
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "size-multiplier", "size-bonus" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
                 return (((effect, context, phase) -> {
-                    if (phase == 2) effect.sizeMultiplier(effect.sizeMultiplier() - 1 + value.evaluate(context));
+                    if (phase == 2) {
+                        effect.sizeMultiplier(effect.sizeMultiplier() - 1 + value.evaluate(context));
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "game-time" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
                 return (((effect, context, phase) -> {
-                    if (phase == 2) effect.gameTimeAdder(effect.gameTimeAdder() + value.evaluate(context));
+                    if (phase == 2) {
+                        effect.gameTimeAdder(effect.gameTimeAdder() + value.evaluate(context));
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "game-time-multiplier", "game-time-bonus" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
                 return (((effect, context, phase) -> {
-                    if (phase == 2) effect.gameTimeMultiplier(effect.gameTimeMultiplier() - 1 + value.evaluate(context));
+                    if (phase == 2) {
+                        effect.gameTimeMultiplier(effect.gameTimeMultiplier() - 1 + value.evaluate(context));
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "score" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
                 return (((effect, context, phase) -> {
-                    if (phase == 2) effect.scoreAdder(effect.scoreAdder() + value.evaluate(context));
+                    if (phase == 2) {
+                        effect.scoreAdder(effect.scoreAdder() + value.evaluate(context));
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "score-multiplier", "score-bonus" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
                 return (((effect, context, phase) -> {
-                    if (phase == 2) effect.scoreMultiplier(effect.scoreMultiplier() - 1 + value.evaluate(context));
+                    if (phase == 2) {
+                        effect.scoreMultiplier(effect.scoreMultiplier() - 1 + value.evaluate(context));
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "multiple-loot" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
                 return (((effect, context, phase) -> {
-                    if (phase == 2) effect.multipleLootChance(effect.multipleLootChance() + value.evaluate(context));
+                    if (phase == 2) {
+                        effect.multipleLootChance(effect.multipleLootChance() + value.evaluate(context));
+                        ActionManager.trigger(context, actions);
+                    }
                 }));
             }
             case "conditional" -> {

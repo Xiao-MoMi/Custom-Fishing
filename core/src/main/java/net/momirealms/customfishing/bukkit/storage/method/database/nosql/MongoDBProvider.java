@@ -37,6 +37,7 @@ import org.bukkit.Bukkit;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public class MongoDBProvider extends AbstractStorage {
 
@@ -114,9 +115,10 @@ public class MongoDBProvider extends AbstractStorage {
     }
 
     @Override
-    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock) {
+    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock, Executor executor) {
         var future = new CompletableFuture<Optional<PlayerData>>();
-        plugin.getScheduler().async().execute(() -> {
+        if (executor == null) executor = plugin.getScheduler().async();
+        executor.execute(() -> {
         MongoCollection<Document> collection = database.getCollection(getCollectionName("data"));
         Document doc = collection.find(Filters.eq("uuid", uuid)).first();
         if (doc == null) {

@@ -34,6 +34,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 /**
  * A data storage implementation that uses JSON files to store player data.
@@ -53,7 +54,7 @@ public class JsonProvider extends AbstractStorage {
     }
 
     @Override
-    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock) {
+    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock, Executor executor) {
         File file = getPlayerDataFile(uuid);
         PlayerData playerData;
         if (file.exists()) {

@@ -26,6 +26,7 @@ import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
+import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.util.RandomUtils;
 import net.momirealms.customfishing.common.util.Tuple;
 import org.bukkit.*;
@@ -249,8 +250,13 @@ public class BukkitBlockManager implements BlockManager, Listener {
         }
         Location hookLocation = requireNonNull(context.arg(ContextKeys.OTHER_LOCATION));
         Location playerLocation = requireNonNull(context.holder()).getLocation();
-        FallingBlock fallingBlock = hookLocation.getWorld().spawn(hookLocation, FallingBlock.class);
-        fallingBlock.setBlockData(blockData);
+        FallingBlock fallingBlock;
+        if (VersionHelper.isVersionNewerThan1_20_2()) {
+            fallingBlock = hookLocation.getWorld().spawn(hookLocation, FallingBlock.class);
+            fallingBlock.setBlockData(blockData);
+        } else {
+            fallingBlock = hookLocation.getWorld().spawnFallingBlock(hookLocation, blockData);
+        }
         fallingBlock.getPersistentDataContainer().set(
                 requireNonNull(NamespacedKey.fromString("block", plugin.getBootstrap())),
                 PersistentDataType.STRING,

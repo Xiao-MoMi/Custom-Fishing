@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public class YAMLProvider extends AbstractStorage {
 
@@ -60,7 +61,7 @@ public class YAMLProvider extends AbstractStorage {
     }
 
     @Override
-    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock) {
+    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock, Executor executor) {
         File dataFile = getPlayerDataFile(uuid);
         if (!dataFile.exists()) {
             if (Bukkit.getPlayer(uuid) != null) {

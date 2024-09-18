@@ -36,6 +36,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -113,8 +114,9 @@ public class SQLiteProvider extends AbstractSQLDatabase {
 
     @SuppressWarnings("DuplicatedCode")
     @Override
-    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock) {
+    public CompletableFuture<Optional<PlayerData>> getPlayerData(UUID uuid, boolean lock, Executor executor) {
         var future = new CompletableFuture<Optional<PlayerData>>();
+        if (executor == null) executor = this.executor;
         executor.execute(() -> {
         try (
             Connection connection = getConnection();

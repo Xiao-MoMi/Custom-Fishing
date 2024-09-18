@@ -77,7 +77,7 @@ public class ExportDataCommand extends BukkitCommandFeature<CommandSender> {
 
                         int amount = uuids.size();
                         for (UUID uuid : uuids) {
-                            futures.add(storageProvider.getPlayerData(uuid, false).thenAccept(it -> {
+                            futures.add(storageProvider.getPlayerData(uuid, false, null).thenAccept(it -> {
                                 if (it.isPresent()) {
                                     out.put(uuid, plugin.getStorageManager().toJson(it.get()));
                                     userCount.incrementAndGet();
