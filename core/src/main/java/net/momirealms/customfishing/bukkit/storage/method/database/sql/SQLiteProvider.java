@@ -129,7 +129,7 @@ public class SQLiteProvider extends AbstractSQLDatabase {
                 PlayerData data = plugin.getStorageManager().fromBytes(dataByteArray);
                 data.uuid(uuid);
                 int lockValue = rs.getInt(2);
-                if (lockValue != 0 && getCurrentSeconds() - ConfigManager.dataSaveInterval() <= lockValue) {
+                if (lockValue != 0 && getCurrentSeconds() - 30 <= lockValue) {
                     connection.close();
                     data.locked(true);
                     future.complete(Optional.of(data));

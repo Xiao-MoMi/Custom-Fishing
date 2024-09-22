@@ -75,7 +75,6 @@ tasks {
         relocate ("com.github.benmanes.caffeine", "net.momirealms.customfishing.libraries.caffeine")
         relocate ("net.momirealms.sparrow.heart", "net.momirealms.customfishing.bukkit.nms")
         relocate ("com.saicone.rtag", "net.momirealms.customfishing.libraries.rtag")
-        relocate ("xyz.xenondevs", "net.momirealms.customfishing.libraries")
         relocate ("net.objecthunter.exp4j", "net.momirealms.customfishing.libraries.exp4j")
         relocate ("net.jpountz", "net.momirealms.customfishing.libraries.jpountz") //lz4
         relocate ("redis.clients.jedis", "net.momirealms.customfishing.libraries.jedis")

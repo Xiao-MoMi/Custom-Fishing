@@ -134,7 +134,7 @@ public abstract class AbstractSQLDatabase extends AbstractStorage {
                     data.uuid(uuid);
                     if (lock) {
                         int lockValue = rs.getInt(2);
-                        if (lockValue != 0 && getCurrentSeconds() - ConfigManager.dataSaveInterval() <= lockValue) {
+                        if (lockValue != 0 && getCurrentSeconds() - 30 <= lockValue) {
                             connection.close();
                             data.locked(true);
                             future.complete(Optional.of(data));
