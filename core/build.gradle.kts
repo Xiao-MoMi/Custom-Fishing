@@ -65,19 +65,19 @@ tasks {
         relocate("net.kyori", "net.momirealms.customfishing.libraries")
         relocate("org.incendo", "net.momirealms.customfishing.libraries")
         relocate("dev.dejvokep", "net.momirealms.customfishing.libraries")
-        relocate ("org.apache.commons.pool2", "net.momirealms.customfishing.libraries.commonspool2")
-        relocate ("com.mysql", "net.momirealms.customfishing.libraries.mysql")
-        relocate ("org.mariadb", "net.momirealms.customfishing.libraries.mariadb")
-        relocate ("com.zaxxer.hikari", "net.momirealms.customfishing.libraries.hikari")
-        relocate ("com.mongodb", "net.momirealms.customfishing.libraries.mongodb")
-        relocate ("org.bson", "net.momirealms.customfishing.libraries.bson")
-        relocate ("org.bstats", "net.momirealms.customfishing.libraries.bstats")
-        relocate ("com.github.benmanes.caffeine", "net.momirealms.customfishing.libraries.caffeine")
-        relocate ("net.momirealms.sparrow.heart", "net.momirealms.customfishing.bukkit.nms")
-        relocate ("com.saicone.rtag", "net.momirealms.customfishing.libraries.rtag")
-        relocate ("net.objecthunter.exp4j", "net.momirealms.customfishing.libraries.exp4j")
-        relocate ("net.jpountz", "net.momirealms.customfishing.libraries.jpountz") //lz4
-        relocate ("redis.clients.jedis", "net.momirealms.customfishing.libraries.jedis")
+        relocate("org.apache.commons.pool2", "net.momirealms.customfishing.libraries.commonspool2")
+        relocate("com.mysql", "net.momirealms.customfishing.libraries.mysql")
+        relocate("org.mariadb", "net.momirealms.customfishing.libraries.mariadb")
+        relocate("com.zaxxer.hikari", "net.momirealms.customfishing.libraries.hikari")
+        relocate("com.mongodb", "net.momirealms.customfishing.libraries.mongodb")
+        relocate("org.bson", "net.momirealms.customfishing.libraries.bson")
+        relocate("org.bstats", "net.momirealms.customfishing.libraries.bstats")
+        relocate("com.github.benmanes.caffeine", "net.momirealms.customfishing.libraries.caffeine")
+        relocate("net.momirealms.sparrow.heart", "net.momirealms.customfishing.bukkit.nms")
+        relocate("com.saicone.rtag", "net.momirealms.customfishing.libraries.rtag")
+        relocate("net.objecthunter.exp4j", "net.momirealms.customfishing.libraries.exp4j")
+        relocate("net.jpountz", "net.momirealms.customfishing.libraries.jpountz") //lz4
+        relocate("redis.clients.jedis", "net.momirealms.customfishing.libraries.jedis")
     }
 }
 

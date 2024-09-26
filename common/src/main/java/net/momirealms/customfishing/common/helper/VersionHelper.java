@@ -91,23 +91,15 @@ public class VersionHelper {
     }
 
     public static boolean isVersionNewerThan1_19_4() {
-        return version >= 19.4;
-    }
-
-    public static boolean isVersionNewerThan1_19_3() {
-        return version >= 19.3;
-    }
-
-    public static boolean isVersionNewerThan1_20() {
-        return version >= 20.0;
+        return version >= 19.39;
     }
 
     public static boolean isVersionNewerThan1_20_2() {
-        return version >= 20.2;
+        return version >= 20.19;
     }
 
     public static boolean isVersionNewerThan1_20_5() {
-        return version >= 20.5;
+        return version >= 20.49;
     }
 
     public static boolean isFolia() {
