@@ -94,6 +94,9 @@ public class BukkitIntegrationManager implements IntegrationManager {
         if (isHooked("NeigeItems")) {
             registerItemProvider(new NeigeItemsItemProvider());
         }
+        if (isHooked("ExecutableItems")) {
+            registerItemProvider(new ExecutableItemProvider());
+        }
         if (isHooked("MythicMobs", "5")) {
             registerItemProvider(new MythicMobsItemProvider());
             registerEntityProvider(new MythicEntityProvider());
