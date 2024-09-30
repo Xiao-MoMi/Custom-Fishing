@@ -136,13 +136,6 @@ public enum Dependency {
             "boosted-yaml",
             Relocation.of("boostedyaml", "dev{}dejvokep{}boostedyaml")
     ),
-    BYTEBUDDY(
-            "net{}bytebuddy",
-            "byte-buddy",
-            "maven",
-            "byte-buddy",
-            Relocation.of("bytebuddy", "net{}bytebuddy")
-    ),
     MARIADB_DRIVER(
             "org{}mariadb{}jdbc",
             "mariadb-java-client",
