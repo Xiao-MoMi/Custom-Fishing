@@ -972,7 +972,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at == requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        }, "==");
+        }, "==", "=");
         registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 MathValue<Player> v1 = MathValue.auto(section.get("value1"));
@@ -1184,7 +1184,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                     case ">" -> {
                         if (level > required) result = true;
                     }
-                    case "==" -> {
+                    case "=", "==" -> {
                         if (level == required) result = true;
                     }
                     case "!=" -> {
