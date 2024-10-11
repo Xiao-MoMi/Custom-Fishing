@@ -1,5 +1,6 @@
 package net.momirealms.customfishing.api.mechanic.effect;
 
+import net.momirealms.customfishing.api.event.FishingEffectApplyEvent;
 import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
@@ -50,6 +51,19 @@ public interface EffectModifier {
      * @return the type of the mechanic
      */
     MechanicType type();
+
+    /**
+     * Applies the effect modifier to the effect
+     *
+     * @param effect effect
+     * @param stage stage
+     * @param context context
+     */
+    default void apply(Effect effect, FishingEffectApplyEvent.Stage stage, Context<Player> context) {
+        for (TriConsumer<Effect, Context<Player>, Integer> consumer : modifiers()) {
+            consumer.accept(effect, context, stage.getId());
+        }
+    }
 
     /**
      * Builder interface for constructing EffectModifier instances.

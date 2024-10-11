@@ -599,7 +599,11 @@ public class BukkitConfigManager extends ConfigManager {
             throw new RuntimeException(section.getRouteAsString());
         }
         Action<Player>[] actions = plugin.getActionManager().parseActions(section.getSection("actions"));
-        switch (section.getString("type")) {
+        String type = section.getString("type");
+        if (type == null) {
+            throw new RuntimeException(section.getRouteAsString());
+        }
+        switch (type) {
             case "lava-fishing" -> {
                 return (((effect, context, phase) -> {
                     if (phase == 0) {

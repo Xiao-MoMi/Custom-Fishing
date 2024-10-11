@@ -90,8 +90,17 @@ public class FishingEffectApplyEvent extends Event {
     }
 
     public enum Stage {
-        CAST,
-        LOOT,
-        FISHING
+
+        CAST(0), LOOT(1), FISHING(2);
+
+        private final int id;
+
+        Stage(int id) {
+            this.id = id;
+        }
+
+        public int getId() {
+            return id;
+        }
     }
 }

@@ -20,7 +20,6 @@ package net.momirealms.customfishing.bukkit.storage.method.database.sql;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.storage.StorageType;
 import net.momirealms.customfishing.api.storage.data.PlayerData;
 import net.momirealms.customfishing.api.storage.user.UserData;

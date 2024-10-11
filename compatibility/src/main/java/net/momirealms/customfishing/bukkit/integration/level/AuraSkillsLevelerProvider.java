@@ -19,7 +19,6 @@ package net.momirealms.customfishing.bukkit.integration.level;
 
 import dev.aurelium.auraskills.api.AuraSkillsApi;
 import dev.aurelium.auraskills.api.registry.NamespacedId;
-import net.momirealms.customfishing.api.event.FishingLootSpawnEvent;
 import net.momirealms.customfishing.api.integration.LevelerProvider;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
