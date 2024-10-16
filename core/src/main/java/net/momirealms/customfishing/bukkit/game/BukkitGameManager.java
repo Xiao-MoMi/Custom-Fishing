@@ -933,7 +933,7 @@ public class BukkitGameManager implements GameManager {
                         @Override
                         protected void tick() {
                             timer++;
-                            if (timer % (21 - settings.difficulty() / 5) == 0) {
+                            if (timer % ((106 - (int) settings.difficulty()) / 5) == 0) {
                                 movePointer();
                             }
                             showUI();

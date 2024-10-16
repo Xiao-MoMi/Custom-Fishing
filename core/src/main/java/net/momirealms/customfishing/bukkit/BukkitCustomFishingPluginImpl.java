@@ -236,6 +236,8 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.storageManager.disable();
         this.hologramManager.disable();
         this.commandManager.unregisterFeatures();
+        this.scheduler.shutdownScheduler();
+        this.scheduler.shutdownExecutor();
     }
 
     @Override
