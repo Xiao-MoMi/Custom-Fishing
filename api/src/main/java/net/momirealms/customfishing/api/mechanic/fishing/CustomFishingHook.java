@@ -179,7 +179,15 @@ public class CustomFishingHook {
                         context.arg(ContextKeys.OTHER_Z, hook.getLocation().getBlockZ());
 
                         // get the next loot
-                        Loot loot = plugin.getLootManager().getNextLoot(tempEffect, context);
+
+
+                        Loot loot;
+                        try {
+                            loot = plugin.getLootManager().getNextLoot(tempEffect, context);
+                        } catch (Exception e) {
+                            loot = null;
+                            plugin.getPluginLogger().warn("Error occurred when getting next loot.", e);
+                        }
                         if (loot != null) {
                             this.nextLoot = loot;
 
@@ -292,6 +300,11 @@ public class CustomFishingHook {
      */
     public boolean isPlayingGame() {
         return gamingPlayer != null && gamingPlayer.isValid();
+    }
+
+    public boolean isHookValid() {
+        if (hook == null) return false;
+        return hook.isValid();
     }
 
     /**

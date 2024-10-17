@@ -35,10 +35,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
@@ -80,7 +77,15 @@ public class BukkitFishingManager implements FishingManager, Listener {
 
     @Override
     public Optional<CustomFishingHook> getFishHook(UUID player) {
-        return Optional.ofNullable(castHooks.get(player));
+        CustomFishingHook hook = castHooks.get(player);
+        if (hook != null) {
+            if (hook.isHookValid()) {
+                return Optional.of(hook);
+            } else {
+                return Optional.empty();
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -348,6 +353,24 @@ public class BukkitFishingManager implements FishingManager, Listener {
                 case LURE -> hook.onLure();
             }
         });
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onInteractEntity(PlayerInteractAtEntityEvent event) {
+        Entity entity = event.getRightClicked();
+        if (entity.getType() != EntityType.ARMOR_STAND) return;
+        if (entity.getPersistentDataContainer().has(Objects.requireNonNull(NamespacedKey.fromString("temp-entity", BukkitCustomFishingPlugin.getInstance().getBootstrap())))) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onInteractEntity(PlayerInteractEntityEvent event) {
+        Entity entity = event.getRightClicked();
+        if (entity.getType() != EntityType.ARMOR_STAND) return;
+        if (entity.getPersistentDataContainer().has(Objects.requireNonNull(NamespacedKey.fromString("temp-entity", BukkitCustomFishingPlugin.getInstance().getBootstrap())))) {
+            event.setCancelled(true);
+        }
     }
 
     @Override

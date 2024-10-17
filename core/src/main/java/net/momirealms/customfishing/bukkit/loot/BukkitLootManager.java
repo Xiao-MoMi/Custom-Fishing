@@ -173,7 +173,7 @@ public class BukkitLootManager implements LootManager {
         plugin.debug(lootWeightMap);
         String lootID = WeightUtils.getRandom(lootWeightMap);
         return Optional.ofNullable(lootID)
-                .map(id -> getLoot(lootID).orElseThrow(() -> new RuntimeException("Could not find loot " + lootID)))
+                .map(id -> getLoot(lootID).orElseThrow(() -> new NullPointerException("Could not find loot " + lootID)))
                 .orElse(null);
     }
 
