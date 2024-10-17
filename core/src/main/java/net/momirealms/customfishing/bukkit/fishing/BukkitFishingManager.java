@@ -82,6 +82,8 @@ public class BukkitFishingManager implements FishingManager, Listener {
             if (hook.isHookValid()) {
                 return Optional.of(hook);
             } else {
+                hook.stop();
+                this.castHooks.remove(player);
                 return Optional.empty();
             }
         }
