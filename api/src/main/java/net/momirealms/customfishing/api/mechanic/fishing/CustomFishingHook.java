@@ -74,6 +74,7 @@ public class CustomFishingHook {
     private Loot nextLoot;
     private GamingPlayer gamingPlayer;
     private BaitAnimationTask baitAnimationTask;
+    private boolean valid = true;
 
     private static TriFunction<FishHook, Context<Player>, Effect, List<HookMechanic>> mechanicProviders = defaultMechanicProviders();
 
@@ -237,10 +238,12 @@ public class CustomFishingHook {
      */
     @ApiStatus.Internal
     public void stop() {
-        if (task != null) task.cancel();
-        if (hook.isValid()) hook.remove();
-        if (hookMechanic != null) hookMechanic.destroy();
-        if (gamingPlayer != null) gamingPlayer.destroy();
+        if (!this.valid) return;
+        this.valid = false;
+        if (this.task != null) this.task.cancel();
+        if (this.hook.isValid()) this.hook.remove();
+        if (this.hookMechanic != null) hookMechanic.destroy();
+        if (this.gamingPlayer != null) gamingPlayer.destroy();
         if (this.baitAnimationTask != null) {
             this.baitAnimationTask.cancel();
             this.baitAnimationTask = null;
@@ -251,7 +254,12 @@ public class CustomFishingHook {
      * Ends the life of the custom fishing hook.
      */
     public void destroy() {
-        plugin.getFishingManager().destroyHook(context.holder().getUniqueId());
+        // if the hook exists in cache
+        this.plugin.getFishingManager().destroyHook(this.context.holder().getUniqueId());
+        // if not, then destroy the tasks. This should never happen
+        if (this.valid) {
+            stop();
+        }
     }
 
     /**
@@ -260,7 +268,7 @@ public class CustomFishingHook {
      * @return the context.
      */
     public Context<Player> getContext() {
-        return context;
+        return this.context;
     }
 
     /**
@@ -270,7 +278,7 @@ public class CustomFishingHook {
      */
     @NotNull
     public FishHook getHookEntity() {
-        return hook;
+        return this.hook;
     }
 
     /**
@@ -304,7 +312,7 @@ public class CustomFishingHook {
 
     public boolean isHookValid() {
         if (hook == null) return false;
-        return hook.isValid();
+        return hook.isValid() && valid;
     }
 
     /**
@@ -441,6 +449,8 @@ public class CustomFishingHook {
      */
     public void handleFailedFishing() {
 
+        if (!valid) return;
+
         // update the hook location
         context.arg(ContextKeys.OTHER_LOCATION, hook.getLocation());
         context.arg(ContextKeys.OTHER_X, hook.getLocation().getBlockX());
@@ -455,6 +465,8 @@ public class CustomFishingHook {
      * Handles a successful fishing attempt.
      */
     public void handleSuccessfulFishing() {
+
+        if (!valid) return;
 
         // update the hook location
         Location hookLocation = hook.getLocation();

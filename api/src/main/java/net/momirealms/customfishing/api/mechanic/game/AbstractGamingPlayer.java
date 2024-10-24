@@ -66,8 +66,8 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
      */
     @Override
     public void destroy() {
-        if (task != null) task.cancel();
         valid = false;
+        if (task != null) task.cancel();
     }
 
     /**

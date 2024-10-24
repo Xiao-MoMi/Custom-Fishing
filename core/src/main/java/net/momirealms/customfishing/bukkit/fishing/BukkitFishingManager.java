@@ -77,17 +77,7 @@ public class BukkitFishingManager implements FishingManager, Listener {
 
     @Override
     public Optional<CustomFishingHook> getFishHook(UUID player) {
-        CustomFishingHook hook = castHooks.get(player);
-        if (hook != null) {
-            if (hook.isHookValid()) {
-                return Optional.of(hook);
-            } else {
-                hook.stop();
-                this.castHooks.remove(player);
-                return Optional.empty();
-            }
-        }
-        return Optional.empty();
+        return Optional.ofNullable(castHooks.get(player));
     }
 
     @Override
@@ -266,16 +256,16 @@ public class BukkitFishingManager implements FishingManager, Listener {
                 hook.get().onReelIn();
                 return;
             }
-        }
 
-        if (player.getGameMode() != GameMode.CREATIVE) {
-            ItemStack itemStack = player.getInventory().getItemInMainHand();
-            if (itemStack.getType() != Material.FISHING_ROD) itemStack = player.getInventory().getItemInOffHand();
-            if (plugin.getItemManager().hasCustomMaxDamage(itemStack)) {
-                event.getHook().pullHookedEntity();
-                event.getHook().remove();
-                event.setCancelled(true);
-                plugin.getItemManager().increaseDamage(player, itemStack, event.getCaught() instanceof Item ? 3 : 5, true);
+            if (player.getGameMode() != GameMode.CREATIVE) {
+                ItemStack itemStack = player.getInventory().getItemInMainHand();
+                if (itemStack.getType() != Material.FISHING_ROD) itemStack = player.getInventory().getItemInOffHand();
+                if (plugin.getItemManager().hasCustomMaxDamage(itemStack)) {
+                    event.setCancelled(true);
+                    event.getHook().pullHookedEntity();
+                    hook.get().destroy();
+                    plugin.getItemManager().increaseDamage(player, itemStack, event.getCaught() instanceof Item ? 3 : 5, true);
+                }
             }
         }
     }
@@ -324,9 +314,13 @@ public class BukkitFishingManager implements FishingManager, Listener {
         if (EventUtils.fireAndCheckCancel(new RodCastEvent(event, gears))) {
             return;
         }
-        plugin.debug(context);
+        plugin.debug(context::toString);
         CustomFishingHook customHook = new CustomFishingHook(plugin, hook, gears, context);
-        this.castHooks.put(player.getUniqueId(), customHook);
+        CustomFishingHook previous = this.castHooks.put(player.getUniqueId(), customHook);
+        if (previous != null) {
+            plugin.debug("Previous hook is still in cache, which is not an expected behavior");
+            previous.stop();
+        }
     }
 
     private void onInGround(PlayerFishEvent event) {
@@ -377,9 +371,9 @@ public class BukkitFishingManager implements FishingManager, Listener {
 
     @Override
     public void destroyHook(UUID uuid) {
-        this.getFishHook(uuid).ifPresent(hook -> {
+        CustomFishingHook hook = this.castHooks.remove(uuid);
+        if (hook != null) {
             hook.stop();
-            this.castHooks.remove(uuid);
-        });
+        }
     }
 }

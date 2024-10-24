@@ -273,12 +273,13 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 boolean mainOrOff = section.getString("hand","main").equalsIgnoreCase("main");
                 int amount = section.getInt("amount", 1);
                 List<String> items = ListUtils.toList(section.get("item"));
+                boolean any = items.contains("any") || items.contains("*");
                 return context -> {
                     ItemStack itemStack = mainOrOff ?
                             context.holder().getInventory().getItemInMainHand()
                             : context.holder().getInventory().getItemInOffHand();
                     String id = plugin.getItemManager().getItemID(itemStack);
-                    if (items.contains(id) && itemStack.getAmount() >= amount) return true;
+                    if ((items.contains(id) || any) && itemStack.getAmount() >= amount) return true;
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
