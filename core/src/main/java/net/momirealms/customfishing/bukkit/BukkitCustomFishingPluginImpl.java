@@ -216,26 +216,26 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
 
     @Override
     public void disable() {
-        this.eventManager.disable();
-        this.configManager.disable();
-        this.requirementManager.disable();
-        this.actionManager.disable();
-        this.placeholderManager.disable();
-        this.itemManager.disable();
-        this.competitionManager.disable();
-        this.marketManager.disable();
-        this.lootManager.disable();
-        this.coolDownManager.disable();
-        this.entityManager.disable();
-        this.blockManager.disable();
-        this.statisticsManager.disable();
-        this.effectManager.disable();
-        this.hookManager.disable();
-        this.bagManager.disable();
-        this.integrationManager.disable();
-        this.storageManager.disable();
-        this.hologramManager.disable();
-        this.commandManager.unregisterFeatures();
+        if (this.eventManager != null) this.eventManager.disable();
+        if (this.configManager != null) this.configManager.disable();
+        if (this.requirementManager != null) this.requirementManager.disable();
+        if (this.actionManager != null) this.actionManager.disable();
+        if (this.placeholderManager != null) this.placeholderManager.disable();
+        if (this.itemManager != null) this.itemManager.disable();
+        if (this.competitionManager != null) this.competitionManager.disable();
+        if (this.marketManager != null) this.marketManager.disable();
+        if (this.lootManager != null) this.lootManager.disable();
+        if (this.coolDownManager != null) this.coolDownManager.disable();
+        if (this.entityManager != null) this.entityManager.disable();
+        if (this.blockManager != null) this.blockManager.disable();
+        if (this.statisticsManager != null) this.statisticsManager.disable();
+        if (this.effectManager != null) this.effectManager.disable();
+        if (this.hookManager != null) this.hookManager.disable();
+        if (this.bagManager != null) this.bagManager.disable();
+        if (this.integrationManager != null)  this.integrationManager.disable();
+        if (this.storageManager != null) this.storageManager.disable();
+        if (this.hologramManager != null) this.hologramManager.disable();
+        if (this.commandManager != null) this.commandManager.unregisterFeatures();
         this.scheduler.shutdownScheduler();
         this.scheduler.shutdownExecutor();
     }
