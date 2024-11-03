@@ -287,7 +287,9 @@ public class RedisManager extends AbstractStorage {
                 byte[] data = jedis.get(key);
                 jedis.del(key);
                 if (data != null) {
-                    future.complete(Optional.of(plugin.getStorageManager().fromBytes(data)));
+                    PlayerData playerData = plugin.getStorageManager().fromBytes(data);
+                    playerData.uuid(uuid);
+                    future.complete(Optional.of(playerData));
                 } else {
                     future.complete(Optional.empty());
                 }

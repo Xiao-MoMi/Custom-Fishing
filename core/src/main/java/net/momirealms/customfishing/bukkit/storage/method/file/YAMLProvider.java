@@ -74,6 +74,7 @@ public class YAMLProvider extends AbstractStorage {
         }
         YamlDocument data = plugin.getConfigManager().loadData(dataFile);
         PlayerData playerData = PlayerData.builder()
+                .uuid(uuid)
                 .bag(new InventoryData(data.getString("bag", ""), data.getInt("size", 9)))
                 .earnings(new EarningData(data.getDouble("earnings"), data.getInt("date")))
                 .statistics(getStatistics(data.getSection("stats")))
