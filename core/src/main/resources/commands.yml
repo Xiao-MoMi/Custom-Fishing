@@ -193,3 +193,12 @@ debug_loot:
   usage:
     - /customfishing debug loot
     - /cfishing debug loot
+
+# A command to debug the biome
+# Usage: [COMMAND]
+debug_biome:
+  enable: true
+  permission: customfishing.command.debug
+  usage:
+    - /customfishing debug biome
+    - /cfishing debug biome

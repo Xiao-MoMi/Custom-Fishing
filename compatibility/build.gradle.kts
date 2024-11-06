@@ -51,6 +51,8 @@ dependencies {
     compileOnly(files("libs/zaphkiel-2.0.24.jar"))
     compileOnly(files("libs/ExecutableItems-7.24.9.29.jar"))
     compileOnly(files("libs/SCore-5.24.9.29.jar"))
+    compileOnly(files("libs/SCore-5.24.9.29.jar"))
+    compileOnly(files("libs/CraftEngine-beta.jar"))
     compileOnly("com.github.LoneDev6:API-ItemsAdder:3.6.1")
     compileOnly("net.Indyuce:MMOItems-API:6.10-SNAPSHOT")
     compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")

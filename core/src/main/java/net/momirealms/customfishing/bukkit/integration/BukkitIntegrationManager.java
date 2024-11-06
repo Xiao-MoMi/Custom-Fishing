@@ -81,6 +81,9 @@ public class BukkitIntegrationManager implements IntegrationManager {
             registerBlockProvider(new ItemsAdderBlockProvider());
             registerEntityProvider(new ItemsAdderEntityProvider());
         }
+        if (isHooked("CraftEngine")) {
+            registerItemProvider(new CraftEngineProvider());
+        }
         if (isHooked("MMOItems")) {
             registerItemProvider(new MMOItemsItemProvider());
         }
