@@ -95,6 +95,15 @@ public interface ItemManager extends Reloadable {
     @Nullable
     String getCustomFishingItemID(@NotNull ItemStack itemStack);
 
+    /**
+     * Gets the loot by providing the context
+     *
+     * @param context context
+     * @param rod rod
+     * @param hook hook
+     * @return the loot
+     */
+    @NotNull
     ItemStack getItemLoot(@NotNull Context<Player> context, ItemStack rod, FishHook hook);
 
     /**

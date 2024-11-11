@@ -177,6 +177,7 @@ public class BukkitItemManager implements ItemManager, Listener {
         return (String) factory.wrap(itemStack).getTag("CustomFishing", "id").orElse(null);
     }
 
+    @NotNull
     @Override
     public ItemStack getItemLoot(@NotNull Context<Player> context, ItemStack rod, FishHook hook) {
         String id = requireNonNull(context.arg(ContextKeys.ID));

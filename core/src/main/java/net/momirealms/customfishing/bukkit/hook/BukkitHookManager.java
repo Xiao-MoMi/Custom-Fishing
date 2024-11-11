@@ -151,7 +151,6 @@ public class BukkitHookManager implements HookManager, Listener {
                 newLore.add(previous);
             }
             wrapped.lore(newLore);
-
             wrapped.load();
             return;
         }
@@ -200,6 +199,9 @@ public class BukkitHookManager implements HookManager, Listener {
         Item<ItemStack> wrappedHook = plugin.getItemManager().wrap(clonedHook);
         DurabilityItem durabilityItem;
         if (wrappedHook.hasTag("CustomFishing", "max_dur")) {
+            durabilityItem = new CustomDurabilityItem(wrappedHook);
+        } else if (hookConfig.maxUsages() > 0) {
+            wrappedHook.setTag(hookConfig.maxUsages(), "CustomFishing", "max_dur");
             durabilityItem = new CustomDurabilityItem(wrappedHook);
         } else {
             durabilityItem = new VanillaDurabilityItem(wrappedHook);

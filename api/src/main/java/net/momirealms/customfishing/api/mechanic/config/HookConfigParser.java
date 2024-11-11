@@ -43,6 +43,7 @@ public class HookConfigParser {
 
     private final String id;
     private final String material;
+    private final int maxUsages;
     private final List<PriorityFunction<BiConsumer<Item<ItemStack>, Context<Player>>>> tagConsumers = new ArrayList<>();
     private final List<Consumer<EventCarrier.Builder>> eventBuilderConsumers = new ArrayList<>();
     private final List<Consumer<HookConfig.Builder>> hookBuilderConsumers = new ArrayList<>();
@@ -53,6 +54,7 @@ public class HookConfigParser {
     public HookConfigParser(String id, Section section, Map<String, Node<ConfigParserFunction>> functionMap) {
         this.id = id;
         this.material = section.getString("material");
+        this.maxUsages = section.getInt("max-durability", -1);
         if (!section.contains("tag")) section.set("tag", true);
         analyze(section, functionMap);
     }
@@ -135,6 +137,7 @@ public class HookConfigParser {
 
     public HookConfig getHook() {
         HookConfig.Builder builder = HookConfig.builder()
+                .maxUsages(maxUsages)
                 .id(id);
         for (Consumer<HookConfig.Builder> consumer : hookBuilderConsumers) {
             consumer.accept(builder);

@@ -39,6 +39,13 @@ public interface HookConfig {
     List<String> lore();
 
     /**
+     * Gets the max usages of the hook
+     *
+     * @return the max usages
+     */
+    int maxUsages();
+
+    /**
      * Creates a new builder for constructing {@link HookConfig} instances.
      *
      * @return a new {@link Builder} instance.
@@ -59,6 +66,11 @@ public interface HookConfig {
          * @return the current {@link Builder} instance.
          */
         Builder id(String id);
+
+        /**
+         * Sets the max usages of the hook
+         */
+        Builder maxUsages(int maxUsages);
 
         /**
          * Sets the lore for the hook configuration.

@@ -22,12 +22,12 @@ import java.util.List;
 public class HookConfigImpl implements HookConfig {
 
     private final String id;
-    private final int maxDurability;
+    private final int maxUsages;
     private final List<String> lore;
 
-    public HookConfigImpl(String id, int maxDurability, List<String> lore) {
+    public HookConfigImpl(String id, int maxUsages, List<String> lore) {
         this.id = id;
-        this.maxDurability = maxDurability;
+        this.maxUsages = maxUsages;
         this.lore = lore;
     }
 
@@ -41,13 +41,23 @@ public class HookConfigImpl implements HookConfig {
         return lore;
     }
 
+    @Override
+    public int maxUsages() {
+        return maxUsages;
+    }
+
     public static class BuilderImpl implements Builder {
         private String id;
-        private int maxDurability;
+        private int maxUsages;
         private List<String> lore;
         @Override
         public Builder id(String id) {
             this.id = id;
+            return this;
+        }
+        @Override
+        public Builder maxUsages(int maxUsages) {
+            this.maxUsages = maxUsages;
             return this;
         }
         @Override
@@ -57,7 +67,7 @@ public class HookConfigImpl implements HookConfig {
         }
         @Override
         public HookConfig build() {
-            return new HookConfigImpl(id, maxDurability, lore);
+            return new HookConfigImpl(id, maxUsages, lore);
         }
     }
 }
