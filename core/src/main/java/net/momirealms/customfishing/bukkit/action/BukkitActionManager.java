@@ -126,7 +126,7 @@ public class BukkitActionManager implements ActionManager<Player> {
             plugin.getPluginLogger().warn("Action type: " + section.getString("type") + " doesn't exist.");
             return Action.empty();
         }
-        return factory.process(section.get("value"), section.getDouble("chance", 1d));
+        return factory.process(section.get("value"), section.contains("chance") ? MathValue.auto(section.get("chance")) : MathValue.plain(1));
     }
 
     @NotNull
@@ -152,7 +152,7 @@ public class BukkitActionManager implements ActionManager<Player> {
             plugin.getPluginLogger().warn("Action type: " + type + " doesn't exist.");
             return Action.empty();
         }
-        return factory.process(args, 1);
+        return factory.process(args, MathValue.plain(1));
     }
 
     private void registerBuiltInActions() {
@@ -178,7 +178,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         registerAction((args, chance) -> {
             List<String> messages = ListUtils.toList(args);
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 List<String> replaced = plugin.getPlaceholderManager().parse(context.holder(), messages, context.placeholderMap());
                 Audience audience = plugin.getSenderFactory().getAudience(context.holder());
                 for (String text : replaced) {
@@ -189,7 +189,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         registerAction((args, chance) -> {
             List<String> messages = ListUtils.toList(args);
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 String random = messages.get(RandomUtils.generateRandomInt(0, messages.size() - 1));
                 random = BukkitPlaceholderManager.getInstance().parse(context.holder(), random, context.placeholderMap());
                 Audience audience = plugin.getSenderFactory().getAudience(context.holder());
@@ -199,7 +199,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         registerAction((args, chance) -> {
             List<String> messages = ListUtils.toList(args);
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 List<String> replaced = plugin.getPlaceholderManager().parse(context.holder(), messages, context.placeholderMap());
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     Audience audience = plugin.getSenderFactory().getAudience(player);
@@ -214,7 +214,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 List<String> messages = ListUtils.toList(section.get("message"));
                 MathValue<Player> range = MathValue.auto(section.get("range"));
                 return context -> {
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     double realRange = range.evaluate(context);
                     Player owner = context.holder();
                     Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
@@ -244,7 +244,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         registerAction((args, chance) -> {
             List<String> commands = ListUtils.toList(args);
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 List<String> replaced = BukkitPlaceholderManager.getInstance().parse(context.holder(), commands, context.placeholderMap());
                 plugin.getScheduler().sync().run(() -> {
                     for (String text : replaced) {
@@ -256,7 +256,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         registerAction((args, chance) -> {
             List<String> commands = ListUtils.toList(args);
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 List<String> replaced = BukkitPlaceholderManager.getInstance().parse(context.holder(), commands, context.placeholderMap());
                 plugin.getScheduler().sync().run(() -> {
                     for (String text : replaced) {
@@ -268,7 +268,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         registerAction((args, chance) -> {
             List<String> commands = ListUtils.toList(args);
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 String random = commands.get(ThreadLocalRandom.current().nextInt(commands.size()));
                 random = BukkitPlaceholderManager.getInstance().parse(context.holder(), random, context.placeholderMap());
                 String finalRandom = random;
@@ -282,7 +282,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 List<String> cmd = ListUtils.toList(section.get("command"));
                 MathValue<Player> range = MathValue.auto(section.get("range"));
                 return context -> {
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     Player owner = context.holder();
                     double realRange = range.evaluate(context);
                     Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
@@ -304,9 +304,9 @@ public class BukkitActionManager implements ActionManager<Player> {
     }
 
     private void registerCloseInvAction() {
-        registerAction((args, chance) -> condition -> {
-            if (Math.random() > chance) return;
-            condition.holder().closeInventory();
+        registerAction((args, chance) -> context -> {
+            if (Math.random() > chance.evaluate(context)) return;
+            context.holder().closeInventory();
         }, "close-inv");
     }
 
@@ -314,7 +314,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         registerAction((args, chance) -> {
             String text = (String) args;
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 Audience audience = plugin.getSenderFactory().getAudience(context.holder());
                 Component component = AdventureHelper.miniMessage(plugin.getPlaceholderManager().parse(context.holder(), text, context.placeholderMap()));
                 audience.sendActionBar(component);
@@ -323,7 +323,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         registerAction((args, chance) -> {
             List<String> texts = ListUtils.toList(args);
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 String random = texts.get(RandomUtils.generateRandomInt(0, texts.size() - 1));
                 random = plugin.getPlaceholderManager().parse(context.holder(), random, context.placeholderMap());
                 Audience audience = plugin.getSenderFactory().getAudience(context.holder());
@@ -335,7 +335,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 String actionbar = section.getString("actionbar");
                 MathValue<Player> range = MathValue.auto(section.get("range"));
                 return context -> {
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     Player owner = context.holder();
                     Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
                     double realRange = range.evaluate(context);
@@ -359,7 +359,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         registerAction((args, chance) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 final Player player = context.holder();
                 ExperienceOrb entity = player.getLocation().getWorld().spawn(player.getLocation().clone().add(0,0.5,0), ExperienceOrb.class);
                 entity.setExperience((int) value.evaluate(context));
@@ -368,7 +368,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         registerAction((args, chance) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 final Player player = context.holder();
                 player.giveExp((int) Math.round(value.evaluate(context)));
                 Audience audience = plugin.getSenderFactory().getAudience(player);
@@ -378,7 +378,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         registerAction((args, chance) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 Player player = context.holder();
                 player.setLevel((int) Math.max(0, player.getLevel() + value.evaluate(context)));
             };
@@ -389,7 +389,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         registerAction((args, chance) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 Player player = context.holder();
                 player.setFoodLevel((int) (player.getFoodLevel() + value.evaluate(context)));
             };
@@ -397,7 +397,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         registerAction((args, chance) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 Player player = context.holder();
                 player.setSaturation((float) (player.getSaturation() + value.evaluate(context)));
             };
@@ -421,7 +421,7 @@ public class BukkitActionManager implements ActionManager<Player> {
             }
             return context -> {
                 if (context.holder() == null) return;
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 Player player = context.holder();
                 EquipmentSlot hand = context.arg(ContextKeys.SLOT);
                 if (mainOrOff == null && hand == null) {
@@ -452,7 +452,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 return Action.empty();
             }
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 Player player = context.holder();
                 if (player == null) return;
                 EquipmentSlot tempSlot = slot;
@@ -481,7 +481,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 int amount = section.getInt("amount", 1);
                 boolean toInventory = section.getBoolean("to-inventory", false);
                 return context -> {
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     Player player = context.holder();
                     ItemStack itemStack = plugin.getItemManager().buildAny(context, id);
                     if (itemStack != null) {
@@ -518,7 +518,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 }
             }
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 for (Action<Player> action : actions) {
                     action.trigger(context);
                 }
@@ -541,7 +541,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 async = false;
             }
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 Location location = context.arg(ContextKeys.LOCATION);
                 if (async) {
                     plugin.getScheduler().asyncLater(() -> {
@@ -577,7 +577,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 duration = 20;
             }
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 Location location = context.arg(ContextKeys.LOCATION);
                 SchedulerTask task;
                 if (async) {
@@ -600,15 +600,15 @@ public class BukkitActionManager implements ActionManager<Player> {
             if (args instanceof Section section) {
                 Action<Player>[] actions = parseActions(section.getSection("actions"));
                 Requirement<Player>[] requirements = plugin.getRequirementManager().parseRequirements(section.getSection("conditions"), true);
-                return condition -> {
-                    if (Math.random() > chance) return;
+                return context -> {
+                    if (Math.random() > chance.evaluate(context)) return;
                     for (Requirement<Player> requirement : requirements) {
-                        if (!requirement.isSatisfied(condition)) {
+                        if (!requirement.isSatisfied(context)) {
                             return;
                         }
                     }
                     for (Action<Player> action : actions) {
-                        action.trigger(condition);
+                        action.trigger(context);
                     }
                 };
             } else {
@@ -627,7 +627,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     }
                 }
                 return context -> {
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     outer:
                     for (Pair<Requirement<Player>[], Action<Player>[]> pair : conditionActionPairList) {
                         if (pair.left() != null)
@@ -654,7 +654,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         registerAction((args, chance) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 if (!VaultHook.isHooked()) return;
                 VaultHook.deposit(context.holder(), value.evaluate(context));
             };
@@ -662,7 +662,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         registerAction((args, chance) -> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 if (!VaultHook.isHooked()) return;
                 VaultHook.withdraw(context.holder(), value.evaluate(context));
             };
@@ -680,7 +680,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                         section.getInt("amplifier", 0)
                 );
                 return context -> {
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     context.holder().addPotionEffect(potionEffect);
                 };
             } else {
@@ -700,7 +700,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                         section.getDouble("pitch", 1.0).floatValue()
                 );
                 return context -> {
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     Audience audience = plugin.getSenderFactory().getAudience(context.holder());
                     AdventureHelper.playSound(audience, sound);
                 };
@@ -718,7 +718,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 MathValue<Player> value = MathValue.auto(section.get("exp"));
                 String target = section.getString("target");
                 return context -> {
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     Optional.ofNullable(plugin.getIntegrationManager().getLevelerProvider(pluginName)).ifPresentOrElse(it -> {
                         it.addXp(context.holder(), target, value.evaluate(context));
                     }, () -> plugin.getPluginLogger().warn("Plugin (" + pluginName + "'s) level is not compatible. Please double check if it's a problem caused by pronunciation."));
@@ -739,7 +739,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 int stay = section.getInt("stay", 30);
                 int fadeOut = section.getInt("fade-out", 10);
                 return context -> {
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     final Player player = context.holder();
                     Audience audience = plugin.getSenderFactory().getAudience(player);
                     AdventureHelper.sendTitle(audience,
@@ -763,7 +763,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 int stay = section.getInt("stay", 30);
                 int fadeOut = section.getInt("fade-out", 10);
                 return context -> {
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     TextValue<Player> title = TextValue.auto(titles.get(RandomUtils.generateRandomInt(0, titles.size() - 1)));
                     TextValue<Player> subtitle = TextValue.auto(subtitles.get(RandomUtils.generateRandomInt(0, subtitles.size() - 1)));
                     final Player player = context.holder();
@@ -788,7 +788,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 int fadeOut = section.getInt("fade-out", 10);
                 int range = section.getInt("range", 0);
                 return context -> {
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
                     for (Player player : location.getWorld().getPlayers()) {
                         if (LocationUtils.getDistance(player.getLocation(), location) <= range) {
@@ -826,7 +826,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 boolean useItemDisplay = section.getBoolean("use-item-display", false);
                 String finalItemID = itemID;
                 return context -> {
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     Player owner = context.holder();
                     Location location = position ? requireNonNull(context.arg(ContextKeys.OTHER_LOCATION)).clone() : owner.getLocation().clone();
                     location.add(x.evaluate(context), y.evaluate(context) - 1, z.evaluate(context));
@@ -891,7 +891,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 int range = section.getInt("range", 16);
                 boolean useTextDisplay = section.getBoolean("use-text-display", false);
                 return context -> {
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     Player owner = context.holder();
                     Location location = position ? requireNonNull(context.arg(ContextKeys.OTHER_LOCATION)).clone() : owner.getLocation().clone();
                     location.add(x.evaluate(context), y.evaluate(context), z.evaluate(context));
@@ -923,7 +923,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 surrounding = (String) args;
             }
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 String previous = context.arg(ContextKeys.SURROUNDING);
                 context.arg(ContextKeys.SURROUNDING, surrounding);
                 Collection<String> loots = plugin.getLootManager().getWeightedLoots(Effect.newInstance(), context).keySet();
