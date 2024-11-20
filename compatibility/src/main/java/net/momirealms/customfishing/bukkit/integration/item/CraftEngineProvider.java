@@ -42,7 +42,7 @@ public class CraftEngineProvider implements ItemProvider {
     @Override
     public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
         ItemStack itemStack = CraftEngine.instance().itemManager().buildItem(Key.fromString(id), player);
-        return requireNonNull(itemStack);
+        return requireNonNull(itemStack, "Id: " + id + " not exists");
     }
 
     @Override
