@@ -22,6 +22,7 @@ import net.momirealms.customfishing.api.integration.*;
 import net.momirealms.customfishing.bukkit.block.BukkitBlockManager;
 import net.momirealms.customfishing.bukkit.entity.BukkitEntityManager;
 import net.momirealms.customfishing.bukkit.integration.block.ItemsAdderBlockProvider;
+import net.momirealms.customfishing.bukkit.integration.block.NexoBlockProvider;
 import net.momirealms.customfishing.bukkit.integration.block.OraxenBlockProvider;
 import net.momirealms.customfishing.bukkit.integration.enchant.AdvancedEnchantmentsProvider;
 import net.momirealms.customfishing.bukkit.integration.enchant.VanillaEnchantmentsProvider;
@@ -90,6 +91,10 @@ public class BukkitIntegrationManager implements IntegrationManager {
         if (isHooked("Oraxen", "1")) {
             registerItemProvider(new OraxenItemProvider());
             registerBlockProvider(new OraxenBlockProvider());
+        }
+        if (isHooked("Nexo")) {
+            registerItemProvider(new NexoItemProvider());
+            registerBlockProvider(new NexoBlockProvider());
         }
         if (isHooked("Zaphkiel")) {
             registerItemProvider(new ZaphkielItemProvider());
