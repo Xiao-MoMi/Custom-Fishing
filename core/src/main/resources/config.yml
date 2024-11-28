@@ -357,9 +357,7 @@ mechanics:
         symbol: 'C'
         material: RED_STAINED_GLASS_PANE
         display:
-          name: ' '
-        components:
-          minecraft:hide_tooltip: {}
+          name: '<red>Close'
         # Add actions on click
         action:
           action_1:
