@@ -206,7 +206,7 @@ mechanics:
     earnings-multiplier: 1
     # Layout for the market menu
     layout:
-      - 'AAAAAAAAA'
+      - 'AAAAAAAAC'
       - 'AIIIIIIIA'
       - 'AIIIIIIIA'
       - 'AIIIIIIIA'
@@ -353,6 +353,17 @@ mechanics:
           name: ' '
         components:
           minecraft:hide_tooltip: {}
+      close-icon:
+        symbol: 'C'
+        material: RED_STAINED_GLASS_PANE
+        display:
+          name: ' '
+        components:
+          minecraft:hide_tooltip: {}
+        # Add actions on click
+        action:
+          action_1:
+            type: close-inv
   # This section is only effective if "override-vanilla" is set to true
   # Meaning vanilla mechanics, such as lure enchantment, will no longer apply
   # You must configure their effects in CustomFishing instead

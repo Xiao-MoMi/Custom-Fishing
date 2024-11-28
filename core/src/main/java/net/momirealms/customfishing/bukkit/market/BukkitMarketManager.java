@@ -68,12 +68,13 @@ public class BukkitMarketManager implements MarketManager, Listener {
 
     protected TextValue<Player> title;
     protected String[] layout;
-    protected final HashMap<Character, CustomFishingItem> decorativeIcons;
+    protected final HashMap<Character, Pair<CustomFishingItem, Action<Player>[]>> decorativeIcons;
     protected final ConcurrentHashMap<UUID, MarketGUI> marketGUICache;
 
     protected char itemSlot;
     protected char sellSlot;
     protected char sellAllSlot;
+    protected char closeSlot;
 
     protected CustomFishingItem sellIconAllowItem;
     protected CustomFishingItem sellIconDenyItem;
@@ -190,7 +191,10 @@ public class BukkitMarketManager implements MarketManager, Listener {
             for (Map.Entry<String, Object> entry : decorativeSection.getStringRouteMappedValues(false).entrySet()) {
                 if (entry.getValue() instanceof Section innerSection) {
                     char symbol = Objects.requireNonNull(innerSection.getString("symbol")).charAt(0);
-                    decorativeIcons.put(symbol, new SingleItemParser("gui", innerSection, plugin.getConfigManager().getItemFormatFunctions()).getItem());
+                    decorativeIcons.put(symbol, Pair.of(
+                            new SingleItemParser("gui", innerSection, plugin.getConfigManager().getItemFormatFunctions()).getItem(),
+                            plugin.getActionManager().parseActions(innerSection.getSection("action")))
+                    );
                 }
             }
         }
@@ -213,8 +217,8 @@ public class BukkitMarketManager implements MarketManager, Listener {
         gui.addElement(new MarketGUIElement(itemSlot, new ItemStack(Material.AIR)));
         gui.addElement(new MarketDynamicGUIElement(sellSlot, new ItemStack(Material.AIR)));
         gui.addElement(new MarketDynamicGUIElement(sellAllSlot, new ItemStack(Material.AIR)));
-        for (Map.Entry<Character, CustomFishingItem> entry : decorativeIcons.entrySet()) {
-            gui.addElement(new MarketGUIElement(entry.getKey(), entry.getValue().build(context)));
+        for (Map.Entry<Character, Pair<CustomFishingItem, Action<Player>[]>> entry : decorativeIcons.entrySet()) {
+            gui.addElement(new MarketGUIElement(entry.getKey(), entry.getValue().left().build(context)));
         }
         gui.build().refresh().show();
         marketGUICache.put(player.getUniqueId(), gui);
@@ -334,6 +338,12 @@ public class BukkitMarketManager implements MarketManager, Listener {
                 }
             } else {
                 event.setCancelled(true);
+            }
+
+            Pair<CustomFishingItem, Action<Player>[]> decorativeIcon = this.decorativeIcons.get(element.getSymbol());
+            if (decorativeIcon != null) {
+                ActionManager.trigger(gui.context, decorativeIcon.right());
+                return;
             }
 
             if (element.getSymbol() == sellSlot) {
