@@ -62,6 +62,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
     private final HashMap<String, MathValue<Player>> priceMap;
     private String formula;
     private MathValue<Player> earningsLimit;
+    private MathValue<Player> earningsMultiplier;
     private boolean allowItemWithNoPrice;
     protected boolean sellFishingBag;
 
@@ -173,6 +174,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
         }
 
         this.earningsLimit = config.getBoolean("limitation.enable", true) ? MathValue.auto(config.getString("limitation.earnings", "10000")) : MathValue.plain(-1);
+        this.earningsMultiplier = MathValue.auto(config.get("earnings-multiplier", 1d));
 
         // Load item prices from the configuration
         Section priceSection = config.getSection("item-price");
@@ -337,7 +339,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
             if (element.getSymbol() == sellSlot) {
 
                 Pair<Integer, Double> pair = getItemsToSell(gui.context, gui.getItemsInGUI());
-                double totalWorth = pair.right();
+                double totalWorth = pair.right() * earningsMultiplier(gui.context);
                 gui.context.arg(ContextKeys.MONEY, money(totalWorth))
                         .arg(ContextKeys.MONEY_FORMATTED, String.format("%.2f", totalWorth))
                         .arg(ContextKeys.REST, money(earningLimit - earningData.earnings))
@@ -367,7 +369,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
                     optionalUserData.ifPresent(userData -> itemStacksToSell.addAll(storageContentsToList(userData.holder().getInventory().getStorageContents())));
                 }
                 Pair<Integer, Double> pair = getItemsToSell(gui.context, itemStacksToSell);
-                double totalWorth = pair.right();
+                double totalWorth = pair.right() * earningsMultiplier(gui.context);
                 gui.context.arg(ContextKeys.MONEY, money(totalWorth))
                         .arg(ContextKeys.MONEY_FORMATTED, String.format("%.2f", totalWorth))
                         .arg(ContextKeys.REST, money(earningLimit - earningData.earnings))
@@ -485,6 +487,11 @@ public class BukkitMarketManager implements MarketManager, Listener {
         return earningsLimit.evaluate(context);
     }
 
+    @Override
+    public double earningsMultiplier(Context<Player> context) {
+        return earningsMultiplier.evaluate(context);
+    }
+
     public Pair<Integer, Double> getItemsToSell(Context<Player> context, List<ItemStack> itemStacks) {
         int amount = 0;
         double worth = 0d;
@@ -506,9 +513,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
                 if (allowBundle && itemStack.getItemMeta() instanceof BundleMeta bundleMeta) {
                     clearWorthyItems(context, bundleMeta.getItems());
                     List<ItemStack> newItems = new ArrayList<>(bundleMeta.getItems());
-                    newItems.removeIf(item -> {
-                        return item.getAmount() == 0 || item.getType() == Material.AIR;
-                    });
+                    newItems.removeIf(item -> item.getAmount() == 0 || item.getType() == Material.AIR);
                     bundleMeta.setItems(newItems);
                     itemStack.setItemMeta(bundleMeta);
                     continue;
@@ -527,8 +532,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
     }
 
     protected String money(double money) {
-        String str = String.format("%.2f", money);
-        return str.replace(",", ".");
+        return String.format(Locale.US, "%.2f", money);
     }
 
     protected List<ItemStack> storageContentsToList(ItemStack[] itemStacks) {

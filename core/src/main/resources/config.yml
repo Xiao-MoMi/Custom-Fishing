@@ -202,6 +202,8 @@ mechanics:
     limitation:
       enable: true
       earnings: '10000' # Expressions can be used here
+    # You can use expressions here if you want some players to earn more from selling fish
+    earnings-multiplier: 1
     # Layout for the market menu
     layout:
       - 'AAAAAAAAA'

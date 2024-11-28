@@ -58,4 +58,6 @@ public interface MarketManager extends Reloadable {
      * @return the earning limit as a double
      */
     double earningLimit(Context<Player> context);
+
+    double earningsMultiplier(Context<Player> context);
 }

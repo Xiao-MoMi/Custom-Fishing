@@ -114,7 +114,7 @@ public class MarketGUI {
         MarketDynamicGUIElement sellElement = (MarketDynamicGUIElement) getElement(manager.sellSlot);
         if (sellElement != null && !sellElement.getSlots().isEmpty()) {
             Pair<Integer, Double> pair = manager.getItemsToSell(context, getItemsInGUI());
-            double totalWorth = pair.right();
+            double totalWorth = pair.right() * manager.earningsMultiplier(context);
             int soldAmount = pair.left();
             context.arg(ContextKeys.MONEY, manager.money(totalWorth))
                     .arg(ContextKeys.MONEY_FORMATTED, String.format("%.2f", totalWorth))
@@ -138,7 +138,7 @@ public class MarketGUI {
                 optionalUserData.ifPresent(userData -> itemStacksToSell.addAll(manager.storageContentsToList(userData.holder().getInventory().getStorageContents())));
             }
             Pair<Integer, Double> pair = manager.getItemsToSell(context, itemStacksToSell);
-            double totalWorth = pair.right();
+            double totalWorth = pair.right() * manager.earningsMultiplier(context);
             int soldAmount = pair.left();
             context.arg(ContextKeys.MONEY, manager.money(totalWorth))
                     .arg(ContextKeys.MONEY_FORMATTED, String.format("%.2f", totalWorth))

@@ -638,7 +638,7 @@ public class BukkitConfigManager extends ConfigManager {
                     }
                 }));
             }
-            case "group-mod" -> {
+            case "group-mod", "group_mod" -> {
                 var op = parseGroupWeightOperation(section.getStringList("value"));
                 return (((effect, context, phase) -> {
                     if (phase == 1) {
@@ -647,7 +647,7 @@ public class BukkitConfigManager extends ConfigManager {
                     }
                 }));
             }
-            case "group-mod-ignore-conditions" -> {
+            case "group-mod-ignore-conditions", "group_mod_ignore_conditions" -> {
                 var op = parseGroupWeightOperation(section.getStringList("value"));
                 return (((effect, context, phase) -> {
                     if (phase == 1) {
@@ -656,7 +656,7 @@ public class BukkitConfigManager extends ConfigManager {
                     }
                 }));
             }
-            case "wait-time" -> {
+            case "wait-time", "wait_time" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
                 return (((effect, context, phase) -> {
                     if (phase == 2) {
@@ -665,7 +665,7 @@ public class BukkitConfigManager extends ConfigManager {
                     }
                 }));
             }
-            case "hook-time", "wait-time-multiplier" -> {
+            case "hook-time", "hook_time", "wait-time-multiplier", "wait_time_multiplier" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
                 return (((effect, context, phase) -> {
                     if (phase == 2) {
@@ -683,7 +683,7 @@ public class BukkitConfigManager extends ConfigManager {
                     }
                 }));
             }
-            case "difficulty-multiplier", "difficulty-bonus" -> {
+            case "difficulty-multiplier", "difficulty_multiplier", "difficulty-bonus" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
                 return (((effect, context, phase) -> {
                     if (phase == 2) {
