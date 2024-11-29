@@ -86,7 +86,7 @@ public class GiveItemCommand extends BukkitCommandFeature<CommandSender> {
                             }
                         }
                         handleFeedback(context, MessageConstants.COMMAND_ITEM_GIVE_SUCCESS, Component.text(player.getName()), Component.text(amount), Component.text(id));
-                    } catch (NullPointerException e) {
+                    } catch (Exception e) {
                         handleFeedback(context, MessageConstants.COMMAND_ITEM_FAILURE_NOT_EXIST, Component.text(id));
                     }
                 });

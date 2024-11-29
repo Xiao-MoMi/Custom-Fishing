@@ -85,7 +85,7 @@ public class GetItemCommand extends BukkitCommandFeature<CommandSender> {
                             }
                         }
                         handleFeedback(context, MessageConstants.COMMAND_ITEM_GET_SUCCESS, Component.text(amount), Component.text(id));
-                    } catch (NullPointerException e) {
+                    } catch (Exception e) {
                         handleFeedback(context, MessageConstants.COMMAND_ITEM_FAILURE_NOT_EXIST, Component.text(id));
                     }
                 });
