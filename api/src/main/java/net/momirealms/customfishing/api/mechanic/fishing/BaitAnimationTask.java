@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.mechanic.fishing;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.entity.FishHook;
@@ -45,7 +46,7 @@ public class BaitAnimationTask implements Runnable {
     @Override
     public void run() {
         SparrowHeart.getInstance().sendClientSideEntityMotion(player, fishHook.getVelocity(), entityID);
-        SparrowHeart.getInstance().sendClientSideTeleportEntity(player, fishHook.getLocation().clone().subtract(0,0.6,0), false, entityID);
+        SparrowHeart.getInstance().sendClientSideTeleportEntity(player, fishHook.getLocation().clone().subtract(0,0.6,0), fishHook.getVelocity(), false, entityID);
     }
 
     public void cancel() {

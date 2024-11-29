@@ -102,6 +102,10 @@ public class VersionHelper {
         return version >= 20.49;
     }
 
+    public static boolean isVersionNewerThan1_21_3() {
+        return version >= 21.29;
+    }
+
     public static boolean isFolia() {
         return folia;
     }
