@@ -25,6 +25,7 @@ import net.momirealms.customfishing.api.util.PlayerUtils;
 import net.momirealms.customfishing.bukkit.command.BukkitCommandFeature;
 import net.momirealms.customfishing.common.command.CustomFishingCommandManager;
 import net.momirealms.customfishing.common.locale.MessageConstants;
+import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -77,7 +78,7 @@ public class GetItemCommand extends BukkitCommandFeature<CommandSender> {
                             amountToGive -= perStackSize;
                             ItemStack more = itemStack.clone();
                             more.setAmount(perStackSize);
-                            if (toInv) {
+                            if (toInv || player.getGameMode() == GameMode.SPECTATOR) {
                                 PlayerUtils.putItemsToInventory(player.getInventory(), more, more.getAmount());
                             } else {
                                 PlayerUtils.dropItem(player, more, false, true, false);
