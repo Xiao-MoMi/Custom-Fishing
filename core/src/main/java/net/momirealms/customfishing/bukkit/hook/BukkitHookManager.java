@@ -26,6 +26,7 @@ import net.kyori.adventure.text.ScoreComponent;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.hook.HookConfig;
 import net.momirealms.customfishing.api.mechanic.hook.HookManager;
@@ -129,7 +130,7 @@ public class BukkitHookManager implements HookManager, Listener {
             if (hookItemBase64 != null) {
                 itemStack = bytesToHook(hookItemBase64);
             } else {
-                itemStack = plugin.getItemManager().buildInternal(Context.player(player), id);
+                itemStack = plugin.getItemManager().buildInternal(Context.player(player).arg(ContextKeys.ID, id), id);
             }
             plugin.getItemManager().setDamage(player, itemStack, damage);
 

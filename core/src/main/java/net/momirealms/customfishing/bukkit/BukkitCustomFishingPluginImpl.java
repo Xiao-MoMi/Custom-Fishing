@@ -236,7 +236,11 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         if (this.integrationManager != null)  this.integrationManager.disable();
         if (this.storageManager != null) this.storageManager.disable();
         if (this.hologramManager != null) this.hologramManager.disable();
-        if (this.commandManager != null) this.commandManager.unregisterFeatures();
+        if (this.commandManager != null) {
+            if (!Bukkit.getServer().isStopping()) {
+                this.commandManager.unregisterFeatures();
+            }
+        }
         this.scheduler.shutdownScheduler();
         this.scheduler.shutdownExecutor();
     }

@@ -138,6 +138,9 @@ public class BukkitItemManager implements ItemManager, Listener {
     @NotNull
     @Override
     public ItemStack build(@NotNull Context<Player> context, @NotNull CustomFishingItem item) {
+        if (context.arg(ContextKeys.ID) == null) {
+            context.arg(ContextKeys.ID, item.id());
+        }
         ItemStack itemStack = getOriginalStack(context.holder(), item.material());
         if (itemStack.getType() == Material.AIR) return itemStack;
         plugin.getLootManager().getLoot(item.id()).ifPresent(loot -> {

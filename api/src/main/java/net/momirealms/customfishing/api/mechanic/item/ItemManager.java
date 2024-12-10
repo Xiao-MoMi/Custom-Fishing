@@ -27,6 +27,7 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +47,7 @@ public interface ItemManager extends Reloadable {
     boolean registerItem(@NotNull CustomFishingItem item);
 
     /**
-     * Builds an internal representation of an item using the given context and item ID.
+     * Builds an item using the given context and item ID.
      *
      * @param context the {@link Context} in which the item is built
      * @param id      the ID of the item to be built
@@ -54,6 +55,7 @@ public interface ItemManager extends Reloadable {
      * @throws NullPointerException if the item ID is not found
      */
     @Nullable
+    @ApiStatus.Internal
     ItemStack buildInternal(@NotNull Context<Player> context, @NotNull String id) throws NullPointerException;
 
     /**

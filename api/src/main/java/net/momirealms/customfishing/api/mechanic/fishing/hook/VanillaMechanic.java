@@ -89,9 +89,10 @@ public class VanillaMechanic implements HookMechanic {
                 return;
             }
             if (!ConfigManager.overrideVanillaWaitTime()) {
-                int before = Math.max(SparrowHeart.getInstance().getWaitTime(hook), 0);
+                int rawBefore = SparrowHeart.getInstance().getWaitTime(hook);
+                int before = Math.max(rawBefore, 0);
                 int after = (int) Math.max(100, before * effect.waitTimeMultiplier() + effect.waitTimeAdder());
-                BukkitCustomFishingPlugin.getInstance().debug("Wait time: " + before + " -> " + after + " ticks");
+                BukkitCustomFishingPlugin.getInstance().debug("Wait time: " + rawBefore + " -> " + after + " ticks");
                 SparrowHeart.getInstance().setWaitTime(hook, after);
             } else {
                 int before = ThreadLocalRandom.current().nextInt(ConfigManager.waterMaxTime() - ConfigManager.waterMinTime() + 1) + ConfigManager.waterMinTime();

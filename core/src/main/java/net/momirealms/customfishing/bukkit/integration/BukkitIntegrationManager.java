@@ -47,6 +47,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,6 +84,22 @@ public class BukkitIntegrationManager implements IntegrationManager {
         }
         if (isHooked("CraftEngine")) {
             registerItemProvider(new CraftEngineProvider());
+        }
+        if (isHooked("Nexo")) {
+            try {
+                Class<?> nexoItemProviderClass = Class.forName("net.momirealms.customfishing.bukkit.integration.item.NexoItemProvider");
+                Constructor<?> itemProviderConstructor = nexoItemProviderClass.getDeclaredConstructor();
+                itemProviderConstructor.setAccessible(true);
+                ItemProvider itemProvider = (ItemProvider) itemProviderConstructor.newInstance();
+                registerItemProvider(itemProvider);
+                Class<?> nexoBlockProviderClass = Class.forName("net.momirealms.customfishing.bukkit.integration.block.NexoBlockProvider");
+                Constructor<?> nexoBlockProviderConstructor = nexoBlockProviderClass.getDeclaredConstructor();
+                nexoBlockProviderConstructor.setAccessible(true);
+                BlockProvider blockProvider = (BlockProvider) nexoBlockProviderConstructor.newInstance();
+                registerBlockProvider(blockProvider);
+            } catch (ReflectiveOperationException exception) {
+                plugin.getPluginLogger().warn("Failed to hook Nexo", exception);
+            }
         }
         if (isHooked("MMOItems")) {
             registerItemProvider(new MMOItemsItemProvider());

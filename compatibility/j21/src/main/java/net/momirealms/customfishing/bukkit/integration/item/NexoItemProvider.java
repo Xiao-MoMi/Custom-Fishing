@@ -17,36 +17,30 @@
 
 package net.momirealms.customfishing.bukkit.integration.item;
 
-import net.momirealms.craftengine.api.CraftEngine;
-import net.momirealms.craftengine.common.util.Key;
-import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import com.nexomc.nexo.api.NexoItems;
+import com.nexomc.nexo.items.ItemBuilder;
 import net.momirealms.customfishing.api.integration.ItemProvider;
-import net.momirealms.customfishing.api.mechanic.context.Context;
-import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-import static java.util.Objects.requireNonNull;
+public class NexoItemProvider implements ItemProvider {
 
-public class CraftEngineProvider implements ItemProvider {
+    @Override
+    public @NotNull ItemStack buildItem(@NotNull Player player, @NotNull String id) {
+        return Optional.ofNullable(NexoItems.itemFromId(id)).map(ItemBuilder::build).orElseThrow(() -> new IllegalArgumentException("Item not found in Nexo: " + id));
+    }
+
+    @Override
+    public @Nullable String itemID(@NotNull ItemStack itemStack) {
+        return NexoItems.idFromItem(itemStack);
+    }
 
     @Override
     public String identifier() {
-        return "CraftEngine";
-    }
-
-    @NotNull
-    @Override
-    public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
-        ItemStack itemStack = CraftEngine.instance().itemManager().buildItem(Key.fromString(id), player);
-        return requireNonNull(itemStack, "Item not found in CraftEngine: " + id);
-    }
-
-    @Override
-    public String itemID(@NotNull ItemStack itemStack) {
-        return Optional.ofNullable(CraftEngine.instance().itemManager().itemId(itemStack)).map(Key::toString).orElse(null);
+        return "Nexo";
     }
 }

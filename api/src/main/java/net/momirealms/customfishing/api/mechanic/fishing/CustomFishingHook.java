@@ -180,8 +180,6 @@ public class CustomFishingHook {
                         context.arg(ContextKeys.OTHER_Z, hook.getLocation().getBlockZ());
 
                         // get the next loot
-
-
                         Loot loot;
                         try {
                             loot = plugin.getLootManager().getNextLoot(tempEffect, context);
@@ -201,11 +199,11 @@ public class CustomFishingHook {
                                 context.arg(ContextKeys.of("data_" + entry.getKey(), String.class), entry.getValue().render(context));
                             }
 
-                            plugin.debug("Next loot: " + loot.id());
+                            plugin.debug("Next Loot: " + loot.id());
                             plugin.debug(context);
                             // get its basic properties
                             Effect baseEffect = loot.baseEffect().toEffect(context);
-                            plugin.debug(baseEffect);
+                            plugin.debug("Loot Base Effect:" + baseEffect);
                             tempEffect.combine(baseEffect);
                             // apply the gears' effects
                             for (EffectModifier modifier : gears.effectModifiers()) {
@@ -218,6 +216,7 @@ public class CustomFishingHook {
                             EventUtils.fireAndForget(new FishingEffectApplyEvent(this, tempEffect, FishingEffectApplyEvent.Stage.FISHING));
 
                             // start the mechanic
+                            plugin.debug("Final Effect:" + tempEffect);
                             mechanic.start(tempEffect);
 
                             this.tempFinalEffect = tempEffect;
