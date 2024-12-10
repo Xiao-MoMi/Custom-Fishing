@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.api.mechanic.fishing;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.entity.FishHook;
