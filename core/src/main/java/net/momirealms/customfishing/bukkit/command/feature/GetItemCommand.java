@@ -87,6 +87,7 @@ public class GetItemCommand extends BukkitCommandFeature<CommandSender> {
                         handleFeedback(context, MessageConstants.COMMAND_ITEM_GET_SUCCESS, Component.text(amount), Component.text(id));
                     } catch (Exception e) {
                         handleFeedback(context, MessageConstants.COMMAND_ITEM_FAILURE_NOT_EXIST, Component.text(id));
+                        BukkitCustomFishingPlugin.getInstance().getPluginLogger().warn("Failed to get item:" + id, e);
                     }
                 });
     }
