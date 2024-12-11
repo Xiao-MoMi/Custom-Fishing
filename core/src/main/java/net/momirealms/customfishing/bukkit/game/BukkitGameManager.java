@@ -824,7 +824,7 @@ public class BukkitGameManager implements GameManager {
         this.registerGameType("accurate_click", ((id, section) -> {
             GameBasics basics = getGameBasics(section);
 
-            Set<String> chances = Objects.requireNonNull(section.getSection("success-rate-sections")).getRoutesAsStrings(false);
+            Set<String> chances = Objects.requireNonNull(section.getSection("success-rate-sections"), "success-rate-sections should not be null").getRoutesAsStrings(false);
             double[] successRate = new double[chances.size()];
             for(int i = 0; i < chances.size(); i++)
                 successRate[i] = section.getDouble("success-rate-sections." + (i + 1));

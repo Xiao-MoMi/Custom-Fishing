@@ -118,7 +118,12 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 if (hasRequirement(typeOrName)) {
                     requirements.add(parseRequirement(typeOrName, entry.getValue()));
                 } else {
-                    requirements.add(parseRequirement(section.getSection(typeOrName), runActions));
+                    Section s = section.getSection(typeOrName);
+                    if (s != null) {
+                        requirements.add(parseRequirement(s, runActions));
+                    } else {
+                        plugin.getPluginLogger().warn("Section: " + section.getRouteAsString() + "." + typeOrName + " is invalid.");
+                    }
                 }
             }
         return requirements.toArray(new Requirement[0]);
