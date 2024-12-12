@@ -177,6 +177,7 @@ public class BukkitItemManager implements ItemManager, Listener {
 
     @Override
     public String getCustomFishingItemID(@NotNull ItemStack itemStack) {
+        if (itemStack.getType() == Material.AIR) return null;
         return (String) factory.wrap(itemStack).getTag("CustomFishing", "id").orElse(null);
     }
 
