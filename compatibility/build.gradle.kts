@@ -58,6 +58,7 @@ dependencies {
     compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")
     compileOnly("pers.neige.neigeitems:NeigeItems:1.17.13")
     compileOnly("io.th0rgal:oraxen:1.168.0")
+    compileOnly("com.github.brcdev-minecraft:shopgui-api:3.0.0")
     // entity
     compileOnly("io.lumine:Mythic-Dist:5.6.2")
     // eco

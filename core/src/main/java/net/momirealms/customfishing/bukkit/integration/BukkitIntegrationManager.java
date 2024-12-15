@@ -39,6 +39,8 @@ import net.momirealms.customfishing.bukkit.integration.region.WorldGuardRegion;
 import net.momirealms.customfishing.bukkit.integration.season.AdvancedSeasonsProvider;
 import net.momirealms.customfishing.bukkit.integration.season.CustomCropsSeasonProvider;
 import net.momirealms.customfishing.bukkit.integration.season.RealisticSeasonsProvider;
+import net.momirealms.customfishing.bukkit.integration.shop.ShopGUICFItemProvider;
+import net.momirealms.customfishing.bukkit.integration.shop.ShopGUIHook;
 import net.momirealms.customfishing.bukkit.item.BukkitItemManager;
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.Bukkit;
@@ -178,6 +180,9 @@ public class BukkitIntegrationManager implements IntegrationManager {
             new CustomFishingPapi(plugin).load();
             new CompetitionPapi(plugin).load();
             new StatisticsPapi(plugin).load();
+        }
+        if (isHooked("ShopGUIPlus")) {
+            ShopGUIHook.register();
         }
     }
 

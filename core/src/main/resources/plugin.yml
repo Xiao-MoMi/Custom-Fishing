@@ -25,6 +25,7 @@ softdepend:
   - EcoJobs
   - Zaphkiel
   - WorldGuard
+  - ShopGUIPlus
 permissions:
   fishingbag.user:
     default: true
