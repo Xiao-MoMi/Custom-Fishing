@@ -74,6 +74,7 @@ public class ActionBarSender {
 
     public void show() {
         this.isShown = true;
+        this.refreshTimer = config.refreshRate();
         senderTask = BukkitCustomFishingPlugin.getInstance().getScheduler().asyncRepeating(() -> {
             switchTimer++;
             boolean forceUpdate = false;
@@ -82,14 +83,14 @@ public class ActionBarSender {
                 counter++;
                 forceUpdate = true;
             }
-            if (refreshTimer < config.refreshRate() && !forceUpdate){
-                refreshTimer++;
-            } else {
+            if (forceUpdate || refreshTimer >= config.refreshRate()) {
                 refreshTimer = 0;
                 DynamicText text = texts[counter % (texts.length)];
                 updatePrivatePlaceholders();
                 text.update(this.privateContext.placeholderMap());
                 audience.sendActionBar(AdventureHelper.miniMessage(text.getLatestValue()));
+            } else {
+                refreshTimer++;
             }
         }, 50, 50, TimeUnit.MILLISECONDS);
     }
