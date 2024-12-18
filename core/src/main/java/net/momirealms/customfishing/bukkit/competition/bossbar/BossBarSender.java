@@ -87,17 +87,19 @@ public class BossBarSender {
         this.bossBar.addViewer(audience);
         this.senderTask = BukkitCustomFishingPlugin.getInstance().getScheduler().asyncRepeating(() -> {
             switchTimer++;
+            boolean forceUpdate = false;
             if (switchTimer > config.switchInterval()) {
                 switchTimer = 0;
                 counter++;
+                forceUpdate= true;
             }
-            if (refreshTimer < config.refreshRate()){
+            if (refreshTimer < config.refreshRate() && !forceUpdate){
                 refreshTimer++;
             } else {
                 refreshTimer = 0;
                 DynamicText text = texts[counter % (texts.length)];
                 updatePrivatePlaceholders();
-                if (text.update(privateContext.placeholderMap())) {
+                if (forceUpdate || text.update(privateContext.placeholderMap())) {
                     bossBar.name(AdventureHelper.miniMessage(text.getLatestValue()));
                 }
                 bossBar.progress(competition.getProgress());

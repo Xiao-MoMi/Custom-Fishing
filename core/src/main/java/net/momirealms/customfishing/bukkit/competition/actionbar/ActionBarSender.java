@@ -76,11 +76,13 @@ public class ActionBarSender {
         this.isShown = true;
         senderTask = BukkitCustomFishingPlugin.getInstance().getScheduler().asyncRepeating(() -> {
             switchTimer++;
+            boolean forceUpdate = false;
             if (switchTimer > config.switchInterval()) {
                 switchTimer = 0;
                 counter++;
+                forceUpdate = true;
             }
-            if (refreshTimer < config.refreshRate()){
+            if (refreshTimer < config.refreshRate() && !forceUpdate){
                 refreshTimer++;
             } else {
                 refreshTimer = 0;
