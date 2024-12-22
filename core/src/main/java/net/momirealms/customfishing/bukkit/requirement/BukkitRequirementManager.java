@@ -201,6 +201,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         this.registerSneakRequirement();
         this.registerGameModeRequirement();
         this.registerEquipmentRequirement();
+        this.registerLiquidDepthRequirement();
     }
 
     private void registerImpossibleRequirement() {
@@ -720,6 +721,38 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 return false;
             };
         }, "ice-fishing");
+    }
+
+    private void registerLiquidDepthRequirement() {
+        registerRequirement((args, actions, advanced) -> {
+            String depthRange = (String) args;
+            String[] split = depthRange.split("~");
+            if (split.length != 2) {
+                plugin.getPluginLogger().warn("Invalid value found(" + depthRange + "). `liquid-depth` requires a range in the format 'min~max' (e.g., 1~10).");
+                return Requirement.empty();
+            }
+            int min;
+            int max;
+            try {
+                min = Integer.parseInt(split[0]);
+                max = Integer.parseInt(split[0]);
+            } catch (NumberFormatException e) {
+                plugin.getPluginLogger().warn("Invalid number format for range: " + depthRange, e);
+                return Requirement.empty();
+            }
+            return context -> {
+                Location location = requireNonNull(context.arg(ContextKeys.OTHER_LOCATION));
+                Location startLocation = location.getBlock().isLiquid() ? location.clone() : location.clone().subtract(0, 1, 0);
+                int depth = 0;
+                while (startLocation.getBlock().isLiquid()) {
+                    startLocation.subtract(0, 1, 0);
+                    depth++;
+                }
+                if (depth >= min && depth <= max) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        }, "liquid-depth");
     }
 
     private void registerLevelRequirement() {
