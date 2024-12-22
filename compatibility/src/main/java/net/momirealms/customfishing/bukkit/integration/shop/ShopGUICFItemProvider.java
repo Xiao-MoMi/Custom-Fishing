@@ -46,7 +46,7 @@ public class ShopGUICFItemProvider extends ItemProvider implements Listener {
 
     @Override
     public ItemStack loadItem(ConfigurationSection configurationSection) {
-        String id = configurationSection.getString("customfishing");
+        String id = configurationSection.getString("customFishing");
         if (id == null) return null;
         return plugin.getItemManager().buildInternal(Context.player(null).arg(ContextKeys.ID, id), id);
     }

@@ -368,21 +368,30 @@ mechanics:
   fishing-wait-time:
     # Toggle to override vanilla fishing wait times
     override-vanilla: false
-    # Wait time in ticks
+    # By default, the plugin will pick a random value from the maximum and minimum time for waiting time
     min-wait-time: 100
     max-wait-time: 600
+    # The minimum and maximum waiting time after applying the effects
+    final-min-wait-time: 50
+    final-max-wait-time: 1200
   # Lava fishing settings
   lava-fishing:
     enable: true
-    # Wait time in ticks
+    ## By default, the plugin will pick a random value from the maximum and minimum time for waiting time
     min-wait-time: 100
     max-wait-time: 600
+    # The minimum and maximum waiting time after applying the effects
+    final-min-wait-time: 50
+    final-max-wait-time: 1200
   # Void fishing settings
   void-fishing:
     enable: true
-    # Wait time in ticks
+    # By default, the plugin will pick a random value from the maximum and minimum time for waiting time
     min-wait-time: 100
     max-wait-time: 600
+    # The minimum and maximum waiting time after applying the effects
+    final-min-wait-time: 50
+    final-max-wait-time: 1200
   # Size configuration
   size:
     # Prevent certain effects from breaking the size limits
