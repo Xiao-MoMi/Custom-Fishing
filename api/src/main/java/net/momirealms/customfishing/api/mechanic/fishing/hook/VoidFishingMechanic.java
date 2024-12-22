@@ -198,7 +198,7 @@ public class VoidFishingMechanic implements HookMechanic {
 
     private void setWaitTime(Effect effect) {
         int before = ThreadLocalRandom.current().nextInt(ConfigManager.voidMaxTime() - ConfigManager.voidMinTime() + 1) + ConfigManager.voidMinTime();
-        int after = Math.max(ConfigManager.voidMinTime(), (int) (before * effect.waitTimeMultiplier() + effect.waitTimeAdder()));
+        int after = Math.min(Math.max(ConfigManager.finalVoidMinTime(), (int) (before * effect.waitTimeMultiplier() + effect.waitTimeAdder())), ConfigManager.finalVoidMaxTime());
         BukkitCustomFishingPlugin.getInstance().debug("Wait time: " + before + " -> " + after + " ticks");
         this.timeUntilLured = after;
     }

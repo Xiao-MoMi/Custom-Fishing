@@ -90,12 +90,18 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     protected boolean overrideVanillaWaitTime;
     protected int waterMinTime;
     protected int waterMaxTime;
+    protected int finalWaterMaxTime;
+    protected int finalWaterMinTime;
     protected boolean enableLavaFishing;
     protected int lavaMinTime;
     protected int lavaMaxTime;
+    protected int finalLavaMaxTime;
+    protected int finalLavaMinTime;
     protected boolean enableVoidFishing;
     protected int voidMinTime;
     protected int voidMaxTime;
+    protected int finalVoidMaxTime;
+    protected int finalVoidMinTime;
     protected int multipleLootSpawnDelay;
     protected boolean restrictedSizeRange;
     protected List<String> durabilityLore;
@@ -171,6 +177,14 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
         return instance.waterMaxTime;
     }
 
+    public static int finalWaterMinTime() {
+        return instance.finalWaterMinTime;
+    }
+
+    public static int finalWaterMaxTime() {
+        return instance.finalWaterMaxTime;
+    }
+
     public static boolean enableLavaFishing() {
         return instance.enableLavaFishing;
     }
@@ -183,6 +197,14 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
         return instance.lavaMaxTime;
     }
 
+    public static int finalLavaMinTime() {
+        return instance.finalLavaMinTime;
+    }
+
+    public static int finalLavaMaxTime() {
+        return instance.finalLavaMaxTime;
+    }
+
     public static boolean enableVoidFishing() {
         return instance.enableVoidFishing;
     }
@@ -193,6 +215,14 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     public static int voidMaxTime() {
         return instance.voidMaxTime;
+    }
+
+    public static int finalVoidMinTime() {
+        return instance.finalVoidMinTime;
+    }
+
+    public static int finalVoidMaxTime() {
+        return instance.finalVoidMaxTime;
     }
 
     public static int multipleLootSpawnDelay() {

@@ -190,14 +190,20 @@ public class BukkitConfigManager extends ConfigManager {
         overrideVanillaWaitTime = config.getBoolean("mechanics.fishing-wait-time.override-vanilla", false);
         waterMinTime = config.getInt("mechanics.fishing-wait-time.min-wait-time", 100);
         waterMaxTime = config.getInt("mechanics.fishing-wait-time.max-wait-time", 600);
+        finalWaterMinTime = config.getInt("mechanics.fishing-wait-time.final-min-wait-time", 50);
+        finalWaterMaxTime = config.getInt("mechanics.fishing-wait-time.final-max-wait-time", 1200);
 
         enableLavaFishing = config.getBoolean("mechanics.lava-fishing.enable", false);
         lavaMinTime = config.getInt("mechanics.lava-fishing.min-wait-time", 100);
         lavaMaxTime = config.getInt("mechanics.lava-fishing.max-wait-time", 600);
+        finalLavaMinTime = config.getInt("mechanics.lava-fishing.final-min-wait-time", 50);
+        finalLavaMaxTime = config.getInt("mechanics.lava-fishing.final-max-wait-time", 1200);
 
         enableVoidFishing = config.getBoolean("mechanics.void-fishing.enable", false);
         voidMinTime = config.getInt("mechanics.void-fishing.min-wait-time", 100);
         voidMaxTime = config.getInt("mechanics.void-fishing.max-wait-time", 600);
+        finalVoidMinTime = config.getInt("mechanics.void-fishing.final-min-wait-time", 50);
+        finalVoidMaxTime = config.getInt("mechanics.void-fishing.final-max-wait-time", 1200);
 
         restrictedSizeRange = config.getBoolean("mechanics.size.restricted-size-range", true);
 

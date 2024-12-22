@@ -219,7 +219,7 @@ public class LavaFishingMechanic implements HookMechanic {
 
     private void setWaitTime(Effect effect) {
         int before = ThreadLocalRandom.current().nextInt(ConfigManager.lavaMaxTime() - ConfigManager.lavaMinTime() + 1) + ConfigManager.lavaMinTime();
-        int after = Math.max(ConfigManager.lavaMinTime(), (int) (before * effect.waitTimeMultiplier() + effect.waitTimeAdder()));
+        int after = Math.min(Math.max(ConfigManager.finalLavaMinTime(), (int) (before * effect.waitTimeMultiplier() + effect.waitTimeAdder())), ConfigManager.finalLavaMaxTime());
         BukkitCustomFishingPlugin.getInstance().debug("Wait time: " + before + " -> " + after + " ticks");
         this.timeUntilLured = after;
     }
