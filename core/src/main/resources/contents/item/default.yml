@@ -8,8 +8,6 @@
 vanilla:
   show-in-fishfinder: false
   disable-stat: true
-  group:
-    - river
   events:
     success:
       action_mending:

@@ -30,8 +30,6 @@ import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import dev.dejvokep.boostedyaml.utils.format.NodeRole;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.event.FishingEffectApplyEvent;
-import net.momirealms.customfishing.api.event.FishingResultEvent;
 import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionManager;
@@ -968,10 +966,6 @@ public class BukkitConfigManager extends ConfigManager {
             for (String member : getGroupMembers(groupExpression, groupProvider)) {
                 result.add(Pair.of(member, operation));
             }
-        }
-        FishingEffectApplyEvent event;
-        if (event.getStage() == FishingEffectApplyEvent.Stage.FISHING) {
-            event.getEffect().difficultyAdder(event.getEffect().difficultyAdder() + 10d);
         }
         return result;
     }

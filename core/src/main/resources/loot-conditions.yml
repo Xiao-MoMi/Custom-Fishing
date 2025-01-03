@@ -11,9 +11,9 @@ global-group:
         '!rod':
           - magical_rod
       list:
-        - rubbish:+15
-        - seagrass:+5
-        - vanilla:+60
+        - 'rubbish:+15'
+        - 'seagrass:+5'
+        - 'vanilla:+60'
       sub-groups:
         ocean_fish:
           conditions:
@@ -29,13 +29,13 @@ global-group:
               - minecraft:warm_ocean
           list:
             # decrease the chance of getting rubbish when fishing in ocean
-            - rubbish:-10
-            - apple_crate:+2
-            - carrot_crate:+2
-            - kelp:+25
-            - group_for_each:ocean&no_star:+15
-            - group_for_each:ocean&silver_star:+3
-            - group_for_each:ocean&golden_star:+1
+            - 'rubbish:-10'
+            - 'apple_crate:+2'
+            - 'carrot_crate:+2'
+            - 'kelp:+25'
+            - 'group_for_each:ocean&no_star:+15'
+            - 'group_for_each:ocean&silver_star:+3'
+            - 'group_for_each:ocean&golden_star:+1'
           sub-groups:
             warm_ocean_fish:
               conditions:
@@ -44,9 +44,9 @@ global-group:
                   - minecraft:deep_lukewarm_ocean
                   - minecraft:warm_ocean
               list:
-                - group_for_each:warm_ocean&no_star:+15
-                - group_for_each:warm_ocean&silver_star:+3
-                - group_for_each:warm_ocean&golden_star:+1
+                - 'group_for_each:warm_ocean&no_star:+15'
+                - 'group_for_each:warm_ocean&silver_star:+3'
+                - 'group_for_each:warm_ocean&golden_star:+1'
         river_fish:
           conditions:
             '!biome':
@@ -60,17 +60,17 @@ global-group:
               - minecraft:deep_lukewarm_ocean
               - minecraft:warm_ocean
           list:
-            - rainbow_fish:+5
-            - stick:+15
-            - group_for_each:river&no_star:+15
-            - group_for_each:river&silver_star:+3
-            - group_for_each:river&golden_star:+1
+            - 'rainbow_fish:+5'
+            - 'stick:+15'
+            - 'group_for_each:river&no_star:+15'
+            - 'group_for_each:river&silver_star:+3'
+            - 'group_for_each:river&golden_star:+1'
           sub-groups:
             swamp_fish:
               list:
-                - group_for_each:swamp&no_star:+15
-                - group_for_each:swamp&silver_star:+3
-                - group_for_each:swamp&golden_star:+1
+                - 'group_for_each:swamp&no_star:+15'
+                - 'group_for_each:swamp&silver_star:+3'
+                - 'group_for_each:swamp&golden_star:+1'
               conditions:
                 biome:
                   - minecraft:swamp
@@ -80,9 +80,9 @@ global-group:
                 ypos:
                   - -64~0
               list:
-                - group_for_each:cave&no_star:+9
-                - group_for_each:cave&silver_star:+3
-                - group_for_each:cave&golden_star:+1
+                - 'group_for_each:cave&no_star:+9'
+                - 'group_for_each:cave&silver_star:+3'
+                - 'group_for_each:cave&golden_star:+1'
         # Skeletons might appear if player holds the bone_rod and fish at night
         skeleton_group:
           conditions:
@@ -118,9 +118,9 @@ global-group:
             - 'gold_ingot:+3'
             - 'gold_nugget:+8'
             - 'magma_cube:+3'
-            - group_for_each:lava&no_star:+15
-            - group_for_each:lava&silver_star:+3
-            - group_for_each:lava&golden_star:+1
+            - 'group_for_each:lava&no_star:+15'
+            - 'group_for_each:lava&silver_star:+3'
+            - 'group_for_each:lava&golden_star:+1'
           sub-groups:
             skeleton_group:
               conditions:
