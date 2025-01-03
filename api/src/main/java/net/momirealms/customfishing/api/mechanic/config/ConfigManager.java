@@ -37,6 +37,7 @@ import net.momirealms.customfishing.api.mechanic.entity.EntityConfig;
 import net.momirealms.customfishing.api.mechanic.event.EventCarrier;
 import net.momirealms.customfishing.api.mechanic.hook.HookConfig;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import net.momirealms.customfishing.api.mechanic.loot.operation.WeightOperation;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.mechanic.totem.TotemConfig;
 import net.momirealms.customfishing.common.config.ConfigLoader;
@@ -59,7 +60,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -471,9 +471,9 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
         return lootFormatFunctions;
     }
 
-    public abstract List<Pair<String, BiFunction<Context<Player>, Double, Double>>> parseWeightOperation(List<String> ops);
+    public abstract List<Pair<String, WeightOperation>> parseWeightOperation(List<String> ops, Function<String, Boolean> validator);
 
-    public abstract List<Pair<String, BiFunction<Context<Player>, Double, Double>>> parseGroupWeightOperation(List<String> gops);
+    public abstract List<Pair<String, WeightOperation>> parseGroupWeightOperation(List<String> gops);
 
     @Deprecated
     public Map<String, Node<ConfigParserFunction>> getDefaultFormatFunctions() {

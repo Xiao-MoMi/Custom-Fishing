@@ -39,7 +39,6 @@ import net.momirealms.customfishing.bukkit.integration.region.WorldGuardRegion;
 import net.momirealms.customfishing.bukkit.integration.season.AdvancedSeasonsProvider;
 import net.momirealms.customfishing.bukkit.integration.season.CustomCropsSeasonProvider;
 import net.momirealms.customfishing.bukkit.integration.season.RealisticSeasonsProvider;
-import net.momirealms.customfishing.bukkit.integration.shop.ShopGUICFItemProvider;
 import net.momirealms.customfishing.bukkit.integration.shop.ShopGUIHook;
 import net.momirealms.customfishing.bukkit.item.BukkitItemManager;
 import net.momirealms.customfishing.common.util.Pair;

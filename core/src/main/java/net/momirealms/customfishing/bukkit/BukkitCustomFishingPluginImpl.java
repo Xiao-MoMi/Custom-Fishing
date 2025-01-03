@@ -184,7 +184,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
 
         this.actionManager.reload();
         this.requirementManager.reload();
-        this.gameManager.reload();
+        this.gameManager.unload();
 
         // before ConfigManager
         this.placeholderManager.reload();
@@ -205,6 +205,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.eventManager.load();
         this.entityManager.load();
         this.lootManager.load();
+        this.gameManager.load();
         this.blockManager.load();
         this.effectManager.load();
         this.hookManager.load();

@@ -48,6 +48,8 @@ import net.momirealms.customfishing.api.mechanic.effect.EffectProperties;
 import net.momirealms.customfishing.api.mechanic.event.EventManager;
 import net.momirealms.customfishing.api.mechanic.item.ItemEditor;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import net.momirealms.customfishing.api.mechanic.loot.operation.*;
+import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
@@ -90,17 +92,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class BukkitConfigManager extends ConfigManager {
 
     private static YamlDocument MAIN_CONFIG;
     private static Particle dustParticle;
-
     public static YamlDocument getMainConfig() {
         return MAIN_CONFIG;
     }
+
+    private Function<String, Boolean> lootValidator = (id) -> {
+        return plugin.getLootManager().getLoot(id).isPresent();
+    };
 
     public BukkitConfigManager(BukkitCustomFishingPlugin plugin) {
         super(plugin);
@@ -627,7 +631,7 @@ public class BukkitConfigManager extends ConfigManager {
                 }));
             }
             case "weight-mod" -> {
-                var op = parseWeightOperation(section.getStringList("value"));
+                var op = parseWeightOperation(section.getStringList("value"), lootValidator);
                 return (((effect, context, phase) -> {
                     if (phase == 1) {
                         effect.weightOperations(op);
@@ -636,7 +640,7 @@ public class BukkitConfigManager extends ConfigManager {
                 }));
             }
             case "weight-mod-ignore-conditions" -> {
-                var op = parseWeightOperation(section.getStringList("value"));
+                var op = parseWeightOperation(section.getStringList("value"), lootValidator);
                 return (((effect, context, phase) -> {
                     if (phase == 1) {
                         effect.weightOperationsIgnored(op);
@@ -782,63 +786,73 @@ public class BukkitConfigManager extends ConfigManager {
         }
     }
 
-    private BiFunction<Context<Player>, Double, Double> parseWeightOperation(String op) {
+    private WeightOperation parseWeightOperation(String op) {
         switch (op.charAt(0)) {
             case '/' -> {
                 MathValue<Player> arg = MathValue.auto(op.substring(1));
-                return (context, weight) -> weight / arg.evaluate(context);
+                return new DivideWeightOperation(arg);
             }
             case '*' -> {
                 MathValue<Player> arg = MathValue.auto(op.substring(1));
-                return (context, weight) -> weight * arg.evaluate(context);
+                return new MultiplyWeightOperation(arg);
             }
             case '-' -> {
                 MathValue<Player> arg = MathValue.auto(op.substring(1));
-                return (context, weight) -> weight - arg.evaluate(context);
+                return new ReduceWeightOperation(arg);
             }
             case '%' -> {
                 MathValue<Player> arg = MathValue.auto(op.substring(1));
-                return (context, weight) -> weight % arg.evaluate(context);
+                return new ModuloWeightOperation(arg);
             }
             case '+' -> {
                 MathValue<Player> arg = MathValue.auto(op.substring(1));
-                return (context, weight) -> weight + arg.evaluate(context);
+                return new AddWeightOperation(arg);
             }
             case '=' -> {
-                MathValue<Player> arg = MathValue.auto(op.substring(1));
-                return (context, weight) -> {
-                    context.arg(ContextKeys.WEIGHT, weight);
-                    return arg.evaluate(context);
-                };
+                String expression = op.substring(1);
+                MathValue<Player> arg = MathValue.auto(expression);
+                List<String> placeholders = BukkitPlaceholderManager.getInstance().resolvePlaceholders(expression);
+                List<String> otherWeights = new ArrayList<>();
+                for (String placeholder : placeholders) {
+                    if (placeholder.startsWith("{loot_")) {
+                        otherWeights.add(placeholder.substring("{loot_".length(), placeholder.length() - 1));
+                    }
+                }
+                return new CustomWeightOperation(arg, expression.contains("{1}"), otherWeights);
             }
             default -> throw new IllegalArgumentException("Invalid weight operation: " + op);
         }
     }
 
     @Override
-    public List<Pair<String, BiFunction<Context<Player>, Double, Double>>> parseWeightOperation(List<String> ops) {
-        List<Pair<String, BiFunction<Context<Player>, Double, Double>>> result = new ArrayList<>();
+    public List<Pair<String, WeightOperation>> parseWeightOperation(List<String> ops, Function<String, Boolean> validator) {
+        List<Pair<String, WeightOperation>> result = new ArrayList<>();
         for (String op : ops) {
             String[] split = op.split(":", 2);
             if (split.length < 2) {
                 plugin.getPluginLogger().warn("Illegal weight operation: " + op);
                 continue;
             }
-            result.add(Pair.of(split[0], parseWeightOperation(split[1])));
+            String id = split[0];
+            if (!validator.apply(id)) {
+                plugin.getPluginLogger().warn("Illegal weight operation: " + op + ". Id " + id + " is not valid");
+                continue;
+            }
+            result.add(Pair.of(id, parseWeightOperation(split[1])));
         }
         return result;
     }
 
     @Override
-    public List<Pair<String, BiFunction<Context<Player>, Double, Double>>> parseGroupWeightOperation(List<String> gops) {
-        List<Pair<String, BiFunction<Context<Player>, Double, Double>>> result = new ArrayList<>();
+    public List<Pair<String, WeightOperation>> parseGroupWeightOperation(List<String> gops) {
+        List<Pair<String, WeightOperation>> result = new ArrayList<>();
         for (String gop : gops) {
             String[] split = gop.split(":", 2);
             if (split.length < 2) {
                 plugin.getPluginLogger().warn("Illegal weight operation: " + gop);
                 continue;
             }
-            BiFunction<Context<Player>, Double, Double> operation = parseWeightOperation(split[1]);
+            WeightOperation operation = parseWeightOperation(split[1]);
             for (String member : plugin.getLootManager().getGroupMembers(split[0])) {
                 result.add(Pair.of(member, operation));
             }
