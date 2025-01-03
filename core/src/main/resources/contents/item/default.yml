@@ -231,7 +231,9 @@ tuna_fish:
       - <gray>Tuna is a kind of healthy food.
       - '<white>size: {size_formatted}cm'
   custom-model-data: 50001
-  group: ocean
+  group:
+    - ocean
+    - no_star
   events:
     success:
       action_mending:
@@ -299,7 +301,9 @@ pike_fish:
       - <gray>water and inland freshwater lakes
       - '<white>size: {size_formatted}cm'
   custom-model-data: 50004
-  group: ocean
+  group:
+    - ocean
+    - no_star
   events:
     success:
       action_mending:
@@ -376,7 +380,9 @@ gold_fish:
     bonus: 2.6
   size: 2~3
   custom-model-data: 50007
-  group: river
+  group:
+    - no_star
+    - river
   events:
     success:
       action_mending:
@@ -442,7 +448,9 @@ perch_fish:
       - <gray>foraging at dusk and early morning
       - '<white>size: {size_formatted}cm'
   custom-model-data: 50010
-  group: river
+  group:
+    - no_star
+    - river
   events:
     success:
       action_mending:
@@ -510,7 +518,9 @@ mullet_fish:
       - <gray>to treat spleen and stomach weakness
       - '<white>size: {size_formatted}cm'
   custom-model-data: 50013
-  group: river
+  group:
+    - no_star
+    - river
   events:
     success:
       action_mending:
@@ -578,7 +588,9 @@ sardine_fish:
       - <gray>Therefore, sardine are also called "smart food"
       - '<white>size: {size_formatted}cm'
   custom-model-data: 50016
-  group: ocean
+  group:
+    - ocean
+    - no_star
   events:
     success:
       action_mending:
@@ -643,7 +655,9 @@ carp_fish:
       - <gray>One of the most common edible fish
       - '<white>size: {size_formatted}cm'
   custom-model-data: 50019
-  group: river
+  group:
+    - no_star
+    - river
   events:
     success:
       action_mending:
@@ -707,7 +721,9 @@ cat_fish:
       - <gray>sharp jaw teeth, short intestine and stomach
       - '<white>size: {size_formatted}cm'
   custom-model-data: 50022
-  group: river
+  group:
+    - no_star
+    - river
   events:
     success:
       action_mending:
@@ -773,7 +789,9 @@ octopus:
       - <gray>People often use pots to catch octopus
       - '<white>size: {size_formatted}cm'
   custom-model-data: 50025
-  group: ocean
+  group:
+    - ocean
+    - no_star
   events:
     success:
       action_mending:
@@ -838,7 +856,9 @@ sunfish:
       - <gray>It only has one huge head
       - '<white>size: {size_formatted}cm'
   custom-model-data: 50028
-  group: ocean
+  group:
+    - ocean
+    - no_star
   events:
     success:
       action_mending:
@@ -902,7 +922,9 @@ red_snapper_fish:
       - <gray>with a male as the "head of the family"
       - '<white>size: {size_formatted}cm'
   custom-model-data: 50031
-  group: ocean
+  group:
+    - ocean
+    - no_star
   events:
     success:
       action_mending:
@@ -971,7 +993,9 @@ salmon_void_fish:
       - <gray>It's looking at you...
       - '<white>size: {size_formatted}cm'
   custom-model-data: 50034
-  group: lava
+  group:
+    - lava
+    - no_star
   events:
     success:
       action_mending:
@@ -1037,7 +1061,9 @@ woodskip_fish:
       - <gray>live in pools deep in the forest
       - '<white>size: {size_formatted}cm'
   custom-model-data: 50037
-  group: river
+  group:
+    - no_star
+    - swamp
   events:
     success:
       action_mending:
@@ -1060,7 +1086,7 @@ woodskip_fish_silver_star:
   custom-model-data: 50038
   group:
     - silver_star
-    - river
+    - swamp
   events:
     success:
       action_mending:
@@ -1083,7 +1109,7 @@ woodskip_fish_golden_star:
   custom-model-data: 50039
   group:
     - golden_star
-    - river
+    - swamp
   events:
     success:
       action_mending:
@@ -1103,7 +1129,9 @@ sturgeon_fish:
       - <gray>population. Females can live up to 150 years
       - '<white>size: {size_formatted}cm'
   custom-model-data: 50040
-  group: river
+  group:
+    - no_star
+    - cave
   events:
     success:
       action_mending:
@@ -1126,7 +1154,7 @@ sturgeon_fish_silver_star:
   custom-model-data: 50041
   group:
     - silver_star
-    - river
+    - cave
   events:
     success:
       action_mending:
@@ -1149,7 +1177,7 @@ sturgeon_fish_golden_star:
   custom-model-data: 50042
   group:
     - golden_star
-    - river
+    - cave
   events:
     success:
       action_mending:
@@ -1168,7 +1196,9 @@ blue_jellyfish:
       - <gray>Looks like a blue umbrella
       - '<white>size: {size_formatted}cm'
   custom-model-data: 50043
-  group: ocean
+  group:
+    - warm_ocean
+    - no_star
   events:
     success:
       action_mending:
@@ -1190,7 +1220,7 @@ blue_jellyfish_silver_star:
   custom-model-data: 50044
   group:
     - silver_star
-    - ocean
+    - warm_ocean
   events:
     success:
       action_mending:
@@ -1212,7 +1242,7 @@ blue_jellyfish_golden_star:
   custom-model-data: 50045
   group:
     - golden_star
-    - ocean
+    - warm_ocean
   events:
     success:
       action_mending:
@@ -1231,7 +1261,9 @@ pink_jellyfish:
       - <gray>Seems to be sweet
       - '<white>size: {size_formatted}cm'
   custom-model-data: 50046
-  group: ocean
+  group:
+    - warm_ocean
+    - no_star
   events:
     success:
       action_mending:
@@ -1253,7 +1285,7 @@ pink_jellyfish_silver_star:
   custom-model-data: 50047
   group:
     - silver_star
-    - ocean
+    - warm_ocean
   events:
     success:
       action_mending:
@@ -1275,7 +1307,7 @@ pink_jellyfish_golden_star:
   custom-model-data: 50048
   group:
     - golden_star
-    - ocean
+    - warm_ocean
   events:
     success:
       action_mending:

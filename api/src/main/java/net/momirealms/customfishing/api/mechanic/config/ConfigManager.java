@@ -473,7 +473,7 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     public abstract List<Pair<String, WeightOperation>> parseWeightOperation(List<String> ops, Function<String, Boolean> validator, Function<String, List<String>> groupProvider);
 
-    public abstract List<Pair<String, WeightOperation>> parseGroupWeightOperation(List<String> gops);
+    public abstract List<Pair<String, WeightOperation>> parseGroupWeightOperation(List<String> gops, boolean forAvailable, Function<String, List<String>> groupProvider);
 
     @Deprecated
     public Map<String, Node<ConfigParserFunction>> getDefaultFormatFunctions() {

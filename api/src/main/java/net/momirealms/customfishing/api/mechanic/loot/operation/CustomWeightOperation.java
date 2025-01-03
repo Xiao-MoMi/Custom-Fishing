@@ -34,17 +34,22 @@ public class CustomWeightOperation implements WeightOperation {
     private final List<String> otherEntries;
     private final List<Pair<String, String[]>> otherGroups;
     private final int sharedMembers;
+    private final boolean forAvailable;
 
-    public CustomWeightOperation(MathValue<Player> arg, boolean hasTotalWeight, List<String> otherEntries, List<Pair<String, String[]>> otherGroups, int sharedMembers) {
+    public CustomWeightOperation(MathValue<Player> arg, boolean hasTotalWeight, List<String> otherEntries, List<Pair<String, String[]>> otherGroups, int sharedMembers, boolean forAvailable) {
         this.arg = arg;
         this.hasTotalWeight = hasTotalWeight;
         this.otherEntries = otherEntries;
         this.otherGroups = otherGroups;
         this.sharedMembers = sharedMembers;
+        this.forAvailable = forAvailable;
     }
 
     @Override
     public Double apply(Context<Player> context, Double weight, Map<String, Double> weights) {
+        if (this.forAvailable && weight <= 0) {
+            return weight;
+        }
         context.arg(ContextKeys.WEIGHT, weight);
         if (hasTotalWeight) {
             context.arg(ContextKeys.TOTAL_WEIGHT, getValidTotalWeight(weights.values()));

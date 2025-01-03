@@ -30,6 +30,8 @@ import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import dev.dejvokep.boostedyaml.utils.format.NodeRole;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.event.FishingEffectApplyEvent;
+import net.momirealms.customfishing.api.event.FishingResultEvent;
 import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionManager;
@@ -649,7 +651,7 @@ public class BukkitConfigManager extends ConfigManager {
                 }));
             }
             case "group-mod", "group_mod" -> {
-                var op = parseGroupWeightOperation(section.getStringList("value"));
+                var op = parseGroupWeightOperation(section.getStringList("value"), true, groupProvider);
                 return (((effect, context, phase) -> {
                     if (phase == 1) {
                         effect.weightOperations(op);
@@ -658,7 +660,7 @@ public class BukkitConfigManager extends ConfigManager {
                 }));
             }
             case "group-mod-ignore-conditions", "group_mod_ignore_conditions" -> {
-                var op = parseGroupWeightOperation(section.getStringList("value"));
+                var op = parseGroupWeightOperation(section.getStringList("value"), false, groupProvider);
                 return (((effect, context, phase) -> {
                     if (phase == 1) {
                         effect.weightOperationsIgnored(op);
@@ -786,15 +788,15 @@ public class BukkitConfigManager extends ConfigManager {
         }
     }
 
-    private WeightOperation parseSharedGroupWeight(String op, int memberCount) {
+    private WeightOperation parseSharedGroupWeight(String op, int memberCount, boolean forAvailable, Function<String, List<String>> groupProvider) {
         switch (op.charAt(0)) {
             case '-' -> {
                 MathValue<Player> arg = MathValue.auto(op.substring(1));
-                return new ReduceWeightOperation(arg, memberCount);
+                return new ReduceWeightOperation(arg, memberCount, forAvailable);
             }
             case '+' -> {
                 MathValue<Player> arg = MathValue.auto(op.substring(1));
-                return new AddWeightOperation(arg, memberCount);
+                return new AddWeightOperation(arg, memberCount, forAvailable);
             }
             case '=' -> {
                 String expression = op.substring(1);
@@ -806,43 +808,42 @@ public class BukkitConfigManager extends ConfigManager {
                     if (placeholder.startsWith("{entry_")) {
                         otherEntries.add(placeholder.substring("{entry_".length(), placeholder.length() - 1));
                     } else if (placeholder.startsWith("{group")) {
-                        // only for loots
-                        String groupName = placeholder.substring("{group_".length(), placeholder.length() - 1);
-                        List<String> members = plugin.getLootManager().getGroupMembers(groupName);
+                        String groupExpression = placeholder.substring("{group_".length(), placeholder.length() - 1);
+                        List<String> members = getGroupMembers(groupExpression, groupProvider);
                         if (members.isEmpty()) {
-                            plugin.getPluginLogger().warn("Failed to load expression: " + expression + ". Invalid group: " + groupName);
+                            plugin.getPluginLogger().warn("Failed to load expression: " + expression + ". Invalid group: " + groupExpression);
                             continue;
                         }
-                        otherGroups.add(Pair.of(groupName, members.toArray(new String[0])));
+                        otherGroups.add(Pair.of(groupExpression, members.toArray(new String[0])));
                     }
                 }
-                return new CustomWeightOperation(arg, expression.contains("{1}"), otherEntries, otherGroups, memberCount);
+                return new CustomWeightOperation(arg, expression.contains("{1}"), otherEntries, otherGroups, memberCount, forAvailable);
             }
             default -> throw new IllegalArgumentException("Invalid shared weight operation: " + op);
         }
     }
 
-    private WeightOperation parseWeightOperation(String op) {
+    private WeightOperation parseWeightOperation(String op, boolean forAvailable, Function<String, List<String>> groupProvider) {
         switch (op.charAt(0)) {
             case '/' -> {
                 MathValue<Player> arg = MathValue.auto(op.substring(1));
-                return new DivideWeightOperation(arg);
+                return new DivideWeightOperation(arg, forAvailable);
             }
             case '*' -> {
                 MathValue<Player> arg = MathValue.auto(op.substring(1));
-                return new MultiplyWeightOperation(arg);
+                return new MultiplyWeightOperation(arg, forAvailable);
             }
             case '-' -> {
                 MathValue<Player> arg = MathValue.auto(op.substring(1));
-                return new ReduceWeightOperation(arg, 1);
+                return new ReduceWeightOperation(arg, 1, forAvailable);
             }
             case '%' -> {
                 MathValue<Player> arg = MathValue.auto(op.substring(1));
-                return new ModuloWeightOperation(arg);
+                return new ModuloWeightOperation(arg, forAvailable);
             }
             case '+' -> {
                 MathValue<Player> arg = MathValue.auto(op.substring(1));
-                return new AddWeightOperation(arg, 1);
+                return new AddWeightOperation(arg, 1, forAvailable);
             }
             case '=' -> {
                 String expression = op.substring(1);
@@ -854,17 +855,16 @@ public class BukkitConfigManager extends ConfigManager {
                     if (placeholder.startsWith("{entry_")) {
                         otherEntries.add(placeholder.substring("{entry_".length(), placeholder.length() - 1));
                     } else if (placeholder.startsWith("{group")) {
-                        // only for loots
-                        String groupName = placeholder.substring("{group_".length(), placeholder.length() - 1);
-                        List<String> members = plugin.getLootManager().getGroupMembers(groupName);
+                        String groupExpression = placeholder.substring("{group_".length(), placeholder.length() - 1);
+                        List<String> members = getGroupMembers(groupExpression, groupProvider);
                         if (members.isEmpty()) {
-                            plugin.getPluginLogger().warn("Failed to load expression: " + expression + ". Invalid group: " + groupName);
+                            plugin.getPluginLogger().warn("Failed to load expression: " + expression + ". Invalid group: " + groupExpression);
                             continue;
                         }
-                        otherGroups.add(Pair.of(groupName, members.toArray(new String[0])));
+                        otherGroups.add(Pair.of(groupExpression, members.toArray(new String[0])));
                     }
                 }
-                return new CustomWeightOperation(arg, expression.contains("{1}"), otherEntries, otherGroups, 1);
+                return new CustomWeightOperation(arg, expression.contains("{1}"), otherEntries, otherGroups, 1, forAvailable);
             }
             default -> throw new IllegalArgumentException("Invalid weight operation: " + op);
         }
@@ -885,39 +885,68 @@ public class BukkitConfigManager extends ConfigManager {
                     plugin.getPluginLogger().warn("Illegal weight operation: " + op + ". Id " + id + " is not valid");
                     continue;
                 }
-                result.add(Pair.of(id, parseWeightOperation(split[1])));
+                result.add(Pair.of(id, parseWeightOperation(split[1], false, groupProvider)));
             } else {
                 String type = split[0];
                 String id = split[1];
                 switch (type) {
                     case "group_for_each" -> {
-                        List<String> members = groupProvider.apply(id);
+                        List<String> members = getGroupMembers(id, groupProvider);
                         if (members.isEmpty()) {
                             plugin.getPluginLogger().warn("Failed to load expression: " + op + ". Invalid group: " + id);
                             continue;
                         }
-                        WeightOperation operation = parseWeightOperation(split[2]);
+                        WeightOperation operation = parseWeightOperation(split[2], false, groupProvider);
+                        for (String member : members) {
+                            result.add(Pair.of(member, operation));
+                        }
+                    }
+                    case "group_available_for_each" -> {
+                        List<String> members = getGroupMembers(id, groupProvider);
+                        if (members.isEmpty()) {
+                            plugin.getPluginLogger().warn("Failed to load expression: " + op + ". Invalid group: " + id);
+                            continue;
+                        }
+                        WeightOperation operation = parseWeightOperation(split[2], true, groupProvider);
                         for (String member : members) {
                             result.add(Pair.of(member, operation));
                         }
                     }
                     case "group_total" -> {
-                        List<String> members = groupProvider.apply(id);
+                        List<String> members = getGroupMembers(id, groupProvider);
                         if (members.isEmpty()) {
                             plugin.getPluginLogger().warn("Failed to load expression: " + op + ". Invalid group: " + id);
                             continue;
                         }
-                        WeightOperation operation = parseSharedGroupWeight(split[2], members.size());
+                        WeightOperation operation = parseSharedGroupWeight(split[2], members.size(), false, groupProvider);
                         for (String member : members) {
                             result.add(Pair.of(member, operation));
                         }
+                    }
+                    case "group_available_total" -> {
+                        List<String> members = getGroupMembers(id, groupProvider);
+                        if (members.isEmpty()) {
+                            plugin.getPluginLogger().warn("Failed to load expression: " + op + ". Invalid group: " + id);
+                            continue;
+                        }
+                        WeightOperation operation = parseSharedGroupWeight(split[2], members.size(), true, groupProvider);
+                        for (String member : members) {
+                            result.add(Pair.of(member, operation));
+                        }
+                    }
+                    case "loot_available" -> {
+                        if (!validator.apply(id)) {
+                            plugin.getPluginLogger().warn("Illegal weight operation: " + op + ". Id " + id + " is not valid");
+                            continue;
+                        }
+                        result.add(Pair.of(id, parseWeightOperation(split[2], true, groupProvider)));
                     }
                     default -> {
                         if (!validator.apply(id)) {
                             plugin.getPluginLogger().warn("Illegal weight operation: " + op + ". Id " + id + " is not valid");
                             continue;
                         }
-                        result.add(Pair.of(id, parseWeightOperation(split[2])));
+                        result.add(Pair.of(id, parseWeightOperation(split[2], false, groupProvider)));
                     }
                 }
             }
@@ -926,7 +955,7 @@ public class BukkitConfigManager extends ConfigManager {
     }
 
     @Override
-    public List<Pair<String, WeightOperation>> parseGroupWeightOperation(List<String> gops) {
+    public List<Pair<String, WeightOperation>> parseGroupWeightOperation(List<String> gops, boolean forAvailable, Function<String, List<String>> groupProvider) {
         List<Pair<String, WeightOperation>> result = new ArrayList<>();
         for (String gop : gops) {
             String[] split = gop.split(":", 2);
@@ -934,12 +963,41 @@ public class BukkitConfigManager extends ConfigManager {
                 plugin.getPluginLogger().warn("Illegal weight operation: " + gop);
                 continue;
             }
-            WeightOperation operation = parseWeightOperation(split[1]);
-            for (String member : plugin.getLootManager().getGroupMembers(split[0])) {
+            WeightOperation operation = parseWeightOperation(split[1], forAvailable, groupProvider);
+            String groupExpression = split[0];
+            for (String member : getGroupMembers(groupExpression, groupProvider)) {
                 result.add(Pair.of(member, operation));
             }
         }
+        FishingEffectApplyEvent event;
+        if (event.getStage() == FishingEffectApplyEvent.Stage.FISHING) {
+            event.getEffect().difficultyAdder(event.getEffect().difficultyAdder() + 10d);
+        }
         return result;
+    }
+
+    private List<String> getGroupMembers(String groupExpression, Function<String, List<String>> groupProvider) {
+        if (groupExpression.contains("&")) {
+            String[] groups = groupExpression.split("&");
+            List<Set<String>> groupSets = new ArrayList<>();
+            for (String group : groups) {
+                groupSets.add(new HashSet<>(groupProvider.apply(group)));
+            }
+            Set<String> intersection = groupSets.get(0);
+            for (int i = 1; i < groupSets.size(); i++) {
+                intersection.retainAll(groupSets.get(i));
+            }
+            return new ArrayList<>(intersection);
+        } else if (groupExpression.contains("|")) {
+            Set<String> members = new HashSet<>();
+            String[] groups = groupExpression.split("&");
+            for (String group : groups) {
+                members.addAll(groupProvider.apply(group));
+            }
+            return new ArrayList<>(members);
+        } else {
+            return groupProvider.apply(groupExpression);
+        }
     }
 
     private void registerBuiltInHookParser() {

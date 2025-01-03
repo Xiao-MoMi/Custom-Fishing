@@ -26,13 +26,18 @@ import java.util.Map;
 public class ModuloWeightOperation implements WeightOperation {
 
     private final MathValue<Player> arg;
+    private final boolean forAvailable;
 
-    public ModuloWeightOperation(MathValue<Player> arg) {
+    public ModuloWeightOperation(MathValue<Player> arg, boolean forAvailable) {
         this.arg = arg;
+        this.forAvailable = forAvailable;
     }
 
     @Override
     public Double apply(Context<Player> context, Double weight, Map<String, Double> weights) {
+        if (this.forAvailable && weight <= 0) {
+            return weight;
+        }
         return weight % arg.evaluate(context);
     }
 }
