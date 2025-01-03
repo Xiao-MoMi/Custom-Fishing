@@ -26,13 +26,15 @@ import java.util.Map;
 public class AddWeightOperation implements WeightOperation {
 
     private final MathValue<Player> arg;
+    private final int sharedMembers;
 
-    public AddWeightOperation(MathValue<Player> arg) {
+    public AddWeightOperation(MathValue<Player> arg, int sharedMembers) {
         this.arg = arg;
+        this.sharedMembers = sharedMembers;
     }
 
     @Override
     public Double apply(Context<Player> context, Double weight, Map<String, Double> weights) {
-        return weight + arg.evaluate(context);
+        return weight + arg.evaluate(context) / sharedMembers;
     }
 }

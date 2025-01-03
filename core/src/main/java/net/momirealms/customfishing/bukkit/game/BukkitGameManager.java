@@ -92,7 +92,7 @@ public class BukkitGameManager implements GameManager {
         Section subSection = section.getSection("sub-groups");
         if (subSection == null) {
             return new ConditionalElement<>(
-                    plugin.getConfigManager().parseWeightOperation(section.getStringList("list"), (id) -> getGame(id).isPresent()),
+                    plugin.getConfigManager().parseWeightOperation(section.getStringList("list"), (id) -> getGame(id).isPresent(), (id) -> Collections.emptyList()),
                     Map.of(),
                     plugin.getRequirementManager().parseRequirements(section.getSection("conditions"), false)
             );
@@ -104,7 +104,7 @@ public class BukkitGameManager implements GameManager {
                 }
             }
             return new ConditionalElement<>(
-                    plugin.getConfigManager().parseWeightOperation(section.getStringList("list"), (id) -> getGame(id).isPresent()),
+                    plugin.getConfigManager().parseWeightOperation(section.getStringList("list"), (id) -> getGame(id).isPresent(), (id) -> Collections.emptyList()),
                     subElements,
                     plugin.getRequirementManager().parseRequirements(section.getSection("conditions"), false)
             );

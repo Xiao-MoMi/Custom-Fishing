@@ -77,7 +77,7 @@ public class BukkitLootManager implements LootManager {
         Section subSection = section.getSection("sub-groups");
         if (subSection == null) {
             return new ConditionalElement<>(
-                    plugin.getConfigManager().parseWeightOperation(section.getStringList("list"), (id) -> getLoot(id).isPresent()),
+                    plugin.getConfigManager().parseWeightOperation(section.getStringList("list"), (id) -> getLoot(id).isPresent(), this::getGroupMembers),
                     Map.of(),
                     plugin.getRequirementManager().parseRequirements(section.getSection("conditions"), false)
             );
@@ -89,7 +89,7 @@ public class BukkitLootManager implements LootManager {
                 }
             }
             return new ConditionalElement<>(
-                    plugin.getConfigManager().parseWeightOperation(section.getStringList("list"), (id) -> getLoot(id).isPresent()),
+                    plugin.getConfigManager().parseWeightOperation(section.getStringList("list"), (id) -> getLoot(id).isPresent(), this::getGroupMembers),
                     subElements,
                     plugin.getRequirementManager().parseRequirements(section.getSection("conditions"), false)
             );

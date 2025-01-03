@@ -178,7 +178,7 @@ public class BukkitConfigManager extends ConfigManager {
         if (globalEffectSection != null) {
             for (Map.Entry<String, Object> entry : globalEffectSection.getStringRouteMappedValues(false).entrySet()) {
                 if (entry.getValue() instanceof Section innerSection) {
-                    globalEffects.add(parseEffect(innerSection));
+                    globalEffects.add(parseEffect(innerSection, id -> plugin.getLootManager().getGroupMembers(id)));
                 }
             }
         }
@@ -595,7 +595,7 @@ public class BukkitConfigManager extends ConfigManager {
             ArrayList<TriConsumer<Effect, Context<Player>, Integer>> property = new ArrayList<>();
             for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
                 if (entry.getValue() instanceof Section innerSection) {
-                    property.add(parseEffect(innerSection));
+                    property.add(parseEffect(innerSection, id -> plugin.getLootManager().getGroupMembers(id)));
                 }
             }
             return builder -> {
@@ -604,7 +604,7 @@ public class BukkitConfigManager extends ConfigManager {
         }, "effects");
     }
 
-    public TriConsumer<Effect, Context<Player>, Integer> parseEffect(Section section) {
+    public TriConsumer<Effect, Context<Player>, Integer> parseEffect(Section section, Function<String, List<String>> groupProvider) {
         if (!section.contains("type")) {
             throw new RuntimeException(section.getRouteAsString());
         }
@@ -631,7 +631,7 @@ public class BukkitConfigManager extends ConfigManager {
                 }));
             }
             case "weight-mod" -> {
-                var op = parseWeightOperation(section.getStringList("value"), lootValidator);
+                var op = parseWeightOperation(section.getStringList("value"), lootValidator, groupProvider);
                 return (((effect, context, phase) -> {
                     if (phase == 1) {
                         effect.weightOperations(op);
@@ -640,7 +640,7 @@ public class BukkitConfigManager extends ConfigManager {
                 }));
             }
             case "weight-mod-ignore-conditions" -> {
-                var op = parseWeightOperation(section.getStringList("value"), lootValidator);
+                var op = parseWeightOperation(section.getStringList("value"), lootValidator, groupProvider);
                 return (((effect, context, phase) -> {
                     if (phase == 1) {
                         effect.weightOperationsIgnored(op);
@@ -772,7 +772,7 @@ public class BukkitConfigManager extends ConfigManager {
                 if (effectSection != null)
                     for (Map.Entry<String, Object> entry : effectSection.getStringRouteMappedValues(false).entrySet())
                         if (entry.getValue() instanceof Section inner)
-                            effects.add(parseEffect(inner));
+                            effects.add(parseEffect(inner, groupProvider));
                 return (((effect, context, phase) -> {
                     if (!RequirementManager.isSatisfied(context, requirements)) return;
                     for (TriConsumer<Effect, Context<Player>, Integer> consumer : effects) {
@@ -783,6 +783,42 @@ public class BukkitConfigManager extends ConfigManager {
             default -> {
                 return (((effect, context, phase) -> {}));
             }
+        }
+    }
+
+    private WeightOperation parseSharedGroupWeight(String op, int memberCount) {
+        switch (op.charAt(0)) {
+            case '-' -> {
+                MathValue<Player> arg = MathValue.auto(op.substring(1));
+                return new ReduceWeightOperation(arg, memberCount);
+            }
+            case '+' -> {
+                MathValue<Player> arg = MathValue.auto(op.substring(1));
+                return new AddWeightOperation(arg, memberCount);
+            }
+            case '=' -> {
+                String expression = op.substring(1);
+                MathValue<Player> arg = MathValue.auto(expression);
+                List<String> placeholders = BukkitPlaceholderManager.getInstance().resolvePlaceholders(expression);
+                List<String> otherEntries = new ArrayList<>();
+                List<Pair<String, String[]>> otherGroups = new ArrayList<>();
+                for (String placeholder : placeholders) {
+                    if (placeholder.startsWith("{entry_")) {
+                        otherEntries.add(placeholder.substring("{entry_".length(), placeholder.length() - 1));
+                    } else if (placeholder.startsWith("{group")) {
+                        // only for loots
+                        String groupName = placeholder.substring("{group_".length(), placeholder.length() - 1);
+                        List<String> members = plugin.getLootManager().getGroupMembers(groupName);
+                        if (members.isEmpty()) {
+                            plugin.getPluginLogger().warn("Failed to load expression: " + expression + ". Invalid group: " + groupName);
+                            continue;
+                        }
+                        otherGroups.add(Pair.of(groupName, members.toArray(new String[0])));
+                    }
+                }
+                return new CustomWeightOperation(arg, expression.contains("{1}"), otherEntries, otherGroups, memberCount);
+            }
+            default -> throw new IllegalArgumentException("Invalid shared weight operation: " + op);
         }
     }
 
@@ -798,7 +834,7 @@ public class BukkitConfigManager extends ConfigManager {
             }
             case '-' -> {
                 MathValue<Player> arg = MathValue.auto(op.substring(1));
-                return new ReduceWeightOperation(arg);
+                return new ReduceWeightOperation(arg, 1);
             }
             case '%' -> {
                 MathValue<Player> arg = MathValue.auto(op.substring(1));
@@ -806,39 +842,85 @@ public class BukkitConfigManager extends ConfigManager {
             }
             case '+' -> {
                 MathValue<Player> arg = MathValue.auto(op.substring(1));
-                return new AddWeightOperation(arg);
+                return new AddWeightOperation(arg, 1);
             }
             case '=' -> {
                 String expression = op.substring(1);
                 MathValue<Player> arg = MathValue.auto(expression);
                 List<String> placeholders = BukkitPlaceholderManager.getInstance().resolvePlaceholders(expression);
-                List<String> otherWeights = new ArrayList<>();
+                List<String> otherEntries = new ArrayList<>();
+                List<Pair<String, String[]>> otherGroups = new ArrayList<>();
                 for (String placeholder : placeholders) {
-                    if (placeholder.startsWith("{loot_")) {
-                        otherWeights.add(placeholder.substring("{loot_".length(), placeholder.length() - 1));
+                    if (placeholder.startsWith("{entry_")) {
+                        otherEntries.add(placeholder.substring("{entry_".length(), placeholder.length() - 1));
+                    } else if (placeholder.startsWith("{group")) {
+                        // only for loots
+                        String groupName = placeholder.substring("{group_".length(), placeholder.length() - 1);
+                        List<String> members = plugin.getLootManager().getGroupMembers(groupName);
+                        if (members.isEmpty()) {
+                            plugin.getPluginLogger().warn("Failed to load expression: " + expression + ". Invalid group: " + groupName);
+                            continue;
+                        }
+                        otherGroups.add(Pair.of(groupName, members.toArray(new String[0])));
                     }
                 }
-                return new CustomWeightOperation(arg, expression.contains("{1}"), otherWeights);
+                return new CustomWeightOperation(arg, expression.contains("{1}"), otherEntries, otherGroups, 1);
             }
             default -> throw new IllegalArgumentException("Invalid weight operation: " + op);
         }
     }
 
     @Override
-    public List<Pair<String, WeightOperation>> parseWeightOperation(List<String> ops, Function<String, Boolean> validator) {
+    public List<Pair<String, WeightOperation>> parseWeightOperation(List<String> ops, Function<String, Boolean> validator, Function<String, List<String>> groupProvider) {
         List<Pair<String, WeightOperation>> result = new ArrayList<>();
         for (String op : ops) {
-            String[] split = op.split(":", 2);
+            String[] split = op.split(":", 3);
             if (split.length < 2) {
                 plugin.getPluginLogger().warn("Illegal weight operation: " + op);
                 continue;
             }
-            String id = split[0];
-            if (!validator.apply(id)) {
-                plugin.getPluginLogger().warn("Illegal weight operation: " + op + ". Id " + id + " is not valid");
-                continue;
+            if (split.length == 2) {
+                String id = split[0];
+                if (!validator.apply(id)) {
+                    plugin.getPluginLogger().warn("Illegal weight operation: " + op + ". Id " + id + " is not valid");
+                    continue;
+                }
+                result.add(Pair.of(id, parseWeightOperation(split[1])));
+            } else {
+                String type = split[0];
+                String id = split[1];
+                switch (type) {
+                    case "group_for_each" -> {
+                        List<String> members = groupProvider.apply(id);
+                        if (members.isEmpty()) {
+                            plugin.getPluginLogger().warn("Failed to load expression: " + op + ". Invalid group: " + id);
+                            continue;
+                        }
+                        WeightOperation operation = parseWeightOperation(split[2]);
+                        for (String member : members) {
+                            result.add(Pair.of(member, operation));
+                        }
+                    }
+                    case "group_total" -> {
+                        List<String> members = groupProvider.apply(id);
+                        if (members.isEmpty()) {
+                            plugin.getPluginLogger().warn("Failed to load expression: " + op + ". Invalid group: " + id);
+                            continue;
+                        }
+                        WeightOperation operation = parseSharedGroupWeight(split[2], members.size());
+                        for (String member : members) {
+                            result.add(Pair.of(member, operation));
+                        }
+                    }
+                    default -> {
+                        if (!validator.apply(id)) {
+                            plugin.getPluginLogger().warn("Illegal weight operation: " + op + ". Id " + id + " is not valid");
+                            continue;
+                        }
+                        result.add(Pair.of(id, parseWeightOperation(split[2])));
+                    }
+                }
             }
-            result.add(Pair.of(id, parseWeightOperation(split[1])));
         }
         return result;
     }

@@ -20,6 +20,7 @@ package net.momirealms.customfishing.api.mechanic.loot.operation;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
+import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -30,12 +31,16 @@ public class CustomWeightOperation implements WeightOperation {
 
     private final MathValue<Player> arg;
     private final boolean hasTotalWeight;
-    private final List<String> otherWeights;
+    private final List<String> otherEntries;
+    private final List<Pair<String, String[]>> otherGroups;
+    private final int sharedMembers;
 
-    public CustomWeightOperation(MathValue<Player> arg, boolean hasTotalWeight, List<String> otherWeights) {
+    public CustomWeightOperation(MathValue<Player> arg, boolean hasTotalWeight, List<String> otherEntries, List<Pair<String, String[]>> otherGroups, int sharedMembers) {
         this.arg = arg;
         this.hasTotalWeight = hasTotalWeight;
-        this.otherWeights = otherWeights;
+        this.otherEntries = otherEntries;
+        this.otherGroups = otherGroups;
+        this.sharedMembers = sharedMembers;
     }
 
     @Override
@@ -44,12 +49,21 @@ public class CustomWeightOperation implements WeightOperation {
         if (hasTotalWeight) {
             context.arg(ContextKeys.TOTAL_WEIGHT, getValidTotalWeight(weights.values()));
         }
-        if (!otherWeights.isEmpty()) {
-            for (String otherWeight : otherWeights) {
-                context.arg(ContextKeys.of("loot_" + otherWeight, Double.class), weights.get(otherWeight));
+        if (!otherEntries.isEmpty()) {
+            for (String otherWeight : otherEntries) {
+                context.arg(ContextKeys.of("entry_" + otherWeight, Double.class), weights.get(otherWeight));
             }
         }
-        return arg.evaluate(context);
+        if (!otherGroups.isEmpty()) {
+            for (Pair<String, String[]> otherGroup : otherGroups) {
+                double totalWeight = 0;
+                for (String id : otherGroup.right()) {
+                    totalWeight += weights.getOrDefault(id, 0d);
+                }
+                context.arg(ContextKeys.of("group_" + otherGroup.left(), Double.class), totalWeight);
+            }
+        }
+        return arg.evaluate(context) / sharedMembers;
     }
 
     private double getValidTotalWeight(Collection<Double> weights) {

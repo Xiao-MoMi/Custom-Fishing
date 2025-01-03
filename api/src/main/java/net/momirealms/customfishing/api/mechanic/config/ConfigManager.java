@@ -471,7 +471,7 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
         return lootFormatFunctions;
     }
 
-    public abstract List<Pair<String, WeightOperation>> parseWeightOperation(List<String> ops, Function<String, Boolean> validator);
+    public abstract List<Pair<String, WeightOperation>> parseWeightOperation(List<String> ops, Function<String, Boolean> validator, Function<String, List<String>> groupProvider);
 
     public abstract List<Pair<String, WeightOperation>> parseGroupWeightOperation(List<String> gops);
 
