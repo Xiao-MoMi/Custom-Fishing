@@ -5,7 +5,7 @@ plugins {
 
 repositories {
     maven("https://jitpack.io/") // rtag
-    maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // papi
     maven("https://oss.sonatype.org/content/repositories/snapshots")
 }

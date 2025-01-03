@@ -891,7 +891,7 @@ public class BukkitGameManager implements GameManager {
                                     + OffsetUtils.getOffsetChars(pointerOffset + progress)
                                     + AdventureHelper.surroundWithMiniMessageFont(pointerImage, font)
                                     + OffsetUtils.getOffsetChars(totalWidth - progress - pointerWidth);
-                            SparrowHeart.getInstance().sendTitle(getPlayer(), AdventureHelper.miniMessageToJson(sendTitle.render(hook.getContext())), AdventureHelper.miniMessageToJson(bar), 0, 10, 0);
+                            SparrowHeart.getInstance().sendTitle(getPlayer(), AdventureHelper.miniMessageToJson(sendTitle.render(hook.getContext())), AdventureHelper.miniMessageToJson(bar), 0, 20, 0);
                         }
                     };
                 }
