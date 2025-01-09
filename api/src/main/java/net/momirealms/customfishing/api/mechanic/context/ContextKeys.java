@@ -19,10 +19,12 @@ package net.momirealms.customfishing.api.mechanic.context;
 
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionGoal;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
+import net.momirealms.customfishing.api.mechanic.totem.ActiveTotemList;
 import org.bukkit.Location;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Represents keys for accessing context values with specific types.
@@ -65,6 +67,7 @@ public class ContextKeys<T> {
     public static final ContextKeys<Double> MAX_SIZE = of("max_size", Double.class);
     public static final ContextKeys<String> RANK = of("rank", String.class);
     public static final ContextKeys<Location> OTHER_LOCATION = of("other_location", Location.class);
+    public static final ContextKeys<ActiveTotemList> TOTEMS = of("totems", ActiveTotemList.class);
     public static final ContextKeys<Integer> OTHER_X = of("other_x", Integer.class);
     public static final ContextKeys<Integer> OTHER_Y = of("other_y", Integer.class);
     public static final ContextKeys<Integer> OTHER_Z = of("other_z", Integer.class);

@@ -30,6 +30,7 @@ import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.EffectModifier;
 import net.momirealms.customfishing.api.mechanic.hook.HookConfig;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
+import net.momirealms.customfishing.api.mechanic.totem.ActiveTotemList;
 import net.momirealms.customfishing.api.storage.user.UserData;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.item.Item;
@@ -236,6 +237,7 @@ public class FishingGears {
 
             // set totems
             Collection<String> totemIDs = BukkitCustomFishingPlugin.getInstance().getTotemManager().getActivatedTotems(player.getLocation());
+            context.arg(ContextKeys.TOTEMS, new ActiveTotemList(totemIDs));
             for (String id : totemIDs) {
                 BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(id, MechanicType.TOTEM).ifPresent(fishingGears.modifiers::add);
             }

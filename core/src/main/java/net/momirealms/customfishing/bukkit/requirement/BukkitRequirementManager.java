@@ -34,6 +34,7 @@ import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementExpansion;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementFactory;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
+import net.momirealms.customfishing.api.mechanic.totem.ActiveTotemList;
 import net.momirealms.customfishing.api.util.MoonPhase;
 import net.momirealms.customfishing.bukkit.integration.VaultHook;
 import net.momirealms.customfishing.common.util.ClassUtils;
@@ -202,6 +203,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         this.registerGameModeRequirement();
         this.registerEquipmentRequirement();
         this.registerLiquidDepthRequirement();
+        this.registerTotemRequirement();
     }
 
     private void registerImpossibleRequirement() {
@@ -753,6 +755,22 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 return false;
             };
         }, "liquid-depth");
+    }
+
+    private void registerTotemRequirement() {
+        registerRequirement((args, actions, advanced) -> {
+            List<String> totems = ListUtils.toList(args);
+            return context -> {
+                ActiveTotemList totemList = context.arg(ContextKeys.TOTEMS);
+                if (totemList != null) {
+                    for (String totem : totems) {
+                        if (totemList.hasTotem(totem)) return true;
+                    }
+                }
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        }, "totem");
     }
 
     private void registerLevelRequirement() {
