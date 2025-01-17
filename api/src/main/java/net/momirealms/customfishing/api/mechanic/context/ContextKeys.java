@@ -24,7 +24,6 @@ import org.bukkit.Location;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Represents keys for accessing context values with specific types.

@@ -67,6 +67,9 @@ public class BukkitMarketManager implements MarketManager, Listener {
     protected boolean sellFishingBag;
 
     protected TextValue<Player> title;
+    protected TextValue<Player> denyTitle;
+    protected TextValue<Player> allowTitle;
+    protected TextValue<Player> limitTitle;
     protected String[] layout;
     protected final HashMap<Character, Pair<CustomFishingItem, Action<Player>[]>> decorativeIcons;
     protected final ConcurrentHashMap<UUID, MarketGUI> marketGUICache;
@@ -74,7 +77,6 @@ public class BukkitMarketManager implements MarketManager, Listener {
     protected char itemSlot;
     protected char sellSlot;
     protected char sellAllSlot;
-    protected char closeSlot;
 
     protected CustomFishingItem sellIconAllowItem;
     protected CustomFishingItem sellIconDenyItem;
@@ -137,7 +139,8 @@ public class BukkitMarketManager implements MarketManager, Listener {
 
         this.formula = config.getString("price-formula", "{base} + {bonus} * {size}");
         this.layout = config.getStringList("layout").toArray(new String[0]);
-        this.title = TextValue.auto(config.getString("title", "market.title"));
+        String defaultTitle = config.getString("title", "mechanics.market.title");
+        this.title = TextValue.auto(defaultTitle);
         this.itemSlot = config.getString("item-slot.symbol", "I").charAt(0);
         this.allowItemWithNoPrice = config.getBoolean("item-slot.allow-items-with-no-price", true);
         this.allowBundle = config.getBoolean("allow-bundle", true);
@@ -198,6 +201,17 @@ public class BukkitMarketManager implements MarketManager, Listener {
                 }
             }
         }
+
+        Section titleSection = config.getSection("titles");
+        if (titleSection != null) {
+            this.denyTitle = TextValue.auto(titleSection.getString("deny", defaultTitle));
+            this.limitTitle = TextValue.auto(titleSection.getString("limit", defaultTitle));
+            this.allowTitle = TextValue.auto(titleSection.getString("allow", defaultTitle));
+        } else {
+            this.denyTitle = null;
+            this.allowTitle = null;
+            this.limitTitle = null;
+        }
     }
 
     /**
@@ -220,7 +234,8 @@ public class BukkitMarketManager implements MarketManager, Listener {
         for (Map.Entry<Character, Pair<CustomFishingItem, Action<Player>[]>> entry : decorativeIcons.entrySet()) {
             gui.addElement(new MarketGUIElement(entry.getKey(), entry.getValue().left().build(context)));
         }
-        gui.build().refresh().show();
+        gui.build().show();
+        gui.refresh();
         marketGUICache.put(player.getUniqueId(), gui);
         return true;
     }

@@ -123,10 +123,16 @@ public class MarketGUI {
                     .arg(ContextKeys.SOLD_ITEM_AMOUNT, soldAmount);
             if (totalWorth <= 0) {
                 sellElement.setItemStack(manager.sellIconDenyItem.build(context));
+                if (manager.denyTitle != null)
+                    SparrowHeart.getInstance().updateInventoryTitle(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(manager.denyTitle.render(context))));
             } else if (earningLimit != -1 && (earningLimit - earningData.earnings < totalWorth)) {
                 sellElement.setItemStack(manager.sellIconLimitItem.build(context));
+                if (manager.limitTitle != null)
+                    SparrowHeart.getInstance().updateInventoryTitle(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(manager.limitTitle.render(context))));
             } else {
                 sellElement.setItemStack(manager.sellIconAllowItem.build(context));
+                if (manager.allowTitle != null)
+                    SparrowHeart.getInstance().updateInventoryTitle(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(manager.allowTitle.render(context))));
             }
         }
 

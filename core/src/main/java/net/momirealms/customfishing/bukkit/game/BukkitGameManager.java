@@ -86,6 +86,7 @@ public class BukkitGameManager implements GameManager {
     @Override
     public void unload() {
         this.gameMap.clear();
+        this.gameConditions.clear();
     }
 
     private ConditionalElement<List<Pair<String, WeightOperation>>, Player> parseGameConditions(Section section) {

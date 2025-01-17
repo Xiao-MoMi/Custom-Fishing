@@ -159,6 +159,7 @@ public class BukkitConfigManager extends ConfigManager {
                             .addIgnoredRoute(configVersion, "mechanics.market.sell-all-icons", '.')
                             .addIgnoredRoute(configVersion, "mechanics.market.sell-icons", '.')
                             .addIgnoredRoute(configVersion, "mechanics.market.decorative-icons", '.')
+                            .addIgnoredRoute(configVersion, "mechanics.market.titles", '.')
                             .addIgnoredRoute(configVersion, "other-settings.placeholder-register", '.')
                             .build()
             );
@@ -300,8 +301,12 @@ public class BukkitConfigManager extends ConfigManager {
                         try {
                             YamlDocument document = plugin.getConfigManager().loadData(subFile);
                             for (Map.Entry<String, Object> entry : document.getStringRouteMappedValues(false).entrySet()) {
-                                if (entry.getValue() instanceof Section section) {
-                                    type.parse(entry.getKey(), section, nodes);
+                                try {
+                                    if (entry.getValue() instanceof Section section) {
+                                        type.parse(entry.getKey(), section, nodes);
+                                    }
+                                } catch (Exception e) {
+                                    plugin.getPluginLogger().warn("Invalid config " + subFile.getPath() + " - Failed to parse section " + entry.getKey(), e);
                                 }
                             }
                         } catch (ConstructorException e) {
