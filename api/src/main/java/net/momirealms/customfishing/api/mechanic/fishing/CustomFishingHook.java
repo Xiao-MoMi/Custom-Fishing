@@ -44,6 +44,7 @@ import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.api.util.PlayerUtils;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
+import net.momirealms.customfishing.common.util.Pair;
 import net.momirealms.customfishing.common.util.TriConsumer;
 import net.momirealms.customfishing.common.util.TriFunction;
 import net.momirealms.sparrow.heart.SparrowHeart;
@@ -604,8 +605,9 @@ public class CustomFishingHook {
         if (!nextLoot.disableStats()) {
             plugin.getStorageManager().getOnlineUser(player.getUniqueId()).ifPresent(
                     userData -> {
-                        userData.statistics().addAmount(nextLoot.statisticKey().amountKey(), 1);
+                        Pair<Integer, Integer> result = userData.statistics().addAmount(nextLoot.statisticKey().amountKey(), 1);
                         context.arg(ContextKeys.TOTAL_AMOUNT, userData.statistics().getAmount(nextLoot.statisticKey().amountKey()));
+                        plugin.getEventManager().trigger(context, id, MechanicType.LOOT, ActionTrigger.SUCCESS, result.left(), result.right());
                         Optional.ofNullable(context.arg(ContextKeys.SIZE)).ifPresent(size -> {
                             float max = Math.max(0, userData.statistics().getMaxSize(nextLoot.statisticKey().sizeKey()));
                             context.arg(ContextKeys.RECORD, max);

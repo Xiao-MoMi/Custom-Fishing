@@ -267,12 +267,19 @@ public class BukkitConfigManager extends ConfigManager {
                 MechanicType type = MechanicType.index().value(entry.getKey());
                 if (entry.getValue() instanceof Section inner) {
                     Map<ActionTrigger, Action<Player>[]> actionMap = new HashMap<>();
+                    Map<ActionTrigger, TreeMap<Integer, Action<Player>[]>> actionTimesMap = new HashMap<>();
                     for (Map.Entry<String, Object> innerEntry : inner.getStringRouteMappedValues(false).entrySet()) {
                         if (innerEntry.getValue() instanceof Section actionSection) {
-                            actionMap.put(ActionTrigger.valueOf(innerEntry.getKey().toUpperCase(Locale.ENGLISH)), plugin.getActionManager().parseActions(actionSection));
+                            String trigger = innerEntry.getKey().toUpperCase(Locale.ENGLISH);
+                            if (trigger.equals("SUCCESS_TIMES") || trigger.equals("SUCCESS-TIMES")) {
+                                actionTimesMap.put(ActionTrigger.SUCCESS, plugin.getActionManager().parseTimesActions(actionSection));
+                            } else {
+                                actionMap.put(ActionTrigger.valueOf(trigger), plugin.getActionManager().parseActions(actionSection));
+                            }
                         }
                     }
                     EventManager.GLOBAL_ACTIONS.put(type, actionMap);
+                    EventManager.GLOBAL_TIMES_ACTION.put(type, actionTimesMap);
                 }
             }
         }
@@ -1183,6 +1190,21 @@ public class BukkitConfigManager extends ConfigManager {
             Action<Player>[] actions = plugin.getActionManager().parseActions(section);
             return builder -> builder.action(ActionTrigger.NEW_SIZE_RECORD, actions);
         }, "events", "new_size_record");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            Action<Player>[] actions = plugin.getActionManager().parseActions(section);
+            return builder -> builder.action(ActionTrigger.NEW_SIZE_RECORD, actions);
+        }, "events", "new-size-record");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            TreeMap<Integer, Action<Player>[]> actions = plugin.getActionManager().parseTimesActions(section);
+            return builder -> builder.actionTimes(ActionTrigger.SUCCESS, actions);
+        }, "events", "success_times");
+        this.registerEventParser(object -> {
+            Section section = (Section) object;
+            TreeMap<Integer, Action<Player>[]> actions = plugin.getActionManager().parseTimesActions(section);
+            return builder -> builder.actionTimes(ActionTrigger.SUCCESS, actions);
+        }, "events", "success-times");
     }
 
     private void registerBuiltInLootParser() {
