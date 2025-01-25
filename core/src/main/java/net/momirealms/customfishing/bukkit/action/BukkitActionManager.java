@@ -172,6 +172,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         this.registerHologramAction();
         this.registerFakeItemAction();
         this.registerTitleAction();
+        this.registerInsertArgumentAction();
     }
 
     private void registerMessageAction() {
@@ -732,6 +733,26 @@ public class BukkitActionManager implements ActionManager<Player> {
                 return Action.empty();
             }
         }, "plugin-exp");
+    }
+
+    private void registerInsertArgumentAction() {
+        registerAction((args, chance) -> {
+            if (args instanceof Section section) {
+                List<Pair<String, TextValue<Player>>> argList = new ArrayList<>();
+                for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
+                    argList.add(Pair.of(entry.getKey(), TextValue.auto(entry.getValue().toString())));
+                }
+                return context -> {
+                    if (Math.random() > chance.evaluate(context)) return;
+                    for (Pair<String, TextValue<Player>> pair : argList) {
+                        context.arg(ContextKeys.of(pair.left(), String.class), pair.right().render(context));
+                    }
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at context-arg action which is expected to be `Section`");
+                return Action.empty();
+            }
+        }, "context-arg");
     }
 
     private void registerTitleAction() {

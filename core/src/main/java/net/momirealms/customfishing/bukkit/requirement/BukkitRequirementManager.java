@@ -35,6 +35,7 @@ import net.momirealms.customfishing.api.mechanic.requirement.RequirementExpansio
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementFactory;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.totem.ActiveTotemList;
+import net.momirealms.customfishing.api.util.MiscUtils;
 import net.momirealms.customfishing.api.util.MoonPhase;
 import net.momirealms.customfishing.bukkit.integration.VaultHook;
 import net.momirealms.customfishing.common.util.ClassUtils;
@@ -204,6 +205,9 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         this.registerEquipmentRequirement();
         this.registerLiquidDepthRequirement();
         this.registerTotemRequirement();
+        this.registerIsFirstLootRequirement();
+        this.registerHasPlayerLootRequirement();
+        this.registerLootOrderRequirement();
     }
 
     private void registerImpossibleRequirement() {
@@ -1188,7 +1192,6 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             if (args instanceof Section section) {
                 TextValue<Player> v1 = TextValue.auto(section.getString("value1", ""));
                 TextValue<Player> v2 = TextValue.auto(section.getString("value2", ""));
-
                 return context -> {
                     if (v1.render(context, true).equals(v2.render(context, true))) return true;
                     if (runActions) ActionManager.trigger(context, actions);
@@ -1294,6 +1297,43 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 return false;
             };
         }, "gamemode");
+    }
+
+    protected void registerIsFirstLootRequirement() {
+        registerRequirement((args, actions, advanced) -> {
+            boolean is = (boolean) args;
+            return context -> {
+                int order = Optional.ofNullable(context.arg(ContextKeys.LOOT_ORDER)).orElse(1);
+                if (is && order == 1) return true;
+                if (!is && order != 1) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        }, "is-first-loot");
+    }
+
+    protected void registerLootOrderRequirement() {
+        registerRequirement((args, actions, advanced) -> {
+            int order = MiscUtils.getAsInt(args);
+            return context -> {
+                int actualOrder = Optional.ofNullable(context.arg(ContextKeys.LOOT_ORDER)).orElse(1);
+                if (order == actualOrder) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        }, "loot-order");
+    }
+
+    protected void registerHasPlayerLootRequirement() {
+        registerRequirement((args, actions, advanced) -> {
+            boolean has = (boolean) args;
+            return context -> {
+                if (has && context.holder() != null) return true;
+                if (!has && context.holder() == null) return true;
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        }, "has-player");
     }
 
     /**

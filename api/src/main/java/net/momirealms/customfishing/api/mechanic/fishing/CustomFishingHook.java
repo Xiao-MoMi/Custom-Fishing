@@ -502,7 +502,9 @@ public class CustomFishingHook {
                 context.arg(ContextKeys.SIZE_ADDER, tempFinalEffect.sizeAdder());
                 boolean directlyToInventory = nextLoot.toInventory().evaluate(context) != 0;
                 for (int i = 0; i < amount; i++) {
+                    int order = i;
                     plugin.getScheduler().sync().runLater(() -> {
+                        context.arg(ContextKeys.LOOT_ORDER, order);
                         if (directlyToInventory) {
                             ItemStack stack = plugin.getItemManager().getItemLoot(context, gears.getItem(FishingGears.GearType.ROD).stream().findAny().orElseThrow().right(), hook);
                             if (stack.getType() != Material.AIR) {
@@ -544,6 +546,7 @@ public class CustomFishingHook {
                 }
             }
             case BLOCK -> {
+                context.arg(ContextKeys.LOOT_ORDER, 1);
                 FallingBlock fallingBlock = plugin.getBlockManager().summonBlockLoot(context);
                 FishingLootSpawnEvent spawnEvent = new FishingLootSpawnEvent(context, hook.getLocation(), nextLoot, fallingBlock);
                 Bukkit.getPluginManager().callEvent(spawnEvent);
@@ -554,6 +557,7 @@ public class CustomFishingHook {
                 doSuccessActions();
             }
             case ENTITY -> {
+                context.arg(ContextKeys.LOOT_ORDER, 1);
                 Entity entity = plugin.getEntityManager().summonEntityLoot(context);
                 FishingLootSpawnEvent spawnEvent = new FishingLootSpawnEvent(context, hook.getLocation(), nextLoot, entity);
                 Bukkit.getPluginManager().callEvent(spawnEvent);
