@@ -60,7 +60,6 @@ import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.InputStream;
 import java.nio.file.Path;

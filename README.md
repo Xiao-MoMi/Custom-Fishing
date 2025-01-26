@@ -1,7 +1,6 @@
 # Custom-Fishing
 
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/Xiao-MoMi/Custom-Fishing)
-[![](https://jitpack.io/v/Xiao-MoMi/Custom-Fishing.svg)](https://jitpack.io/#Xiao-MoMi/Custom-Fishing)
 <a href="https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing" alt="GitBook">
 <img src="https://img.shields.io/badge/docs-gitbook-brightgreen" alt="Gitbook"/>
 </a>
@@ -26,7 +25,7 @@ Get the artifact under /target folder
 ## How to Contribute
 
 #### Translations
-Clone this project and create a new language file in the /common/src/main/resources/translations directory. \
+Clone this project and create a new language file in the /core/src/main/resources/translations directory. \
 Once your changes are ready, open a pull request for review. We appreciate your works!
 
 ## Support the Developer
@@ -37,48 +36,14 @@ Afdian: https://afdian.com/@xiaomomi/
 
 ## CustomFishing API
 
-### Maven
-
-```html
-<repositories>
-  <repository>
-    <id>jitpack</id>
-    <url>https://jitpack.io/</url>
-  </repository>
-</repositories>
-```
-```html
-<dependencies>
-  <dependency>
-    <groupId>com.github.Xiao-MoMi</groupId>
-    <artifactId>Custom-Fishing</artifactId>
-    <version>{VERSION}</version>
-    <scope>provided</scope>
-  </dependency>
-</dependencies>
-```
-### Gradle (Groovy)
-
-```groovy
-repositories {
-    maven { url 'https://jitpack.io' }
-}
-```
-```groovy
-dependencies {
-    compileOnly 'com.github.Xiao-MoMi:Custom-Fishing:{VERSION}'
-}
-```
-### Gradle (Kotlin)
-
 ```kotlin
 repositories {
-    maven("https://jitpack.io/")
+    maven("https://repo.momirealms.net/releases/")
 }
 ```
 ```kotlin
 dependencies {
-    compileOnly("com.github.Xiao-MoMi:Custom-Fishing:{VERSION}")
+    compileOnly("net.momirealms:custom-fishing:2.3.3")
 }
 ```
 #### Fun Facts

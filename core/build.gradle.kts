@@ -1,7 +1,3 @@
-plugins {
-    id("io.github.goooler.shadow") version "8.1.8"
-}
-
 repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // papi
     maven("https://libraries.minecraft.net") // brigadier
@@ -15,7 +11,6 @@ dependencies {
     // platform
     compileOnly("dev.folia:folia-api:${rootProject.properties["paper_version"]}-R0.1-SNAPSHOT")
     // subprojects
-    implementation(project(":common"))
     implementation(project(":api")) {
         exclude("dev.dejvokep", "boosted-yaml")
     }
