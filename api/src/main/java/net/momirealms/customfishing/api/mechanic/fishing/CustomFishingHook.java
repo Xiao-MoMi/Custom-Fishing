@@ -611,15 +611,15 @@ public class CustomFishingHook {
                     userData -> {
                         Pair<Integer, Integer> result = userData.statistics().addAmount(nextLoot.statisticKey().amountKey(), 1);
                         context.arg(ContextKeys.TOTAL_AMOUNT, userData.statistics().getAmount(nextLoot.statisticKey().amountKey()));
-                        plugin.getEventManager().trigger(context, id, MechanicType.LOOT, ActionTrigger.SUCCESS, result.left(), result.right());
                         Optional.ofNullable(context.arg(ContextKeys.SIZE)).ifPresent(size -> {
-                            float max = Math.max(0, userData.statistics().getMaxSize(nextLoot.statisticKey().sizeKey()));
+                            float max = Math.max(size, userData.statistics().getMaxSize(nextLoot.statisticKey().sizeKey()));
                             context.arg(ContextKeys.RECORD, max);
                             context.arg(ContextKeys.RECORD_FORMATTED, String.format("%.2f", max));
                             if (userData.statistics().updateSize(nextLoot.statisticKey().sizeKey(), size)) {
                                 plugin.getEventManager().trigger(context, id, MechanicType.LOOT, ActionTrigger.NEW_SIZE_RECORD);
                             }
                         });
+                        plugin.getEventManager().trigger(context, id, MechanicType.LOOT, ActionTrigger.SUCCESS, result.left(), result.right());
                     }
             );
         }
