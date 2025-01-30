@@ -105,6 +105,9 @@ public class BukkitIntegrationManager implements IntegrationManager {
         if (isHooked("MMOItems")) {
             registerItemProvider(new MMOItemsItemProvider());
         }
+        if (isHooked("EcoItems")) {
+            registerItemProvider(new EcoItemsProvider());
+        }
         if (isHooked("Oraxen", "1")) {
             registerItemProvider(new OraxenItemProvider());
             registerBlockProvider(new OraxenBlockProvider());

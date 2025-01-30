@@ -52,10 +52,12 @@ dependencies {
     compileOnly(files("libs/SCore-5.24.9.29.jar"))
     compileOnly(files("libs/SCore-5.24.9.29.jar"))
     compileOnly(files("libs/CraftEngine-beta.jar"))
+    compileOnly(files("libs/libreforge-4.73.0.jar"))
     compileOnly("com.github.LoneDev6:API-ItemsAdder:3.6.1")
     compileOnly("net.Indyuce:MMOItems-API:6.10-SNAPSHOT")
     compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")
     compileOnly("pers.neige.neigeitems:NeigeItems:1.17.13")
+    compileOnly("com.willfp:EcoItems:5.61.0")
     compileOnly("io.th0rgal:oraxen:1.168.0")
     compileOnly("com.github.brcdev-minecraft:shopgui-api:3.0.0")
     // entity
