@@ -996,7 +996,7 @@ public class BukkitConfigManager extends ConfigManager {
             return new ArrayList<>(intersection);
         } else if (groupExpression.contains("|")) {
             Set<String> members = new HashSet<>();
-            String[] groups = groupExpression.split("&");
+            String[] groups = groupExpression.split("\\|");
             for (String group : groups) {
                 members.addAll(groupProvider.apply(group));
             }
