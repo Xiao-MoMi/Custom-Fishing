@@ -43,7 +43,7 @@ repositories {
 ```
 ```kotlin
 dependencies {
-    compileOnly("net.momirealms:custom-fishing:2.3.3")
+    compileOnly("net.momirealms:custom-fishing:2.3.4")
 }
 ```
 #### Fun Facts
