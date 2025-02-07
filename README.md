@@ -1,4 +1,4 @@
-# Custom-Fishing
+# Custom-Fishing 🎣
 
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/Xiao-MoMi/Custom-Fishing)
 <a href="https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customfishing" alt="GitBook">
@@ -10,41 +10,69 @@
 ![bStats Players](https://img.shields.io/bstats/players/16648)
 ![GitHub](https://img.shields.io/github/license/Xiao-MoMi/Custom-Fishing)
 
-CustomFishing is a Paper plugin designed to offer an extensive range of minigames and a robust condition and action system for fishing. Introducing a novel weight system concept, CustomFishing provides unparalleled customization opportunities while ensuring optimal performance. The plugin goes beyond standard features by allowing you to register custom mechanism, actions, conditions, games, and even parsers for configuration file formats. This flexibility makes it a powerful API for developers, enabling the creation of innovative fishing experiences, such as lava fishing or void fishing, tailored to your specific needs.
-## How to Build
+## 📌 About CustomFishing
+CustomFishing is a **Paper plugin** designed to provide a variety of **fishing minigames** and a powerful **condition and action system**. It introduces a unique **weight system**, offering unparalleled customization while maintaining optimal performance.
 
-#### Command Line
-Install JDK 17 & 21. \
-Start terminal and change directory to the project folder.\
-Execute ".\gradlew build" and get the artifact under /target folder
+### 🔥 Key Features:
+- Extensive **customization** options for fishing mechanics.
+- Ability to **register custom** mechanisms, actions, conditions, games, and configuration parsers.
+- Supports **innovative fishing experiences**, such as **lava fishing** or **void fishing**.
+- Provides a **robust API** for developers to extend functionality easily.
 
-#### IDE
-Import the project and execute gradle build action. \
-Get the artifact under /target folder
+---
+## 🔧 How to Build
 
-## How to Contribute
+### 💻 Command Line
+1. Install **JDK 17 & 21**.
+2. Open a terminal and navigate to the project directory.
+3. Run:
+   ```sh
+   ./gradlew build
+   ```
+4. The artifact will be available in the **/target** folder.
 
-#### Translations
-Clone this project and create a new language file in the /core/src/main/resources/translations directory. \
-Once your changes are ready, open a pull request for review. We appreciate your works!
+### 🛠️ Using an IDE
+1. Import the project into your preferred IDE.
+2. Execute the **Gradle build** action.
+3. Find the artifact in the **/target** folder.
 
-## Support the Developer
+---
+## 🤝 How to Contribute
 
-Polymart: https://polymart.org/resource/customfishing.2723/ \
-BuiltByBit: https://builtbybit.com/resources/customfishing.36361/ \
-Afdian: https://afdian.com/@xiaomomi/
+### 🌍 Translations
+1. Clone this repository.
+2. Create a new language file in:
+   ```
+   /core/src/main/resources/translations
+   ```
+3. Once done, submit a **pull request** for review. We appreciate your contributions!
 
-## CustomFishing API
+---
+## 💖 Support the Developer
+If you enjoy using CustomFishing, consider supporting the developer!
 
+- **Polymart**: [CustomFishing on Polymart](https://polymart.org/resource/customfishing.2723/)
+- **BuiltByBit**: [CustomFishing on BuiltByBit](https://builtbybit.com/resources/customfishing.36361/)
+- **Afdian**: [Support via Afdian](https://afdian.com/@xiaomomi/)
+
+---
+## 📚 CustomFishing API
+
+### 📌 Repository
 ```kotlin
 repositories {
     maven("https://repo.momirealms.net/releases/")
 }
 ```
+
+### 📌 Dependency
 ```kotlin
 dependencies {
     compileOnly("net.momirealms:custom-fishing:2.3.4")
 }
 ```
-#### Fun Facts
-I misspelled mechanism as mechanic. I should have realized this earlier XD
+
+---
+## 🎉 Fun Fact
+I misspelled "mechanism" as "mechanic"—I should have caught that earlier! 😆
+
