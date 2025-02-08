@@ -73,6 +73,18 @@ public class FishingGears {
     private boolean canFish = true;
     private HandSlot rodSlot;
 
+    public void setCanFish(boolean canFish) {
+        this.canFish = canFish;
+    }
+
+    public void setRodSlot(HandSlot rodSlot) {
+        this.rodSlot = rodSlot;
+    }
+
+    public Map<GearType, List<Pair<String, ItemStack>>> gears() {
+        return gears;
+    }
+
     /**
      * Sets the fishing gears consumers.
      *

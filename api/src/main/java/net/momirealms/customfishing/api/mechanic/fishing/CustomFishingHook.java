@@ -627,4 +627,8 @@ public class CustomFishingHook {
         plugin.getEventManager().trigger(context, id, MechanicType.LOOT, ActionTrigger.SUCCESS);
         player.setStatistic(Statistic.FISH_CAUGHT, player.getStatistic(Statistic.FISH_CAUGHT) + 1);
     }
+
+    public FishingGears gears() {
+        return gears;
+    }
 }

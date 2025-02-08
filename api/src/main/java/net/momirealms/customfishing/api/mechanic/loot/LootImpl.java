@@ -150,7 +150,7 @@ public class LootImpl implements Loot {
         private String[] groups = new String[0];
         private LootBaseEffect lootBaseEffect = null;
         private MathValue<Player> toInventory = MathValue.plain(0);
-        private Map<String, TextValue<Player>> customData = new LinkedHashMap<>();
+        private final Map<String, TextValue<Player>> customData = new LinkedHashMap<>();
 
         @Override
         public Builder type(LootType type) {

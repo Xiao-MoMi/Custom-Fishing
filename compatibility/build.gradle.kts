@@ -51,7 +51,7 @@ dependencies {
     compileOnly(files("libs/ExecutableItems-7.24.9.29.jar"))
     compileOnly(files("libs/SCore-5.24.9.29.jar"))
     compileOnly(files("libs/SCore-5.24.9.29.jar"))
-    compileOnly(files("libs/CraftEngine-beta.jar"))
+    compileOnly(files("libs/CraftEngine-0.0.8.jar"))
     compileOnly(files("libs/libreforge-4.73.0.jar"))
     compileOnly("com.github.LoneDev6:API-ItemsAdder:3.6.1")
     compileOnly("net.Indyuce:MMOItems-API:6.10-SNAPSHOT")
