@@ -31,6 +31,7 @@ import net.momirealms.customfishing.api.mechanic.game.AbstractGamingPlayer;
 import net.momirealms.customfishing.api.mechanic.game.GamingPlayer;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.util.EventUtils;
+import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -82,8 +83,9 @@ public class BukkitFishingManager implements FishingManager, Listener {
 
     @Override
     public Optional<Player> getOwner(FishHook hook) {
-        if (hook.getOwnerUniqueId() != null) {
-            return Optional.ofNullable(Bukkit.getPlayer(hook.getOwnerUniqueId()));
+        UUID ownerUUID = SparrowHeart.getInstance().getFishingHookOwner(hook);
+        if (ownerUUID != null) {
+            return Optional.ofNullable(Bukkit.getPlayer(ownerUUID));
         }
         return Optional.empty();
     }

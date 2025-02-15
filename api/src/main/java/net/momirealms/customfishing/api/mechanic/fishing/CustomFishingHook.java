@@ -19,6 +19,7 @@ package net.momirealms.customfishing.api.mechanic.fishing;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.FishingEffectApplyEvent;
+import net.momirealms.customfishing.api.event.FishingHookStateEvent;
 import net.momirealms.customfishing.api.event.FishingLootSpawnEvent;
 import net.momirealms.customfishing.api.event.FishingResultEvent;
 import net.momirealms.customfishing.api.mechanic.MechanicType;
@@ -383,6 +384,7 @@ public class CustomFishingHook {
                 gears.trigger(ActionTrigger.REEL, context);
                 destroy();
             } else {
+                EventUtils.fireAndForget(new FishingHookStateEvent(context.holder(), hook, FishingHookStateEvent.State.HOOK));
                 if (nextLoot.disableGame() || RequirementManager.isSatisfied(context, ConfigManager.skipGameRequirements())) {
                     handleSuccessfulFishing();
                     destroy();
@@ -397,7 +399,6 @@ public class CustomFishingHook {
             destroy();
         }
     }
-
 
     /**
      * Handles the bite action.

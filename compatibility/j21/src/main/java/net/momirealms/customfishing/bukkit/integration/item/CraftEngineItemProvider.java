@@ -17,8 +17,8 @@
 
 package net.momirealms.customfishing.bukkit.integration.item;
 
-import net.momirealms.craftengine.api.util.Key;
 import net.momirealms.craftengine.bukkit.plugin.BukkitCraftEngine;
+import net.momirealms.craftengine.core.util.Key;
 import net.momirealms.customfishing.api.integration.ItemProvider;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -28,7 +28,7 @@ import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
-public class CraftEngineProvider implements ItemProvider {
+public class CraftEngineItemProvider implements ItemProvider {
 
     @Override
     public String identifier() {

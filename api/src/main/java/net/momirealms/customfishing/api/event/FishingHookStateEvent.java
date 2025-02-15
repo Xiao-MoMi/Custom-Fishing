@@ -79,6 +79,7 @@ public class FishingHookStateEvent extends PlayerEvent {
         BITE,
         ESCAPE,
         LURE,
-        LAND
+        LAND,
+        HOOK
     }
 }

@@ -8,6 +8,7 @@ dependencies {
     compileOnly(project(":api"))
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
     compileOnly("com.nexomc:nexo:0.5.0-dev.8")
+    compileOnly(files("libs/CraftEngine-0.0.11.jar"))
 }
 
 tasks.withType<JavaCompile> {
