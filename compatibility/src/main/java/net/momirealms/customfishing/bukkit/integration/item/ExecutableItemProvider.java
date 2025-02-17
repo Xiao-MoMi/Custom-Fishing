@@ -20,6 +20,7 @@ package net.momirealms.customfishing.bukkit.integration.item;
 import com.ssomar.executableitems.executableitems.manager.ExecutableItemsManager;
 import com.ssomar.score.api.executableitems.config.ExecutableItemInterface;
 import net.momirealms.customfishing.api.integration.ItemProvider;
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -30,8 +31,8 @@ import java.util.Optional;
 public class ExecutableItemProvider implements ItemProvider {
 
     @Override
-    public @NotNull ItemStack buildItem(@NotNull Player player, @NotNull String id) {
-        return ExecutableItemsManager.getInstance().getExecutableItem(id).get().buildItem(1, Optional.of(player));
+    public @NotNull ItemStack buildItem(@NotNull Context<Player> player, @NotNull String id) {
+        return ExecutableItemsManager.getInstance().getExecutableItem(id).get().buildItem(1, Optional.of(player.holder()));
     }
 
     @Nullable

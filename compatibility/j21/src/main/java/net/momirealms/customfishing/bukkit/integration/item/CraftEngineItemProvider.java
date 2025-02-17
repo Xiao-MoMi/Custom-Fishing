@@ -20,6 +20,7 @@ package net.momirealms.customfishing.bukkit.integration.item;
 import net.momirealms.craftengine.bukkit.plugin.BukkitCraftEngine;
 import net.momirealms.craftengine.core.util.Key;
 import net.momirealms.customfishing.api.integration.ItemProvider;
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -37,8 +38,8 @@ public class CraftEngineItemProvider implements ItemProvider {
 
     @NotNull
     @Override
-    public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
-        ItemStack itemStack = BukkitCraftEngine.instance().itemManager().buildItemStack(Key.of(id), BukkitCraftEngine.instance().adapt(player));
+    public ItemStack buildItem(@NotNull Context<Player> player, @NotNull String id) {
+        ItemStack itemStack = BukkitCraftEngine.instance().itemManager().buildItemStack(Key.of(id), BukkitCraftEngine.instance().adapt(player.holder()));
         return requireNonNull(itemStack, "Item not found in CraftEngine: " + id);
     }
 

@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.api.integration;
 
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,7 @@ public interface ItemProvider extends ExternalProvider {
      * @return the built ItemStack.
      */
     @NotNull
-    ItemStack buildItem(@NotNull Player player, @NotNull String id);
+    ItemStack buildItem(@NotNull Context<Player> player, @NotNull String id);
 
     /**
      * Retrieves the item ID from a given ItemStack.

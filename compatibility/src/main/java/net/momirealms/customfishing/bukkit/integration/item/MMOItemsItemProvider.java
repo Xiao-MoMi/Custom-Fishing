@@ -22,6 +22,7 @@ import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 import net.momirealms.customfishing.api.integration.ItemProvider;
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -40,7 +41,7 @@ public class MMOItemsItemProvider implements ItemProvider {
 
     @NotNull
     @Override
-    public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
+    public ItemStack buildItem(@NotNull Context<Player> player, @NotNull String id) {
         String[] split = id.split(":");
         MMOItem mmoItem = MMOItems.plugin.getMMOItem(Type.get(split[0]), split[1].toUpperCase(Locale.ENGLISH));
         return mmoItem == null ? new ItemStack(Material.AIR) : requireNonNull(mmoItem.newBuilder().build());

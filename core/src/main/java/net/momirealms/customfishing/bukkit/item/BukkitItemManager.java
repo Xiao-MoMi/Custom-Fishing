@@ -82,7 +82,7 @@ public class BukkitItemManager implements ItemManager, Listener {
         this.registerItemProvider(new ItemProvider() {
             @NotNull
             @Override
-            public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
+            public ItemStack buildItem(@NotNull Context<Player> player, @NotNull String id) {
                 try {
                     return new ItemStack(Material.valueOf(id.toUpperCase(Locale.ENGLISH)));
                 } catch (IllegalArgumentException e) {
@@ -141,7 +141,7 @@ public class BukkitItemManager implements ItemManager, Listener {
         if (context.arg(ContextKeys.ID) == null) {
             context.arg(ContextKeys.ID, item.id());
         }
-        ItemStack itemStack = getOriginalStack(context.holder(), item.material());
+        ItemStack itemStack = getOriginalStack(context, item.material());
         if (itemStack.getType() == Material.AIR) return itemStack;
         plugin.getLootManager().getLoot(item.id()).ifPresent(loot -> {
             for (Map.Entry<String, TextValue<Player>> entry : loot.customData().entrySet()) {
@@ -158,7 +158,7 @@ public class BukkitItemManager implements ItemManager, Listener {
 
     @Override
     public ItemStack buildAny(@NotNull Context<Player> context, @NotNull String item) {
-        return getOriginalStack(context.holder(), item);
+        return getOriginalStack(context, item);
     }
 
     @NotNull
@@ -225,7 +225,7 @@ public class BukkitItemManager implements ItemManager, Listener {
         return itemEntity;
     }
 
-    private ItemStack getOriginalStack(Player player, String material) {
+    private ItemStack getOriginalStack(Context<Player> player, String material) {
         if (!material.contains(":")) {
             try {
                 return new ItemStack(Material.valueOf(material.toUpperCase(Locale.ENGLISH)));

@@ -36,7 +36,7 @@ public class CustomFishingItemProvider implements ItemProvider {
 
     @NotNull
     @Override
-    public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
+    public ItemStack buildItem(@NotNull Context<Player> player, @NotNull String id) {
         String[] split = id.split(":", 2);
         String finalID;
         if (split.length == 1) {
@@ -46,7 +46,7 @@ public class CustomFishingItemProvider implements ItemProvider {
             // CustomFishing:TYPE:ID
             finalID = split[1];
         }
-        ItemStack itemStack = BukkitCustomFishingPlugin.getInstance().getItemManager().buildInternal(Context.player(player).arg(ContextKeys.ID, finalID), finalID);
+        ItemStack itemStack = BukkitCustomFishingPlugin.getInstance().getItemManager().buildInternal(player.arg(ContextKeys.ID, finalID), finalID);
         return requireNonNull(itemStack);
     }
 

@@ -20,6 +20,7 @@ package net.momirealms.customfishing.bukkit.integration.item;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import net.momirealms.customfishing.api.integration.ItemProvider;
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -34,7 +35,7 @@ public class OraxenItemProvider implements ItemProvider {
 
     @NotNull
     @Override
-    public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
+    public ItemStack buildItem(@NotNull Context<Player> player, @NotNull String id) {
         ItemBuilder itemBuilder = OraxenItems.getItemById(id);
         return itemBuilder == null ? new ItemStack(Material.AIR) : itemBuilder.build();
     }

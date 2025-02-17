@@ -19,6 +19,7 @@ package net.momirealms.customfishing.bukkit.integration.item;
 
 import io.lumine.mythic.bukkit.MythicBukkit;
 import net.momirealms.customfishing.api.integration.ItemProvider;
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +35,7 @@ public class MythicMobsItemProvider implements ItemProvider {
 
     @NotNull
     @Override
-    public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
+    public ItemStack buildItem(@NotNull Context<Player> player, @NotNull String id) {
         if (mythicBukkit == null || mythicBukkit.isClosed()) {
             this.mythicBukkit = MythicBukkit.inst();
         }

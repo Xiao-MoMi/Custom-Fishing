@@ -20,6 +20,7 @@ package net.momirealms.customfishing.bukkit.integration.item;
 import com.nexomc.nexo.api.NexoItems;
 import com.nexomc.nexo.items.ItemBuilder;
 import net.momirealms.customfishing.api.integration.ItemProvider;
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,7 @@ import java.util.Optional;
 public class NexoItemProvider implements ItemProvider {
 
     @Override
-    public @NotNull ItemStack buildItem(@NotNull Player player, @NotNull String id) {
+    public @NotNull ItemStack buildItem(@NotNull Context<Player> player, @NotNull String id) {
         return Optional.ofNullable(NexoItems.itemFromId(id)).map(ItemBuilder::build).orElseThrow(() -> new IllegalArgumentException("Item not found in Nexo: " + id));
     }
 

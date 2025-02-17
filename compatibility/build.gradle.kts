@@ -16,6 +16,7 @@ repositories {
 
 dependencies {
     compileOnly(project(":api"))
+    compileOnly("com.github.Xiao-MoMi:Sparrow-Heart:${rootProject.properties["sparrow_heart_version"]}")
     compileOnly("dev.dejvokep:boosted-yaml:${rootProject.properties["boosted_yaml_version"]}")
     compileOnly("net.kyori:adventure-api:${rootProject.properties["adventure_bundle_version"]}") {
         exclude(module = "adventure-bom")
@@ -38,7 +39,8 @@ dependencies {
     // leveler
     compileOnly(files("libs/mcMMO-api.jar"))
     compileOnly("net.Indyuce:MMOCore-API:1.12.1-SNAPSHOT")
-    compileOnly("dev.aurelium:auraskills-api-bukkit:2.1.5")
+//    compileOnly("dev.aurelium:auraskills-api-bukkit:2.2.7")
+    compileOnly(files("libs/AuraSkills-2.2.7.jar"))
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
     compileOnly("com.github.Zrips:Jobs:v5.2.2.3")
     // quest

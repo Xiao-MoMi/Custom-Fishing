@@ -21,6 +21,8 @@ import net.momirealms.customfishing.api.mechanic.competition.CompetitionGoal;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
 import net.momirealms.customfishing.api.mechanic.totem.ActiveTotemList;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.FishHook;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.Objects;
@@ -52,6 +54,7 @@ public class ContextKeys<T> {
     public static final ContextKeys<String> ROD = of("rod", String.class);
     public static final ContextKeys<String> BAIT = of("bait", String.class);
     public static final ContextKeys<String> HOOK = of("hook", String.class);
+    public static final ContextKeys<FishHook> HOOK_ENTITY = of("hook_entity", FishHook.class);
     public static final ContextKeys<Boolean> IN_BAG = of("in_bag", Boolean.class);
     public static final ContextKeys<CompetitionGoal> GOAL = of("goal", CompetitionGoal.class);
     public static final ContextKeys<String> HOUR = of("hour", String.class);

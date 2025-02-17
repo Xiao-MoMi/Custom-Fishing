@@ -20,6 +20,7 @@ import com.willfp.ecoitems.items.EcoItem;
 import com.willfp.ecoitems.items.EcoItemFinder;
 import com.willfp.ecoitems.items.EcoItems;
 import net.momirealms.customfishing.api.integration.ItemProvider;
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +38,7 @@ public class EcoItemsProvider implements ItemProvider {
 
     @NotNull
     @Override
-    public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
+    public ItemStack buildItem(@NotNull Context<Player> player, @NotNull String id) {
         EcoItem item = EcoItems.INSTANCE.getByID(id);
         requireNonNull(item, "EcoItems cannot find item with ID " + id);
         return item.getItemStack();

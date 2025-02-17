@@ -23,6 +23,7 @@ import net.momirealms.customfishing.api.event.FishingHookStateEvent;
 import net.momirealms.customfishing.api.event.RodCastEvent;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
 import net.momirealms.customfishing.api.mechanic.fishing.FishingGears;
 import net.momirealms.customfishing.api.mechanic.fishing.FishingManager;
@@ -305,6 +306,7 @@ public class BukkitFishingManager implements FishingManager, Listener {
         Player player = event.getPlayer();
         Context<Player> context = Context.player(player);
         FishingGears gears = new FishingGears(context);
+        context.arg(ContextKeys.HOOK_ENTITY, hook);
         if (!RequirementManager.isSatisfied(context, ConfigManager.mechanicRequirements())) {
             this.destroyHook(player.getUniqueId());
             return;
