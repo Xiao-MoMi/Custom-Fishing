@@ -216,6 +216,7 @@ public class CustomFishingHook {
 
                             // trigger event
                             EventUtils.fireAndForget(new FishingEffectApplyEvent(this, tempEffect, FishingEffectApplyEvent.Stage.FISHING));
+                            context.arg(ContextKeys.EFFECT, tempEffect);
 
                             // start the mechanic
                             plugin.debug("Final Effect:" + tempEffect);
@@ -379,6 +380,7 @@ public class CustomFishingHook {
      */
     public void onReelIn() {
         if (isPlayingGame() || !hook.isValid()) return;
+        context.arg(ContextKeys.OTHER_LOCATION, hook.getLocation());
         if (hookMechanic != null) {
             if (!hookMechanic.isHooked()) {
                 gears.trigger(ActionTrigger.REEL, context);
@@ -405,6 +407,7 @@ public class CustomFishingHook {
      */
     public void onBite() {
         if (isPlayingGame() || !hook.isValid()) return;
+        context.arg(ContextKeys.OTHER_LOCATION, hook.getLocation());
         plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.BITE);
         gears.trigger(ActionTrigger.BITE, context);
         if (RequirementManager.isSatisfied(context, ConfigManager.autoFishingRequirements())) {
@@ -424,6 +427,7 @@ public class CustomFishingHook {
      */
     public void onLand() {
         if (!hook.isValid()) return;
+        context.arg(ContextKeys.OTHER_LOCATION, hook.getLocation());
         gears.trigger(ActionTrigger.LAND, context);
     }
 
@@ -432,6 +436,7 @@ public class CustomFishingHook {
      */
     public void onEscape() {
         if (isPlayingGame() || !hook.isValid()) return;
+        context.arg(ContextKeys.OTHER_LOCATION, hook.getLocation());
         plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.ESCAPE);
         gears.trigger(ActionTrigger.ESCAPE, context);
     }
@@ -441,6 +446,7 @@ public class CustomFishingHook {
      */
     public void onLure() {
         if (isPlayingGame() || !hook.isValid()) return;
+        context.arg(ContextKeys.OTHER_LOCATION, hook.getLocation());
         plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.LURE);
         gears.trigger(ActionTrigger.LURE, context);
     }

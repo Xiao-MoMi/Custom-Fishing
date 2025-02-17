@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.mechanic.context;
 
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionGoal;
+import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.loot.LootType;
 import net.momirealms.customfishing.api.mechanic.totem.ActiveTotemList;
 import org.bukkit.Location;
@@ -92,6 +93,7 @@ public class ContextKeys<T> {
     public static final ContextKeys<Double> BONUS = of("bonus", Double.class);
     public static final ContextKeys<Double> BASE = of("base", Double.class);
     public static final ContextKeys<Integer> LOOT_ORDER = of("loot_order", Integer.class);
+    public static final ContextKeys<Effect> EFFECT = of("effect", Effect.class);
 
     private final String key;
     private final Class<T> type;

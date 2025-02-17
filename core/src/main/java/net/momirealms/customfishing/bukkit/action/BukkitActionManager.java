@@ -27,8 +27,11 @@ import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionExpansion;
 import net.momirealms.customfishing.api.mechanic.action.ActionFactory;
 import net.momirealms.customfishing.api.mechanic.action.ActionManager;
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
+import net.momirealms.customfishing.api.mechanic.loot.Loot;
+import net.momirealms.customfishing.api.mechanic.loot.LootType;
 import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
@@ -53,6 +56,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ExperienceOrb;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -173,6 +177,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         this.registerFakeItemAction();
         this.registerTitleAction();
         this.registerInsertArgumentAction();
+        this.registerDropRandomLootsAction();
     }
 
     private void registerMessageAction() {
@@ -384,6 +389,49 @@ public class BukkitActionManager implements ActionManager<Player> {
                 player.setLevel((int) Math.max(0, player.getLevel() + value.evaluate(context)));
             };
         }, "level");
+    }
+
+    private void registerDropRandomLootsAction() {
+        registerAction((args, chance) -> {
+            if (args instanceof Section section) {
+                boolean toInv = section.getBoolean("to-inventory");
+                MathValue<Player> count = MathValue.auto(section.get("amount"));
+                int extraAttempts = section.getInt("extra-attempts", 5);
+                return context -> {
+                    if (Math.random() > chance.evaluate(context)) return;
+                    Effect effect = context.arg(ContextKeys.EFFECT);
+                    if (effect == null) effect = Effect.newInstance();
+                    int triesTimes = 0;
+                    int successTimes = 0;
+                    int requiredTimes = (int) count.evaluate(context);
+                    Player player = context.holder();
+                    ItemStack rod = player.getInventory().getItemInMainHand();
+                    if (rod.getType() != Material.FISHING_ROD) rod = player.getInventory().getItemInOffHand();
+                    if (rod.getType() != Material.FISHING_ROD) rod = new ItemStack(Material.FISHING_ROD);
+                    FishHook fishHook = context.arg(ContextKeys.HOOK_ENTITY);
+                    if (fishHook == null) return;
+
+                    while (successTimes < requiredTimes && triesTimes < requiredTimes + extraAttempts) {
+                        Loot loot = plugin.getLootManager().getNextLoot(effect, context);
+                        Context<Player> newContext = Context.player(player).combine(context);
+                        if (loot != null && loot.type() == LootType.ITEM) {
+                            newContext.arg(ContextKeys.ID, loot.id());
+                            if (!toInv) {
+                                plugin.getItemManager().dropItemLoot(newContext, rod, fishHook);
+                            } else {
+                                ItemStack itemLoot = plugin.getItemManager().getItemLoot(newContext, rod, fishHook);
+                                PlayerUtils.giveItem(player, itemLoot, itemLoot.getAmount());
+                            }
+                            successTimes++;
+                        }
+                        triesTimes++;
+                    }
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at actionbar-nearby action which should be Section");
+                return Action.empty();
+            }
+        }, "drop-random-loots");
     }
 
     private void registerFoodAction() {
