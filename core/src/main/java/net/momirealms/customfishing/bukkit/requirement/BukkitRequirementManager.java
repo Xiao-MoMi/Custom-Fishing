@@ -235,6 +235,9 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                     return true;
                 }
             }
+            if (!BukkitIntegrationManager.instance().hasFloodGate() && !BukkitIntegrationManager.instance().hasGeyser() && !arg) {
+                return true;
+            }
             if (runActions) ActionManager.trigger(context, actions);
             return false;
         }), "is-bedrock-player");

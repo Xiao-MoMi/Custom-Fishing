@@ -33,6 +33,7 @@ import net.momirealms.customfishing.bukkit.integration.papi.CompetitionPapi;
 import net.momirealms.customfishing.bukkit.integration.papi.CustomFishingPapi;
 import net.momirealms.customfishing.bukkit.integration.papi.StatisticsPapi;
 import net.momirealms.customfishing.bukkit.integration.quest.BattlePassQuest;
+import net.momirealms.customfishing.bukkit.integration.quest.BeautyFishingQuest;
 import net.momirealms.customfishing.bukkit.integration.quest.BetonQuestQuest;
 import net.momirealms.customfishing.bukkit.integration.quest.ClueScrollsQuest;
 import net.momirealms.customfishing.bukkit.integration.region.WorldGuardRegion;
@@ -210,6 +211,9 @@ public class BukkitIntegrationManager implements IntegrationManager {
         }
         if (isHooked("ShopGUIPlus")) {
             ShopGUIHook.register();
+        }
+        if (isHooked("BeautyQuests")) {
+            BeautyFishingQuest.register();
         }
         if (Bukkit.getPluginManager().getPlugin("Geyser-Spigot") != null) {
             this.hasGeyser = true;
