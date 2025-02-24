@@ -12,6 +12,8 @@ repositories {
     maven("https://nexus.betonquest.org/repository/betonquest/") // betonquest
     maven("https://repo.dmulloy2.net/repository/public/") // betonquest needs packet wrapper?
     maven("https://oss.sonatype.org/content/repositories/snapshots")
+    maven("https://repo.opencollab.dev/main/") // geyser
+    maven("https://repo.codemc.org/repository/maven-public/") // beauty quest
 }
 
 dependencies {
@@ -47,6 +49,7 @@ dependencies {
     compileOnly(files("libs/BattlePass-4.0.6-api.jar"))
     compileOnly(files("libs/ClueScrolls-4.8.7-api.jar"))
     compileOnly(files("libs/notquests-5.17.1.jar"))
+    compileOnly(files("libs/beautyquests-1.0.4.jar"))
     compileOnly("org.betonquest:betonquest:2.1.3")
     // item
     compileOnly(files("libs/zaphkiel-2.0.24.jar"))
@@ -72,6 +75,10 @@ dependencies {
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9")
     // cache
     compileOnly("com.github.ben-manes.caffeine:caffeine:${rootProject.properties["caffeine_version"]}")
+    // Geyser
+    compileOnly("org.geysermc.geyser:api:2.4.2-SNAPSHOT")
+    // Floodgate
+    compileOnly("org.geysermc.floodgate:api:2.2.3-SNAPSHOT")
 }
 
 java {

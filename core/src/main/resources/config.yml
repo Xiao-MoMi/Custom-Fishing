@@ -18,10 +18,10 @@ mechanics:
       value:
         - blacklist_world
   # If you want to allow some players to skip the game, set skip requirements here
-  # We've used the 'impossible' requirement here, meaning players cannot skip the game if it exists
   skip-game-requirements:
-    impossible_requirement:
-      type: 'impossible'
+    bedrock_requirement:
+      type: 'is-bedrock-player'
+      value: true
   # Conditions for enabling auto-fishing
   auto-fishing-requirements:
     impossible_requirement:

@@ -54,11 +54,13 @@ import java.util.HashMap;
 import java.util.List;
 
 public class BukkitIntegrationManager implements IntegrationManager {
-
+    private static BukkitIntegrationManager instance;
     private final BukkitCustomFishingPlugin plugin;
     private final HashMap<String, LevelerProvider> levelerProviders = new HashMap<>();
     private final HashMap<String, EnchantmentProvider> enchantmentProviders = new HashMap<>();
     private SeasonProvider seasonProvider;
+    private boolean hasFloodGate;
+    private boolean hasGeyser;
 
     public BukkitIntegrationManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
@@ -66,7 +68,21 @@ public class BukkitIntegrationManager implements IntegrationManager {
             this.load();
         } catch (Exception e) {
             plugin.getPluginLogger().warn("Failed to load integrations", e);
+        } finally {
+            instance = this;
         }
+    }
+
+    public static BukkitIntegrationManager instance() {
+        return instance;
+    }
+
+    public boolean hasFloodGate() {
+        return hasFloodGate;
+    }
+
+    public boolean hasGeyser() {
+        return hasGeyser;
     }
 
     @Override
@@ -194,6 +210,12 @@ public class BukkitIntegrationManager implements IntegrationManager {
         }
         if (isHooked("ShopGUIPlus")) {
             ShopGUIHook.register();
+        }
+        if (Bukkit.getPluginManager().getPlugin("Geyser-Spigot") != null) {
+            this.hasGeyser = true;
+        }
+        if (Bukkit.getPluginManager().getPlugin("floodgate") != null) {
+            this.hasFloodGate = true;
         }
     }
 

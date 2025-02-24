@@ -37,7 +37,10 @@ import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.mechanic.totem.ActiveTotemList;
 import net.momirealms.customfishing.api.util.MiscUtils;
 import net.momirealms.customfishing.api.util.MoonPhase;
+import net.momirealms.customfishing.bukkit.integration.BukkitIntegrationManager;
 import net.momirealms.customfishing.bukkit.integration.VaultHook;
+import net.momirealms.customfishing.bukkit.integration.bedrock.FloodGateUtils;
+import net.momirealms.customfishing.bukkit.integration.bedrock.GeyserUtils;
 import net.momirealms.customfishing.common.util.ClassUtils;
 import net.momirealms.customfishing.common.util.ListUtils;
 import net.momirealms.customfishing.common.util.Pair;
@@ -208,6 +211,33 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         this.registerIsFirstLootRequirement();
         this.registerHasPlayerLootRequirement();
         this.registerLootOrderRequirement();
+        this.registerIsBedrockPlayerRequirement();
+    }
+
+    private void registerIsBedrockPlayerRequirement() {
+        registerRequirement(((args, actions, runActions) -> context -> {
+            boolean arg = (boolean) args;
+            if (BukkitIntegrationManager.instance().hasGeyser()) {
+                boolean is = GeyserUtils.isBedrockPlayer(context.holder().getUniqueId());
+                if (is && arg) {
+                    return true;
+                }
+                if (!is && !arg) {
+                    return true;
+                }
+            }
+            if (BukkitIntegrationManager.instance().hasFloodGate()) {
+                boolean is = FloodGateUtils.isBedrockPlayer(context.holder().getUniqueId());
+                if (is && arg) {
+                    return true;
+                }
+                if (!is && !arg) {
+                    return true;
+                }
+            }
+            if (runActions) ActionManager.trigger(context, actions);
+            return false;
+        }), "is-bedrock-player");
     }
 
     private void registerImpossibleRequirement() {

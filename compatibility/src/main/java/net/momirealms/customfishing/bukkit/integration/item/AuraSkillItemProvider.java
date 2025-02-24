@@ -127,8 +127,9 @@ public class AuraSkillItemProvider implements ItemProvider {
                     return new ItemStack(Material.AIR);
                 } else if (selectedLoot instanceof EntityLoot entityLoot && fishHook != null) {
                     giveFishingEntityLoot(context.holder(), entityLoot, source, skill, fishHook);
+                    return new ItemStack(Material.AIR);
                 }
-                break;
+                return new ItemStack(Material.AIR);
             }
         }
 
