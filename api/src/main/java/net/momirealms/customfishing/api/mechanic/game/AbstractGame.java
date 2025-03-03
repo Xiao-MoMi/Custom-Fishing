@@ -18,8 +18,10 @@
 package net.momirealms.customfishing.api.mechanic.game;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.event.FishingGamePreStartEvent;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
+import net.momirealms.customfishing.api.util.EventUtils;
 
 import java.util.function.BiFunction;
 
@@ -42,6 +44,11 @@ public abstract class AbstractGame implements Game {
         this.id = id;
     }
 
+    @Override
+    public GameBasics basics() {
+        return basics;
+    }
+
     /**
      * Gets the identifier of the game.
      *
@@ -62,7 +69,10 @@ public abstract class AbstractGame implements Game {
     @Override
     public GamingPlayer start(CustomFishingHook hook, Effect effect) {
         BukkitCustomFishingPlugin.getInstance().debug(effect);
-        return gamingPlayerProvider().apply(hook, basics.toGameSetting(hook.getContext(), effect));
+        GameSetting setting = this.basics.toGameSetting(hook.getContext(), effect);
+        FishingGamePreStartEvent event = new FishingGamePreStartEvent(hook, setting);
+        EventUtils.fireAndForget(event);
+        return gamingPlayerProvider().apply(hook, event.setting());
     }
 
     /**

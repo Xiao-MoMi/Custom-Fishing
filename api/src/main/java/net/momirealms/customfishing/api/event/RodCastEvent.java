@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
  * This class represents an event that occurs when a player casts a fishing rod.
  */
 public class RodCastEvent extends PlayerEvent implements Cancellable {
-
     private final FishingGears gears;
     private boolean isCancelled;
     private final PlayerFishEvent event;

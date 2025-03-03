@@ -27,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
  * It is triggered when the state of a fishing competition changes.
  */
 public class CompetitionEvent extends Event {
-
     private static final HandlerList handlerList = new HandlerList();
 
     private final State state;

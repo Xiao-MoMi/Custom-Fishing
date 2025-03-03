@@ -29,6 +29,8 @@ import net.momirealms.customfishing.api.mechanic.market.MarketGUIHolder;
 import net.momirealms.customfishing.api.mechanic.market.MarketManager;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
+import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
+import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.storage.data.EarningData;
 import net.momirealms.customfishing.api.storage.user.UserData;
 import net.momirealms.customfishing.bukkit.config.BukkitConfigManager;
@@ -91,6 +93,9 @@ public class BukkitMarketManager implements MarketManager, Listener {
     protected Action<Player>[] sellAllAllowActions;
     protected Action<Player>[] sellAllLimitActions;
 
+    protected Requirement<Player>[] allowBundleRequirements;
+    protected Requirement<Player>[] allowShulkerBoxRequirements;
+
     private SchedulerTask resetEarningsTask;
     private int cachedDate;
 
@@ -144,7 +149,9 @@ public class BukkitMarketManager implements MarketManager, Listener {
         this.itemSlot = config.getString("item-slot.symbol", "I").charAt(0);
         this.allowItemWithNoPrice = config.getBoolean("item-slot.allow-items-with-no-price", true);
         this.allowBundle = config.getBoolean("allow-bundle", true);
+        this.allowBundleRequirements = plugin.getRequirementManager().parseRequirements(config.getSection("allow-bundle-requirements"), false);
         this.allowShulkerBox = config.getBoolean("allow-shulker-box", true);
+        this.allowShulkerBoxRequirements = plugin.getRequirementManager().parseRequirements(config.getSection("allow-shulker-box-requirements"), false);
 
         Section sellAllSection = config.getSection("sell-all-icons");
         if (sellAllSection != null) {
@@ -477,12 +484,12 @@ public class BukkitMarketManager implements MarketManager, Listener {
             return price * itemStack.getAmount();
         }
 
-        if (allowBundle && itemStack.getItemMeta() instanceof BundleMeta bundleMeta) {
+        if (allowBundle && itemStack.getItemMeta() instanceof BundleMeta bundleMeta && RequirementManager.isSatisfied(context, allowBundleRequirements) ) {
             Pair<Integer, Double> pair = getItemsToSell(context, bundleMeta.getItems());
             return pair.right();
         }
 
-        if (allowShulkerBox && itemStack.getItemMeta() instanceof BlockStateMeta stateMeta) {
+        if (allowShulkerBox && itemStack.getItemMeta() instanceof BlockStateMeta stateMeta && RequirementManager.isSatisfied(context, allowShulkerBoxRequirements) ) {
             if (stateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
                 Pair<Integer, Double> pair = getItemsToSell(context, Arrays.stream(shulkerBox.getInventory().getStorageContents()).filter(Objects::nonNull).toList());
                 return pair.right();
@@ -535,7 +542,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
         for (ItemStack itemStack : itemStacks) {
             double price = getItemPrice(context, itemStack);
             if (price > 0 && itemStack != null) {
-                if (allowBundle && itemStack.getItemMeta() instanceof BundleMeta bundleMeta) {
+                if (allowBundle && itemStack.getItemMeta() instanceof BundleMeta bundleMeta && RequirementManager.isSatisfied(context, allowBundleRequirements)) {
                     clearWorthyItems(context, bundleMeta.getItems());
                     List<ItemStack> newItems = new ArrayList<>(bundleMeta.getItems());
                     newItems.removeIf(item -> item.getAmount() == 0 || item.getType() == Material.AIR);
@@ -543,7 +550,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
                     itemStack.setItemMeta(bundleMeta);
                     continue;
                 }
-                if (allowShulkerBox && itemStack.getItemMeta() instanceof BlockStateMeta stateMeta) {
+                if (allowShulkerBox && itemStack.getItemMeta() instanceof BlockStateMeta stateMeta && RequirementManager.isSatisfied(context, allowShulkerBoxRequirements)) {
                     if (stateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
                         clearWorthyItems(context, Arrays.stream(shulkerBox.getInventory().getStorageContents()).filter(Objects::nonNull).toList());
                         stateMeta.setBlockState(shulkerBox);

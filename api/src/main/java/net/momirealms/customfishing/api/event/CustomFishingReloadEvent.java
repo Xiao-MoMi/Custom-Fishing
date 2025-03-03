@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
  * This class represents an event that is triggered when the Custom Fishing plugin is reloaded.
  */
 public class CustomFishingReloadEvent extends Event {
-
     private static final HandlerList handlerList = new HandlerList();
 
     private final BukkitCustomFishingPlugin plugin;

@@ -30,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
  * It can be cancelled to prevent the item from being collected.
  */
 public class FishingBagPreCollectEvent extends PlayerEvent implements Cancellable {
-
     private static final HandlerList handlerList = new HandlerList();
 
     private final ItemStack itemStack;

@@ -32,6 +32,20 @@ public interface GamingPlayer {
     boolean isValid();
 
     /**
+     * Sets the game result
+     *
+     * @param result result, true for success, false for failure
+     */
+    void setGameResult(Boolean result);
+
+    /**
+     * Gets the current game settings
+     *
+     * @return game settings
+     */
+    GameSetting settings();
+
+    /**
      * Destroys the gaming player, performing any necessary cleanup
      */
     void destroy();
@@ -93,4 +107,9 @@ public interface GamingPlayer {
      * @return the player.
      */
     Player getPlayer();
+
+    /**
+     * Ends the game
+     */
+    void endGame();
 }

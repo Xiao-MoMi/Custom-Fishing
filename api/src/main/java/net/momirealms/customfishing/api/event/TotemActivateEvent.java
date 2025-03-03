@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
  * This class represents an event that occurs when a player activates a totem.
  */
 public class TotemActivateEvent extends PlayerEvent implements Cancellable {
-
     private static final HandlerList handlerList = new HandlerList();
     private final Location coreLocation;
     private boolean isCancelled;

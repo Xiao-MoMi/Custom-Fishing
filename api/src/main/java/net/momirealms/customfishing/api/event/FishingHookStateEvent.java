@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
  * It is triggered by various states of the fishing hook such as when a fish bites, escapes, is lured, or is landed.
  */
 public class FishingHookStateEvent extends PlayerEvent {
-
     private static final HandlerList handlerList = new HandlerList();
 
     private final FishHook fishHook;

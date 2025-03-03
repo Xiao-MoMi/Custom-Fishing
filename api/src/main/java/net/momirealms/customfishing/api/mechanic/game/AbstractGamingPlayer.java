@@ -31,7 +31,6 @@ import java.util.concurrent.TimeUnit;
  * Provides the basic structure and functionalities for a gaming player.
  */
 public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
-
     protected long deadline;
     protected boolean success;
     protected SchedulerTask task;
@@ -40,6 +39,12 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     protected boolean isTimeOut;
     private boolean valid = true;
     private boolean firstFlag = true;
+    protected Boolean forcedGameResult;
+
+    @Override
+    public void setGameResult(Boolean forcedGameResult) {
+        this.forcedGameResult = forcedGameResult;
+    }
 
     /**
      * Constructs an AbstractGamingPlayer instance.
@@ -52,6 +57,11 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
         this.settings = settings;
         this.deadline = (long) (System.currentTimeMillis() + settings.time() * 1000L);
         this.arrangeTask();
+    }
+
+    @Override
+    public GameSetting settings() {
+        return settings;
     }
 
     /**
@@ -206,7 +216,8 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     /**
      * Ends the game for the gaming player.
      */
-    protected void endGame() {
+    @Override
+    public void endGame() {
         if (!isValid()) return;
         destroy();
         boolean success = isSuccessful();

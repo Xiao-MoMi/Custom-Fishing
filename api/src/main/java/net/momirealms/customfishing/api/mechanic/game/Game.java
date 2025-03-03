@@ -26,6 +26,13 @@ import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
 public interface Game {
 
     /**
+     * Gets the basic settings of the game
+     *
+     * @return the basic settings
+     */
+    GameBasics basics();
+
+    /**
      * Gets the identifier of the game.
      *
      * @return the identifier of the game.

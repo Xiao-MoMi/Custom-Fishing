@@ -33,7 +33,6 @@ import java.util.Optional;
  * This class represents an event that is triggered when a fishing result is determined.
  */
 public class FishingResultEvent extends PlayerEvent implements Cancellable {
-
     private static final HandlerList handlerList = new HandlerList();
     private boolean isCancelled;
     private final Result result;

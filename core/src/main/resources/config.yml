@@ -19,9 +19,12 @@ mechanics:
         - blacklist_world
   # If you want to allow some players to skip the game, set skip requirements here
   skip-game-requirements:
-    bedrock_requirement:
-      type: 'is-bedrock-player'
-      value: true
+    or_requirement:
+      type: "||"
+      value:
+        bedrock_requirement:
+          type: 'is-bedrock-player'
+          value: true
   # Conditions for enabling auto-fishing
   auto-fishing-requirements:
     impossible_requirement:
@@ -213,10 +216,14 @@ mechanics:
       - 'AAAABAAAA'
     # Price formula for custom fishing loot
     price-formula: '{base} + {bonus} * {size}'
-    # Allow players to sell fish in bundles
-    allow-bundle: false
-    # Allow players to sell fish in shulker boxes
-    allow-shulker-box: false
+    # Requirements for players to sell fish in bundles
+    allow-bundle-requirements:
+      impossible_requirement:
+        type: 'impossible'
+    # Requirements for players to sell fish in shulker boxes
+    allow-shulker-box-requirements:
+      impossible_requirement:
+        type: 'impossible'
     # Prices for vanilla and other plugin items with CustomModelData
     item-price:
       # Vanilla items

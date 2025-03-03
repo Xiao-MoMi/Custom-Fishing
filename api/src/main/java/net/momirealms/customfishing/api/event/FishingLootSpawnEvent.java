@@ -31,7 +31,6 @@ import org.jetbrains.annotations.Nullable;
  * This class represents an event that is triggered when fishing loot is spawned.
  */
 public class FishingLootSpawnEvent extends PlayerEvent {
-
     private static final HandlerList handlerList = new HandlerList();
     private final Location location;
     private final Entity entity;

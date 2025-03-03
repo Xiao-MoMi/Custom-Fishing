@@ -27,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
  * This class provides
  */
 public class FishingEffectApplyEvent extends Event {
-
     private static final HandlerList handlerList = new HandlerList();
 
     private final Stage stage;

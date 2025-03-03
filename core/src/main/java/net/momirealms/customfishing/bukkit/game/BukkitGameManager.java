@@ -924,7 +924,6 @@ public class BukkitGameManager implements GameManager {
                     int maxSuccess = Integer.parseInt(barSuccess.split("~")[1]);
 
                     return (customFishingHook, gameSetting) -> new AbstractGamingPlayer(customFishingHook, gameSetting) {
-
                         private final int totalWidth = RandomUtils.generateRandomInt(minWidth, maxWidth);
                         private final int successWidth = RandomUtils.generateRandomInt(minSuccess, maxSuccess);
                         private final int successPosition = ThreadLocalRandom.current().nextInt((totalWidth - successWidth + 1)) + 1;

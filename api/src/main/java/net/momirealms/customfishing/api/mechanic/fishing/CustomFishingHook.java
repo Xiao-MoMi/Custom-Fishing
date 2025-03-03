@@ -18,10 +18,7 @@
 package net.momirealms.customfishing.api.mechanic.fishing;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
-import net.momirealms.customfishing.api.event.FishingEffectApplyEvent;
-import net.momirealms.customfishing.api.event.FishingHookStateEvent;
-import net.momirealms.customfishing.api.event.FishingLootSpawnEvent;
-import net.momirealms.customfishing.api.event.FishingResultEvent;
+import net.momirealms.customfishing.api.event.*;
 import net.momirealms.customfishing.api.mechanic.MechanicType;
 import net.momirealms.customfishing.api.mechanic.action.ActionTrigger;
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionGoal;
@@ -345,6 +342,8 @@ public class CustomFishingHook {
                 BukkitCustomFishingPlugin.getInstance().debug("Freezing current mechanic");
                 this.hookMechanic.freeze();
             }
+            FishingGameStartEvent event = new FishingGameStartEvent(this, gamingPlayer);
+            EventUtils.fireAndForget(event);
         } else {
             plugin.debug("Next game: " + "`null`");
             handleSuccessfulFishing();
