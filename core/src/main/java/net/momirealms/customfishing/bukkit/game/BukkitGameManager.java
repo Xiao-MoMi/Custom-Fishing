@@ -883,6 +883,7 @@ public class BukkitGameManager implements GameManager {
 
                         @Override
                         public boolean isSuccessful() {
+                            if (forcedGameResult != null) return forcedGameResult;
                             if (isTimeOut) return false;
                             int last = progress / widthPerSection;
                             return (Math.random() < successRate[last]);
@@ -973,6 +974,7 @@ public class BukkitGameManager implements GameManager {
 
                         @Override
                         public boolean isSuccessful() {
+                            if (forcedGameResult != null) return forcedGameResult;
                             if (isTimeOut) return false;
                             return currentIndex + 1 <= successPosition + successWidth - 1 && currentIndex + 1 >= successPosition;
                         }
@@ -1052,6 +1054,7 @@ public class BukkitGameManager implements GameManager {
 
                         @Override
                         public boolean isSuccessful() {
+                            if (forcedGameResult != null) return forcedGameResult;
                             if (isTimeOut) return false;
                             return progress < judgement_position + judgementAreaWidth && progress >= judgement_position;
                         }

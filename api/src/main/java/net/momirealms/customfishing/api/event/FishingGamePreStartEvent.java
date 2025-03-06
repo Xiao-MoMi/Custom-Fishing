@@ -25,12 +25,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class FishingGamePreStartEvent extends PlayerEvent {
     private static final HandlerList handlerList = new HandlerList();
+    private final CustomFishingHook hook;
     private GameSetting setting;
-    private CustomFishingHook hook;
 
     public FishingGamePreStartEvent(@NotNull CustomFishingHook hook, GameSetting setting) {
         super(hook.getContext().holder());
         this.setting = setting;
+        this.hook = hook;
     }
 
     public CustomFishingHook hook() {

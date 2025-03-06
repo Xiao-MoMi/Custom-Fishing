@@ -95,6 +95,7 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
      */
     @Override
     public boolean isSuccessful() {
+        if (forcedGameResult != null) return forcedGameResult;
         return success;
     }
 
