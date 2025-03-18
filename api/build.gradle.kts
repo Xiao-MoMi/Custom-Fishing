@@ -7,6 +7,7 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // papi
     maven("https://oss.sonatype.org/content/repositories/snapshots")
+    maven("https://repo.momirealms.net/releases/")
 }
 
 dependencies {
@@ -16,7 +17,7 @@ dependencies {
     compileOnly("dev.folia:folia-api:${rootProject.properties["paper_version"]}-R0.1-SNAPSHOT")
     compileOnly("com.google.code.gson:gson:${rootProject.properties["gson_version"]}")
     compileOnly("me.clip:placeholderapi:${rootProject.properties["placeholder_api_version"]}")
-    compileOnly("com.github.Xiao-MoMi:Sparrow-Heart:${rootProject.properties["sparrow_heart_version"]}")
+    compileOnly("net.momirealms:sparrow-heart:${rootProject.properties["sparrow_heart_version"]}")
     compileOnly("org.incendo:cloud-core:${rootProject.properties["cloud_core_version"]}")
     compileOnly("org.incendo:cloud-minecraft-extras:${rootProject.properties["cloud_minecraft_extras_version"]}")
     compileOnly("org.jetbrains:annotations:${rootProject.properties["jetbrains_annotations_version"]}")

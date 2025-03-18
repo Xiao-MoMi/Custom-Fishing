@@ -5,6 +5,7 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/") // paper
     maven("https://oss.sonatype.org/content/repositories/snapshots")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") // spigot
+    maven("https://repo.momirealms.net/releases/")
 }
 
 dependencies {
@@ -26,7 +27,7 @@ dependencies {
     implementation("com.saicone.rtag:rtag:${rootProject.properties["rtag_version"]}")
     implementation("com.saicone.rtag:rtag-item:${rootProject.properties["rtag_version"]}")
     // nms util
-    implementation("com.github.Xiao-MoMi:Sparrow-Heart:${rootProject.properties["sparrow_heart_version"]}")
+    implementation("net.momirealms:sparrow-heart:${rootProject.properties["sparrow_heart_version"]}")
     // bstats
     compileOnly("org.bstats:bstats-bukkit:${rootProject.properties["bstats_version"]}")
     // config

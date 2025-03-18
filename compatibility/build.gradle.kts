@@ -14,11 +14,12 @@ repositories {
     maven("https://oss.sonatype.org/content/repositories/snapshots")
     maven("https://repo.opencollab.dev/main/") // geyser
     maven("https://repo.codemc.org/repository/maven-public/") // beauty quest
+    maven("https://repo.momirealms.net/releases/")
 }
 
 dependencies {
     compileOnly(project(":api"))
-    compileOnly("com.github.Xiao-MoMi:Sparrow-Heart:${rootProject.properties["sparrow_heart_version"]}")
+    compileOnly("net.momirealms:sparrow-heart:${rootProject.properties["sparrow_heart_version"]}")
     compileOnly("dev.dejvokep:boosted-yaml:${rootProject.properties["boosted_yaml_version"]}")
     compileOnly("net.kyori:adventure-api:${rootProject.properties["adventure_bundle_version"]}") {
         exclude(module = "adventure-bom")
