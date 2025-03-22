@@ -500,6 +500,8 @@ public class CustomFishingHook {
             return;
         }
 
+        amount = event.getAmount();
+
         gears.trigger(ActionTrigger.SUCCESS, context);
 
         switch (lootType) {
