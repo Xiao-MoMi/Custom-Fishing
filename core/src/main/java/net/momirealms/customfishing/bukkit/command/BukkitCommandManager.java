@@ -39,6 +39,7 @@ public class BukkitCommandManager extends AbstractCommandManager<CommandSender> 
             new SellFishCommand(this),
             new GetItemCommand(this),
             new GiveItemCommand(this),
+            new GiveItemByUUIDCommand(this),
             new ImportItemCommand(this),
             new EndCompetitionCommand(this),
             new StopCompetitionCommand(this),

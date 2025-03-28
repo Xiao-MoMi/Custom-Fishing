@@ -42,13 +42,22 @@ get_item:
     - /cfishing items get
 
 # A command to give items
-# Usage: [COMMAND] [id]
+# Usage: [COMMAND] [player] [id]
 give_item:
   enable: true
   permission: customfishing.command.giveitem
   usage:
     - /customfishing items give
     - /cfishing items give
+
+# A command to give items
+# Usage: [COMMAND] [uuid] [id]
+give_item_by_uuid:
+  enable: true
+  permission: customfishing.command.giveitem
+  usage:
+    - /customfishing items give-by-uuid
+    - /cfishing items give-by-uuid
 
 # A command to import items
 # Usage: [COMMAND] [type] [id]
