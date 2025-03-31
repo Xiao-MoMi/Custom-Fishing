@@ -1500,6 +1500,7 @@ tension_game_easy:
   title: '{progress}'
   # Tip would show on the title to guide the player how to play
   tip: '<gray>Press <red><key:key.sneak> <gray>to start'
+  actionbar-tip: '<gray>Press <red><key:key.sneak> <gray>to pull the fish'
   subtitle:
     font: 'customfishing:default'
     bar: '뀑'
@@ -1539,6 +1540,7 @@ tension_game_normal:
   title: '{progress}'
   # Tip would show on the title to guide the player how to play
   tip: '<gray>Press <red><key:key.sneak> <gray>to start'
+  actionbar-tip: '<gray>Press <red><key:key.sneak> <gray>to pull the fish'
   subtitle:
     font: 'customfishing:default'
     bar: '뀑'
@@ -1578,6 +1580,7 @@ tension_game_hard:
   title: '{progress}'
   # Tip would show on the title to guide the player how to play
   tip: '<gray>Press <red><key:key.sneak> <gray>to start'
+  actionbar-tip: '<gray>Press <red><key:key.sneak> <gray>to pull the fish'
   subtitle:
     font: 'customfishing:default'
     bar: '뀑'

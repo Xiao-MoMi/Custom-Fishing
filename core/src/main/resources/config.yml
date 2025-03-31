@@ -56,7 +56,7 @@ mechanics:
             actions:
               actionbar_action:
                 type: actionbar
-                value: '<#FFD700>[New Record]</#FFD700> <#FFFFF0>You caught a(n) {nick} measuring <#FFA500>{size_formatted}cm</#FFA500> long!</#FFFFF0>'
+                value: '<#FFD700>[New Record]</#FFD700> <#FFFFF0>You caught a(n) {nick} measuring <#FFA500>{size_formatted}cm</#FFA500> long!</#FFFFF0> <#C0C0C0>(Previous record: {previous_record_formatted}cm)</#C0C0C0>'
               sound_action:
                 type: sound
                 value:

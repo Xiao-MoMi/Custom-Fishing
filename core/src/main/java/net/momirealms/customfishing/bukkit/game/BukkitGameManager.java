@@ -563,6 +563,7 @@ public class BukkitGameManager implements GameManager {
                 private final String font = section.getString("subtitle.font");
                 private final String barImage = section.getString("subtitle.bar");
                 private final String tip = section.getString("tip");
+                private final String actionbarTip = section.getString("actionbar-tip");
 
                 @Override
                 public BiFunction<CustomFishingHook, GameSetting, AbstractGamingPlayer> gamingPlayerProvider() {
@@ -598,6 +599,9 @@ public class BukkitGameManager implements GameManager {
                                 setGameResult(false);
                                 endGame();
                                 return;
+                            }
+                            if (actionbarTip != null) {
+                                SparrowHeart.getInstance().sendActionBar(getPlayer(), AdventureHelper.miniMessageToJson(actionbarTip));
                             }
                             showUI();
                         }
