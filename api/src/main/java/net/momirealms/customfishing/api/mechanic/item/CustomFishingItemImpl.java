@@ -67,7 +67,6 @@ public class CustomFishingItemImpl implements CustomFishingItem {
     }
 
     public static class BuilderImpl implements Builder {
-
         private String material = DEFAULT_MATERIAL;
         private String id;
         private MathValue<Player> amount;

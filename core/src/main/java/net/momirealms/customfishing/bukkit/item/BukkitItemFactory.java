@@ -19,6 +19,7 @@ package net.momirealms.customfishing.bukkit.item;
 
 import com.saicone.rtag.RtagItem;
 import net.momirealms.customfishing.bukkit.item.impl.ComponentItemFactory;
+import net.momirealms.customfishing.bukkit.item.impl.ComponentItemFactory1_21_5;
 import net.momirealms.customfishing.bukkit.item.impl.UniversalItemFactory;
 import net.momirealms.customfishing.common.item.Item;
 import net.momirealms.customfishing.common.item.ItemFactory;
@@ -46,6 +47,9 @@ public abstract class BukkitItemFactory extends ItemFactory<CustomFishingPlugin,
             case "1.20.5", "1.20.6",
                  "1.21", "1.21.1", "1.21.2", "1.21.3", "1.21.4" -> {
                 return new ComponentItemFactory(plugin);
+            }
+            case "1.21.5" -> {
+                return new ComponentItemFactory1_21_5(plugin);
             }
             default -> throw new IllegalStateException("Unsupported server version: " + plugin.getServerVersion());
         }

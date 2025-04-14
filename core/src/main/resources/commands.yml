@@ -211,3 +211,12 @@ debug_biome:
   usage:
     - /customfishing debug biome
     - /cfishing debug biome
+
+# A command to debug the snbt
+# Usage: [COMMAND]
+debug_snbt:
+  enable: true
+  permission: customfishing.command.debug
+  usage:
+    - /customfishing debug snbt
+    - /cfishing debug snbt

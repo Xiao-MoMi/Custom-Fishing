@@ -57,7 +57,8 @@ public class BukkitCommandManager extends AbstractCommandManager<CommandSender> 
             new ResetStatisticsCommand(this),
             new QueryStatisticsCommand(this),
             new DebugLootCommand(this),
-            new DebugBiomeCommand(this)
+            new DebugBiomeCommand(this),
+            new DebugSNBTCommand(this)
     );
 
     private final Index<String, CommandFeature<CommandSender>> INDEX = Index.create(CommandFeature::getFeatureID, FEATURES);

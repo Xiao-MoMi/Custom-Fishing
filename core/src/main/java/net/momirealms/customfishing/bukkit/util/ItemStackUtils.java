@@ -24,6 +24,7 @@ import net.momirealms.customfishing.api.mechanic.item.tag.TagMap;
 import net.momirealms.customfishing.api.mechanic.item.tag.TagValueType;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
+import net.momirealms.customfishing.common.helper.GsonHelper;
 import net.momirealms.customfishing.common.util.ArrayUtils;
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.Material;
@@ -114,9 +115,7 @@ public class ItemStackUtils {
                 Map<String, Object> innerMap = new HashMap<>();
                 sectionToMap(inner, innerMap);
                 TagMap tagMap = TagMap.of(innerMap);
-                itemEditors.add(((item, context) -> {
-                    item.setComponent(component, tagMap.apply(context));
-                }));
+                itemEditors.add(((item, context) -> item.setComponent(component, tagMap.apply(context))));
             } else if (value instanceof List<?> list) {
                 Object first = list.get(0);
                 if (first instanceof Map<?,?>) {

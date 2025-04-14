@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Optional;
 
 public class AbstractItem<R, I> implements Item<I> {
-
     private final CustomFishingPlugin plugin;
     private final ItemFactory<?, R, I> factory;
     private final R item;

@@ -42,6 +42,7 @@ import net.momirealms.customfishing.bukkit.integration.season.CustomCropsSeasonP
 import net.momirealms.customfishing.bukkit.integration.season.RealisticSeasonsProvider;
 import net.momirealms.customfishing.bukkit.integration.shop.ShopGUIHook;
 import net.momirealms.customfishing.bukkit.item.BukkitItemManager;
+import net.momirealms.customfishing.bukkit.item.SNBTItemProvider;
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
@@ -95,6 +96,7 @@ public class BukkitIntegrationManager implements IntegrationManager {
     @Override
     public void load() {
         registerEnchantmentProvider(new VanillaEnchantmentsProvider());
+        registerItemProvider(new SNBTItemProvider());
         if (isHooked("ItemsAdder")) {
             registerItemProvider(new ItemsAdderItemProvider());
             registerBlockProvider(new ItemsAdderBlockProvider());

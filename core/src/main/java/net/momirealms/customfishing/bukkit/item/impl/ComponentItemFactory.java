@@ -35,7 +35,6 @@ import java.util.function.Function;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ComponentItemFactory extends BukkitItemFactory {
-
     private final BiConsumer<RtagItem, Integer> customModelDataSetter;
     private final Function<RtagItem, Optional<Integer>> customModelDataGetter;
 
