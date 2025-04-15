@@ -527,7 +527,7 @@ public class BukkitActionManager implements ActionManager<Player> {
         registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 String id = section.getString("item");
-                int amount = section.getInt("amount", 1);
+                MathValue<Player> amount = MathValue.auto(section.get("amount", 1));
                 boolean toInventory = section.getBoolean("to-inventory", false);
                 return context -> {
                     if (Math.random() > chance.evaluate(context)) return;
@@ -535,7 +535,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                     ItemStack itemStack = plugin.getItemManager().buildAny(context, id);
                     if (itemStack != null) {
                         int maxStack = itemStack.getMaxStackSize();
-                        int amountToGive = amount;
+                        int amountToGive = (int) amount.evaluate(context);
                         while (amountToGive > 0) {
                             int perStackSize = Math.min(maxStack, amountToGive);
                             amountToGive -= perStackSize;
