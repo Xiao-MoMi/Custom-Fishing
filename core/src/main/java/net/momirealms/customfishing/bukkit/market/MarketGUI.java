@@ -92,7 +92,7 @@ public class MarketGUI {
 
     public void show() {
         context.holder().openInventory(inventory);
-        SparrowHeart.getInstance().updateInventoryTitle(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(manager.title.render(context))));
+        SparrowHeart.getInstance().updateInventoryTitle(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(manager.title.render(context, true))));
     }
 
     @Nullable
@@ -124,15 +124,15 @@ public class MarketGUI {
             if (totalWorth <= 0) {
                 sellElement.setItemStack(manager.sellIconDenyItem.build(context));
                 if (manager.denyTitle != null)
-                    SparrowHeart.getInstance().updateInventoryTitle(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(manager.denyTitle.render(context))));
+                    SparrowHeart.getInstance().updateInventoryTitle(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(manager.denyTitle.render(context, true))));
             } else if (earningLimit != -1 && (earningLimit - earningData.earnings < totalWorth)) {
                 sellElement.setItemStack(manager.sellIconLimitItem.build(context));
                 if (manager.limitTitle != null)
-                    SparrowHeart.getInstance().updateInventoryTitle(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(manager.limitTitle.render(context))));
+                    SparrowHeart.getInstance().updateInventoryTitle(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(manager.limitTitle.render(context, true))));
             } else {
                 sellElement.setItemStack(manager.sellIconAllowItem.build(context));
                 if (manager.allowTitle != null)
-                    SparrowHeart.getInstance().updateInventoryTitle(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(manager.allowTitle.render(context))));
+                    SparrowHeart.getInstance().updateInventoryTitle(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(manager.allowTitle.render(context, true))));
             }
         }
 
