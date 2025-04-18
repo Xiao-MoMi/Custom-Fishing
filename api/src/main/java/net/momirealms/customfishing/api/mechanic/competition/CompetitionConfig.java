@@ -20,6 +20,7 @@ package net.momirealms.customfishing.api.mechanic.competition;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.competition.info.ActionBarConfig;
 import net.momirealms.customfishing.api.mechanic.competition.info.BossBarConfig;
+import net.momirealms.customfishing.api.mechanic.competition.info.BroadcastConfig;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import org.bukkit.entity.Player;
 
@@ -124,6 +125,13 @@ public interface CompetitionConfig {
      * @return the action bar configuration.
      */
     ActionBarConfig actionBarConfig();
+
+    /**
+     * Gets the configuration for the broadcast during the competition.
+     *
+     * @return the broadcast configuration
+     */
+    BroadcastConfig broadcastConfig();
 
     /**
      * Get the time to start competition
@@ -241,6 +249,14 @@ public interface CompetitionConfig {
          * @return the builder instance.
          */
         Builder actionBarConfig(ActionBarConfig actionBarConfig);
+
+        /**
+         * Sets the configuration for the broadcast during the competition.
+         *
+         * @param broadcastConfig the broadcast configuration.
+         * @return the builder instance.
+         */
+        Builder broadcastConfig(BroadcastConfig broadcastConfig);
 
         /**
          * Sets the configuration for schedules of the competition.

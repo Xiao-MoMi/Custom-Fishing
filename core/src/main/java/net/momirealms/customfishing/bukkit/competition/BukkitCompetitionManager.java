@@ -40,7 +40,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class BukkitCompetitionManager implements CompetitionManager {
-
     private final BukkitCustomFishingPlugin plugin;
     private final NavigableMap<CompetitionSchedule, CompetitionConfig> timeConfigMap;
     private final HashMap<String, CompetitionConfig> commandConfigMap;

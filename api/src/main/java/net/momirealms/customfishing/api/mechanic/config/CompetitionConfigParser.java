@@ -26,6 +26,7 @@ import net.momirealms.customfishing.api.mechanic.competition.CompetitionGoal;
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionSchedule;
 import net.momirealms.customfishing.api.mechanic.competition.info.ActionBarConfig;
 import net.momirealms.customfishing.api.mechanic.competition.info.BossBarConfig;
+import net.momirealms.customfishing.api.mechanic.competition.info.BroadcastConfig;
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.entity.Player;
 
@@ -74,6 +75,16 @@ public class CompetitionConfigParser {
                             .switchInterval(section.getInt("actionbar.switch-interval", 200))
                             .showToAll(!section.getBoolean("actionbar.only-show-to-participants", true))
                             .text(section.getStringList("actionbar.text").toArray(new String[0]))
+                            .build()
+            );
+        }
+        if (section.getBoolean("broadcast.enable", false)) {
+            builder.broadcastConfig(
+                    BroadcastConfig.builder()
+                            .enable(true)
+                            .interval(section.getInt("broadcast.interval", 1200))
+                            .showToAll(!section.getBoolean("broadcast.only-show-to-participants", true))
+                            .texts(section.getStringList("broadcast.text").toArray(new String[0]))
                             .build()
             );
         }

@@ -619,7 +619,7 @@ public class CustomFishingHook {
                     userData -> {
                         Pair<Integer, Integer> result = userData.statistics().addAmount(nextLoot.statisticKey().amountKey(), 1);
                         context.arg(ContextKeys.TOTAL_AMOUNT, userData.statistics().getAmount(nextLoot.statisticKey().amountKey()));
-                        Optional.ofNullable(context.arg(ContextKeys.SIZE)).ifPresent(size -> {
+                        Optional.ofNullable(context.arg(ContextKeys.SIZE)).ifPresentOrElse(size -> {
                             float currentRecord = userData.statistics().getMaxSize(nextLoot.statisticKey().sizeKey());
                             float max = Math.max(size, currentRecord);
                             context.arg(ContextKeys.RECORD, max);
@@ -627,10 +627,11 @@ public class CustomFishingHook {
                             context.arg(ContextKeys.RECORD_FORMATTED, String.format("%.2f", max));
                             context.arg(ContextKeys.PREVIOUS_RECORD_FORMATTED, String.format("%.2f", currentRecord));
                             if (userData.statistics().updateSize(nextLoot.statisticKey().sizeKey(), size)) {
+                                context.arg(ContextKeys.IS_NEW_SIZE_RECORD, true);
+                                plugin.getEventManager().trigger(context, id, MechanicType.LOOT, ActionTrigger.SUCCESS, result.left(), result.right());
                                 plugin.getEventManager().trigger(context, id, MechanicType.LOOT, ActionTrigger.NEW_SIZE_RECORD);
                             }
-                        });
-                        plugin.getEventManager().trigger(context, id, MechanicType.LOOT, ActionTrigger.SUCCESS, result.left(), result.right());
+                        }, () -> plugin.getEventManager().trigger(context, id, MechanicType.LOOT, ActionTrigger.SUCCESS, result.left(), result.right()));
                     }
             );
         }

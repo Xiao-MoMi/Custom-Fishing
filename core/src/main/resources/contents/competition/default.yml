@@ -44,8 +44,8 @@ weekend_competition:
       - '<gray>[<#87CEFA>🎣<gray>] <gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{seconds}s <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Your Rank: <#E6E6FA>{rank} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>No.1 Player: <#E6E6FA>{1_player}'
       - '<gray>[<#87CEFA>🎣<gray>] <gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{minute}{second} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Your Score: <#E6E6FA>{score_formatted} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>No.1 Score: <#E6E6FA>{1_score}'
       - '<gray>[<#87CEFA>🎣<gray>] <gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{minute}{second} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Winning condition: <#E6E6FA>{goal}'
-    refresh-rate: 20
-    switch-interval: 200
+    refresh-rate: 20 # in ticks
+    switch-interval: 200 # in ticks
     only-show-to-participants: true
 
   actionbar:
@@ -54,9 +54,25 @@ weekend_competition:
       - '<gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{seconds}s <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Your Rank: <#E6E6FA>{rank} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>No.1 Player: <#E6E6FA>{1_player}'
       - '<gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{minute}{second} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Your Score: <#E6E6FA>{score_formatted} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>No.1 Score: <#E6E6FA>{1_score}'
       - '<gradient:#F0F8FF:#87CEFA:#F0F8FF>Time Left: <#E6E6FA>{minute}{second} <gray>| <gradient:#F0F8FF:#87CEFA:#F0F8FF>Winning condition: <#E6E6FA>{goal}'
-    refresh-rate: 5
-    switch-interval: 200
+    refresh-rate: 5 # in ticks
+    switch-interval: 200 # in ticks
     only-show-to-participants: true
+
+  # timely broadcast competition
+  broadcast:
+    enable: false
+    text:
+      - '<#D4F2E7>◤─────────────────────────◥'
+      - ''
+      - '             <gray>[<#87CEFA>🎣<gray>]  <gradient:#F0F8FF:#87CEFA:#F0F8FF>Fishing Competition'
+      - ''
+      - '     <#E1FFFF>Current Ranking:</#E1FFFF>'
+      - '              <#E1FFFF>No.①: {1_player} - {1_score}'
+      - '              <#E1FFFF>No.②: {2_player} - {2_score}'
+      - '              <#E1FFFF>No.③: {3_player} - {3_score}'
+      - ''
+      - '<#D4F2E7>◣─────────────────────────◢'
+    interval: 1200 # in ticks
 
   start-actions:
     broadcast:
@@ -67,7 +83,7 @@ weekend_competition:
         - '             <gray>[<#87CEFA>🎣<gray>]  <gradient:#F0F8FF:#87CEFA:#F0F8FF>Fishing Competition'
         - ''
         - '      <#E1FFFF>Objectives:'
-        - '         <#B0C4DE>Catch as many fish as possible'
+        - '         <#B0C4DE>{goal}'
         - '           <#B0C4DE>Start fishing to participate!'
         - ''
         - '<#D4F2E7>◣─────────────────────────◢'

@@ -20,6 +20,8 @@ package net.momirealms.customfishing.api.mechanic.competition;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.competition.info.ActionBarConfig;
 import net.momirealms.customfishing.api.mechanic.competition.info.BossBarConfig;
+import net.momirealms.customfishing.api.mechanic.competition.info.BroadcastConfig;
+import net.momirealms.customfishing.api.mechanic.competition.info.BroadcastConfigImpl;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import org.bukkit.entity.Player;
 
@@ -41,9 +43,13 @@ public class CompetitionConfigImpl implements CompetitionConfig {
     private final HashMap<String, Action<Player>[]> rewards;
     private final BossBarConfig bossBarConfig;
     private final ActionBarConfig actionBarConfig;
+    private final BroadcastConfig broadcastConfig;
     private final List<CompetitionSchedule> schedules;
 
-    public CompetitionConfigImpl(String key, CompetitionGoal goal, int duration, int minPlayers, Requirement<Player>[] joinRequirements, Action<Player>[] skipActions, Action<Player>[] startActions, Action<Player>[] endActions, Action<Player>[] joinActions, HashMap<String, Action<Player>[]> rewards, BossBarConfig bossBarConfig, ActionBarConfig actionBarConfig, List<CompetitionSchedule> schedules) {
+    public CompetitionConfigImpl(String key, CompetitionGoal goal, int duration, int minPlayers, Requirement<Player>[] joinRequirements,
+                                 Action<Player>[] skipActions, Action<Player>[] startActions, Action<Player>[] endActions, Action<Player>[] joinActions, HashMap<String, Action<Player>[]> rewards,
+                                 BossBarConfig bossBarConfig, ActionBarConfig actionBarConfig, BroadcastConfig broadcastConfig,
+                                 List<CompetitionSchedule> schedules) {
         this.key = key;
         this.goal = goal;
         this.duration = duration;
@@ -56,6 +62,7 @@ public class CompetitionConfigImpl implements CompetitionConfig {
         this.rewards = rewards;
         this.bossBarConfig = bossBarConfig;
         this.actionBarConfig = actionBarConfig;
+        this.broadcastConfig = broadcastConfig;
         this.schedules = schedules;
     }
 
@@ -120,6 +127,11 @@ public class CompetitionConfigImpl implements CompetitionConfig {
     }
 
     @Override
+    public BroadcastConfig broadcastConfig() {
+        return broadcastConfig;
+    }
+
+    @Override
     public List<CompetitionSchedule> schedules() {
         return schedules;
     }
@@ -137,6 +149,7 @@ public class CompetitionConfigImpl implements CompetitionConfig {
         private HashMap<String, Action<Player>[]> rewards = DEFAULT_REWARDS;
         private BossBarConfig bossBarConfig;
         private ActionBarConfig actionBarConfig;
+        private BroadcastConfig broadcastConfig;
         private final List<CompetitionSchedule> schedules = new ArrayList<>();
         @Override
         public Builder id(String key) {
@@ -199,13 +212,18 @@ public class CompetitionConfigImpl implements CompetitionConfig {
             return this;
         }
         @Override
+        public Builder broadcastConfig(BroadcastConfig broadcastConfig) {
+            this.broadcastConfig = broadcastConfig;
+            return this;
+        }
+        @Override
         public Builder schedules(List<CompetitionSchedule> schedules) {
             this.schedules.addAll(schedules);
             return this;
         }
         @Override
         public CompetitionConfig build() {
-            return new CompetitionConfigImpl(key, goal, duration, minPlayers, joinRequirements, skipActions, startActions, endActions, joinActions, rewards, bossBarConfig, actionBarConfig, schedules);
+            return new CompetitionConfigImpl(key, goal, duration, minPlayers, joinRequirements, skipActions, startActions, endActions, joinActions, rewards, bossBarConfig, actionBarConfig, broadcastConfig, schedules);
         }
     }
 }

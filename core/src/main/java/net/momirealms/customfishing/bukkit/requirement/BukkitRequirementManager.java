@@ -212,6 +212,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         this.registerHasPlayerLootRequirement();
         this.registerLootOrderRequirement();
         this.registerIsBedrockPlayerRequirement();
+        this.registerIsNewSizeRecordRequirement();
     }
 
     private void registerIsBedrockPlayerRequirement() {
@@ -657,6 +658,19 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 return false;
             };
         }, "open-water");
+    }
+
+    private void registerIsNewSizeRecordRequirement() {
+        registerRequirement((args, actions, runActions) -> {
+            boolean is = (boolean) args;
+            return context -> {
+                boolean current = Optional.ofNullable(context.arg(ContextKeys.IS_NEW_SIZE_RECORD)).orElse(false);
+                if (is == current)
+                    return true;
+                if (runActions) ActionManager.trigger(context, actions);
+                return false;
+            };
+        }, "new-size-record");
     }
 
     private void registerHasStatsRequirement() {

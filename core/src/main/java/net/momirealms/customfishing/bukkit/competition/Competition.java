@@ -17,6 +17,7 @@
 
 package net.momirealms.customfishing.bukkit.competition;
 
+import net.kyori.adventure.audience.Audience;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.CompetitionEvent;
 import net.momirealms.customfishing.api.mechanic.action.Action;
@@ -25,13 +26,16 @@ import net.momirealms.customfishing.api.mechanic.competition.CompetitionConfig;
 import net.momirealms.customfishing.api.mechanic.competition.CompetitionGoal;
 import net.momirealms.customfishing.api.mechanic.competition.FishingCompetition;
 import net.momirealms.customfishing.api.mechanic.competition.RankingProvider;
+import net.momirealms.customfishing.api.mechanic.competition.info.BroadcastConfig;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
+import net.momirealms.customfishing.api.mechanic.misc.value.DynamicText;
 import net.momirealms.customfishing.bukkit.competition.actionbar.ActionBarManager;
 import net.momirealms.customfishing.bukkit.competition.bossbar.BossBarManager;
 import net.momirealms.customfishing.bukkit.competition.ranking.LocalRankingProvider;
 import net.momirealms.customfishing.bukkit.competition.ranking.RedisRankingProvider;
+import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
@@ -49,7 +53,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public class Competition implements FishingCompetition {
-
     private final BukkitCustomFishingPlugin plugin;
     private final CompetitionConfig config;
     private SchedulerTask competitionTimerTask;
@@ -180,7 +183,26 @@ public class Competition implements FishingCompetition {
                 return;
             }
             updatePublicPlaceholders();
+            BroadcastConfig broadcastConfig = config.broadcastConfig();
+            if (broadcastConfig != null && broadcastConfig.enabled()) {
+                int intervalInSeconds = broadcastConfig.interval() / 20;
+                if ((this.config.durationInSeconds() - this.remainingTime) % intervalInSeconds == 0) {
+                    this.broadcast(broadcastConfig);
+                }
+            }
         }, 1, 1, TimeUnit.SECONDS);
+    }
+
+    private void broadcast(BroadcastConfig config) {
+        String[] texts = config.texts();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            Audience audience = plugin.getSenderFactory().getAudience(player);
+            for (String s : texts) {
+                DynamicText text = new DynamicText(player, s);
+                text.update(this.publicContext.placeholderMap());
+                AdventureHelper.sendMessage(audience, AdventureHelper.miniMessage(text.getLatestValue()));
+            }
+        }
     }
 
     private void updatePublicPlaceholders() {
