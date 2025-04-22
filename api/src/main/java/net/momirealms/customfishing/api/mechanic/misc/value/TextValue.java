@@ -18,6 +18,7 @@
 package net.momirealms.customfishing.api.mechanic.misc.value;
 
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customfishing.api.mechanic.misc.placeholder.PlaceholderAPIUtils;
 import org.bukkit.OfflinePlayer;
 
@@ -51,13 +52,17 @@ public interface TextValue<T> {
      */
     default String render(Context<T> context, boolean parseRawPlaceholders) {
         if (!(context.holder() instanceof OfflinePlayer player)) {
-            if (!parseRawPlaceholders) {
-                return render(context);
-            } else {
+            if (BukkitPlaceholderManager.getInstance().hasPapi() && parseRawPlaceholders) {
                 return PlaceholderAPIUtils.parse(null, render(context));
+            } else {
+                return render(context);
             }
         } else {
-            return PlaceholderAPIUtils.parse(player, render(context));
+            if (BukkitPlaceholderManager.getInstance().hasPapi() && parseRawPlaceholders) {
+                return PlaceholderAPIUtils.parse(player, render(context));
+            } else {
+                return render(context);
+            }
         }
     }
 

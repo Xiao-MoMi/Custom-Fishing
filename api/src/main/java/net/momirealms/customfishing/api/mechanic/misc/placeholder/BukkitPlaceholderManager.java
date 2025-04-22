@@ -77,6 +77,10 @@ public class BukkitPlaceholderManager implements PlaceholderManager {
         return instance;
     }
 
+    public boolean hasPapi() {
+        return hasPapi;
+    }
+
     @Override
     public boolean registerCustomPlaceholder(String placeholder, String original) {
         if (this.customPlaceholderMap.containsKey(placeholder)) return false;

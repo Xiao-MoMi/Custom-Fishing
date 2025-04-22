@@ -17,14 +17,17 @@
 
 package net.momirealms.customfishing.bukkit.util;
 
+import com.saicone.rtag.RtagItem;
 import com.saicone.rtag.item.ItemTagStream;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
+import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.item.ItemEditor;
 import net.momirealms.customfishing.api.mechanic.item.tag.TagMap;
 import net.momirealms.customfishing.api.mechanic.item.tag.TagValueType;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.common.helper.GsonHelper;
+import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.util.ArrayUtils;
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.Material;
@@ -110,6 +113,13 @@ public class ItemStackUtils {
     public static void sectionToComponentEditor(Section section, List<ItemEditor> itemEditors) {
         for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
             String component = entry.getKey();
+            if (VersionHelper.isVersionNewerThan1_21_5() && component.equals("minecraft:hide_tooltip")) {
+                itemEditors.add((item, context) -> {
+                    item.setComponent("minecraft:tooltip_display", Map.of("hide_tooltip", true));
+                });
+                continue;
+            }
+
             Object value = entry.getValue();
             if (value instanceof Section inner) {
                 Map<String, Object> innerMap = new HashMap<>();
