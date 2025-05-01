@@ -282,6 +282,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
 
     @Override
     public void debug(Object message) {
+        if (message == null) return;
         this.debugger.accept(message::toString);
     }
 
