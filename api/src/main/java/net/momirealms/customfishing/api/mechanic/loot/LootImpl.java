@@ -31,7 +31,6 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 
 public class LootImpl implements Loot {
-
     private final LootType type;
     private final boolean instantGame;
     private final boolean disableGame;

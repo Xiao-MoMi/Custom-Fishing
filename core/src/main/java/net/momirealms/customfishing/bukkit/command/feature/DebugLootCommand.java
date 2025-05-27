@@ -17,7 +17,10 @@
 
 package net.momirealms.customfishing.bukkit.command.feature;
 
+import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.context.Context;
@@ -37,6 +40,7 @@ import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.parser.standard.IntegerParser;
 import org.incendo.cloud.parser.standard.StringParser;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.suggestion.SuggestionProvider;
@@ -63,6 +67,7 @@ public class DebugLootCommand extends BukkitCommandFeature<CommandSender> {
                         return CompletableFuture.completedFuture(Stream.of("lava", "water", "void").map(Suggestion::suggestion).toList());
                     }
                 }))
+                .optional("page", IntegerParser.integerParser(1))
                 .handler(context -> {
                     String surrounding = context.get("surrounding");
                     if (context.sender().getInventory().getItemInMainHand().getType() != Material.FISHING_ROD) {
@@ -70,6 +75,7 @@ public class DebugLootCommand extends BukkitCommandFeature<CommandSender> {
                         return;
                     }
                     final Player player = context.sender();
+                    int page = (int) context.optional("page").orElse(1) - 1;
 
                     Context<Player> playerContext = Context.player(player);
                     FishingGears gears = new FishingGears(playerContext);
@@ -112,16 +118,45 @@ public class DebugLootCommand extends BukkitCommandFeature<CommandSender> {
                         sum += weight;
                     }
                     LootWithWeight[] lootArray = loots.toArray(new LootWithWeight[0]);
-                    quickSort(lootArray, 0,lootArray.length - 1);
-                    Component component = Component.text().build();
-                    for (LootWithWeight loot : lootArray) {
-                        component = component.append(Component.newline())
-                                .append(Component.text(loot.key + ": ").color(NamedTextColor.WHITE))
-                                .append(Component.text(String.format("%.4f", loot.weight * 100 / sum) + "% ").color(NamedTextColor.GOLD))
-                                .append(Component.text("(" + loot.weight + ")").color(NamedTextColor.GRAY));
-                    }
+                    int maxPages = (int) Math.ceil((double) lootArray.length / 10) - 1;
+                    if (page > maxPages) return;
 
-                    handleFeedback(context, MessageConstants.COMMAND_DEBUG_LOOT_SUCCESS, component);
+                    quickSort(lootArray, 0,lootArray.length - 1);
+                    Component component = Component.empty();
+                    List<Component> children = new ArrayList<>();
+                    int i = 0;
+                    for (LootWithWeight loot : lootArray) {
+                        if (i >= page * 10 && i < page * 10 + 10) {
+                            children.add(Component.newline()
+                                    .append(Component.text(loot.key + ": ").color(NamedTextColor.WHITE))
+                                    .append(Component.text(String.format("%.4f", loot.weight * 100 / sum) + "% ").color(NamedTextColor.GOLD))
+                                    .append(Component.text("(" + loot.weight + ")").color(NamedTextColor.GRAY)));
+                        }
+                        i++;
+                    }
+                    handleFeedback(context, MessageConstants.COMMAND_DEBUG_LOOT_SUCCESS, component.children(children));
+                    Component previous = Component.text("( <<< )");
+                    if (page > 0) {
+                        previous = previous.color(NamedTextColor.GREEN).clickEvent(ClickEvent.runCommand(commandConfig.getUsages().get(0) + " " + surrounding + " " + (page)));
+                    } else {
+                        previous = previous.color(NamedTextColor.GRAY);
+                    }
+                    Component next = Component.text("( >>> )");
+                    if (page < maxPages) {
+                        next = next.color(NamedTextColor.GREEN).clickEvent(ClickEvent.runCommand(commandConfig.getUsages().get(0) + " " + surrounding + " " + (page + 2)));
+                    } else {
+                        next = next.color(NamedTextColor.GRAY);
+                    }
+                    BukkitCustomFishingPlugin.getInstance().getSenderFactory().wrap(player)
+                            .sendMessage(
+                                Component.empty().children(List.of(
+                                        previous,
+                                        Component.text("   "),
+                                        Component.text("[" + (page + 1) + "/" + (maxPages + 1) + "]").color(NamedTextColor.AQUA),
+                                        Component.text("   "),
+                                        next
+                                ))
+                            );
                 });
     }
 
