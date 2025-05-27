@@ -102,7 +102,7 @@ public interface MathValue<T> {
      * @throws IllegalArgumentException if the object type is not supported
      */
     static <T> MathValue<T> auto(Object o) {
-        return auto(o, false);
+        return auto(o, true);
     }
 
     static <T> MathValue<T> auto(Object o, boolean intFirst) {

@@ -170,8 +170,8 @@ public class BukkitGameManager implements GameManager {
 
     private GameBasics getGameBasics(Section section) {
         return GameBasics.builder()
-                .difficulty(MathValue.auto(section.get("difficulty", "20~80"), false))
-                .time(MathValue.auto(section.get("time", 15), false))
+                .difficulty(MathValue.auto(section.get("difficulty", "20~80"), true))
+                .time(MathValue.auto(section.get("time", 15), true))
                 .build();
     }
 
