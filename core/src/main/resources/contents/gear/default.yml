@@ -20,7 +20,7 @@ angler_helmet:
   effects:
     effect_1:
       type: difficulty
-      value: -2 # Giảm độ khó đi 2
+      value: -2
 
 deep_sea_chestplate:
   material: DIAMOND_CHESTPLATE
@@ -33,7 +33,7 @@ deep_sea_chestplate:
       - ''
       - '<#FFD700>Effects:'
       - '<gray> - Increases the chance of catching silver star fish.'
-  custom-model-data: 50011 # Example
+  custom-model-data: 50011
   effects:
     effect_1:
       type: group-mod
