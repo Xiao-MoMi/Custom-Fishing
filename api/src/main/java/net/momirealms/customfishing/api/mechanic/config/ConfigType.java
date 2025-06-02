@@ -32,7 +32,23 @@ import java.util.function.Supplier;
  * Configuration types for various mechanics.
  */
 public class ConfigType {
-
+    public static final ConfigType GEAR = of(
+            "gear", //new
+            () -> {
+                HashMap<String, Node<ConfigParserFunction>> parsers = new HashMap<>();
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getItemFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEffectModifierFormatFunctions());
+                parsers.putAll(BukkitCustomFishingPlugin.getInstance().getConfigManager().getEventFormatFunctions());
+                return parsers;
+            },
+            (id, section, functions) -> {
+                MechanicType.register(id, MechanicType.GEAR);
+                GearConfigParser config = new GearConfigParser(id, section, functions);
+                BukkitCustomFishingPlugin.getInstance().getItemManager().registerItem(config.getItem());
+                BukkitCustomFishingPlugin.getInstance().getEffectManager().registerEffectModifier(config.getEffectModifier(), MechanicType.GEAR);
+                BukkitCustomFishingPlugin.getInstance().getEventManager().registerEventCarrier(config.getEventCarrier());
+            }
+    );
     public static final ConfigType ITEM = of(
             "item",
             () -> {
@@ -218,7 +234,7 @@ public class ConfigType {
             }
     );
 
-    private static final ConfigType[] values = new ConfigType[] {ITEM, ENTITY, BLOCK, HOOK, ROD, BAIT, UTIL, TOTEM, ENCHANT, MINI_GAME, COMPETITION};
+    private static final ConfigType[] values = new ConfigType[] {ITEM, ENTITY, BLOCK, HOOK, ROD, BAIT, UTIL, TOTEM, ENCHANT, MINI_GAME, COMPETITION, GEAR};
 
     /**
      * Gets an array of all configuration types.
