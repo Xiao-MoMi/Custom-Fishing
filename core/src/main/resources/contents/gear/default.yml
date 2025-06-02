@@ -1,0 +1,68 @@
+angler_helmet:
+  material: IRON_HELMET
+  display:
+    name: "<b><#A0D2DB>Mũ Câu Thủ</b>"
+    lore:
+      - ''
+      - '<#7FFFD4>Mô tả:'
+      - '<gray> - Một chiếc mũ chắc chắn giúp tăng nhẹ sự tập trung khi câu cá.'
+      - ''
+      - '<#FFD700>Hiệu ứng:'
+      - '<gray> - Giảm nhẹ độ khó khi câu cá.'
+  custom-model-data: 50010 # Ví dụ
+  effects:
+    effect_1:
+      type: difficulty
+      value: -2 # Giảm độ khó đi 2
+
+deep_sea_chestplate:
+  material: DIAMOND_CHESTPLATE
+  display:
+    name: "<b><#3A6EA5>Giáp Ngực Biển Sâu</b>"
+    lore:
+      - ''
+      - '<#7FFFD4>Mô tả:'
+      - '<gray> - Giáp ngực được gia cố giúp thu hút cá lớn hơn.'
+      - ''
+      - '<#FFD700>Hiệu ứng:'
+      - '<gray> - Tăng cơ hội bắt được cá sao bạc.'
+  custom-model-data: 50011 # Ví dụ
+  effects:
+    effect_1:
+      type: group-mod
+      value:
+        - silver_star:+1
+
+swift_leggings:
+  material: LEATHER_LEGGINGS
+  display:
+    name: "<b><#C0C0C0>Quần Nhanh Nhẹn</b>"
+    lore:
+      - ''
+      - '<#7FFFD4>Mô tả:'
+      - '<gray> - Quần nhẹ giúp giảm thời gian chờ cá cắn câu.'
+      - ''
+      - '<#FFD700>Hiệu ứng:'
+      - '<gray> - Giảm nhẹ thời gian chờ.'
+  custom-model-data: 50012 # Ví dụ
+  effects:
+    effect_1:
+      type: wait-time-multiplier
+      value: 0.98 # Giảm 2%
+
+sturdy_boots:
+  material: GOLDEN_BOOTS
+  display:
+    name: "<b><#FFD700>Ủng Vững Chãi</b>"
+    lore:
+      - ''
+      - '<#7FFFD4>Mô tả:'
+      - '<gray> - Đôi ủng giúp bạn đứng vững hơn, làm trò chơi dễ hơn một chút.'
+      - ''
+      - '<#FFD700>Hiệu ứng:'
+      - '<gray> - Giảm nhẹ thời gian trò chơi (giúp dễ hơn).'
+  custom-model-data: 50013 # Ví dụ
+  effects:
+    effect_1:
+      type: game-time
+      value: -0.5 # Giảm thời gian trò chơi 0.5 giây
