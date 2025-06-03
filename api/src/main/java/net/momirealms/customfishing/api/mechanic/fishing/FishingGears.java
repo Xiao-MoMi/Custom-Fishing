@@ -239,6 +239,27 @@ public class FishingGears {
                     }
                 }
             }
+            ItemStack helmet = playerInventory.getHelmet();
+            ItemStack chestplate = playerInventory.getChestplate();
+            ItemStack leggings = playerInventory.getLeggings();
+            ItemStack boots = playerInventory.getBoots();
+
+            ItemStack[] armorContents = new ItemStack[]{helmet, chestplate, leggings, boots};
+            List<Pair<String, ItemStack>> gearItemsList = new ArrayList<>();
+
+            for (ItemStack armorPiece : armorContents) {
+                if (armorPiece != null && armorPiece.getType() != Material.AIR) {
+                    String gearID = BukkitCustomFishingPlugin.getInstance().getItemManager().getItemID(armorPiece);
+                    List<MechanicType> itemTypes = MechanicType.getTypeByID(gearID);
+                    if (itemTypes != null && itemTypes.contains(MechanicType.GEAR)) {
+                        gearItemsList.add(Pair.of(gearID, armorPiece));
+                        BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(gearID, MechanicType.GEAR).ifPresent(fishingGears.modifiers::add);
+                    }
+                }
+            }
+            if (!gearItemsList.isEmpty()) {
+                fishingGears.gears.put(GearType.GEAR, gearItemsList);
+            }
 
             // check requirements before checking totems
             for (EffectModifier modifier : fishingGears.modifiers) {
@@ -283,7 +304,17 @@ public class FishingGears {
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {})
         );
-
+        public static final GearType GEAR = new GearType(MechanicType.GEAR,
+                ((context, itemStack) -> {}), // castFunction
+                ((context, itemStack) -> {}), // reelFunction
+                ((context, itemStack) -> {}), // biteFunction
+                ((context, itemStack) -> {}), // successFunction
+                ((context, itemStack) -> {}), // failureFunction
+                ((context, itemStack) -> {}), // lureFunction
+                ((context, itemStack) -> {}), // escapeFunction
+                ((context, itemStack) -> {}), // landFunction
+                ((context, itemStack) -> {})  // hookFunction
+        );
         public static final GearType BAIT = new GearType(MechanicType.BAIT,
                 ((context, itemStack) -> {
                     if (context.holder().getGameMode() != GameMode.CREATIVE)
