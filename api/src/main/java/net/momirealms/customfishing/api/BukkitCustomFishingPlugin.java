@@ -27,7 +27,6 @@ import net.momirealms.customfishing.api.mechanic.effect.EffectManager;
 import net.momirealms.customfishing.api.mechanic.entity.EntityManager;
 import net.momirealms.customfishing.api.mechanic.event.EventManager;
 import net.momirealms.customfishing.api.mechanic.fishing.FishingManager;
-import net.momirealms.customfishing.api.mechanic.game.AbstractGamingPlayer;
 import net.momirealms.customfishing.api.mechanic.game.GameManager;
 import net.momirealms.customfishing.api.mechanic.hook.HookManager;
 import net.momirealms.customfishing.api.mechanic.item.ItemManager;

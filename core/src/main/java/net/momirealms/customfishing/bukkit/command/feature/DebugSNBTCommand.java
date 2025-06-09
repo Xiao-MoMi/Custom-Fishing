@@ -25,7 +25,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.bukkit.command.BukkitCommandFeature;
 import net.momirealms.customfishing.common.command.CustomFishingCommandManager;
-import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

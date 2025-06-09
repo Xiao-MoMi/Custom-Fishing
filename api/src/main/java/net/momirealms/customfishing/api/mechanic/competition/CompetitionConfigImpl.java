@@ -21,7 +21,6 @@ import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.competition.info.ActionBarConfig;
 import net.momirealms.customfishing.api.mechanic.competition.info.BossBarConfig;
 import net.momirealms.customfishing.api.mechanic.competition.info.BroadcastConfig;
-import net.momirealms.customfishing.api.mechanic.competition.info.BroadcastConfigImpl;
 import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import org.bukkit.entity.Player;
 

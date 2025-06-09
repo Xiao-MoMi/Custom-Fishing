@@ -18,7 +18,6 @@
 package net.momirealms.customfishing.api.event;
 
 import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
-import net.momirealms.customfishing.api.mechanic.game.GameSetting;
 import net.momirealms.customfishing.api.mechanic.game.GamingPlayer;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;

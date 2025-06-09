@@ -40,6 +40,7 @@ import net.momirealms.sparrow.heart.feature.inventory.HandSlot;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -71,13 +72,13 @@ public class FishingGears {
     private final HashMap<GearType, List<Pair<String, ItemStack>>> gears = new HashMap<>();
     private final ArrayList<EffectModifier> modifiers = new ArrayList<>();
     private boolean canFish = true;
-    private HandSlot rodSlot;
+    private EquipmentSlot rodSlot;
 
     public void setCanFish(boolean canFish) {
         this.canFish = canFish;
     }
 
-    public void setRodSlot(HandSlot rodSlot) {
+    public void setRodSlot(EquipmentSlot rodSlot) {
         this.rodSlot = rodSlot;
     }
 
@@ -146,7 +147,7 @@ public class FishingGears {
      * @return the hand slot of the fishing rod.
      */
     public HandSlot getRodSlot() {
-        return rodSlot;
+        return rodSlot == EquipmentSlot.HAND ? HandSlot.MAIN : HandSlot.OFF;
     }
 
     /**
@@ -177,7 +178,7 @@ public class FishingGears {
             String rodID = BukkitCustomFishingPlugin.getInstance().getItemManager().getItemID(rodItem);
             fishingGears.gears.put(GearType.ROD, List.of(Pair.of(rodID, rodItem)));
             context.arg(ContextKeys.ROD, rodID);
-            fishingGears.rodSlot = rodOnMainHand ? HandSlot.MAIN : HandSlot.OFF;
+            fishingGears.rodSlot = rodOnMainHand ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND;
             BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(rodID, MechanicType.ROD).ifPresent(fishingGears.modifiers::add);
 
             // set enchantments
