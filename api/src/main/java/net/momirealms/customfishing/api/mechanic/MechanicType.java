@@ -41,6 +41,7 @@ public class MechanicType {
     public static final MechanicType HOOK = of("hook");
     public static final MechanicType TOTEM = of("totem");
     public static final MechanicType ENCHANT = of("enchant");
+    public static final MechanicType GEAR = of("gear");
 
     private final String type;
 
