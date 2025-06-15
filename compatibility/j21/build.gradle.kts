@@ -1,6 +1,6 @@
 repositories {
     mavenCentral()
-    maven("https://repo.nexomc.com/snapshots/")
+    maven("https://repo.nexomc.com/releases/")
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.momirealms.net/releases/")
 }
@@ -8,7 +8,7 @@ repositories {
 dependencies {
     compileOnly(project(":api"))
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-    compileOnly("com.nexomc:nexo:1.8.0-dev.24")
+    compileOnly("com.nexomc:nexo:1.7.3")
     compileOnly("net.momirealms:craft-engine-core:0.0.57")
     compileOnly("net.momirealms:craft-engine-bukkit:0.0.57")
 }
