@@ -252,14 +252,14 @@ public class FishingGears {
                 if (armorPiece != null && armorPiece.getType() != Material.AIR) {
                     String gearID = BukkitCustomFishingPlugin.getInstance().getItemManager().getItemID(armorPiece);
                     List<MechanicType> itemTypes = MechanicType.getTypeByID(gearID);
-                    if (itemTypes != null && itemTypes.contains(MechanicType.GEAR)) {
+                    if (itemTypes != null && itemTypes.contains(MechanicType.EQUIPMENT)) {
                         gearItemsList.add(Pair.of(gearID, armorPiece));
-                        BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(gearID, MechanicType.GEAR).ifPresent(fishingGears.modifiers::add);
+                        BukkitCustomFishingPlugin.getInstance().getEffectManager().getEffectModifier(gearID, MechanicType.EQUIPMENT).ifPresent(fishingGears.modifiers::add);
                     }
                 }
             }
             if (!gearItemsList.isEmpty()) {
-                fishingGears.gears.put(GearType.GEAR, gearItemsList);
+                fishingGears.gears.put(GearType.EQUIPMENT, gearItemsList);
             }
 
             // check requirements before checking totems
@@ -305,7 +305,7 @@ public class FishingGears {
                 ((context, itemStack) -> {}),
                 ((context, itemStack) -> {})
         );
-        public static final GearType GEAR = new GearType(MechanicType.GEAR,
+        public static final GearType EQUIPMENT = new GearType(MechanicType.EQUIPMENT,
                 ((context, itemStack) -> {}), // castFunction
                 ((context, itemStack) -> {}), // reelFunction
                 ((context, itemStack) -> {}), // biteFunction

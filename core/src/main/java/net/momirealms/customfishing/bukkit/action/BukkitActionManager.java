@@ -44,6 +44,7 @@ import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
+import net.momirealms.customfishing.common.sender.Sender;
 import net.momirealms.customfishing.common.util.ClassUtils;
 import net.momirealms.customfishing.common.util.ListUtils;
 import net.momirealms.customfishing.common.util.Pair;
@@ -186,7 +187,7 @@ public class BukkitActionManager implements ActionManager<Player> {
             return context -> {
                 if (Math.random() > chance.evaluate(context)) return;
                 List<String> replaced = plugin.getPlaceholderManager().parse(context.holder(), messages, context.placeholderMap());
-                Audience audience = plugin.getSenderFactory().getAudience(context.holder());
+                Sender audience = plugin.getSenderFactory().wrap(context.holder());
                 for (String text : replaced) {
                     audience.sendMessage(AdventureHelper.miniMessage(text));
                 }
@@ -198,7 +199,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 if (Math.random() > chance.evaluate(context)) return;
                 String random = messages.get(RandomUtils.generateRandomInt(0, messages.size() - 1));
                 random = BukkitPlaceholderManager.getInstance().parse(context.holder(), random, context.placeholderMap());
-                Audience audience = plugin.getSenderFactory().getAudience(context.holder());
+                Sender audience = plugin.getSenderFactory().wrap(context.holder());
                 audience.sendMessage(AdventureHelper.miniMessage(random));
             };
         }, "random-message");
@@ -208,7 +209,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 if (Math.random() > chance.evaluate(context)) return;
                 List<String> replaced = plugin.getPlaceholderManager().parse(context.holder(), messages, context.placeholderMap());
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    Audience audience = plugin.getSenderFactory().getAudience(player);
+                    Sender audience = plugin.getSenderFactory().wrap(player);
                     for (String text : replaced) {
                         audience.sendMessage(AdventureHelper.miniMessage(text));
                     }
@@ -232,7 +233,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                                     messages,
                                     context.placeholderMap()
                             );
-                            Audience audience = plugin.getSenderFactory().getAudience(player);
+                            Sender audience = plugin.getSenderFactory().wrap(player);
                             for (String text : replaced) {
                                 audience.sendMessage(AdventureHelper.miniMessage(text));
                             }
@@ -321,9 +322,7 @@ public class BukkitActionManager implements ActionManager<Player> {
             String text = (String) args;
             return context -> {
                 if (Math.random() > chance.evaluate(context)) return;
-                Audience audience = plugin.getSenderFactory().getAudience(context.holder());
-                Component component = AdventureHelper.miniMessage(plugin.getPlaceholderManager().parse(context.holder(), text, context.placeholderMap()));
-                audience.sendActionBar(component);
+                SparrowHeart.getInstance().sendActionBar(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(plugin.getPlaceholderManager().parse(context.holder(), text, context.placeholderMap()))));
             };
         }, "actionbar");
         registerAction((args, chance) -> {
@@ -332,8 +331,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 if (Math.random() > chance.evaluate(context)) return;
                 String random = texts.get(RandomUtils.generateRandomInt(0, texts.size() - 1));
                 random = plugin.getPlaceholderManager().parse(context.holder(), random, context.placeholderMap());
-                Audience audience = plugin.getSenderFactory().getAudience(context.holder());
-                audience.sendActionBar(AdventureHelper.miniMessage(random));
+                SparrowHeart.getInstance().sendActionBar(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(random)));
             };
         }, "random-actionbar");
         registerAction((args, chance) -> {
@@ -349,8 +347,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                         if (LocationUtils.getDistance(player.getLocation(), location) <= realRange) {
                             context.arg(ContextKeys.TEMP_NEAR_PLAYER, player.getName());
                             String replaced = plugin.getPlaceholderManager().parse(owner, actionbar, context.placeholderMap());
-                            Audience audience = plugin.getSenderFactory().getAudience(player);
-                            audience.sendActionBar(AdventureHelper.miniMessage(replaced));
+                            SparrowHeart.getInstance().sendActionBar(player, AdventureHelper.componentToJson(AdventureHelper.miniMessage(replaced)));
                         }
                     }
                 };
@@ -814,10 +811,9 @@ public class BukkitActionManager implements ActionManager<Player> {
                 return context -> {
                     if (Math.random() > chance.evaluate(context)) return;
                     final Player player = context.holder();
-                    Audience audience = plugin.getSenderFactory().getAudience(player);
-                    AdventureHelper.sendTitle(audience,
-                            AdventureHelper.miniMessage(title.render(context)),
-                            AdventureHelper.miniMessage(subtitle.render(context)),
+                    SparrowHeart.getInstance().sendTitle(player,
+                            AdventureHelper.componentToJson(AdventureHelper.miniMessage(title.render(context))),
+                            AdventureHelper.componentToJson(AdventureHelper.miniMessage(subtitle.render(context))),
                             fadeIn, stay, fadeOut
                     );
                 };
@@ -840,10 +836,9 @@ public class BukkitActionManager implements ActionManager<Player> {
                     TextValue<Player> title = TextValue.auto(titles.get(RandomUtils.generateRandomInt(0, titles.size() - 1)));
                     TextValue<Player> subtitle = TextValue.auto(subtitles.get(RandomUtils.generateRandomInt(0, subtitles.size() - 1)));
                     final Player player = context.holder();
-                    Audience audience = plugin.getSenderFactory().getAudience(player);
-                    AdventureHelper.sendTitle(audience,
-                            AdventureHelper.miniMessage(title.render(context)),
-                            AdventureHelper.miniMessage(subtitle.render(context)),
+                    SparrowHeart.getInstance().sendTitle(player,
+                            AdventureHelper.componentToJson(AdventureHelper.miniMessage(title.render(context))),
+                            AdventureHelper.componentToJson(AdventureHelper.miniMessage(subtitle.render(context))),
                             fadeIn, stay, fadeOut
                     );
                 };
@@ -866,10 +861,9 @@ public class BukkitActionManager implements ActionManager<Player> {
                     for (Player player : location.getWorld().getPlayers()) {
                         if (LocationUtils.getDistance(player.getLocation(), location) <= range) {
                             context.arg(ContextKeys.TEMP_NEAR_PLAYER, player.getName());
-                            Audience audience = plugin.getSenderFactory().getAudience(player);
-                            AdventureHelper.sendTitle(audience,
-                                    AdventureHelper.miniMessage(title.render(context)),
-                                    AdventureHelper.miniMessage(subtitle.render(context)),
+                            SparrowHeart.getInstance().sendTitle(player,
+                                    AdventureHelper.componentToJson(AdventureHelper.miniMessage(title.render(context))),
+                                    AdventureHelper.componentToJson(AdventureHelper.miniMessage(subtitle.render(context))),
                                     fadeIn, stay, fadeOut
                             );
                         }

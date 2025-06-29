@@ -80,7 +80,7 @@ public class GearConfigParser {
     public EffectModifier getEffectModifier() {
         EffectModifier.Builder builder = EffectModifier.builder()
                 .id(id)
-                .type(MechanicType.GEAR);
+                .type(MechanicType.EQUIPMENT);
         for (Consumer<EffectModifier.Builder> consumer : effectBuilderConsumers) {
             consumer.accept(builder);
         }
@@ -90,7 +90,7 @@ public class GearConfigParser {
     public EventCarrier getEventCarrier() {
         EventCarrier.Builder builder = EventCarrier.builder()
                 .id(id)
-                .type(MechanicType.GEAR);
+                .type(MechanicType.EQUIPMENT);
         for (Consumer<EventCarrier.Builder> consumer : eventBuilderConsumers) {
             consumer.accept(builder);
         }

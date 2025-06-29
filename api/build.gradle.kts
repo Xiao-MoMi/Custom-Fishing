@@ -25,6 +25,7 @@ dependencies {
     compileOnly("org.apache.logging.log4j:log4j-core:${rootProject.properties["log4j_version"]}")
     compileOnly("net.kyori:adventure-text-minimessage:${rootProject.properties["adventure_bundle_version"]}")
     compileOnly("net.kyori:adventure-text-serializer-gson:${rootProject.properties["adventure_bundle_version"]}")
+    compileOnly("net.kyori:adventure-text-serializer-json-legacy-impl:${rootProject.properties["adventure_bundle_version"]}")
     compileOnly("com.github.ben-manes.caffeine:caffeine:${rootProject.properties["caffeine_version"]}")
     compileOnly("net.objecthunter:exp4j:${rootProject.properties["exp4j_version"]}")
     compileOnly("com.google.guava:guava:${rootProject.properties["guava_version"]}")

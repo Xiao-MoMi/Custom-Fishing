@@ -1,0 +1,68 @@
+angler_helmet:
+  material: IRON_HELMET
+  display:
+    name: "<b><#A0D2DB>Angler's Helmet</b>"
+    lore:
+      - ''
+      - '<#7FFFD4>Description:'
+      - '<gray> - A sturdy helmet that slightly increases concentration when fishing.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Slightly reduces fishing difficulty.'
+  custom-model-data: 50010 # Example
+  effects:
+    effect_1:
+      type: difficulty
+      value: -2
+
+deep_sea_chestplate:
+  material: DIAMOND_CHESTPLATE
+  display:
+    name: "<b><#3A6EA5>Deep Sea Chestplate</b>"
+    lore:
+      - ''
+      - '<#7FFFD4>Description:'
+      - '<gray> - Reinforced chestplate that helps attract larger fish.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Increases the chance of catching silver star fish.'
+  custom-model-data: 50011
+  effects:
+    effect_1:
+      type: group-mod
+      value:
+        - silver_star:+1
+
+swift_leggings:
+  material: LEATHER_LEGGINGS
+  display:
+    name: "<b><#C0C0C0>Swift Leggings</b>"
+    lore:
+      - ''
+      - '<#7FFFD4>Description:'
+      - '<gray> - Lightweight leggings that help reduce the waiting time for a fish to bite.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Slightly reduces waiting time.'
+  custom-model-data: 50012 # Example
+  effects:
+    effect_1:
+      type: wait-time-multiplier
+      value: 0.98 # Reduces by 2%
+
+sturdy_boots:
+  material: GOLDEN_BOOTS
+  display:
+    name: "<b><#FFD700>Sturdy Boots</b>"
+    lore:
+      - ''
+      - '<#7FFFD4>Description:'
+      - '<gray> - Boots that help you stand firmer, making the game a little easier.'
+      - ''
+      - '<#FFD700>Effects:'
+      - '<gray> - Slightly reduces game time (making it easier).'
+  custom-model-data: 50013 # Example
+  effects:
+    effect_1:
+      type: game-time
+      value: -0.5 # Reduces game time by 0.5 seconds

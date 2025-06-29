@@ -39,6 +39,7 @@ import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
+import net.momirealms.customfishing.common.sender.Sender;
 import net.momirealms.customfishing.common.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -50,6 +51,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class Competition implements FishingCompetition {
@@ -196,11 +198,11 @@ public class Competition implements FishingCompetition {
     private void broadcast(BroadcastConfig config) {
         String[] texts = config.texts();
         for (Player player : Bukkit.getOnlinePlayers()) {
-            Audience audience = plugin.getSenderFactory().getAudience(player);
+            Sender audience = plugin.getSenderFactory().wrap(player);
             for (String s : texts) {
                 DynamicText text = new DynamicText(player, s);
                 text.update(this.publicContext.placeholderMap());
-                AdventureHelper.sendMessage(audience, AdventureHelper.miniMessage(text.getLatestValue()));
+                audience.sendMessage(AdventureHelper.miniMessage(text.getLatestValue()));
             }
         }
     }
