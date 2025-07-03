@@ -68,7 +68,7 @@ public class BukkitIntegrationManager implements IntegrationManager {
         this.plugin = plugin;
         try {
             this.load();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             plugin.getPluginLogger().warn("Failed to load integrations", e);
         } finally {
             instance = this;

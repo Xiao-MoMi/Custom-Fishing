@@ -17,13 +17,13 @@ import dev.aurelium.auraskills.bukkit.AuraSkills;
 import dev.aurelium.auraskills.bukkit.hooks.WorldGuardFlags.FlagKey;
 import dev.aurelium.auraskills.bukkit.hooks.WorldGuardHook;
 import dev.aurelium.auraskills.bukkit.loot.context.MobContext;
-import dev.aurelium.auraskills.bukkit.loot.context.SourceContext;
-import dev.aurelium.auraskills.bukkit.loot.type.CommandLoot;
 import dev.aurelium.auraskills.bukkit.loot.type.EntityLoot;
 import dev.aurelium.auraskills.bukkit.loot.type.ItemLoot;
 import dev.aurelium.auraskills.bukkit.source.FishingLeveler;
 import dev.aurelium.auraskills.common.commands.CommandExecutor;
 import dev.aurelium.auraskills.common.hooks.PlaceholderHook;
+import dev.aurelium.auraskills.common.loot.CommandLoot;
+import dev.aurelium.auraskills.common.loot.SourceContext;
 import dev.aurelium.auraskills.common.message.MessageKey;
 import dev.aurelium.auraskills.common.user.User;
 import dev.aurelium.auraskills.common.util.text.TextUtil;
@@ -41,6 +41,8 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +51,9 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
+
+import static dev.aurelium.auraskills.bukkit.ref.BukkitItemRef.unwrap;
 
 /*
  *
@@ -88,7 +93,7 @@ public class AuraSkillItemProvider implements ItemProvider {
         User user = plugin.getUser(context.holder());
         Skill skill = originalSource != null ? originalSource.skill() : Skills.FISHING;
 
-        LootTable table = plugin.getLootTableManager().getLootTable(skill);
+        LootTable table = plugin.getLootManager().getLootTable(skill);
         if (table == null) return originalItem;
         for (LootPool pool : table.getPools()) {
             // Calculate chance for pool
@@ -115,7 +120,7 @@ public class AuraSkillItemProvider implements ItemProvider {
 
             if (random.nextDouble() < chance) { // Pool is selected
                 XpSource contextSource = originalSource != null ? originalSource.source() : null;
-                Loot selectedLoot = selectLoot(pool, new SourceContext(contextSource));
+                Loot selectedLoot = selectLoot(pool, new dev.aurelium.auraskills.common.loot.SourceContext(contextSource));
                 // Give loot
                 if (selectedLoot == null) { // Continue iterating pools
                     continue;
@@ -220,11 +225,42 @@ public class AuraSkillItemProvider implements ItemProvider {
         int amount = generateAmount(loot.getMinAmount(), loot.getMaxAmount());
         if (amount == 0) return new ItemStack(Material.AIR);
 
-        ItemStack drop = loot.getItem().supplyItem(plugin, table);
+        ItemStack drop = generateDamaged(unwrap(loot.getItem().supplyItem(plugin, table)), loot.getMinDamage(), loot.getMaxDamage());
         drop.setAmount(amount);
 
         attemptSendMessage(player, loot);
         giveXp(player, loot, source, skill);
+
+        return drop;
+    }
+
+    private ItemStack generateDamaged(ItemStack drop, double minDamage, double maxDamage) {
+        if (minDamage >= 0.0 && minDamage <= 1.0 &&
+                maxDamage >= 0.0 && maxDamage <= 1.0 &&
+                minDamage <= maxDamage) {
+
+            // Check if the item is damageable.
+            if (drop == null) {
+                return drop;
+            }
+
+            ItemMeta meta = drop.getItemMeta();
+            if (meta instanceof Damageable damageable) {
+                int damage = 0; // Default to 0 damage
+                short durability = drop.getType().getMaxDurability();
+                int minDamageValue = (int) (durability * minDamage); // E.g. 1561 * 0.0 = 0 -> resulting in an undamaged item.
+                int maxDamageValue = (int) (durability * maxDamage); // E.g. 1561 * 0.5 = 780 -> resulting in a max 50% damaged item.
+
+                if (minDamage == maxDamage) {
+                    damage = maxDamageValue;
+                } else {
+                    damage = ThreadLocalRandom.current().nextInt(minDamageValue, maxDamageValue);
+                }
+
+                damageable.setDamage(damage);
+                drop.setItemMeta(meta);
+            }
+        }
 
         return drop;
     }
@@ -312,13 +348,14 @@ public class AuraSkillItemProvider implements ItemProvider {
     protected Loot selectLoot(LootPool pool, @NotNull LootContext providedContext) {
         return pool.rollLoot(loot -> {
             if (providedContext instanceof SourceContext sourceContext) {
+                XpSource providedSource = sourceContext.source();
                 Set<LootContext> lootContexts = loot.getValues().getContexts().get("sources");
                 // Make sure the loot defines a sources context and the provided context exists
                 if (lootContexts != null && sourceContext.source() != null) {
                     boolean matched = false;
                     for (LootContext context : lootContexts) { // Go through LootContext and cast to Source
-                        if (context instanceof SourceContext sourceLootContext) {
-                            if (sourceLootContext.source().equals(sourceContext.source())) { // Check if source matches one of the contexts
+                        if (context instanceof SourceContext sourceContext1) {
+                            if (sourceContext1.source().equals(providedSource)) { // Check if source matches one of the contexts
                                 matched = true;
                                 break;
                             }

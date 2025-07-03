@@ -12,6 +12,8 @@ dependencies {
     compileOnly("com.nexomc:nexo:1.7.3")
     compileOnly("net.momirealms:craft-engine-core:0.0.57")
     compileOnly("net.momirealms:craft-engine-bukkit:0.0.57")
+    compileOnly("net.momirealms:sparrow-heart:${rootProject.properties["sparrow_heart_version"]}")
+    compileOnly(files("libs/AuraSkills-2.3.4.jar"))
 }
 
 tasks.withType<JavaCompile> {
