@@ -17,8 +17,8 @@
 
 package net.momirealms.customfishing.bukkit.integration.season;
 
-import net.momirealms.customcrops.api.CustomCropsPlugin;
-import net.momirealms.customcrops.api.mechanic.world.season.Season;
+import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
+import net.momirealms.customcrops.api.core.world.Season;
 import net.momirealms.customfishing.api.integration.SeasonProvider;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ public class CustomCropsSeasonProvider implements SeasonProvider {
     @NotNull
     @Override
     public net.momirealms.customfishing.api.mechanic.misc.season.Season getSeason(@NotNull World world) {
-        Season season = CustomCropsPlugin.get().getIntegrationManager().getSeasonInterface().getSeason(world);
+        Season season = BukkitCustomCropsPlugin.getInstance().getWorldManager().getSeason(world);
         if (season == null) return net.momirealms.customfishing.api.mechanic.misc.season.Season.DISABLE;
         return net.momirealms.customfishing.api.mechanic.misc.season.Season.valueOf(season.name().toUpperCase(Locale.ENGLISH));
     }

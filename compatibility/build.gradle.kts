@@ -14,7 +14,9 @@ repositories {
     maven("https://oss.sonatype.org/content/repositories/snapshots")
     maven("https://repo.opencollab.dev/main/") // geyser
     maven("https://repo.codemc.org/repository/maven-public/") // beauty quest
-    maven("https://repo.momirealms.net/releases/")
+    maven("https://repo.momirealms.net/releases/") // craftengine customcrops
+    maven("https://repo.nexomc.com/releases/") // nexo
+    maven("https://repo.nexomc.com/snapshots/")
 }
 
 dependencies {
@@ -34,7 +36,7 @@ dependencies {
     // vault
     compileOnly("com.github.MilkBowl:VaultAPI:${rootProject.properties["vault_version"]}")
     // season
-    compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.5.7")
+    compileOnly("net.momirealms:custom-crops:3.6.41")
     compileOnly(files("libs/RealisticSeasons-api.jar"))
     compileOnly(files("libs/AdvancedSeasons-API.jar"))
     // enchantment
@@ -42,7 +44,6 @@ dependencies {
     // leveler
     compileOnly(files("libs/mcMMO-api.jar"))
     compileOnly("net.Indyuce:MMOCore-API:1.12.1-SNAPSHOT")
-//    compileOnly("dev.aurelium:auraskills-api-bukkit:2.2.7")
     compileOnly(files("libs/AuraSkills-2.3.4.jar"))
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
     compileOnly("com.github.Zrips:Jobs:v5.2.2.3")
@@ -64,7 +65,10 @@ dependencies {
     compileOnly("pers.neige.neigeitems:NeigeItems:1.17.13")
     compileOnly("com.willfp:EcoItems:5.61.0")
     compileOnly("io.th0rgal:oraxen:1.168.0")
+    compileOnly("com.nexomc:nexo:1.7.3")
     compileOnly("com.github.brcdev-minecraft:shopgui-api:3.0.0")
+    compileOnly("net.momirealms:craft-engine-core:0.0.60")
+    compileOnly("net.momirealms:craft-engine-bukkit:0.0.60")
     // entity
     compileOnly("io.lumine:Mythic-Dist:5.6.2")
     // eco
