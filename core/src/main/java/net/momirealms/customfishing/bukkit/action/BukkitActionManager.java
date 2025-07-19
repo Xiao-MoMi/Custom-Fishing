@@ -523,13 +523,13 @@ public class BukkitActionManager implements ActionManager<Player> {
         }, "durability");
         registerAction((args, chance) -> {
             if (args instanceof Section section) {
-                String id = section.getString("item");
+                TextValue<Player> id = TextValue.auto(section.getString("item"));
                 MathValue<Player> amount = MathValue.auto(section.get("amount", 1));
                 boolean toInventory = section.getBoolean("to-inventory", false);
                 return context -> {
                     if (Math.random() > chance.evaluate(context)) return;
                     Player player = context.holder();
-                    ItemStack itemStack = plugin.getItemManager().buildAny(context, id);
+                    ItemStack itemStack = plugin.getItemManager().buildAny(context, id.render(context));
                     if (itemStack != null) {
                         int maxStack = itemStack.getMaxStackSize();
                         int amountToGive = (int) amount.evaluate(context);
