@@ -29,6 +29,7 @@ CustomFishing is a **Paper plugin** designed to provide a variety of **fishing m
    ```sh
    ./gradlew build
    ```
+4. Create *j21* folder in /compatibility
 4. The artifact will be available in the **/target** folder.
 
 ### 🛠️ Using an IDE

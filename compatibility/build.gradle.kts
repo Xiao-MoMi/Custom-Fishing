@@ -4,7 +4,7 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/") // paper
     maven("https://mvn.lumine.io/repository/maven-public/") // mythicmobs
     maven("https://nexus.phoenixdevt.fr/repository/maven-public/") // mmoitems
-    maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // papi
     maven("https://r.irepo.space/maven/") // neigeitems
     maven("https://repo.oraxen.com/releases/") // oraxen
@@ -17,6 +17,7 @@ repositories {
     maven("https://repo.momirealms.net/releases/") // craftengine customcrops
     maven("https://repo.nexomc.com/releases/") // nexo
     maven("https://repo.nexomc.com/snapshots/")
+    maven("https://repo.lukasa.lt/repository/maven-public/") // packet wrapper
 }
 
 dependencies {
@@ -52,7 +53,8 @@ dependencies {
     compileOnly(files("libs/ClueScrolls-4.8.7-api.jar"))
     compileOnly(files("libs/notquests-5.17.1.jar"))
     compileOnly(files("libs/beautyquests-1.0.4.jar"))
-    compileOnly("org.betonquest:betonquest:2.1.3")
+    compileOnly("com.comphenix.packetwrapper:PacketWrapper:1.20-2.2.1")
+    compileOnly("org.betonquest:betonquest:2.2.1")
     // item
     compileOnly(files("libs/zaphkiel-2.0.24.jar"))
     compileOnly(files("libs/ExecutableItems-7.24.9.29.jar"))
