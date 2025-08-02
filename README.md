@@ -25,12 +25,12 @@ CustomFishing is a **Paper plugin** designed to provide a variety of **fishing m
 ### 💻 Command Line
 1. Install **JDK 17 & 21**.
 2. Open a terminal and navigate to the project directory.
-3. Run:
+3. Create **j21** folder in /compatibility folder
+4. Run:
    ```sh
    ./gradlew build
    ```
-4. Create *j21* folder in /compatibility
-4. The artifact will be available in the **/target** folder.
+5. The artifact will be available in the **/target** folder.
 
 ### 🛠️ Using an IDE
 1. Import the project into your preferred IDE.
