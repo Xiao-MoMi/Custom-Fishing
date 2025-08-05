@@ -26,6 +26,7 @@ CustomFishing is a **Paper plugin** designed to provide a variety of **fishing m
 1. Install **JDK 17 & 21**.
 2. Open a terminal and navigate to the project directory.
 3. Run:
+
    ```sh
    ./gradlew build
    ```
