@@ -184,9 +184,9 @@ public class BukkitIntegrationManager implements IntegrationManager {
         }
         if (isHooked("RealisticSeasons")) {
             registerSeasonProvider(new RealisticSeasonsProvider());
-        } else if (isHooked("AdvancedSeasons", "1.4", "1.5", "1.6")) {
+        } else if (isHooked("AdvancedSeasons")) {
             registerSeasonProvider(new AdvancedSeasonsProvider());
-        } else if (isHooked("CustomCrops", "3.4", "3.5", "3.6")) {
+        } else if (isHooked("CustomCrops")) {
             registerSeasonProvider(new CustomCropsSeasonProvider());
         }
         if (isHooked("Vault")) {
