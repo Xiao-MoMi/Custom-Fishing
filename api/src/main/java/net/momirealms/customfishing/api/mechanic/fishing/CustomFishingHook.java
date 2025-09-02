@@ -177,6 +177,7 @@ public class CustomFishingHook {
                         context.arg(ContextKeys.OTHER_X, hook.getLocation().getBlockX());
                         context.arg(ContextKeys.OTHER_Y, hook.getLocation().getBlockY());
                         context.arg(ContextKeys.OTHER_Z, hook.getLocation().getBlockZ());
+                        context.arg(ContextKeys.OPEN_WATER, hook.isInOpenWater());
 
                         // get the next loot
                         Loot loot;
