@@ -788,7 +788,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
             int max;
             try {
                 min = Integer.parseInt(split[0]);
-                max = Integer.parseInt(split[0]);
+                max = Integer.parseInt(split[1]);
             } catch (NumberFormatException e) {
                 plugin.getPluginLogger().warn("Invalid number format for range: " + depthRange, e);
                 return Requirement.empty();
