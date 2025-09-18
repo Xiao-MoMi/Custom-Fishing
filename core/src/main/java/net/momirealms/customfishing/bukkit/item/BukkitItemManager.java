@@ -325,7 +325,9 @@ public class BukkitItemManager implements ItemManager, Listener {
             plugin.debug("Another plugin modified the item from `PlayerItemDamageEvent` called by CustomFishing");
             return;
         }
-        if (!itemStack.getItemMeta().equals(previousMeta)) {
+
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta == null || !itemMeta.equals(previousMeta)) {
             return;
         }
 

@@ -80,7 +80,7 @@ public interface ItemManager extends Reloadable {
     /**
      * Retrieves the item ID of the given item stack. If it's a vanilla item, the returned value would be capitalized for instance {@code PAPER}. If it's a CustomFishing
      * item, the returned value would be the ID for instance {@code beginner_rod}. If it's an item from other plugins, the returned value would be the
-     * id from that plugin for instance {@code itemsadder_namespace:id} / {@code oraxen_item_id}
+     * id from that plugin for instance {@code namespace:id} / {@code MythicSword}
      *
      * @param itemStack the {@link ItemStack} to be checked
      * @return the custom fishing item ID, or null if the item stack is not a custom fishing item
