@@ -464,6 +464,11 @@ public class CustomFishingHook {
         context.arg(ContextKeys.OTHER_Y, hook.getLocation().getBlockY());
         context.arg(ContextKeys.OTHER_Z, hook.getLocation().getBlockZ());
 
+        FishingResultEvent event = new FishingResultEvent(context, FishingResultEvent.Result.FAILURE, hook, nextLoot);
+        if (EventUtils.fireAndCheckCancel(event)) {
+            return;
+        }
+
         gears.trigger(ActionTrigger.FAILURE, context);
         plugin.getEventManager().trigger(context, nextLoot.id(), MechanicType.LOOT, ActionTrigger.FAILURE);
     }
