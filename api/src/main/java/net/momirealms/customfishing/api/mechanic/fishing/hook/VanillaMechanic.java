@@ -113,7 +113,7 @@ public class VanillaMechanic implements HookMechanic {
                     if (player.isOnline() && hook.isValid()) {
                         AntiAutoFishing.prevent(player, hook);
                     }
-                },  RandomUtils.generateRandomInt(20, SparrowHeart.getInstance().getWaitTime(hook) + lureTime - 5), hook.getLocation());
+                },  RandomUtils.generateRandomInt(20, Math.max(20, SparrowHeart.getInstance().getWaitTime(hook) + lureTime - 5)), hook.getLocation());
             }
         }, hook.getLocation());
     }

@@ -166,6 +166,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
     }
 
     private void registerBuiltInRequirements() {
+        this.registerFirstCaptureRequirement();
         this.registerTimeRequirement();
         this.registerYRequirement();
         this.registerInWaterRequirement();
@@ -456,6 +457,19 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
                 return Requirement.empty();
             }
         }, "&&");
+    }
+
+    private void registerFirstCaptureRequirement() {
+        registerRequirement((args, actions, runActions) -> {
+            boolean required = (boolean) args;
+            return context -> {
+                Boolean arg = context.arg(ContextKeys.FIRST_CAPTURE);
+                boolean first = arg != null && arg;
+                if (first == required) return true;
+                if (runActions) ActionManager.trigger(context, actions);
+                return false;
+            };
+        }, "first-capture");
     }
 
     private void registerInWaterRequirement() {
