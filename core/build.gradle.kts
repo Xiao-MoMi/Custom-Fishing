@@ -57,7 +57,6 @@ dependencies {
 
 tasks {
     shadowJar {
-        from(project(":compatibility:j21").tasks.jar.get().archiveFile)
         archiveFileName = "CustomFishing-${rootProject.properties["project_version"]}.jar"
         destinationDirectory.set(file("$rootDir/target"))
         relocate("net.kyori", "net.momirealms.customfishing.libraries")

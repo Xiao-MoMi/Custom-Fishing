@@ -21,7 +21,9 @@ import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.integration.*;
 import net.momirealms.customfishing.bukkit.block.BukkitBlockManager;
 import net.momirealms.customfishing.bukkit.entity.BukkitEntityManager;
+import net.momirealms.customfishing.bukkit.integration.action.CEActionExpansion;
 import net.momirealms.customfishing.bukkit.integration.block.ItemsAdderBlockProvider;
+import net.momirealms.customfishing.bukkit.integration.block.NexoBlockProvider;
 import net.momirealms.customfishing.bukkit.integration.block.OraxenBlockProvider;
 import net.momirealms.customfishing.bukkit.integration.enchant.AdvancedEnchantmentsProvider;
 import net.momirealms.customfishing.bukkit.integration.enchant.VanillaEnchantmentsProvider;
@@ -103,31 +105,12 @@ public class BukkitIntegrationManager implements IntegrationManager {
             registerEntityProvider(new ItemsAdderEntityProvider());
         }
         if (isHooked("CraftEngine")) {
-            try {
-                Class<?> ceItemProviderClass = Class.forName("net.momirealms.customfishing.bukkit.integration.item.CraftEngineItemProvider");
-                Constructor<?> itemProviderConstructor = ceItemProviderClass.getDeclaredConstructor();
-                itemProviderConstructor.setAccessible(true);
-                ItemProvider itemProvider = (ItemProvider) itemProviderConstructor.newInstance();
-                registerItemProvider(itemProvider);
-            } catch (ReflectiveOperationException e) {
-                plugin.getPluginLogger().warn("Failed to hook CraftEngine", e);
-            }
+            registerItemProvider(new CraftEngineItemProvider());
+            CEActionExpansion.register();
         }
         if (isHooked("Nexo")) {
-            try {
-                Class<?> nexoItemProviderClass = Class.forName("net.momirealms.customfishing.bukkit.integration.item.NexoItemProvider");
-                Constructor<?> itemProviderConstructor = nexoItemProviderClass.getDeclaredConstructor();
-                itemProviderConstructor.setAccessible(true);
-                ItemProvider itemProvider = (ItemProvider) itemProviderConstructor.newInstance();
-                registerItemProvider(itemProvider);
-                Class<?> nexoBlockProviderClass = Class.forName("net.momirealms.customfishing.bukkit.integration.block.NexoBlockProvider");
-                Constructor<?> nexoBlockProviderConstructor = nexoBlockProviderClass.getDeclaredConstructor();
-                nexoBlockProviderConstructor.setAccessible(true);
-                BlockProvider blockProvider = (BlockProvider) nexoBlockProviderConstructor.newInstance();
-                registerBlockProvider(blockProvider);
-            } catch (ReflectiveOperationException e) {
-                plugin.getPluginLogger().warn("Failed to hook Nexo", e);
-            }
+            registerItemProvider(new NexoItemProvider());
+            registerBlockProvider(new NexoBlockProvider());
         }
         if (isHooked("MMOItems")) {
             registerItemProvider(new MMOItemsItemProvider());
