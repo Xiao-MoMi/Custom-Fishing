@@ -18,6 +18,7 @@ repositories {
     maven("https://repo.nexomc.com/releases/") // nexo
     maven("https://repo.nexomc.com/snapshots/")
     maven("https://repo.lukasa.lt/repository/maven-public/") // packet wrapper
+    maven("https://repo.minebench.de/") // minedown adventure
 }
 
 dependencies {
@@ -45,14 +46,15 @@ dependencies {
     // leveler
     compileOnly(files("libs/mcMMO-api.jar"))
     compileOnly("net.Indyuce:MMOCore-API:1.12.1-SNAPSHOT")
-    compileOnly(files("libs/AuraSkills-2.3.4.jar"))
+    compileOnly(files("libs/AuraSkills-2.3.8.jar"))
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
     compileOnly("com.github.Zrips:Jobs:v5.2.2.3")
     // quest
     compileOnly(files("libs/BattlePass-4.0.6-api.jar"))
     compileOnly(files("libs/ClueScrolls-4.8.7-api.jar"))
     compileOnly(files("libs/notquests-5.17.1.jar"))
-    compileOnly(files("libs/beautyquests-1.0.4.jar"))
+    compileOnly(files("libs/beautyquests-2.0.0.jar"))
+    compileOnly("com.github.cryptomorin:XSeries:13.5.1")
     compileOnly("com.comphenix.packetwrapper:PacketWrapper:1.20-2.2.1")
     compileOnly("org.betonquest:betonquest:2.2.1")
     // item

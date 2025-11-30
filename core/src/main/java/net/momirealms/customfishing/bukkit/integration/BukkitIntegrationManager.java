@@ -197,8 +197,10 @@ public class BukkitIntegrationManager implements IntegrationManager {
         if (isHooked("ShopGUIPlus")) {
             ShopGUIHook.register();
         }
-        if (isHooked("BeautyQuests")) {
+        if (isHooked("BeautyQuests", "2")) {
             BeautyFishingQuest.register();
+        } else if (isOutdated("BeautyQuests", "1")) {
+            this.plugin.getPluginLogger().info("CustomFishing no longer supports BeautyQuests1.x, please consider updating to BeautyQuests2.x. https://www.spigotmc.org/resources/beautyquests.39255/");
         }
         if (Bukkit.getPluginManager().getPlugin("Geyser-Spigot") != null) {
             this.hasGeyser = true;
@@ -224,6 +226,19 @@ public class BukkitIntegrationManager implements IntegrationManager {
             for (String prefix : versionPrefix) {
                 if (ver.startsWith(prefix)) {
                     plugin.getPluginLogger().info(hooked + " hooked!");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isOutdated(String hooked, String... versionPrefix) {
+        Plugin p = Bukkit.getPluginManager().getPlugin(hooked);
+        if (p != null) {
+            String ver = p.getDescription().getVersion();
+            for (String prefix : versionPrefix) {
+                if (ver.startsWith(prefix)) {
                     return true;
                 }
             }

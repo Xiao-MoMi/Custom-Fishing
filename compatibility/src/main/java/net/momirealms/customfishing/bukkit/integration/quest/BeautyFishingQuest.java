@@ -1,5 +1,6 @@
 package net.momirealms.customfishing.bukkit.integration.quest;
 
+import com.cryptomorin.xseries.XMaterial;
 import fr.skytasul.quests.api.QuestsAPI;
 import fr.skytasul.quests.api.comparison.ItemComparisonMap;
 import fr.skytasul.quests.api.localization.Lang;
@@ -10,7 +11,6 @@ import fr.skytasul.quests.api.stages.StageTypeRegistry;
 import fr.skytasul.quests.api.stages.creation.StageCreationContext;
 import fr.skytasul.quests.api.stages.types.AbstractItemStage;
 import fr.skytasul.quests.api.utils.CountableObject;
-import fr.skytasul.quests.api.utils.XMaterial;
 import net.momirealms.customfishing.api.event.FishingLootSpawnEvent;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Item;

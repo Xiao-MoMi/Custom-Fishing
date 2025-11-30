@@ -17,6 +17,7 @@ import dev.aurelium.auraskills.bukkit.AuraSkills;
 import dev.aurelium.auraskills.bukkit.hooks.WorldGuardFlags.FlagKey;
 import dev.aurelium.auraskills.bukkit.hooks.WorldGuardHook;
 import dev.aurelium.auraskills.bukkit.loot.context.MobContext;
+import dev.aurelium.auraskills.bukkit.loot.item.BukkitItemSupplier;
 import dev.aurelium.auraskills.bukkit.loot.type.EntityLoot;
 import dev.aurelium.auraskills.bukkit.loot.type.ItemLoot;
 import dev.aurelium.auraskills.bukkit.source.FishingLeveler;
@@ -225,7 +226,8 @@ public class AuraSkillItemProvider implements ItemProvider {
         int amount = generateAmount(loot.getMinAmount(), loot.getMaxAmount());
         if (amount == 0) return new ItemStack(Material.AIR);
 
-        ItemStack drop = generateDamaged(unwrap(loot.getItem().supplyItem(plugin, table)), loot.getMinDamage(), loot.getMaxDamage());
+        BukkitItemSupplier bukkitItemSupplier = new BukkitItemSupplier(loot.getItem());
+        ItemStack drop = generateDamaged(unwrap(bukkitItemSupplier.supplyItem(plugin, table)), loot.getMinDamage(), loot.getMaxDamage());
         drop.setAmount(amount);
 
         attemptSendMessage(player, loot);
