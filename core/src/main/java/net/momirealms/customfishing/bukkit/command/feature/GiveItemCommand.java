@@ -53,10 +53,10 @@ public class GiveItemCommand extends BukkitCommandFeature<CommandSender> {
     public Command.Builder<? extends CommandSender> assembleCommand(CommandManager<CommandSender> manager, Command.Builder<CommandSender> builder) {
         return builder
                 .required("player", PlayerParser.playerParser())
-                .required("id", StringParser.stringComponent().suggestionProvider(new SuggestionProvider<>() {
+                .required("id", StringParser.stringComponent(StringParser.StringMode.QUOTED).suggestionProvider(new SuggestionProvider<>() {
                     @Override
                     public @NonNull CompletableFuture<? extends @NonNull Iterable<? extends @NonNull Suggestion>> suggestionsFuture(@NonNull CommandContext<Object> context, @NonNull CommandInput input) {
-                        return CompletableFuture.completedFuture(BukkitCustomFishingPlugin.getInstance().getItemManager().getItemIDs().stream().map(Suggestion::suggestion).toList());
+                        return CompletableFuture.completedFuture(BukkitCustomFishingPlugin.getInstance().getItemManager().getItemIDs().stream().map(it -> Suggestion.suggestion("\"" + it + "\"")).toList());
                     }
                 }))
                 .optional("amount", IntegerParser.integerParser(1, 6400))
