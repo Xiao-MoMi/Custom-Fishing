@@ -24,6 +24,7 @@ import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.util.PlayerUtils;
 import net.momirealms.customfishing.bukkit.command.BukkitCommandFeature;
 import net.momirealms.customfishing.common.command.CustomFishingCommandManager;
+import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
@@ -70,7 +71,8 @@ public class GiveItemCommand extends BukkitCommandFeature<CommandSender> {
                     try {
                         ItemStack itemStack = BukkitCustomFishingPlugin.getInstance().getItemManager().buildInternal(Context.player(player).arg(ContextKeys.ID, id), id);
                         if (itemStack == null) {
-                            throw new RuntimeException("Unrecognized item id: " + id);
+                            handleFeedback(context, MessageConstants.COMMAND_ITEM_FAILURE_NOT_EXIST, Component.text(id));
+                            return;
                         }
                         int amountToGive = amount;
                         int maxStack = itemStack.getMaxStackSize();
@@ -79,10 +81,20 @@ public class GiveItemCommand extends BukkitCommandFeature<CommandSender> {
                             amountToGive -= perStackSize;
                             ItemStack more = itemStack.clone();
                             more.setAmount(perStackSize);
-                            if (toInv || player.getGameMode() == GameMode.SPECTATOR) {
-                                PlayerUtils.putItemsToInventory(player.getInventory(), more, more.getAmount());
+                            if (VersionHelper.isFolia()) {
+                                player.getScheduler().run(BukkitCustomFishingPlugin.getInstance().getBootstrap(), t -> {
+                                    if (toInv || player.getGameMode() == GameMode.SPECTATOR) {
+                                        PlayerUtils.putItemsToInventory(player.getInventory(), more, more.getAmount());
+                                    } else {
+                                        PlayerUtils.dropItem(player, more, false, true, false);
+                                    }
+                                }, null);
                             } else {
-                                PlayerUtils.dropItem(player, more, false, true, false);
+                                if (toInv || player.getGameMode() == GameMode.SPECTATOR) {
+                                    PlayerUtils.putItemsToInventory(player.getInventory(), more, more.getAmount());
+                                } else {
+                                    PlayerUtils.dropItem(player, more, false, true, false);
+                                }
                             }
                         }
                         handleFeedback(context, MessageConstants.COMMAND_ITEM_GIVE_SUCCESS, Component.text(player.getName()), Component.text(amount), Component.text(id));
