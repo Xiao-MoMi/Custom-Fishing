@@ -156,7 +156,7 @@ public class VoidFishingMechanic implements HookMechanic {
                         d0 = location.getX() + Math.sin(f1) * f2 * 0.1D;
                         d1 = location.getY();
                         d2 = location.getZ() + Math.cos(f1) * f2 * 0.1D;
-                        hook.getWorld().spawnParticle(Particle.DRAGON_BREATH, d0, d1, d2, 2 + RandomUtils.generateRandomInt(0,1), 0.10000000149011612D, 0.0D, 0.10000000149011612D, 0.0D);
+                        hook.getWorld().spawnParticle(Particle.DRAGON_BREATH, d0, d1, d2, 2 + RandomUtils.generateRandomInt(0,1), 0.10000000149011612D, 0.0D, 0.10000000149011612D, 0.0D, 0F);
                     }
                     if (this.timeUntilLured <= 0) {
                         this.fishAngle = RandomUtils.generateRandomFloat(0F, 360F);
