@@ -56,7 +56,8 @@ dependencies {
     compileOnly(files("libs/beautyquests-2.0.0.jar"))
     compileOnly("com.github.cryptomorin:XSeries:13.5.1")
     compileOnly("com.comphenix.packetwrapper:PacketWrapper:1.20-2.2.1")
-    compileOnly("org.betonquest:betonquest:2.2.1")
+//    compileOnly("org.betonquest:betonquest:3.0.0-SNAPSHOT")
+    compileOnly(files("libs/BetonQuest.jar"))
     // item
     compileOnly(files("libs/zaphkiel-2.0.24.jar"))
     compileOnly(files("libs/ExecutableItems-7.24.9.29.jar"))
