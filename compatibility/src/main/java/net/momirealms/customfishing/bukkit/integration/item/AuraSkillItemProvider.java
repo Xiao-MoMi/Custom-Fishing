@@ -9,6 +9,7 @@ import dev.aurelium.auraskills.api.loot.LootPool;
 import dev.aurelium.auraskills.api.loot.LootTable;
 import dev.aurelium.auraskills.api.skill.Skill;
 import dev.aurelium.auraskills.api.skill.Skills;
+import dev.aurelium.auraskills.api.source.LevelerContext;
 import dev.aurelium.auraskills.api.source.SkillSource;
 import dev.aurelium.auraskills.api.source.XpSource;
 import dev.aurelium.auraskills.api.source.type.FishingXpSource;
@@ -65,9 +66,11 @@ public class AuraSkillItemProvider implements ItemProvider {
     private final AuraSkills plugin;
     private final TextFormatter tf = new TextFormatter();
     private final Random random = new Random();
+    private final LevelerContext levelerContext;
 
     public AuraSkillItemProvider() {
-        plugin = (AuraSkills) Bukkit.getPluginManager().getPlugin("AuraSkills");
+        this.plugin = (AuraSkills) Bukkit.getPluginManager().getPlugin("AuraSkills");
+        this.levelerContext = new LevelerContext(this.plugin.getApi());
     }
 
     @Override
@@ -268,11 +271,8 @@ public class AuraSkillItemProvider implements ItemProvider {
     }
 
     private void giveXp(Player player, Loot loot, @Nullable XpSource source, Skill skill) {
-        if (plugin.getHookManager().isRegistered(WorldGuardHook.class)) {
-            // Check generic xp-gain and skill-specific flags
-            if (plugin.getHookManager().getHook(WorldGuardHook.class).isBlocked(player.getLocation(), player, skill)) {
-                return;
-            }
+        if (levelerContext.failsChecks(player, player.getLocation(), skill)) {
+            return;
         }
 
         User user = plugin.getUser(player);
@@ -292,7 +292,6 @@ public class AuraSkillItemProvider implements ItemProvider {
             plugin.getLevelManager().addXp(user, skill, source, xp);
         }
     }
-
     private int generateAmount(int minAmount, int maxAmount) {
         return new Random().nextInt(maxAmount - minAmount + 1) + minAmount;
     }
