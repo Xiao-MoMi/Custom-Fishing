@@ -21,7 +21,7 @@ import net.momirealms.customfishing.bukkit.integration.quest.bq.FishingGroupObje
 import net.momirealms.customfishing.bukkit.integration.quest.bq.FishingIdObjectiveFactory;
 import org.betonquest.betonquest.BetonQuest;
 
-public class BetonQuestQuest {
+public final class BetonQuestHook {
 
     public static void register() {
         BetonQuest bq = BetonQuest.getInstance();

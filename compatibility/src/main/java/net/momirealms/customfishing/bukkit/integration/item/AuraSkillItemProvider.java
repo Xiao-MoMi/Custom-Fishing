@@ -49,10 +49,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static dev.aurelium.auraskills.bukkit.ref.BukkitItemRef.unwrap;
@@ -77,8 +74,8 @@ public class AuraSkillItemProvider implements ItemProvider {
     public @NotNull ItemStack buildItem(@NotNull Context<Player> context, @NotNull String id) {
         FishHook fishHook = context.arg(ContextKeys.HOOK_ENTITY);
         ItemStack originalItem;
+        Player player = context.holder();
         if (fishHook != null) {
-            Player player = context.holder();
             PlayerInventory inventory = player.getInventory();
             ItemStack rod = inventory.getItemInMainHand();
             if (rod.getType() != Material.FISHING_ROD) {
@@ -92,14 +89,27 @@ public class AuraSkillItemProvider implements ItemProvider {
         } else {
             originalItem = new ItemStack(Material.COD);
         }
+
+        if (failsChecks(player, player.getLocation(), false)) {
+            return originalItem;
+        }
+
+        UUID uuid = player.getUniqueId();
+
         var originalSource = plugin.getLevelManager().getLeveler(FishingLeveler.class).getSource(originalItem);
 
         User user = plugin.getUser(context.holder());
         Skill skill = originalSource != null ? originalSource.skill() : Skills.FISHING;
 
         LootTable table = plugin.getLootManager().getLootTable(skill);
-        if (table == null) return originalItem;
+        if (table == null || !table.checkRequirements(uuid)) return originalItem;
+
         for (LootPool pool : table.getPools()) {
+
+            if (!pool.checkRequirements(uuid)) {
+                continue;
+            }
+
             // Calculate chance for pool
             XpSource source = null;
             double chance = getCommonChance(pool, user);
@@ -140,12 +150,6 @@ public class AuraSkillItemProvider implements ItemProvider {
                 }
                 return new ItemStack(Material.AIR);
             }
-        }
-
-        var skillSource = getSource(originalItem);
-        if (skillSource != null) {
-            FishingXpSource source = skillSource.source();
-            plugin.getLevelManager().addXp(user, skill, source, source.getXp());
         }
 
         return originalItem;
@@ -292,6 +296,7 @@ public class AuraSkillItemProvider implements ItemProvider {
             plugin.getLevelManager().addXp(user, skill, source, xp);
         }
     }
+
     private int generateAmount(int minAmount, int maxAmount) {
         return new Random().nextInt(maxAmount - minAmount + 1) + minAmount;
     }
@@ -332,8 +337,8 @@ public class AuraSkillItemProvider implements ItemProvider {
         return chance;
     }
 
-    protected boolean failsChecks(Player player, Location location) {
-        if (player.getGameMode() == GameMode.CREATIVE) { // Only drop loot in survival mode
+    protected boolean failsChecks(Player player, Location location, boolean disableInCreative) {
+        if (disableInCreative && player.getGameMode() == GameMode.CREATIVE) { // Only drop loot in survival mode
             return true;
         }
 

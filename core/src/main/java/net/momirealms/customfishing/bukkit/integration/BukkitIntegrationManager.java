@@ -36,7 +36,7 @@ import net.momirealms.customfishing.bukkit.integration.papi.CustomFishingPapi;
 import net.momirealms.customfishing.bukkit.integration.papi.StatisticsPapi;
 import net.momirealms.customfishing.bukkit.integration.quest.BattlePassQuest;
 import net.momirealms.customfishing.bukkit.integration.quest.BeautyFishingQuest;
-import net.momirealms.customfishing.bukkit.integration.quest.BetonQuestQuest;
+import net.momirealms.customfishing.bukkit.integration.quest.BetonQuestHook;
 import net.momirealms.customfishing.bukkit.integration.quest.ClueScrollsQuest;
 import net.momirealms.customfishing.bukkit.integration.region.WorldGuardRegion;
 import net.momirealms.customfishing.bukkit.integration.season.AdvancedSeasonsProvider;
@@ -52,7 +52,6 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -184,7 +183,7 @@ public class BukkitIntegrationManager implements IntegrationManager {
             clueScrollsQuest.register();
         }
         if (isHooked("BetonQuest", "3")) {
-            BetonQuestQuest.register();
+            BetonQuestHook.register();
         }
         if (isHooked("WorldGuard", "7")) {
             WorldGuardRegion.register();
