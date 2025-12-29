@@ -9,7 +9,7 @@ repositories {
     maven("https://r.irepo.space/maven/") // neigeitems
     maven("https://repo.oraxen.com/releases/") // oraxen
     maven("https://repo.auxilor.io/repository/maven-public/") // eco
-    maven("https://nexus.betonquest.org/repository/betonquest/") // betonquest
+    maven("https://repo.betonquest.org/betonquest/") // betonquest
     maven("https://repo.dmulloy2.net/repository/public/") // betonquest needs packet wrapper?
     maven("https://oss.sonatype.org/content/repositories/snapshots")
     maven("https://repo.opencollab.dev/main/") // geyser
