@@ -127,6 +127,7 @@ rainbow_fish:
     name: <Rainbow>Rainbow Fish</Rainbow>
     lore:
       - <gray>Bringing a good mood for the day
+  group: special_game
   custom-model-data: 50100
   price:
     base: 100

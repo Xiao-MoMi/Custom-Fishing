@@ -1,130 +1,127 @@
-# global group
-global-group:
-  list: []
-  conditions: {}
+# https://mo-mi.gitbook.io/xiaomomi-plugins/customfishing/plugin-wiki/customfishing/weight-system-must-read#configure-loot-conditions.yml-and-game-conditions.yml
+
+water_loots:
+  conditions:
+    # The loot must be in water.
+    in-water: true
+    # the overworld
+    environment:
+      - normal
+    # The magical_rod can only catch enchanted books, and only when using a book as bait.
+    '!rod':
+      - magical_rod
+  list:
+    - 'rubbish:+10'
+    - 'seagrass:+5'
+    - 'vanilla:+100'
   sub-groups:
-    loots_in_water:
+    saltwater_loots:
       conditions:
-        in-water: true
-        environment:
-          - normal
-        '!rod':
-          - magical_rod
+        biome:
+          - minecraft:ocean
+          - minecraft:deep_ocean
+          - minecraft:cold_ocean
+          - minecraft:deep_cold_ocean
+          - minecraft:frozen_ocean
+          - minecraft:deep_frozen_ocean
+          - minecraft:lukewarm_ocean
+          - minecraft:deep_lukewarm_ocean
+          - minecraft:warm_ocean
       list:
-        - 'rubbish:+15'
+        # decrease the chance of getting rubbish when fishing in ocean
+        - 'rubbish:-8'
+        - 'apple_crate:+2'
+        - 'carrot_crate:+2'
+        - 'kelp:+25'
         - 'seagrass:+5'
-        - 'vanilla:+60'
+        # Set the same weight for all fish in ocean groups. The & symbol indicates the fish must be in both groups.
+        - 'group_for_each:ocean&no_star:+15'
+        - 'group_for_each:ocean&silver_star:+3'
+        - 'group_for_each:ocean&golden_star:+1'
+    freshwater_loots:
+      conditions:
+        '!biome':
+          - minecraft:ocean
+          - minecraft:deep_ocean
+          - minecraft:cold_ocean
+          - minecraft:deep_cold_ocean
+          - minecraft:frozen_ocean
+          - minecraft:deep_frozen_ocean
+          - minecraft:lukewarm_ocean
+          - minecraft:deep_lukewarm_ocean
+          - minecraft:warm_ocean
+      list:
+        - 'rainbow_fish:+5'
+        - 'stick:+15'
+        # Set the same weight for all fish in river groups. The & symbol indicates the fish must be in both groups.
+        - 'group_for_each:river&no_star:+15'
+        - 'group_for_each:river&silver_star:+3'
+        - 'group_for_each:river&golden_star:+1'
+      # For freshwater fish, further subdivide by biome and add loot for swamps and caves.
       sub-groups:
-        ocean_fish:
+        swamp_fish:
           conditions:
             biome:
-              - minecraft:ocean
-              - minecraft:deep_ocean
-              - minecraft:cold_ocean
-              - minecraft:deep_cold_ocean
-              - minecraft:frozen_ocean
-              - minecraft:deep_frozen_ocean
-              - minecraft:lukewarm_ocean
-              - minecraft:deep_lukewarm_ocean
-              - minecraft:warm_ocean
+              - minecraft:swamp
+              - minecraft:mangrove_swamp
           list:
-            # decrease the chance of getting rubbish when fishing in ocean
-            - 'rubbish:-10'
-            - 'apple_crate:+2'
-            - 'carrot_crate:+2'
-            - 'kelp:+25'
-            - 'group_for_each:ocean&no_star:+15'
-            - 'group_for_each:ocean&silver_star:+3'
-            - 'group_for_each:ocean&golden_star:+1'
-          sub-groups:
-            warm_ocean_fish:
-              conditions:
-                biome:
-                  - minecraft:lukewarm_ocean
-                  - minecraft:deep_lukewarm_ocean
-                  - minecraft:warm_ocean
-              list:
-                - 'group_for_each:warm_ocean&no_star:+15'
-                - 'group_for_each:warm_ocean&silver_star:+3'
-                - 'group_for_each:warm_ocean&golden_star:+1'
-        river_fish:
+            - 'group_for_each:swamp&no_star:+15'
+            - 'group_for_each:swamp&silver_star:+3'
+            - 'group_for_each:swamp&golden_star:+1'
+        cave_fish:
           conditions:
-            '!biome':
-              - minecraft:ocean
-              - minecraft:deep_ocean
-              - minecraft:cold_ocean
-              - minecraft:deep_cold_ocean
-              - minecraft:frozen_ocean
-              - minecraft:deep_frozen_ocean
-              - minecraft:lukewarm_ocean
-              - minecraft:deep_lukewarm_ocean
-              - minecraft:warm_ocean
+            ypos:
+              - -64~0
           list:
-            - 'rainbow_fish:+5'
-            - 'stick:+15'
-            - 'group_for_each:river&no_star:+15'
-            - 'group_for_each:river&silver_star:+3'
-            - 'group_for_each:river&golden_star:+1'
-          sub-groups:
-            swamp_fish:
-              list:
-                - 'group_for_each:swamp&no_star:+15'
-                - 'group_for_each:swamp&silver_star:+3'
-                - 'group_for_each:swamp&golden_star:+1'
-              conditions:
-                biome:
-                  - minecraft:swamp
-                  - minecraft:mangrove_swamp
-            cave_fish:
-              conditions:
-                ypos:
-                  - -64~0
-              list:
-                - 'group_for_each:cave&no_star:+9'
-                - 'group_for_each:cave&silver_star:+3'
-                - 'group_for_each:cave&golden_star:+1'
-        # Skeletons might appear if player holds the bone_rod and fish at night
-        skeleton_group:
-          conditions:
-            rod:
-              - bone_rod
-            time:
-              - 14000~22000
-          list:
-            - 'skeleton:+30'
-    loots_in_lava:
+            - 'group_for_each:cave&no_star:+9'
+            - 'group_for_each:cave&silver_star:+3'
+            - 'group_for_each:cave&golden_star:+1'
+
+lava_loots:
+  conditions:
+    in-lava: true
+  sub-groups:
+    overworld_loots:
+      conditions:
+        environment:
+          - normal
+      list:
+        - 'cobblestone:+50'
+        - 'stone:+30'
+        - 'obsidian:+3'
+        - 'diamond:+1'
+        - 'flint:+6'
+    nether_loots:
+      conditions:
+        environment:
+          - nether
+      list:
+        - 'netherrack:+20'
+        - 'nether_brick:+12'
+        - 'obsidian:+5'
+        - 'gold_ingot:+3'
+        - 'gold_nugget:+8'
+        - 'magma_cube:+3'
+        - 'group_for_each:lava&no_star:+15'
+        - 'group_for_each:lava&silver_star:+3'
+        - 'group_for_each:lava&golden_star:+1'
+
+# Skeletons might appear if player holds the bone_rod
+skeletons:
+  conditions:
+    rod:
+      - bone_rod
+  sub-groups:
+    wither_skeletons:
       conditions:
         in-lava: true
-      list: []
-      sub-groups:
-        world_loots:
-          conditions:
-            environment:
-              - normal
-          list:
-            - 'cobblestone:+50'
-            - 'stone:+30'
-            - 'obsidian:+3'
-            - 'diamond:+1'
-            - 'flint:+6'
-        nether_loots:
-          conditions:
-            environment:
-              - nether
-          list:
-            - 'netherrack:+20'
-            - 'nether_brick:+12'
-            - 'obsidian:+5'
-            - 'gold_ingot:+3'
-            - 'gold_nugget:+8'
-            - 'magma_cube:+3'
-            - 'group_for_each:lava&no_star:+15'
-            - 'group_for_each:lava&silver_star:+3'
-            - 'group_for_each:lava&golden_star:+1'
-          sub-groups:
-            skeleton_group:
-              conditions:
-                rod:
-                  - bone_rod
-              list:
-                - 'wither_skeleton:+30'
+      list:
+        - 'wither_skeleton:+25'
+    skeletons:
+      conditions:
+        in-water: true
+        # The chance to fish up a common skeleton is restricted to the night.
+        time:
+          - 14000~22000
+      list:
+        - 'skeleton:+30'

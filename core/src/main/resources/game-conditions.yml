@@ -1,164 +1,177 @@
-# global group
-global-group:
-  conditions: {}
+# https://mo-mi.gitbook.io/xiaomomi-plugins/customfishing/plugin-wiki/customfishing/weight-system-must-read#configure-loot-conditions.yml-and-game-conditions.yml
+
+# You can follow this format to assign exclusive games to specific fish.
+# Don't forget to add a group named 'special_game' to your loot. Otherwise, it might accidentally trigger common game types.
+# See the rainbowfish example in /contents/item/default.yml for how to do this.
+rainbow_fish_games:
+  conditions:
+    loot:
+      - rainbow_fish
+  list:
+    - rainbow_1:+1
+    - rainbow_2:+1
+    - rainbow_3:+1
+    - rainbow_4:+1
+    - rainbow_5:+1
+    - rainbow_6:+1
+    - rainbow_7:+1
+
+lava_games:
+  conditions:
+    # The game must be triggered while fishing in lava.
+    in-lava: true
+    # Prevent the special fish from activating game types intended for common fish.
+    "!group":
+      - special_game
+  list:
+    - hold_game_easy:+15
+    - hold_game_normal:+5
+  # The game weight (and thus difficulty) is scaled based on the fish's quality and its assigned group, with rarer fish typically triggering more challenging games.
+  sub-groups:
+    silver:
+      conditions:
+        group:
+          - silver_star
+      list:
+        - hold_game_easy:-10
+        - hold_game_normal:+12
+        - hold_game_hard:+3
+    golden:
+      conditions:
+        group:
+          - golden_star
+      list:
+        - hold_game_easy:-15
+        - hold_game_normal:-2
+        - hold_game_hard:+7
+
+water_games:
+  conditions:
+    # The game must be triggered while fishing in water.
+    in-water: true
+    # Prevent the special fish from activating game types intended for common fish.
+    "!group":
+      - special_game
   list: []
   sub-groups:
-    lava_fishing_game:
+    ocean_games:
+      # Use biome conditions to differentiate between freshwater and saltwater fish, applying distinct game types accordingly.
       conditions:
-        in-lava: true
+        biome:
+          - minecraft:ocean
+          - minecraft:deep_ocean
+          - minecraft:cold_ocean
+          - minecraft:deep_cold_ocean
+          - minecraft:frozen_ocean
+          - minecraft:deep_frozen_ocean
+          - minecraft:lukewarm_ocean
+          - minecraft:deep_lukewarm_ocean
+          - minecraft:warm_ocean
       list:
-        - hold_game_easy:+15
-        - hold_game_normal:+5
+        - tension_game_easy:+15
+        - tension_game_normal:+5
       sub-groups:
         silver:
           conditions:
             group:
               - silver_star
           list:
-            - hold_game_easy:-10
-            - hold_game_normal:+12
-            - hold_game_hard:+3
+            - tension_game_easy:-10
+            - tension_game_normal:+12
+            - tension_game_hard:+3
         golden:
           conditions:
             group:
               - golden_star
           list:
-            - hold_game_easy:-15
-            - hold_game_normal:-2
-            - hold_game_hard:+7
-    water_fish_game:
+            - tension_game_easy:-15
+            - tension_game_normal:-2
+            - tension_game_hard:+7
+    river_games:
+      # Use biome conditions to differentiate between freshwater and saltwater fish, applying distinct game types accordingly.
       conditions:
-        in-water: true
-      list: []
+        '!biome':
+          - minecraft:ocean
+          - minecraft:deep_ocean
+          - minecraft:cold_ocean
+          - minecraft:deep_cold_ocean
+          - minecraft:frozen_ocean
+          - minecraft:deep_frozen_ocean
+          - minecraft:lukewarm_ocean
+          - minecraft:deep_lukewarm_ocean
+          - minecraft:warm_ocean
+      list:
+        - accurate_click_bar_1_easy:+15
+        - accurate_click_bar_1_normal:+5
+        - accurate_click_bar_2_easy:+15
+        - accurate_click_bar_2_normal:+5
+        - accurate_click_bar_3_easy:+15
+        - accurate_click_bar_3_normal:+5
+        - accurate_click_bar_4_easy:+15
+        - accurate_click_bar_4_normal:+5
+        - accurate_click_bar_5_easy:+15
+        - accurate_click_bar_5_normal:+5
+        - accurate_click_bar_6_easy:+15
+        - accurate_click_bar_6_normal:+5
+        - accurate_click_bar_7_easy:+15
+        - accurate_click_bar_7_normal:+5
+        - accurate_click_bar_8_easy:+15
+        - accurate_click_bar_8_normal:+5
+        - accurate_click_bar_9_easy:+15
+        - accurate_click_bar_9_normal:+5
       sub-groups:
-        rainbow_fish_game:
+        silver:
           conditions:
-            loot:
-              - rainbow_fish
+            group:
+              - silver_star
           list:
-            - rainbow_1:+1
-            - rainbow_2:+1
-            - rainbow_3:+1
-            - rainbow_4:+1
-            - rainbow_5:+1
-            - rainbow_6:+1
-            - rainbow_7:+1
-        ocean_fish_game:
-          conditions:
-            biome:
-              - minecraft:ocean
-              - minecraft:deep_ocean
-              - minecraft:cold_ocean
-              - minecraft:deep_cold_ocean
-              - minecraft:frozen_ocean
-              - minecraft:deep_frozen_ocean
-              - minecraft:lukewarm_ocean
-              - minecraft:deep_lukewarm_ocean
-              - minecraft:warm_ocean
-          list:
-            - tension_game_easy:+15
-            - tension_game_normal:+5
-          sub-groups:
-            silver:
-              conditions:
-                group:
-                  - silver_star
-              list:
-                - tension_game_easy:-10
-                - tension_game_normal:+12
-                - tension_game_hard:+3
-            golden:
-              conditions:
-                group:
-                  - golden_star
-              list:
-                - tension_game_easy:-15
-                - tension_game_normal:-2
-                - tension_game_hard:+7
-        river_fish_game:
-          conditions:
-            '!biome':
-              - minecraft:ocean
-              - minecraft:deep_ocean
-              - minecraft:cold_ocean
-              - minecraft:deep_cold_ocean
-              - minecraft:frozen_ocean
-              - minecraft:deep_frozen_ocean
-              - minecraft:lukewarm_ocean
-              - minecraft:deep_lukewarm_ocean
-              - minecraft:warm_ocean
-          list:
-            - accurate_click_bar_1_easy:+15
+            - accurate_click_bar_1_easy:-10
             - accurate_click_bar_1_normal:+5
-            - accurate_click_bar_2_easy:+15
+            - accurate_click_bar_1_hard:+3
+            - accurate_click_bar_2_easy:-10
             - accurate_click_bar_2_normal:+5
-            - accurate_click_bar_3_easy:+15
+            - accurate_click_bar_2_hard:+3
+            - accurate_click_bar_3_easy:-10
             - accurate_click_bar_3_normal:+5
-            - accurate_click_bar_4_easy:+15
+            - accurate_click_bar_3_hard:+3
+            - accurate_click_bar_4_easy:-10
             - accurate_click_bar_4_normal:+5
-            - accurate_click_bar_5_easy:+15
+            - accurate_click_bar_4_hard:+3
+            - accurate_click_bar_5_easy:-10
             - accurate_click_bar_5_normal:+5
-            - accurate_click_bar_6_easy:+15
+            - accurate_click_bar_5_hard:+3
+            - accurate_click_bar_6_easy:-10
             - accurate_click_bar_6_normal:+5
-            - accurate_click_bar_7_easy:+15
+            - accurate_click_bar_6_hard:+3
+            - accurate_click_bar_7_easy:-10
             - accurate_click_bar_7_normal:+5
-            - accurate_click_bar_8_easy:+15
+            - accurate_click_bar_7_hard:+3
+            - accurate_click_bar_8_easy:-10
             - accurate_click_bar_8_normal:+5
-            - accurate_click_bar_9_easy:+15
+            - accurate_click_bar_8_hard:+3
+            - accurate_click_bar_9_easy:-10
             - accurate_click_bar_9_normal:+5
-          sub-groups:
-            silver:
-              conditions:
-                group:
-                  - silver_star
-              list:
-                - accurate_click_bar_1_easy:-10
-                - accurate_click_bar_1_normal:+5
-                - accurate_click_bar_1_hard:+3
-                - accurate_click_bar_2_easy:-10
-                - accurate_click_bar_2_normal:+5
-                - accurate_click_bar_2_hard:+3
-                - accurate_click_bar_3_easy:-10
-                - accurate_click_bar_3_normal:+5
-                - accurate_click_bar_3_hard:+3
-                - accurate_click_bar_4_easy:-10
-                - accurate_click_bar_4_normal:+5
-                - accurate_click_bar_4_hard:+3
-                - accurate_click_bar_5_easy:-10
-                - accurate_click_bar_5_normal:+5
-                - accurate_click_bar_5_hard:+3
-                - accurate_click_bar_6_easy:-10
-                - accurate_click_bar_6_normal:+5
-                - accurate_click_bar_6_hard:+3
-                - accurate_click_bar_7_easy:-10
-                - accurate_click_bar_7_normal:+5
-                - accurate_click_bar_7_hard:+3
-                - accurate_click_bar_8_easy:-10
-                - accurate_click_bar_8_normal:+5
-                - accurate_click_bar_8_hard:+3
-                - accurate_click_bar_9_easy:-10
-                - accurate_click_bar_9_normal:+5
-                - accurate_click_bar_9_hard:+3
-            golden:
-              conditions:
-                group:
-                  - golden_star
-              list:
-                - accurate_click_bar_1_easy:-15
-                - accurate_click_bar_1_hard:+7
-                - accurate_click_bar_2_easy:-15
-                - accurate_click_bar_2_hard:+7
-                - accurate_click_bar_3_easy:-15
-                - accurate_click_bar_3_hard:+7
-                - accurate_click_bar_4_easy:-15
-                - accurate_click_bar_4_hard:+7
-                - accurate_click_bar_5_easy:-15
-                - accurate_click_bar_5_hard:+7
-                - accurate_click_bar_6_easy:-15
-                - accurate_click_bar_6_hard:+7
-                - accurate_click_bar_7_easy:-15
-                - accurate_click_bar_7_hard:+7
-                - accurate_click_bar_8_easy:-15
-                - accurate_click_bar_8_hard:+7
-                - accurate_click_bar_9_easy:-15
-                - accurate_click_bar_9_hard:+7
+            - accurate_click_bar_9_hard:+3
+        golden:
+          conditions:
+            group:
+              - golden_star
+          list:
+            - accurate_click_bar_1_easy:-15
+            - accurate_click_bar_1_hard:+7
+            - accurate_click_bar_2_easy:-15
+            - accurate_click_bar_2_hard:+7
+            - accurate_click_bar_3_easy:-15
+            - accurate_click_bar_3_hard:+7
+            - accurate_click_bar_4_easy:-15
+            - accurate_click_bar_4_hard:+7
+            - accurate_click_bar_5_easy:-15
+            - accurate_click_bar_5_hard:+7
+            - accurate_click_bar_6_easy:-15
+            - accurate_click_bar_6_hard:+7
+            - accurate_click_bar_7_easy:-15
+            - accurate_click_bar_7_hard:+7
+            - accurate_click_bar_8_easy:-15
+            - accurate_click_bar_8_hard:+7
+            - accurate_click_bar_9_easy:-15
+            - accurate_click_bar_9_hard:+7
