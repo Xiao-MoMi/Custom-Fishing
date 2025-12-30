@@ -15,6 +15,7 @@ repositories {
     maven("https://repo.opencollab.dev/main/") // geyser
     maven("https://repo.codemc.org/repository/maven-public/") // beauty quest
     maven("https://repo.momirealms.net/releases/") // craftengine customcrops
+    maven("https://repo.momirealms.net/snapshots/") // craftengine
     maven("https://repo.nexomc.com/releases/") // nexo
     maven("https://repo.nexomc.com/snapshots/")
     maven("https://repo.lukasa.lt/repository/maven-public/") // packet wrapper
@@ -72,8 +73,8 @@ dependencies {
     compileOnly("io.th0rgal:oraxen:1.168.0")
     compileOnly("com.nexomc:nexo:1.7.3")
     compileOnly("com.github.brcdev-minecraft:shopgui-api:3.0.0")
-    compileOnly("net.momirealms:craft-engine-core:0.0.65")
-    compileOnly("net.momirealms:craft-engine-bukkit:0.0.65")
+    compileOnly("net.momirealms:craft-engine-core:0.0.66.11-SNAPSHOT")
+    compileOnly("net.momirealms:craft-engine-bukkit:0.0.66.11-SNAPSHOT")
     // entity
     compileOnly("io.lumine:Mythic-Dist:5.6.2")
     // eco

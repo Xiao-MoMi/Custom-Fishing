@@ -1,9 +1,9 @@
 package net.momirealms.customfishing.bukkit.integration.action;
 
 import net.momirealms.craftengine.bukkit.api.BukkitAdaptors;
+import net.momirealms.craftengine.core.plugin.context.CommonFunctions;
 import net.momirealms.craftengine.core.plugin.context.ContextHolder;
 import net.momirealms.craftengine.core.plugin.context.PlayerOptionalContext;
-import net.momirealms.craftengine.core.plugin.context.event.EventFunctions;
 import net.momirealms.craftengine.core.plugin.context.function.Function;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.Action;
@@ -28,7 +28,7 @@ public class CEActionExpansion implements ActionFactory<Player> {
             List<Function<net.momirealms.craftengine.core.plugin.context.Context>> functions = new ArrayList<>();
             for (Object o : list) {
                 if (o instanceof Map functionArguments) {
-                    functions.add(EventFunctions.fromMap(functionArguments));
+                    functions.add(CommonFunctions.fromMap(functionArguments));
                 }
             }
             return context -> {
