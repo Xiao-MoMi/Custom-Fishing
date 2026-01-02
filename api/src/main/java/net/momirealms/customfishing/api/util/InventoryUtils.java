@@ -22,16 +22,17 @@ import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 
 /**
  * Utility class for working with Bukkit Inventories and item stacks.
  */
 public class InventoryUtils {
+    private static final String systemLineSeparator = System.lineSeparator();
 
     private InventoryUtils() {
     }
@@ -56,7 +57,7 @@ public class InventoryUtils {
             dataOutput.close();
             byte[] byteArr = outputStream.toByteArray();
             outputStream.close();
-            return Base64Coder.encodeLines(byteArr);
+            return Base64.getEncoder().encodeToString(byteArr);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -75,7 +76,7 @@ public class InventoryUtils {
         if (base64 == null || base64.isEmpty()) return new ItemStack[]{};
         ByteArrayInputStream inputStream;
         try {
-            inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(base64));
+            inputStream = new ByteArrayInputStream(Base64.getDecoder().decode(base64));
         } catch (IllegalArgumentException ignored) {
             return new ItemStack[]{};
         }

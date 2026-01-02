@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.bukkit.competition;
 
-import net.kyori.adventure.audience.Audience;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.CompetitionEvent;
 import net.momirealms.customfishing.api.mechanic.action.Action;
@@ -51,7 +50,6 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class Competition implements FishingCompetition {

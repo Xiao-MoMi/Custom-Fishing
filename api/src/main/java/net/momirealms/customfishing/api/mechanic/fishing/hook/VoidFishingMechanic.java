@@ -25,6 +25,7 @@ import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.effect.Effect;
 import net.momirealms.customfishing.api.mechanic.effect.EffectProperties;
 import net.momirealms.customfishing.api.util.EventUtils;
+import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import net.momirealms.customfishing.common.util.RandomUtils;
 import org.bukkit.Location;
@@ -40,7 +41,6 @@ import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class VoidFishingMechanic implements HookMechanic {
-
     private final FishHook hook;
     private final Effect gearsEffect;
     private final Context<Player> context;
@@ -156,7 +156,11 @@ public class VoidFishingMechanic implements HookMechanic {
                         d0 = location.getX() + Math.sin(f1) * f2 * 0.1D;
                         d1 = location.getY();
                         d2 = location.getZ() + Math.cos(f1) * f2 * 0.1D;
-                        hook.getWorld().spawnParticle(Particle.DRAGON_BREATH, d0, d1, d2, 2 + RandomUtils.generateRandomInt(0,1), 0.10000000149011612D, 0.0D, 0.10000000149011612D, 0.0D, 0F);
+                        if (VersionHelper.isVersionNewerThan1_21_9()) {
+                            this.hook.getWorld().spawnParticle(Particle.DRAGON_BREATH, d0, d1, d2, 2 + RandomUtils.generateRandomInt(0,1), 0.10000000149011612D, 0.0D, 0.10000000149011612D, 0.0D, 0f);
+                        } else {
+                            this.hook.getWorld().spawnParticle(Particle.DRAGON_BREATH, d0, d1, d2, 2 + RandomUtils.generateRandomInt(0,1), 0.10000000149011612D, 0.0D, 0.10000000149011612D, 0.0D);
+                        }
                     }
                     if (this.timeUntilLured <= 0) {
                         this.fishAngle = RandomUtils.generateRandomFloat(0F, 360F);

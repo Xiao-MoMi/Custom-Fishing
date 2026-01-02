@@ -27,9 +27,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.json.JSONOptions;
 import net.kyori.adventure.text.serializer.json.legacyimpl.NBTLegacyHoverEventSerializer;
-import net.kyori.adventure.title.Title;
 
-import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
