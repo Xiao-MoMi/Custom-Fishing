@@ -17,15 +17,18 @@
 
 package net.momirealms.customfishing.bukkit.integration.quest;
 
-import net.momirealms.customfishing.bukkit.integration.quest.bq.FishingGroupObjectiveFactory;
-import net.momirealms.customfishing.bukkit.integration.quest.bq.FishingIdObjectiveFactory;
+import net.momirealms.customfishing.bukkit.integration.quest.bq.SimpleCustomFishingObjectiveFactory;
+import net.momirealms.customfishing.bukkit.integration.quest.bq.common.TotemActivateObjective;
+import net.momirealms.customfishing.bukkit.integration.quest.bq.fish.FishingGroupObjective;
+import net.momirealms.customfishing.bukkit.integration.quest.bq.fish.FishingIdObjective;
 import org.betonquest.betonquest.BetonQuest;
 
 public final class BetonQuestHook {
 
     public static void register() {
         BetonQuest bq = BetonQuest.getInstance();
-        bq.getQuestRegistries().objective().register("customfishing_loot", new FishingIdObjectiveFactory());
-        bq.getQuestRegistries().objective().register("customfishing_group", new FishingGroupObjectiveFactory());
+        bq.getQuestRegistries().objective().register("customfishing_fish_caught", new SimpleCustomFishingObjectiveFactory(FishingIdObjective::new));
+        bq.getQuestRegistries().objective().register("customfishing_group_caught", new SimpleCustomFishingObjectiveFactory(FishingGroupObjective::new));
+        bq.getQuestRegistries().objective().register("customfishing.totem_activated", new SimpleCustomFishingObjectiveFactory(TotemActivateObjective::new));
     }
 }
