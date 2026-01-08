@@ -30,5 +30,10 @@ public final class BetonQuestHook {
         bq.getQuestRegistries().objective().register("customfishing_fish_caught", new SimpleCustomFishingObjectiveFactory(FishingIdObjective::new));
         bq.getQuestRegistries().objective().register("customfishing_group_caught", new SimpleCustomFishingObjectiveFactory(FishingGroupObjective::new));
         bq.getQuestRegistries().objective().register("customfishing_totem_activated", new SimpleCustomFishingObjectiveFactory(TotemActivateObjective::new));
+
+        // Old Objective
+        bq.getQuestRegistries().objective().register("customfishing_loot", new SimpleCustomFishingObjectiveFactory(FishingIdObjective::new));
+        bq.getQuestRegistries().objective().register("customfishing_group", new SimpleCustomFishingObjectiveFactory(FishingGroupObjective::new));
+
     }
 }
