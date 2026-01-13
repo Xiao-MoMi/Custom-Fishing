@@ -70,7 +70,6 @@ public class BukkitGameManager implements GameManager {
 
     @Override
     public void load() {
-        this.loadExpansions();
         File file = new File(plugin.getDataFolder(), "game-conditions.yml");
         if (!file.exists()) {
             plugin.getBootstrap().saveResource("game-conditions.yml", false);
@@ -1071,8 +1070,9 @@ public class BukkitGameManager implements GameManager {
     /**
      * Loads minigame expansions from the expansion folder.
      */
+    @Override
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    private void loadExpansions() {
+    public void loadExpansions() {
         File expansionFolder = new File(plugin.getDataFolder(), EXPANSION_FOLDER);
         if (!expansionFolder.exists())
             expansionFolder.mkdirs();

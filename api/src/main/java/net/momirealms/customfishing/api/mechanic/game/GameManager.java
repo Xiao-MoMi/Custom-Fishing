@@ -81,4 +81,6 @@ public interface GameManager extends Reloadable {
      */
     @Nullable
     Game getNextGame(Effect effect, Context<Player> context);
+
+    void loadExpansions();
 }

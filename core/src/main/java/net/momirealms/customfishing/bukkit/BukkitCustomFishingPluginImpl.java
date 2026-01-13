@@ -189,6 +189,7 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
         this.actionManager.reload();
         this.requirementManager.reload();
         this.gameManager.unload();
+        this.gameManager.loadExpansions();
 
         // before ConfigManager
         this.placeholderManager.reload();
