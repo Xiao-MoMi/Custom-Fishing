@@ -19,6 +19,7 @@ package net.momirealms.customfishing.bukkit.fishing;
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.event.CustomPlayerFishEvent;
 import net.momirealms.customfishing.api.event.FishingHookStateEvent;
 import net.momirealms.customfishing.api.event.RodCastEvent;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
@@ -209,6 +210,10 @@ public class BukkitFishingManager implements FishingManager, Listener {
     }
 
     private void selectState(PlayerFishEvent event) {
+        // custom event created by CustomFishing
+        if (event instanceof CustomPlayerFishEvent) {
+            return;
+        }
         switch (event.getState()) {
             case FISHING -> onCastRod(event);
             case REEL_IN, CAUGHT_FISH -> onReelIn(event);
