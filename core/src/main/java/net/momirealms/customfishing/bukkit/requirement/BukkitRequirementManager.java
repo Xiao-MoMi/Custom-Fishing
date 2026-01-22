@@ -30,10 +30,7 @@ import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.misc.season.Season;
 import net.momirealms.customfishing.api.mechanic.misc.value.MathValue;
 import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
-import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
-import net.momirealms.customfishing.api.mechanic.requirement.RequirementExpansion;
-import net.momirealms.customfishing.api.mechanic.requirement.RequirementFactory;
-import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
+import net.momirealms.customfishing.api.mechanic.requirement.*;
 import net.momirealms.customfishing.api.mechanic.totem.ActiveTotemList;
 import net.momirealms.customfishing.api.util.MiscUtils;
 import net.momirealms.customfishing.api.util.MoonPhase;
@@ -531,7 +528,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
     private void registerRodRequirement() {
         registerRequirement((args, actions, runActions) -> {
             HashSet<String> rods = new HashSet<>(ListUtils.toList(args));
-            return context -> {
+            return (GearRequirement<Player>) context -> {
                 String id = context.arg(ContextKeys.ROD);
                 if (rods.contains(id)) return true;
                 if (runActions) ActionManager.trigger(context, actions);
@@ -540,7 +537,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         }, "rod");
         registerRequirement((args, actions, runActions) -> {
             HashSet<String> rods = new HashSet<>(ListUtils.toList(args));
-            return context -> {
+            return (GearRequirement<Player>) context -> {
                 String id = context.arg(ContextKeys.ROD);
                 if (!rods.contains(id)) return true;
                 if (runActions) ActionManager.trigger(context, actions);
@@ -610,7 +607,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
     private void registerHookRequirement() {
         registerRequirement((args, actions, runActions) -> {
             HashSet<String> hooks = new HashSet<>(ListUtils.toList(args));
-            return context -> {
+            return (GearRequirement<Player>) context -> {
                 String id = context.arg(ContextKeys.HOOK);
                 if (hooks.contains(id)) return true;
                 if (runActions) ActionManager.trigger(context, actions);
@@ -619,7 +616,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         }, "hook");
         registerRequirement((args, actions, runActions) -> {
             HashSet<String> hooks = new HashSet<>(ListUtils.toList(args));
-            return context -> {
+            return (GearRequirement<Player>) context -> {
                 String id = context.arg(ContextKeys.HOOK);
                 if (!hooks.contains(id)) return true;
                 if (runActions) ActionManager.trigger(context, actions);
@@ -628,7 +625,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         }, "!hook");
         registerRequirement((args, actions, runActions) -> {
             boolean has = (boolean) args;
-            return context -> {
+            return (GearRequirement<Player>) context -> {
                 String id = context.arg(ContextKeys.HOOK);
                 if (id != null && has) return true;
                 if (id == null && !has) return true;
@@ -641,7 +638,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
     private void registerBaitRequirement() {
         registerRequirement((args, actions, runActions) -> {
             HashSet<String> arg = new HashSet<>(ListUtils.toList(args));
-            return context -> {
+            return (GearRequirement<Player>) context -> {
                 String id = context.arg(ContextKeys.BAIT);
                 if (arg.contains(id)) return true;
                 if (runActions) ActionManager.trigger(context, actions);
@@ -650,7 +647,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         }, "bait");
         registerRequirement((args, actions, runActions) -> {
             HashSet<String> arg = new HashSet<>(ListUtils.toList(args));
-            return context -> {
+            return (GearRequirement<Player>) context -> {
                 String id = context.arg(ContextKeys.BAIT);
                 if (!arg.contains(id)) return true;
                 if (runActions) ActionManager.trigger(context, actions);
@@ -659,7 +656,7 @@ public class BukkitRequirementManager implements RequirementManager<Player> {
         }, "!bait");
         registerRequirement((args, actions, runActions) -> {
             boolean has = (boolean) args;
-            return context -> {
+            return (GearRequirement<Player>) context -> {
                 String id = context.arg(ContextKeys.BAIT);
                 if (id != null && has) return true;
                 if (id == null && !has) return true;

@@ -99,7 +99,7 @@ public class DebugLootCommand extends BukkitCommandFeature<CommandSender> {
                     playerContext.arg(ContextKeys.OTHER_Y, player.getLocation().getBlockY());
                     playerContext.arg(ContextKeys.OTHER_Z, player.getLocation().getBlockZ());
 
-                    Map<String, Double> weightMap = BukkitCustomFishingPlugin.getInstance().getLootManager().getWeightedLoots(tempEffect, playerContext);
+                    Map<String, Double> weightMap = BukkitCustomFishingPlugin.getInstance().getLootManager().getWeightedLoots(tempEffect, playerContext, false);
 
                     if (weightMap.isEmpty()) {
                         handleFeedback(context, MessageConstants.COMMAND_DEBUG_LOOT_FAILURE_NO_LOOT);

@@ -63,7 +63,6 @@ import java.util.*;
  * Represents a custom fishing hook.
  */
 public class CustomFishingHook {
-
     private final BukkitCustomFishingPlugin plugin;
     private final FishHook hook;
     private final SchedulerTask task;

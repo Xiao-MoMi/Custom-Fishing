@@ -983,16 +983,23 @@ public class BukkitActionManager implements ActionManager<Player> {
     private void registerFishFindAction() {
         registerAction((args, chance) -> {
             String surrounding;
-            if (args instanceof Boolean b) {
-                surrounding = b ? "lava" : "water";
+            boolean ignoreGears;
+            if (args instanceof Section section) {
+                surrounding = section.getString("surrounding", "water");
+                ignoreGears = section.getBoolean("ignore-gears", false);
             } else {
-                surrounding = (String) args;
+                ignoreGears = false;
+                if (args instanceof Boolean b) {
+                    surrounding = b ? "lava" : "water";
+                } else {
+                    surrounding = (String) args;
+                }
             }
             return context -> {
                 if (Math.random() > chance.evaluate(context)) return;
                 String previous = context.arg(ContextKeys.SURROUNDING);
                 context.arg(ContextKeys.SURROUNDING, surrounding);
-                Collection<String> loots = plugin.getLootManager().getWeightedLoots(Effect.newInstance(), context).keySet();
+                Collection<String> loots = plugin.getLootManager().getWeightedLoots(Effect.newInstance(), context, ignoreGears).keySet();
                 StringJoiner stringJoiner = new StringJoiner(TranslationManager.miniMessageTranslation(MessageConstants.COMMAND_FISH_FINDER_SPLIT_CHAR.build().key()));
                 for (String loot : loots) {
                     plugin.getLootManager().getLoot(loot).ifPresent(lootIns -> {

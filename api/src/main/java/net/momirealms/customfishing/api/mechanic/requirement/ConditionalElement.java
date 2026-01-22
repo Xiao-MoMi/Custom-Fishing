@@ -26,7 +26,6 @@ import java.util.Map;
  * @param <T> the type of the requirement parameter
  */
 public class ConditionalElement<E, T> {
-
     private final E element;
     private final Map<String, ConditionalElement<E, T>> subElements;
     private final Requirement<T>[] requirements;

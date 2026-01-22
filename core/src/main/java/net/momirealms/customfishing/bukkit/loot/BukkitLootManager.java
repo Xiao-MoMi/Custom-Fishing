@@ -134,10 +134,10 @@ public class BukkitLootManager implements LootManager {
     }
 
     @Override
-    public HashMap<String, Double> getWeightedLoots(Effect effect, Context<Player> context) {
+    public HashMap<String, Double> getWeightedLoots(Effect effect, Context<Player> context, boolean ignoreGears) {
         HashMap<String, Double> lootWeightMap = new HashMap<>();
         for (ConditionalElement<List<Pair<String, WeightOperation>>, Player> conditionalElement : lootConditions.values()) {
-            modifyWeightMap(lootWeightMap, context, conditionalElement);
+            modifyWeightMap(lootWeightMap, context, conditionalElement, ignoreGears);
         }
         for (Pair<String, WeightOperation> pair : effect.weightOperations()) {
             Double previous = lootWeightMap.get(pair.left());
@@ -157,7 +157,7 @@ public class BukkitLootManager implements LootManager {
     public Loot getNextLoot(Effect effect, Context<Player> context) {
         HashMap<String, Double> weightMap = new HashMap<>();
         for (ConditionalElement<List<Pair<String, WeightOperation>>, Player> conditionalElement : lootConditions.values()) {
-            modifyWeightMap(weightMap, context, conditionalElement);
+            modifyWeightMap(weightMap, context, conditionalElement, false);
         }
         for (Pair<String, WeightOperation> pair : effect.weightOperations()) {
             Double previous = weightMap.get(pair.left());
@@ -177,15 +177,15 @@ public class BukkitLootManager implements LootManager {
                 .orElse(null);
     }
 
-    private void modifyWeightMap(Map<String, Double> weightMap, Context<Player> context, ConditionalElement<List<Pair<String, WeightOperation>>, Player> conditionalElement) {
+    private void modifyWeightMap(Map<String, Double> weightMap, Context<Player> context, ConditionalElement<List<Pair<String, WeightOperation>>, Player> conditionalElement, boolean ignoreGears) {
         if (conditionalElement == null) return;
-        if (RequirementManager.isSatisfied(context, conditionalElement.getRequirements())) {
+        if (RequirementManager.isSatisfied(context, conditionalElement.getRequirements(), ignoreGears)) {
             for (Pair<String, WeightOperation> modifierPair : conditionalElement.getElement()) {
                 double previous = weightMap.getOrDefault(modifierPair.left(), 0d);
                 weightMap.put(modifierPair.left(), modifierPair.right().apply(context, previous, weightMap));
             }
             for (ConditionalElement<List<Pair<String, WeightOperation>>, Player> sub : conditionalElement.getSubElements().values()) {
-                modifyWeightMap(weightMap, context, sub);
+                modifyWeightMap(weightMap, context, sub, ignoreGears);
             }
         }
     }

@@ -114,6 +114,20 @@ public interface RequirementManager<T> extends Reloadable {
         return true;
     }
 
+    static <T> boolean isSatisfied(Context<T> context, @Nullable Requirement<T>[] requirements, boolean ignoreGears) {
+        if (requirements == null) return true;
+        for (Requirement<T> requirement : requirements) {
+            if (ignoreGears && requirement instanceof GearRequirement<T>)  {
+                continue;
+            }
+            if (requirement != null && !requirement.isSatisfied(context)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     /**
      * Checks if all requirements in the provided array are satisfied within the given context.
      *

@@ -70,11 +70,23 @@ public interface LootManager extends Reloadable {
     /**
      * Retrieves a map of weighted loots based on the given effect and context.
      *
-     * @param effect  the {@link Effect} influencing the loot selection
-     * @param context the {@link Context} in which the loot selection occurs
+     * @param effect      the {@link Effect} influencing the loot selection
+     * @param context     the {@link Context} in which the loot selection occurs
+     * @param ignoreGears whether fishing gears should be ignored
      * @return a map of loot keys to their respective weights
      */
-    Map<String, Double> getWeightedLoots(Effect effect, Context<Player> context);
+    Map<String, Double> getWeightedLoots(Effect effect, Context<Player> context, boolean ignoreGears);
+
+    /**
+     * Retrieves a map of weighted loots based on the given effect and context.
+     *
+     * @param effect      the {@link Effect} influencing the loot selection
+     * @param context     the {@link Context} in which the loot selection occurs
+     * @return a map of loot keys to their respective weights
+     */
+    default Map<String, Double> getWeightedLoots(Effect effect, Context<Player> context) {
+        return getWeightedLoots(effect, context, false);
+    }
 
     /**
      * Retrieves the next loot item based on the given effect and context.
