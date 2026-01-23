@@ -165,13 +165,21 @@ public class BukkitCustomFishingPluginImpl extends BukkitCustomFishingPlugin {
 
         if (VersionHelper.isFolia()) {
             Bukkit.getGlobalRegionScheduler().run(getBootstrap(), (scheduledTask) -> {
-                this.reload();
-                if (ConfigManager.metrics()) new Metrics(getBootstrap(), 16648);
+                try {
+                    this.integrationManager.delayedLoad();
+                } finally {
+                    this.reload();
+                    if (ConfigManager.metrics()) new Metrics(getBootstrap(), 16648);
+                }
             });
         } else {
             Bukkit.getScheduler().runTask(getBootstrap(), () -> {
-                this.reload();
-                if (ConfigManager.metrics()) new Metrics(getBootstrap(), 16648);
+                try {
+                    this.integrationManager.delayedLoad();
+                } finally {
+                    this.reload();
+                    if (ConfigManager.metrics()) new Metrics(getBootstrap(), 16648);
+                }
             });
         }
     }

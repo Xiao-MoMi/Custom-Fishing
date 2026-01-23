@@ -94,6 +94,14 @@ public class BukkitIntegrationManager implements IntegrationManager {
     }
 
     @Override
+    public void delayedLoad() {
+        if (isHooked("ClueScrolls")) {
+            ClueScrollsQuest clueScrollsQuest = new ClueScrollsQuest();
+            clueScrollsQuest.register();
+        }
+    }
+
+    @Override
     public void load() {
         registerEnchantmentProvider(new VanillaEnchantmentsProvider());
         registerItemProvider(new SNBTItemProvider());
@@ -176,10 +184,6 @@ public class BukkitIntegrationManager implements IntegrationManager {
         if (isHooked("BattlePass")){
             BattlePassQuest battlePassQuest = new BattlePassQuest();
             battlePassQuest.register();
-        }
-        if (isHooked("ClueScrolls")) {
-            ClueScrollsQuest clueScrollsQuest = new ClueScrollsQuest();
-            clueScrollsQuest.register();
         }
         if (isHooked("WorldGuard", "7")) {
             WorldGuardRegion.register();

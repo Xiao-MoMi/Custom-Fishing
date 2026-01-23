@@ -33,4 +33,7 @@ public interface Reloadable {
     default void disable() {
         unload();
     }
+
+    default void delayedLoad() {
+    }
 }
