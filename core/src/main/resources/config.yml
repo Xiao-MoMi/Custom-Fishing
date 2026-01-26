@@ -423,6 +423,8 @@ mechanics:
   bait-animation: true
 # Other settings
 other-settings:
+  # Whether to additionally trigger a PlayerFishEvent from Bukkit when fishing succeeds—this may improve compatibility with certain plugins, but could also lead to issues.
+  trigger-fish-event: false
   # Anti-auto-fishing mod toggle
   anti-auto-fishing-mod: false
   # Recommended to use MiniMessage format. If you prefer using legacy color codes "&", enable the support below.

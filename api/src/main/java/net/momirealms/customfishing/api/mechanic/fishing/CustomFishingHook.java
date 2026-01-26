@@ -553,8 +553,10 @@ public class CustomFishingHook {
                                 if (item.isValid() && nextLoot.preventGrabbing()) {
                                     item.getPersistentDataContainer().set(Objects.requireNonNull(NamespacedKey.fromString("owner", plugin.getBootstrap())), PersistentDataType.STRING, context.holder().getName());
                                 }
-                                CustomPlayerFishEvent customEvent = new CustomPlayerFishEvent(context.holder(), item, hook, gears.getRodSlot() == HandSlot.MAIN ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND, PlayerFishEvent.State.CAUGHT_FISH);
-                                EventUtils.fireAndForget(customEvent);
+                                if (ConfigManager.triggerFishEvent()) {
+                                    CustomPlayerFishEvent customEvent = new CustomPlayerFishEvent(context.holder(), item, hook, gears.getRodSlot() == HandSlot.MAIN ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND, PlayerFishEvent.State.CAUGHT_FISH);
+                                    EventUtils.fireAndForget(customEvent);
+                                }
                             }
                         }
                         doSuccessActions();
@@ -581,8 +583,10 @@ public class CustomFishingHook {
                     entity.remove();
                 if (spawnEvent.skipActions())
                     return;
-                CustomPlayerFishEvent customEvent = new CustomPlayerFishEvent(context.holder(), entity, hook, gears.getRodSlot() == HandSlot.MAIN ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND, PlayerFishEvent.State.CAUGHT_FISH);
-                EventUtils.fireAndForget(customEvent);
+                if (ConfigManager.triggerFishEvent()) {
+                    CustomPlayerFishEvent customEvent = new CustomPlayerFishEvent(context.holder(), entity, hook, gears.getRodSlot() == HandSlot.MAIN ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND, PlayerFishEvent.State.CAUGHT_FISH);
+                    EventUtils.fireAndForget(customEvent);
+                }
                 doSuccessActions();
             }
         }
