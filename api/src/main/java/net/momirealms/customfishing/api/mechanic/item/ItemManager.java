@@ -47,6 +47,14 @@ public interface ItemManager extends Reloadable {
     boolean registerItem(@NotNull CustomFishingItem item);
 
     /**
+     * Gets the size from an existing item
+     *
+     * @param itemStack the itemStack
+     * @return null if this item has no size
+     */
+    Float getFishSize(@NotNull ItemStack itemStack);
+
+    /**
      * Builds an item using the given context and item ID.
      *
      * @param context the {@link Context} in which the item is built

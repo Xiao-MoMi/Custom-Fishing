@@ -69,7 +69,6 @@ import java.util.function.BiConsumer;
 import static java.util.Objects.requireNonNull;
 
 public class BukkitItemManager implements ItemManager, Listener {
-
     private final BukkitCustomFishingPlugin plugin;
     private final HashMap<String, ItemProvider> itemProviders = new HashMap<>();
     private final HashMap<String, CustomFishingItem> items = new HashMap<>();
@@ -179,6 +178,18 @@ public class BukkitItemManager implements ItemManager, Listener {
     public String getCustomFishingItemID(@NotNull ItemStack itemStack) {
         if (itemStack.getType() == Material.AIR) return null;
         return (String) factory.wrap(itemStack).getTag("CustomFishing", "id").orElse(null);
+    }
+
+    @Override
+    public Float getFishSize(@NotNull ItemStack itemStack) {
+        if (itemStack.getType() == Material.AIR) return null;
+        Optional<Object> tag = factory.wrap(itemStack).getTag("CustomFishing", "size");
+        if (tag.isPresent()) {
+            if (tag.get() instanceof Number n) {
+                return n.floatValue();
+            }
+        }
+        return null;
     }
 
     @NotNull
