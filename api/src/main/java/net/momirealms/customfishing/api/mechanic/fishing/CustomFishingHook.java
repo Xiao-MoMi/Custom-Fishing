@@ -544,6 +544,7 @@ public class CustomFishingHook {
                                 }
                             }
                             if (item != null) {
+                                item.setInvulnerable(true);
                                 FishingLootSpawnEvent spawnEvent = new FishingLootSpawnEvent(context, hookLocation, nextLoot, item);
                                 Bukkit.getPluginManager().callEvent(spawnEvent);
                                 if (!spawnEvent.summonEntity())
@@ -557,6 +558,8 @@ public class CustomFishingHook {
                                     CustomPlayerFishEvent customEvent = new CustomPlayerFishEvent(context.holder(), item, hook, gears.getRodSlot() == HandSlot.MAIN ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND, PlayerFishEvent.State.CAUGHT_FISH);
                                     EventUtils.fireAndForget(customEvent);
                                 }
+                                // prevent it from being removed by lava and fire
+                                this.plugin.getScheduler().sync().runLater(() -> item.setInvulnerable(false), 20, item.getLocation());
                             }
                         }
                         doSuccessActions();
