@@ -742,6 +742,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 MathValue<Player> pitch = MathValue.auto(section.get("pitch", 1));
                 Key key = Key.key(section.getString("key"));
                 Sound.Source source = Sound.Source.valueOf(section.getString("source", "PLAYER").toUpperCase(Locale.ENGLISH));
+                boolean useOtherPosition = section.getString("position", "player").equals("other");
                 return context -> {
                     if (Math.random() > chance.evaluate(context)) return;
                     Sound sound = Sound.sound(
@@ -751,7 +752,16 @@ public class BukkitActionManager implements ActionManager<Player> {
                             (float) pitch.evaluate(context)
                     );
                     Audience audience = plugin.getSenderFactory().getAudience(context.holder());
-                    AdventureHelper.playSound(audience, sound);
+                    if (useOtherPosition) {
+                        Location location = context.arg(ContextKeys.OTHER_LOCATION);
+                        if (location != null) {
+                            audience.playSound(sound, location.getX(), location.getY(), location.getZ());
+                        } else {
+                            AdventureHelper.playSound(audience, sound);
+                        }
+                    } else {
+                        AdventureHelper.playSound(audience, sound);
+                    }
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at sound action which is expected to be `Section`");
