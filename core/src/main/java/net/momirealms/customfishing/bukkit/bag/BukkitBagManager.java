@@ -194,7 +194,7 @@ public class BukkitBagManager implements BagManager, Listener {
      */
     @EventHandler
     public void onInvClose(InventoryCloseEvent event) {
-        if (!(event.getInventory().getHolder() instanceof FishingBagHolder))
+        if (!(event.getInventory().getHolder(false) instanceof FishingBagHolder))
             return;
         final Player viewer = (Player) event.getPlayer();
         UserData userData = tempEditMap.remove(viewer.getUniqueId());
@@ -211,7 +211,7 @@ public class BukkitBagManager implements BagManager, Listener {
      */
     @EventHandler (ignoreCancelled = true)
     public void onInvClick(InventoryClickEvent event) {
-        if (!(event.getInventory().getHolder() instanceof FishingBagHolder))
+        if (!(event.getInventory().getHolder(false) instanceof FishingBagHolder))
             return;
         ItemStack movedItem = event.getCurrentItem();
         Inventory clicked = event.getClickedInventory();

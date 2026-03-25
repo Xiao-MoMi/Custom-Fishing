@@ -256,7 +256,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
     public void onCloseInv(InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player player))
             return;
-        if (!(event.getInventory().getHolder() instanceof MarketGUIHolder))
+        if (!(event.getInventory().getHolder(false) instanceof MarketGUIHolder))
             return;
         MarketGUI gui = marketGUICache.remove(player.getUniqueId());
         if (gui != null)
@@ -285,7 +285,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
         if (event.isCancelled())
             return;
         Inventory inventory = event.getInventory();
-        if (!(inventory.getHolder() instanceof MarketGUIHolder))
+        if (!(inventory.getHolder(false) instanceof MarketGUIHolder))
             return;
         Player player = (Player) event.getWhoClicked();
         MarketGUI gui = marketGUICache.get(player.getUniqueId());
@@ -325,7 +325,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
         Player player = (Player) event.getWhoClicked();
 
         // Check if the clicked inventory is a MarketGUI
-        if (!(event.getInventory().getHolder() instanceof MarketGUIHolder))
+        if (!(event.getInventory().getHolder(false) instanceof MarketGUIHolder))
             return;
 
         MarketGUI gui = marketGUICache.get(player.getUniqueId());

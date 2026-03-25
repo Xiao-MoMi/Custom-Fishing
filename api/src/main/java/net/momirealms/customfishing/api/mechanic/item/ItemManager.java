@@ -91,7 +91,7 @@ public interface ItemManager extends Reloadable {
      * id from that plugin for instance {@code namespace:id} / {@code MythicSword}
      *
      * @param itemStack the {@link ItemStack} to be checked
-     * @return the custom fishing item ID, or null if the item stack is not a custom fishing item
+     * @return the item ID of the item
      */
     @NotNull
     String getItemID(@NotNull ItemStack itemStack);
