@@ -98,7 +98,11 @@ public class VoidFishingMechanic implements HookMechanic {
                     if (RandomUtils.generateRandomDouble(0, 1) < 0.5) {
                         hook.getWorld().spawnParticle(Particle.END_ROD, location.getX(), location.getY(), location.getZ(), (int) (1.0F + 0.3 * 20.0F), 0.3, 0.0D, 0.3, 0.10000000298023224D);
                     } else {
-                        hook.getWorld().spawnParticle(Particle.DRAGON_BREATH, location.getX(), location.getY(), location.getZ(), (int) (1.0F + 0.3 * 20.0F), 0.3, 0.0D, 0.3, 0.10000000298023224D);
+                        if (VersionHelper.isVersionNewerThan1_21_9()) {
+                            hook.getWorld().spawnParticle(Particle.DRAGON_BREATH, location.getX(), location.getY(), location.getZ(), (int) (1.0F + 0.3 * 20.0F), 0.3, 0.0D, 0.3, 0.10000000298023224D, 0f);
+                        } else {
+                            hook.getWorld().spawnParticle(Particle.DRAGON_BREATH, location.getX(), location.getY(), location.getZ(), (int) (1.0F + 0.3 * 20.0F), 0.3, 0.0D, 0.3, 0.10000000298023224D);
+                        }
                     }
                 }
                 if (this.nibble <= 0) {
