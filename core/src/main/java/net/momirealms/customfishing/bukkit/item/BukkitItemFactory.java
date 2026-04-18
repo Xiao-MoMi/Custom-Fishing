@@ -21,6 +21,7 @@ import com.saicone.rtag.RtagItem;
 import net.momirealms.customfishing.bukkit.item.impl.ComponentItemFactory;
 import net.momirealms.customfishing.bukkit.item.impl.ComponentItemFactory1_21_5;
 import net.momirealms.customfishing.bukkit.item.impl.UniversalItemFactory;
+import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.item.Item;
 import net.momirealms.customfishing.common.item.ItemFactory;
 import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
@@ -37,21 +38,12 @@ public abstract class BukkitItemFactory extends ItemFactory<CustomFishingPlugin,
 
     public static BukkitItemFactory create(CustomFishingPlugin plugin) {
         Objects.requireNonNull(plugin, "plugin");
-        switch (plugin.getServerVersion()) {
-            case "1.17", "1.17.1",
-                 "1.18", "1.18.1", "1.18.2",
-                 "1.19", "1.19.1", "1.19.2", "1.19.3", "1.19.4",
-                 "1.20", "1.20.1", "1.20.2", "1.20.3", "1.20.4" -> {
-                return new UniversalItemFactory(plugin);
-            }
-            case "1.20.5", "1.20.6",
-                 "1.21", "1.21.1", "1.21.2", "1.21.3", "1.21.4" -> {
-                return new ComponentItemFactory(plugin);
-            }
-            case "1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11" -> {
-                return new ComponentItemFactory1_21_5(plugin);
-            }
-            default -> throw new IllegalStateException("Unsupported server version: " + plugin.getServerVersion());
+        if (VersionHelper.isVersionNewerThan1_21_5()) {
+            return new ComponentItemFactory1_21_5(plugin);
+        } else if (VersionHelper.isVersionNewerThan1_20_5()) {
+            return new ComponentItemFactory(plugin);
+        } else {
+            return new UniversalItemFactory(plugin);
         }
     }
 
