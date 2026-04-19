@@ -461,7 +461,7 @@ public class BukkitConfigManager extends ConfigManager {
             return (item, context) -> item.customModelData((int) mathValue.evaluate(context));
         }, 5000, "custom-model-data");
         this.registerItemParser(arg -> {
-            TextValue<Player> textValue = TextValue.auto("<!i><white>" + arg);
+            TextValue<Player> textValue = TextValue.auto("<!italic><white>" + arg);
             return (item, context) -> {
                 item.displayName(AdventureHelper.miniMessageToJson(textValue.render(context)));
             };
@@ -470,7 +470,7 @@ public class BukkitConfigManager extends ConfigManager {
             List<String> list = ListUtils.toList(arg);
             List<TextValue<Player>> lore = new ArrayList<>();
             for (String text : list) {
-                lore.add(TextValue.auto("<!i><white>" + text));
+                lore.add(TextValue.auto("<!italic><white>" + text));
             }
             return (item, context) -> {
                 item.lore(lore.stream()
