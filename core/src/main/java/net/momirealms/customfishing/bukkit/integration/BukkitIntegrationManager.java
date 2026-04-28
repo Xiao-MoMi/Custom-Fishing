@@ -22,6 +22,7 @@ import net.momirealms.customfishing.api.integration.*;
 import net.momirealms.customfishing.bukkit.block.BukkitBlockManager;
 import net.momirealms.customfishing.bukkit.entity.BukkitEntityManager;
 import net.momirealms.customfishing.bukkit.integration.action.CEActionExpansion;
+import net.momirealms.customfishing.bukkit.integration.block.CraftEngineBlockProvider;
 import net.momirealms.customfishing.bukkit.integration.block.ItemsAdderBlockProvider;
 import net.momirealms.customfishing.bukkit.integration.block.NexoBlockProvider;
 import net.momirealms.customfishing.bukkit.integration.block.OraxenBlockProvider;
@@ -110,8 +111,9 @@ public class BukkitIntegrationManager implements IntegrationManager {
             registerBlockProvider(new ItemsAdderBlockProvider());
             registerEntityProvider(new ItemsAdderEntityProvider());
         }
-        if (isHooked("CraftEngine")) {
+        if (isHooked("CraftEngine", "0.0.")) {
             registerItemProvider(new CraftEngineItemProvider());
+            registerBlockProvider(new CraftEngineBlockProvider());
             CEActionExpansion.register();
         }
         if (isHooked("Nexo")) {
