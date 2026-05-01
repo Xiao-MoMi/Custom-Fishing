@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.bukkit.competition.actionbar;
 
-import net.kyori.adventure.audience.Audience;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.competition.info.ActionBarConfig;
 import net.momirealms.customfishing.api.mechanic.context.Context;
@@ -28,6 +27,7 @@ import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
+import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.TimeUnit;
@@ -35,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 public class ActionBarSender {
 
     private final Player player;
-    private final Audience audience;
     private int refreshTimer;
     private int switchTimer;
     private int counter;
@@ -48,7 +47,6 @@ public class ActionBarSender {
 
     public ActionBarSender(Player player, ActionBarConfig config, Competition competition) {
         this.player = player;
-        this.audience = BukkitCustomFishingPlugin.getInstance().getSenderFactory().getAudience(player);
         this.config = config;
         this.privateContext = Context.player(player);
         this.isShown = false;
@@ -88,7 +86,7 @@ public class ActionBarSender {
                 DynamicText text = texts[counter % (texts.length)];
                 updatePrivatePlaceholders();
                 text.update(this.privateContext.placeholderMap());
-                audience.sendActionBar(AdventureHelper.miniMessage(text.getLatestValue()));
+                SparrowHeart.getInstance().sendActionBar(player, AdventureHelper.componentToJson(AdventureHelper.miniMessage(text.getLatestValue())));
             } else {
                 refreshTimer++;
             }

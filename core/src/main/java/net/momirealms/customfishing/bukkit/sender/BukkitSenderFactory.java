@@ -25,8 +25,6 @@
 
 package net.momirealms.customfishing.bukkit.sender;
 
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
@@ -42,11 +40,9 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 public class BukkitSenderFactory extends SenderFactory<BukkitCustomFishingPlugin, CommandSender> {
-    private final BukkitAudiences audiences;
 
     public BukkitSenderFactory(BukkitCustomFishingPlugin plugin) {
         super(plugin);
-        this.audiences = BukkitAudiences.create(plugin.getBootstrap());
     }
 
     @Override
@@ -66,18 +62,11 @@ public class BukkitSenderFactory extends SenderFactory<BukkitCustomFishingPlugin
     }
 
     @Override
-    public Audience getAudience(CommandSender sender) {
-        return this.audiences.sender(sender);
-    }
-
-    @Override
     protected void sendMessage(CommandSender sender, Component message) {
         if (sender instanceof Player player) {
             SparrowHeart.getInstance().sendMessage(player, AdventureHelper.componentToJson(message));
-        } else if (sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender) {
-            getAudience(sender).sendMessage(message);
         } else {
-            getPlugin().getScheduler().executeSync(() -> getAudience(sender).sendMessage(message));
+            sender.sendRichMessage(AdventureHelper.getMiniMessage().serialize(message));
         }
     }
 
@@ -110,6 +99,5 @@ public class BukkitSenderFactory extends SenderFactory<BukkitCustomFishingPlugin
     @Override
     public void close() {
         super.close();
-        this.audiences.close();
     }
 }

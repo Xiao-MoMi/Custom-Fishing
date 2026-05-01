@@ -18,9 +18,6 @@
 package net.momirealms.customfishing.bukkit.action;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionExpansion;
@@ -55,6 +52,7 @@ import net.momirealms.sparrow.heart.feature.entity.display.FakeItemDisplay;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -373,8 +371,7 @@ public class BukkitActionManager implements ActionManager<Player> {
                 if (Math.random() > chance.evaluate(context)) return;
                 final Player player = context.holder();
                 player.giveExp((int) Math.round(value.evaluate(context)));
-                Audience audience = plugin.getSenderFactory().getAudience(player);
-                AdventureHelper.playSound(audience, Sound.sound(Key.key("minecraft:entity.experience_orb.pickup"), Sound.Source.PLAYER, 1, 1));
+                player.playSound(player, "minecraft:entity.experience_orb.pickup", SoundCategory.PLAYERS, 1, 1);
             };
         }, "exp");
         registerAction((args, chance) -> {
@@ -740,18 +737,10 @@ public class BukkitActionManager implements ActionManager<Player> {
             if (args instanceof Section section) {
                 MathValue<Player> volume = MathValue.auto(section.get("volume", 1));
                 MathValue<Player> pitch = MathValue.auto(section.get("pitch", 1));
-                Key key = Key.key(section.getString("key"));
-                Sound.Source source = Sound.Source.valueOf(section.getString("source", "PLAYER").toUpperCase(Locale.ENGLISH));
+                String soundId = section.getString("key");
                 return context -> {
                     if (Math.random() > chance.evaluate(context)) return;
-                    Sound sound = Sound.sound(
-                            key,
-                            source,
-                            (float) volume.evaluate(context),
-                            (float) pitch.evaluate(context)
-                    );
-                    Audience audience = plugin.getSenderFactory().getAudience(context.holder());
-                    AdventureHelper.playSound(audience, sound);
+                    context.holder().playSound(context.holder(), soundId, (float) volume.evaluate(context), (float) pitch.evaluate(context));
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at sound action which is expected to be `Section`");

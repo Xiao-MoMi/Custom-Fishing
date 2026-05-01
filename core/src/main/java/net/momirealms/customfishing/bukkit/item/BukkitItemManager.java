@@ -17,8 +17,6 @@
 
 package net.momirealms.customfishing.bukkit.item;
 
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.integration.ExternalProvider;
 import net.momirealms.customfishing.api.integration.ItemProvider;
@@ -345,7 +343,7 @@ public class BukkitItemManager implements ItemManager, Listener {
         DurabilityItem durabilityItem = wrapDurabilityItem(wrapped);
         int damage = durabilityItem.damage();
         if (damage + amount >= durabilityItem.maxDamage()) {
-            plugin.getSenderFactory().getAudience(player).playSound(Sound.sound(Key.key("minecraft:entity.item.break"), Sound.Source.PLAYER, 1, 1));
+            player.playSound(player, "minecraft:entity.item.break", SoundCategory.PLAYERS, 1, 1);
             itemStack.setAmount(0);
             return;
         }
@@ -363,8 +361,9 @@ public class BukkitItemManager implements ItemManager, Listener {
             return;
         DurabilityItem wrappedDurability = wrapDurabilityItem(wrapped);
         if (damage >= wrappedDurability.maxDamage()) {
-            if (player != null)
-                plugin.getSenderFactory().getAudience(player).playSound(Sound.sound(Key.key("minecraft:entity.item.break"), Sound.Source.PLAYER, 1, 1));
+            if (player != null) {
+                player.playSound(player, "minecraft:entity.item.break", SoundCategory.PLAYERS, 1, 1);
+            }
             itemStack.setAmount(0);
             return;
         }

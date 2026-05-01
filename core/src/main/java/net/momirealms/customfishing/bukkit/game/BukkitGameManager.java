@@ -19,8 +19,6 @@ package net.momirealms.customfishing.bukkit.game;
 
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
@@ -36,6 +34,7 @@ import net.momirealms.customfishing.api.util.OffsetUtils;
 import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.util.*;
 import net.momirealms.sparrow.heart.SparrowHeart;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,6 +60,7 @@ public class BukkitGameManager implements GameManager {
         this.registerHoldGame();
         this.registerHoldV2Game();
         this.registerClickGame();
+        this.registerClickV2Game();
         this.registerTensionGame();
         this.registerDanceGame();
         this.registerAccurateClickGame();
@@ -541,6 +541,94 @@ public class BukkitGameManager implements GameManager {
         }));
     }
 
+    private void registerClickV2Game() {
+        this.registerGameType("click_v2", ((id, section) -> {
+            GameBasics basics = getGameBasics(section);
+
+            return new AbstractGame(id, basics) {
+                private final TextValue<Player> title = TextValue.auto(section.getString("title","{progress}"));
+                private final TextValue<Player> subtitle = TextValue.auto(section.getString("subtitle", "<gray>{clicked}/{clicks} | Time left {time_left}s"));
+                private final String[] progress = section.getStringList("progress").toArray(new String[0]);
+                private final boolean left = section.getBoolean("left-click", false);
+                private final MathValue<Player> requiredTimes = MathValue.auto(section.get("arguments.required-progress", 30));
+                private final double baseDecreaseRate = section.getDouble("arguments.base-decrease-rate", 1.0);
+                private final double extraDecreaseRate = section.getDouble("arguments.extra-decrease-rate", 0.01);
+                private final MathValue<Player> initialTimes = MathValue.auto(section.get("initial-progress", 10));
+                private final boolean zeroProgressFailure = section.getBoolean("arguments.zero-progress-failure", false);
+                private final int interval = section.getInt("arguments.decrease-interval", 10);
+
+                @Override
+                public BiFunction<CustomFishingHook, GameSetting, AbstractGamingPlayer> gamingPlayerProvider() {
+                    return (customFishingHook, gameSetting) -> new AbstractGamingPlayer(customFishingHook, gameSetting) {
+                        private double clickedTimes;
+                        private final int requiredClicks = (int) requiredTimes.evaluate(customFishingHook.getContext());
+                        private int ticks;
+
+                        @Override
+                        public void arrangeTask() {
+                            hook.getContext().arg(ContextKeys.REQUIRED_TIMES, requiredClicks);
+                            super.arrangeTask();
+                            clickedTimes = initialTimes.evaluate(customFishingHook.getContext());
+                        }
+
+                        @Override
+                        protected void tick() {
+                            if (this.ticks++ % interval == 0) {
+                                this.clickedTimes -= (baseDecreaseRate + extraDecreaseRate * gameSetting.difficulty());
+                                if (this.clickedTimes < 0) {
+                                    this.clickedTimes = 0;
+                                    if (zeroProgressFailure) {
+                                        setGameResult(false);
+                                        endGame();
+                                        return;
+                                    }
+                                }
+                            }
+                            showUI();
+                        }
+
+                        @Override
+                        public void handleRightClick() {
+                            if (!left) {
+                                handleClicks();
+                            }
+                        }
+
+                        @Override
+                        public boolean handleLeftClick() {
+                            if (left) {
+                                handleClicks();
+                            }
+                            return true;
+                        }
+
+                        private void handleClicks() {
+                            clickedTimes++;
+                            if (clickedTimes >= requiredClicks) {
+                                setGameResult(true);
+                                endGame();
+                            }
+                        }
+
+                        private void showUI() {
+                            hook.getContext().arg(ContextKeys.CLICKS_LEFT, requiredClicks - (int) clickedTimes);
+                            hook.getContext().arg(ContextKeys.CLICKED, (int) clickedTimes);
+                            hook.getContext().arg(ContextKeys.REQUIRED_TIMES, requiredClicks);
+                            hook.getContext().arg(ContextKeys.PROGRESS, progress[(int) ((clickedTimes / requiredClicks) * progress.length)]);
+                            SparrowHeart.getInstance().sendTitle(
+                                    getPlayer(),
+                                    AdventureHelper.miniMessageToJson(title.render(hook.getContext())),
+                                    AdventureHelper.miniMessageToJson(subtitle.render(hook.getContext())),
+                                    0, 20, 0
+                            );
+                        }
+                    };
+                }
+            };
+        }));
+    }
+
+
     private void registerTensionGame() {
         this.registerGameType("tension", ((id, section) -> {
             GameBasics basics = getGameBasics(section);
@@ -731,7 +819,7 @@ public class BukkitGameManager implements GameManager {
                         }
 
                         private void handleCorrectAction() {
-                            plugin.getSenderFactory().getAudience(getPlayer()).playSound(Sound.sound(Key.key(correctSound), Sound.Source.PLAYER, 1,1));
+                            getPlayer().playSound(getPlayer(), correctSound, SoundCategory.PLAYERS, 1, 1);
                             clickedTimes++;
                             if (clickedTimes >= requiredTimes) {
                                 setGameResult(true);
@@ -744,7 +832,7 @@ public class BukkitGameManager implements GameManager {
                             setGameResult(false);
                             fail = true;
                             showUI();
-                            plugin.getSenderFactory().getAudience(getPlayer()).playSound(Sound.sound(Key.key(wrongSound), Sound.Source.PLAYER, 1,1));
+                            getPlayer().playSound(getPlayer(), wrongSound, SoundCategory.PLAYERS, 1, 1);
                             endGame();
                         }
 

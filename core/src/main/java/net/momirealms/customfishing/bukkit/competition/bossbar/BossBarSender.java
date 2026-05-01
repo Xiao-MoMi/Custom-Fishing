@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.bukkit.competition.bossbar;
 
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.competition.info.BossBarConfig;
@@ -29,15 +28,17 @@ import net.momirealms.customfishing.common.helper.AdventureHelper;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import net.momirealms.customfishing.common.locale.TranslationManager;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
+import net.momirealms.sparrow.heart.SparrowHeart;
+import net.momirealms.sparrow.heart.feature.bossbar.BossBarColor;
+import net.momirealms.sparrow.heart.feature.bossbar.BossBarOverlay;
 import org.bukkit.entity.Player;
 
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class BossBarSender {
-
     private final Player player;
-    private final Audience audience;
     private int refreshTimer;
     private int switchTimer;
     private int counter;
@@ -48,20 +49,20 @@ public class BossBarSender {
     private boolean isShown;
     private final Competition competition;
     private final Context<Player> privateContext;
+    private final UUID uuid;
 
     public BossBarSender(Player player, BossBarConfig config, Competition competition) {
         this.player = player;
-        this.audience = BukkitCustomFishingPlugin.getInstance().getSenderFactory().getAudience(player);
         this.config = config;
         this.isShown = false;
         this.competition = competition;
         this.privateContext = Context.player(player);
         this.updatePrivatePlaceholders();
         String[] str = config.texts();
-        texts = new DynamicText[str.length];
+        this.texts = new DynamicText[str.length];
         for (int i = 0; i < str.length; i++) {
-            texts[i] = new DynamicText(player, str[i]);
-            texts[i].update(privateContext.placeholderMap());
+            this.texts[i] = new DynamicText(player, str[i]);
+            this.texts[i].update(privateContext.placeholderMap());
         }
         bossBar = BossBar.bossBar(
                 AdventureHelper.miniMessage(texts[0].getLatestValue()),
@@ -70,6 +71,8 @@ public class BossBarSender {
                 config.overlay(),
                 Set.of()
         );
+
+        this.uuid = UUID.randomUUID();
     }
 
     @SuppressWarnings("DuplicatedCode")
@@ -84,7 +87,15 @@ public class BossBarSender {
 
     public void show() {
         this.isShown = true;
-        this.bossBar.addViewer(audience);
+        SparrowHeart.getInstance().createBossBar(
+                player,
+                uuid,
+                AdventureHelper.componentToJson(AdventureHelper.miniMessage(texts[0].getLatestValue())),
+                BossBarColor.valueOf(config.color().name()),
+                BossBarOverlay.valueOf(config.overlay().name()),
+                competition.getProgress(),
+                false, false, false
+        );
         this.refreshTimer = config.refreshRate();
         this.senderTask = BukkitCustomFishingPlugin.getInstance().getScheduler().asyncRepeating(() -> {
             switchTimer++;
@@ -99,9 +110,9 @@ public class BossBarSender {
                 DynamicText text = texts[counter % (texts.length)];
                 updatePrivatePlaceholders();
                 if (text.update(privateContext.placeholderMap()) || forceUpdate) {
-                    bossBar.name(AdventureHelper.miniMessage(text.getLatestValue()));
+                    SparrowHeart.getInstance().updateBossBarName(player, uuid, AdventureHelper.componentToJson(AdventureHelper.miniMessage(text.getLatestValue())));
                 }
-                bossBar.progress(competition.getProgress());
+                SparrowHeart.getInstance().updateBossBarProgress(player, uuid, competition.getProgress());
             } else {
                 refreshTimer++;
             }
@@ -117,7 +128,7 @@ public class BossBarSender {
     }
 
     public void hide() {
-        this.bossBar.removeViewer(audience);
+        SparrowHeart.getInstance().removeBossBar(player, uuid);
         if (senderTask != null) senderTask.cancel();
         this.isShown = false;
     }

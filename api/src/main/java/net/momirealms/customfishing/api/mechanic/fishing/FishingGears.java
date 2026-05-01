@@ -17,8 +17,6 @@
 
 package net.momirealms.customfishing.api.mechanic.fishing;
 
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ScoreComponent;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
@@ -39,6 +37,7 @@ import net.momirealms.customfishing.common.util.TriConsumer;
 import net.momirealms.sparrow.heart.feature.inventory.HandSlot;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -364,7 +363,8 @@ public class FishingGears {
                                 }
                                 newLore.addAll(durabilityLore);
                                 wrapped.lore(newLore);
-                                BukkitCustomFishingPlugin.getInstance().getSenderFactory().getAudience(context.holder()).playSound(Sound.sound(Key.key("minecraft:entity.item.break"), Sound.Source.PLAYER, 1, 1));
+                                Player who = context.holder();
+                                who.playSound(who, "minecraft:entity.item.break", SoundCategory.PLAYERS, 1.0F, 1.0F);
                             } else {
                                 wrapped.setTag(hookDamage, "CustomFishing", "hook_damage");
                                 HookConfig hookConfig = BukkitCustomFishingPlugin.getInstance().getHookManager().getHook(hookID).orElseThrow();
@@ -407,7 +407,8 @@ public class FishingGears {
                                 wrapped.removeTag("CustomFishing", "hook_id");
                                 wrapped.removeTag("CustomFishing", "hook_stack");
                                 wrapped.removeTag("CustomFishing", "hook_max_damage");
-                                BukkitCustomFishingPlugin.getInstance().getSenderFactory().getAudience(context.holder()).playSound(Sound.sound(Key.key("minecraft:entity.item.break"), Sound.Source.PLAYER, 1, 1));
+                                Player player = context.holder();
+                                player.playSound(player, "minecraft:entity.item.break", SoundCategory.PLAYERS, 1, 1);
                             } else {
                                 wrapped.setTag(hookDamage, "CustomFishing", "hook_damage");
                                 HookConfig hookConfig = BukkitCustomFishingPlugin.getInstance().getHookManager().getHook(hookID).orElseThrow();
