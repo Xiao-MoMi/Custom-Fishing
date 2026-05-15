@@ -18,7 +18,7 @@
 package net.momirealms.customfishing.bukkit.integration.block;
 
 import net.momirealms.craftengine.bukkit.api.CraftEngineBlocks;
-import net.momirealms.craftengine.core.block.CustomBlock;
+import net.momirealms.craftengine.core.block.BlockDefinition;
 import net.momirealms.craftengine.core.block.ImmutableBlockState;
 import net.momirealms.craftengine.core.util.Key;
 import net.momirealms.customfishing.api.integration.BlockProvider;
@@ -40,7 +40,7 @@ public class CraftEngineBlockProvider implements BlockProvider {
 
     @Override
     public BlockData blockData(@NotNull Context<Player> context, @NotNull String id, List<BlockDataModifier> modifiers) {
-        CustomBlock customBlock = CraftEngineBlocks.byId(Key.of(id));
+        BlockDefinition customBlock = CraftEngineBlocks.byId(Key.of(id));
         if (customBlock == null) {
             return null;
         }

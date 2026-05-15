@@ -70,8 +70,8 @@ dependencies {
     compileOnly("io.th0rgal:oraxen:1.168.0")
     compileOnly("com.nexomc:nexo:1.7.3")
     compileOnly("com.github.brcdev-minecraft:shopgui-api:3.0.0")
-    compileOnly("net.momirealms:craft-engine-core:0.0.66.11-SNAPSHOT")
-    compileOnly("net.momirealms:craft-engine-bukkit:0.0.66.11-SNAPSHOT")
+    compileOnly("net.momirealms:craft-engine-core:26.5")
+    compileOnly("net.momirealms:craft-engine-bukkit:26.5")
     // entity
     compileOnly("io.lumine:Mythic-Dist:5.6.2")
     // eco

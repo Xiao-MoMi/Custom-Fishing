@@ -1,6 +1,7 @@
 package net.momirealms.customfishing.bukkit.integration.action;
 
-import net.momirealms.craftengine.bukkit.api.BukkitAdaptors;
+import net.momirealms.craftengine.bukkit.api.BukkitAdaptor;
+import net.momirealms.craftengine.core.plugin.config.ConfigValue;
 import net.momirealms.craftengine.core.plugin.context.CommonFunctions;
 import net.momirealms.craftengine.core.plugin.context.ContextHolder;
 import net.momirealms.craftengine.core.plugin.context.PlayerOptionalContext;
@@ -21,18 +22,18 @@ public class CEActionExpansion implements ActionFactory<Player> {
         BukkitCustomFishingPlugin.getInstance().getActionManager().registerAction(new CEActionExpansion(), "ce-function");
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"rawtypes"})
     @Override
     public Action<Player> process(Object arg, MathValue<Player> mathValue) {
         if (arg instanceof List<?> list) {
             List<Function<net.momirealms.craftengine.core.plugin.context.Context>> functions = new ArrayList<>();
             for (Object o : list) {
                 if (o instanceof Map functionArguments) {
-                    functions.add(CommonFunctions.fromMap(functionArguments));
+                    functions.add(CommonFunctions.fromConfig(ConfigValue.of("customfishing", functionArguments)));
                 }
             }
             return context -> {
-                PlayerOptionalContext ctx = PlayerOptionalContext.of(BukkitAdaptors.adapt(context.holder()), ContextHolder.builder());
+                PlayerOptionalContext ctx = PlayerOptionalContext.of(BukkitAdaptor.adapt(context.holder()), ContextHolder.builder());
                 for (Function<net.momirealms.craftengine.core.plugin.context.Context> function : functions) {
                     function.run(ctx);
                 }

@@ -27,6 +27,7 @@ import net.momirealms.customfishing.api.mechanic.misc.value.TextValue;
 import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.util.ArrayUtils;
 import net.momirealms.customfishing.common.util.Pair;
+import net.momirealms.customfishing.common.util.YamlUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -94,18 +95,6 @@ public class ItemStackUtils {
         return map;
     }
 
-    private static void sectionToMap(Section section, Map<String, Object> outPut) {
-        for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
-            if (entry.getValue() instanceof Section inner) {
-                HashMap<String, Object> map = new HashMap<>();
-                outPut.put(entry.getKey(), map);
-                sectionToMap(inner, map);
-            } else {
-                outPut.put(entry.getKey(), entry.getValue());
-            }
-        }
-    }
-
     @SuppressWarnings({"unchecked", "UnstableApiUsage"})
     public static void sectionToComponentEditor(Section section, List<ItemEditor> itemEditors) {
         for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
@@ -120,7 +109,7 @@ public class ItemStackUtils {
             Object value = entry.getValue();
             if (value instanceof Section inner) {
                 Map<String, Object> innerMap = new HashMap<>();
-                sectionToMap(inner, innerMap);
+                YamlUtils.sectionToMap(inner, innerMap);
                 TagMap tagMap = TagMap.of(innerMap);
                 itemEditors.add(((item, context) -> item.setComponent(component, tagMap.apply(context))));
             } else if (value instanceof List<?> list) {

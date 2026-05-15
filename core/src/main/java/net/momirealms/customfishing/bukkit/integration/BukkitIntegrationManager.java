@@ -97,8 +97,10 @@ public class BukkitIntegrationManager implements IntegrationManager {
     @Override
     public void delayedLoad() {
         if (isHooked("ClueScrolls")) {
-            ClueScrollsQuest clueScrollsQuest = new ClueScrollsQuest();
-            clueScrollsQuest.register();
+            runCatchingHook(() -> {
+                ClueScrollsQuest clueScrollsQuest = new ClueScrollsQuest();
+                clueScrollsQuest.register();
+            }, "ClueScrolls");
         }
     }
 
@@ -107,88 +109,128 @@ public class BukkitIntegrationManager implements IntegrationManager {
         registerEnchantmentProvider(new VanillaEnchantmentsProvider());
         registerItemProvider(new SNBTItemProvider());
         if (isHooked("ItemsAdder")) {
-            registerItemProvider(new ItemsAdderItemProvider());
-            registerBlockProvider(new ItemsAdderBlockProvider());
-            registerEntityProvider(new ItemsAdderEntityProvider());
+            runCatchingHook(() -> {
+                registerItemProvider(new ItemsAdderItemProvider());
+                registerBlockProvider(new ItemsAdderBlockProvider());
+                registerEntityProvider(new ItemsAdderEntityProvider());
+            }, "ItemsAdder");
         }
-        if (isHooked("CraftEngine", "0.0.")) {
-            registerItemProvider(new CraftEngineItemProvider());
-            registerBlockProvider(new CraftEngineBlockProvider());
-            CEActionExpansion.register();
+        if (isHooked("CraftEngine", "26.")) {
+            runCatchingHook(() -> {
+                registerItemProvider(new CraftEngineItemProvider());
+                registerBlockProvider(new CraftEngineBlockProvider());
+                CEActionExpansion.register();
+            }, "CraftEngine");
         }
         if (isHooked("Nexo")) {
-            registerItemProvider(new NexoItemProvider());
-            registerBlockProvider(new NexoBlockProvider());
+            runCatchingHook(() -> {
+                registerItemProvider(new NexoItemProvider());
+                registerBlockProvider(new NexoBlockProvider());
+            }, "Nexo");
         }
         if (isHooked("MMOItems")) {
-            registerItemProvider(new MMOItemsItemProvider());
+            runCatchingHook(() -> {
+                registerItemProvider(new MMOItemsItemProvider());
+            }, "MMOItems");
         }
         if (isHooked("EcoItems")) {
-            registerItemProvider(new EcoItemsProvider());
+            runCatchingHook(() -> {
+                registerItemProvider(new EcoItemsProvider());
+            }, "EcoItems");
         }
         if (isHooked("Oraxen", "1")) {
-            registerItemProvider(new OraxenItemProvider());
-            registerBlockProvider(new OraxenBlockProvider());
+            runCatchingHook(() -> {
+                registerItemProvider(new OraxenItemProvider());
+                registerBlockProvider(new OraxenBlockProvider());
+            }, "Oraxen");
         }
         if (isHooked("Zaphkiel")) {
-            registerItemProvider(new ZaphkielItemProvider());
+            runCatchingHook(() -> {
+                registerItemProvider(new ZaphkielItemProvider());
+            }, "Zaphkiel");
         }
         if (isHooked("NeigeItems")) {
-            registerItemProvider(new NeigeItemsItemProvider());
+            runCatchingHook(() -> {
+                registerItemProvider(new NeigeItemsItemProvider());
+            }, "NeigeItems");
         }
         if (isHooked("ExecutableItems")) {
-            registerItemProvider(new ExecutableItemProvider());
+            runCatchingHook(() -> {
+                registerItemProvider(new ExecutableItemProvider());
+            }, "ExecutableItems");
         }
         if (isHooked("MythicMobs", "5")) {
-            registerItemProvider(new MythicMobsItemProvider());
-            registerEntityProvider(new MythicEntityProvider());
+            runCatchingHook(() -> {
+                registerItemProvider(new MythicMobsItemProvider());
+                registerEntityProvider(new MythicEntityProvider());
+            }, "MythicMobs");
         }
         if (isHooked("EcoJobs")) {
-            registerLevelerProvider(new EcoJobsLevelerProvider());
+            runCatchingHook(() -> {
+                registerLevelerProvider(new EcoJobsLevelerProvider());
+            }, "EcoJobs");
         }
         if (isHooked("EcoSkills")) {
-            registerLevelerProvider(new EcoSkillsLevelerProvider());
+            runCatchingHook(() -> {
+                registerLevelerProvider(new EcoSkillsLevelerProvider());
+            }, "EcoSkills");
         }
         if (isHooked("Jobs")) {
-            registerLevelerProvider(new JobsRebornLevelerProvider());
+            runCatchingHook(() -> {
+                registerLevelerProvider(new JobsRebornLevelerProvider());
+            }, "JobsReborn");
         }
         if (isHooked("MMOCore")) {
-            registerLevelerProvider(new MMOCoreLevelerProvider());
+            runCatchingHook(() -> {
+                registerLevelerProvider(new MMOCoreLevelerProvider());
+            }, "MMOCore");
         }
         if (isHooked("mcMMO")) {
-            try {
+            runCatchingHook(() -> {
+                registerLevelerProvider(new McMMOLevelerProvider());
                 registerItemProvider(new McMMOTreasureProvider());
-            } catch (ClassNotFoundException | NoSuchMethodException e) {
-                plugin.getPluginLogger().warn("Failed to initialize mcMMO Treasure");
-            }
-            registerLevelerProvider(new McMMOLevelerProvider());
+            }, "mcMMO");
         }
         if (isHooked("AureliumSkills")) {
-            registerLevelerProvider(new AureliumSkillsProvider());
+            runCatchingHook(() -> {
+                registerLevelerProvider(new AureliumSkillsProvider());
+            }, "AureliumSkills");
         }
         if (isHooked("AuraSkills")) {
-            registerLevelerProvider(new AuraSkillsLevelerProvider());
-            registerItemProvider(new AuraSkillItemProvider());
+            runCatchingHook(() -> {
+                registerLevelerProvider(new AuraSkillsLevelerProvider());
+                registerItemProvider(new AuraSkillItemProvider());
+            }, "AuraSkills");
         }
         if (isHooked("AdvancedEnchantments")) {
-            registerEnchantmentProvider(new AdvancedEnchantmentsProvider());
+            runCatchingHook(() -> {
+                registerEnchantmentProvider(new AdvancedEnchantmentsProvider());
+            }, "AdvancedEnchantments");
         }
         if (isHooked("RealisticSeasons")) {
-            registerSeasonProvider(new RealisticSeasonsProvider());
+            runCatchingHook(() -> {
+                registerSeasonProvider(new RealisticSeasonsProvider());
+            }, "RealisticSeasons");
         } else if (isHooked("AdvancedSeasons")) {
-            registerSeasonProvider(new AdvancedSeasonsProvider());
+            runCatchingHook(() -> {
+                registerSeasonProvider(new AdvancedSeasonsProvider());
+            }, "AdvancedSeasons");
         } else if (isHooked("CustomCrops")) {
-            registerSeasonProvider(new CustomCropsSeasonProvider());
+            runCatchingHook(() -> {
+                registerSeasonProvider(new CustomCropsSeasonProvider());
+            }, "CustomCrops");
         }
         if (isHooked("Vault")) {
             VaultHook.init();
         }
         if (isHooked("BattlePass")){
-            BattlePassQuest battlePassQuest = new BattlePassQuest();
-            battlePassQuest.register();
+            runCatchingHook(() -> {
+                BattlePassQuest battlePassQuest = new BattlePassQuest();
+                battlePassQuest.register();
+            }, "BattlePass");
         }
         if (isHooked("WorldGuard", "7")) {
-            WorldGuardRegion.register();
+            runCatchingHook(WorldGuardRegion::register, "WorldGuard");
         }
         if (isHooked("PlaceholderAPI")) {
             new CustomFishingPapi(plugin).load();
@@ -196,10 +238,10 @@ public class BukkitIntegrationManager implements IntegrationManager {
             new StatisticsPapi(plugin).load();
         }
         if (isHooked("ShopGUIPlus")) {
-            ShopGUIHook.register();
+            runCatchingHook(ShopGUIHook::register, "ShopGUIPlus");
         }
         if (isHooked("BeautyQuests", "2")) {
-            BeautyFishingQuest.register();
+            runCatchingHook(BeautyFishingQuest::register, "BeautyQuests");
         } else if (isOutdated("BeautyQuests", "1")) {
             this.plugin.getPluginLogger().info("CustomFishing no longer supports BeautyQuests1.x, please consider updating to BeautyQuests2.x. https://www.spigotmc.org/resources/beautyquests.39255/");
         }
@@ -213,7 +255,6 @@ public class BukkitIntegrationManager implements IntegrationManager {
 
     private boolean isHooked(String hooked) {
         if (Bukkit.getPluginManager().getPlugin(hooked) != null) {
-            plugin.getPluginLogger().info(hooked + " hooked!");
             return true;
         }
         return false;
@@ -226,7 +267,6 @@ public class BukkitIntegrationManager implements IntegrationManager {
             String ver = p.getDescription().getVersion();
             for (String prefix : versionPrefix) {
                 if (ver.startsWith(prefix)) {
-                    plugin.getPluginLogger().info(hooked + " hooked!");
                     return true;
                 }
             }
@@ -341,4 +381,18 @@ public class BukkitIntegrationManager implements IntegrationManager {
     public boolean unregisterBlockProvider(@NotNull String id) {
         return ((BukkitBlockManager) plugin.getBlockManager()).unregisterBlockProvider(id);
     }
+
+    private void runCatchingHook(ThrowableRunnable runnable, String plugin) {
+        try {
+            runnable.run();
+            this.plugin.getPluginLogger().info(plugin + " hooked!");
+        } catch (Throwable e) {
+            this.plugin.getPluginLogger().warn("Failed to hook " + plugin, e);
+        }
+    }
+
+    private interface ThrowableRunnable {
+        void run() throws Throwable;
+    }
+
 }

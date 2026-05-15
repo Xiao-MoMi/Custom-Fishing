@@ -19,7 +19,6 @@ dependencies {
     // adventure
     implementation("net.kyori:adventure-api:${rootProject.properties["adventure_bundle_version"]}")
     implementation("net.kyori:adventure-text-minimessage:${rootProject.properties["adventure_bundle_version"]}")
-    implementation("net.kyori:adventure-platform-bukkit:${rootProject.properties["adventure_platform_version"]}")
     implementation("net.kyori:adventure-text-serializer-gson:${rootProject.properties["adventure_bundle_version"]}") {
         exclude("com.google.code.gson", "gson")
     }
