@@ -19,6 +19,7 @@ package net.momirealms.customfishing.bukkit.market;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.event.MarketSellEvent;
 import net.momirealms.customfishing.api.mechanic.action.Action;
 import net.momirealms.customfishing.api.mechanic.action.ActionManager;
 import net.momirealms.customfishing.api.mechanic.config.SingleItemParser;
@@ -33,6 +34,7 @@ import net.momirealms.customfishing.api.mechanic.requirement.Requirement;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.storage.data.EarningData;
 import net.momirealms.customfishing.api.storage.user.UserData;
+import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.bukkit.config.BukkitConfigManager;
 import net.momirealms.customfishing.bukkit.item.BukkitItemFactory;
 import net.momirealms.customfishing.common.item.Item;
@@ -55,6 +57,8 @@ import org.bukkit.inventory.meta.BundleMeta;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 @SuppressWarnings("DuplicatedCode")
 public class BukkitMarketManager implements MarketManager, Listener {
@@ -351,7 +355,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
                 if (!allowItemWithNoPrice) {
                     if (event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD || event.getAction() == InventoryAction.HOTBAR_SWAP) {
                         ItemStack moved = player.getInventory().getItem(event.getHotbarButton());
-                        double price = getItemPrice(gui.context, moved);
+                        double price = getItemPrice(gui.context, moved, (i, p) -> {});
                         if (price <= 0) {
                             event.setCancelled(true);
                             return;
@@ -369,8 +373,19 @@ public class BukkitMarketManager implements MarketManager, Listener {
             }
 
             if (element.getSymbol() == sellSlot) {
+                List<ItemStack> toSell = new ArrayList<>();
+                List<Double> prices = new ArrayList<>();
+                Pair<Integer, Double> pair = getItemsToSell(gui.context, gui.getItemsInGUI(), (i, p) -> {
+                    toSell.add(i);
+                    prices.add(p);
+                });
+                if (!toSell.isEmpty()) {
+                    MarketSellEvent sellEvent = new MarketSellEvent(player, toSell, prices);
+                    if (EventUtils.fireAndCheckCancel(sellEvent)) {
+                        return;
+                    }
+                }
 
-                Pair<Integer, Double> pair = getItemsToSell(gui.context, gui.getItemsInGUI());
                 double totalWorth = pair.right() * earningsMultiplier(gui.context);
                 gui.context.arg(ContextKeys.MONEY, money(totalWorth))
                         .arg(ContextKeys.MONEY_FORMATTED, String.format("%.2f", totalWorth))
@@ -400,7 +415,20 @@ public class BukkitMarketManager implements MarketManager, Listener {
                     Optional<UserData> optionalUserData = BukkitCustomFishingPlugin.getInstance().getStorageManager().getOnlineUser(gui.context.holder().getUniqueId());
                     optionalUserData.ifPresent(userData -> itemStacksToSell.addAll(storageContentsToList(userData.holder().getInventory().getStorageContents())));
                 }
-                Pair<Integer, Double> pair = getItemsToSell(gui.context, itemStacksToSell);
+
+                List<ItemStack> toSell = new ArrayList<>();
+                List<Double> prices = new ArrayList<>();
+                Pair<Integer, Double> pair = getItemsToSell(gui.context, gui.getItemsInGUI(), (i, p) -> {
+                    toSell.add(i);
+                    prices.add(p);
+                });
+                if (!toSell.isEmpty()) {
+                    MarketSellEvent sellEvent = new MarketSellEvent(player, toSell, prices);
+                    if (EventUtils.fireAndCheckCancel(sellEvent)) {
+                        return;
+                    }
+                }
+
                 double totalWorth = pair.right() * earningsMultiplier(gui.context);
                 gui.context.arg(ContextKeys.MONEY, money(totalWorth))
                         .arg(ContextKeys.MONEY_FORMATTED, String.format("%.2f", totalWorth))
@@ -429,7 +457,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
             // Handle interactions with the player's inventory
             ItemStack current = event.getCurrentItem();
             if (!allowItemWithNoPrice) {
-                double price = getItemPrice(gui.context, current);
+                double price = getItemPrice(gui.context, current, (i, p) -> {});
                 if (price <= 0) {
                     event.setCancelled(true);
                     return;
@@ -473,7 +501,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
 
     @Override
     @SuppressWarnings("UnstableApiUsage")
-    public double getItemPrice(Context<Player> context, ItemStack itemStack) {
+    public double getItemPrice(Context<Player> context, ItemStack itemStack, BiConsumer<ItemStack, Double> collector) {
         if (itemStack == null || itemStack.getType() == Material.AIR)
             return 0;
 
@@ -481,17 +509,19 @@ public class BukkitMarketManager implements MarketManager, Listener {
         double price = (double) wrapped.getTag("Price").orElse(0d);
         if (price != 0) {
             // If a custom price is defined in the ItemStack's NBT data, use it.
-            return price * itemStack.getAmount();
+            double totalPrice = price * itemStack.getAmount();
+            collector.accept(itemStack, totalPrice);
+            return totalPrice;
         }
 
         if (allowBundle && itemStack.getItemMeta() instanceof BundleMeta bundleMeta && RequirementManager.isSatisfied(context, allowBundleRequirements) ) {
-            Pair<Integer, Double> pair = getItemsToSell(context, bundleMeta.getItems());
+            Pair<Integer, Double> pair = getItemsToSell(context, bundleMeta.getItems(), collector);
             return pair.right();
         }
 
         if (allowShulkerBox && itemStack.getItemMeta() instanceof BlockStateMeta stateMeta && RequirementManager.isSatisfied(context, allowShulkerBoxRequirements) ) {
             if (stateMeta.getBlockState() instanceof ShulkerBox shulkerBox) {
-                Pair<Integer, Double> pair = getItemsToSell(context, Arrays.stream(shulkerBox.getInventory().getStorageContents()).filter(Objects::nonNull).toList());
+                Pair<Integer, Double> pair = getItemsToSell(context, Arrays.stream(shulkerBox.getInventory().getStorageContents()).filter(Objects::nonNull).toList(), collector);
                 return pair.right();
             }
         }
@@ -506,7 +536,9 @@ public class BukkitMarketManager implements MarketManager, Listener {
         MathValue<Player> formula = priceMap.get(itemID);
         if (formula == null) return 0;
 
-        return formula.evaluate(context) * itemStack.getAmount();
+        double totalPrice = formula.evaluate(context) * itemStack.getAmount();
+        collector.accept(itemStack, totalPrice);
+        return totalPrice;
     }
 
     @Override
@@ -524,11 +556,11 @@ public class BukkitMarketManager implements MarketManager, Listener {
         return earningsMultiplier.evaluate(context);
     }
 
-    public Pair<Integer, Double> getItemsToSell(Context<Player> context, List<ItemStack> itemStacks) {
+    public Pair<Integer, Double> getItemsToSell(Context<Player> context, List<ItemStack> itemStacks, BiConsumer<ItemStack, Double> collector) {
         int amount = 0;
         double worth = 0d;
         for (ItemStack itemStack : itemStacks) {
-            double price = getItemPrice(context, itemStack);
+            double price = getItemPrice(context, itemStack, collector);
             if (price > 0 && itemStack != null) {
                 amount += itemStack.getAmount();
                 worth += price;
@@ -540,7 +572,7 @@ public class BukkitMarketManager implements MarketManager, Listener {
     @SuppressWarnings("UnstableApiUsage")
     public void clearWorthyItems(Context<Player> context, List<ItemStack> itemStacks) {
         for (ItemStack itemStack : itemStacks) {
-            double price = getItemPrice(context, itemStack);
+            double price = getItemPrice(context, itemStack, (i, p) -> {});
             if (price > 0 && itemStack != null) {
                 if (allowBundle && itemStack.getItemMeta() instanceof BundleMeta bundleMeta && RequirementManager.isSatisfied(context, allowBundleRequirements)) {
                     clearWorthyItems(context, bundleMeta.getItems());

@@ -22,6 +22,8 @@ import net.momirealms.customfishing.common.plugin.feature.Reloadable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.function.BiConsumer;
+
 /**
  * Interface for managing the market
  */
@@ -42,7 +44,19 @@ public interface MarketManager extends Reloadable {
      * @param itemStack the {@link ItemStack} representing the item
      * @return the price of the item as a double
      */
-    double getItemPrice(Context<Player> context, ItemStack itemStack);
+    default double getItemPrice(Context<Player> context, ItemStack itemStack) {
+        return getItemPrice(context, itemStack, (i, p) -> {});
+    }
+
+    /**
+     * Retrieves the price of the specified item within the given context.
+     *
+     * @param context   the {@link Context} in which the price is calculated
+     * @param itemStack the {@link ItemStack} representing the item
+     * @param collector a collector to get the worthy items
+     * @return the price of the item as a double
+     */
+    double getItemPrice(Context<Player> context, ItemStack itemStack, BiConsumer<ItemStack, Double> collector);
 
     /**
      * Retrieves the formula used for calculating item prices.

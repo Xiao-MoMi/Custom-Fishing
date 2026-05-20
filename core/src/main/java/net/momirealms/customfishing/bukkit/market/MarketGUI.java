@@ -113,7 +113,7 @@ public class MarketGUI {
         double earningLimit = manager.earningLimit(context);
         MarketDynamicGUIElement sellElement = (MarketDynamicGUIElement) getElement(manager.sellSlot);
         if (sellElement != null && !sellElement.getSlots().isEmpty()) {
-            Pair<Integer, Double> pair = manager.getItemsToSell(context, getItemsInGUI());
+            Pair<Integer, Double> pair = manager.getItemsToSell(context, getItemsInGUI(), (i, p) -> {});
             double totalWorth = pair.right() * manager.earningsMultiplier(context);
             int soldAmount = pair.left();
             context.arg(ContextKeys.MONEY, manager.money(totalWorth))
@@ -143,7 +143,7 @@ public class MarketGUI {
                 Optional<UserData> optionalUserData = BukkitCustomFishingPlugin.getInstance().getStorageManager().getOnlineUser(context.holder().getUniqueId());
                 optionalUserData.ifPresent(userData -> itemStacksToSell.addAll(manager.storageContentsToList(userData.holder().getInventory().getStorageContents())));
             }
-            Pair<Integer, Double> pair = manager.getItemsToSell(context, itemStacksToSell);
+            Pair<Integer, Double> pair = manager.getItemsToSell(context, itemStacksToSell, (i, p) -> {});
             double totalWorth = pair.right() * manager.earningsMultiplier(context);
             int soldAmount = pair.left();
             context.arg(ContextKeys.MONEY, manager.money(totalWorth))
