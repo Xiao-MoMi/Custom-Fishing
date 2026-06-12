@@ -21,6 +21,7 @@ import net.kyori.adventure.text.Component;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.bukkit.command.BukkitCommandFeature;
 import net.momirealms.customfishing.common.command.CustomFishingCommandManager;
+import net.momirealms.customfishing.common.helper.VersionHelper;
 import net.momirealms.customfishing.common.locale.MessageConstants;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -41,10 +42,17 @@ public class OpenMarketCommand extends BukkitCommandFeature<CommandSender> {
                 .flag(manager.flagBuilder("silent").withAliases("s").build())
                 .handler(context -> {
                     final Player player = context.get("player");
-                    if (BukkitCustomFishingPlugin.getInstance().getMarketManager().openMarketGUI(player)) {
-                        handleFeedback(context, MessageConstants.COMMAND_MARKET_OPEN_SUCCESS, Component.text(player.getName()));
+                    Runnable r = () -> {
+                        if (BukkitCustomFishingPlugin.getInstance().getMarketManager().openMarketGUI(player)) {
+                            handleFeedback(context, MessageConstants.COMMAND_MARKET_OPEN_SUCCESS, Component.text(player.getName()));
+                        } else {
+                            handleFeedback(context, MessageConstants.COMMAND_MARKET_OPEN_FAILURE_NOT_LOADED, Component.text(player.getName()));
+                        }
+                    };
+                    if (VersionHelper.isFolia()) {
+                        BukkitCustomFishingPlugin.getInstance().getScheduler().sync().run(r, player.getLocation());
                     } else {
-                        handleFeedback(context, MessageConstants.COMMAND_MARKET_OPEN_FAILURE_NOT_LOADED, Component.text(player.getName()));
+                        r.run();
                     }
                 });
     }

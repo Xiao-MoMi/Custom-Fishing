@@ -51,7 +51,10 @@ public class MythicEntityProvider implements EntityProvider {
             Position position = Position.of(location);
             AbstractLocation abstractLocation = new AbstractLocation(position);
             ActiveMob activeMob = theMob.spawn(abstractLocation, ((Number) propertyMap.getOrDefault("level", 0d)).doubleValue());
-            return activeMob.getEntity().getBukkitEntity();
+            if (activeMob != null) {
+                return activeMob.getEntity().getBukkitEntity();
+            }
+            throw new IllegalStateException("Failed to spawn mythic mob: " + id);
         }
         throw new NullPointerException("MythicMobs: " + id + " doesn't exist.");
     }
