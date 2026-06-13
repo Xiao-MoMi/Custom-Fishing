@@ -17,7 +17,6 @@
 
 package net.momirealms.customfishing.bukkit.competition.bossbar;
 
-import net.kyori.adventure.bossbar.BossBar;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.mechanic.competition.info.BossBarConfig;
 import net.momirealms.customfishing.api.mechanic.context.Context;
@@ -33,7 +32,6 @@ import net.momirealms.sparrow.heart.feature.bossbar.BossBarColor;
 import net.momirealms.sparrow.heart.feature.bossbar.BossBarOverlay;
 import org.bukkit.entity.Player;
 
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -44,7 +42,6 @@ public class BossBarSender {
     private int counter;
     private final DynamicText[] texts;
     private SchedulerTask senderTask;
-    private final BossBar bossBar;
     private final BossBarConfig config;
     private boolean isShown;
     private final Competition competition;
@@ -64,14 +61,6 @@ public class BossBarSender {
             this.texts[i] = new DynamicText(player, str[i]);
             this.texts[i].update(privateContext.placeholderMap());
         }
-        bossBar = BossBar.bossBar(
-                AdventureHelper.miniMessage(texts[0].getLatestValue()),
-                competition.getProgress(),
-                config.color(),
-                config.overlay(),
-                Set.of()
-        );
-
         this.uuid = UUID.randomUUID();
     }
 

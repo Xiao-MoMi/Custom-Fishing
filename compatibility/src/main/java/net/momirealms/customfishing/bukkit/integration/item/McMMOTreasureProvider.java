@@ -19,8 +19,10 @@ package net.momirealms.customfishing.bukkit.integration.item;
 
 import net.momirealms.customfishing.api.integration.ItemProvider;
 import net.momirealms.customfishing.api.mechanic.context.Context;
+import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +42,7 @@ public class McMMOTreasureProvider implements ItemProvider {
         Class<?> mcMMOPlayerClass = Class.forName("com.gmail.nossr50.datatypes.player.McMMOPlayer");
         getFishingManagerMethod = mcMMOPlayerClass.getMethod("getFishingManager");
         Class<?> fishingManagerClass = Class.forName("com.gmail.nossr50.skills.fishing.FishingManager");
-        getFishingTreasureMethod = fishingManagerClass.getDeclaredMethod("getFishingTreasure");
+        getFishingTreasureMethod = fishingManagerClass.getDeclaredMethod("getFishingTreasure", EquipmentSlot.class);
         getFishingTreasureMethod.setAccessible(true);
         Class<?> treasureClass = Class.forName("com.gmail.nossr50.datatypes.treasure.Treasure");
         getItemStackMethod = treasureClass.getMethod("getDrop");
@@ -61,7 +63,8 @@ public class McMMOTreasureProvider implements ItemProvider {
             try {
                 Object mcMMOPlayer = getMcMMOPlayerMethod.invoke(null, player.holder());
                 Object fishingManager = getFishingManagerMethod.invoke(mcMMOPlayer);
-                Object treasure = getFishingTreasureMethod.invoke(fishingManager);
+                EquipmentSlot arg = player.arg(ContextKeys.SLOT);
+                Object treasure = getFishingTreasureMethod.invoke(fishingManager, arg != null ? arg : EquipmentSlot.HAND);
                 if (treasure != null) {
                     itemStack = (ItemStack) getItemStackMethod.invoke(treasure);
                 }
