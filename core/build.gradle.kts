@@ -51,7 +51,7 @@ dependencies {
     // placeholder api
     compileOnly("me.clip:placeholderapi:${rootProject.properties["placeholder_api_version"]}")
     // lz4
-    compileOnly("org.lz4:lz4-java:${rootProject.properties["lz4_version"]}")
+    compileOnly("at.yawk.lz4:lz4-java:${rootProject.properties["lz4_version"]}")
 }
 
 tasks {

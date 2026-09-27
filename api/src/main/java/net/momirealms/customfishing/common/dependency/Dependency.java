@@ -263,7 +263,7 @@ public enum Dependency {
             "slf4j"
     ),
     LZ4(
-            "org{}lz4",
+            "at{}yawk{}lz4",
             "lz4-java",
             "maven",
             "lz4-java",
@@ -314,6 +314,11 @@ public enum Dependency {
                 ? ""
                 : "-" + classifier;
         return name + "-" + this.getVersion() + extra + ".jar";
+    }
+
+    public String toLocalPath() {
+        return rewriteEscaping(groupId).replace(".", "/") + "/"
+                + rewriteEscaping(rawArtifactId) + "/" + getVersion();
     }
 
     String getMavenRepoPath() {
