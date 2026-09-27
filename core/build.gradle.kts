@@ -24,8 +24,8 @@ dependencies {
     }
     implementation("net.kyori:adventure-text-serializer-json-legacy-impl:${rootProject.properties["adventure_bundle_version"]}")
     // tag & component
-    implementation("com.saicone.rtag:rtag:${rootProject.properties["rtag_version"]}")
-    implementation("com.saicone.rtag:rtag-item:${rootProject.properties["rtag_version"]}")
+    implementation("io.github.missdrop:rtag:${rootProject.properties["rtag_version"]}")
+    implementation("io.github.missdrop:rtag-item:${rootProject.properties["rtag_version"]}")
     // nms util
     implementation("net.momirealms:sparrow-heart:${rootProject.properties["sparrow_heart_version"]}")
     // bstats

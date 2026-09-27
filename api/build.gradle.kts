@@ -12,8 +12,8 @@ repositories {
 
 dependencies {
     implementation(files("libs/boosted-yaml-${rootProject.properties["boosted_yaml_version"]}.jar"))
-    implementation("com.saicone.rtag:rtag:${rootProject.properties["rtag_version"]}")
-    implementation("com.saicone.rtag:rtag-item:${rootProject.properties["rtag_version"]}")
+    implementation("io.github.missdrop:rtag:${rootProject.properties["rtag_version"]}")
+    implementation("io.github.missdrop:rtag-item:${rootProject.properties["rtag_version"]}")
     compileOnly("dev.folia:folia-api:${rootProject.properties["paper_version"]}-R0.1-SNAPSHOT")
     compileOnly("com.google.code.gson:gson:${rootProject.properties["gson_version"]}")
     compileOnly("me.clip:placeholderapi:${rootProject.properties["placeholder_api_version"]}")
