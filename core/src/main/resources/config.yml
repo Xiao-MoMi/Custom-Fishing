@@ -429,6 +429,10 @@ mechanics:
 other-settings:
   # Whether to additionally trigger a PlayerFishEvent from Bukkit when fishing succeeds—this may improve compatibility with certain plugins, but could also lead to issues.
   trigger-fish-event: false
+  # Fire FishingLootSpawnEvent for vanilla catches when mechanic-requirements were not met at casting.
+  # Enables integrations such as libreforge's catch_fish outside CustomFishing mechanics.
+  # Loot IDs use the caught material's namespaced key (e.g. minecraft:cod).
+  trigger-loot-spawn-event-when-requirements-not-met: false
   # Anti-auto-fishing mod toggle
   anti-auto-fishing-mod: false
   # Recommended to use MiniMessage format. If you prefer using legacy color codes "&", enable the support below.

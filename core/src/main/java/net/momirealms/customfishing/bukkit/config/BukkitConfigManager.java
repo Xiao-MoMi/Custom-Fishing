@@ -229,6 +229,7 @@ public class BukkitConfigManager extends ConfigManager {
         blockDetectOrder = config.getStringList("other-settings.block-detection-order").toArray(new String[0]);
 
         triggerFishEvent = config.getBoolean("other-settings.trigger-fish-event", false);
+        triggerLootSpawnEventWhenRequirementsNotMet = config.getBoolean("other-settings.trigger-loot-spawn-event-when-requirements-not-met", false);
 
         allowMultipleTotemType = config.getBoolean("mechanics.totem.allow-multiple-type", true);
         allowSameTotemType = config.getBoolean("mechanics.totem.allow-same-type", false);

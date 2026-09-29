@@ -117,6 +117,7 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     protected boolean antiAutoFishingMod;
     protected List<TriConsumer<Effect, Context<Player>, Integer>> globalEffects;
     protected boolean triggerFishEvent;
+    protected boolean triggerLootSpawnEventWhenRequirementsNotMet;
 
     protected ConfigManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
@@ -289,6 +290,10 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     public static boolean triggerFishEvent() {
         return instance.triggerFishEvent;
+    }
+
+    public static boolean triggerLootSpawnEventWhenRequirementsNotMet() {
+        return instance.triggerLootSpawnEventWhenRequirementsNotMet;
     }
 
     public void registerHookParser(Function<Object, Consumer<HookConfig.Builder>> function, String... nodes) {

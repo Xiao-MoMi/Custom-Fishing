@@ -29,6 +29,12 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * This class represents an event that is triggered when fishing loot is spawned.
+ * When enabled in the configuration, this also includes vanilla catches from casts
+ * that did not satisfy mechanic requirements. Those catches use a synthetic loot
+ * whose ID is the caught material's namespaced key (for example, {@code minecraft:cod}).
+ * For vanilla catches, this event runs before the item is added to the world;
+ * disabling {@link #summonEntity()} cancels the underlying Bukkit fishing event.
+ * {@link #skipActions()} has no effect on vanilla catches, which have no CustomFishing actions.
  */
 public class FishingLootSpawnEvent extends PlayerEvent {
     private static final HandlerList handlerList = new HandlerList();

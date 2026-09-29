@@ -21,16 +21,19 @@ import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import net.momirealms.customfishing.api.event.CustomPlayerFishEvent;
 import net.momirealms.customfishing.api.event.FishingHookStateEvent;
+import net.momirealms.customfishing.api.event.FishingLootSpawnEvent;
 import net.momirealms.customfishing.api.event.RodCastEvent;
 import net.momirealms.customfishing.api.mechanic.config.ConfigManager;
 import net.momirealms.customfishing.api.mechanic.context.Context;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
+import net.momirealms.customfishing.api.mechanic.effect.LootBaseEffect;
 import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
 import net.momirealms.customfishing.api.mechanic.fishing.FishingGears;
 import net.momirealms.customfishing.api.mechanic.fishing.FishingManager;
 import net.momirealms.customfishing.api.mechanic.fishing.hook.VanillaMechanic;
 import net.momirealms.customfishing.api.mechanic.game.AbstractGamingPlayer;
 import net.momirealms.customfishing.api.mechanic.game.GamingPlayer;
+import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import net.momirealms.customfishing.api.mechanic.requirement.RequirementManager;
 import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.sparrow.heart.SparrowHeart;
@@ -57,10 +60,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BukkitFishingManager implements FishingManager, Listener {
 
     private final BukkitCustomFishingPlugin plugin;
+    private final NamespacedKey requirementsNotMetKey;
     private final ConcurrentHashMap<UUID, CustomFishingHook> castHooks = new ConcurrentHashMap<>();
 
     public BukkitFishingManager(BukkitCustomFishingPlugin plugin) {
         this.plugin = plugin;
+        this.requirementsNotMetKey = new NamespacedKey(plugin.getBootstrap(), "requirements_not_met");
     }
 
     @Override
@@ -216,9 +221,9 @@ public class BukkitFishingManager implements FishingManager, Listener {
         }
         switch (event.getState()) {
             case FISHING -> onCastRod(event);
-            case REEL_IN, CAUGHT_FISH -> onReelIn(event);
+            case REEL_IN -> onReelIn(event);
+            case CAUGHT_FISH -> onCaughtFish(event);
             case CAUGHT_ENTITY -> onCaughtEntity(event);
-            //case CAUGHT_FISH -> onCaughtFish(event);
             case BITE -> onBite(event);
             case IN_GROUND -> onInGround(event);
             case FAILED_ATTEMPT -> onFailedAttempt(event);
@@ -291,20 +296,39 @@ public class BukkitFishingManager implements FishingManager, Listener {
         });
     }
 
-//    private void onCaughtFish(PlayerFishEvent event) {
-//        Player player = event.getPlayer();
-//        getFishHook(player).ifPresent(hook -> {
-//            Optional<GamingPlayer> gamingPlayer = hook.getGamingPlayer();
-//            if (gamingPlayer.isPresent()) {
-//                if (gamingPlayer.get().handleRightClick()) {
-//                    event.setCancelled(true);
-//                }
-//                return;
-//            }
-//            event.setCancelled(true);
-//            hook.onReelIn();
-//        });
-//    }
+    private void onCaughtFish(PlayerFishEvent event) {
+        if (getFishHook(event.getPlayer()).isPresent()) {
+            onReelIn(event);
+            return;
+        }
+        if (!ConfigManager.triggerLootSpawnEventWhenRequirementsNotMet()
+                || !event.getHook().getPersistentDataContainer().has(requirementsNotMetKey, PersistentDataType.BYTE)
+                || !(event.getCaught() instanceof Item item)) {
+            return;
+        }
+        ItemStack stack = item.getItemStack();
+        Loot loot = Loot.builder()
+                .id(stack.getType().getKey().toString())
+                .nick(stack.getType().name())
+                .disableGame(true)
+                .disableStatistics(true)
+                .showInFinder(false)
+                .lootBaseEffect(LootBaseEffect.builder().build())
+                .build();
+        Context<Player> context = Context.player(event.getPlayer());
+        context.arg(ContextKeys.HOOK_ENTITY, event.getHook());
+        context.arg(ContextKeys.ID, loot.id());
+        context.arg(ContextKeys.LOOT, loot.type());
+        context.arg(ContextKeys.NICK, loot.nick());
+        context.arg(ContextKeys.AMOUNT, stack.getAmount());
+        FishingLootSpawnEvent spawnEvent = new FishingLootSpawnEvent(context, event.getHook().getLocation(), loot, item);
+        Bukkit.getPluginManager().callEvent(spawnEvent);
+        if (!spawnEvent.summonEntity()) {
+            // Vanilla has not spawned the item yet; removing it alone would not prevent the drop.
+            event.setCancelled(true);
+            item.remove();
+        }
+    }
 
     private void onCastRod(PlayerFishEvent event) {
         FishHook hook = event.getHook();
@@ -314,6 +338,9 @@ public class BukkitFishingManager implements FishingManager, Listener {
         context.arg(ContextKeys.HOOK_ENTITY, hook);
         if (!RequirementManager.isSatisfied(context, ConfigManager.mechanicRequirements())) {
             this.destroyHook(player.getUniqueId());
+            if (ConfigManager.triggerLootSpawnEventWhenRequirementsNotMet()) {
+                hook.getPersistentDataContainer().set(requirementsNotMetKey, PersistentDataType.BYTE, (byte) 1);
+            }
             return;
         }
         if (!gears.canFish()) {
