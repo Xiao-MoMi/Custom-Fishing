@@ -241,6 +241,7 @@ public class VoidFishingMechanic implements HookMechanic {
         entity.setCustomNameVisible(false);
         entity.setSmall(true);
         entity.setGravity(false);
+        entity.setPersistent(false);
         entity.getPersistentDataContainer().set(
                 Objects.requireNonNull(NamespacedKey.fromString("temp-entity", BukkitCustomFishingPlugin.getInstance().getBootstrap())),
                 PersistentDataType.STRING,
