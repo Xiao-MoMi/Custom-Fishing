@@ -737,6 +737,15 @@ public class BukkitConfigManager extends ConfigManager {
                     }
                 }));
             }
+            case "game-max-failures" -> {
+                MathValue<Player> value = MathValue.auto(section.get("value"));
+                return (((effect, context, phase) -> {
+                    if (phase == 2) {
+                        effect.gameMaxFailures(effect.gameMaxFailures() + (int) value.evaluate(context));
+                        ActionManager.trigger(context, actions);
+                    }
+                }));
+            }
             case "game-time" -> {
                 MathValue<Player> value = MathValue.auto(section.get("value"));
                 return (((effect, context, phase) -> {

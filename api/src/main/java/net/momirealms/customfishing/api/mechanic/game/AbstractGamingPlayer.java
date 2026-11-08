@@ -18,8 +18,10 @@
 package net.momirealms.customfishing.api.mechanic.game;
 
 import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
+import net.momirealms.customfishing.api.event.FishingGameFailurePreventedEvent;
 import net.momirealms.customfishing.api.mechanic.context.ContextKeys;
 import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
+import net.momirealms.customfishing.api.util.EventUtils;
 import net.momirealms.customfishing.common.plugin.scheduler.SchedulerTask;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
@@ -37,7 +39,8 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     protected GameSetting settings;
     protected CustomFishingHook hook;
     protected boolean isTimeOut;
-    private boolean valid = true;
+    private volatile boolean valid = true;
+    private int preventedFailures;
     private boolean firstFlag = true;
     protected Boolean forcedGameResult;
 
@@ -218,10 +221,19 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
      * Ends the game for the gaming player.
      */
     @Override
-    public void endGame() {
+    public synchronized void endGame() {
         if (!isValid()) return;
-        destroy();
+        if (System.currentTimeMillis() >= deadline) isTimeOut = true;
         boolean success = isSuccessful();
+        if (!success && !isTimeOut && preventedFailures < settings.maxFailures() - 1) {
+            int failureCount = ++preventedFailures;
+            onFailurePrevented();
+            BukkitCustomFishingPlugin.getInstance().getScheduler().sync().run(() ->
+                    EventUtils.fireAndForget(new FishingGameFailurePreventedEvent(hook, this, failureCount)),
+                    hook.getHookEntity().getLocation());
+            return;
+        }
+        destroy();
         BukkitCustomFishingPlugin.getInstance().getScheduler().sync().run(() -> {
             if (success) {
                 hook.handleSuccessfulFishing();
@@ -230,6 +242,13 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
             }
             hook.destroy();
         }, hook.getHookEntity().getLocation());
+    }
+
+    /**
+     * Restores playable state after a non-timeout failure is prevented.
+     * The deadline and accumulated progress are preserved unless overridden.
+     */
+    protected void onFailurePrevented() {
     }
 
     /**

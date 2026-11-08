@@ -22,6 +22,15 @@ package net.momirealms.customfishing.api.mechanic.game;
  *
  * @param time       The time allocated for the game, in seconds.
  * @param difficulty The difficulty level of the game. (1~100)
+ * @param maxFailures The failure that ends the game; earlier non-timeout failures are prevented.
  */
-public record GameSetting(double time, double difficulty) {
+public record GameSetting(double time, double difficulty, int maxFailures) {
+
+    public GameSetting {
+        maxFailures = Math.max(1, maxFailures);
+    }
+
+    public GameSetting(double time, double difficulty) {
+        this(time, difficulty, 1);
+    }
 }

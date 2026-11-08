@@ -175,6 +175,22 @@ public interface Effect {
     double gameTimeAdder();
 
     /**
+     * Gets the maximum number of non-timeout failures. Defaults to one.
+     */
+    default int gameMaxFailures() {
+        Integer value = arg(EffectProperties.GAME_MAX_FAILURES);
+        return value == null ? 1 : value;
+    }
+
+    /**
+     * Sets the maximum number of non-timeout failures. Values below one are
+     * clamped when the game settings are created.
+     */
+    default Effect gameMaxFailures(int maxFailures) {
+        return arg(EffectProperties.GAME_MAX_FAILURES, maxFailures);
+    }
+
+    /**
      * Sets the game time adder.
      *
      * @param gameTimeAdder the new game time adder

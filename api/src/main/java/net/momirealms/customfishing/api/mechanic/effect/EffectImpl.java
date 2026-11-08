@@ -207,7 +207,9 @@ public class EffectImpl implements Effect {
         this.multipleLootChance += another.multipleLootChance();
         this.weightOperations.addAll(another.weightOperations());
         this.weightOperationsIgnored.addAll(another.weightOperationsIgnored());
+        int maxFailures = gameMaxFailures() + another.gameMaxFailures() - 1;
         this.properties.putAll(another.properties());
+        gameMaxFailures(maxFailures);
     }
 
     @Override

@@ -52,7 +52,8 @@ public record GameBasicsImpl(MathValue<Player> time, MathValue<Player> difficult
     public GameSetting toGameSetting(Context<Player> context, Effect effect) {
         return new GameSetting(
                 time.evaluate(context) * effect.gameTimeMultiplier() + effect.gameTimeAdder(),
-                Math.min(100, Math.max(1, difficulty.evaluate(context) * effect.difficultyMultiplier() + effect.difficultyAdder()))
+                Math.min(100, Math.max(1, difficulty.evaluate(context) * effect.difficultyMultiplier() + effect.difficultyAdder())),
+                effect.gameMaxFailures()
         );
     }
 }
