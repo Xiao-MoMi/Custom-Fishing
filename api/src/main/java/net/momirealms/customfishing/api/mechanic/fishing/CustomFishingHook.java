@@ -58,6 +58,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Represents a custom fishing hook.
@@ -350,6 +351,19 @@ public class CustomFishingHook {
             handleSuccessfulFishing();
             destroy();
         }
+    }
+
+    /**
+     * Replaces the current attempt with a fresh instance on the hook's region thread.
+     * A cancelled or replaced game must not be restarted by a queued task.
+     */
+    @ApiStatus.Internal
+    public boolean restartGame(GamingPlayer previous, Supplier<? extends GamingPlayer> factory) {
+        if (!isHookValid() || gamingPlayer != previous || !previous.isValid()) return false;
+        previous.destroy();
+        gamingPlayer = factory.get();
+        EventUtils.fireAndForget(new FishingGameStartEvent(this, gamingPlayer));
+        return true;
     }
 
     /**

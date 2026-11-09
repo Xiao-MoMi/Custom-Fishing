@@ -25,7 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Fired on the hook's region thread once for each prevented non-timeout failure.
- * This notification cannot be cancelled and does not extend the game deadline.
+ * The failed attempt has been replaced with a fresh game and a new deadline.
+ * This notification cannot be cancelled.
  */
 public class FishingGameFailurePreventedEvent extends PlayerEvent {
     private static final HandlerList handlerList = new HandlerList();
@@ -44,6 +45,7 @@ public class FishingGameFailurePreventedEvent extends PlayerEvent {
         return hook;
     }
 
+    /** @return the failed attempt; the hook holds the new game instance */
     public GamingPlayer gamingPlayer() {
         return gamingPlayer;
     }

@@ -27,6 +27,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 
 /**
  * Represents an abstract gaming player.
@@ -41,6 +42,8 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     protected boolean isTimeOut;
     private volatile boolean valid = true;
     private int preventedFailures;
+    private volatile boolean restarting;
+    private BiFunction<CustomFishingHook, GameSetting, AbstractGamingPlayer> restartProvider;
     private boolean firstFlag = true;
     protected Boolean forcedGameResult;
 
@@ -60,6 +63,17 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
         this.settings = settings;
         this.deadline = (long) (System.currentTimeMillis() + settings.time() * 1000L);
         this.arrangeTask();
+    }
+
+    void restartProvider(BiFunction<CustomFishingHook, GameSetting, AbstractGamingPlayer> provider) {
+        this.restartProvider = provider;
+    }
+
+    private AbstractGamingPlayer restart() {
+        AbstractGamingPlayer player = restartProvider.apply(hook, settings);
+        player.restartProvider = restartProvider;
+        player.preventedFailures = preventedFailures;
+        return player;
     }
 
     @Override
@@ -196,7 +210,7 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
      */
     @Override
     public void run() {
-        if (timeOutCheck()) {
+        if (!isValid() || restarting || timeOutCheck()) {
             return;
         }
         tick();
@@ -222,15 +236,18 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
      */
     @Override
     public synchronized void endGame() {
-        if (!isValid()) return;
+        if (!isValid() || restarting) return;
         if (System.currentTimeMillis() >= deadline) isTimeOut = true;
         boolean success = isSuccessful();
-        if (!success && !isTimeOut && preventedFailures < settings.maxFailures() - 1) {
+        if (!success && !isTimeOut && restartProvider != null && preventedFailures < settings.maxFailures() - 1) {
             int failureCount = ++preventedFailures;
-            onFailurePrevented();
-            BukkitCustomFishingPlugin.getInstance().getScheduler().sync().run(() ->
-                    EventUtils.fireAndForget(new FishingGameFailurePreventedEvent(hook, this, failureCount)),
-                    hook.getHookEntity().getLocation());
+            restarting = true;
+            if (task != null) task.cancel();
+            BukkitCustomFishingPlugin.getInstance().getScheduler().sync().run(() -> {
+                if (hook.restartGame(this, this::restart)) {
+                    EventUtils.fireAndForget(new FishingGameFailurePreventedEvent(hook, this, failureCount));
+                }
+            }, hook.getHookEntity().getLocation());
             return;
         }
         destroy();
@@ -242,13 +259,6 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
             }
             hook.destroy();
         }, hook.getHookEntity().getLocation());
-    }
-
-    /**
-     * Restores playable state after a non-timeout failure is prevented.
-     * The deadline and accumulated progress are preserved unless overridden.
-     */
-    protected void onFailurePrevented() {
     }
 
     /**

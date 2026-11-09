@@ -72,7 +72,10 @@ public abstract class AbstractGame implements Game {
         GameSetting setting = this.basics.toGameSetting(hook.getContext(), effect);
         FishingGamePreStartEvent event = new FishingGamePreStartEvent(hook, setting);
         EventUtils.fireAndForget(event);
-        return gamingPlayerProvider().apply(hook, event.setting());
+        BiFunction<CustomFishingHook, GameSetting, AbstractGamingPlayer> provider = gamingPlayerProvider();
+        AbstractGamingPlayer player = provider.apply(hook, event.setting());
+        player.restartProvider(provider);
+        return player;
     }
 
     /**

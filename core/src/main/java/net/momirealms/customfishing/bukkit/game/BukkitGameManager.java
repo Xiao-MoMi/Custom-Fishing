@@ -602,14 +602,6 @@ public class BukkitGameManager implements GameManager {
                             return true;
                         }
 
-                        @Override
-                        protected void onFailurePrevented() {
-                            clickedTimes = Math.min(Math.nextDown((double) requiredClicks),
-                                    Math.max(1, initialTimes.evaluate(hook.getContext())));
-                            ticks = 1;
-                            showUI();
-                        }
-
                         private void handleClicks() {
                             clickedTimes++;
                             if (clickedTimes >= requiredClicks) {
@@ -698,14 +690,6 @@ public class BukkitGameManager implements GameManager {
                             if (actionbarTip != null) {
                                 SparrowHeart.getInstance().sendActionBar(getPlayer(), AdventureHelper.miniMessageToJson(actionbarTip));
                             }
-                            showUI();
-                        }
-
-                        @Override
-                        protected void onFailurePrevented() {
-                            fish_position = fishStartPosition;
-                            strain = 0;
-                            struggling_time = 0;
                             showUI();
                         }
 
@@ -836,12 +820,6 @@ public class BukkitGameManager implements GameManager {
                             }
                             handleCorrectAction();
                             return false;
-                        }
-
-                        @Override
-                        protected void onFailurePrevented() {
-                            fail = false;
-                            showUI();
                         }
 
                         private void handleCorrectAction() {
