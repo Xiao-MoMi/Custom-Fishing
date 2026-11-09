@@ -239,7 +239,7 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
         if (!isValid() || restarting) return;
         if (System.currentTimeMillis() >= deadline) isTimeOut = true;
         boolean success = isSuccessful();
-        if (!success && !isTimeOut && restartProvider != null && preventedFailures < settings.maxFailures() - 1) {
+        if (!success && restartProvider != null && preventedFailures < settings.maxFailures() - 1) {
             int failureCount = ++preventedFailures;
             restarting = true;
             if (task != null) task.cancel();

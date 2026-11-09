@@ -24,7 +24,7 @@ import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Fired on the hook's region thread once for each prevented non-timeout failure.
+ * Fired on the hook's region thread once for each prevented failure (including a timeout).
  * The failed attempt has been replaced with a fresh game and a new deadline.
  * This notification cannot be cancelled.
  */
