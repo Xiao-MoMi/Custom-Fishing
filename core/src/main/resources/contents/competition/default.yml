@@ -75,7 +75,8 @@ weekend_competition:
     interval: 1200 # in ticks
 
   # What /customfishing competition top shows, with the same placeholders as the broadcast
-  # plus {rank}, {score} and {score_formatted} of the player using it
+  # plus {rank}, {score}, {score_formatted} and {fish} of the player using it
+  # {1_fish} and {fish} show the record fish in MAX_SIZE and MIN_SIZE goals
   # Increase placeholder-limit in config.yml to show more than the top 3
   # Without this section the competition has no leaderboard
   leaderboard:

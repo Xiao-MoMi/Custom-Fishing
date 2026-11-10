@@ -22,6 +22,7 @@ import net.momirealms.customfishing.api.mechanic.competition.RankingProvider;
 import net.momirealms.customfishing.common.util.Pair;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implementation of the Ranking interface that manages the ranking of competition players locally.
@@ -29,6 +30,7 @@ import java.util.*;
 public class LocalRankingProvider implements RankingProvider {
 
     private final Set<CompetitionPlayer> competitionPlayers;
+    private final Map<String, String> fish = new ConcurrentHashMap<>();
 
     public LocalRankingProvider() {
         competitionPlayers = Collections.synchronizedSet(new TreeSet<>());
@@ -52,6 +54,7 @@ public class LocalRankingProvider implements RankingProvider {
     @Override
     public void removePlayer(String player) {
         competitionPlayers.removeIf(e -> e.getPlayer().equals(player));
+        fish.remove(player);
     }
 
     /**
@@ -69,6 +72,7 @@ public class LocalRankingProvider implements RankingProvider {
     @Override
     public void clear() {
         competitionPlayers.clear();
+        fish.clear();
     }
 
     /**
@@ -232,5 +236,15 @@ public class LocalRankingProvider implements RankingProvider {
             competitionPlayer = new CompetitionPlayer(player, score);
             addPlayer(competitionPlayer);
         }
+    }
+
+    @Override
+    public void setFish(String player, String fish) {
+        this.fish.put(player, fish);
+    }
+
+    @Override
+    public String getFish(String player) {
+        return fish.get(player);
     }
 }

@@ -69,6 +69,7 @@ public class ContextKeys<T> {
     public static final ContextKeys<Double> MIN_SIZE = of("min_size", Double.class);
     public static final ContextKeys<Double> MAX_SIZE = of("max_size", Double.class);
     public static final ContextKeys<String> RANK = of("rank", String.class);
+    public static final ContextKeys<String> FISH = of("fish", String.class);
     public static final ContextKeys<Location> OTHER_LOCATION = of("other_location", Location.class);
     public static final ContextKeys<ActiveTotemList> TOTEMS = of("totems", ActiveTotemList.class);
     public static final ContextKeys<Integer> OTHER_X = of("other_x", Integer.class);

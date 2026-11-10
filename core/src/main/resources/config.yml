@@ -413,7 +413,7 @@ mechanics:
     redis-ranking: false
     # Server group for competition
     server-group: default
-    # Increase this value to allow more placeholders like {4_player} and {5_score}
+    # Increase this value to allow more placeholders like {4_player}, {5_score} and {5_fish}
     placeholder-limit: 3
   # If multiple loots are obtained during fishing, should they spawn simultaneously or with a delay (in ticks) between each?
   multiple-loot-spawn-delay: 4

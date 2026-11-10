@@ -59,11 +59,13 @@ public class CompetitionTopCommand extends BukkitCommandFeature<CommandSender> {
                     RankingProvider ranking = competition.getRanking();
                     double score = player == null ? 0 : ranking.getPlayerScore(player.getName());
                     int rank = player == null ? -1 : ranking.getPlayerRank(player.getName());
+                    String fish = player == null ? null : ranking.getFish(player.getName());
                     double shownScore = competition.getGoal().isReversed() ? -score : score;
                     Context<Player> placeholders = Context.player(player);
                     placeholders.arg(ContextKeys.SCORE_FORMATTED, score == 0 ? TranslationManager.miniMessageTranslation(MessageConstants.COMPETITION_NO_SCORE.build().key()) : String.format("%.2f", shownScore));
                     placeholders.arg(ContextKeys.SCORE, shownScore);
                     placeholders.arg(ContextKeys.RANK, rank != -1 ? String.valueOf(rank) : TranslationManager.miniMessageTranslation(MessageConstants.COMPETITION_NO_RANK.build().key()));
+                    placeholders.arg(ContextKeys.FISH, fish == null ? "" : fish);
                     placeholders.combine(competition.getPublicContext());
 
                     Sender audience = getSenderFactory().wrap(context.sender());
