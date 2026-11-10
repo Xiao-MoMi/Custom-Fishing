@@ -39,6 +39,7 @@ public class CompetitionConfigImpl implements CompetitionConfig {
     private final Action<Player>[] startActions;
     private final Action<Player>[] endActions;
     private final Action<Player>[] joinActions;
+    private final Action<Player>[] leaderChangeActions;
     private final HashMap<String, Action<Player>[]> rewards;
     private final BossBarConfig bossBarConfig;
     private final ActionBarConfig actionBarConfig;
@@ -47,7 +48,7 @@ public class CompetitionConfigImpl implements CompetitionConfig {
     private final List<CompetitionSchedule> schedules;
 
     public CompetitionConfigImpl(String key, CompetitionGoal goal, int duration, int minPlayers, Requirement<Player>[] joinRequirements,
-                                 Action<Player>[] skipActions, Action<Player>[] startActions, Action<Player>[] endActions, Action<Player>[] joinActions, HashMap<String, Action<Player>[]> rewards,
+                                 Action<Player>[] skipActions, Action<Player>[] startActions, Action<Player>[] endActions, Action<Player>[] joinActions, Action<Player>[] leaderChangeActions, HashMap<String, Action<Player>[]> rewards,
                                  BossBarConfig bossBarConfig, ActionBarConfig actionBarConfig, BroadcastConfig broadcastConfig, String[] leaderboardTexts,
                                  List<CompetitionSchedule> schedules) {
         this.key = key;
@@ -59,6 +60,7 @@ public class CompetitionConfigImpl implements CompetitionConfig {
         this.startActions = startActions;
         this.endActions = endActions;
         this.joinActions = joinActions;
+        this.leaderChangeActions = leaderChangeActions;
         this.rewards = rewards;
         this.bossBarConfig = bossBarConfig;
         this.actionBarConfig = actionBarConfig;
@@ -95,6 +97,11 @@ public class CompetitionConfigImpl implements CompetitionConfig {
     @Override
     public Action<Player>[] joinActions() {
         return joinActions;
+    }
+
+    @Override
+    public Action<Player>[] leaderChangeActions() {
+        return leaderChangeActions;
     }
 
     @Override
@@ -152,6 +159,7 @@ public class CompetitionConfigImpl implements CompetitionConfig {
         private Action<Player>[] startActions = DEFAULT_START_ACTIONS;
         private Action<Player>[] endActions = DEFAULT_END_ACTIONS;
         private Action<Player>[] joinActions = DEFAULT_JOIN_ACTIONS;
+        private Action<Player>[] leaderChangeActions = DEFAULT_LEADER_CHANGE_ACTIONS;
         private HashMap<String, Action<Player>[]> rewards = DEFAULT_REWARDS;
         private BossBarConfig bossBarConfig;
         private ActionBarConfig actionBarConfig;
@@ -204,6 +212,11 @@ public class CompetitionConfigImpl implements CompetitionConfig {
             return this;
         }
         @Override
+        public Builder leaderChangeActions(Action<Player>[] leaderChangeActions) {
+            this.leaderChangeActions = leaderChangeActions;
+            return this;
+        }
+        @Override
         public Builder rewards(HashMap<String, Action<Player>[]> rewards) {
             this.rewards = rewards;
             return this;
@@ -235,7 +248,7 @@ public class CompetitionConfigImpl implements CompetitionConfig {
         }
         @Override
         public CompetitionConfig build() {
-            return new CompetitionConfigImpl(key, goal, duration, minPlayers, joinRequirements, skipActions, startActions, endActions, joinActions, rewards, bossBarConfig, actionBarConfig, broadcastConfig, leaderboardTexts, schedules);
+            return new CompetitionConfigImpl(key, goal, duration, minPlayers, joinRequirements, skipActions, startActions, endActions, joinActions, leaderChangeActions, rewards, bossBarConfig, actionBarConfig, broadcastConfig, leaderboardTexts, schedules);
         }
     }
 }

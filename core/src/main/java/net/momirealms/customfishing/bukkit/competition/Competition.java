@@ -258,6 +258,13 @@ public class Competition implements FishingCompetition {
 
     @Override
     public void refreshScore(Player player, double score) {
+        refreshScore(Context.player(player), score);
+    }
+
+    @Override
+    public void refreshScore(Context<Player> catchContext, double score) {
+        Player player = catchContext.holder();
+
         // if player join for the first time, trigger join actions
         if (!hasPlayerJoined(player)) {
             ActionManager.trigger(Context.player(player).combine(publicContext), config.joinActions());
@@ -269,8 +276,19 @@ public class Competition implements FishingCompetition {
         if (this.actionBarManager != null)
             this.actionBarManager.showActionBarTo(player);
 
-        // refresh data
+        // refresh data, reading the previous leader only when someone listens for a leader change
+        Action<Player>[] leaderChangeActions = config.leaderChangeActions();
+        String previousLeader = leaderChangeActions != null && leaderChangeActions.length > 0 ? rankingProvider.getPlayerAt(1) : null;
         this.goal.refreshScore(rankingProvider, player, score);
+
+        // not on the first score of the competition, nor when the leader improves their own score
+        if (previousLeader != null && !previousLeader.equals(player.getName()) && player.getName().equals(rankingProvider.getPlayerAt(1))) {
+            double leaderScore = getScore(player.getName());
+            Context<Player> context = Context.player(player).combine(catchContext).combine(publicContext);
+            context.arg(ContextKeys.SCORE, leaderScore);
+            context.arg(ContextKeys.SCORE_FORMATTED, String.format("%.2f", leaderScore));
+            ActionManager.trigger(context, leaderChangeActions);
+        }
     }
 
     @Override

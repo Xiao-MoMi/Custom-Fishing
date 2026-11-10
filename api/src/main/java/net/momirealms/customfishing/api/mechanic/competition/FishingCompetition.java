@@ -69,6 +69,15 @@ public interface FishingCompetition {
     void refreshScore(Player player, double score);
 
     /**
+     * Refreshes the score for the player of the given context, like {@link #refreshScore(Player, double)}.
+     * The context of the catch makes its placeholders, such as {nick}, available to the competition actions.
+     *
+     * @param context The context of the player's catch.
+     * @param score The score to add or refresh
+     */
+    void refreshScore(Context<Player> context, double score);
+
+    /**
      * Checks if a player has joined the fishing competition based on their name.
      *
      * @param player The player to check for participation.

@@ -51,6 +51,7 @@ public class CompetitionConfigParser {
                 .rewards(getPrizeActions(section.getSection("rewards")))
                 .joinRequirements(BukkitCustomFishingPlugin.getInstance().getRequirementManager().parseRequirements(section.getSection("participate-requirements"), false))
                 .joinActions(BukkitCustomFishingPlugin.getInstance().getActionManager().parseActions(section.getSection("participate-actions")))
+                .leaderChangeActions(BukkitCustomFishingPlugin.getInstance().getActionManager().parseActions(section.getSection("leader-change-actions")))
                 .startActions(BukkitCustomFishingPlugin.getInstance().getActionManager().parseActions(section.getSection("start-actions")))
                 .endActions(BukkitCustomFishingPlugin.getInstance().getActionManager().parseActions(section.getSection("end-actions")))
                 .skipActions(BukkitCustomFishingPlugin.getInstance().getActionManager().parseActions(section.getSection("skip-actions")));;

@@ -126,6 +126,14 @@ weekend_competition:
       value:
         - 'You have joined the competition. Good luck!'
 
+  # Triggered when a player takes first place from another player, with the placeholders of that catch like {nick}
+  # Uncomment it if needed. It suits MAX_SIZE and MIN_SIZE: with CATCH_AMOUNT or TOTAL_* goals first place can change on almost every catch
+  # leader-change-actions:
+  #   broadcast:
+  #     type: broadcast
+  #     value:
+  #       - '<gray>[<#87CEFA>🎣<gray>] <#E1FFFF>{player} <#B0C4DE>is now No.1 with <#E1FFFF>{nick} <#B0C4DE>({score_formatted})'
+
   # Requirements for participating the competition
   participate-requirements: {}
 

@@ -40,6 +40,7 @@ public interface CompetitionConfig {
     Action<Player>[] DEFAULT_START_ACTIONS = null;
     Action<Player>[] DEFAULT_END_ACTIONS = null;
     Action<Player>[] DEFAULT_JOIN_ACTIONS = null;
+    Action<Player>[] DEFAULT_LEADER_CHANGE_ACTIONS = null;
     HashMap<String, Action<Player>[]> DEFAULT_REWARDS = new HashMap<>();
 
     /**
@@ -83,6 +84,13 @@ public interface CompetitionConfig {
      * @return an array of join actions.
      */
     Action<Player>[] joinActions();
+
+    /**
+     * Gets the actions to be performed when a player takes first place from another player.
+     *
+     * @return an array of leader change actions.
+     */
+    Action<Player>[] leaderChangeActions();
 
     /**
      * Gets the actions to be performed when a player skips the competition.
@@ -232,6 +240,14 @@ public interface CompetitionConfig {
          * @return the builder instance.
          */
         Builder joinActions(Action<Player>[] joinActions);
+
+        /**
+         * Sets the actions to be performed when a player takes first place from another player.
+         *
+         * @param leaderChangeActions an array of leader change actions.
+         * @return the builder instance.
+         */
+        Builder leaderChangeActions(Action<Player>[] leaderChangeActions);
 
         /**
          * Sets the rewards for the competition.
