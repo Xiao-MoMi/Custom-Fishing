@@ -42,9 +42,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -213,33 +215,70 @@ public class BukkitBagManager implements BagManager, Listener {
     public void onInvClick(InventoryClickEvent event) {
         if (!(event.getInventory().getHolder(false) instanceof FishingBagHolder))
             return;
-        ItemStack movedItem = event.getCurrentItem();
+        Inventory top = event.getView().getTopInventory();
         Inventory clicked = event.getClickedInventory();
-        if (clicked != event.getWhoClicked().getInventory()) {
-            if (event.getAction() != InventoryAction.HOTBAR_SWAP && event.getAction() != InventoryAction.HOTBAR_MOVE_AND_READD) {
-                return;
+        ItemStack movedItem;
+
+        if (clicked == top) {
+            switch (event.getAction()) {
+                case PLACE_ALL, PLACE_ONE, PLACE_SOME, SWAP_WITH_CURSOR -> movedItem = event.getCursor();
+                case HOTBAR_SWAP -> {
+                    if (event.getClick() == ClickType.SWAP_OFFHAND) {
+                        movedItem = event.getWhoClicked().getInventory().getItemInOffHand();
+                    } else {
+                        int hotbarButton = event.getHotbarButton();
+                        if (hotbarButton < 0 || hotbarButton > 8) {
+                            event.setCancelled(true);
+                            return;
+                        }
+                        movedItem = event.getWhoClicked().getInventory().getItem(hotbarButton);
+                    }
+                }
+
+                // Pickups, drops, collection and HOTBAR_MOVE_AND_READD only withdraw items.
+                default -> {
+                    return;
+                }
             }
-            int hotbarButton = event.getHotbarButton();
-            // can be -1 when the swap wasn't triggered by a number key (e.g. offhand swap)
-            if (hotbarButton < 0) {
-                return;
-            }
-            movedItem = event.getWhoClicked().getInventory().getItem(hotbarButton);
-        }
-        if (movedItem == null || movedItem.getType() == Material.AIR || bagWhiteListItems.contains(movedItem.getType()))
+        } else if (clicked == event.getView().getBottomInventory()
+                && event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
+            movedItem = event.getCurrentItem();
+        } else {
             return;
-        String id = plugin.getItemManager().getItemID(movedItem);
+        }
+        if (!canStore(movedItem)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onInvDrag(InventoryDragEvent event) {
+        Inventory top = event.getView().getTopInventory();
+        if (!(top.getHolder(false) instanceof FishingBagHolder))
+            return;
+        for (Map.Entry<Integer, ItemStack> entry : event.getNewItems().entrySet()) {
+            int slot = entry.getKey();
+            if (slot >= 0 && slot < top.getSize() && !canStore(entry.getValue())) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+    private boolean canStore(ItemStack item) {
+        if (item == null || item.getType().isAir() || bagWhiteListItems.contains(item.getType()))
+            return true;
+        String id = plugin.getItemManager().getItemID(item);
         List<MechanicType> type = MechanicType.getTypeByID(id);
         if (type == null) {
-            event.setCancelled(true);
-            return;
+            return false;
         }
         for (MechanicType mechanicType : type) {
             if (storedTypes.contains(mechanicType)) {
-                return;
+                return true;
             }
         }
-        event.setCancelled(true);
+        return false;
     }
 
     /**
