@@ -88,6 +88,7 @@ public class CompetitionConfigParser {
                             .build()
             );
         }
+        builder.leaderboardTexts(section.getStringList("leaderboard.text").toArray(new String[0]));
         List<Pair<Integer, Integer>> timePairs = section.getStringList("start-time")
                 .stream().map(it -> {
                     String[] split = it.split(":");

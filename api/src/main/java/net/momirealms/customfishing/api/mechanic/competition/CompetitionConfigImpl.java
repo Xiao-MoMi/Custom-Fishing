@@ -43,11 +43,12 @@ public class CompetitionConfigImpl implements CompetitionConfig {
     private final BossBarConfig bossBarConfig;
     private final ActionBarConfig actionBarConfig;
     private final BroadcastConfig broadcastConfig;
+    private final String[] leaderboardTexts;
     private final List<CompetitionSchedule> schedules;
 
     public CompetitionConfigImpl(String key, CompetitionGoal goal, int duration, int minPlayers, Requirement<Player>[] joinRequirements,
                                  Action<Player>[] skipActions, Action<Player>[] startActions, Action<Player>[] endActions, Action<Player>[] joinActions, HashMap<String, Action<Player>[]> rewards,
-                                 BossBarConfig bossBarConfig, ActionBarConfig actionBarConfig, BroadcastConfig broadcastConfig,
+                                 BossBarConfig bossBarConfig, ActionBarConfig actionBarConfig, BroadcastConfig broadcastConfig, String[] leaderboardTexts,
                                  List<CompetitionSchedule> schedules) {
         this.key = key;
         this.goal = goal;
@@ -62,6 +63,7 @@ public class CompetitionConfigImpl implements CompetitionConfig {
         this.bossBarConfig = bossBarConfig;
         this.actionBarConfig = actionBarConfig;
         this.broadcastConfig = broadcastConfig;
+        this.leaderboardTexts = leaderboardTexts;
         this.schedules = schedules;
     }
 
@@ -131,6 +133,11 @@ public class CompetitionConfigImpl implements CompetitionConfig {
     }
 
     @Override
+    public String[] leaderboardTexts() {
+        return leaderboardTexts;
+    }
+
+    @Override
     public List<CompetitionSchedule> schedules() {
         return schedules;
     }
@@ -149,6 +156,7 @@ public class CompetitionConfigImpl implements CompetitionConfig {
         private BossBarConfig bossBarConfig;
         private ActionBarConfig actionBarConfig;
         private BroadcastConfig broadcastConfig;
+        private String[] leaderboardTexts = new String[0];
         private final List<CompetitionSchedule> schedules = new ArrayList<>();
         @Override
         public Builder id(String key) {
@@ -216,13 +224,18 @@ public class CompetitionConfigImpl implements CompetitionConfig {
             return this;
         }
         @Override
+        public Builder leaderboardTexts(String[] leaderboardTexts) {
+            this.leaderboardTexts = leaderboardTexts;
+            return this;
+        }
+        @Override
         public Builder schedules(List<CompetitionSchedule> schedules) {
             this.schedules.addAll(schedules);
             return this;
         }
         @Override
         public CompetitionConfig build() {
-            return new CompetitionConfigImpl(key, goal, duration, minPlayers, joinRequirements, skipActions, startActions, endActions, joinActions, rewards, bossBarConfig, actionBarConfig, broadcastConfig, schedules);
+            return new CompetitionConfigImpl(key, goal, duration, minPlayers, joinRequirements, skipActions, startActions, endActions, joinActions, rewards, bossBarConfig, actionBarConfig, broadcastConfig, leaderboardTexts, schedules);
         }
     }
 }

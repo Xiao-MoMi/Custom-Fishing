@@ -134,6 +134,13 @@ public interface CompetitionConfig {
     BroadcastConfig broadcastConfig();
 
     /**
+     * Gets the texts shown by the leaderboard command during the competition.
+     *
+     * @return the leaderboard texts
+     */
+    String[] leaderboardTexts();
+
+    /**
      * Get the time to start competition
      *
      * @return schedules
@@ -257,6 +264,14 @@ public interface CompetitionConfig {
          * @return the builder instance.
          */
         Builder broadcastConfig(BroadcastConfig broadcastConfig);
+
+        /**
+         * Sets the texts shown by the leaderboard command during the competition.
+         *
+         * @param leaderboardTexts the leaderboard texts.
+         * @return the builder instance.
+         */
+        Builder leaderboardTexts(String[] leaderboardTexts);
 
         /**
          * Sets the configuration for schedules of the competition.

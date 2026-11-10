@@ -1,6 +1,6 @@
 # Translated into Ukrainian by a team of enthusiasts: mrbear25, mihayrus and kefu
 # Don't change this
-config-version: "33"
+config-version: "34"
 
 exception.invalid_syntax: "<red>Неправильний синтаксис. Правильний синтаксис: <white><arg:0></white></red>"
 exception.invalid_argument: "<red>Неправильний аргумент. Причина: <white><arg:0></white></red>"
@@ -50,6 +50,7 @@ command.fish_finder.no_loot: "<white>Тут нічого не знайдено</
 command.fish_finder.split_char: ", "
 command.competition.failure.not_exist: "<red>Змагання <arg:0> не існує.</red>"
 command.competition.failure.no_competition: "<red>Нині не відбувається жодних змагань.</red>"
+command.competition.failure.no_leaderboard: "<red>У цього змагання немає рейтингу.</red>"
 command.competition.stop.success: "<white>Поточне змагання зупинено.</white>"
 command.competition.end.success: "<white>Поточне змагання завершено.</white>"
 command.competition.start.success: "<white>Змагання розпочатно.</white>"

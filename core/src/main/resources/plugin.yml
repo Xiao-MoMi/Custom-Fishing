@@ -33,3 +33,5 @@ permissions:
     default: false
   customfishing.sellfish:
     default: true
+  customfishing.competition.top:
+    default: true

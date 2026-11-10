@@ -74,6 +74,25 @@ weekend_competition:
       - '<#D4F2E7>◣─────────────────────────◢'
     interval: 1200 # in ticks
 
+  # What /customfishing competition top shows, with the same placeholders as the broadcast
+  # plus {rank}, {score} and {score_formatted} of the player using it
+  # Increase placeholder-limit in config.yml to show more than the top 3
+  # Without this section the competition has no leaderboard
+  leaderboard:
+    text:
+      - '<#D4F2E7>◤─────────────────────────◥'
+      - ''
+      - '             <gray>[<#87CEFA>🎣<gray>]  <gradient:#F0F8FF:#87CEFA:#F0F8FF>Fishing Competition'
+      - ''
+      - '     <#E1FFFF>Current Ranking:</#E1FFFF>'
+      - '              <gradient:#FFF8DC:#FFD700:#FFF8DC>No.①: {1_player} - {1_score}'
+      - '              <gradient:#F5FFFA:#F5F5F5:#F5FFFA>No.②: {2_player} - {2_score}'
+      - '              <gradient:#D2B48C:#CD853F:#D2B48C>No.③: {3_player} - {3_score}'
+      - ''
+      - '     <#E1FFFF>Your Rank: <#B0C4DE>{rank} <gray>| <#E1FFFF>Your Score: <#B0C4DE>{score_formatted}'
+      - ''
+      - '<#D4F2E7>◣─────────────────────────◢'
+
   start-actions:
     broadcast:
       type: broadcast

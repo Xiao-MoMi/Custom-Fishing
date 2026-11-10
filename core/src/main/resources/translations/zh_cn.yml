@@ -1,5 +1,5 @@
 # 别动这个
-config-version: "33"
+config-version: "34"
 
 exception.invalid_syntax: "<red>无效语法. 正确语法:<white><arg:0></white></red>"
 exception.invalid_argument: "<red>无效参数. 原因:<white><arg:0></white></red>"
@@ -49,6 +49,7 @@ command.fish_finder.no_loot: "<white>这里钓不到任何东西</white>"
 command.fish_finder.split_char: ", "
 command.competition.failure.not_exist: "<red>比赛 <arg:0> 不存在</red>"
 command.competition.failure.no_competition: "<red>当前没有正在进行的比赛</red>"
+command.competition.failure.no_leaderboard: "<red>该比赛没有排行榜</red>"
 command.competition.stop.success: "<white>成功停止当前比赛</white>"
 command.competition.end.success: "<white>成功结束当前比赛</white>"
 command.competition.start.success: "<white>成功开始比赛</white>"
