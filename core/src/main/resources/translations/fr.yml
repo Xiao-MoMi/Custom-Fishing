@@ -1,5 +1,5 @@
 # Don't change this
-config-version: "33"
+config-version: "34"
 
 exception.invalid_syntax: "<red>Syntaxe invalide. La syntaxe correcte est: <white><arg:0></white></red>"
 exception.invalid_argument: "<red>Argument invalide. Raison: <white><arg:0></white></red>"
@@ -49,6 +49,7 @@ command.fish_finder.no_loot: "<white>Pas de Butin ici</white>"
 command.fish_finder.split_char: ", "
 command.competition.failure.not_exist: "<red>Compétition <arg:0> n'existe pas.</red>"
 command.competition.failure.no_competition: "<red>Il n'y a pas de compétition en cours.</red>"
+command.competition.failure.no_leaderboard: "<red>Cette compétition n'a pas de classement.</red>"
 command.competition.stop.success: "<white>Arrêt de la compétition en cours.</white>"
 command.competition.end.success: "<white>Fin de la compétition en cours.</white>"
 command.competition.start.success: "<white>Début de la compétition.</white>"

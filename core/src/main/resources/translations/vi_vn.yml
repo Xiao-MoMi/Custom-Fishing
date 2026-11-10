@@ -1,6 +1,6 @@
 # Không đổi !!!
 # Việt hóa bởi https://github.com/NguyenSonhoa
-config-version: "33"
+config-version: "34"
 
 exception.invalid_syntax: "<red>Cú pháp không hợp lệ. Cú pháp đúng: <white><arg:0></white></red>"
 exception.invalid_argument: "<red>Tham số không hợp lệ. Lý do: <white><arg:0></white></red>"
@@ -50,6 +50,7 @@ command.fish_finder.no_loot: "<white>Không tìm thấy vật phẩm nào ở đ
 command.fish_finder.split_char: ", "
 command.competition.failure.not_exist: "<red>Cuộc thi <arg:0> không tồn tại.</red>"
 command.competition.failure.no_competition: "<red>Hiện không có cuộc thi nào đang diễn ra.</red>"
+command.competition.failure.no_leaderboard: "<red>Cuộc thi này không có bảng xếp hạng.</red>"
 command.competition.stop.success: "<white>Đã dừng cuộc thi hiện tại.</white>"
 command.competition.end.success: "<white>Đã kết thúc cuộc thi hiện tại.</white>"
 command.competition.start.success: "<white>Đã bắt đầu cuộc thi.</white>"

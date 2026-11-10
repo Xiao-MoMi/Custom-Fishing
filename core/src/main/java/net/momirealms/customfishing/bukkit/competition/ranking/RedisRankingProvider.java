@@ -36,7 +36,7 @@ public class RedisRankingProvider implements RankingProvider {
     @Override
     public void clear() {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
-            jedis.del("cf_competition_" + ConfigManager.serverGroup());
+            jedis.del("cf_competition_" + ConfigManager.serverGroup(), "cf_competition_fish_" + ConfigManager.serverGroup());
         }
     }
 
@@ -75,6 +75,7 @@ public class RedisRankingProvider implements RankingProvider {
     public void removePlayer(String player) {
         try (Jedis jedis = RedisManager.getInstance().getJedis()) {
             jedis.zrem("cf_competition_" + ConfigManager.serverGroup(), player);
+            jedis.hdel("cf_competition_fish_" + ConfigManager.serverGroup(), player);
         }
     }
 
@@ -189,6 +190,20 @@ public class RedisRankingProvider implements RankingProvider {
             List<Tuple> players = jedis.zrevrangeWithScores("cf_competition_" + ConfigManager.serverGroup(), rank - 1, rank -1);
             if (players == null || players.isEmpty()) return 0;
             return players.get(0).getScore();
+        }
+    }
+
+    @Override
+    public void setFish(String player, String fish) {
+        try (Jedis jedis = RedisManager.getInstance().getJedis()) {
+            jedis.hset("cf_competition_fish_" + ConfigManager.serverGroup(), player, fish);
+        }
+    }
+
+    @Override
+    public String getFish(String player) {
+        try (Jedis jedis = RedisManager.getInstance().getJedis()) {
+            return jedis.hget("cf_competition_fish_" + ConfigManager.serverGroup(), player);
         }
     }
 }

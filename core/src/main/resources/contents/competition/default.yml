@@ -74,6 +74,26 @@ weekend_competition:
       - '<#D4F2E7>◣─────────────────────────◢'
     interval: 1200 # in ticks
 
+  # What /customfishing competition top shows, with the same placeholders as the broadcast
+  # plus {rank}, {score}, {score_formatted} and {fish} of the player using it
+  # {1_fish} and {fish} show the record fish in MAX_SIZE and MIN_SIZE goals
+  # Increase placeholder-limit in config.yml to show more than the top 3
+  # Without this section the competition has no leaderboard
+  leaderboard:
+    text:
+      - '<#D4F2E7>◤─────────────────────────◥'
+      - ''
+      - '             <gray>[<#87CEFA>🎣<gray>]  <gradient:#F0F8FF:#87CEFA:#F0F8FF>Fishing Competition'
+      - ''
+      - '     <#E1FFFF>Current Ranking:</#E1FFFF>'
+      - '              <gradient:#FFF8DC:#FFD700:#FFF8DC>No.①: {1_player} - {1_score}'
+      - '              <gradient:#F5FFFA:#F5F5F5:#F5FFFA>No.②: {2_player} - {2_score}'
+      - '              <gradient:#D2B48C:#CD853F:#D2B48C>No.③: {3_player} - {3_score}'
+      - ''
+      - '     <#E1FFFF>Your Rank: <#B0C4DE>{rank} <gray>| <#E1FFFF>Your Score: <#B0C4DE>{score_formatted}'
+      - ''
+      - '<#D4F2E7>◣─────────────────────────◢'
+
   start-actions:
     broadcast:
       type: broadcast
@@ -106,6 +126,14 @@ weekend_competition:
       type: message
       value:
         - 'You have joined the competition. Good luck!'
+
+  # Triggered when a player takes first place from another player, with the placeholders of that catch like {nick}
+  # Uncomment it if needed. It suits MAX_SIZE and MIN_SIZE: with CATCH_AMOUNT or TOTAL_* goals first place can change on almost every catch
+  # leader-change-actions:
+  #   broadcast:
+  #     type: broadcast
+  #     value:
+  #       - '<gray>[<#87CEFA>🎣<gray>] <#E1FFFF>{player} <#B0C4DE>is now No.1 with <#E1FFFF>{nick} <#B0C4DE>({score_formatted})'
 
   # Requirements for participating the competition
   participate-requirements: {}

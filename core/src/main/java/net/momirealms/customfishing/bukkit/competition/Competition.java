@@ -142,6 +142,7 @@ public class Competition implements FishingCompetition {
                 Pair<String, Double> competitionPlayer = iterator.next();
                 this.publicContext.arg(ContextKeys.of(i + "_player", String.class), competitionPlayer.left());
                 this.publicContext.arg(ContextKeys.of(i + "_score", String.class), String.format("%.2f", goal.isReversed() ? -competitionPlayer.right() : competitionPlayer.right()));
+                this.publicContext.arg(ContextKeys.of(i + "_fish", String.class), getFish(competitionPlayer.left()));
                 if (i < rewardsMap.size()) {
                     Player player = Bukkit.getPlayer(competitionPlayer.left());
                     if (player != null) {
@@ -211,9 +212,11 @@ public class Competition implements FishingCompetition {
             if (player.isPresent()) {
                 this.publicContext.arg(ContextKeys.of(i + "_player", String.class), player.get());
                 this.publicContext.arg(ContextKeys.of(i + "_score", String.class), String.format("%.2f", getScore(i)));
+                this.publicContext.arg(ContextKeys.of(i + "_fish", String.class), getFish(player.get()));
             } else {
                 this.publicContext.arg(ContextKeys.of(i + "_player", String.class), TranslationManager.miniMessageTranslation(MessageConstants.COMPETITION_NO_PLAYER.build().key()));
                 this.publicContext.arg(ContextKeys.of(i + "_score", String.class), TranslationManager.miniMessageTranslation(MessageConstants.COMPETITION_NO_SCORE.build().key()));
+                this.publicContext.arg(ContextKeys.of(i + "_fish", String.class), "");
             }
         }
         this.publicContext.arg(ContextKeys.HOUR, remainingTime < 3600 ? "" : (remainingTime / 3600) + TranslationManager.miniMessageTranslation(MessageConstants.FORMAT_HOUR.build().key()));
@@ -231,6 +234,16 @@ public class Competition implements FishingCompetition {
     @ApiStatus.Internal
     public double getScore(int rank) {
         return goal.isReversed() ? -this.rankingProvider.getScoreAt(rank) : this.rankingProvider.getScoreAt(rank);
+    }
+
+    // only the size goals have a fish behind the score: the record one
+    private boolean recordsFish() {
+        return goal == CompetitionGoal.MAX_SIZE || goal == CompetitionGoal.MIN_SIZE;
+    }
+
+    private String getFish(String player) {
+        String fish = recordsFish() ? this.rankingProvider.getFish(player) : null;
+        return fish == null ? "" : fish;
     }
 
     @Override
@@ -258,6 +271,13 @@ public class Competition implements FishingCompetition {
 
     @Override
     public void refreshScore(Player player, double score) {
+        refreshScore(Context.player(player), score);
+    }
+
+    @Override
+    public void refreshScore(Context<Player> catchContext, double score) {
+        Player player = catchContext.holder();
+
         // if player join for the first time, trigger join actions
         if (!hasPlayerJoined(player)) {
             ActionManager.trigger(Context.player(player).combine(publicContext), config.joinActions());
@@ -269,8 +289,25 @@ public class Competition implements FishingCompetition {
         if (this.actionBarManager != null)
             this.actionBarManager.showActionBarTo(player);
 
-        // refresh data
+        // refresh data, reading the previous leader only when someone listens for a leader change
+        Action<Player>[] leaderChangeActions = config.leaderChangeActions();
+        String previousLeader = leaderChangeActions != null && leaderChangeActions.length > 0 ? rankingProvider.getPlayerAt(1) : null;
+        double previousScore = recordsFish() ? rankingProvider.getPlayerScore(player.getName()) : 0;
         this.goal.refreshScore(rankingProvider, player, score);
+
+        String fish = catchContext.arg(ContextKeys.NICK);
+        if (recordsFish() && fish != null && rankingProvider.getPlayerScore(player.getName()) != previousScore) {
+            rankingProvider.setFish(player.getName(), fish);
+        }
+
+        // not on the first score of the competition, nor when the leader improves their own score
+        if (previousLeader != null && !previousLeader.equals(player.getName()) && player.getName().equals(rankingProvider.getPlayerAt(1))) {
+            double leaderScore = getScore(player.getName());
+            Context<Player> context = Context.player(player).combine(catchContext).combine(publicContext);
+            context.arg(ContextKeys.SCORE, leaderScore);
+            context.arg(ContextKeys.SCORE_FORMATTED, String.format("%.2f", leaderScore));
+            ActionManager.trigger(context, leaderChangeActions);
+        }
     }
 
     @Override

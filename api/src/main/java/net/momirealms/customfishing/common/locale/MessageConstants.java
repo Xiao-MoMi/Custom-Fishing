@@ -48,6 +48,7 @@ public interface MessageConstants {
     TranslatableComponent.Builder COMMAND_FISH_FINDER_SPLIT_CHAR = Component.translatable().key("command.fish_finder.split_char");
     TranslatableComponent.Builder COMMAND_COMPETITION_FAILURE_NOT_EXIST = Component.translatable().key("command.competition.failure.not_exist");
     TranslatableComponent.Builder COMMAND_COMPETITION_FAILURE_NO_COMPETITION = Component.translatable().key("command.competition.failure.no_competition");
+    TranslatableComponent.Builder COMMAND_COMPETITION_FAILURE_NO_LEADERBOARD = Component.translatable().key("command.competition.failure.no_leaderboard");
     TranslatableComponent.Builder COMMAND_COMPETITION_START_SUCCESS = Component.translatable().key("command.competition.start.success");
     TranslatableComponent.Builder COMMAND_COMPETITION_STOP_SUCCESS = Component.translatable().key("command.competition.stop.success");
     TranslatableComponent.Builder COMMAND_COMPETITION_END_SUCCESS = Component.translatable().key("command.competition.end.success");

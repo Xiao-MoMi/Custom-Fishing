@@ -1,5 +1,5 @@
 # これを変更しないで
-config-version: "33"
+config-version: "34"
 
 exception.invalid_syntax: "<red>構文エラー。正しい構文は: <white><arg:0></white></red>"
 exception.invalid_argument: "<red>無効な引数。理由: <white><arg:0></white></red>"
@@ -49,6 +49,7 @@ command.fish_finder.no_loot: "<white>ここでは報酬が見つかりません�
 command.fish_finder.split_char: "、 "
 command.competition.failure.not_exist: "<red>コンペティション <arg:0> は存在しません。</red>"
 command.competition.failure.no_competition: "<red>現在進行中のコンペティションはありません。</red>"
+command.competition.failure.no_leaderboard: "<red>このコンペティションにはランキングがありません。</red>"
 command.competition.stop.success: "<white>現在のコンペティションを停止しました。</white>"
 command.competition.end.success: "<white>コンペティションを終了しました。</white>"
 command.competition.start.success: "<white>コンペティションを開始しました。</white>"

@@ -126,4 +126,21 @@ public interface RankingProvider {
      * @return The score of the player at the specified index, or 0 if not found.
      */
     double getScoreAt(int rank);
+
+    /**
+     * Sets the fish that gave a player their current score.
+     *
+     * @param player The name of the player.
+     * @param fish   The display name of the fish, in MiniMessage format.
+     */
+    void setFish(String player, String fish);
+
+    /**
+     * Returns the fish that gave a player their current score.
+     *
+     * @param player The name of the player.
+     * @return The display name of the fish, in MiniMessage format, or null if none was recorded.
+     */
+    @Nullable
+    String getFish(String player);
 }

@@ -1,6 +1,6 @@
 # Não altere isso
 # traduzido por https://github.com/goul4rt
-config-version: "33"
+config-version: "34"
 exception.invalid_syntax: "<red>Sintaxe inválida. Sintaxe correta: <white><arg:0></white></red>"
 exception.invalid_argument: "<red>Argumento inválido. Motivo: <white><arg:0></white></red>"
 exception.invalid_sender: "<red><arg:0> não tem permissão para executar este comando. Deve ser do tipo <arg:1></red>"
@@ -49,6 +49,7 @@ command.fish_finder.no_loot: "<white>Nenhum loot encontrado aqui</white>"
 command.fish_finder.split_char: ", "
 command.competition.failure.not_exist: "<red>Competição <arg:0> não existe.</red>"
 command.competition.failure.no_competition: "<red>Não há competição em andamento.</red>"
+command.competition.failure.no_leaderboard: "<red>Esta competição não tem classificação.</red>"
 command.competition.stop.success: "<white>Competição atual interrompida.</white>"
 command.competition.end.success: "<white>Competição encerrada.</white>"
 command.competition.start.success: "<white>Competição iniciada.</white>"

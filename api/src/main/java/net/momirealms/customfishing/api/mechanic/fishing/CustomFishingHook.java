@@ -614,24 +614,24 @@ public class CustomFishingHook {
         if (competition != null && RequirementManager.isSatisfied(context, competition.getConfig().joinRequirements())) {
             Double customScore = context.arg(ContextKeys.CUSTOM_SCORE);
             if (customScore != null) {
-                competition.refreshScore(context.holder(), customScore);
+                competition.refreshScore(context, customScore);
                 context.arg(ContextKeys.SCORE_FORMATTED, String.format("%.2f", customScore));
                 context.arg(ContextKeys.SCORE, customScore);
             } else {
                 double score = 0;
                 if (competition.getGoal() == CompetitionGoal.CATCH_AMOUNT) {
                     score = 1;
-                    competition.refreshScore(context.holder(), score);
+                    competition.refreshScore(context, score);
                 } else if (competition.getGoal() == CompetitionGoal.MAX_SIZE || competition.getGoal() == CompetitionGoal.MIN_SIZE || competition.getGoal() == CompetitionGoal.TOTAL_SIZE) {
                     Float size = context.arg(ContextKeys.SIZE);
                     if (size != null && size > 0) {
-                        competition.refreshScore(context.holder(), size);
+                        competition.refreshScore(context, size);
                     }
                 } else if (competition.getGoal() == CompetitionGoal.TOTAL_SCORE) {
                     score = nextLoot.score().evaluate(context);
                     score = score * tempFinalEffect.scoreMultiplier() + tempFinalEffect.scoreAdder();
                     if (score != 0) {
-                        competition.refreshScore(context.holder(), score);
+                        competition.refreshScore(context, score);
                     }
                 }
                 context.arg(ContextKeys.SCORE_FORMATTED, String.format("%.2f", score));
